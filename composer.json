@@ -1,6 +1,6 @@
 {
-    "name": "your-name-here/CsvMigrations",
-    "description": "CsvMigrations plugin for CakePHP",
+    "name": "qobo/cakephp-csv-migrations",
+    "description": "CSV Migrations plugin for CakePHP",
     "type": "cakephp-plugin",
     "require": {
         "php": ">=5.4.16",

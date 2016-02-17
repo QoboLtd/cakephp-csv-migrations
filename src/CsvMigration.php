@@ -49,6 +49,8 @@ class CsvMigration extends AbstractMigration
 
         if (empty($tableFields)) {
             $this->_createFromCsv($csvData);
+        } else {
+            $this->_updateFromCsv($csvData, $tableFields);
         }
 
         return $this->_table;
@@ -115,6 +117,55 @@ class CsvMigration extends AbstractMigration
     }
 
     /**
+     * Update (modify/delete) table fields in comparison to the csv data.
+     * @param  array $csvData      csv data
+     * @param  array $tableFields  existing table fields
+     * @return void
+     */
+    protected function _updateFromCsv(array $csvData, array $tableFields)
+    {
+        $csvData = $this->_prepareCsvData($csvData);
+
+        // store all table field names
+        $tableFieldNames = [];
+        foreach ($tableFields as $tableField) {
+            $tableFieldName = $tableField->getName();
+            $tableFieldNames[] = $tableFieldName;
+
+            // remove missing fields
+            if (!in_array($tableFieldName, array_keys($csvData))) {
+                $this->_table->removeColumn($tableFieldName);
+            } else {
+                // store table field parameters in an array
+                $tableField = array_combine($this->_fieldParams, [
+                    $tableFieldName,
+                    $tableField->getType(),
+                    $tableField->getLimit(),
+                    $tableField->getNull()
+                ]);
+
+                // if table field and csv field parameters do not match, modify the table field
+                if (!empty(array_diff(array_values($tableField), $csvData[$tableField['name']]))) {
+                    $result = array_combine($this->_fieldParams, $csvData[$tableField['name']]);
+                    $this->_table->changeColumn($result['name'], $result['type'], [
+                        'limit' => $result['limit'],
+                        'null' => $result['null']
+                    ]);
+                }
+            }
+        }
+
+        // add new fields
+        $newFields = [];
+        foreach (array_keys($csvData) as $csvField) {
+            if (!in_array($csvData[$csvField]['name'], $tableFieldNames)) {
+                $newFields[] = $csvData[$csvField];
+            }
+        }
+        $this->_createFromCsv($newFields);
+    }
+
+    /**
      * Validate field.
      * @param  array $field field info
      * @throws \RuntimeException when field type is not supported
@@ -127,5 +178,20 @@ class CsvMigration extends AbstractMigration
         }
 
         return true;
+    }
+
+    /**
+     * Method that restructures csv data for better handling and searching through.
+     * @param  array  $csvData csv data
+     * @return array
+     */
+    protected function _prepareCsvData(array $csvData)
+    {
+        $result = [];
+        foreach ($csvData as $v) {
+            $result[$v[0]] = array_combine($this->_fieldParams, $v);
+        }
+
+        return $result;
     }
 }

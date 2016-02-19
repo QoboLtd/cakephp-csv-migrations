@@ -18,7 +18,7 @@ class CsvMigration extends AbstractMigration
      * Field parameters
      * @var array
      */
-    protected $_fieldParams = ['name', 'type', 'limit', 'null'];
+    protected $_fieldParams = ['name', 'type', 'limit', 'required'];
 
     /**
      * Supported field types
@@ -110,7 +110,7 @@ class CsvMigration extends AbstractMigration
             if ($this->_validateField($field)) {
                 $this->_table->addColumn($field['name'], $field['type'], [
                     'limit' => $field['limit'],
-                    'null' => $field['null']
+                    'null' => (bool)$field['required'] ? false : true
                 ]);
             }
         }
@@ -149,7 +149,7 @@ class CsvMigration extends AbstractMigration
                     $result = array_combine($this->_fieldParams, $csvData[$tableField['name']]);
                     $this->_table->changeColumn($result['name'], $result['type'], [
                         'limit' => $result['limit'],
-                        'null' => $result['null']
+                        'null' => (bool)$result['required'] ? false : true
                     ]);
                 }
             }

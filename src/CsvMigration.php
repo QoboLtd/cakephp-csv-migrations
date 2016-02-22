@@ -114,6 +114,12 @@ class CsvMigration extends AbstractMigration
                     'limit' => $field['limit'],
                     'null' => (bool)$field['required'] ? false : true
                 ]);
+                // set id as primary key
+                if ('id' === $field['name']) {
+                    $this->_table->addPrimaryKey([
+                        $field['name'],
+                    ]);
+                }
             }
         }
     }

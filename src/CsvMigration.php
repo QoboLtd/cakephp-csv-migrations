@@ -109,6 +109,10 @@ class CsvMigration extends AbstractMigration
                 throw new \RuntimeException(sprintf($this->_errorMessages[__FUNCTION__], $colCount, $paramsCount));
             }
             $field = array_combine($this->_fieldParams, $col);
+            // set to uuid if foreign key
+            if (false !== strpos($field['type'], ':')) {
+                $field['type'] = 'uuid';
+            }
             if ($this->_validateField($field)) {
                 $this->_table->addColumn($field['name'], $field['type'], [
                     'limit' => $field['limit'],

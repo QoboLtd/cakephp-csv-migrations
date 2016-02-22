@@ -35,6 +35,8 @@ class CsvMigration extends AbstractMigration
         '_validateField' => 'Field type [%s] not supported'
     ];
 
+    public $autoId = false;
+
     /**
      * Method that handles migrations using csv file.
      * @param  \Migrations\Table $table Migrations table object
@@ -107,11 +109,21 @@ class CsvMigration extends AbstractMigration
                 throw new \RuntimeException(sprintf($this->_errorMessages[__FUNCTION__], $colCount, $paramsCount));
             }
             $field = array_combine($this->_fieldParams, $col);
+            // set to uuid if foreign key
+            if (false !== strpos($field['type'], ':')) {
+                $field['type'] = 'uuid';
+            }
             if ($this->_validateField($field)) {
                 $this->_table->addColumn($field['name'], $field['type'], [
                     'limit' => $field['limit'],
                     'null' => (bool)$field['required'] ? false : true
                 ]);
+                // set id as primary key
+                if ('id' === $field['name']) {
+                    $this->_table->addPrimaryKey([
+                        $field['name'],
+                    ]);
+                }
             }
         }
     }

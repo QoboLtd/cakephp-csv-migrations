@@ -35,6 +35,8 @@ class CsvMigration extends AbstractMigration
         '_validateField' => 'Field type [%s] not supported'
     ];
 
+    public $autoId = false;
+
     /**
      * Method that handles migrations using csv file.
      * @param  \Migrations\Table $table Migrations table object

@@ -62,13 +62,15 @@ class Table extends BaseTable
     protected function _getCsvFiles($path)
     {
         $result = [];
-        $dir = new \DirectoryIterator($path);
-        foreach ($dir as $it) {
-            if ($it->isDir() && !$it->isDot()) {
-                $subDir = new \DirectoryIterator($it->getPathname());
-                foreach ($subDir as $fileInfo) {
-                    if ($fileInfo->isFile() && 'csv' === $fileInfo->getExtension()) {
-                        $result[$it->getFilename()][] = $fileInfo->getPathname();
+        if (file_exists($path)) {
+            $dir = new \DirectoryIterator($path);
+            foreach ($dir as $it) {
+                if ($it->isDir() && !$it->isDot()) {
+                    $subDir = new \DirectoryIterator($it->getPathname());
+                    foreach ($subDir as $fileInfo) {
+                        if ($fileInfo->isFile() && 'csv' === $fileInfo->getExtension()) {
+                            $result[$it->getFilename()][] = $fileInfo->getPathname();
+                        }
                     }
                 }
             }

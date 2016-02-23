@@ -1,6 +1,7 @@
 <?php
 namespace CsvAssociations;
 
+use Cake\Core\Configure;
 use Cake\ORM\Table as BaseTable;
 use Cake\Utility\Inflector;
 
@@ -26,10 +27,11 @@ class Table extends BaseTable
     /**
      * Method that sets current model table associations.
      * @param array $config The configuration for the Table.
+     * @return void
      */
     protected function _setAssociationsFromCsv(array $config)
     {
-        $path = 'etc' . DS . 'migrations-csv' . DS;
+        $path = Configure::readOrFail('CsvAssociations.path');
         $csvFiles = $this->_getCsvFiles($path);
         $csvData = $this->_getCsvData($csvFiles);
 

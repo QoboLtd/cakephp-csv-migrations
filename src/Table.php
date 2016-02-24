@@ -39,13 +39,20 @@ class Table extends BaseTable
             foreach ($csvData as $module => $fields) {
                 foreach ($fields as $row) {
                     if (1 < count($row)) {
-                        if (false !== ($pos = strpos($row['1'], ':'))) {
-                            $associatedModule = substr($row['1'], $pos + 1);
-                            $associatedModule = Inflector::camelize($associatedModule);
+                        $assocModule = $this->_getAssociatedModuleName($row[1]);
+                        if (!empty($assocModule)) {
                             if ($config['alias'] === $module) {
-                                $this->belongsTo($associatedModule, ['foreignKey' => $row[0]]);
-                            } elseif ($config['alias'] === $associatedModule) {
-                                $this->hasMany($module);
+                                $assocName = $this->_createAssociationName($assocModule, $row[0]);
+                                $this->belongsTo($assocName, [
+                                    'className' => $assocModule,
+                                    'foreignKey' => $row[0]
+                                ]);
+                            } elseif ($config['alias'] === $assocModule) {
+                                $assocName = $this->_createAssociationName($module, $row[0]);
+                                $this->hasMany($assocName, [
+                                    'className' => $module,
+                                    'foreignKey' => $row[0]
+                                ]);
                             }
                         }
                     }
@@ -101,5 +108,35 @@ class Table extends BaseTable
         }
 
         return $result;
+    }
+
+    /**
+     * Method that extracts module name from field type definition.
+     * @param  string $name field type
+     * @return string
+     */
+    protected function _getAssociatedModuleName($name)
+    {
+        $result = '';
+        if (false !== $pos = strpos($name, ':')) {
+            $result = substr($name, $pos + 1);
+            $result = Inflector::camelize($result);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Method that generates association naming based on passed parameters.
+     * @param  string $module     module name
+     * @param  string $foreignKey foreign key name
+     * @return string
+     */
+    protected function _createAssociationName($module, $foreignKey = '')
+    {
+        if ('' !== $foreignKey) {
+            $foreignKey = Inflector::camelize($foreignKey);
+        }
+        return $foreignKey . $module;
     }
 }

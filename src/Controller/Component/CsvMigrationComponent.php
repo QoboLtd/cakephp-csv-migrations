@@ -49,7 +49,7 @@ class CsvMigrationComponent extends Component
             $result[$k->foreignKey()] = $k;
         }
 
-        $controller->set('foreignKeys', $result);
-        $controller->set('_serialize', ['foreignKeys']);
+        $controller->set('csvForeignKeys', $result);
+        $controller->set('_serialize', ['csvForeignKeys']);
     }
 }

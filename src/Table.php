@@ -1,5 +1,5 @@
 <?php
-namespace CsvAssociations;
+namespace CsvMigrations;
 
 use Cake\Core\Configure;
 use Cake\ORM\Table as BaseTable;

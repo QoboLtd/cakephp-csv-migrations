@@ -61,12 +61,18 @@ class CsvMigrationComponent extends Component
      * Method that passes Table's list fields options to the View.
      * @param \Cake\Event\Event $event An Event instance
      * @return void
+     * @todo   need to handle more than one migration csv file
      */
     protected function _setListFieldOptions(\Cake\Event\Event $event)
     {
         $controller = $event->subject();
+
+        $path = Configure::readOrFail('CsvAssociations.path') . $this->request->controller . DS;
+
+        // get csv file
+        $path = $this->_getCsvFile($path);
+
         // get migrations csv data
-        $path = Configure::readOrFail('CsvAssociations.path') . $this->request->controller . DS . 'accounts.csv';
         $csvData = $this->_getCsvData($path);
 
         $result = [];
@@ -83,6 +89,26 @@ class CsvMigrationComponent extends Component
 
         $controller->set('csvListsOptions', $result);
         $controller->set('_serialize', ['csvListsOptions']);
+    }
+
+    /**
+     * Method that retrieves csv file path from specified directory.
+     * @param  string $path directory to search in
+     * @return string       csv file path
+     */
+    protected function _getCsvFile($path)
+    {
+        $result = '';
+        if (file_exists($path)) {
+            foreach (new \DirectoryIterator($path) as $fileInfo) {
+                if ($fileInfo->isFile() && 'csv' === $fileInfo->getExtension()) {
+                    $result = $fileInfo->getPathname();
+                    break;
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**

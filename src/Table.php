@@ -118,9 +118,9 @@ class Table extends BaseTable
     protected function _getAssociatedModuleName($name)
     {
         $result = '';
-        if (false !== $pos = strpos($name, ':')) {
-            $result = substr($name, $pos + 1);
-            $result = Inflector::camelize($result);
+        $pattern = 'related:';
+        if (false !== $pos = strpos($name, $pattern)) {
+            $result = str_replace($pattern, '', $name);
         }
 
         return $result;

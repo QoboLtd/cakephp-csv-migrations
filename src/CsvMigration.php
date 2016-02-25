@@ -110,7 +110,7 @@ class CsvMigration extends AbstractMigration
             }
             $field = array_combine($this->_fieldParams, $col);
             // set to uuid if foreign key
-            if (false !== strpos($field['type'], ':')) {
+            if ($this->_isForeignKey($field['type'])) {
                 $field['type'] = 'uuid';
             }
             if ($this->_validateField($field)) {
@@ -159,6 +159,10 @@ class CsvMigration extends AbstractMigration
                 // if table field and csv field parameters do not match, modify the table field
                 if (!empty(array_diff(array_values($tableField), $csvData[$tableField['name']]))) {
                     $result = array_combine($this->_fieldParams, $csvData[$tableField['name']]);
+                    // set to uuid if foreign key
+                    if ($this->_isForeignKey($result['type'])) {
+                        $result['type'] = 'uuid';
+                    }
                     $this->_table->changeColumn($result['name'], $result['type'], [
                         'limit' => $result['limit'],
                         'null' => (bool)$result['required'] ? false : true
@@ -175,6 +179,16 @@ class CsvMigration extends AbstractMigration
             }
         }
         $this->_createFromCsv($newFields);
+    }
+
+    /**
+     * Method that determines, from its type, if field is a foreign key.
+     * @param  string $type field type
+     * @return boolean      true if is foreign key, false otherwise
+     */
+    protected function _isForeignKey($type)
+    {
+        return strpos($type, 'related:');
     }
 
     /**

@@ -11,6 +11,7 @@ use Cake\ORM\TableRegistry;
  */
 class CsvMigrationComponent extends Component
 {
+    const LIST_FIELDS_ACTIONS = ['add', 'edit'];
 
     /**
      * Default configuration.
@@ -30,6 +31,9 @@ class CsvMigrationComponent extends Component
     public function beforeFilter(\Cake\Event\Event $event)
     {
         $this->_setForeignKeys($event);
+        if (in_array($this->request->params['action'], static::LIST_FIELDS_ACTIONS)) {
+            $this->_setListFieldOptions($event);
+        }
     }
 
     /**
@@ -51,5 +55,85 @@ class CsvMigrationComponent extends Component
 
         $controller->set('csvForeignKeys', $result);
         $controller->set('_serialize', ['csvForeignKeys']);
+    }
+
+    /**
+     * Method that passes Table's list fields options to the View.
+     * @param \Cake\Event\Event $event An Event instance
+     * @return void
+     */
+    protected function _setListFieldOptions(\Cake\Event\Event $event)
+    {
+        $controller = $event->subject();
+        // get migrations csv data
+        $path = Configure::readOrFail('CsvAssociations.path') . $this->request->controller . DS . 'accounts.csv';
+        $csvData = $this->_getCsvData($path);
+
+        $result = [];
+        foreach ($csvData as $row) {
+            $listName = $this->_getListName($row[1]);
+            if ('' !== $listName) {
+                $path = Configure::readOrFail('CsvListsOptions.path') . $listName . '.csv';
+                $listData = $this->_getCsvData($path);
+                if (!empty($listData)) {
+                    $result[$row[0]] = $this->_prepareListOptions($listData);
+                }
+            }
+        }
+
+        $controller->set('csvListsOptions', $result);
+        $controller->set('_serialize', ['csvListsOptions']);
+    }
+
+    /**
+     * Method that retrieves csv file data.
+     * @param  string $path csv file path
+     * @return array        csv data
+     */
+    protected function _getCsvData($path)
+    {
+        $result = [];
+        if (file_exists($path)) {
+            if (false !== ($handle = fopen($path, 'r'))) {
+                while (false !== ($data = fgetcsv($handle, 0, ','))) {
+                    $result[] = $data;
+                }
+                fclose($handle);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Method that extracts list name from field type definition.
+     * @param  string $name field type
+     * @return string
+     */
+    protected function _getListName($name)
+    {
+        $result = '';
+        $pattern = 'list:';
+        if (false !== $pos = strpos($name, $pattern)) {
+            $result = str_replace($pattern, '', $name);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Method that restructures list options csv data for better handling.
+     * @param  array  $data csv data
+     * @return array
+     */
+    protected function _prepareListOptions($data)
+    {
+        $result = [];
+
+        foreach ($data as $row) {
+            $result[$row[0]] = $row[1];
+        }
+
+        return $result;
     }
 }

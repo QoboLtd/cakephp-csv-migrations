@@ -11,7 +11,7 @@ use Cake\ORM\TableRegistry;
  */
 class CsvMigrationComponent extends Component
 {
-    const LIST_FIELDS_ACTIONS = ['add', 'edit'];
+    protected $_listFieldsActions = ['add', 'edit'];
 
     /**
      * Default configuration.
@@ -31,7 +31,7 @@ class CsvMigrationComponent extends Component
     public function beforeFilter(\Cake\Event\Event $event)
     {
         $this->_setForeignKeys($event);
-        if (in_array($this->request->params['action'], static::LIST_FIELDS_ACTIONS)) {
+        if (in_array($this->request->params['action'], $this->_listFieldsActions)) {
             $this->_setListFieldOptions($event);
         }
     }

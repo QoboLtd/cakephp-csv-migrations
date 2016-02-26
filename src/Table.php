@@ -121,6 +121,7 @@ class Table extends BaseTable
         $pattern = 'related:';
         if (false !== $pos = strpos($name, $pattern)) {
             $result = str_replace($pattern, '', $name);
+            $result = Inflector::camelize($result);
         }
 
         return $result;

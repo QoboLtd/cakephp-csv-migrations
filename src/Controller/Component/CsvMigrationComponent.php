@@ -15,7 +15,7 @@ class CsvMigrationComponent extends Component
      * Actions list for passing list fields to
      * @var array
      */
-    protected $_listFieldsActions = ['add', 'edit', 'view'];
+    protected $_listFieldsActions = ['add', 'edit', 'view', 'index'];
 
     /**
      * Field parameters

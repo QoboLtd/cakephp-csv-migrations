@@ -11,7 +11,17 @@ use Cake\ORM\TableRegistry;
  */
 class CsvMigrationComponent extends Component
 {
-    protected $_listFieldsActions = ['add', 'edit'];
+    /**
+     * Actions list for passing list fields to
+     * @var array
+     */
+    protected $_listFieldsActions = ['add', 'edit', 'view'];
+
+    /**
+     * Field parameters
+     * @var array
+     */
+    protected $_fieldParams = ['value', 'label', 'active'];
 
     /**
      * Default configuration.
@@ -155,9 +165,19 @@ class CsvMigrationComponent extends Component
     protected function _prepareListOptions($data)
     {
         $result = [];
+        $paramsCount = count($this->_fieldParams);
 
         foreach ($data as $row) {
-            $result[$row[0]] = $row[1];
+            $colCount = count($row);
+            if ($colCount !== $paramsCount) {
+                throw new \RuntimeException(sprintf($this->_errorMessages[__FUNCTION__], $colCount, $paramsCount));
+            }
+            $field = array_combine($this->_fieldParams, $row);
+
+            $result[$field['value']] = [
+                'label' => $field['label'],
+                'active' => (bool)$field['active']
+            ];
         }
 
         return $result;

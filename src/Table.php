@@ -11,6 +11,7 @@ use Cake\Utility\Inflector;
  */
 class Table extends BaseTable
 {
+    protected $_fieldParams = ['name', 'type', 'limit', 'required'];
 
     /**
      * Initialize method
@@ -22,6 +23,50 @@ class Table extends BaseTable
     {
         parent::initialize($config);
         $this->_setAssociationsFromCsv($config);
+    }
+
+    /**
+     * Method that retrieves fields from csv file and returns them in associate array format.
+     * @return array
+     */
+    public function getFieldsDefinitions()
+    {
+        $path = Configure::readOrFail('CsvAssociations.path') . $this->alias() . DS;
+
+        $csvFiles = $this->_getCsvFile($path);
+        $csvData = $this->_getCsvData($csvFiles);
+
+        $result = [];
+        if (!empty($csvData)) {
+            foreach ($csvData as $module => $fields) {
+                foreach ($fields as $row) {
+                    $field = array_combine($this->_fieldParams, $row);
+                    $result[$field['name']] = $field;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Method that retrieves csv file path from specified directory.
+     * @param  string $path directory to search in
+     * @return array        csv file path
+     */
+    protected function _getCsvFile($path)
+    {
+        $result = [];
+        if (file_exists($path)) {
+            $di = new \DirectoryIterator($path);
+            foreach ($di as $fileInfo) {
+                if ($fileInfo->isFile() && 'csv' === $fileInfo->getExtension()) {
+                    $result[$this->alias()][] = $fileInfo->getPathname();
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**

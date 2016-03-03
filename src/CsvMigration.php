@@ -62,13 +62,20 @@ class CsvMigration extends AbstractMigration
      * Method that retrieves csv file data.
      * @param  string $path csv file path
      * @return array        csv data
+     * @todo this method should be moved to a Trait class as is used throught Csv Migrations and Csv Views plugins
      */
     protected function _getCsvData($path)
     {
         $result = [];
         if (file_exists($path)) {
             if (false !== ($handle = fopen($path, 'r'))) {
+                $row = 0;
                 while (false !== ($data = fgetcsv($handle, 0, ','))) {
+                    // skip first row
+                    if (0 === $row) {
+                        $row++;
+                        continue;
+                    }
                     $result[] = $data;
                 }
                 fclose($handle);

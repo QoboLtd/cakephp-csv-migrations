@@ -64,26 +64,42 @@ trait CsvMigrationsTableTrait
         $csvData = $this->_getCsvData($csvFiles);
 
         if (!empty($csvData)) {
-            foreach ($csvData as $module => $fields) {
-                foreach ($fields as $row) {
-                    if (1 < count($row)) {
-                        $assocModule = $this->_getAssociatedModuleName($row[1]);
-                        if (!empty($assocModule)) {
-                            if ($config['alias'] === $module) {
-                                $assocName = $this->_createAssociationName($assocModule, $row[0]);
-                                $this->belongsTo($assocName, [
-                                    'className' => $assocModule,
-                                    'foreignKey' => $row[0]
-                                ]);
-                            } elseif ($config['alias'] === $assocModule) {
-                                $assocName = $this->_createAssociationName($module, $row[0]);
-                                $this->hasMany($assocName, [
-                                    'className' => $module,
-                                    'foreignKey' => $row[0]
-                                ]);
-                            }
-                        }
-                    }
+            return;
+        }
+
+        foreach ($csvData as $module => $fields) {
+            foreach ($fields as $row) {
+                /*
+                Skip if row is incomplete
+                 */
+                if (1 >= count($row)) {
+                    continue;
+                }
+
+                $assocModule = $this->_getAssociatedModuleName($row[1]);
+                /*
+                Skip if not associated module name was found
+                 */
+                if (empty($assocModule)) {
+                    continue;
+                }
+
+                /*
+                If current model alias matches csv module, then assume belongsTo association.
+                Else if it matches associated module, then assume hasMany association.
+                 */
+                if ($config['alias'] === $module) {
+                    $assocName = $this->_createAssociationName($assocModule, $row[0]);
+                    $this->belongsTo($assocName, [
+                        'className' => $assocModule,
+                        'foreignKey' => $row[0]
+                    ]);
+                } elseif ($config['alias'] === $assocModule) {
+                    $assocName = $this->_createAssociationName($module, $row[0]);
+                    $this->hasMany($assocName, [
+                        'className' => $module,
+                        'foreignKey' => $row[0]
+                    ]);
                 }
             }
         }

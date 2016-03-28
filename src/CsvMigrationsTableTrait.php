@@ -10,7 +10,7 @@ trait CsvMigrationsTableTrait
      * Field parameters
      * @var array
      */
-    protected $_fieldParams = ['name', 'type', 'limit', 'required'];
+    protected $_fieldParams = ['name', 'type', 'limit', 'required', 'non-searchable'];
 
     /**
      * Method that retrieves fields from csv file and returns them in associate array format.

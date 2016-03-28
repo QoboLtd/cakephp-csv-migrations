@@ -1,6 +1,8 @@
 <?php
 namespace CsvMigrations;
 
+use Cake\Core\Configure;
+use Cake\Utility\Inflector;
 use Migrations\AbstractMigration;
 
 /**
@@ -8,6 +10,11 @@ use Migrations\AbstractMigration;
  */
 class CsvMigration extends AbstractMigration
 {
+    /**
+     * File extension
+     */
+    const EXTENSION = 'csv';
+
     /**
      * Migrations table object
      * @var \Migrations\Table
@@ -43,8 +50,13 @@ class CsvMigration extends AbstractMigration
      * @param  string            $path  csv file path
      * @return \Migrations\Table
      */
-    public function csv(\Migrations\Table $table, $path)
+    public function csv(\Migrations\Table $table, $path = '')
     {
+        if ('' === trim($path)) {
+            $path = Configure::readOrFail('CsvMigrations.migrations.path');
+            $path .= Inflector::pluralize(Inflector::classify($table->getName())) . DS;
+            $path .= Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . static::EXTENSION;
+        }
         $this->_table = $table;
         $csvData = $this->_getCsvData($path);
         $tableFields = $this->_getTableFields();

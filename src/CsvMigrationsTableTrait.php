@@ -6,6 +6,10 @@ use Cake\Utility\Inflector;
 
 trait CsvMigrationsTableTrait
 {
+    /**
+     * Field parameters
+     * @var array
+     */
     protected $_fieldParams = ['name', 'type', 'limit', 'required'];
 
     /**
@@ -14,7 +18,7 @@ trait CsvMigrationsTableTrait
      */
     public function getFieldsDefinitions()
     {
-        $path = Configure::readOrFail('CsvAssociations.path') . $this->alias() . DS;
+        $path = Configure::readOrFail('CsvMigrations.migrations.path') . $this->alias() . DS;
 
         $csvFiles = $this->_getCsvFile($path);
         $csvData = $this->_getCsvData($csvFiles);
@@ -59,7 +63,7 @@ trait CsvMigrationsTableTrait
      */
     protected function _setAssociationsFromCsv(array $config)
     {
-        $path = Configure::readOrFail('CsvAssociations.path');
+        $path = Configure::readOrFail('CsvMigrations.migrations.path');
         $csvFiles = $this->_getCsvFiles($path);
         $csvData = $this->_getCsvData($csvFiles);
 
@@ -113,13 +117,14 @@ trait CsvMigrationsTableTrait
     protected function _getCsvFiles($path)
     {
         $result = [];
+        $filename = Configure::read('CsvMigrations.migrations.filename') . '.csv';
         if (file_exists($path)) {
             $dir = new \DirectoryIterator($path);
             foreach ($dir as $it) {
                 if ($it->isDir() && !$it->isDot()) {
                     $subDir = new \DirectoryIterator($it->getPathname());
                     foreach ($subDir as $fileInfo) {
-                        if ($fileInfo->isFile() && 'csv' === $fileInfo->getExtension()) {
+                        if ($fileInfo->isFile() && $filename === $fileInfo->getFilename()) {
                             $result[$it->getFilename()][] = $fileInfo->getPathname();
                         }
                     }

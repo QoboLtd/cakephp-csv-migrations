@@ -71,7 +71,7 @@ class CsvViewComponent extends Component
             $controller->set('_serialize', ['csvAssociatedRecords']);
         }
 
-        $path = Configure::readOrFail('CsvViews.path');
+        $path = Configure::readOrFail('CsvMigrations.views.path');
         $this->_setTableFields($event, $path);
     }
 
@@ -191,7 +191,7 @@ class CsvViewComponent extends Component
             $action = static::ASSOC_FIELDS_ACTION;
         }
 
-        $path = Configure::readOrFail('CsvViews.path');
+        $path = Configure::readOrFail('CsvMigrations.views.path');
         $path .= Inflector::camelize($tableName) . DS . $action . '.csv';
 
         $result = $this->_getFieldsFromCsv($path, $action);

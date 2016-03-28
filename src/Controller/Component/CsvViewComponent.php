@@ -289,7 +289,7 @@ class CsvViewComponent extends Component
                 );
 
             }
-            $panel = array_pop($fields);
+            $panel = array_shift($fields);
             $result[$panel][] = $fields;
         }
 

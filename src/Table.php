@@ -26,7 +26,6 @@ class Table extends BaseTable
     {
         parent::initialize($config);
         $this->_setAssociationsFromCsv($config);
-        $this->getSearchableFields();
     }
 
     /**

@@ -25,7 +25,7 @@ class CsvMigration extends AbstractMigration
      * Field parameters
      * @var array
      */
-    protected $_fieldParams = ['name', 'type', 'limit', 'required'];
+    protected $_fieldParams = ['name', 'type', 'limit', 'required', 'non-searchable'];
 
     /**
      * Supported field types

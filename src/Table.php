@@ -12,6 +12,11 @@ class Table extends BaseTable
     use CsvMigrationsTableTrait;
 
     /**
+     * Searchable parameter name
+     */
+    const PARAM_NAME = 'non-searchable';
+
+    /**
      * Initialize method
      *
      * @param array $config The configuration for the Table.
@@ -21,5 +26,22 @@ class Table extends BaseTable
     {
         parent::initialize($config);
         $this->_setAssociationsFromCsv($config);
+    }
+
+    /**
+     * Get searchable fields
+     *
+     * @return array field names
+     */
+    public function getSearchableFields()
+    {
+        $result = [];
+        foreach ($this->getFieldsDefinitions() as $field) {
+            if (!$field[static::PARAM_NAME]) {
+                $result[] = $field['name'];
+            }
+        }
+
+        return $result;
     }
 }

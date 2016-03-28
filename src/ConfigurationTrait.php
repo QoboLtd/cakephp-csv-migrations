@@ -31,7 +31,7 @@ trait ConfigurationTrait
      *
      * @var boolean
      */
-    protected $_searchable = true;
+    protected $_searchable = false;
 
     /**
      * Module alias
@@ -60,7 +60,7 @@ trait ConfigurationTrait
      * @param  bool|null $searchable sets module as (not) searchable
      * @return bool
      */
-    public function searchable(bool $searchable = null)
+    public function searchable($searchable = null)
     {
         if (!is_null($searchable)) {
             $this->_searchable = (bool)$searchable;

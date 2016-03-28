@@ -8,12 +8,14 @@ trait CsvMigrationsTableTrait
 {
     /**
      * Field parameters
+     *
      * @var array
      */
     protected $_fieldParams = ['name', 'type', 'limit', 'required', 'non-searchable'];
 
     /**
      * Method that retrieves fields from csv file and returns them in associate array format.
+     *
      * @return array
      */
     public function getFieldsDefinitions()
@@ -38,6 +40,7 @@ trait CsvMigrationsTableTrait
 
     /**
      * Method that retrieves csv file path from specified directory.
+     *
      * @param  string $path directory to search in
      * @return array        csv file path
      */
@@ -58,6 +61,7 @@ trait CsvMigrationsTableTrait
 
     /**
      * Method that sets current model table associations.
+     *
      * @param array $config The configuration for the Table.
      * @return void
      */
@@ -71,12 +75,14 @@ trait CsvMigrationsTableTrait
             return;
         }
 
+        $count = count($this->_fieldParams);
+
         foreach ($csvData as $module => $fields) {
             foreach ($fields as $row) {
                 /*
                 Skip if row is incomplete
                  */
-                if (1 >= count($row)) {
+                if ($count !== count($row)) {
                     continue;
                 }
 
@@ -84,7 +90,7 @@ trait CsvMigrationsTableTrait
                 /*
                 Skip if not associated module name was found
                  */
-                if (empty($assocModule)) {
+                if ('' === trim($assocModule)) {
                     continue;
                 }
 
@@ -111,6 +117,7 @@ trait CsvMigrationsTableTrait
 
     /**
      * Method that retrieves csv file path(s) from specified directory recursively.
+     *
      * @param  string $path directory to search in.
      * @return array        csv file paths grouped by parent directory.
      */
@@ -137,6 +144,7 @@ trait CsvMigrationsTableTrait
 
     /**
      * Method that retrieves csv file data.
+     *
      * @param  array $csvFiles csv file path(s)
      * @return array           csv data
      */
@@ -147,7 +155,14 @@ trait CsvMigrationsTableTrait
             foreach ($paths as $path) {
                 if (file_exists($path)) {
                     if (false !== ($handle = fopen($path, 'r'))) {
+                        $row = 0;
                         while (false !== ($data = fgetcsv($handle, 0, ','))) {
+                            // skip first row
+                            if (0 === $row) {
+                                $row++;
+                                continue;
+                            }
+
                             $result[$module][] = $data;
                         }
                         fclose($handle);
@@ -161,6 +176,7 @@ trait CsvMigrationsTableTrait
 
     /**
      * Method that extracts module name from field type definition.
+     *
      * @param  string $name field type
      * @return string
      */
@@ -178,6 +194,7 @@ trait CsvMigrationsTableTrait
 
     /**
      * Method that generates association naming based on passed parameters.
+     *
      * @param  string $module     module name
      * @param  string $foreignKey foreign key name
      * @return string

@@ -2,6 +2,7 @@
 namespace CsvMigrations;
 
 use Cake\ORM\Table as BaseTable;
+use CsvMigrations\ConfigurationTrait;
 
 /**
  * Accounts Model
@@ -9,6 +10,7 @@ use Cake\ORM\Table as BaseTable;
  */
 class Table extends BaseTable
 {
+    use ConfigurationTrait;
     use CsvMigrationsTableTrait;
 
     /**
@@ -26,6 +28,32 @@ class Table extends BaseTable
     {
         parent::initialize($config);
         $this->_setAssociationsFromCsv($config);
+
+        /*
+        set table/module configuration
+         */
+        $this->_setConfiguration();
+
+        /*
+        display field from configuration file
+         */
+        if (isset($this->_config['table']['display_field'])) {
+            $this->displayField($this->_config['table']['display_field']);
+        }
+
+        /*
+        set module alias from configuration file
+         */
+        if (isset($this->_config['table']['alias'])) {
+            $this->moduleAlias($this->_config['table']['alias']);
+        }
+
+        /*
+        set searchable flag from configuration file
+         */
+        if (isset($this->_config['table']['searchable'])) {
+            $this->searchable($this->_config['table']['searchable']);
+        }
     }
 
     /**

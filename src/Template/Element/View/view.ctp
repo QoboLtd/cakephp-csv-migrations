@@ -47,7 +47,7 @@ if (empty($options['title'])) {
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    <strong><?= Inflector::humanize($panelName); ?></strong>
+                    <strong><?= $panelName; ?></strong>
                 </h3>
             </div>
             <table class="table table-hover">

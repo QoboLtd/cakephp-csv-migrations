@@ -33,7 +33,7 @@ if (empty($options['title'])) {
                     foreach ($options['fields'] as $panelName => $panelFields) {
                         echo '<div class="panel panel-default">';
                         echo '<div class="panel-heading">';
-                        echo '<h3 class="panel-title"><strong>' . Inflector::humanize($panelName) . '</strong></h3>';
+                        echo '<h3 class="panel-title"><strong>' . $panelName . '</strong></h3>';
                         echo '</div>';
                         echo '<div class="panel-body">';
                         foreach ($panelFields as $subFields) {

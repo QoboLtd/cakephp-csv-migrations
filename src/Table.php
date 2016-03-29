@@ -52,7 +52,7 @@ class Table extends BaseTable
         set searchable flag from configuration file
          */
         if (isset($this->_config['table']['searchable'])) {
-            $this->searchable($this->_config['table']['searchable']);
+            $this->isSearchable($this->_config['table']['searchable']);
         }
     }
 

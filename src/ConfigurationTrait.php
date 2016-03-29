@@ -60,7 +60,7 @@ trait ConfigurationTrait
      * @param  bool|null $searchable sets module as (not) searchable
      * @return bool
      */
-    public function searchable($searchable = null)
+    public function isSearchable($searchable = null)
     {
         if (!is_null($searchable)) {
             $this->_searchable = (bool)$searchable;

@@ -11,6 +11,9 @@
     "require-dev": {
         "phpunit/phpunit": "*"
     },
+    "replace": {
+        "qobo/cakephp-csv-views": "1.0.0 - 1.0.5"
+    },
     "autoload": {
         "psr-4": {
             "CsvMigrations\\": "src"

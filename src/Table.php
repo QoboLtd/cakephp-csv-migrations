@@ -16,7 +16,7 @@ class Table extends BaseTable
     /**
      * Searchable parameter name
      */
-    const NON_SEARCHABLE_PARAM = 'non-searchable';
+    const PARAM_NON_SEARCHABLE = 'non-searchable';
 
     /**
      * Initialize method

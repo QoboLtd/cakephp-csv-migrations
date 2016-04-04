@@ -16,7 +16,7 @@ class Table extends BaseTable
     /**
      * Searchable parameter name
      */
-    const PARAM_NAME = 'non-searchable';
+    const PARAM_NON_SEARCHABLE = 'non-searchable';
 
     /**
      * Initialize method
@@ -65,7 +65,7 @@ class Table extends BaseTable
     {
         $result = [];
         foreach ($this->getFieldsDefinitions() as $field) {
-            if (!$field[static::PARAM_NAME]) {
+            if (!$field[static::NON_SEARCHABLE_PARAM]) {
                 $result[] = $field['name'];
             }
         }

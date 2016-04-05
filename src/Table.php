@@ -65,7 +65,7 @@ class Table extends BaseTable
     {
         $result = [];
         foreach ($this->getFieldsDefinitions() as $field) {
-            if (!$field[static::NON_SEARCHABLE_PARAM]) {
+            if (!$field[static::PARAM_NON_SEARCHABLE]) {
                 $result[] = $field['name'];
             }
         }

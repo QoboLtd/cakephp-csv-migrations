@@ -171,30 +171,19 @@ class CsvMigration extends AbstractMigration
             if (!in_array($tableFieldName, array_keys($csvData))) {
                 $this->_table->removeColumn($tableFieldName);
             } else {
-                // store table field parameters in an array
-                $tableField = array_combine($this->_fieldParams, [
-                    $tableFieldName,
-                    $tableField->getType(),
-                    $tableField->getLimit(),
-                    $tableField->getNull()
-                ]);
-
-                // if table field and csv field parameters do not match, modify the table field
-                if (!empty(array_diff(array_values($tableField), $csvData[$tableField['name']]))) {
-                    $result = array_combine($this->_fieldParams, $csvData[$tableField['name']]);
-                    // set to string if list field
-                    if ($this->_isListField($result['type'])) {
-                        $result['type'] = 'string';
-                    }
-                    // set to uuid if foreign key
-                    if ($this->_isForeignKey($result['type'])) {
-                        $result['type'] = 'uuid';
-                    }
-                    $this->_table->changeColumn($result['name'], $result['type'], [
-                        'limit' => $result['limit'],
-                        'null' => (bool)$result['required'] ? false : true
-                    ]);
+                $result = array_combine($this->_fieldParams, $csvData[$tableFieldName]);
+                // set to string if list field
+                if ($this->_isListField($result['type'])) {
+                    $result['type'] = 'string';
                 }
+                // set to uuid if foreign key
+                if ($this->_isForeignKey($result['type'])) {
+                    $result['type'] = 'uuid';
+                }
+                $this->_table->changeColumn($result['name'], $result['type'], [
+                    'limit' => $result['limit'],
+                    'null' => (bool)$result['required'] ? false : true
+                ]);
             }
         }
 

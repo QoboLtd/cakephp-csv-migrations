@@ -38,6 +38,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         return $cakeView->Form->input($field, [
             'type' => $fieldType,
+            'required' => (bool)$options['fieldDefinitions']['required'],
             'value' => $data
         ]);
     }

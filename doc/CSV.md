@@ -280,5 +280,5 @@ List file consists of the following columns:
 * Inactive - whether or not the list item is active
 
 In order to avoid data inconsistency and unexpected results during record
-updating, it is **strongl** recommended to not ever delete list items from
+updating, it is **strongly** recommended to not ever delete list items from
 the CSV files, but to mark them Inactive.

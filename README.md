@@ -11,3 +11,7 @@ The recommended way to install composer packages is:
 ```
 composer require qobo/cakephp-csv-migrations
 ```
+
+## Documentation
+
+Have a look at [doc/CSV.md](doc/CSV.md) for details of what is supported.

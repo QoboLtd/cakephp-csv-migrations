@@ -44,6 +44,7 @@ class RelatedFieldHandler extends BaseFieldHandler
             'value' => $displayFieldValue,
             'data-name' => $field,
             'autocomplete' => 'off',
+            'required' => (bool)$options['fieldDefinitions']['required'],
             'data-url' => '/api/' . $relatedName . '/lookup.json'
         ]);
         $input .= $cakeView->Form->input($field, ['type' => 'hidden', 'value' => $data]);

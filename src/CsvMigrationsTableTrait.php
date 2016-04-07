@@ -71,7 +71,7 @@ trait CsvMigrationsTableTrait
         $csvFiles = $this->_getCsvFiles($path);
         $csvData = $this->_getCsvData($csvFiles);
 
-        if (!empty($csvData)) {
+        if (empty($csvData)) {
             return;
         }
 

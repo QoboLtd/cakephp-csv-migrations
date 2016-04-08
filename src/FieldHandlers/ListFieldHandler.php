@@ -73,9 +73,16 @@ class ListFieldHandler extends BaseFieldHandler
         $result = $data;
         $listName = $this->_getListName($options['fieldDefinitions']['type']);
         $fieldOptions = $this->_getListFieldOptions($listName);
+        $fieldOptions = $this->_filterOptions($fieldOptions);
 
-        if (!empty($fieldOptions[$data]['label'])) {
-            $result = h($fieldOptions[$data]['label']);
+        /*
+        nested list options
+         */
+        $collection = new Collection($fieldOptions);
+        $fieldOptions = $collection->listNested()->printer('name', 'id', null)->toArray();
+
+        if (isset($fieldOptions[$data])) {
+            $result = h($fieldOptions[$data]);
         }
 
         return $result;

@@ -2,6 +2,7 @@
 namespace CsvMigrations\FieldHandlers;
 
 use App\View\AppView;
+use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
@@ -44,7 +45,7 @@ class ListFieldHandler extends BaseFieldHandler
         /*
         nested list options
          */
-        $collection = new \Cake\Collection\Collection($fieldOptions);
+        $collection = new Collection($fieldOptions);
         $fieldOptions = $collection->listNested()->printer('name', 'id', '--')->toArray();
 
         $input = $cakeView->Form->label($field);
@@ -96,16 +97,17 @@ class ListFieldHandler extends BaseFieldHandler
     /**
      * Method that retrieves list field options.
      *
-     * @param string $listName list name
+     * @param  string $listName list name
+     * @param  string $prefix   nested option prefix
      * @return array
      */
-    protected function _getListFieldOptions($listName)
+    protected function _getListFieldOptions($listName, $prefix = null)
     {
         $result = [];
         $path = Configure::readOrFail('CsvMigrations.lists.path') . $listName . '.csv';
         $listData = $this->_getCsvData($path);
         if (!empty($listData)) {
-            $result = $this->_prepareListOptions($listData, $listName);
+            $result = $this->_prepareListOptions($listData, $listName, $prefix);
         }
 
         return $result;
@@ -170,13 +172,14 @@ class ListFieldHandler extends BaseFieldHandler
     /**
      * Method that restructures list options csv data for better handling.
      *
-     * @param  array  $data csv data
+     * @param  array  $data     csv data
      * @param  string $listName list name
+     * @param  string $prefix   nested option prefix
      * @return array
      * @todo   Validation of CVS files should probably be done separately, elsewhere.
      *         Note: the number of columns can vary per record.
      */
-    protected function _prepareListOptions($data, $listName)
+    protected function _prepareListOptions($data, $listName, $prefix = null)
     {
         $result = [];
         $paramsCount = count($this->_fieldParams);
@@ -188,7 +191,7 @@ class ListFieldHandler extends BaseFieldHandler
             }
             $field = array_combine($this->_fieldParams, $row);
 
-            $result[$field['value']] = [
+            $result[$prefix . $field['value']] = [
                 'label' => $field['label'],
                 'inactive' => (bool)$field['inactive']
             ];
@@ -196,9 +199,9 @@ class ListFieldHandler extends BaseFieldHandler
             /*
             get child options
              */
-            $children = $this->_getListFieldOptions($listName . DS . $field['value']);
+            $children = $this->_getListFieldOptions($listName . DS . $field['value'], $prefix . $field['value'] . '.');
             if (!empty($children)) {
-                $result[$field['value']]['children'] = $children;
+                $result[$prefix . $field['value']]['children'] = $children;
             }
         }
 

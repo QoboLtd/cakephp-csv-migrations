@@ -25,6 +25,7 @@ class ListFieldHandler extends BaseFieldHandler
 
     /**
      * Method responsible for rendering field's input.
+     *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
@@ -40,6 +41,12 @@ class ListFieldHandler extends BaseFieldHandler
         $fieldOptions = $this->_getListFieldOptions($listName);
         $fieldOptions = $this->_filterOptions($fieldOptions);
 
+        /*
+        nested list options
+         */
+        $collection = new \Cake\Collection\Collection($fieldOptions);
+        $fieldOptions = $collection->listNested()->printer('name', 'id', '--')->toArray();
+
         $input = $cakeView->Form->label($field);
         $input .= $cakeView->Form->select($field, $fieldOptions, [
             'class' => 'form-control',
@@ -53,6 +60,7 @@ class ListFieldHandler extends BaseFieldHandler
 
     /**
      * Method that renders list field's value.
+     *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
@@ -74,6 +82,7 @@ class ListFieldHandler extends BaseFieldHandler
 
     /**
      * Method that extracts list name from field type definition.
+     *
      * @param  string $type field type
      * @return string       list name
      */
@@ -86,6 +95,7 @@ class ListFieldHandler extends BaseFieldHandler
 
     /**
      * Method that retrieves list field options.
+     *
      * @param string $listName list name
      * @return array
      */
@@ -95,7 +105,7 @@ class ListFieldHandler extends BaseFieldHandler
         $path = Configure::readOrFail('CsvMigrations.lists.path') . $listName . '.csv';
         $listData = $this->_getCsvData($path);
         if (!empty($listData)) {
-            $result = $this->_prepareListOptions($listData);
+            $result = $this->_prepareListOptions($listData, $listName);
         }
 
         return $result;
@@ -103,17 +113,27 @@ class ListFieldHandler extends BaseFieldHandler
 
     /**
      * Method that filters list options, excluding non-active ones
-     * @param  array $options list options
+     *
+     * @param  array  $options list options
+     * @param  int    $index nested list index
+     * @param  string $parent parent id
      * @return array
      */
-    protected function _filterOptions($options)
+    protected function _filterOptions($options, $index = -1, $parent = null)
     {
         $result = [];
         foreach ($options as $k => $v) {
             if ($v['inactive']) {
                 continue;
             }
-            $result[$k] = $v['label'];
+            $index++;
+            $result[$index] = ['id' => $k, 'parent_id' => $parent, 'name' => $v['label']];
+            /*
+            iterate over children options
+             */
+            if (isset($v['children'])) {
+                $result[$index]['children'] = $this->_filterOptions($v['children'], $index, $k);
+            }
         }
 
         return $result;
@@ -121,6 +141,7 @@ class ListFieldHandler extends BaseFieldHandler
 
     /**
      * Method that retrieves csv file data.
+     *
      * @param  string $path csv file path
      * @return array        csv data
      * @todo this method should be moved to a Trait class as is used throught Csv Migrations and Csv Views plugins
@@ -148,12 +169,14 @@ class ListFieldHandler extends BaseFieldHandler
 
     /**
      * Method that restructures list options csv data for better handling.
+     *
      * @param  array  $data csv data
+     * @param  string $listName list name
      * @return array
      * @todo   Validation of CVS files should probably be done separately, elsewhere.
      *         Note: the number of columns can vary per record.
      */
-    protected function _prepareListOptions($data)
+    protected function _prepareListOptions($data, $listName)
     {
         $result = [];
         $paramsCount = count($this->_fieldParams);
@@ -169,6 +192,14 @@ class ListFieldHandler extends BaseFieldHandler
                 'label' => $field['label'],
                 'inactive' => (bool)$field['inactive']
             ];
+
+            /*
+            get child options
+             */
+            $children = $this->_getListFieldOptions($listName . DS . $field['value']);
+            if (!empty($children)) {
+                $result[$field['value']]['children'] = $children;
+            }
         }
 
         return $result;

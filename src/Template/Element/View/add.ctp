@@ -41,7 +41,8 @@ if (empty($options['title'])) {
                             foreach ($subFields as $field) {
                                 echo '<div class="col-xs-6">';
                                 if ('' !== trim($field)) {
-                                    echo $fhf->renderInput($this->name, $field, $this->request->data[$field]);
+                                    $value = isset($this->request->data[$field]) ? $this->request->data[$field] : null;
+                                    echo $fhf->renderInput($this->name, $field, $value);
                                 } else {
                                     echo '&nbsp;';
                                 }

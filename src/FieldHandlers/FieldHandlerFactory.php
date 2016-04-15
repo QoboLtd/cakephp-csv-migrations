@@ -87,7 +87,8 @@ class FieldHandlerFactory
         if (is_object($table)) {
             $this->setTableName($table->alias());
         } else {
-            $this->setTableName($table);
+            $tableName = (!is_null($plugin) ? $plugin . '.' : '') . $table;
+            $this->setTableName($tableName);
         }
 
         $tableInstance = $this->_setTableInstance($plugin, $table);

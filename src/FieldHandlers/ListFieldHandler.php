@@ -27,13 +27,14 @@ class ListFieldHandler extends BaseFieldHandler
     /**
      * Method responsible for rendering field's input.
      *
+     * @param  string $plugin  plugin name
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string          field input
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($plugin, $table, $field, $data = '', array $options = [])
     {
         // load AppView
         $cakeView = new AppView();
@@ -62,13 +63,14 @@ class ListFieldHandler extends BaseFieldHandler
     /**
      * Method that renders list field's value.
      *
+     * @param  string $plugin  plugin name
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($plugin, $table, $field, $data, array $options = [])
     {
         $result = $data;
         $listName = $this->_getListName($options['fieldDefinitions']['type']);

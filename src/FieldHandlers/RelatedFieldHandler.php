@@ -20,17 +20,19 @@ class RelatedFieldHandler extends BaseFieldHandler
 
     /**
      * Method responsible for rendering field's input.
+     *
+     * @param  string $plugin  plugin name
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string          field input
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($plugin, $table, $field, $data = '', array $options = [])
     {
         // load AppView
         $cakeView = new AppView();
-
+        // get related table name
         $relatedName = $this->_getRelatedName($options['fieldDefinitions']['type']);
         // get related table's displayField value
         $displayFieldValue = $this->_getDisplayFieldValueByPrimaryKey(Inflector::camelize($relatedName), $data);
@@ -54,13 +56,15 @@ class RelatedFieldHandler extends BaseFieldHandler
 
     /**
      * Method that renders related field's value.
+     *
+     * @param  string $plugin  plugin name
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($plugin, $table, $field, $data, array $options = [])
     {
         // load AppView
         $cakeView = new AppView();
@@ -79,6 +83,7 @@ class RelatedFieldHandler extends BaseFieldHandler
 
     /**
      * Method that extracts list name from field type definition.
+     *
      * @param  string $type field type
      * @return string       list name
      */
@@ -92,6 +97,7 @@ class RelatedFieldHandler extends BaseFieldHandler
     /**
      * Method that retrieves provided Table's displayField value,
      * based on provided primary key's value.
+     *
      * @param  mixed  $table      Table object or name
      * @param  sting  $value      query parameter value
      * @return string             displayField value

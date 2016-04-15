@@ -24,56 +24,64 @@ class FieldHandlerFactory
 
     /**
      * Current Table name
+     *
      * @var string
      */
     protected $_tableName;
 
     /**
      * Loaded Table instances
+     *
      * @var array
      */
     protected $_tableInstances = [];
 
     /**
      * Method responsible for rendering field's input.
+     *
+     * @param  string $plugin  plugin name
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string          field input
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($plugin, $table, $field, $data = '', array $options = [])
     {
-        $table = $this->_getTableInstance($table);
+        $table = $this->_getTableInstance($plugin, $table);
         $options = $this->_getExtraOptions($table, $field, $options);
         $handler = $this->_getHandler($options['fieldDefinitions']['type']);
 
-        return $handler->renderInput($table, $field, $data, $options);
+        return $handler->renderInput($plugin, $table, $field, $data, $options);
     }
 
     /**
      * Method that renders specified field's value based on the field's type.
+     *
+     * @param  string $plugin  plugin name
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string          list field value
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($plugin, $table, $field, $data, array $options = [])
     {
-        $table = $this->_getTableInstance($table);
+        $table = $this->_getTableInstance($plugin, $table);
         $options = $this->_getExtraOptions($table, $field, $options);
         $handler = $this->_getHandler($options['fieldDefinitions']['type']);
 
-        return $handler->renderValue($table, $field, $data, $options);
+        return $handler->renderValue($plugin, $table, $field, $data, $options);
     }
 
     /**
      * Method that sets and returns Table instance
-     * @param  mixed  $table name or instance of the Table
-     * @return object        Table instance
+     *
+     * @param  string $plugin plugin name
+     * @param  mixed  $table  name or instance of the Table
+     * @return object         Table instance
      */
-    protected function _getTableInstance($table)
+    protected function _getTableInstance($plugin, $table)
     {
         // set table name
         if (is_object($table)) {
@@ -82,13 +90,14 @@ class FieldHandlerFactory
             $this->setTableName($table);
         }
 
-        $tableInstance = $this->_setTableInstance($table);
+        $tableInstance = $this->_setTableInstance($plugin, $table);
 
         return $tableInstance;
     }
 
     /**
      * Method that adds extra parameters to the field options array.
+     *
      * @param  object $tableInstance instance of the Table
      * @param  string $field         field name
      * @param  array  $options       field options
@@ -109,6 +118,7 @@ class FieldHandlerFactory
     /**
      * Method that returns an instance of the appropriate
      * FieldHandler class based on field Type.
+     *
      * @param  array  $fieldType field type
      * @return object            FieldHandler instance
      */
@@ -129,6 +139,7 @@ class FieldHandlerFactory
 
     /**
      * Set table name
+     *
      * @param string $tableName table name
      * @return void
      */
@@ -142,6 +153,7 @@ class FieldHandlerFactory
      * It also handles more advanced field types like foreign key and list fields.
      * Example: if field type is 'string' then 'StringFieldHandler' will be returned.
      * Example: if field type is 'related:users' then 'RelatedFieldHandler' will be returned.
+     *
      * @param  string $type field type
      * @param  bool   $fqcn true to use fully-qualified class name
      * @return string       handler class name
@@ -164,6 +176,7 @@ class FieldHandlerFactory
     /**
      * Method that adds specified table to the _tableInstances
      * array and returns the table's instance.
+     *
      * @param  mixed $table name or instance of the Table
      * @return object       instance of specified Table
      */

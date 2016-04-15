@@ -35,7 +35,16 @@ class RelatedFieldHandler extends BaseFieldHandler
         // get related table name
         $relatedName = $this->_getRelatedName($options['fieldDefinitions']['type']);
         // get related table's displayField value
-        $displayFieldValue = $this->_getDisplayFieldValueByPrimaryKey(Inflector::camelize($relatedName), $data);
+        $displayFieldValue = $this->_getDisplayFieldValueByPrimaryKey($relatedName, $data);
+        // get plugin and controller names
+        list($relatedPlugin, $relatedController) = pluginSplit($relatedName);
+        // remove vendor from plugin name
+        if (!is_null($relatedPlugin)) {
+            $pos = strpos($relatedPlugin, '/');
+            if ($pos !== false) {
+                $relatedPlugin = substr($relatedPlugin, $pos + 1);
+            }
+        }
 
         $input = $cakeView->Form->input($field, [
             'name' => $field . '_label',
@@ -47,7 +56,12 @@ class RelatedFieldHandler extends BaseFieldHandler
             'data-name' => $field,
             'autocomplete' => 'off',
             'required' => (bool)$options['fieldDefinitions']['required'],
-            'data-url' => '/api/' . $relatedName . '/lookup.json'
+            'data-url' => $cakeView->Url->build([
+                'prefix' => 'api',
+                'plugin' => $relatedPlugin,
+                'controller' => $relatedController,
+                'action' => 'lookup.json'
+            ])
         ]);
         $input .= $cakeView->Form->input($field, ['type' => 'hidden', 'value' => $data]);
 
@@ -71,7 +85,7 @@ class RelatedFieldHandler extends BaseFieldHandler
         // get related table name
         $relatedName = $this->_getRelatedName($options['fieldDefinitions']['type']);
         // get related table's displayField value
-        $displayFieldValue = $this->_getDisplayFieldValueByPrimaryKey(Inflector::camelize($relatedName), $data);
+        $displayFieldValue = $this->_getDisplayFieldValueByPrimaryKey($relatedName, $data);
         // generate related record html link
         $result = $cakeView->Html->link(
             h($displayFieldValue),

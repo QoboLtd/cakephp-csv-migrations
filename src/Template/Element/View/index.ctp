@@ -51,7 +51,7 @@ if (empty($options['title'])) {
                 <?php foreach ($options['entities'] as $entity): ?>
                 <tr>
                     <?php foreach ($fields as $field): ?>
-                        <td><?= $fhf->renderValue($this->name, $field[0], $entity->$field[0]); ?></td>
+                        <td><?= $fhf->renderValue($this->plugin, $this->name, $field[0], $entity->$field[0]); ?></td>
                     <?php endforeach; ?>
                     <td class="actions">
                         <?= $this->Html->link('', ['action' => 'view', $entity->id], ['title' => __('View'), 'class' => 'btn btn-default glyphicon glyphicon-eye-open']) ?>

@@ -42,7 +42,7 @@ if (empty($options['title'])) {
                                 echo '<div class="col-xs-6">';
                                 if ('' !== trim($field)) {
                                     $value = isset($this->request->data[$field]) ? $this->request->data[$field] : null;
-                                    echo $fhf->renderInput($this->name, $field, $value);
+                                    echo $fhf->renderInput($this->plugin, $this->name, $field, $value);
                                 } else {
                                     echo '&nbsp;';
                                 }

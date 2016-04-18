@@ -47,10 +47,11 @@ trait CsvMigrationsTableTrait
     protected function _getCsvFile($path)
     {
         $result = [];
+        $fileName = Configure::readOrFail('CsvMigrations.migrations.filename');
         if (file_exists($path)) {
             $di = new \DirectoryIterator($path);
             foreach ($di as $fileInfo) {
-                if ($fileInfo->isFile() && 'csv' === $fileInfo->getExtension()) {
+                if ($fileInfo->isFile() && $fileName . '.csv' === $fileInfo->getFilename()) {
                     $result[$this->alias()][] = $fileInfo->getPathname();
                 }
             }

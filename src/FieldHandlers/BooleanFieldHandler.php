@@ -10,6 +10,7 @@ class BooleanFieldHandler extends BaseFieldHandler
 
     /**
      * Method responsible for rendering field's input.
+     *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
@@ -30,6 +31,7 @@ class BooleanFieldHandler extends BaseFieldHandler
 
     /**
      * Method that renders specified field's value based on the field's type.
+     *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data

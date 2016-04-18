@@ -24,18 +24,21 @@ class FieldHandlerFactory
 
     /**
      * Current Table name
+     *
      * @var string
      */
     protected $_tableName;
 
     /**
      * Loaded Table instances
+     *
      * @var array
      */
     protected $_tableInstances = [];
 
     /**
      * Method responsible for rendering field's input.
+     *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
@@ -53,6 +56,7 @@ class FieldHandlerFactory
 
     /**
      * Method that renders specified field's value based on the field's type.
+     *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
@@ -70,8 +74,9 @@ class FieldHandlerFactory
 
     /**
      * Method that sets and returns Table instance
-     * @param  mixed  $table name or instance of the Table
-     * @return object        Table instance
+     *
+     * @param  mixed  $table  name or instance of the Table
+     * @return object         Table instance
      */
     protected function _getTableInstance($table)
     {
@@ -89,6 +94,7 @@ class FieldHandlerFactory
 
     /**
      * Method that adds extra parameters to the field options array.
+     *
      * @param  object $tableInstance instance of the Table
      * @param  string $field         field name
      * @param  array  $options       field options
@@ -114,6 +120,7 @@ class FieldHandlerFactory
     /**
      * Method that returns an instance of the appropriate
      * FieldHandler class based on field Type.
+     *
      * @param  array  $fieldType field type
      * @return object            FieldHandler instance
      */
@@ -134,6 +141,7 @@ class FieldHandlerFactory
 
     /**
      * Set table name
+     *
      * @param string $tableName table name
      * @return void
      */
@@ -147,6 +155,7 @@ class FieldHandlerFactory
      * It also handles more advanced field types like foreign key and list fields.
      * Example: if field type is 'string' then 'StringFieldHandler' will be returned.
      * Example: if field type is 'related:users' then 'RelatedFieldHandler' will be returned.
+     *
      * @param  string $type field type
      * @param  bool   $fqcn true to use fully-qualified class name
      * @return string       handler class name
@@ -169,6 +178,7 @@ class FieldHandlerFactory
     /**
      * Method that adds specified table to the _tableInstances
      * array and returns the table's instance.
+     *
      * @param  mixed $table name or instance of the Table
      * @return object       instance of specified Table
      */

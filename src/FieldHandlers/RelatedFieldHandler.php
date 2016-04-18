@@ -20,6 +20,7 @@ class RelatedFieldHandler extends BaseFieldHandler
 
     /**
      * Method responsible for rendering field's input.
+     *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
@@ -30,10 +31,19 @@ class RelatedFieldHandler extends BaseFieldHandler
     {
         // load AppView
         $cakeView = new AppView();
-
+        // get related table name
         $relatedName = $this->_getRelatedName($options['fieldDefinitions']['type']);
         // get related table's displayField value
-        $displayFieldValue = $this->_getDisplayFieldValueByPrimaryKey(Inflector::camelize($relatedName), $data);
+        $displayFieldValue = $this->_getDisplayFieldValueByPrimaryKey($relatedName, $data);
+        // get plugin and controller names
+        list($relatedPlugin, $relatedController) = pluginSplit($relatedName);
+        // remove vendor from plugin name
+        if (!is_null($relatedPlugin)) {
+            $pos = strpos($relatedPlugin, '/');
+            if ($pos !== false) {
+                $relatedPlugin = substr($relatedPlugin, $pos + 1);
+            }
+        }
 
         $input = $cakeView->Form->input($field, [
             'name' => $field . '_label',
@@ -45,7 +55,12 @@ class RelatedFieldHandler extends BaseFieldHandler
             'data-name' => $field,
             'autocomplete' => 'off',
             'required' => (bool)$options['fieldDefinitions']['required'],
-            'data-url' => '/api/' . $relatedName . '/lookup.json'
+            'data-url' => $cakeView->Url->build([
+                'prefix' => 'api',
+                'plugin' => $relatedPlugin,
+                'controller' => $relatedController,
+                'action' => 'lookup.json'
+            ])
         ]);
         $input .= $cakeView->Form->input($field, ['type' => 'hidden', 'value' => $data]);
 
@@ -54,6 +69,7 @@ class RelatedFieldHandler extends BaseFieldHandler
 
     /**
      * Method that renders related field's value.
+     *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
@@ -77,6 +93,7 @@ class RelatedFieldHandler extends BaseFieldHandler
                 $relatedPlugin = substr($relatedPlugin, $pos + 1);
             }
         }
+
         // generate related record html link
         $result = $cakeView->Html->link(
             h($displayFieldValue),
@@ -93,6 +110,7 @@ class RelatedFieldHandler extends BaseFieldHandler
 
     /**
      * Method that extracts list name from field type definition.
+     *
      * @param  string $type field type
      * @return string       list name
      */
@@ -106,6 +124,7 @@ class RelatedFieldHandler extends BaseFieldHandler
     /**
      * Method that retrieves provided Table's displayField value,
      * based on provided primary key's value.
+     *
      * @param  mixed  $table      Table object or name
      * @param  sting  $value      query parameter value
      * @return string             displayField value

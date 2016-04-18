@@ -39,59 +39,55 @@ class FieldHandlerFactory
     /**
      * Method responsible for rendering field's input.
      *
-     * @param  string $plugin  plugin name
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string          field input
      */
-    public function renderInput($plugin, $table, $field, $data = '', array $options = [])
+    public function renderInput($table, $field, $data = '', array $options = [])
     {
-        $table = $this->_getTableInstance($plugin, $table);
+        $table = $this->_getTableInstance($table);
         $options = $this->_getExtraOptions($table, $field, $options);
         $handler = $this->_getHandler($options['fieldDefinitions']['type']);
 
-        return $handler->renderInput($plugin, $table, $field, $data, $options);
+        return $handler->renderInput($table, $field, $data, $options);
     }
 
     /**
      * Method that renders specified field's value based on the field's type.
      *
-     * @param  string $plugin  plugin name
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string          list field value
      */
-    public function renderValue($plugin, $table, $field, $data, array $options = [])
+    public function renderValue($table, $field, $data, array $options = [])
     {
-        $table = $this->_getTableInstance($plugin, $table);
+        $table = $this->_getTableInstance($table);
         $options = $this->_getExtraOptions($table, $field, $options);
         $handler = $this->_getHandler($options['fieldDefinitions']['type']);
 
-        return $handler->renderValue($plugin, $table, $field, $data, $options);
+        return $handler->renderValue($table, $field, $data, $options);
     }
 
     /**
      * Method that sets and returns Table instance
      *
-     * @param  string $plugin plugin name
      * @param  mixed  $table  name or instance of the Table
      * @return object         Table instance
      */
-    protected function _getTableInstance($plugin, $table)
+    protected function _getTableInstance($table)
     {
         // set table name
         if (is_object($table)) {
             $this->setTableName($table->alias());
         } else {
-            $tableName = (!is_null($plugin) ? $plugin . '.' : '') . $table;
-            $this->setTableName($tableName);
+            $this->setTableName($table);
         }
 
-        $tableInstance = $this->_setTableInstance($plugin, $table);
+        $tableInstance = $this->_setTableInstance($table);
 
         return $tableInstance;
     }

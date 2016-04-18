@@ -41,7 +41,11 @@ if (empty($options['title'])) {
                             foreach ($subFields as $field) {
                                 echo '<div class="col-xs-6">';
                                 if ('' !== trim($field)) {
-                                    echo $fhf->renderInput($this->plugin, $this->name, $field, $options['entity']->$field);
+                                    $tableName = $this->name;
+                                    if (!is_null($this->plugin)) {
+                                        $tableName = $this->plugin . '.' . $tableName;
+                                    }
+                                    echo $fhf->renderInput($tableName, $field, $options['entity']->$field);
                                 } else {
                                     echo '&nbsp;';
                                 }

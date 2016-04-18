@@ -136,6 +136,7 @@ class CsvViewComponent extends Component
      */
     protected function _manyToOneAssociatedRecords(\Cake\ORM\Table $table, \Cake\ORM\Association $association)
     {
+        $result = [];
         $tableName = $table->table();
         $primaryKey = $table->primaryKey();
         $assocTableName = $association->table();
@@ -143,6 +144,15 @@ class CsvViewComponent extends Component
         $assocForeignKey = $association->foreignKey();
         $recordId = $this->request->params['pass'][0];
         $displayField = $association->displayField();
+
+        /**
+         * skip inverse relationship
+         *
+         * @todo find better way to handle it
+         */
+        if ($tableName === $assocTableName) {
+            return $result;
+        }
 
         $connection = ConnectionManager::get('default');
         $records = $connection

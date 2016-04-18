@@ -59,13 +59,14 @@ class CsvViewComponent extends Component
     {
         if (in_array($this->request->params['action'], $this->_assocActions)) {
             $controller = $event->subject();
+            $tableInstance = $this->_getTableInstance($controller->request->params);
             // associated records
             $controller->set(
                 'csvAssociatedRecords',
                 $this->_setAssociatedRecords(
                     $event,
                     ['oneToMany', 'manyToOne'],
-                    TableRegistry::get($controller->name)
+                    $tableInstance
                 )
             );
             $controller->set('_serialize', ['csvAssociatedRecords']);
@@ -73,6 +74,22 @@ class CsvViewComponent extends Component
 
         $path = Configure::readOrFail('CsvMigrations.views.path');
         $this->_setTableFields($event, $path);
+    }
+
+    /**
+     * Method that instantiates Table based on request parameters.
+     *
+     * @param  array  $params  Request parameters
+     * @return \Cake\ORM\Table
+     */
+    protected function _getTableInstance(array $params)
+    {
+        $table = $params['controller'];
+        if (!is_null($params['plugin'])) {
+            $table = $params['plugin'] . '.' . $table;
+        }
+
+        return TableRegistry::get($table);
     }
 
     /**
@@ -84,11 +101,6 @@ class CsvViewComponent extends Component
      */
     protected function _setAssociatedRecords(\Cake\Event\Event $event, array $types, \Cake\ORM\Table $table = null)
     {
-        // if not provided, get Table object from current controller
-        if (is_null($table)) {
-            $table = TableRegistry::get($event->subject()->name);
-        }
-
         $result = [];
         // loop through associations
         foreach ($table->associations() as $association) {
@@ -124,6 +136,7 @@ class CsvViewComponent extends Component
      */
     protected function _manyToOneAssociatedRecords(\Cake\ORM\Table $table, \Cake\ORM\Association $association)
     {
+        $result = [];
         $tableName = $table->table();
         $primaryKey = $table->primaryKey();
         $assocTableName = $association->table();
@@ -131,6 +144,15 @@ class CsvViewComponent extends Component
         $assocForeignKey = $association->foreignKey();
         $recordId = $this->request->params['pass'][0];
         $displayField = $association->displayField();
+
+        /**
+         * skip inverse relationship
+         *
+         * @todo find better way to handle it
+         */
+        if ($tableName === $assocTableName) {
+            return $result;
+        }
 
         $connection = ConnectionManager::get('default');
         $records = $connection

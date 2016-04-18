@@ -84,10 +84,25 @@ class RelatedFieldHandler extends BaseFieldHandler
         $relatedName = $this->_getRelatedName($options['fieldDefinitions']['type']);
         // get related table's displayField value
         $displayFieldValue = $this->_getDisplayFieldValueByPrimaryKey($relatedName, $data);
+        // get plugin and controller names
+        list($relatedPlugin, $relatedController) = pluginSplit($relatedName);
+        // remove vendor from plugin name
+        if (!is_null($relatedPlugin)) {
+            $pos = strpos($relatedPlugin, '/');
+            if ($pos !== false) {
+                $relatedPlugin = substr($relatedPlugin, $pos + 1);
+            }
+        }
+
         // generate related record html link
         $result = $cakeView->Html->link(
             h($displayFieldValue),
-            ['controller' => $relatedName, 'action' => static::LINK_ACTION, $data]
+            $cakeView->Url->build([
+                'plugin' => $relatedPlugin,
+                'controller' => $relatedController,
+                'action' => static::LINK_ACTION,
+                $data
+            ])
         );
 
         return $result;

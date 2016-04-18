@@ -98,10 +98,15 @@ class FieldHandlerFactory
     {
         // get fields definitions
         $fieldsDefinitions = $tableInstance->getFieldsDefinitions();
-        $fieldDefinitions = $fieldsDefinitions[$field];
 
-        // add field definitions to options array
-        $options['fieldDefinitions'] = $fieldDefinitions;
+        /**
+         * @todo make this better, probably define defaults (scenario virtual fields)
+         */
+        $options['fieldDefinitions']['type'] = 'string';
+        if (!empty($fieldsDefinitions[$field])) {
+            // add field definitions to options array
+            $options['fieldDefinitions'] = $fieldsDefinitions[$field];
+        }
 
         return $options;
     }

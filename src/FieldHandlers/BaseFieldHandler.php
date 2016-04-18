@@ -19,6 +19,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
     /**
      * Method responsible for rendering field's input.
+     *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
@@ -45,6 +46,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
     /**
      * Method that renders default type field's value.
+     *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data

@@ -58,7 +58,13 @@ if (empty($options['title'])) {
                         <strong><?= Inflector::humanize($field); ?>:</strong>
                     </td>
                     <td class="col-xs-3">
-                        <?= $fhf->renderValue($this->name, $field, $options['entity']->$field); ?>
+                    <?php
+                        $tableName = $this->name;
+                        if (!is_null($this->plugin)) {
+                            $tableName = $this->plugin . '.' . $tableName;
+                        }
+                        echo $fhf->renderValue($tableName, $field, $options['entity']->$field);
+                    ?>
                     </td>
                         <?php else : ?>
                     <td class="col-xs-3">&nbsp;</td>

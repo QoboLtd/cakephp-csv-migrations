@@ -5,6 +5,7 @@ interface FieldHandlerInterface
 {
     /**
      * Method responsible for rendering field's input.
+     *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data
@@ -15,6 +16,7 @@ interface FieldHandlerInterface
 
     /**
      * Method responsible for rendering field's value.
+     *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
      * @param  string $data    field data

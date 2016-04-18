@@ -12,7 +12,7 @@ if (!empty($csvAssociatedRecords['oneToMany'])) : ?>
 ?>
             <li role="presentation" class="<?= $active; ?>">
                 <a href="#<?= $tabName; ?>" aria-controls="<?= $tabName; ?>" role="tab" data-toggle="tab">
-                    <?= Inflector::humanize($assocData['table_name']); ?>
+                    <?= Inflector::humanize(Inflector::tableize($tabName)); ?>
                 </a>
             </li>
 <?php

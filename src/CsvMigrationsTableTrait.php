@@ -75,17 +75,8 @@ trait CsvMigrationsTableTrait
             return;
         }
 
-        $count = count($this->_fieldParams);
-
         foreach ($csvData as $module => $fields) {
             foreach ($fields as $row) {
-                /*
-                Skip if row is incomplete
-                 */
-                if ($count !== count($row)) {
-                    continue;
-                }
-
                 $assocModule = $this->_getAssociatedModuleName($row[1]);
                 /*
                 Skip if not associated module name was found
@@ -151,6 +142,7 @@ trait CsvMigrationsTableTrait
     protected function _getCsvData(array $csvFiles)
     {
         $result = [];
+        $count = count($this->_fieldParams);
         foreach ($csvFiles as $module => $paths) {
             foreach ($paths as $path) {
                 if (file_exists($path)) {
@@ -160,6 +152,12 @@ trait CsvMigrationsTableTrait
                             // skip first row
                             if (0 === $row) {
                                 $row++;
+                                continue;
+                            }
+                            /*
+                            Skip if row is incomplete
+                             */
+                            if ($count !== count($data)) {
                                 continue;
                             }
 

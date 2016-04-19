@@ -111,10 +111,14 @@ class ListFieldHandler extends BaseFieldHandler
     protected function _getListFieldOptions($listName, $prefix = null)
     {
         $result = [];
-        $path = Configure::readOrFail('CsvMigrations.lists.path') . $listName . '.csv';
-        $listData = $this->_getCsvData($path);
-        if (!empty($listData)) {
-            $result = $this->_prepareListOptions($listData, $listName, $prefix);
+
+        foreach (Configure::readOrFail('CsvMigrations.lists.paths') as $path) {
+            $path .= $listName . '.csv';
+            $listData = $this->_getCsvData($path);
+            if (!empty($listData)) {
+                $result = $this->_prepareListOptions($listData, $listName, $prefix);
+                break;
+            }
         }
 
         return $result;

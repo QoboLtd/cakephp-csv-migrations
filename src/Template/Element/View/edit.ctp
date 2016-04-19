@@ -18,7 +18,7 @@ $options = array_merge($defaultOptions, $options);
 if (empty($options['title'])) {
     $options['title'] = __(
         'Edit {0}',
-        Inflector::singularize(Inflector::humanize(Inflector::underscore($this->request->controller)))
+        Inflector::singularize(Inflector::humanize(Inflector::underscore($moduleAlias)))
     );
 }
 ?>

@@ -29,7 +29,7 @@ if (empty($options['title'])) {
     $displayField = TableRegistry::get($options['controller'])->displayField();
 
     $options['title'] = $this->Html->link(
-        Inflector::humanize(Inflector::underscore($options['controller'])),
+        Inflector::humanize(Inflector::underscore($moduleAlias)),
         ['plugin' => $options['plugin'], 'controller' => $options['controller'], 'action' => 'index']
     );
     $options['title'] .= ' &raquo; ';

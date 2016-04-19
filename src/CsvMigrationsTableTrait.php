@@ -96,7 +96,7 @@ trait CsvMigrationsTableTrait
                         'className' => $assocModule,
                         'foreignKey' => $row[0]
                     ]);
-                } elseif ($config['alias'] === $assocModule) {
+                } elseif ($config['registryAlias'] === $assocModule) {
                     $assocName = $this->_createAssociationName($module, $row[0]);
                     $this->hasMany($assocName, [
                         'className' => $module,

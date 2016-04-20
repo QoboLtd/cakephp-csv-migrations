@@ -158,6 +158,7 @@ class ListFieldHandler extends BaseFieldHandler
     protected function _getCsvData($path)
     {
         $result = [];
+        $count = count($this->_fieldParams);
         if (file_exists($path)) {
             if (false !== ($handle = fopen($path, 'r'))) {
                 $row = 0;
@@ -167,6 +168,13 @@ class ListFieldHandler extends BaseFieldHandler
                         $row++;
                         continue;
                     }
+                    /*
+                    Skip if row is incomplete
+                     */
+                    if ($count !== count($data)) {
+                        continue;
+                    }
+
                     $result[] = $data;
                 }
                 fclose($handle);

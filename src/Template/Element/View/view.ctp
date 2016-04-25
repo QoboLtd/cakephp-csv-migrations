@@ -50,29 +50,33 @@ if (empty($options['title'])) {
                     <strong><?= $panelName; ?></strong>
                 </h3>
             </div>
-            <table class="table table-hover">
+            <div class="panel-body">
             <?php foreach ($panelFields as $subFields) : ?>
-                <tr>
-                <?php foreach ($subFields as $field) : if ('' !== trim($field)) : ?>
-                    <td class="col-xs-3 text-right">
-                        <strong><?= Inflector::humanize($field); ?>:</strong>
-                    </td>
-                    <td class="col-xs-3">
-                    <?php
-                        $tableName = $this->name;
-                        if (!is_null($this->plugin)) {
-                            $tableName = $this->plugin . '.' . $tableName;
-                        }
-                        echo $fhf->renderValue($tableName, $field, $options['entity']->$field);
-                    ?>
-                    </td>
-                        <?php else : ?>
-                    <td class="col-xs-3">&nbsp;</td>
-                    <td class="col-xs-3">&nbsp;</td>
-                <?php endif; endforeach; ?>
-                </tr>
+                <div class="row">
+                <?php foreach ($subFields as $field) : ?>
+                    <?php if ('' !== trim($field)) : ?>
+                        <div class="col-xs-4 col-md-2 text-right">
+                            <strong><?= Inflector::humanize($field); ?>:</strong>
+                        </div>
+                        <div class="col-xs-8 col-md-4">
+                        <?php
+                            $tableName = $this->name;
+                            if (!is_null($this->plugin)) {
+                                $tableName = $this->plugin . '.' . $tableName;
+                            }
+                            $value = $fhf->renderValue($tableName, $field, $options['entity']->$field);
+                            echo !empty($value) ? $value : '&nbsp;';
+                        ?>
+                        </div>
+                    <?php else : ?>
+                        <div class="col-xs-4 col-md-2 text-right">&nbsp;</div>
+                        <div class="col-xs-8 col-md-4">&nbsp;</div>
+                    <?php endif; ?>
+                    <div class="clearfix visible-xs visible-sm"></div>
                 <?php endforeach; ?>
-            </table>
+                </div>
+            <?php endforeach; ?>
+            </div>
         </div>
         <?php endforeach; endif; ?>
     </div>

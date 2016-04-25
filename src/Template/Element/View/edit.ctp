@@ -39,7 +39,7 @@ if (empty($options['title'])) {
                         foreach ($panelFields as $subFields) {
                             echo '<div class="row">';
                             foreach ($subFields as $field) {
-                                echo '<div class="col-xs-6">';
+                                echo '<div class="col-xs-12 col-md-6">';
                                 if ('' !== trim($field)) {
                                     $tableName = $this->name;
                                     if (!is_null($this->plugin)) {

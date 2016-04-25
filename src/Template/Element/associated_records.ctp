@@ -26,46 +26,48 @@ if (!empty($csvAssociatedRecords['oneToMany'])) : ?>
     foreach ($csvAssociatedRecords['oneToMany'] as $assocName => $assocData) {
     ?>
             <div role="tabpanel" class="tab-pane <?= $active; ?>" id="<?= $assocName; ?>">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                        <?php foreach ($assocData['fields'] as $assocField) : ?>
-                            <th><?= $this->Paginator->sort($assocField); ?></th>
-                        <?php endforeach; ?>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($assocData['records'] as $record) : ?>
-                        <tr>
-                        <?php foreach ($assocData['fields'] as $assocField) : ?>
-                            <?php if ('' !== trim($record->$assocField)) : ?>
-                            <td>
-                            <?php
-                                if (is_bool($record->$assocField)) {
-                                    echo $record->$assocField ? __('Yes') : __('No');
-                                } else {
-                                    if ('id' === $assocField) {
-                                        echo $this->Html->link(
-                                            h($record->$assocField), [
-                                                'controller' => $assocData['table_name'],
-                                                'action' => 'view',
-                                                $record->$assocField
-                                            ]
-                                        );
+                <div class=" table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                            <?php foreach ($assocData['fields'] as $assocField) : ?>
+                                <th><?= $this->Paginator->sort($assocField); ?></th>
+                            <?php endforeach; ?>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($assocData['records'] as $record) : ?>
+                            <tr>
+                            <?php foreach ($assocData['fields'] as $assocField) : ?>
+                                <?php if ('' !== trim($record->$assocField)) : ?>
+                                <td>
+                                <?php
+                                    if (is_bool($record->$assocField)) {
+                                        echo $record->$assocField ? __('Yes') : __('No');
                                     } else {
-                                        echo h($record->$assocField);
+                                        if ('id' === $assocField) {
+                                            echo $this->Html->link(
+                                                h($record->$assocField), [
+                                                    'controller' => $assocData['table_name'],
+                                                    'action' => 'view',
+                                                    $record->$assocField
+                                                ]
+                                            );
+                                        } else {
+                                            echo h($record->$assocField);
+                                        }
                                     }
-                                }
-                            ?>
-                            </td>
-                            <?php else : ?>
-                            <td>&nbsp;</td>
-                            <?php endif; ?>
+                                ?>
+                                </td>
+                                <?php else : ?>
+                                <td>&nbsp;</td>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                            </tr>
                         <?php endforeach; ?>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         <?php $active = '';
     }

@@ -94,6 +94,12 @@ class RelatedFieldHandler extends BaseFieldHandler
             }
         }
 
+        $result = null;
+
+        if (empty($data)) {
+            return $result;
+        }
+
         // generate related record html link
         $result = $cakeView->Html->link(
             h($displayFieldValue),

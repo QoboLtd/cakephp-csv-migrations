@@ -1,10 +1,19 @@
 <?php
 use \Cake\Utility\Inflector;
 
-if (!empty($csvAssociatedRecords['oneToMany'])) : ?>
+if (!empty($csvAssociatedRecords['oneToMany'])) {
+    foreach ($csvAssociatedRecords['oneToMany'] as $tabName => $assocData) {
+        if (0 === $assocData['records']->count()) {
+            unset($csvAssociatedRecords['oneToMany'][$tabName]);
+        }
+    }
+}
+?>
+
+<?php if (!empty($csvAssociatedRecords['oneToMany'])) : ?>
 <div class="row">
     <div class="col-xs-12">
-        <h3><?= __('Associated Records'); ?></h3>
+        <hr />
         <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
 <?php
     $active = 'active';
@@ -12,7 +21,11 @@ if (!empty($csvAssociatedRecords['oneToMany'])) : ?>
 ?>
             <li role="presentation" class="<?= $active; ?>">
                 <a href="#<?= $tabName; ?>" aria-controls="<?= $tabName; ?>" role="tab" data-toggle="tab">
-                    <?= Inflector::humanize(Inflector::tableize($tabName)); ?>
+                    <?php
+                        $tableName = Inflector::humanize($assocData['table_name']);
+                        $fieldName = trim(str_replace($tableName, '', Inflector::humanize(Inflector::tableize($tabName))));
+                    ?>
+                    <?= $tableName . ' <small>(' . $fieldName . ')</small>' ?>
                 </a>
             </li>
 <?php

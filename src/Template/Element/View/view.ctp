@@ -41,6 +41,12 @@ if (empty($options['title'])) {
     <div class="col-xs-12">
         <h3><strong><?= $options['title'] ?></strong></h3>
         <?php
+            /*
+            @todo probably this needs to be added to the View using Event Listeners
+             */
+            echo $this->element('changelog', ['recordId' => $options['entity']->id]);
+        ?>
+        <?php
             if (!empty($options['fields'])) :
                 foreach ($options['fields'] as $panelName => $panelFields) :
         ?>

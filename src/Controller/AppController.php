@@ -15,6 +15,8 @@ class AppController extends BaseController
      */
     public function beforeFilter(\Cake\Event\Event $event)
     {
+        parent::beforeFilter($event);
+
         /*
         pass module alias to the View
          */

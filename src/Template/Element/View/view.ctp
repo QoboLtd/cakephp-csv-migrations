@@ -44,7 +44,10 @@ if (empty($options['title'])) {
             /*
             @todo probably this needs to be added to the View using Event Listeners
              */
-            echo $this->element('changelog', ['recordId' => $options['entity']->id]);
+            $changelogElement = 'changelog';
+            if ($this->elementExists($changelogElement)) {
+                echo $this->element($changelogElement, ['recordId' => $options['entity']->id]);
+            }
         ?>
         <?php
             if (!empty($options['fields'])) :

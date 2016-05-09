@@ -1,4 +1,5 @@
 <?php
+use Cake\Event\Event;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
@@ -15,22 +16,27 @@ $options = array_merge($defaultOptions, $options);
 
 // Get title from controller
 if (empty($options['title'])) {
-    $options['title'] = __(
-        'Add {0}',
-        Inflector::singularize(Inflector::humanize(Inflector::underscore($moduleAlias)))
-    );
+    $options['title'] = Inflector::humanize(Inflector::underscore($moduleAlias));
 }
 ?>
 
 <div class="row">
-    <div class="col-xs-12">
-        <p class="text-right">
-            <?php echo $this->Html->link(
-                $options['title'],
-                ['plugin' => $this->request->plugin, 'controller' => $this->request->controller, 'action' => 'add'],
-                ['class' => 'btn btn-primary']
-            ); ?>
-        </p>
+    <div class="col-xs-6">
+        <h3><strong><?= $options['title'] ?></strong></h3>
+    </div>
+    <div class="col-xs-6">
+        <div class="h3 text-right">
+            <?php
+                $event = new Event('View.Index.Menu.Top', $this, [
+                    'request' => $this->request,
+                    'options' => $options
+                ]);
+                $this->eventManager()->dispatch($event);
+                if (!empty($event->result)) {
+                    echo $event->result;
+                }
+            ?>
+        </div>
     </div>
 </div>
 

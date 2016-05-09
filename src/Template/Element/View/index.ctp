@@ -69,9 +69,16 @@ if (empty($options['title'])) {
                             </td>
                         <?php endforeach; ?>
                         <td class="actions">
-                            <?= $this->Html->link('', ['action' => 'view', $entity->id], ['title' => __('View'), 'class' => 'btn btn-default glyphicon glyphicon-eye-open']) ?>
-                            <?= $this->Html->link('', ['action' => 'edit', $entity->id], ['title' => __('Edit'), 'class' => 'btn btn-default glyphicon glyphicon-pencil']) ?>
-                            <?= $this->Form->postLink('', ['action' => 'delete', $entity->id], ['confirm' => __('Are you sure you want to delete # {0}?', $entity->id), 'title' => __('Delete'), 'class' => 'btn btn-default glyphicon glyphicon-trash']) ?>
+                            <?php
+                                $event = new Event('View.Index.Menu.Actions', $this, [
+                                    'request' => $this->request,
+                                    'options' => $entity,
+                                ]);
+                                $this->eventManager()->dispatch($event);
+                                if (!empty($event->result)) {
+                                    echo $event->result;
+                                }
+                            ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>

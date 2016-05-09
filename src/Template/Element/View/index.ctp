@@ -1,4 +1,5 @@
 <?php
+use Cake\Event\Event;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
@@ -15,22 +16,27 @@ $options = array_merge($defaultOptions, $options);
 
 // Get title from controller
 if (empty($options['title'])) {
-    $options['title'] = __(
-        'Add {0}',
-        Inflector::singularize(Inflector::humanize(Inflector::underscore($moduleAlias)))
-    );
+    $options['title'] = Inflector::humanize(Inflector::underscore($moduleAlias));
 }
 ?>
 
 <div class="row">
-    <div class="col-xs-12">
-        <p class="text-right">
-            <?php echo $this->Html->link(
-                $options['title'],
-                ['plugin' => $this->request->plugin, 'controller' => $this->request->controller, 'action' => 'add'],
-                ['class' => 'btn btn-primary']
-            ); ?>
-        </p>
+    <div class="col-xs-6">
+        <h3><strong><?= $options['title'] ?></strong></h3>
+    </div>
+    <div class="col-xs-6">
+        <div class="h3 text-right">
+            <?php
+                $event = new Event('View.Index.Menu.Top', $this, [
+                    'request' => $this->request,
+                    'options' => $options
+                ]);
+                $this->eventManager()->dispatch($event);
+                if (!empty($event->result)) {
+                    echo $event->result;
+                }
+            ?>
+        </div>
     </div>
 </div>
 
@@ -63,9 +69,16 @@ if (empty($options['title'])) {
                             </td>
                         <?php endforeach; ?>
                         <td class="actions">
-                            <?= $this->Html->link('', ['action' => 'view', $entity->id], ['title' => __('View'), 'class' => 'btn btn-default glyphicon glyphicon-eye-open']) ?>
-                            <?= $this->Html->link('', ['action' => 'edit', $entity->id], ['title' => __('Edit'), 'class' => 'btn btn-default glyphicon glyphicon-pencil']) ?>
-                            <?= $this->Form->postLink('', ['action' => 'delete', $entity->id], ['confirm' => __('Are you sure you want to delete # {0}?', $entity->id), 'title' => __('Delete'), 'class' => 'btn btn-default glyphicon glyphicon-trash']) ?>
+                            <?php
+                                $event = new Event('View.Index.Menu.Actions', $this, [
+                                    'request' => $this->request,
+                                    'options' => $entity,
+                                ]);
+                                $this->eventManager()->dispatch($event);
+                                if (!empty($event->result)) {
+                                    echo $event->result;
+                                }
+                            ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>

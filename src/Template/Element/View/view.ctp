@@ -1,4 +1,5 @@
 <?php
+use Cake\Event\Event;
 use Cake\Utility\Inflector;
 use Cake\ORM\TableRegistry;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
@@ -26,7 +27,11 @@ if (empty($options['controller'])) {
 }
 // Get title
 if (empty($options['title'])) {
-    $displayField = TableRegistry::get($options['controller'])->displayField();
+    $controllerName = $options['controller'];
+    if (!empty($options['plugin'])) {
+        $controllerName = $options['plugin'] . '.' . $controllerName;
+    }
+    $displayField = TableRegistry::get($controllerName)->displayField();
 
     $options['title'] = $this->Html->link(
         Inflector::humanize(Inflector::underscore($moduleAlias)),
@@ -39,16 +44,25 @@ if (empty($options['title'])) {
 
 <div class="row">
     <div class="col-xs-12">
-        <h3><strong><?= $options['title'] ?></strong></h3>
-        <?php
-            /*
-            @todo probably this needs to be added to the View using Event Listeners
-             */
-            $changelogElement = 'changelog';
-            if ($this->elementExists($changelogElement)) {
-                echo $this->element($changelogElement, ['recordId' => $options['entity']->id]);
-            }
-        ?>
+        <div class="row">
+            <div class="col-xs-6">
+                <h3><strong><?= $options['title'] ?></strong></h3>
+            </div>
+            <div class="col-xs-6">
+                <div class="h3 text-right">
+                <?php
+                    $event = new Event('View.View.Menu.Top', $this, [
+                        'request' => $this->request,
+                        'options' => $options
+                    ]);
+                    $this->eventManager()->dispatch($event);
+                    if (!empty($event->result)) {
+                        echo $event->result;
+                    }
+                ?>
+                </div>
+            </div>
+        </div>
         <?php
             if (!empty($options['fields'])) :
                 foreach ($options['fields'] as $panelName => $panelFields) :

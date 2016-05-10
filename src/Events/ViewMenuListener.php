@@ -62,7 +62,7 @@ class ViewMenuListener implements EventListenerInterface
         ];
 
         if ($appView->elementExists(static::MENU_ELEMENT)) {
-            $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'asIs']);
+            $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
         } else {
             $result = $btnAdd;
         }
@@ -143,7 +143,7 @@ class ViewMenuListener implements EventListenerInterface
         ];
 
         if ($appView->elementExists(static::MENU_ELEMENT)) {
-            $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'asIs']);
+            $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
         } else {
             $result = $btnView . $btnEdit . $btnDel;
         }
@@ -231,7 +231,7 @@ class ViewMenuListener implements EventListenerInterface
         ];
 
         if ($appView->elementExists(static::MENU_ELEMENT)) {
-            $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'asIs']);
+            $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
         } else {
             $result = $btnChangelog . $btnEdit . $btnDel;
         }

@@ -12,6 +12,11 @@ use Cake\Utility\Inflector;
 class ViewMenuListener implements EventListenerInterface
 {
     /**
+     * Menu element name
+     */
+    const MENU_ELEMENT = 'Menu.menu';
+
+    /**
      * Implemented Events
      *
      * @return array
@@ -37,11 +42,32 @@ class ViewMenuListener implements EventListenerInterface
     {
         $appView = new AppView();
 
-        return $appView->Html->link(
+        $btnAdd = $appView->Html->link(
             __('Add {0}', Inflector::singularize($options['title'])),
             ['plugin' => $request->plugin, 'controller' => $request->controller, 'action' => 'add'],
             ['class' => 'btn btn-primary']
         );
+
+
+        $menu = [
+            [
+                'label' => $btnAdd,
+                'url' => [
+                    'plugin' => $request->plugin,
+                    'controller' => $request->controller,
+                    'action' => 'add'
+                ],
+                'capabilities' => 'fromUrl'
+            ]
+        ];
+
+        if ($appView->elementExists(static::MENU_ELEMENT)) {
+            $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
+        } else {
+            $result = $btnAdd;
+        }
+
+        return $result;
     }
 
     /**
@@ -63,17 +89,17 @@ class ViewMenuListener implements EventListenerInterface
 
         $displayField = TableRegistry::get($controllerName)->displayField();
 
-        $result = $appView->Html->link(
+        $btnView = $appView->Html->link(
             '',
             ['action' => 'view', $options->id],
             ['title' => __('View'), 'class' => 'btn btn-default glyphicon glyphicon-eye-open']
         );
-        $result .= ' ' . $appView->Html->link(
+        $btnEdit = ' ' . $appView->Html->link(
             '',
             ['action' => 'edit', $options->id],
             ['title' => __('Edit'), 'class' => 'btn btn-default glyphicon glyphicon-pencil']
         );
-        $result .= ' ' . $appView->Form->postLink(
+        $btnDel = ' ' . $appView->Form->postLink(
             '',
             ['action' => 'delete', $options->id],
             [
@@ -82,6 +108,45 @@ class ViewMenuListener implements EventListenerInterface
                 'class' => 'btn btn-default glyphicon glyphicon-trash'
             ]
         );
+
+        $menu = [
+            [
+                'label' => $btnView,
+                'url' => [
+                    'plugin' => $request->plugin,
+                    'controller' => $request->controller,
+                    'action' => 'view',
+                    $options->id
+                ],
+                'capabilities' => 'fromUrl'
+            ],
+            [
+                'label' => $btnEdit,
+                'url' => [
+                    'plugin' => $request->plugin,
+                    'controller' => $request->controller,
+                    'action' => 'edit',
+                    $options->id
+                ],
+                'capabilities' => 'fromUrl'
+            ],
+            [
+                'label' => $btnDel,
+                'url' => [
+                    'plugin' => $request->plugin,
+                    'controller' => $request->controller,
+                    'action' => 'delete',
+                    $options->id
+                ],
+                'capabilities' => 'fromUrl'
+            ]
+        ];
+
+        if ($appView->elementExists(static::MENU_ELEMENT)) {
+            $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
+        } else {
+            $result = $btnView . $btnEdit . $btnDel;
+        }
 
         return $result;
     }
@@ -96,7 +161,6 @@ class ViewMenuListener implements EventListenerInterface
      */
     public function getViewMenuTop(Event $event, Request $request, array $options)
     {
-        $result = '';
         $appView = new AppView();
 
         $controllerName = $request->controller;
@@ -104,26 +168,73 @@ class ViewMenuListener implements EventListenerInterface
             $controllerName = $request->plugin . '.' . $controllerName;
         }
 
-        $result .= $appView->Html->link(
+        $displayField = TableRegistry::get($controllerName)->displayField();
+
+        $btnChangelog = $appView->Html->link(
             '',
-            ['plugin' => null, 'controller' => 'log_audit', 'action' => 'changelog', $controllerName, $options['entity']->id],
+            [
+                'plugin' => null,
+                'controller' => 'log_audit',
+                'action' => 'changelog',
+                $controllerName,
+                $options['entity']->id
+            ],
             ['title' => __('Changelog'), 'class' => 'btn btn-default glyphicon glyphicon-book']
         );
 
-        $result .= ' ' . $appView->Html->link(
+        $btnEdit = ' ' . $appView->Html->link(
             '',
             ['action' => 'edit', $options['entity']->id],
             ['title' => __('Edit'), 'class' => 'btn btn-default glyphicon glyphicon-pencil']
         );
-        $result .= ' ' . $appView->Form->postLink(
+        $btnDel = ' ' . $appView->Form->postLink(
             '',
             ['action' => 'delete', $options['entity']->id],
             [
-                'confirm' => __('Are you sure you want to delete {0}?', $options['entity']->id),
+                'confirm' => __('Are you sure you want to delete {0}?', $options['entity']->{$displayField}),
                 'title' => __('Delete'),
                 'class' => 'btn btn-default glyphicon glyphicon-trash'
             ]
         );
+
+        $menu = [
+            [
+                'label' => $btnChangelog,
+                'url' => [
+                    'plugin' => null,
+                    'controller' => 'LogAudit',
+                    'action' => 'changelog',
+                    $options['entity']->id
+                ],
+                'capabilities' => 'fromUrl'
+            ],
+            [
+                'label' => $btnEdit,
+                'url' => [
+                    'plugin' => $request->plugin,
+                    'controller' => $request->controller,
+                    'action' => 'edit',
+                    $options['entity']->id
+                ],
+                'capabilities' => 'fromUrl'
+            ],
+            [
+                'label' => $btnDel,
+                'url' => [
+                    'plugin' => $request->plugin,
+                    'controller' => $request->controller,
+                    'action' => 'delete',
+                    $options['entity']->id
+                ],
+                'capabilities' => 'fromUrl'
+            ]
+        ];
+
+        if ($appView->elementExists(static::MENU_ELEMENT)) {
+            $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
+        } else {
+            $result = $btnChangelog . $btnEdit . $btnDel;
+        }
 
         return $result;
     }

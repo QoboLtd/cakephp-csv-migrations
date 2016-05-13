@@ -345,7 +345,7 @@ class CsvViewComponent extends Component
 
             }
             $panel = array_shift($fields);
-            $result[$panel][] = $fields;
+            $result[$panel['name']][] = $fields;
         }
 
         return $result;

@@ -37,7 +37,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $fieldType = $this->_fieldTypes[$fieldType];
         }
 
-        return $cakeView->Form->input($field, [
+        return $cakeView->Form->input($this->_getFieldName($table, $field, $options), [
             'type' => $fieldType,
             'required' => (bool)$options['fieldDefinitions']['required'],
             'value' => $data

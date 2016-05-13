@@ -45,6 +45,7 @@ class RelatedFieldHandler extends BaseFieldHandler
             }
         }
 
+        $fieldName = $this->_getFieldName($table, $field, $options);
         $input = $cakeView->Form->input($field, [
             'name' => $field . '_label',
             'id' => $field . '_label',
@@ -62,7 +63,7 @@ class RelatedFieldHandler extends BaseFieldHandler
                 'action' => 'lookup.json'
             ])
         ]);
-        $input .= $cakeView->Form->input($field, ['type' => 'hidden', 'value' => $data]);
+        $input .= $cakeView->Form->input($fieldName, ['type' => 'hidden', 'value' => $data]);
 
         return $input;
     }

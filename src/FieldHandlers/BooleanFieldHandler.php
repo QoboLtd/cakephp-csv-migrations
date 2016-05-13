@@ -22,7 +22,7 @@ class BooleanFieldHandler extends BaseFieldHandler
         // load AppView
         $cakeView = new AppView();
 
-        return $cakeView->Form->input($field, [
+        return $cakeView->Form->input($this->_getFieldName($table, $field, $options), [
             'type' => static::FIELD_TYPE,
             'required' => (bool)$options['fieldDefinitions']['required'],
             'checked' => $data

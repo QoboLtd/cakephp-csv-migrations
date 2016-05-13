@@ -49,7 +49,7 @@ class ListFieldHandler extends BaseFieldHandler
         $fieldOptions = $collection->listNested()->printer('name', 'id', '--')->toArray();
 
         $input = $cakeView->Form->label($field);
-        $input .= $cakeView->Form->select($field, $fieldOptions, [
+        $input .= $cakeView->Form->select($this->_getFieldName($table, $field, $options), $fieldOptions, [
             'class' => 'form-control',
             'required' => (bool)$options['fieldDefinitions']['required'],
             'value' => $data,

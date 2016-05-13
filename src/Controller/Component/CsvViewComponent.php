@@ -244,6 +244,15 @@ class CsvViewComponent extends Component
             $result = $this->_getFieldsFromCsv($path);
         }
 
+        list($plugin, $model) = pluginSplit($this->_tableInstance->registryAlias());
+        /*
+        add plugin and model names to each of the fields
+         */
+        $result = $this->_setFieldPluginAndModel($result, $model, $plugin);
+
+        /*
+        If action requires panels, arrange the fields into the panels
+         */
         if (in_array($this->request->action, $this->_panelActions)) {
             $result = $this->_arrangePanels($result);
         }
@@ -264,6 +273,29 @@ class CsvViewComponent extends Component
         }
 
         return $result;
+    }
+
+    /**
+     * Add plugin and model name for each of the csv fields.
+     *
+     * @param array  $data   csv data
+     * @param string $model  model name
+     * @param string $plugin plugin name
+     * @return array         csv data
+     */
+    protected function _setFieldPluginAndModel($data, $model = null, $plugin = null)
+    {
+        foreach ($data as &$row) {
+            foreach ($row as &$col) {
+                $col = [
+                    'plugin' => $plugin,
+                    'model' => $model,
+                    'name' => $col
+                ];
+            }
+        }
+
+        return $data;
     }
 
     /**

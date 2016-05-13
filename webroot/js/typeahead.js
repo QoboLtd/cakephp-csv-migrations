@@ -19,7 +19,7 @@ var typeahead = typeahead || {};
 
         // loop through typeahead inputs
         $(typeahead_id).each(function() {
-            hidden_input = $('[name=' + $(this).data('name') + ']');
+            hidden_input = $('#' + $(this).data('id'));
 
             // enable typeahead functionality
             that._enable(this, hidden_input);
@@ -27,7 +27,7 @@ var typeahead = typeahead || {};
 
         // clear inputs on double click
         $(typeahead_id).dblclick(function() {
-            hidden_input = $('[name=' + $(this).data('name') + ']');
+            hidden_input = $('#' + $(this).data('id'));
             that._clearInputs(this, hidden_input);
         });
     };

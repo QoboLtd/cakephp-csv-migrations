@@ -44,6 +44,7 @@ if (empty($options['title'])) {
 
 <div class="row">
     <div class="col-xs-12">
+        <?php if (empty($this->request->query['embedded'])) : ?>
         <div class="row">
             <div class="col-xs-6">
                 <h3><strong><?= $options['title'] ?></strong></h3>
@@ -63,6 +64,7 @@ if (empty($options['title'])) {
                 </div>
             </div>
         </div>
+        <?php endif; ?>
         <?php
             if (!empty($options['fields'])) :
                 foreach ($options['fields'] as $panelName => $panelFields) :
@@ -104,5 +106,6 @@ if (empty($options['title'])) {
         <?php endforeach; endif; ?>
     </div>
 </div>
-
-<?= $this->element('CsvMigrations.associated_records'); ?>
+<?php if (empty($this->request->query['embedded'])) : ?>
+    <?= $this->element('CsvMigrations.associated_records'); ?>
+<?php endif; ?>

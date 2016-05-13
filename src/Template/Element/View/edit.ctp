@@ -25,7 +25,9 @@ if (empty($options['title'])) {
 
 <div class="row">
     <div class="col-xs-12">
-        <?= $this->Form->create($options['entity']); ?>
+        <?php if (empty($this->request->query['embedded'])) : ?>
+            <?= $this->Form->create($options['entity']); ?>
+        <?php endif; ?>
         <fieldset>
             <legend><?= $options['title'] ?></legend>
             <?php
@@ -59,8 +61,10 @@ if (empty($options['title'])) {
                 }
             ?>
         </fieldset>
-        <?= $this->Form->button(__('Submit'), ['class' => 'btn btn-primary']) ?>
-        <?= $this->Form->end() ?>
+        <?php if (empty($this->request->query['embedded'])) : ?>
+            <?= $this->Form->button(__('Submit'), ['class' => 'btn btn-primary']) ?>
+            <?= $this->Form->end() ?>
+        <?php endif; ?>
     </div>
 </div>
 

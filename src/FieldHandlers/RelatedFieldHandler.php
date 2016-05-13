@@ -4,10 +4,13 @@ namespace CsvMigrations\FieldHandlers;
 use App\View\AppView;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use Cake\View\Helper\IdGeneratorTrait;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
 class RelatedFieldHandler extends BaseFieldHandler
 {
+    use IdGeneratorTrait;
+
     /**
      * Field type match pattern
      */
@@ -53,7 +56,7 @@ class RelatedFieldHandler extends BaseFieldHandler
             'data-type' => 'typeahead',
             'readonly' => (bool)$data,
             'value' => $displayFieldValue,
-            'data-name' => $field,
+            'data-id' => $this->_domId($fieldName),
             'autocomplete' => 'off',
             'required' => (bool)$options['fieldDefinitions']['required'],
             'data-url' => $cakeView->Url->build([

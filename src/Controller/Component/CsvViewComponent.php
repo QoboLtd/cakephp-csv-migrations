@@ -5,6 +5,8 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Event\Event;
+use Cake\ORM\Association;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 
@@ -21,6 +23,20 @@ class CsvViewComponent extends Component
      */
     protected $_defaultConfig = [];
 
+    /**
+     * Current request's table instance.
+     *
+     * @var object
+     */
+    protected $_tableInstance;
+
+    /**
+     * Current request's controller instance.
+     *
+     * @var [type]
+     */
+    protected $_controllerInstance;
+
     const ASSOC_FIELDS_ACTION = 'index';
 
     /**
@@ -28,6 +44,8 @@ class CsvViewComponent extends Component
      * @var array
      */
     protected $_assocActions = ['view'];
+
+    protected $_assocTypes = ['oneToMany', 'manyToOne'];
 
     /**
      * Count of fields per row for panel logic
@@ -55,25 +73,19 @@ class CsvViewComponent extends Component
      * @return void
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeFilter(\Cake\Event\Event $event)
+    public function beforeFilter(Event $event)
     {
+        $this->_controllerInstance = $event->subject();
+        $this->_setTableInstance($this->_controllerInstance->request->params);
+
         if (in_array($this->request->params['action'], $this->_assocActions)) {
-            $controller = $event->subject();
-            $tableInstance = $this->_getTableInstance($controller->request->params);
             // associated records
-            $controller->set(
-                'csvAssociatedRecords',
-                $this->_setAssociatedRecords(
-                    $event,
-                    ['oneToMany', 'manyToOne'],
-                    $tableInstance
-                )
-            );
-            $controller->set('_serialize', ['csvAssociatedRecords']);
+            $this->_controllerInstance->set('csvAssociatedRecords', $this->_setAssociatedRecords());
+            $this->_controllerInstance->set('_serialize', ['csvAssociatedRecords']);
         }
 
         $path = Configure::readOrFail('CsvMigrations.views.path');
-        $this->_setTableFields($event, $path);
+        $this->_setTableFields($path);
     }
 
     /**
@@ -82,42 +94,41 @@ class CsvViewComponent extends Component
      * @param  array  $params  Request parameters
      * @return \Cake\ORM\Table
      */
-    protected function _getTableInstance(array $params)
+    protected function _setTableInstance(array $params)
     {
         $table = $params['controller'];
         if (!is_null($params['plugin'])) {
             $table = $params['plugin'] . '.' . $table;
         }
 
-        return TableRegistry::get($table);
+        $this->_tableInstance = TableRegistry::get($table);
+
+        return $this->_tableInstance;
     }
 
     /**
-     * Method that retrieves specified Table's associated records and passes them to the View.
-     * @param \Cake\Event\Event $event     An Event instance
-     * @param array             $types     association type(s)
-     * @param \Cake\ORM\Table   $table     Table object
-     * @return array                       associated records
+     * Method that retrieves specified Table's
+     * associated records and passes them to the View.
+     *
+     * @return array
      */
-    protected function _setAssociatedRecords(\Cake\Event\Event $event, array $types, \Cake\ORM\Table $table = null)
+    protected function _setAssociatedRecords()
     {
         $result = [];
         // loop through associations
-        foreach ($table->associations() as $association) {
+        foreach ($this->_tableInstance->associations() as $association) {
             $assocType = $association->type();
-            if (in_array($assocType, $types)) {
+            if (in_array($assocType, $this->_assocTypes)) {
                 // get associated records
-                switch ($association->type()) {
+                switch ($assocType) {
                     case 'manyToOne':
                         $result[$assocType][$association->foreignKey()] = $this->_manyToOneAssociatedRecords(
-                            $table,
                             $association
                         );
                         break;
 
                     case 'oneToMany':
                         $result[$assocType][$association->name()] = $this->_oneToManyAssociatedRecords(
-                            $table,
                             $association
                         );
                         break;
@@ -129,16 +140,16 @@ class CsvViewComponent extends Component
     }
 
     /**
-     * Method that retrieves many to one associated records
-     * @param  \Cake\ORM\Table       $table       Table object
+     * Method that retrieves many to one associated records.
+     *
      * @param  \Cake\ORM\Association $association Association object
      * @return array                              associated records
      */
-    protected function _manyToOneAssociatedRecords(\Cake\ORM\Table $table, \Cake\ORM\Association $association)
+    protected function _manyToOneAssociatedRecords(Association $association)
     {
         $result = [];
-        $tableName = $table->table();
-        $primaryKey = $table->primaryKey();
+        $tableName = $this->_tableInstance->table();
+        $primaryKey = $this->_tableInstance->primaryKey();
         $assocTableName = $association->table();
         $assocPrimaryKey = $association->primaryKey();
         $assocForeignKey = $association->foreignKey();
@@ -170,11 +181,11 @@ class CsvViewComponent extends Component
 
     /**
      * Method that retrieves one to many associated records
-     * @param  \Cake\ORM\Table       $table       Table object
+     *
      * @param  \Cake\ORM\Association $association Association object
      * @return array                              associated records
      */
-    protected function _oneToManyAssociatedRecords(\Cake\ORM\Table $table, \Cake\ORM\Association $association)
+    protected function _oneToManyAssociatedRecords(Association $association)
     {
         $assocName = $association->name();
         $assocTableName = $association->table();
@@ -182,9 +193,9 @@ class CsvViewComponent extends Component
         $recordId = $this->request->params['pass'][0];
 
         // get associated index View csv fields
-        $fields = $this->_getTableFields($association);
+        $fields = $this->_getTableFields($association->className(), static::ASSOC_FIELDS_ACTION);
 
-        $query = $table->{$assocName}->find('all', [
+        $query = $this->_tableInstance->{$assocName}->find('all', [
             'conditions' => [$assocForeignKey => $recordId],
             'fields' => $fields
         ]);
@@ -200,26 +211,21 @@ class CsvViewComponent extends Component
     }
 
     /**
-     * Method that retrieves table fields defined
-     * in the csv file, based on specified action
-     * @param  object $table  Table object
-     * @param  string $action action name
-     * @return array          table fields
+     * Method that retrieves table fields defined in the csv file, based on specified action
+     *
+     * @param  string $tableName Table name
+     * @param  string $action    Action name
+     * @return array             table fields
      */
-    protected function _getTableFields($table, $action = '')
+    protected function _getTableFields($tableName, $action)
     {
-        $tableName = $table->table();
-        if ('' === trim($action)) {
-            $action = static::ASSOC_FIELDS_ACTION;
-        }
-
         $path = Configure::readOrFail('CsvMigrations.views.path');
-        $path .= Inflector::camelize($tableName) . DS . $action . '.csv';
+        $path .= $tableName . DS . $action . '.csv';
 
-        $result = $this->_getFieldsFromCsv($path, $action);
+        $csvFields = $this->_getFieldsFromCsv($path);
         $result = array_map(function ($v) {
             return $v[0];
-        }, $result);
+        }, $csvFields);
 
         return $result;
     }
@@ -230,37 +236,31 @@ class CsvViewComponent extends Component
      * @param  string           $path  file path
      * @return void
      */
-    protected function _setTableFields(\Cake\Event\Event $event, $path)
+    protected function _setTableFields($path)
     {
         $result = [];
         if (file_exists($path)) {
-            $controller = $event->subject();
-            $result = $this->_getFieldsFromCsv(
-                $path . $this->request->controller . DS . $this->request->params['action'] . '.csv'
-            );
+            $path .= $this->request->controller . DS . $this->request->action . '.csv';
+            $result = $this->_getFieldsFromCsv($path);
         }
 
-        $controller->set('fields', $result);
-        $controller->set('_serialize', ['fields']);
+        if (in_array($this->request->action, $this->_panelActions)) {
+            $result = $this->_arrangePanels($result);
+        }
+        $this->_controllerInstance->set('fields', $result);
+        $this->_controllerInstance->set('_serialize', ['fields']);
     }
 
     /**
      * Method that gets fields from a csv file
      * @param  string $path   csv file path
-     * @param  string $action action name
      * @return array          csv data
      */
-    protected function _getFieldsFromCsv($path, $action = '')
+    protected function _getFieldsFromCsv($path)
     {
-        if ('' === trim($action)) {
-            $action = $this->request->params['action'];
-        }
         $result = [];
         if (file_exists($path)) {
             $result = $this->_getCsvData($path);
-            if (in_array($action, $this->_panelActions)) {
-                $result = $this->_arrangePanels($result);
-            }
         }
 
         return $result;
@@ -295,6 +295,7 @@ class CsvViewComponent extends Component
 
     /**
      * Method that arranges csv fetched fields into panels.
+     *
      * @param  array  $data fields
      * @throws \RuntimeException when csv field parameters count does not match
      * @return array        fields arranged in panels

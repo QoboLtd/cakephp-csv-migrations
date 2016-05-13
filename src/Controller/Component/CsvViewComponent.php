@@ -17,35 +17,9 @@ class CsvViewComponent extends Component
 {
 
     /**
-     * Default configuration.
-     *
-     * @var array
+     * Associated fields action name.
      */
-    protected $_defaultConfig = [];
-
-    /**
-     * Current request's table instance.
-     *
-     * @var object
-     */
-    protected $_tableInstance;
-
-    /**
-     * Current request's controller instance.
-     *
-     * @var [type]
-     */
-    protected $_controllerInstance;
-
     const ASSOC_FIELDS_ACTION = 'index';
-
-    /**
-     * Actions to pass associated records to
-     * @var array
-     */
-    protected $_assocActions = ['view'];
-
-    protected $_assocTypes = ['oneToMany', 'manyToOne'];
 
     /**
      * Count of fields per row for panel logic
@@ -53,12 +27,43 @@ class CsvViewComponent extends Component
     const PANEL_COUNT = 3;
 
     /**
-     * Actions to arrange fields into panels
+     * Default configuration.
+     * @var array
+     */
+    protected $_defaultConfig = [];
+
+    /**
+     * Current request's table instance.
+     * @var \Cake\ORM\Table
+     */
+    protected $_tableInstance;
+
+    /**
+     * Current request's controller instance.
+     * @var \Cake\Controller\Controller
+     */
+    protected $_controllerInstance;
+
+    /**
+     * Actions to pass associated records to.
+     * @var array
+     */
+    protected $_assocActions = ['view'];
+
+    /**
+     * Supported association types.
+     * @var array
+     */
+    protected $_assocTypes = ['oneToMany', 'manyToOne'];
+
+    /**
+     * Actions to arrange fields into panels.
+     * @var array
      */
     protected $_panelActions = ['add', 'edit', 'view'];
 
     /**
-     * Error messages
+     * Error messages.
      * @var array
      */
     protected $_errorMessages = [

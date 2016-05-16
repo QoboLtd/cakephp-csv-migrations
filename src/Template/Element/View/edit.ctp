@@ -73,7 +73,7 @@ if (empty($options['title'])) {
                                         );
                                     }
                                 } elseif ('' !== trim($field['name'])) {
-                                    $embeddedFields[] = $field['name'];
+                                    $embeddedFields[] = $field;
                                     $embeddedDirty = false;
                                     echo '&nbsp;';
                                 } else {
@@ -94,9 +94,9 @@ if (empty($options['title'])) {
                         Fetch embedded module(s) using CakePHP's requestAction() method
                          */
                         foreach ($embeddedFields as $embeddedField) {
-                            $embeddedFieldName = substr($embeddedField, strrpos($embeddedField, '.') + 1);
+                            $embeddedFieldName = substr($embeddedField['name'], strrpos($embeddedField['name'], '.') + 1);
                             list($embeddedPlugin, $embeddedController) = pluginSplit(
-                                substr($embeddedField, 0, strrpos($embeddedField, '.'))
+                                substr($embeddedField['name'], 0, strrpos($embeddedField['name'], '.'))
                             );
 
                             $embeddedAssocName = CsvMigrationsUtils::createAssociationName(
@@ -109,6 +109,9 @@ if (empty($options['title'])) {
                              */
                             $embeddedAssocName = Inflector::underscore(Inflector::singularize($embeddedAssocName));
 
+                            /*
+                            If embedded record is set load edit View
+                             */
                             if (!empty($options['entity']->$embeddedFieldName)) {
                                 echo $this->Form->hidden(
                                     $this->request->controller . '.' . $embeddedAssocName . '.id',
@@ -123,6 +126,21 @@ if (empty($options['title'])) {
                                     [
                                         'query' => ['embedded' => $this->request->controller . '.' . $embeddedAssocName],
                                         'pass' => [$options['entity']->$embeddedFieldName]
+                                    ]
+                                );
+                            }
+                            /*
+                            else load the add View
+                             */
+                            else {
+                                echo $this->requestAction(
+                                    [
+                                        'plugin' => $embeddedPlugin,
+                                        'controller' => $embeddedController,
+                                        'action' => 'add'
+                                    ],
+                                    [
+                                        'query' => ['embedded' => $this->request->controller . '.' . $embeddedAssocName]
                                     ]
                                 );
                             }

@@ -49,7 +49,17 @@ class RelatedFieldHandler extends BaseFieldHandler
         }
 
         $fieldName = $this->_getFieldName($table, $field, $options);
-        $input = $cakeView->Form->input($field, [
+
+        $input = '';
+
+        $input .= $cakeView->Form->label($field);
+
+        if (!empty($options['collapseEmbedded'])) {
+            $input .= '<div class="input-group">';
+        }
+
+        $input .= $cakeView->Form->input($field, [
+            'label' => false,
             'name' => $field . '_label',
             'id' => $field . '_label',
             'type' => 'text',
@@ -66,6 +76,16 @@ class RelatedFieldHandler extends BaseFieldHandler
                 'action' => 'lookup.json'
             ])
         ]);
+
+        if (!empty($options['collapseEmbedded'])) {
+            $input .= '<div class="input-group-btn">';
+            $input .= '<button type="button" class="btn btn-default" data-toggle="collapse" data-target="#' . $field . '_collapse" aria-expanded="false" aria-controls="' . $field . '">';
+            $input .= '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>';
+            $input .= '</button>';
+            $input .= '</div>';
+            $input .= '</div>';
+        }
+
         $input .= $cakeView->Form->input($fieldName, ['type' => 'hidden', 'value' => $data]);
 
         return $input;

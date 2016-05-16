@@ -44,44 +44,49 @@ if (empty($options['title'])) {
                         foreach ($panelFields as $subFields) {
                             echo '<div class="row">';
                             foreach ($subFields as $field) {
-                                echo '<div class="col-xs-12 col-md-6">';
-                                if ('' !== trim($field['name']) && !$embeddedDirty) {
+                                if ('' !== trim($field['name'])) {
                                     /*
                                     embedded field
                                      */
                                     if ('EMBEDDED' === $field['name']) {
                                         $embeddedDirty = true;
+                                        continue;
                                     }
 
+                                    $handlerOptions = [];
+
+                                    if ($embeddedDirty) {
+                                        $embeddedFields[] = $field;
+                                        $handlerOptions['collapseEmbedded'] = true;
+                                        $field['name'] = substr($field['name'], strrpos($field['name'], '.') + 1);
+                                    }
+
+                                    echo '<div class="col-xs-12 col-md-6">';
                                     /*
                                     non-embedded field
                                      */
-                                    if (!$embeddedDirty) {
-                                        $tableName = $field['model'];
-                                        if (!is_null($field['plugin'])) {
-                                            $tableName = $field['plugin'] . '.' . $tableName;
-                                        }
-                                        $handlerOptions = [];
-                                        if (!empty($this->request->query['embedded'])) {
-                                            $handlerOptions['embedded'] = $this->request->query['embedded'];
-                                        }
-                                        echo $fhf->renderInput(
-                                            $tableName,
-                                            $field['name'],
-                                            isset($this->request->data[$field['name']])
-                                                ? $this->request->data[$field['name']]
-                                                : null,
-                                            $handlerOptions
-                                        );
+                                    $tableName = $field['model'];
+                                    if (!is_null($field['plugin'])) {
+                                        $tableName = $field['plugin'] . '.' . $tableName;
                                     }
-                                } elseif ('' !== trim($field['name'])) {
-                                    $embeddedFields[] = $field['name'];
+                                    if (!empty($this->request->query['embedded'])) {
+                                        $handlerOptions['embedded'] = $this->request->query['embedded'];
+                                    }
+                                    echo $fhf->renderInput(
+                                        $tableName,
+                                        $field['name'],
+                                        isset($this->request->data[$field['name']])
+                                            ? $this->request->data[$field['name']]
+                                            : null,
+                                        $handlerOptions
+                                    );
+                                    echo '</div>';
                                     $embeddedDirty = false;
-                                    echo '&nbsp;';
                                 } else {
+                                    echo '<div class="col-xs-12 col-md-6">';
                                     echo '&nbsp;';
+                                    echo '</div>';
                                 }
-                                echo '</div>';
                             }
                             echo '</div>';
                         }
@@ -96,9 +101,9 @@ if (empty($options['title'])) {
                         Fetch embedded module(s) using CakePHP's requestAction() method
                          */
                         foreach ($embeddedFields as $embeddedField) {
-                            $embeddedFieldName = substr($embeddedField, strrpos($embeddedField, '.') + 1);
+                            $embeddedFieldName = substr($embeddedField['name'], strrpos($embeddedField['name'], '.') + 1);
                             list($embeddedPlugin, $embeddedController) = pluginSplit(
-                                substr($embeddedField, 0, strrpos($embeddedField, '.'))
+                                substr($embeddedField['name'], 0, strrpos($embeddedField['name'], '.'))
                             );
 
                             $embeddedAssocName = CsvMigrationsUtils::createAssociationName(
@@ -110,17 +115,22 @@ if (empty($options['title'])) {
                             @note this only works for belongsTo for now.
                              */
                             $embeddedAssocName = Inflector::underscore(Inflector::singularize($embeddedAssocName));
-
-                            echo $this->requestAction(
-                                [
-                                    'plugin' => $embeddedPlugin,
-                                    'controller' => $embeddedController,
-                                    'action' => $this->request->action
-                                ],
-                                [
-                                    'query' => ['embedded' => $this->request->controller . '.' . $embeddedAssocName]
-                                ]
-                            );
+                            ?>
+                            <div class="collapse" id="<?= $embeddedFieldName ?>_collapse">
+                                <div class="well">
+                                <?php echo $this->requestAction(
+                                    [
+                                        'plugin' => $embeddedPlugin,
+                                        'controller' => $embeddedController,
+                                        'action' => $this->request->action
+                                    ],
+                                    [
+                                        'query' => ['embedded' => $this->request->controller . '.' . $embeddedAssocName]
+                                    ]
+                                ); ?>
+                                </div>
+                            </div>
+                        <?php
                         }
                         $embeddedFields = [];
                     }

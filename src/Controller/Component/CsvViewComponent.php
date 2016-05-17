@@ -54,7 +54,7 @@ class CsvViewComponent extends Component
      * Supported association types.
      * @var array
      */
-    protected $_assocTypes = ['oneToMany', 'manyToOne'];
+    protected $_assocTypes = ['oneToMany', 'manyToOne', 'manyToMany'];
 
     /**
      * Actions to arrange fields into panels.
@@ -137,6 +137,12 @@ class CsvViewComponent extends Component
                             $association
                         );
                         break;
+
+                    case 'manyToMany':
+                        $result[$assocType][$association->name()] = $this->_manyToManyAssociatedRecords(
+                            $association
+                        );
+                        break;
                 }
             }
         }
@@ -205,6 +211,37 @@ class CsvViewComponent extends Component
             'fields' => $fields
         ]);
         $records = $query->all();
+        // store associated table records
+        $result['records'] = $records;
+        // store associated table fields
+        $result['fields'] = $fields;
+        // store associated table name
+        $result['table_name'] = $assocTableName;
+
+        return $result;
+    }
+
+    /**
+     * Method that retrieves many to many associated records
+     *
+     * @param  \Cake\ORM\Association $association Association object
+     * @return array                              associated records
+     * @todo  find better way to fetch associated data, without including current table's data
+     */
+    protected function _manyToManyAssociatedRecords(Association $association)
+    {
+        $assocTableName = $association->table();
+        $assocForeignKey = $association->foreignKey();
+
+        // get associated index View csv fields
+        $fields = $this->_getTableFields($association->name(), static::ASSOC_FIELDS_ACTION);
+        $query = $this->_tableInstance->find('all', [
+            'conditions' => [$this->_tableInstance->primaryKey() => $this->request->params['pass'][0]],
+            'contain' => [
+                $association->name()
+            ]
+        ]);
+        $records = $query->first()->{$assocTableName};
         // store associated table records
         $result['records'] = $records;
         // store associated table fields

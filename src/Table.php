@@ -54,6 +54,11 @@ class Table extends BaseTable
         if (isset($this->_config['table']['searchable'])) {
             $this->isSearchable($this->_config['table']['searchable']);
         }
+
+        $this->hasMany('UploadDocuments', [
+            'className' => 'Burzum/FileStorage.FileStorage',
+            'foreignKey' => 'foreign_key',
+        ]);
     }
 
     /**

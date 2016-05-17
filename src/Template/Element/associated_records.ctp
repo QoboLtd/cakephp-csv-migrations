@@ -1,31 +1,46 @@
 <?php
 use \Cake\Utility\Inflector;
 
+$panels = [];
 if (!empty($csvAssociatedRecords['oneToMany'])) {
     foreach ($csvAssociatedRecords['oneToMany'] as $tabName => $assocData) {
         if (0 === $assocData['records']->count()) {
             unset($csvAssociatedRecords['oneToMany'][$tabName]);
+        } else {
+            $panels[$tabName] = $csvAssociatedRecords['oneToMany'][$tabName];
+        }
+    }
+}
+if (!empty($csvAssociatedRecords['manyToMany'])) {
+    foreach ($csvAssociatedRecords['manyToMany'] as $tabName => $assocData) {
+        if (0 === count($assocData['records'])) {
+            unset($csvAssociatedRecords['manyToMany'][$tabName]);
+        } else {
+            $panels[$tabName] = $csvAssociatedRecords['manyToMany'][$tabName];
         }
     }
 }
 ?>
 
-<?php if (!empty($csvAssociatedRecords['oneToMany'])) : ?>
+<?php if (!empty($panels)) : ?>
 <div class="row">
     <div class="col-xs-12">
         <hr />
         <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
 <?php
     $active = 'active';
-    foreach ($csvAssociatedRecords['oneToMany'] as $tabName => $assocData) :
+    foreach ($panels as $tabName => $assocData) :
 ?>
             <li role="presentation" class="<?= $active; ?>">
                 <a href="#<?= $tabName; ?>" aria-controls="<?= $tabName; ?>" role="tab" data-toggle="tab">
                     <?php
                         $tableName = Inflector::humanize($assocData['table_name']);
                         $fieldName = trim(str_replace($tableName, '', Inflector::humanize(Inflector::tableize($tabName))));
+                        if (!empty($fieldName)) {
+                            $fieldName = ' <small>(' . $fieldName . ')</small>';
+                        }
                     ?>
-                    <?= $tableName . ' <small>(' . $fieldName . ')</small>' ?>
+                    <?= $tableName . $fieldName ?>
                 </a>
             </li>
 <?php
@@ -36,7 +51,7 @@ if (!empty($csvAssociatedRecords['oneToMany'])) {
         <div class="tab-content">
 <?php
     $active = 'active';
-    foreach ($csvAssociatedRecords['oneToMany'] as $assocName => $assocData) {
+    foreach ($panels as $assocName => $assocData) {
     ?>
             <div role="tabpanel" class="tab-pane <?= $active; ?>" id="<?= $assocName; ?>">
                 <div class=" table-responsive">

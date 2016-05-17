@@ -128,7 +128,7 @@ class AppController extends BaseController
      * @param  uuid $id foreign key of the related model
      * @return void
      */
-    protected function _upload($id)
+    protected function _upload($id = null)
     {
         if (!$this->request->data['file']['error']) {
             $user = $this->Auth->identify();

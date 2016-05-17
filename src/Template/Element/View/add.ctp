@@ -167,7 +167,7 @@ if (!empty($this->request->query['embedded'])) {
 </div>
 
 <?php
-// enable typeahead library
+// enable typeahead and embedded library
 // @todo load these files only if foreign/related field exists
 echo $this->Html->script('CsvMigrations.bootstrap-typeahead.min.js', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.typeahead', ['block' => 'scriptBottom']);

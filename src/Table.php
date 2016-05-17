@@ -27,7 +27,6 @@ class Table extends BaseTable
     public function initialize(array $config)
     {
         parent::initialize($config);
-        $this->_setAssociationsFromCsv($config);
 
         /*
         set table/module configuration
@@ -54,6 +53,8 @@ class Table extends BaseTable
         if (isset($this->_config['table']['searchable'])) {
             $this->isSearchable($this->_config['table']['searchable']);
         }
+
+        $this->_setAssociations($config);
     }
 
     /**

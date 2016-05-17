@@ -21,11 +21,16 @@ if (empty($options['title'])) {
         Inflector::singularize(Inflector::humanize(Inflector::underscore($moduleAlias)))
     );
 }
-?>
 
+/**
+ * @todo Need to handle this for the forms without upload field.
+ * @var array
+ */
+$formOptions = ['type' => 'file'];
+?>
 <div class="row">
     <div class="col-xs-12">
-        <?= $this->Form->create($options['entity']) ?>
+        <?= $this->Form->create($options['entity'], $formOptions) ?>
         <fieldset>
             <legend><?= $options['title'] ?></legend>
             <?php

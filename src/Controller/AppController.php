@@ -63,6 +63,9 @@ class AppController extends BaseController
         if ($this->request->is('post')) {
             $entity = $this->{$this->name}->patchEntity($entity, $this->request->data);
             if ($this->{$this->name}->save($entity)) {
+                if (isset($this->request->data['file'])) {
+                    $this->_upload($entity->get('id'));
+                }
                 $this->Flash->success(__('The record has been saved.'));
                 return $this->redirect(['action' => 'index']);
             } else {
@@ -117,5 +120,31 @@ class AppController extends BaseController
             $this->Flash->error(__('The record could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
+    }
+
+    /**
+     * Uploads the file and stores it to its related model.
+     *
+     * @param  uuid $id foreign key of the related model
+     * @return void
+     */
+    protected function _upload($id = null)
+    {
+        if (!$this->request->data['file']['error']) {
+            $user = $this->Auth->identify();
+            $entity = $this->{$this->name}->uploaddocuments->newEntity($this->request->data);
+            $entity = $this->{$this->name}->uploaddocuments->patchEntity(
+                $entity,
+                [
+                    'foreign_key' => $id,
+                    'user_id' => $user['id'],
+                ]
+            );
+            if ($this->{$this->name}->uploaddocuments->save($entity)) {
+                $this->Flash->success(__('File uploaded.'));
+            } else {
+                $this->Flash->error(__('Fail to upload.'));
+            }
+        }
     }
 }

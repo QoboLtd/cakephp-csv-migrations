@@ -88,17 +88,20 @@ if (empty($options['title'])) {
                 <?php
                 foreach ($subFields as $field) :
                     if ('' !== trim($field['name']) && !$embeddedDirty) :
+                        /*
+                        embedded field
+                         */
                         if ('EMBEDDED' === $field['name']) {
                             $embeddedDirty = true;
                         }
+
+                        /*
+                        non-embedded field
+                         */
+                        if (!$embeddedDirty) :
                 ?>
                         <div class="col-xs-4 col-md-2 text-right">
-                            <?php
-                            $label = Inflector::humanize($field['name']);
-                            if ($this->request->controller !== $field['model'])
-                                $label = Inflector::humanize($field['model']) . ' ' . $label;
-                            ?>
-                            <strong><?= $label ?>:</strong>
+                            <strong><?= Inflector::humanize($field['name']) ?>:</strong>
                         </div>
                         <div class="col-xs-8 col-md-4">
                         <?php
@@ -110,12 +113,11 @@ if (empty($options['title'])) {
                             echo !empty($value) ? $value : '&nbsp;';
                         ?>
                         </div>
+                    <?php endif; ?>
                     <?php elseif ('' !== trim($field['name'])) :
                         $embeddedFields[] = $field['name'];
                         $embeddedDirty = false;
                     ?>
-                        <div class="col-xs-4 col-md-2 text-right">&nbsp;</div>
-                        <div class="col-xs-8 col-md-4">&nbsp;</div>
                     <?php else : ?>
                         <div class="col-xs-4 col-md-2 text-right">&nbsp;</div>
                         <div class="col-xs-8 col-md-4">&nbsp;</div>

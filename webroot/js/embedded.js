@@ -98,10 +98,12 @@ var embedded = embedded || {};
                  */
                 $field = $('input[name=' + $(form).data('field_name') + ']');
 
+                displayField = $(form).data('display_field');
+
                 /*
                 set typeahead value
                  */
-                $field.val(data.data.email);
+                $field.val(data.data[displayField]);
 
                 /*
                 set typeahead as read-only

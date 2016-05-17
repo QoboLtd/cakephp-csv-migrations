@@ -1,4 +1,5 @@
 <?php
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\CsvMigrationsUtils;
@@ -31,6 +32,11 @@ $formOptions = [
     ]
 ];
 if (!empty($this->request->query['embedded'])) {
+    $embControllerName = $this->request->controller;
+    if (!empty($this->request->plugin)) {
+        $embControllerName = $this->request->plugin . '.' . $embControllerName;
+    }
+    $formOptions['data-display_field'] = TableRegistry::get($embControllerName)->displayField();
     $formOptions['class'] = 'embeddedForm';
     $formOptions['data-modal_id'] = $this->request->query['foreign_key'] . '_modal';
     $formOptions['data-field_name'] = $this->request->query['foreign_key'] . '_label';

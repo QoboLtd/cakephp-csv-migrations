@@ -71,6 +71,10 @@ if (empty($options['title'])) {
             $embeddedFields = [];
             $embeddedDirty = false;
             foreach ($options['fields'] as $panelName => $panelFields) :
+             if (!empty($this->request->query['embedded'])) {
+                $panelName = Inflector::singularize(Inflector::humanize($this->request->controller)) . ' : ' . $panelName;
+             }
+
         ?>
         <div class="panel panel-default">
             <div class="panel-heading">

@@ -48,7 +48,7 @@ if (empty($options['title'])) {
                     <tr>
                         <?php
                             foreach ($options['fields'] as $field) {
-                                echo '<th>' . $this->Paginator->sort($field[0]) . '</th>';
+                                echo '<th>' . $this->Paginator->sort($field[0]['name']) . '</th>';
                             }
                             echo '<th class="actions">' . __('Actions') . '</th>';
                         ?>
@@ -57,14 +57,14 @@ if (empty($options['title'])) {
                 <tbody>
                     <?php foreach ($options['entities'] as $entity): ?>
                     <tr>
-                        <?php foreach ($fields as $field): ?>
+                        <?php foreach ($options['fields'] as $field): ?>
                             <td>
                             <?php
                                 $tableName = $this->name;
                                 if (!is_null($this->plugin)) {
                                     $tableName = $this->plugin . '.' . $tableName;
                                 }
-                                echo $fhf->renderValue($tableName, $field[0], $entity->$field[0]);
+                                echo $fhf->renderValue($tableName, $field[0]['name'], $entity->$field[0]['name']);
                             ?>
                             </td>
                         <?php endforeach; ?>

@@ -87,7 +87,11 @@ class AppController extends BaseController
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $entity = $this->{$this->name}->patchEntity($entity, $this->request->data);
+            /*
+            enable accessibility to associated entity's primary key to avoid associated entity getting flagged as new
+             */
+            $patchOptions = $this->{$this->name}->enablePrimaryKeyAccess();
+            $entity = $this->{$this->name}->patchEntity($entity, $this->request->data, $patchOptions);
             if ($this->{$this->name}->save($entity)) {
                 $this->Flash->success(__('The record has been saved.'));
                 return $this->redirect(['action' => 'index']);

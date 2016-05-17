@@ -72,4 +72,22 @@ class Table extends BaseTable
 
         return $result;
     }
+
+    /**
+     * Enable accessibility to associations primary key. Useful for
+     * patching entities with associated data during updating process.
+     *
+     * @return array
+     */
+    public function enablePrimaryKeyAccess()
+    {
+        $result = [];
+        foreach ($this->associations() as $association) {
+            $result['associated'][$association->name()] = [
+                'accessibleFields' => [$association->primaryKey() => true]
+            ];
+        }
+
+        return $result;
+    }
 }

@@ -4,10 +4,13 @@ namespace CsvMigrations\FieldHandlers;
 use App\View\AppView;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use Cake\View\Helper\IdGeneratorTrait;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
 class RelatedFieldHandler extends BaseFieldHandler
 {
+    use IdGeneratorTrait;
+
     /**
      * Field type match pattern
      */
@@ -45,14 +48,25 @@ class RelatedFieldHandler extends BaseFieldHandler
             }
         }
 
-        $input = $cakeView->Form->input($field, [
+        $fieldName = $this->_getFieldName($table, $field, $options);
+
+        $input = '';
+
+        $input .= $cakeView->Form->label($field);
+
+        if (!empty($options['embModal'])) {
+            $input .= '<div class="input-group">';
+        }
+
+        $input .= $cakeView->Form->input($field, [
+            'label' => false,
             'name' => $field . '_label',
             'id' => $field . '_label',
             'type' => 'text',
             'data-type' => 'typeahead',
             'readonly' => (bool)$data,
             'value' => $displayFieldValue,
-            'data-name' => $field,
+            'data-id' => $this->_domId($fieldName),
             'autocomplete' => 'off',
             'required' => (bool)$options['fieldDefinitions']['required'],
             'data-url' => $cakeView->Url->build([
@@ -62,7 +76,17 @@ class RelatedFieldHandler extends BaseFieldHandler
                 'action' => 'lookup.json'
             ])
         ]);
-        $input .= $cakeView->Form->input($field, ['type' => 'hidden', 'value' => $data]);
+
+        if (!empty($options['embModal'])) {
+            $input .= '<div class="input-group-btn">';
+            $input .= '<button type="button" class="btn btn-default" data-toggle="modal" data-target="#' . $field . '_modal">';
+            $input .= '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>';
+            $input .= '</button>';
+            $input .= '</div>';
+            $input .= '</div>';
+        }
+
+        $input .= $cakeView->Form->input($fieldName, ['type' => 'hidden', 'value' => $data]);
 
         return $input;
     }

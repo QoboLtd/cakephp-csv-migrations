@@ -54,7 +54,7 @@ class RelatedFieldHandler extends BaseFieldHandler
 
         $input .= $cakeView->Form->label($field);
 
-        if (!empty($options['collapseEmbedded'])) {
+        if (!empty($options['embModal'])) {
             $input .= '<div class="input-group">';
         }
 
@@ -77,9 +77,9 @@ class RelatedFieldHandler extends BaseFieldHandler
             ])
         ]);
 
-        if (!empty($options['collapseEmbedded'])) {
+        if (!empty($options['embModal'])) {
             $input .= '<div class="input-group-btn">';
-            $input .= '<button type="button" class="btn btn-default" data-toggle="collapse" data-target="#' . $field . '_collapse" aria-expanded="false" aria-controls="' . $field . '">';
+            $input .= '<button type="button" class="btn btn-default" data-toggle="modal" data-target="#' . $field . '_modal">';
             $input .= '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>';
             $input .= '</button>';
             $input .= '</div>';

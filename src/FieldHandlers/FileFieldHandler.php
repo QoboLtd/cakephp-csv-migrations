@@ -19,7 +19,7 @@ class FileFieldHandler extends BaseFieldHandler
     public function renderInput($table, $field, $data = '', array $options = [])
     {
         $cakeView = new AppView();
-        $uploadField = $cakeView->Form->file('file') . $cakeView->Form->error('file');
+        $uploadField = $cakeView->Form->file('UploadDocuments.file');
         $label = $cakeView->Form->label($field);
         $result = sprintf(self::WRAPPER, $label, $uploadField);
 

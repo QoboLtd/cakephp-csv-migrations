@@ -50,7 +50,8 @@ class FileFieldHandler extends BaseFieldHandler
         $url = $cakeView->Storage->url($entity);
         $result = $cakeView->Html->link(
             __d('CsvMigrations', 'View File'),
-            $cakeView->Url->build($url)
+            $cakeView->Url->build($url),
+            ['target' => '_blank']
         );
         return $result;
     }

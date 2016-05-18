@@ -213,7 +213,7 @@ class CsvViewComponent extends Component
 
         $query = $this->_tableInstance->{$assocName}->find('all', [
             'conditions' => [$assocForeignKey => $recordId],
-            'fields' => $fields
+            'fields' => array_merge([$association->primaryKey()], $fields)
         ]);
         $records = $query->all();
         // store associated table records

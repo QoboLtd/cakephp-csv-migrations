@@ -25,4 +25,30 @@ class FileFieldHandler extends BaseFieldHandler
 
         return $result;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function renderValue($table, $field, $data, array $options = [])
+    {
+        $result = '';
+        if (is_null($data)) {
+            return $result;
+        }
+        $cakeView = new AppView();
+        $cakeView->loadHelper('Burzum/FileStorage.Storage', [
+            'pathBuilderOptions' => [
+                'pathPrefix' => '/uploads'
+            ]
+        ]);
+        $entity = $table->uploaddocuments->find()
+            ->where(['id' => $data])
+            ->first();
+        $url = $cakeView->Storage->url($entity);
+        $result = $cakeView->Html->link(
+            __d('CsvMigrations', 'View File'),
+            $cakeView->Url->build($url)
+        );
+        return $result;
+    }
 }

@@ -63,8 +63,8 @@ class AppController extends BaseController
         if ($this->request->is('post')) {
             $entity = $this->{$this->name}->patchEntity($entity, $this->request->data);
             if ($this->{$this->name}->save($entity)) {
-                if (isset($this->request->data['file'])) {
-                    $this->_upload($entity->get('id'));
+                if ($this->_hasUpload() && !$this->_isInValidUpload()) {
+                    $this->_upload($entity);
                 }
                 $this->Flash->success(__('The record has been saved.'));
                 return $this->redirect(['action' => 'index']);
@@ -125,26 +125,66 @@ class AppController extends BaseController
     /**
      * Uploads the file and stores it to its related model.
      *
-     * @param  uuid $id foreign key of the related model
+     * @param  Entity $relatedEntity Related entity of the upload.
      * @return void
      */
-    protected function _upload($id = null)
+    protected function _upload($relatedEntity)
     {
-        if (!$this->request->data['file']['error']) {
-            $user = $this->Auth->identify();
-            $entity = $this->{$this->name}->uploaddocuments->newEntity($this->request->data);
-            $entity = $this->{$this->name}->uploaddocuments->patchEntity(
-                $entity,
-                [
-                    'foreign_key' => $id,
-                    'user_id' => $user['id'],
-                ]
-            );
-            if ($this->{$this->name}->uploaddocuments->save($entity)) {
-                $this->Flash->success(__('File uploaded.'));
-            } else {
-                $this->Flash->error(__('Fail to upload.'));
+        $this->request->allowMethod('post');
+        $user = $this->Auth->identify();
+        $entity = $this->{$this->name}->uploaddocuments->newEntity($this->request->data);
+        $entity = $this->{$this->name}->uploaddocuments->patchEntity(
+            $entity,
+            [
+                'foreign_key' => $relatedEntity->get('id'),
+                'user_id' => $user['id'],
+            ]
+        );
+        if ($this->{$this->name}->uploaddocuments->save($entity)) {
+            /**
+             * Stores the id of the FileStorage entity to the document field.
+             * The 'id' is used to get the entity on renderValue to generate the URL of the uploaded file.
+             * @see CsvMigrations\FieldHandlers\FileFieldHandler renderValue()
+             * @todo document should not be hardcoded.
+             */
+            $relatedEntity = $this->{$this->name}->patchEntity($relatedEntity, ['document' => $entity->get('id')]);
+            if (!$this->{$this->name}->save($relatedEntity)) {
+                $this->Flash->error(__('Failed to update related entity.'));
             }
+            $this->Flash->success(__('File uploaded.'));
+        } else {
+            $this->Flash->error(__('Failed to upload.'));
         }
+    }
+
+    /**
+     * Check for upload in the post data.
+     *
+     * @return boolean [description]
+     */
+    protected function _hasUpload()
+    {
+        $this->request->allowMethod('post');
+        if (!isset($this->request->data['UploadDocuments'])) {
+            return false;
+        }
+
+        if (!is_array($this->request->data['UploadDocuments']['file'])) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check for upload in the post data.
+     *
+     * @return boolean [description]
+     */
+    protected function _isInValidUpload()
+    {
+        $this->request->allowMethod('post');
+        return (bool)$this->request->data['UploadDocuments']['file']['error'];
+
     }
 }

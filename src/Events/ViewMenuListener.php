@@ -26,6 +26,7 @@ class ViewMenuListener implements EventListenerInterface
         return [
             'View.Index.Menu.Top' => 'getIndexMenuTop',
             'View.Index.Menu.Actions' => 'getIndexMenuActions',
+            'View.Associated.Menu.Actions' => 'getAssociatedMenuActions',
             'View.View.Menu.Top' => 'getViewMenuTop'
         ];
     }
@@ -234,6 +235,53 @@ class ViewMenuListener implements EventListenerInterface
             $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
         } else {
             $result = $btnChangelog . $btnEdit . $btnDel;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Method that adds elements to associated Element actions menu.
+     *
+     * @param  Cake\Event\Event     $event   Event object
+     * @param  Cake\Network\Request $request Request object
+     * @param  Cake\ORM\Entity      $options Entity options
+     * @return undefined
+     */
+    public function getAssociatedMenuActions(Event $event, Request $request, array $options)
+    {
+        $appView = new AppView();
+
+        $controllerName = $request->controller;
+        if (!empty($request->plugin)) {
+            $controllerName = $request->plugin . '.' . $controllerName;
+        }
+
+        $btnUnlink = $appView->Form->postLink(
+            '',
+            ['action' => 'unlink', $options['entity']->id, $options['assoc_name'], $options['assoc_entity']->id],
+            ['title' => __('Unlink'), 'class' => 'btn btn-default fa fa-chain-broken']
+        );
+
+        $menu = [
+            [
+                'label' => $btnUnlink,
+                'url' => [
+                    'plugin' => $request->plugin,
+                    'controller' => $request->controller,
+                    'action' => 'unlink',
+                    $options['entity']->id,
+                    $options['assoc_name'],
+                    $options['assoc_entity']->id
+                ],
+                'capabilities' => 'fromUrl'
+            ]
+        ];
+
+        if ($appView->elementExists(static::MENU_ELEMENT)) {
+            $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
+        } else {
+            $result = $btnUnlink;
         }
 
         return $result;

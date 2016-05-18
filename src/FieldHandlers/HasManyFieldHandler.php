@@ -79,13 +79,13 @@ class HasManyFieldHandler extends BaseFieldHandler
 
         if (!empty($options['embModal'])) {
             $input .= '<div class="input-group-btn">';
+            $input .= $cakeView->Form->button(
+                __('<span class="fa fa-link" aria-hidden="true"></span>'),
+                ['class' => 'btn btn-primary', 'title' => __('Link record')]
+            );
             $input .= '<button type="button" class="btn btn-default" data-toggle="modal" data-target="#' . $field . '_modal">';
             $input .= '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>';
             $input .= '</button>';
-            $input .= $cakeView->Form->button(
-                __('<span class="glyphicon glyphicon-link" aria-hidden="true"></span>'),
-                ['class' => 'btn btn-primary', 'title' => __('Link record')]
-            );
             $input .= '</div>';
             $input .= '</div>';
         }

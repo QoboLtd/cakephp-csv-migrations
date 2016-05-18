@@ -94,7 +94,7 @@ class AppController extends BaseController
             $entity = $this->{$this->name}->patchEntity($entity, $this->request->data, $patchOptions);
             if ($this->{$this->name}->save($entity)) {
                 $this->Flash->success(__('The record has been saved.'));
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'view', $id]);
             } else {
                 $this->Flash->error(__('The record could not be saved. Please, try again.'));
             }

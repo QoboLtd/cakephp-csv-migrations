@@ -1,5 +1,6 @@
 <?php
-use \Cake\Utility\Inflector;
+use Cake\Event\Event;
+use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 $fhf = new FieldHandlerFactory();
@@ -18,13 +19,13 @@ if (!empty($csvAssociatedRecords['oneToMany'])) {
 /*
 list of embedded fields to generate modals from
  */
-$embeddedFields = [];
+$embFields = [];
 if (!empty($csvAssociatedRecords['manyToMany'])) {
     foreach ($csvAssociatedRecords['manyToMany'] as $tabName => $assocData) {
         /*
         add to embedded fields
          */
-        $embeddedFields[] = $assocData['class_name'] . '.' . $assocData['foreign_key'];
+        $embFields[] = $assocData['class_name'] . '.' . $assocData['foreign_key'];
         if (0 === count($assocData['records'])) {
             unset($csvAssociatedRecords['manyToMany'][$tabName]);
         } else {
@@ -71,7 +72,8 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
             display typeahead field for adding/linking associated records,
             filtered from embeddedFields array.
              */
-            if (in_array($assocData['class_name'] . '.' . $assocData['foreign_key'], $embeddedFields)) {
+            $embField = $assocData['class_name'] . '.' . $assocData['foreign_key'];
+            if (in_array($embField, $embFields)) {
                 $formOptions = [
                     'url' => [
                         'plugin' => $this->request->plugin,
@@ -137,6 +139,7 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                             <?php foreach ($assocData['fields'] as $assocField) : ?>
                                 <th><?= $this->Paginator->sort($assocField); ?></th>
                             <?php endforeach; ?>
+                                <th class="actions"><?= __('Actions'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -169,6 +172,22 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                                 <td>&nbsp;</td>
                                 <?php endif; ?>
                             <?php endforeach; ?>
+                            <td class="actions">
+                            <?php
+                                $event = new Event('View.Associated.Menu.Actions', $this, [
+                                    'request' => $this->request,
+                                    'options' => [
+                                        'entity' => $entity,
+                                        'assoc_entity' => $record,
+                                        'assoc_name' => $assocData['assoc_name']
+                                    ]
+                                ]);
+                                $this->eventManager()->dispatch($event);
+                                if (!empty($event->result)) {
+                                    echo $event->result;
+                                }
+                            ?>
+                            </td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>
@@ -186,15 +205,15 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
 /*
 Fetch embedded module(s) using CakePHP's requestAction() method
  */
-if (!empty($embeddedFields)) :
-    foreach ($embeddedFields as $embeddedField) :
-        $embeddedFieldName = substr($embeddedField, strrpos($embeddedField, '.') + 1);
-        list($embeddedPlugin, $embeddedController) = pluginSplit(
-            substr($embeddedField, 0, strrpos($embeddedField, '.'))
+if (!empty($embFields)) :
+    foreach ($embFields as $embField) :
+        $embFieldName = substr($embField, strrpos($embField, '.') + 1);
+        list($embPlugin, $embController) = pluginSplit(
+            substr($embField, 0, strrpos($embField, '.'))
         );
     ?>
     <!-- Modal -->
-    <div id="<?= $embeddedFieldName ?>_modal" class="modal fade" tabindex="-1" role="dialog">
+    <div id="<?= $embFieldName ?>_modal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -205,14 +224,14 @@ if (!empty($embeddedFields)) :
                 <div class="modal-body">
                 <?php echo $this->requestAction(
                     [
-                        'plugin' => $embeddedPlugin,
-                        'controller' => $embeddedController,
+                        'plugin' => $embPlugin,
+                        'controller' => $embController,
                         'action' => 'add'
                     ],
                     [
                         'query' => [
                             'embedded' => $this->request->controller,
-                            'foreign_key' => $embeddedFieldName
+                            'foreign_key' => $embFieldName
                         ]
                     ]
                 ); ?>

@@ -204,7 +204,12 @@ class CsvViewComponent extends Component
         $recordId = $this->request->params['pass'][0];
 
         // get associated index View csv fields
-        $fields = $this->_getTableFields($association->className(), static::ASSOC_FIELDS_ACTION);
+        $fields = array_unique(
+            array_merge(
+                [$association->displayField()],
+                $this->_getTableFields($association->className(), static::ASSOC_FIELDS_ACTION)
+            )
+        );
 
         $query = $this->_tableInstance->{$assocName}->find('all', [
             'conditions' => [$assocForeignKey => $recordId],
@@ -234,7 +239,12 @@ class CsvViewComponent extends Component
         $assocForeignKey = $association->foreignKey();
 
         // get associated index View csv fields
-        $fields = $this->_getTableFields($association->name(), static::ASSOC_FIELDS_ACTION);
+        $fields = array_unique(
+            array_merge(
+                [$association->displayField()],
+                $this->_getTableFields($association->name(), static::ASSOC_FIELDS_ACTION)
+            )
+        );
         $query = $this->_tableInstance->find('all', [
             'conditions' => [$this->_tableInstance->primaryKey() => $this->request->params['pass'][0]],
             'contain' => [

@@ -222,6 +222,14 @@ class CsvViewComponent extends Component
         $result['fields'] = $fields;
         // store associated table name
         $result['table_name'] = $assocTableName;
+        // store associated table class name
+        $result['class_name'] = 'CrmRe.' . $association->className();
+        // store associated table display field
+        $result['display_field'] =  $association->displayField();
+        // store associated table primary key
+        $result['primary_key'] =  $association->primaryKey();
+        // store associated table foreign key
+        $result['foreign_key'] =  $association->foreignKey();
 
         return $result;
     }
@@ -258,6 +266,14 @@ class CsvViewComponent extends Component
         $result['fields'] = $fields;
         // store associated table name
         $result['table_name'] = $assocTableName;
+        // store associated table class name
+        $result['class_name'] = $association->className();
+        // store associated table display field
+        $result['display_field'] =  $association->displayField();
+        // store associated table primary key
+        $result['primary_key'] =  $association->primaryKey();
+        // store associated table foreign key
+        $result['foreign_key'] =  Inflector::singularize($assocTableName) . '_' . $association->primaryKey();
 
         return $result;
     }

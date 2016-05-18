@@ -122,4 +122,28 @@ class AppController extends BaseController
         }
         return $this->redirect(['action' => 'index']);
     }
+
+    /**
+     * Unlink method
+     *
+     * @param string $id Entity id.
+     * @param string $assocName Association Name.
+     * @param string $assocId Associated Entity id.
+     * @return \Cake\Network\Response|null Redirects to referer.
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
+    public function unlink($id, $assocName, $assocId)
+    {
+        $this->request->allowMethod(['post']);
+        $entity = $this->{$this->name}->get($id);
+        $assocEntity = $this->{$this->name}->{$assocName}->get($assocId);
+        /*
+        unlink associated record
+         */
+        $this->{$this->name}->{$assocName}->unlink($entity, [$assocEntity]);
+
+        $this->Flash->success(__('The record has been unlinked.'));
+
+        return $this->redirect($this->referer());
+    }
 }

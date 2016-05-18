@@ -31,7 +31,7 @@ class FileFieldHandler extends BaseFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $result = '';
+        $result = __d('CsvMigration', 'No upload file');
         if (is_null($data)) {
             return $result;
         }
@@ -44,6 +44,9 @@ class FileFieldHandler extends BaseFieldHandler
         $entity = $table->uploaddocuments->find()
             ->where(['id' => $data])
             ->first();
+        if (!$entity) {
+            return $result;
+        }
         $url = $cakeView->Storage->url($entity);
         $result = $cakeView->Html->link(
             __d('CsvMigrations', 'View File'),

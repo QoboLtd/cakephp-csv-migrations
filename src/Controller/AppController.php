@@ -160,7 +160,7 @@ class AppController extends BaseController
     /**
      * Check for upload in the post data.
      *
-     * @return boolean [description]
+     * @return boolean true if there is an upload array as defined by PHP.
      */
     protected function _hasUpload()
     {
@@ -179,7 +179,7 @@ class AppController extends BaseController
     /**
      * Check for upload in the post data.
      *
-     * @return boolean [description]
+     * @return boolean true for invalid upload and vice versa.
      */
     protected function _isInValidUpload()
     {

@@ -216,10 +216,8 @@ class CsvViewComponent extends Component
             'fields' => array_merge([$association->primaryKey()], $fields)
         ]);
         $records = $query->all();
-        // store associated table records
-        $result['records'] = $records;
-        // store associated table fields
-        $result['fields'] = $fields;
+        // store association name
+        $result['assoc_name'] = $assocName;
         // store associated table name
         $result['table_name'] = $assocTableName;
         // store associated table class name
@@ -230,6 +228,10 @@ class CsvViewComponent extends Component
         $result['primary_key'] =  $association->primaryKey();
         // store associated table foreign key
         $result['foreign_key'] =  $association->foreignKey();
+        // store associated table fields
+        $result['fields'] = $fields;
+        // store associated table records
+        $result['records'] = $records;
 
         return $result;
     }
@@ -243,6 +245,7 @@ class CsvViewComponent extends Component
      */
     protected function _manyToManyAssociatedRecords(Association $association)
     {
+        $assocName = $association->name();
         $assocTableName = $association->table();
         $assocForeignKey = $association->foreignKey();
 
@@ -250,20 +253,18 @@ class CsvViewComponent extends Component
         $fields = array_unique(
             array_merge(
                 [$association->displayField()],
-                $this->_getTableFields($association->name(), static::ASSOC_FIELDS_ACTION)
+                $this->_getTableFields($assocName, static::ASSOC_FIELDS_ACTION)
             )
         );
         $query = $this->_tableInstance->find('all', [
             'conditions' => [$this->_tableInstance->primaryKey() => $this->request->params['pass'][0]],
             'contain' => [
-                $association->name()
+                $assocName
             ]
         ]);
         $records = $query->first()->{$assocTableName};
-        // store associated table records
-        $result['records'] = $records;
-        // store associated table fields
-        $result['fields'] = $fields;
+        // store association name
+        $result['assoc_name'] = $assocName;
         // store associated table name
         $result['table_name'] = $assocTableName;
         // store associated table class name
@@ -274,6 +275,10 @@ class CsvViewComponent extends Component
         $result['primary_key'] =  $association->primaryKey();
         // store associated table foreign key
         $result['foreign_key'] =  Inflector::singularize($assocTableName) . '_' . $association->primaryKey();
+        // store associated table fields
+        $result['fields'] = $fields;
+        // store associated table records
+        $result['records'] = $records;
 
         return $result;
     }

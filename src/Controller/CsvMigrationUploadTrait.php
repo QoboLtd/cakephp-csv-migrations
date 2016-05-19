@@ -3,6 +3,20 @@ namespace CsvMigrations\Controller;
 
 trait CsvMigrationUploadTrait
 {
+    public function unlinkUpload($id = null)
+    {
+        $entity = $this->{$this->name}->find()
+            ->where(['document' => $id])
+            ->first();
+        $entity = $this->{$this->name}->patchEntity($entity, ['document' => null]);
+        if ($this->{$this->name}->uploaddocuments->save($entity)) {
+            $this->Flash->success(__('The upload has been unlinked.'));
+        } else {
+            $this->Flash->error(__('The upload could not be unlinked. Please, try again.'));
+        }
+        return $this->redirect($this->referer());
+    }
+
     /**
      * Uploads the file and stores it to its related model.
      *

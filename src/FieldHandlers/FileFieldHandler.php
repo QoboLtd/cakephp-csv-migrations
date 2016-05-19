@@ -40,16 +40,16 @@ class FileFieldHandler extends BaseFieldHandler
                 $cakeView->Url->build($url),
                 ['target' => '_blank']
             );
-            $removeLink = $cakeView->Form->postLink(
+            $unlinkCta = $cakeView->Form->postLink(
                 '',
-                ['action' => 'deleteUpload', $data],
+                ['action' => 'unlinkUpload', $data],
                 [
-                    'confirm' => __d('CsvMigration', 'Are you sure you want to delete?'),
-                    'title' => __d('CsvMigration', 'Delete'),
+                    'confirm' => __d('CsvMigration', 'Are you sure you want to unlink?'),
+                    'title' => __d('CsvMigration', 'Unlink upload'),
                     'class' => 'btn btn-default glyphicon glyphicon-trash'
                 ]
             );
-            $div = sprintf(self::DIV, $viewLink, $removeLink);
+            $div = sprintf(self::DIV, $viewLink, $unlinkCta);
             $result = sprintf(self::WRAPPER, $label, $div);
         }
 

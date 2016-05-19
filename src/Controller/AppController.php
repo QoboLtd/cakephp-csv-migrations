@@ -2,7 +2,6 @@
 namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
-use Cake\ORM\TableRegistry;
 
 class AppController extends BaseController
 {
@@ -64,35 +63,12 @@ class AppController extends BaseController
         if ($this->request->is('post')) {
             $entity = $this->{$this->name}->patchEntity($entity, $this->request->data);
             if ($this->{$this->name}->save($entity)) {
-                /**
-                 * Conversion logic
-                 * @todo probably this has to be moved to another plugin
-                 */
-                if (!empty($this->request->data['convFrom'])) {
-                    $convFrom = $this->request->data['convFrom'];
-                    $convFromTable = TableRegistry::get($convFrom['model']);
-                    $convFromEntity = $convFromTable->get($convFrom['id']);
-                    $convData = [$convFrom['field'] => $convFrom['value']];
-
-                    $convFromEntity = $convFromTable->patchEntity($convFromEntity, $convData);
-                    $convFromTable->save($convFromEntity);
-                }
-
                 $this->Flash->success(__('The record has been saved.'));
                 return $this->redirect(['action' => 'index']);
             } else {
                 $this->Flash->error(__('The record could not be saved. Please, try again.'));
             }
         }
-        /**
-         * Conversion logic
-         * @todo probably this has to be moved to another plugin
-         */
-        if (!empty($this->request->params['convert'])) {
-            $this->request->data = $this->request->params['convert']['data'];
-            $this->set('convFrom', $this->request->params['convert']['from']);
-        }
-
         $this->set(compact('entity'));
         $this->render('CsvMigrations.Common/add');
         $this->set('_serialize', ['entity']);

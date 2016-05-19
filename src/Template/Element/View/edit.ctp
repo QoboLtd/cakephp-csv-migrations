@@ -69,8 +69,14 @@ $formOptions = ['type' => 'file'];
 </div>
 
 <?php
-// enable typeahead library
-// @todo load these files only if foreign/related field exists
+/**
+ * @todo  Load when needed.
+ * - When there is file input
+ * - Typeahead field.
+ */
+echo $this->Html->css('QoboAdminPanel.fileinput.min', ['block' => 'cssBottom']);
+echo $this->Html->script('QoboAdminPanel.canvas-to-blob.min', ['block' => 'scriptBottom']);
+echo $this->Html->script('QoboAdminPanel.fileinput.min', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.bootstrap-typeahead.min.js', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.typeahead', ['block' => 'scriptBottom']);
 ?>

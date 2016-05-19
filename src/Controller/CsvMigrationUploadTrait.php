@@ -3,6 +3,12 @@ namespace CsvMigrations\Controller;
 
 trait CsvMigrationUploadTrait
 {
+    /**
+     * Unlink the upload field from the given module record.
+     * @todo Replace 'document' with dynamic field, Should be called only by ajax calls.
+     *
+     * @param  int $id record id
+     */
     public function unlinkUpload($id = null)
     {
         $entity = $this->{$this->name}->get($id);

@@ -41,6 +41,16 @@ trait ConfigurationTrait
     protected $_moduleAlias;
 
     /**
+     * Method that returns table configuration.
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->_config;
+    }
+
+    /**
      * Method that sets table configuration.
      *
      * @return void

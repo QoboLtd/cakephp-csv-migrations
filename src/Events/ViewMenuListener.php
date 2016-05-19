@@ -185,7 +185,7 @@ class ViewMenuListener implements EventListenerInterface
                 [
                     'plugin' => null,
                     'controller' => 'conversions',
-                    'action' => 'convert',
+                    'action' => 'prepare',
                     $controllerName,
                     $options['entity']->id
                 ],

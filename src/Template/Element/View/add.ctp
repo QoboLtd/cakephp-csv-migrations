@@ -49,21 +49,17 @@ if (!empty($this->request->query['embedded'])) {
 
 <div class="row">
     <div class="col-xs-12">
-        <?= $this->Form->create($options['entity'], $formOptions); ?>
+    <?php
+        /**
+         * Conversion logic
+         * @todo probably this has to be moved to another plugin
+         */
+        if (empty($isConversion)) {
+            echo $this->Form->create($options['entity'], $formOptions);
+        }
+    ?>
         <fieldset>
             <legend><?= $options['title'] ?></legend>
-            <?php
-                /**
-                 * Conversion logic
-                 * @todo probably this has to be moved to another plugin
-                 */
-                if (!empty($convFrom)) {
-                    echo $this->Form->hidden('convFrom.model', ['value' => $convFrom['model']]);
-                    echo $this->Form->hidden('convFrom.id', ['value' => $convFrom['id']]);
-                    echo $this->Form->hidden('convFrom.field', ['value' => $convFrom['field']]);
-                    echo $this->Form->hidden('convFrom.value', ['value' => $convFrom['value']]);
-                }
-            ?>
             <?php
                 if (!empty($options['fields'])) {
                     $embeddedFields = [];
@@ -129,8 +125,16 @@ if (!empty($this->request->query['embedded'])) {
                 }
             ?>
         </fieldset>
-        <?= $this->Form->button(__('Submit'), ['class' => 'btn btn-primary']) ?>
-        <?= $this->Form->end() ?>
+    <?php
+        /**
+         * Conversion logic
+         * @todo probably this has to be moved to another plugin
+         */
+        if (empty($isConversion)) {
+            echo $this->Form->button(__('Submit'), ['class' => 'btn btn-primary']);
+            echo $this->Form->end();
+        }
+    ?>
         <?php
         /*
         Fetch embedded module(s) using CakePHP's requestAction() method

@@ -95,6 +95,9 @@ class AppController extends BaseController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $entity = $this->{$this->name}->patchEntity($entity, $this->request->data);
             if ($this->{$this->name}->save($entity)) {
+                if ($this->_hasUpload() && !$this->_isInValidUpload()) {
+                    $this->_upload($entity);
+                }
                 $this->Flash->success(__('The record has been saved.'));
                 return $this->redirect(['action' => 'index']);
             } else {

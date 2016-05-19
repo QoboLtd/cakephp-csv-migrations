@@ -3,6 +3,20 @@ namespace CsvMigrations\Controller;
 
 trait CsvMigrationUploadTrait
 {
+    public function unlinkUpload($id = null)
+    {
+        $entity = $this->{$this->name}->find()
+            ->where(['document' => $id])
+            ->first();
+        $entity = $this->{$this->name}->patchEntity($entity, ['document' => null]);
+        if ($this->{$this->name}->uploaddocuments->save($entity)) {
+            $this->Flash->success(__('The upload has been unlinked.'));
+        } else {
+            $this->Flash->error(__('The upload could not be unlinked. Please, try again.'));
+        }
+        return $this->redirect($this->referer());
+    }
+
     /**
      * Uploads the file and stores it to its related model.
      *
@@ -11,7 +25,6 @@ trait CsvMigrationUploadTrait
      */
     protected function _upload($relatedEntity)
     {
-        $this->request->allowMethod('post');
         $user = $this->Auth->identify();
         $entity = $this->{$this->name}->uploaddocuments->newEntity($this->request->data);
         $entity = $this->{$this->name}->uploaddocuments->patchEntity(
@@ -45,7 +58,6 @@ trait CsvMigrationUploadTrait
      */
     protected function _hasUpload()
     {
-        $this->request->allowMethod('post');
         if (!isset($this->request->data['UploadDocuments'])) {
             return false;
         }
@@ -64,8 +76,6 @@ trait CsvMigrationUploadTrait
      */
     protected function _isInValidUpload()
     {
-        $this->request->allowMethod('post');
         return (bool)$this->request->data['UploadDocuments']['file']['error'];
-
     }
 }

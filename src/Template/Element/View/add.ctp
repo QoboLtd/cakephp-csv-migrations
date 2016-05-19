@@ -69,7 +69,6 @@ $formOptions = ['type' => 'file'];
         <?= $this->Form->end() ?>
     </div>
 </div>
-
 <?php
 /**
  * @todo  Load when needed.
@@ -79,6 +78,7 @@ $formOptions = ['type' => 'file'];
 echo $this->Html->css('QoboAdminPanel.fileinput.min', ['block' => 'cssBottom']);
 echo $this->Html->script('QoboAdminPanel.canvas-to-blob.min', ['block' => 'scriptBottom']);
 echo $this->Html->script('QoboAdminPanel.fileinput.min', ['block' => 'scriptBottom']);
+echo $this->Html->script('QoboAdminPanel.fileinput-load', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.bootstrap-typeahead.min.js', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.typeahead', ['block' => 'scriptBottom']);
 ?>

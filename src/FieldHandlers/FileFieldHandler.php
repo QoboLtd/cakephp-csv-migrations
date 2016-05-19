@@ -25,7 +25,6 @@ class FileFieldHandler extends BaseFieldHandler
             $label = $cakeView->Form->label($field);
             $result = sprintf(self::WRAPPER, $label, $uploadField);
         } else {
-            $label = $cakeView->Form->label($field);
             $cakeView->loadHelper('Burzum/FileStorage.Storage', [
                 'pathBuilderOptions' => [
                     'pathPrefix' => '/uploads'
@@ -35,22 +34,10 @@ class FileFieldHandler extends BaseFieldHandler
                 ->where(['id' => $data])
                 ->first();
             $url = $cakeView->Storage->url($entity);
-            $viewLink = $cakeView->Html->link(
-                __d('CsvMigrations', 'View File'),
-                $cakeView->Url->build($url),
-                ['target' => '_blank']
-            );
-            $unlinkCta = $cakeView->Form->postLink(
-                '',
-                ['action' => 'unlinkUpload', $data],
-                [
-                    'confirm' => __d('CsvMigration', 'Are you sure you want to unlink?'),
-                    'title' => __d('CsvMigration', 'Unlink upload'),
-                    'class' => 'btn btn-default glyphicon glyphicon-trash'
-                ]
-            );
-            $div = sprintf(self::DIV, $viewLink, $unlinkCta);
-            $result = sprintf(self::WRAPPER, $label, $div);
+            $img = $cakeView->Html->image($url);
+            $uploadField = $cakeView->Form->file('UploadDocuments.file', ['data-upload-url' => $url]);
+            $label = $cakeView->Form->label($field);
+            $result = sprintf(self::WRAPPER, $label, $uploadField);
         }
 
         return $result;

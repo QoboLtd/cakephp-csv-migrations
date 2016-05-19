@@ -169,9 +169,31 @@ class ViewMenuListener implements EventListenerInterface
             $controllerName = $request->plugin . '.' . $controllerName;
         }
 
-        $displayField = TableRegistry::get($controllerName)->displayField();
+        $model = TableRegistry::get($controllerName);
 
-        $btnChangelog = $appView->Html->link(
+        $config = $model->getConfig();
+
+        $displayField = $model->displayField();
+
+        /**
+         * Conversion logic
+         * @todo probably this has to be moved to another plugin
+         */
+        if (!empty($config['conversion']['modules'])) {
+            $btnConvert = ' ' . $appView->Html->link(
+                '',
+                [
+                    'plugin' => null,
+                    'controller' => 'conversions',
+                    'action' => 'convert',
+                    $controllerName,
+                    $options['entity']->id
+                ],
+                ['title' => __('Convert'), 'class' => 'btn btn-default glyphicon glyphicon-copy']
+            );
+        }
+
+        $btnChangelog = ' ' . $appView->Html->link(
             '',
             [
                 'plugin' => null,
@@ -198,43 +220,69 @@ class ViewMenuListener implements EventListenerInterface
             ]
         );
 
-        $menu = [
-            [
-                'label' => $btnChangelog,
+        $menu = [];
+        /**
+         * Conversion logic
+         * @todo probably this has to be moved to another plugin
+         */
+        if (!empty($config['conversion']['modules'])) {
+            $menu[] = [
+                'label' => $btnConvert,
                 'url' => [
                     'plugin' => null,
-                    'controller' => 'LogAudit',
-                    'action' => 'changelog',
+                    'controller' => 'conversions',
+                    'action' => 'convert',
+                    $controllerName,
                     $options['entity']->id
                 ],
                 'capabilities' => 'fromUrl'
+            ];
+        }
+        $menu[] = [
+            'label' => $btnChangelog,
+            'url' => [
+                'plugin' => null,
+                'controller' => 'LogAudit',
+                'action' => 'changelog',
+                $controllerName,
+                $options['entity']->id
             ],
-            [
-                'label' => $btnEdit,
-                'url' => [
-                    'plugin' => $request->plugin,
-                    'controller' => $request->controller,
-                    'action' => 'edit',
-                    $options['entity']->id
-                ],
-                'capabilities' => 'fromUrl'
+            'capabilities' => 'fromUrl'
+        ];
+        $menu[] = [
+            'label' => $btnEdit,
+            'url' => [
+                'plugin' => $request->plugin,
+                'controller' => $request->controller,
+                'action' => 'edit',
+                $options['entity']->id
             ],
-            [
-                'label' => $btnDel,
-                'url' => [
-                    'plugin' => $request->plugin,
-                    'controller' => $request->controller,
-                    'action' => 'delete',
-                    $options['entity']->id
-                ],
-                'capabilities' => 'fromUrl'
-            ]
+            'capabilities' => 'fromUrl'
+        ];
+        $menu[] = [
+            'label' => $btnDel,
+            'url' => [
+                'plugin' => $request->plugin,
+                'controller' => $request->controller,
+                'action' => 'delete',
+                $options['entity']->id
+            ],
+            'capabilities' => 'fromUrl'
         ];
 
+        $result = null;
         if ($appView->elementExists(static::MENU_ELEMENT)) {
-            $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
+            $result .= $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
         } else {
-            $result = $btnChangelog . $btnEdit . $btnDel;
+            /**
+             * Conversion logic
+             * @todo probably this has to be moved to another plugin
+             */
+            if (!empty($config['conversion']['modules'])) {
+                $result .= $btnConvert;
+            }
+
+            $result .= $btnChangelog . $btnEdit . $btnDel;
         }
 
         return $result;

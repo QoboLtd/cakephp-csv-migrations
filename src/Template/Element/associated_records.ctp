@@ -26,11 +26,7 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
         add to embedded fields
          */
         $embFields[] = $assocData['class_name'] . '.' . $assocData['foreign_key'];
-        if (0 === count($assocData['records'])) {
-            unset($csvAssociatedRecords['manyToMany'][$tabName]);
-        } else {
-            $panels[$tabName] = $csvAssociatedRecords['manyToMany'][$tabName];
-        }
+        $panels[$tabName] = $csvAssociatedRecords['manyToMany'][$tabName];
     }
 }
 ?>
@@ -132,6 +128,8 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                 echo $this->Form->end();
             }
             ?>
+
+            <?php if (!empty($assocData['records'])) : ?>
                 <div class=" table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -193,6 +191,7 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                         </tbody>
                     </table>
                 </div>
+            <?php endif; ?>
             </div>
         <?php $active = '';
     }

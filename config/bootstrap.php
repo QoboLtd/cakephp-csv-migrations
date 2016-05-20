@@ -1,4 +1,6 @@
 <?php
+use Burzum\FileStorage\Storage\Listener\BaseListener;
+use Burzum\FileStorage\Storage\StorageManager;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use CsvMigrations\Events\ViewMenuListener;
@@ -9,3 +11,19 @@ Configure::write('CsvMigrations.lists.path', CONFIG . 'CsvMigrations' . DS . 'li
 Configure::write('CsvMigrations.migrations.filename', 'migration');
 
 EventManager::instance()->on(new ViewMenuListener());
+
+StorageManager::config(
+    'Local',
+    [
+        'adapterOptions' => [WWW_ROOT, true],
+        'adapterClass' => '\Gaufrette\Adapter\Local',
+        'class' => '\Gaufrette\Filesystem'
+    ]
+);
+$listener = new BaseListener([
+    'pathBuilderOptions' => [
+        'pathPrefix' => '/uploads'
+    ]
+]);
+
+EventManager::instance()->on($listener);

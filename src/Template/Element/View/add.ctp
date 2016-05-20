@@ -45,10 +45,16 @@ if (!empty($this->request->query['embedded'])) {
     $formOptions['data-embedded'] = $first . (!empty($parts) ? '[' . implode('][', $parts) . ']' : '');
     $formOptions['url']['prefix'] = 'api';
 }
-?>
 
+/**
+ * @todo Need to handle this for the forms without upload field.
+ * @var array
+ */
+$formOptions = ['type' => 'file'];
+?>
 <div class="row">
     <div class="col-xs-12">
+        <?= $this->Form->create($options['entity'], $formOptions) ?>
     <?php
         /**
          * Conversion logic
@@ -187,10 +193,16 @@ if (!empty($this->request->query['embedded'])) {
         <?php endif; ?>
     </div>
 </div>
-
 <?php
-// enable typeahead and embedded library
-// @todo load these files only if foreign/related field exists
+/**
+ * @todo  Load when needed.
+ * - When there is file input
+ * - load these files only if foreign/related field exists
+ */
+echo $this->Html->css('QoboAdminPanel.fileinput.min', ['block' => 'cssBottom']);
+echo $this->Html->script('QoboAdminPanel.canvas-to-blob.min', ['block' => 'scriptBottom']);
+echo $this->Html->script('QoboAdminPanel.fileinput.min', ['block' => 'scriptBottom']);
+echo $this->Html->script('QoboAdminPanel.fileinput-load', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.bootstrap-typeahead.min.js', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.typeahead', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.embedded', ['block' => 'scriptBottom']);

@@ -206,6 +206,10 @@ class CsvMigration extends AbstractMigration
                 throw new \RuntimeException(sprintf($this->_errorMessages[__FUNCTION__], $colCount, $paramsCount));
             }
             $field = array_combine($this->_fieldParams, $col);
+            // set to uuid if file field
+            if ($this->_isFileField($field['type'])) {
+                $field['type'] = 'uuid';
+            }
             // set to string if list field
             if ($this->_isListField($field['type'])) {
                 $field['type'] = 'string';
@@ -273,6 +277,16 @@ class CsvMigration extends AbstractMigration
             }
         }
         $this->_createFromCsv($newFields);
+    }
+
+    /**
+     * Method that determines, from its type, if field is a file type.
+     * @param  string  $type field type
+     * @return boolean       true if is file field, false otherwise
+     */
+    protected function _isFileField($type)
+    {
+        return $type === 'file';
     }
 
     /**

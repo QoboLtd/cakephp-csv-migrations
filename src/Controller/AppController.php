@@ -75,6 +75,16 @@ class AppController extends BaseController
                 $this->Flash->error(__('The record could not be saved. Please, try again.'));
             }
         }
+
+        /**
+         * Conversion logic
+         * @todo probably this has to be moved to another plugin
+         */
+        if (!empty($this->request->params['convert'])) {
+            $this->request->data = $this->request->params['convert']['data'];
+            $this->set('isConversion', true);
+        }
+
         $this->set(compact('entity'));
         $this->render('CsvMigrations.Common/add');
         $this->set('_serialize', ['entity']);
@@ -93,13 +103,17 @@ class AppController extends BaseController
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $entity = $this->{$this->name}->patchEntity($entity, $this->request->data);
+            /*
+            enable accessibility to associated entity's primary key to avoid associated entity getting flagged as new
+             */
+            $patchOptions = $this->{$this->name}->enablePrimaryKeyAccess();
+            $entity = $this->{$this->name}->patchEntity($entity, $this->request->data, $patchOptions);
             if ($this->{$this->name}->save($entity)) {
                 if ($this->_hasUpload() && !$this->_isInValidUpload()) {
                     $this->_upload($entity);
                 }
                 $this->Flash->success(__('The record has been saved.'));
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'view', $id]);
             } else {
                 $this->Flash->error(__('The record could not be saved. Please, try again.'));
             }
@@ -126,5 +140,29 @@ class AppController extends BaseController
             $this->Flash->error(__('The record could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
+    }
+
+    /**
+     * Unlink method
+     *
+     * @param string $id Entity id.
+     * @param string $assocName Association Name.
+     * @param string $assocId Associated Entity id.
+     * @return \Cake\Network\Response|null Redirects to referer.
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
+    public function unlink($id, $assocName, $assocId)
+    {
+        $this->request->allowMethod(['post']);
+        $entity = $this->{$this->name}->get($id);
+        $assocEntity = $this->{$this->name}->{$assocName}->get($assocId);
+        /*
+        unlink associated record
+         */
+        $this->{$this->name}->{$assocName}->unlink($entity, [$assocEntity]);
+
+        $this->Flash->success(__('The record has been unlinked.'));
+
+        return $this->redirect($this->referer());
     }
 }

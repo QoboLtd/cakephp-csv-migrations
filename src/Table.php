@@ -27,7 +27,6 @@ class Table extends BaseTable
     public function initialize(array $config)
     {
         parent::initialize($config);
-        $this->_setAssociationsFromCsv($config);
 
         /*
         set table/module configuration
@@ -59,6 +58,7 @@ class Table extends BaseTable
             'className' => 'Burzum/FileStorage.FileStorage',
             'foreignKey' => 'foreign_key',
         ]);
+        $this->_setAssociations($config);
     }
 
     /**
@@ -73,6 +73,24 @@ class Table extends BaseTable
             if (!$field[static::PARAM_NON_SEARCHABLE]) {
                 $result[] = $field['name'];
             }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Enable accessibility to associations primary key. Useful for
+     * patching entities with associated data during updating process.
+     *
+     * @return array
+     */
+    public function enablePrimaryKeyAccess()
+    {
+        $result = [];
+        foreach ($this->associations() as $association) {
+            $result['associated'][$association->name()] = [
+                'accessibleFields' => [$association->primaryKey() => true]
+            ];
         }
 
         return $result;

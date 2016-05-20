@@ -3,6 +3,7 @@ namespace CsvMigrations;
 
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
+use CsvMigrations\CsvMigrationsUtils;
 
 trait CsvMigrationsTableTrait
 {
@@ -66,6 +67,37 @@ trait CsvMigrationsTableTrait
      * @param array $config The configuration for the Table.
      * @return void
      */
+    protected function _setAssociations(array $config)
+    {
+        $this->_setAssociationsFromCsv($config);
+        $this->_setAssociationsFromConfig($config);
+    }
+
+    /**
+     * Method that sets current model table associations from config file.
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    protected function _setAssociationsFromConfig(array $config)
+    {
+        if (empty($this->_config['manyToMany']['modules'])) {
+            return;
+        }
+
+        $manyToMany = explode(',', $this->_config['manyToMany']['modules']);
+
+        foreach($manyToMany as $module) {
+            $this->belongsToMany($module);
+        }
+    }
+
+    /**
+     * Method that sets current model table associations from csv file.
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
     protected function _setAssociationsFromCsv(array $config)
     {
         $path = Configure::readOrFail('CsvMigrations.migrations.path');
@@ -91,13 +123,13 @@ trait CsvMigrationsTableTrait
                 Else if it matches associated module, then assume hasMany association.
                  */
                 if ($config['alias'] === $module) {
-                    $assocName = $this->_createAssociationName($assocModule, $row[0]);
+                    $assocName = CsvMigrationsUtils::createAssociationName($assocModule, $row[0]);
                     $this->belongsTo($assocName, [
                         'className' => $assocModule,
                         'foreignKey' => $row[0]
                     ]);
                 } elseif ($config['registryAlias'] === $assocModule) {
-                    $assocName = $this->_createAssociationName($module, $row[0]);
+                    $assocName = CsvMigrationsUtils::createAssociationName($module, $row[0]);
                     $this->hasMany($assocName, [
                         'className' => $module,
                         'foreignKey' => $row[0]
@@ -189,20 +221,5 @@ trait CsvMigrationsTableTrait
         }
 
         return $result;
-    }
-
-    /**
-     * Method that generates association naming based on passed parameters.
-     *
-     * @param  string $module     module name
-     * @param  string $foreignKey foreign key name
-     * @return string
-     */
-    protected function _createAssociationName($module, $foreignKey = '')
-    {
-        if ('' !== $foreignKey) {
-            $foreignKey = Inflector::camelize($foreignKey);
-        }
-        return $foreignKey . $module;
     }
 }

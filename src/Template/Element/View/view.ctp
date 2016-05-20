@@ -2,6 +2,7 @@
 use Cake\Event\Event;
 use Cake\Utility\Inflector;
 use Cake\ORM\TableRegistry;
+use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 $fhf = new FieldHandlerFactory();
@@ -44,6 +45,7 @@ if (empty($options['title'])) {
 
 <div class="row">
     <div class="col-xs-12">
+        <?php if (empty($this->request->query['embedded'])) : ?>
         <div class="row">
             <div class="col-xs-6">
                 <h3><strong><?= $options['title'] ?></strong></h3>
@@ -63,9 +65,16 @@ if (empty($options['title'])) {
                 </div>
             </div>
         </div>
+        <?php endif; ?>
         <?php
-            if (!empty($options['fields'])) :
-                foreach ($options['fields'] as $panelName => $panelFields) :
+        if (!empty($options['fields'])) :
+            $embeddedFields = [];
+            $embeddedDirty = false;
+            foreach ($options['fields'] as $panelName => $panelFields) :
+             if (!empty($this->request->query['embedded'])) {
+                $panelName = Inflector::singularize(Inflector::humanize($this->request->controller)) . ' : ' . $panelName;
+             }
+
         ?>
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -76,21 +85,39 @@ if (empty($options['title'])) {
             <div class="panel-body">
             <?php foreach ($panelFields as $subFields) : ?>
                 <div class="row">
-                <?php foreach ($subFields as $field) : ?>
-                    <?php if ('' !== trim($field)) : ?>
+                <?php
+                foreach ($subFields as $field) :
+                    if ('' !== trim($field['name']) && !$embeddedDirty) :
+                        /*
+                        embedded field
+                         */
+                        if ('EMBEDDED' === $field['name']) {
+                            $embeddedDirty = true;
+                        }
+
+                        /*
+                        non-embedded field
+                         */
+                        if (!$embeddedDirty) :
+                ?>
                         <div class="col-xs-4 col-md-2 text-right">
-                            <strong><?= Inflector::humanize($field); ?>:</strong>
+                            <strong><?= Inflector::humanize($field['name']) ?>:</strong>
                         </div>
                         <div class="col-xs-8 col-md-4">
                         <?php
-                            $tableName = $this->name;
-                            if (!is_null($this->plugin)) {
-                                $tableName = $this->plugin . '.' . $tableName;
+                            $tableName = $field['model'];
+                            if (!is_null($field['plugin'])) {
+                                $tableName = $field['plugin'] . '.' . $tableName;
                             }
-                            $value = $fhf->renderValue($tableName, $field, $options['entity']->$field);
+                            $value = $fhf->renderValue($tableName, $field['name'], $options['entity']->$field['name']);
                             echo !empty($value) ? $value : '&nbsp;';
                         ?>
                         </div>
+                    <?php endif; ?>
+                    <?php elseif ('' !== trim($field['name'])) :
+                        $embeddedFields[] = $field['name'];
+                        $embeddedDirty = false;
+                    ?>
                     <?php else : ?>
                         <div class="col-xs-4 col-md-2 text-right">&nbsp;</div>
                         <div class="col-xs-8 col-md-4">&nbsp;</div>
@@ -101,8 +128,50 @@ if (empty($options['title'])) {
             <?php endforeach; ?>
             </div>
         </div>
-        <?php endforeach; endif; ?>
+            <?php
+            if (empty($embeddedFields)) {
+                continue;
+            }
+
+            /*
+            Fetch embedded module(s) using CakePHP's requestAction() method
+             */
+            foreach ($embeddedFields as $embeddedField) {
+                $embeddedFieldName = substr($embeddedField, strrpos($embeddedField, '.') + 1);
+                list($embeddedPlugin, $embeddedController) = pluginSplit(
+                    substr($embeddedField, 0, strrpos($embeddedField, '.'))
+                );
+
+                $embeddedAssocName = CsvMigrationsUtils::createAssociationName(
+                    $embeddedPlugin . $embeddedController,
+                    $embeddedFieldName
+                );
+
+                /*
+                @note this only works for belongsTo for now.
+                 */
+                $embeddedAssocName = Inflector::underscore(Inflector::singularize($embeddedAssocName));
+
+                if (!empty($options['entity']->$embeddedFieldName)) {
+                    echo $this->requestAction(
+                        [
+                            'plugin' => $embeddedPlugin,
+                            'controller' => $embeddedController,
+                            'action' => $this->request->action
+                        ],
+                        [
+                            'query' => ['embedded' => $this->request->controller . '.' . $embeddedAssocName],
+                            'pass' => [$options['entity']->$embeddedFieldName]
+                        ]
+                    );
+                }
+            }
+            $embeddedFields = [];
+            ?>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 </div>
-
-<?= $this->element('CsvMigrations.associated_records'); ?>
+<?php if (empty($this->request->query['embedded'])) : ?>
+    <?= $this->element('CsvMigrations.associated_records'); ?>
+<?php endif; ?>

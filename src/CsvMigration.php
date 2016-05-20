@@ -2,14 +2,19 @@
 namespace CsvMigrations;
 
 use Cake\Core\Configure;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use CsvMigrations\ConfigurationTrait;
 use Migrations\AbstractMigration;
+use Migrations\Table;
 
 /**
  * CSV Migration class
  */
 class CsvMigration extends AbstractMigration
 {
+    use ConfigurationTrait;
+
     /**
      * File extension
      */
@@ -52,12 +57,19 @@ class CsvMigration extends AbstractMigration
      */
     public function csv(\Migrations\Table $table, $path = '')
     {
+        $this->_table = $table;
+        $this->_handleCsv($path);
+
+        return $this->_table;
+    }
+
+    protected function _handleCsv($path = '')
+    {
         if ('' === trim($path)) {
             $path = Configure::readOrFail('CsvMigrations.migrations.path');
-            $path .= Inflector::pluralize(Inflector::classify($table->getName())) . DS;
+            $path .= Inflector::pluralize(Inflector::classify($this->_table->getName())) . DS;
             $path .= Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . static::EXTENSION;
         }
-        $this->_table = $table;
         $csvData = $this->_getCsvData($path);
         $tableFields = $this->_getTableFields();
 
@@ -66,8 +78,74 @@ class CsvMigration extends AbstractMigration
         } else {
             $this->_updateFromCsv($csvData, $tableFields);
         }
+    }
 
-        return $this->_table;
+    /**
+     * Method that creates joined tables for Many to Many relationships.
+     *
+     * @param  string $tableName current table name
+     * @return array             phinx table instances
+     */
+    public function joins($tableName)
+    {
+        $result = [];
+        $this->_setConfiguration();
+
+        if (empty($this->_config['manyToMany']['modules'])) {
+            return $result;
+        }
+
+        $manyToMany = explode(',', $this->_config['manyToMany']['modules']);
+
+        foreach ($manyToMany as $module) {
+            $tables = [];
+            $tables[] = $tableName;
+            /*
+            associated table name
+             */
+            $moduleTable = TableRegistry::get($module)->table();
+            $tables[] = $moduleTable;
+
+            /*
+            sort them alphabetically for CakePHP naming convention
+             */
+            sort($tables);
+
+            $joinedTable = implode('_', $tables);
+
+            /*
+            skip if join table exists
+             */
+            if ($this->hasTable($joinedTable)) {
+                continue;
+            }
+
+            /*
+            construct instance of the new table
+             */
+            $table = $this->table($joinedTable);
+            $table->addColumn('id', 'uuid', [
+                'null' => false
+            ]);
+            $table->addColumn(Inflector::singularize($tableName) . '_id', 'uuid', [
+                'null' => false
+            ]);
+            $table->addColumn(Inflector::singularize($moduleTable) . '_id', 'uuid', [
+                'null' => false
+            ]);
+            $table->addColumn('created', 'datetime');
+            $table->addColumn('modified', 'datetime');
+            $table->addPrimaryKey(['id']);
+
+            $result[] = $table;
+        }
+
+        return $result;
+    }
+
+    public function alias()
+    {
+        return Inflector::pluralize(Inflector::classify($this->_table->getName()));
     }
 
     /**

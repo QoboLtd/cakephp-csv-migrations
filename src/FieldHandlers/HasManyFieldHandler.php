@@ -7,14 +7,14 @@ use Cake\Utility\Inflector;
 use Cake\View\Helper\IdGeneratorTrait;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
-class RelatedFieldHandler extends BaseFieldHandler
+class HasManyFieldHandler extends BaseFieldHandler
 {
     use IdGeneratorTrait;
 
     /**
      * Field type match pattern
      */
-    const FIELD_TYPE_PATTERN = 'related:';
+    const FIELD_TYPE_PATTERN = 'hasMany:';
 
     /**
      * Action name for html link
@@ -36,8 +36,6 @@ class RelatedFieldHandler extends BaseFieldHandler
         $cakeView = new AppView();
         // get related table name
         $relatedName = $this->_getRelatedName($options['fieldDefinitions']['type']);
-        // get related table's displayField value
-        $displayFieldValue = $this->_getDisplayFieldValueByPrimaryKey($relatedName, $data);
         // get plugin and controller names
         list($relatedPlugin, $relatedController) = pluginSplit($relatedName);
         // remove vendor from plugin name
@@ -52,7 +50,9 @@ class RelatedFieldHandler extends BaseFieldHandler
 
         $input = '';
 
-        $input .= $cakeView->Form->label($field);
+        if (empty($options['embModal'])) {
+            $input .= $cakeView->Form->label($field);
+        }
 
         if (!empty($options['embModal'])) {
             $input .= '<div class="input-group">';
@@ -65,7 +65,7 @@ class RelatedFieldHandler extends BaseFieldHandler
             'type' => 'text',
             'data-type' => 'typeahead',
             'readonly' => (bool)$data,
-            'value' => $displayFieldValue,
+            'value' => null,
             'data-id' => $this->_domId($fieldName),
             'autocomplete' => 'off',
             'required' => (bool)$options['fieldDefinitions']['required'],
@@ -79,6 +79,10 @@ class RelatedFieldHandler extends BaseFieldHandler
 
         if (!empty($options['embModal'])) {
             $input .= '<div class="input-group-btn">';
+            $input .= $cakeView->Form->button(
+                __('<span class="fa fa-link" aria-hidden="true"></span>'),
+                ['class' => 'btn btn-primary', 'title' => __('Link record')]
+            );
             $input .= '<button type="button" class="btn btn-default" data-toggle="modal" data-target="#' . $field . '_modal">';
             $input .= '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>';
             $input .= '</button>';
@@ -86,56 +90,12 @@ class RelatedFieldHandler extends BaseFieldHandler
             $input .= '</div>';
         }
 
-        $input .= $cakeView->Form->input($fieldName, ['type' => 'hidden', 'value' => $data]);
-
-        return $input;
-    }
-
-    /**
-     * Method that renders related field's value.
-     *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string
-     */
-    public function renderValue($table, $field, $data, array $options = [])
-    {
-        // load AppView
-        $cakeView = new AppView();
-        // get related table name
-        $relatedName = $this->_getRelatedName($options['fieldDefinitions']['type']);
-        // get related table's displayField value
-        $displayFieldValue = $this->_getDisplayFieldValueByPrimaryKey($relatedName, $data);
-        // get plugin and controller names
-        list($relatedPlugin, $relatedController) = pluginSplit($relatedName);
-        // remove vendor from plugin name
-        if (!is_null($relatedPlugin)) {
-            $pos = strpos($relatedPlugin, '/');
-            if ($pos !== false) {
-                $relatedPlugin = substr($relatedPlugin, $pos + 1);
-            }
-        }
-
-        $result = null;
-
-        if (empty($data)) {
-            return $result;
-        }
-
-        // generate related record html link
-        $result = $cakeView->Html->link(
-            h($displayFieldValue),
-            $cakeView->Url->build([
-                'plugin' => $relatedPlugin,
-                'controller' => $relatedController,
-                'action' => static::LINK_ACTION,
-                $data
-            ])
+        $input .= $cakeView->Form->input(
+            $options['associated_table_name'] . '._ids[]',
+            ['type' => 'hidden', 'value' => $data, 'id' => $this->_domId($fieldName)]
         );
 
-        return $result;
+        return $input;
     }
 
     /**
@@ -147,39 +107,6 @@ class RelatedFieldHandler extends BaseFieldHandler
     protected function _getRelatedName($type)
     {
         $result = str_replace(static::FIELD_TYPE_PATTERN, '', $type);
-
-        return $result;
-    }
-
-    /**
-     * Method that retrieves provided Table's displayField value,
-     * based on provided primary key's value.
-     *
-     * @param  mixed  $table      Table object or name
-     * @param  sting  $value      query parameter value
-     * @return string             displayField value
-     */
-    protected function _getDisplayFieldValueByPrimaryKey($table, $value)
-    {
-        $result = '';
-
-        if (!is_object($table)) {
-            $table = TableRegistry::get($table);
-        }
-        $primaryKey = $table->primaryKey();
-        $displayField = $table->displayField();
-
-        $query = $table->find('all', [
-            'conditions' => [$primaryKey => $value],
-            'fields' => [$displayField],
-            'limit' => 1
-        ]);
-
-        $record = $query->first();
-
-        if (!is_null($record)) {
-            $result = $record->$displayField;
-        }
 
         return $result;
     }

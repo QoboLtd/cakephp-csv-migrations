@@ -26,6 +26,7 @@ class ViewMenuListener implements EventListenerInterface
         return [
             'View.Index.Menu.Top' => 'getIndexMenuTop',
             'View.Index.Menu.Actions' => 'getIndexMenuActions',
+            'View.Associated.Menu.Actions' => 'getAssociatedMenuActions',
             'View.View.Menu.Top' => 'getViewMenuTop'
         ];
     }
@@ -168,9 +169,31 @@ class ViewMenuListener implements EventListenerInterface
             $controllerName = $request->plugin . '.' . $controllerName;
         }
 
-        $displayField = TableRegistry::get($controllerName)->displayField();
+        $model = TableRegistry::get($controllerName);
 
-        $btnChangelog = $appView->Html->link(
+        $config = $model->getConfig();
+
+        $displayField = $model->displayField();
+
+        /**
+         * Conversion logic
+         * @todo probably this has to be moved to another plugin
+         */
+        if (!empty($config['conversion']['modules'])) {
+            $btnConvert = ' ' . $appView->Html->link(
+                '',
+                [
+                    'plugin' => null,
+                    'controller' => 'conversions',
+                    'action' => 'prepare',
+                    $controllerName,
+                    $options['entity']->id
+                ],
+                ['title' => __('Convert'), 'class' => 'btn btn-default glyphicon glyphicon-copy']
+            );
+        }
+
+        $btnChangelog = ' ' . $appView->Html->link(
             '',
             [
                 'plugin' => null,
@@ -197,34 +220,107 @@ class ViewMenuListener implements EventListenerInterface
             ]
         );
 
-        $menu = [
-            [
-                'label' => $btnChangelog,
+        $menu = [];
+        /**
+         * Conversion logic
+         * @todo probably this has to be moved to another plugin
+         */
+        if (!empty($config['conversion']['modules'])) {
+            $menu[] = [
+                'label' => $btnConvert,
                 'url' => [
                     'plugin' => null,
-                    'controller' => 'LogAudit',
-                    'action' => 'changelog',
+                    'controller' => 'conversions',
+                    'action' => 'convert',
+                    $controllerName,
                     $options['entity']->id
                 ],
                 'capabilities' => 'fromUrl'
+            ];
+        }
+        $menu[] = [
+            'label' => $btnChangelog,
+            'url' => [
+                'plugin' => null,
+                'controller' => 'LogAudit',
+                'action' => 'changelog',
+                $controllerName,
+                $options['entity']->id
             ],
+            'capabilities' => 'fromUrl'
+        ];
+        $menu[] = [
+            'label' => $btnEdit,
+            'url' => [
+                'plugin' => $request->plugin,
+                'controller' => $request->controller,
+                'action' => 'edit',
+                $options['entity']->id
+            ],
+            'capabilities' => 'fromUrl'
+        ];
+        $menu[] = [
+            'label' => $btnDel,
+            'url' => [
+                'plugin' => $request->plugin,
+                'controller' => $request->controller,
+                'action' => 'delete',
+                $options['entity']->id
+            ],
+            'capabilities' => 'fromUrl'
+        ];
+
+        $result = null;
+        if ($appView->elementExists(static::MENU_ELEMENT)) {
+            $result .= $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
+        } else {
+            /**
+             * Conversion logic
+             * @todo probably this has to be moved to another plugin
+             */
+            if (!empty($config['conversion']['modules'])) {
+                $result .= $btnConvert;
+            }
+
+            $result .= $btnChangelog . $btnEdit . $btnDel;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Method that adds elements to associated Element actions menu.
+     *
+     * @param  Cake\Event\Event     $event   Event object
+     * @param  Cake\Network\Request $request Request object
+     * @param  Cake\ORM\Entity      $options Entity options
+     * @return undefined
+     */
+    public function getAssociatedMenuActions(Event $event, Request $request, array $options)
+    {
+        $appView = new AppView();
+
+        $controllerName = $request->controller;
+        if (!empty($request->plugin)) {
+            $controllerName = $request->plugin . '.' . $controllerName;
+        }
+
+        $btnUnlink = $appView->Form->postLink(
+            '',
+            ['action' => 'unlink', $options['entity']->id, $options['assoc_name'], $options['assoc_entity']->id],
+            ['title' => __('Unlink'), 'class' => 'btn btn-default fa fa-chain-broken']
+        );
+
+        $menu = [
             [
-                'label' => $btnEdit,
+                'label' => $btnUnlink,
                 'url' => [
                     'plugin' => $request->plugin,
                     'controller' => $request->controller,
-                    'action' => 'edit',
-                    $options['entity']->id
-                ],
-                'capabilities' => 'fromUrl'
-            ],
-            [
-                'label' => $btnDel,
-                'url' => [
-                    'plugin' => $request->plugin,
-                    'controller' => $request->controller,
-                    'action' => 'delete',
-                    $options['entity']->id
+                    'action' => 'unlink',
+                    $options['entity']->id,
+                    $options['assoc_name'],
+                    $options['assoc_entity']->id
                 ],
                 'capabilities' => 'fromUrl'
             ]
@@ -233,7 +329,7 @@ class ViewMenuListener implements EventListenerInterface
         if ($appView->elementExists(static::MENU_ELEMENT)) {
             $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
         } else {
-            $result = $btnChangelog . $btnEdit . $btnDel;
+            $result = $btnUnlink;
         }
 
         return $result;

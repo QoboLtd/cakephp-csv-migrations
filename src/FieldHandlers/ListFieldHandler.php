@@ -52,8 +52,7 @@ class ListFieldHandler extends BaseFieldHandler
         $input .= $cakeView->Form->select($this->_getFieldName($table, $field, $options), $fieldOptions, [
             'class' => 'form-control',
             'required' => (bool)$options['fieldDefinitions']['required'],
-            'value' => $data,
-            'empty' => true
+            'value' => $data
         ]);
 
         return sprintf(static::INPUT_HTML, $input);

@@ -181,7 +181,7 @@ class ViewMenuListener implements EventListenerInterface
          */
         if (!empty($config['conversion']['modules'])) {
             $btnConvert = ' ' . $appView->Html->link(
-                '',
+                __('Convert') . ' ' . Inflector::singularize($model->alias()),
                 [
                     'plugin' => null,
                     'controller' => 'conversions',
@@ -189,7 +189,7 @@ class ViewMenuListener implements EventListenerInterface
                     $controllerName,
                     $options['entity']->id
                 ],
-                ['title' => __('Convert'), 'class' => 'btn btn-default glyphicon glyphicon-copy']
+                ['title' => __('Convert'), 'class' => 'btn btn-default']
             );
         }
 

@@ -50,7 +50,7 @@ if (!empty($this->request->query['embedded'])) {
  * @todo Need to handle this for the forms without upload field.
  * @var array
  */
-$formOptions = ['type' => 'file'];
+$formOptions['type'] = 'file';
 ?>
 <div class="row">
     <div class="col-xs-12">

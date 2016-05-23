@@ -54,9 +54,8 @@ class RelatedFieldHandler extends BaseFieldHandler
 
         $input .= $cakeView->Form->label($field);
 
-        if (!empty($options['embModal'])) {
-            $input .= '<div class="input-group">';
-        }
+        $input .= '<div class="input-group">';
+        $input .= '<span class="input-group-addon" title="Auto-complete"><strong>&hellip;</strong></span>';
 
         $input .= $cakeView->Form->input($field, [
             'label' => false,
@@ -83,8 +82,8 @@ class RelatedFieldHandler extends BaseFieldHandler
             $input .= '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>';
             $input .= '</button>';
             $input .= '</div>';
-            $input .= '</div>';
         }
+        $input .= '</div>';
 
         $input .= $cakeView->Form->input($fieldName, ['type' => 'hidden', 'value' => $data]);
 

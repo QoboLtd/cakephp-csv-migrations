@@ -28,7 +28,7 @@ trait CsvMigrationUploadTrait
      * @param  Entity $relatedEntity Related entity of the upload.
      * @return void
      */
-    protected function _upload($relatedEntity)
+    protected function _upload($relatedEntity, $uploadField)
     {
         $user = $this->Auth->identify();
         $entity = $this->{$this->name}->uploaddocuments->newEntity($this->request->data);
@@ -40,13 +40,7 @@ trait CsvMigrationUploadTrait
             ]
         );
         if ($this->{$this->name}->uploaddocuments->save($entity)) {
-            /**
-             * Stores the id of the FileStorage entity to the document field.
-             * The 'id' is used to get the entity on renderValue to generate the URL of the uploaded file.
-             * @see CsvMigrations\FieldHandlers\FileFieldHandler renderValue()
-             * @todo document should not be hardcoded.
-             */
-            $relatedEntity = $this->{$this->name}->patchEntity($relatedEntity, ['document' => $entity->get('id')]);
+            $relatedEntity = $this->{$this->name}->patchEntity($relatedEntity, [$uploadField => $entity->get('id')]);
             if (!$this->{$this->name}->save($relatedEntity)) {
                 $this->Flash->error(__('Failed to update related entity.'));
             }
@@ -82,5 +76,23 @@ trait CsvMigrationUploadTrait
     protected function _isInValidUpload()
     {
         return (bool)$this->request->data['UploadDocuments']['file']['error'];
+    }
+
+    /**
+     * Find the field which are typed file
+     *
+     * @return array
+     */
+    protected function _getCsvUploadFields()
+    {
+        $result = [];
+        $csvFields = $this->{$this->name}->getFieldsDefinitions();
+        foreach ($csvFields as $field) {
+            if ($field['type'] === 'file') {
+                $result[] = $field['name'];
+            }
+        }
+
+        return $result;
     }
 }

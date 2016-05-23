@@ -254,6 +254,10 @@ class CsvMigration extends AbstractMigration
                 $this->_table->removeColumn($tableFieldName);
             } else {
                 $result = array_combine($this->_fieldParams, $csvData[$tableFieldName]);
+                // set to uuid if file field
+                if ($this->_isFileField($result['type'])) {
+                    $result['type'] = 'uuid';
+                }
                 // set to string if list field
                 if ($this->_isListField($result['type'])) {
                     $result['type'] = 'string';

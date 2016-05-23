@@ -43,21 +43,18 @@ class ViewMenuListener implements EventListenerInterface
     {
         $appView = new AppView();
 
+        $urlAdd = ['plugin' => $request->plugin, 'controller' => $request->controller, 'action' => 'add'];
+
         $btnAdd = $appView->Html->link(
             __('Add {0}', Inflector::singularize($options['title'])),
-            ['plugin' => $request->plugin, 'controller' => $request->controller, 'action' => 'add'],
+            $urlAdd,
             ['class' => 'btn btn-primary']
         );
-
 
         $menu = [
             [
                 'label' => $btnAdd,
-                'url' => [
-                    'plugin' => $request->plugin,
-                    'controller' => $request->controller,
-                    'action' => 'add'
-                ],
+                'url' => $urlAdd,
                 'capabilities' => 'fromUrl'
             ]
         ];
@@ -90,19 +87,39 @@ class ViewMenuListener implements EventListenerInterface
 
         $displayField = TableRegistry::get($controllerName)->displayField();
 
+        $urlView = [
+            'plugin' => $request->plugin,
+            'controller' => $request->controller,
+            'action' => 'view',
+            $options->id
+        ];
         $btnView = $appView->Html->link(
             '',
-            ['action' => 'view', $options->id],
+            $urlView,
             ['title' => __('View'), 'class' => 'btn btn-default glyphicon glyphicon-eye-open']
         );
+
+        $urlEdit = [
+            'plugin' => $request->plugin,
+            'controller' => $request->controller,
+            'action' => 'edit',
+            $options->id
+        ];
         $btnEdit = ' ' . $appView->Html->link(
             '',
-            ['action' => 'edit', $options->id],
+            $urlEdit,
             ['title' => __('Edit'), 'class' => 'btn btn-default glyphicon glyphicon-pencil']
         );
+
+        $urlDel = [
+            'plugin' => $request->plugin,
+            'controller' => $request->controller,
+            'action' => 'delete',
+            $options->id
+        ];
         $btnDel = ' ' . $appView->Form->postLink(
             '',
-            ['action' => 'delete', $options->id],
+            $urlDel,
             [
                 'confirm' => __('Are you sure you want to delete {0}?', $options->{$displayField}),
                 'title' => __('Delete'),
@@ -113,32 +130,17 @@ class ViewMenuListener implements EventListenerInterface
         $menu = [
             [
                 'label' => $btnView,
-                'url' => [
-                    'plugin' => $request->plugin,
-                    'controller' => $request->controller,
-                    'action' => 'view',
-                    $options->id
-                ],
+                'url' => $urlView,
                 'capabilities' => 'fromUrl'
             ],
             [
                 'label' => $btnEdit,
-                'url' => [
-                    'plugin' => $request->plugin,
-                    'controller' => $request->controller,
-                    'action' => 'edit',
-                    $options->id
-                ],
+                'url' => $urlEdit,
                 'capabilities' => 'fromUrl'
             ],
             [
                 'label' => $btnDel,
-                'url' => [
-                    'plugin' => $request->plugin,
-                    'controller' => $request->controller,
-                    'action' => 'delete',
-                    $options->id
-                ],
+                'url' => $urlDel,
                 'capabilities' => 'fromUrl'
             ]
         ];
@@ -180,39 +182,54 @@ class ViewMenuListener implements EventListenerInterface
          * @todo probably this has to be moved to another plugin
          */
         if (!empty($config['conversion']['modules'])) {
+            $urlConvert = [
+                'plugin' => null,
+                'controller' => 'conversions',
+                'action' => 'prepare',
+                $controllerName,
+                $options['entity']->id
+            ];
             $btnConvert = ' ' . $appView->Html->link(
-                '',
-                [
-                    'plugin' => null,
-                    'controller' => 'conversions',
-                    'action' => 'prepare',
-                    $controllerName,
-                    $options['entity']->id
-                ],
-                ['title' => __('Convert'), 'class' => 'btn btn-default glyphicon glyphicon-copy']
+                __('Convert') . ' ' . Inflector::singularize($model->alias()),
+                $urlConvert,
+                ['title' => __('Convert'), 'class' => 'btn btn-default']
             );
         }
 
+        $urlChangelog = [
+            'plugin' => null,
+            'controller' => 'log_audit',
+            'action' => 'changelog',
+            $controllerName,
+            $options['entity']->id
+        ];
         $btnChangelog = ' ' . $appView->Html->link(
             '',
-            [
-                'plugin' => null,
-                'controller' => 'log_audit',
-                'action' => 'changelog',
-                $controllerName,
-                $options['entity']->id
-            ],
+            $urlChangelog,
             ['title' => __('Changelog'), 'class' => 'btn btn-default glyphicon glyphicon-book']
         );
 
+        $urlEdit = [
+            'plugin' => $request->plugin,
+            'controller' => $request->controller,
+            'action' => 'edit',
+            $options['entity']->id
+        ];
         $btnEdit = ' ' . $appView->Html->link(
             '',
-            ['action' => 'edit', $options['entity']->id],
+            $urlEdit,
             ['title' => __('Edit'), 'class' => 'btn btn-default glyphicon glyphicon-pencil']
         );
+
+        $urlDel = [
+            'plugin' => $request->plugin,
+            'controller' => $request->controller,
+            'action' => 'delete',
+            $options['entity']->id
+        ];
         $btnDel = ' ' . $appView->Form->postLink(
             '',
-            ['action' => 'delete', $options['entity']->id],
+            $urlDel,
             [
                 'confirm' => __('Are you sure you want to delete {0}?', $options['entity']->{$displayField}),
                 'title' => __('Delete'),
@@ -228,45 +245,23 @@ class ViewMenuListener implements EventListenerInterface
         if (!empty($config['conversion']['modules'])) {
             $menu[] = [
                 'label' => $btnConvert,
-                'url' => [
-                    'plugin' => null,
-                    'controller' => 'conversions',
-                    'action' => 'convert',
-                    $controllerName,
-                    $options['entity']->id
-                ],
+                'url' => $urlConvert,
                 'capabilities' => 'fromUrl'
             ];
         }
         $menu[] = [
             'label' => $btnChangelog,
-            'url' => [
-                'plugin' => null,
-                'controller' => 'LogAudit',
-                'action' => 'changelog',
-                $controllerName,
-                $options['entity']->id
-            ],
+            'url' => $urlChangelog,
             'capabilities' => 'fromUrl'
         ];
         $menu[] = [
             'label' => $btnEdit,
-            'url' => [
-                'plugin' => $request->plugin,
-                'controller' => $request->controller,
-                'action' => 'edit',
-                $options['entity']->id
-            ],
+            'url' => $urlEdit,
             'capabilities' => 'fromUrl'
         ];
         $menu[] = [
             'label' => $btnDel,
-            'url' => [
-                'plugin' => $request->plugin,
-                'controller' => $request->controller,
-                'action' => 'delete',
-                $options['entity']->id
-            ],
+            'url' => $urlDel,
             'capabilities' => 'fromUrl'
         ];
 
@@ -305,23 +300,25 @@ class ViewMenuListener implements EventListenerInterface
             $controllerName = $request->plugin . '.' . $controllerName;
         }
 
+        $urlUnlink = [
+            'plugin' => $request->plugin,
+            'controller' => $request->controller,
+            'action' => 'unlink',
+            $options['entity']->id,
+            $options['assoc_name'],
+            $options['assoc_entity']->id
+        ];
+
         $btnUnlink = $appView->Form->postLink(
             '',
-            ['action' => 'unlink', $options['entity']->id, $options['assoc_name'], $options['assoc_entity']->id],
+            $urlUnlink,
             ['title' => __('Unlink'), 'class' => 'btn btn-default fa fa-chain-broken']
         );
 
         $menu = [
             [
                 'label' => $btnUnlink,
-                'url' => [
-                    'plugin' => $request->plugin,
-                    'controller' => $request->controller,
-                    'action' => 'unlink',
-                    $options['entity']->id,
-                    $options['assoc_name'],
-                    $options['assoc_entity']->id
-                ],
+                'url' => $urlUnlink,
                 'capabilities' => 'fromUrl'
             ]
         ];

@@ -6,7 +6,8 @@ var typeahead = typeahead || {};
      * @param {object} options configuration options
      */
     function Typeahead(options) {
-        this.min_length = options.hasOwnProperty('min_length') ? options.min_length : 4;
+        this.min_length = options.hasOwnProperty('min_length') ? options.min_length : 1;
+        this.timeout = options.hasOwnProperty('timeout') ? options.timeout : 300;
     }
 
     /**
@@ -61,8 +62,8 @@ var typeahead = typeahead || {};
             // ajax
             ajax: {
                 url: $(input).data('url'),
-                timeout: 500,
-                triggerLength: 4,
+                timeout: that.timeout,
+                triggerLength: that.min_length,
                 method: 'get',
                 preProcess: function(data) {
                     if (data.success === false) {
@@ -98,7 +99,7 @@ var typeahead = typeahead || {};
         $(input).prop('readonly', true);
     };
 
-    typeahead = new Typeahead([]);
+    typeahead = new Typeahead(typeahead_options);
 
     typeahead.init();
 

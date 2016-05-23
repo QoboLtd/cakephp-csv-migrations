@@ -70,7 +70,7 @@ class AppController extends BaseController
                     $this->_upload($entity);
                 }
                 $this->Flash->success(__('The record has been saved.'));
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'view', $entity->{$this->{$this->name}->primaryKey()}]);
             } else {
                 $this->Flash->error(__('The record could not be saved. Please, try again.'));
             }

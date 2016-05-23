@@ -32,7 +32,7 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
 ?>
 
 <?php if (!empty($panels)) : ?>
-<div class="row">
+<div class="row associated_records">
     <div class="col-xs-12">
         <hr />
         <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
@@ -69,65 +69,70 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
             filtered from embeddedFields array.
              */
             $embField = $assocData['class_name'] . '.' . $assocData['foreign_key'];
-            if (in_array($embField, $embFields)) {
-                $formOptions = [
-                    'url' => [
-                        'plugin' => $this->request->plugin,
-                        'controller' => $this->request->controller,
-                        'action' => 'edit',
-                        $this->request->pass[0]
-                    ]
-                ];
+            if (in_array($embField, $embFields)) : ?>
+            <div class="row">
+                <div class="typeahead-container col-md-4 col-md-offset-8">
+                <?php
+                    $formOptions = [
+                        'url' => [
+                            'plugin' => $this->request->plugin,
+                            'controller' => $this->request->controller,
+                            'action' => 'edit',
+                            $this->request->pass[0]
+                        ]
+                    ];
 
-                echo $this->Form->create(null, $formOptions);
-                /*
-                non-embedded field
-                 */
-                $tableName = $this->request->controller;
-                if (!is_null($this->request->plugin)) {
-                    $tableName = $this->request->plugin . '.' . $tableName;
-                }
+                    echo $this->Form->create(null, $formOptions);
+                    /*
+                    non-embedded field
+                     */
+                    $tableName = $this->request->controller;
+                    if (!is_null($this->request->plugin)) {
+                        $tableName = $this->request->plugin . '.' . $tableName;
+                    }
 
-                $handlerOptions = [];
-                /*
-                set associated table name to be used on input field's name
-                 */
-                $handlerOptions['associated_table_name'] = $assocData['table_name'];
-                /*
-                set embedded modal flag
-                 */
-                $handlerOptions['embModal'] = true;
-                /*
-                set field type to 'hasMany'
-                 */
-                $handlerOptions['fieldDefinitions']['type'] = 'hasMany:' . $assocData['class_name'];
-                /*
-                set field as required
-                 */
-                $handlerOptions['fieldDefinitions']['required'] = true;
+                    $handlerOptions = [];
+                    /*
+                    set associated table name to be used on input field's name
+                     */
+                    $handlerOptions['associated_table_name'] = $assocData['table_name'];
+                    /*
+                    set embedded modal flag
+                     */
+                    $handlerOptions['embModal'] = true;
+                    /*
+                    set field type to 'hasMany'
+                     */
+                    $handlerOptions['fieldDefinitions']['type'] = 'hasMany:' . $assocData['class_name'];
+                    /*
+                    set field as required
+                     */
+                    $handlerOptions['fieldDefinitions']['required'] = true;
 
-                /*
-                display typeahead field for associated module(s)
-                 */
-                echo $fhf->renderInput(
-                    $tableName,
-                    $assocData['foreign_key'],
-                    null,
-                    $handlerOptions
-                );
+                    /*
+                    display typeahead field for associated module(s)
+                     */
+                    echo $fhf->renderInput(
+                        $tableName,
+                        $assocData['foreign_key'],
+                        null,
+                        $handlerOptions
+                    );
 
-                /*
-                set existing related records as hidden fields
-                 */
-                foreach ($assocData['records'] as $record) {
-                    echo $this->Form->hidden($assocData['table_name'] . '._ids[]', [
-                        'value' => $record->{$assocData['primary_key']}
-                    ]);
-                }
+                    /*
+                    set existing related records as hidden fields
+                     */
+                    foreach ($assocData['records'] as $record) {
+                        echo $this->Form->hidden($assocData['table_name'] . '._ids[]', [
+                            'value' => $record->{$assocData['primary_key']}
+                        ]);
+                    }
 
-                echo $this->Form->end();
-            }
-            ?>
+                    echo $this->Form->end();
+                ?>
+                </div>
+            </div>
+            <?php endif; ?>
 
             <?php if (!empty($assocData['records'])) : ?>
                 <div class=" table-responsive">
@@ -190,6 +195,10 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                         <?php endforeach; ?>
                         </tbody>
                     </table>
+                </div>
+            <?php else : ?>
+                <div class="well">
+                    <?= __('No records found.'); ?>
                 </div>
             <?php endif; ?>
             </div>

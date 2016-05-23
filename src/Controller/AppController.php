@@ -66,8 +66,10 @@ class AppController extends BaseController
         if ($this->request->is('post')) {
             $entity = $this->{$this->name}->patchEntity($entity, $this->request->data);
             if ($this->{$this->name}->save($entity)) {
-                if ($this->_hasUpload() && !$this->_isInValidUpload()) {
-                    $this->_upload($entity);
+                if ($this->_hasUpload()) {
+                    foreach ($this->_getCsvUploadFields() as $field) {
+                        $this->_upload($entity, $field);
+                    }
                 }
                 $this->Flash->success(__('The record has been saved.'));
                 return $this->redirect(['action' => 'view', $entity->{$this->{$this->name}->primaryKey()}]);

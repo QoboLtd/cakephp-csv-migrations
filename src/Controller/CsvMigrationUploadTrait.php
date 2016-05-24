@@ -40,9 +40,17 @@ trait CsvMigrationUploadTrait
             ]
         );
         if ($this->{$this->name}->uploaddocuments->save($entity)) {
+            $assocFile = $this->{$this->name}->association('documentidfiles');
+            $fileEntity = $this->{$this->name}->documentidfiles->newEntity([
+                        'document_id' => $relatedEntity->get('id'),
+                        'file_id' => $entity->get('id')
+                    ]);
+            if (!$this->{$this->name}->documentidfiles->save($fileEntity)) {
+                $this->Flash->error(__('Failed to update related entity.'));
+            }
             $relatedEntity = $this->{$this->name}->patchEntity($relatedEntity, [$uploadField => $entity->get('id')]);
             if (!$this->{$this->name}->save($relatedEntity)) {
-                $this->Flash->error(__('Failed to update related entity.'));
+                $this->Flash->error(__('Failed to update related to entity\'s field.'));
             }
             $this->Flash->success(__('File uploaded.'));
         } else {

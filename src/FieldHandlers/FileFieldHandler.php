@@ -6,6 +6,10 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
 class FileFieldHandler extends BaseFieldHandler
 {
+    /**
+     * Field type
+     */
+    const FIELD_TYPE = 'uuid';
 
     /**
      * Defines the layout of the wrapper
@@ -71,5 +75,18 @@ class FileFieldHandler extends BaseFieldHandler
             ['target' => '_blank']
         );
         return $result;
+    }
+
+    /**
+     * Method responsible for converting field for migration.
+     *
+     * @param  string $field field name
+     * @return array         converted field
+     */
+    public function convertField($field)
+    {
+        $field['type'] = static::FIELD_TYPE;
+
+        return $field;
     }
 }

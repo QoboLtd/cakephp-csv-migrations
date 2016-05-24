@@ -9,6 +9,11 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 class ListFieldHandler extends BaseFieldHandler
 {
     /**
+     * Field type
+     */
+    const FIELD_TYPE = 'string';
+
+    /**
      * Field type match pattern
      */
     const FIELD_TYPE_PATTERN = 'list:';
@@ -85,6 +90,19 @@ class ListFieldHandler extends BaseFieldHandler
         }
 
         return $result;
+    }
+
+    /**
+     * Method responsible for converting field for migration.
+     *
+     * @param  string $field field name
+     * @return array         converted field
+     */
+    public function convertField($field)
+    {
+        $field['type'] = static::FIELD_TYPE;
+
+        return $field;
     }
 
     /**

@@ -12,6 +12,11 @@ class RelatedFieldHandler extends BaseFieldHandler
     use IdGeneratorTrait;
 
     /**
+     * Field type
+     */
+    const FIELD_TYPE = 'uuid';
+
+    /**
      * Field type match pattern
      */
     const FIELD_TYPE_PATTERN = 'related:';
@@ -135,6 +140,19 @@ class RelatedFieldHandler extends BaseFieldHandler
         );
 
         return $result;
+    }
+
+    /**
+     * Method responsible for converting field for migration.
+     *
+     * @param  string $field field name
+     * @return array         converted field
+     */
+    public function convertField($field)
+    {
+        $field['type'] = static::FIELD_TYPE;
+
+        return $field;
     }
 
     /**

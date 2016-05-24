@@ -47,7 +47,7 @@ class FieldHandlerFactory
      * @var array
      */
     protected $_errorMessages = [
-        '_validateField' => 'Field type [%s] not supported'
+        '_validateField' => 'Field [%s] type [%s] not supported'
     ];
 
     /**
@@ -110,7 +110,7 @@ class FieldHandlerFactory
     protected function _validateField(array $field)
     {
         if (!in_array($field['type'], $this->_supportedTypes)) {
-            throw new \RuntimeException(sprintf($this->_errorMessages[__FUNCTION__], $field['type']));
+            throw new \RuntimeException(sprintf($this->_errorMessages[__FUNCTION__], $field['name'], $field['type']));
         }
 
         return true;

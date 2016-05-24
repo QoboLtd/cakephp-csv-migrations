@@ -37,6 +37,20 @@ class FieldHandlerFactory
     protected $_tableInstances = [];
 
     /**
+     * Supported field types
+     * @var array
+     */
+    protected $_supportedTypes = ['uuid', 'string', 'integer', 'boolean', 'text', 'datetime', 'date', 'time'];
+
+    /**
+     * Error messages
+     * @var array
+     */
+    protected $_errorMessages = [
+        '_validateField' => 'Field type [%s] not supported'
+    ];
+
+    /**
      * Method responsible for rendering field's input.
      *
      * @param  mixed  $table   name or instance of the Table
@@ -70,6 +84,36 @@ class FieldHandlerFactory
         $handler = $this->_getHandler($options['fieldDefinitions']['type']);
 
         return $handler->renderValue($table, $field, $data, $options);
+    }
+
+    /**
+     * Method responsible for converting field for migration.
+     *
+     * @param  string $field field name
+     * @return array         converted field
+     */
+    public function convertField($field)
+    {
+        $handler = $this->_getHandler($field['type']);
+        $field = $handler->convertField($field);
+        $this->_validateField($field);
+
+        return $field;
+    }
+
+    /**
+     * Validate field.
+     * @param  array $field field info
+     * @throws \RuntimeException when field type is not supported
+     * @return bool
+     */
+    protected function _validateField(array $field)
+    {
+        if (!in_array($field['type'], $this->_supportedTypes)) {
+            throw new \RuntimeException(sprintf($this->_errorMessages[__FUNCTION__], $field['type']));
+        }
+
+        return true;
     }
 
     /**

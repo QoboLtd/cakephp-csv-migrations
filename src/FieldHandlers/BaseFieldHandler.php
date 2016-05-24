@@ -61,6 +61,17 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     }
 
     /**
+     * Method responsible for converting field for migration.
+     *
+     * @param  string $field field name
+     * @return array         converted field
+     */
+    public function convertField($field)
+    {
+        return $field;
+    }
+
+    /**
      * Method that generates field name based on its options.
      *
      * @param  \Cake\ORM\Table $table Table instance

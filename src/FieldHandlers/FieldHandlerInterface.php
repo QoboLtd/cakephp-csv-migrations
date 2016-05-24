@@ -24,4 +24,12 @@ interface FieldHandlerInterface
      * @return string          field value
      */
     public function renderValue($table, $field, $data, array $options = []);
+
+    /**
+     * Method responsible for converting field for migration.
+     *
+     * @param  string $field field name
+     * @return array         converted field
+     */
+    public function convertField($field);
 }

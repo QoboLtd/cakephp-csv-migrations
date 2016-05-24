@@ -14,6 +14,7 @@ use Migrations\Table;
 class CsvMigration extends AbstractMigration
 {
     use ConfigurationTrait;
+    use MigrationTrait;
 
     /**
      * File extension
@@ -25,20 +26,6 @@ class CsvMigration extends AbstractMigration
      * @var \Migrations\Table
      */
     protected $_table;
-
-    /**
-     * Field parameters
-     * @var array
-     */
-    protected $_fieldParams = ['name', 'type', 'limit', 'required', 'non-searchable'];
-
-    /**
-     * Error messages
-     * @var array
-     */
-    protected $_errorMessages = [
-        '_createFromCsv' => 'Field parameters count [%s] does not match required parameters count [%s]'
-    ];
 
     /**
      * Field handler factory instance
@@ -71,6 +58,7 @@ class CsvMigration extends AbstractMigration
             $path .= Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . static::EXTENSION;
         }
         $csvData = $this->_getCsvData($path);
+        $csvData = $this->_prepareCsvData($csvData);
         $tableFields = $this->_getTableFields();
 
         if (empty($tableFields)) {
@@ -149,33 +137,6 @@ class CsvMigration extends AbstractMigration
     }
 
     /**
-     * Method that retrieves csv file data.
-     * @param  string $path csv file path
-     * @return array        csv data
-     * @todo this method should be moved to a Trait class as is used throught Csv Migrations and Csv Views plugins
-     */
-    protected function _getCsvData($path)
-    {
-        $result = [];
-        if (file_exists($path)) {
-            if (false !== ($handle = fopen($path, 'r'))) {
-                $row = 0;
-                while (false !== ($data = fgetcsv($handle, 0, ','))) {
-                    // skip first row
-                    if (0 === $row) {
-                        $row++;
-                        continue;
-                    }
-                    $result[] = $data;
-                }
-                fclose($handle);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Get existing table fields.
      * @return array table fields objects
      */
@@ -199,14 +160,8 @@ class CsvMigration extends AbstractMigration
      */
     protected function _createFromCsv(array $csvData)
     {
-        $paramsCount = count($this->_fieldParams);
         foreach ($csvData as $col) {
-            $colCount = count($col);
-            if ($colCount !== $paramsCount) {
-                throw new \RuntimeException(sprintf($this->_errorMessages[__FUNCTION__], $colCount, $paramsCount));
-            }
-            $field = array_combine($this->_fieldParams, $col);
-            $field = $this->_fhf->convertField($field);
+            $field = $this->_fhf->convertField($col);
 
             $this->_table->addColumn($field['name'], $field['type'], [
                 'limit' => $field['limit'],
@@ -229,8 +184,6 @@ class CsvMigration extends AbstractMigration
      */
     protected function _updateFromCsv(array $csvData, array $tableFields)
     {
-        $csvData = $this->_prepareCsvData($csvData);
-
         // store all table field names
         $tableFieldNames = [];
         foreach ($tableFields as $tableField) {
@@ -241,8 +194,7 @@ class CsvMigration extends AbstractMigration
             if (!in_array($tableFieldName, array_keys($csvData))) {
                 $this->_table->removeColumn($tableFieldName);
             } else {
-                $field = array_combine($this->_fieldParams, $csvData[$tableFieldName]);
-                $field = $this->_fhf->convertField($field);
+                $field = $this->_fhf->convertField($csvData[$tableFieldName]);
 
                 $this->_table->changeColumn($field['name'], $field['type'], [
                     'limit' => $field['limit'],
@@ -259,20 +211,5 @@ class CsvMigration extends AbstractMigration
             }
         }
         $this->_createFromCsv($newFields);
-    }
-
-    /**
-     * Method that restructures csv data for better handling and searching through.
-     * @param  array  $csvData csv data
-     * @return array
-     */
-    protected function _prepareCsvData(array $csvData)
-    {
-        $result = [];
-        foreach ($csvData as $v) {
-            $result[$v[0]] = array_combine($this->_fieldParams, $v);
-        }
-
-        return $result;
     }
 }

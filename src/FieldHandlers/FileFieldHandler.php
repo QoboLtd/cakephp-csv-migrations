@@ -49,18 +49,22 @@ class FileFieldHandler extends BaseFieldHandler
     public function renderValue($table, $field, $data, array $options = [])
     {
         $result = __d('CsvMigration', 'No upload file');
-        if (is_null($data)) {
-            return $result;
-        }
         $cakeView = new AppView();
         $cakeView->loadHelper('Burzum/FileStorage.Storage', [
             'pathBuilderOptions' => [
                 'pathPrefix' => '/uploads'
             ]
         ]);
-        $entity = $table->uploaddocuments->find()
-            ->where(['id' => $data])
-            ->first();
+        $assocFile = $table->association('documentidfiles');
+        if ($assocFile) {
+            $entity = $table->documentidfiles->find()
+                ->where(['file_id' => $data])
+                ->first();
+        } else {
+            $entity = $table->uploaddocuments->find()
+                ->where(['id' => $data])
+                ->first();
+        }
         if (!$entity) {
             return $result;
         }

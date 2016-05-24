@@ -5,7 +5,7 @@ use Cake\Core\Configure;
 use Cake\Utility\Inflector;
 use CsvMigrations\CsvMigrationsUtils;
 
-trait CsvMigrationsTableTrait
+trait MigrationTrait
 {
     /**
      * Field parameters

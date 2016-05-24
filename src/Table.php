@@ -3,6 +3,7 @@ namespace CsvMigrations;
 
 use Cake\ORM\Table as BaseTable;
 use CsvMigrations\ConfigurationTrait;
+use CsvMigrations\MigrationTrait;
 
 /**
  * Accounts Model
@@ -11,7 +12,7 @@ use CsvMigrations\ConfigurationTrait;
 class Table extends BaseTable
 {
     use ConfigurationTrait;
-    use CsvMigrationsTableTrait;
+    use MigrationTrait;
 
     /**
      * Searchable parameter name

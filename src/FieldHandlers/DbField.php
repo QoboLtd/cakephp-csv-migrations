@@ -1,6 +1,8 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use InvalidArgumentException;
+
 class DbField
 {
     /**

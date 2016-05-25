@@ -43,20 +43,19 @@ trait CsvTrait
     /**
      * Method that retrieves csv file data.
      *
-     * @param  string $path     csv file path
-     * @param  array  $skipRows which rows to skip
-     * @return array            csv data
-     * @todo this method should be moved to a Trait class as is used throught Csv Migrations and Csv Views plugins
+     * @param  string $path        csv file path
+     * @param  array  $skipHeaders skip csv headers flag
+     * @return array               csv data
      */
-    protected function _getCsvData($path, array $skipRows = [0])
+    protected function _getCsvData($path, $skipHeaders = true)
     {
         $result = [];
         if (file_exists($path)) {
             if (false !== ($handle = fopen($path, 'r'))) {
                 $row = 0;
                 while (false !== ($data = fgetcsv($handle, 0, ','))) {
-                    // skip first row
-                    if (in_array($row, $skipRows)) {
+                    // skip csv headers
+                    if ($skipHeaders && 0 === $row) {
                         $row++;
                         continue;
                     }

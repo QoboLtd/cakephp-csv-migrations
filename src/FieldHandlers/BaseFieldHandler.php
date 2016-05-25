@@ -7,11 +7,6 @@ use CsvMigrations\FieldHandlers\FieldHandlerInterface;
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
     /**
-     * Field type match pattern
-     */
-    const FIELD_TYPE_PATTERN = '/\(.*?\)/';
-
-    /**
      * Csv field types respective input field types
      * @var array
      */

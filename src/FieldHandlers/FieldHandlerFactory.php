@@ -8,11 +8,6 @@ use CsvMigrations\ForeignKeysHandler;
 class FieldHandlerFactory
 {
     /**
-     * Field limit match pattern
-     */
-    const PATTERN_LIMIT = '/\((\d+)\)/';
-
-    /**
      * Default Field Handler class name
      */
     const DEFAULT_HANDLER_CLASS = 'Default';
@@ -41,19 +36,9 @@ class FieldHandlerFactory
      */
     protected $_tableInstances = [];
 
-    /**
-     * Supported field types
-     * @var array
+    /**     * @var array
      */
     protected $_supportedTypes = ['uuid', 'string', 'integer', 'boolean', 'text', 'datetime', 'date', 'time'];
-
-    /**
-     * Error messages
-     * @var array
-     */
-    protected $_errorMessages = [
-        '_validateField' => 'Field [%s] type [%s] not supported'
-    ];
 
     /**
      * Method responsible for rendering field's input.
@@ -105,21 +90,6 @@ class FieldHandlerFactory
         $this->_validateField($field);
 
         return $field;
-    }
-
-    /**
-     * Validate field.
-     * @param  array $field field info
-     * @throws \RuntimeException when field type is not supported
-     * @return bool
-     */
-    protected function _validateField(array $field)
-    {
-        if (!in_array($field['type'], $this->_supportedTypes)) {
-            throw new \RuntimeException(sprintf($this->_errorMessages[__FUNCTION__], $field['name'], $field['type']));
-        }
-
-        return true;
     }
 
     /**

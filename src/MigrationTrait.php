@@ -5,17 +5,18 @@ use Cake\Core\Configure;
 use Cake\Utility\Inflector;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\CsvTrait;
+use CsvMigrations\FieldHandlers\CsvField;
 
 trait MigrationTrait
 {
     use CsvTrait;
 
     /**
-     * Pattern for associated fields
+     * Associated fields identifier
      *
      * @var string
      */
-    protected $_patternAssoc = 'related:';
+    protected $_assocIdentifier = 'related';
 
     /**
      * Field parameters
@@ -141,13 +142,14 @@ trait MigrationTrait
 
         foreach ($csvData as $module => $fields) {
             foreach ($fields as $row) {
-                $assocModule = $this->_getAssociatedModuleName($row['type']);
+                $csvField = new CsvField($row);
                 /*
                 Skip if not associated module name was found
                  */
-                if ('' === trim($assocModule)) {
+                if ($this->_assocIdentifier !== $csvField->getType()) {
                     continue;
                 }
+                $assocModule = $csvField->getLimit();
 
                 /*
                 If current model alias matches csv module, then assume belongsTo association.
@@ -192,23 +194,6 @@ trait MigrationTrait
                     }
                 }
             }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Method that extracts module name from field type definition.
-     *
-     * @param  string $name field type
-     * @return string
-     */
-    protected function _getAssociatedModuleName($name)
-    {
-        $result = '';
-        if (false !== $pos = strpos($name, $this->_patternAssoc)) {
-            $result = str_replace($this->_patternAssoc, '', $name);
-            $result = Inflector::camelize($result);
         }
 
         return $result;

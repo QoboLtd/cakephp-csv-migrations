@@ -162,18 +162,24 @@ class CsvMigration extends AbstractMigration
     protected function _createFromCsv(array $csvData)
     {
         foreach ($csvData as $col) {
-            $csvField = new CsvField($col['name'], $col['type'], $col['required'], $col['non-searchable']);
-            $dbField = $this->_fhf->fieldToDb($csvField);
+            $csvField = new CsvField($col);
+            $dbFields = $this->_fhf->fieldToDb($csvField);
 
-            $this->_table->addColumn($dbField->getName(), $dbField->getType(), [
-                'limit' => $dbField->getLimit(),
-                'null' => $dbField->getRequired() ? false : true
-            ]);
-            // set id as primary key
-            if ('id' === $dbField->getName()) {
-                $this->_table->addPrimaryKey([
-                    $dbField->getName(),
+            if (empty($dbFields)) {
+                continue;
+            }
+
+            foreach ($dbFields as $dbField) {
+                $this->_table->addColumn($dbField->getName(), $dbField->getType(), [
+                    'limit' => $dbField->getLimit(),
+                    'null' => $dbField->getRequired() ? false : true
                 ]);
+                // set id as primary key
+                if ('id' === $dbField->getName()) {
+                    $this->_table->addPrimaryKey([
+                        $dbField->getName(),
+                    ]);
+                }
             }
         }
     }
@@ -196,19 +202,19 @@ class CsvMigration extends AbstractMigration
             if (!in_array($tableFieldName, array_keys($csvData))) {
                 $this->_table->removeColumn($tableFieldName);
             } else {
-                $field = $csvData[$tableFieldName];
-                $csvField = new CsvField(
-                    $field['name'],
-                    $field['type'],
-                    $field['required'],
-                    $field['non-searchable']
-                );
-                $dbField = $this->_fhf->fieldToDb($csvField);
+                $csvField = new CsvField($csvData[$tableFieldName]);
+                $dbFields = $this->_fhf->fieldToDb($csvField);
 
-                $this->_table->changeColumn($dbField->getName(), $dbField->getType(), [
-                    'limit' => $dbField->getLimit(),
-                    'null' => (bool)$dbField->getRequired() ? false : true
-                ]);
+                if (empty($dbFields)) {
+                    continue;
+                }
+
+                foreach ($dbFields as $dbField) {
+                    $this->_table->changeColumn($dbField->getName(), $dbField->getType(), [
+                        'limit' => $dbField->getLimit(),
+                        'null' => (bool)$dbField->getRequired() ? false : true
+                    ]);
+                }
             }
         }
 

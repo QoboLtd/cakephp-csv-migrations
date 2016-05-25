@@ -44,7 +44,9 @@ trait MigrationTrait
         $csvData = [];
         foreach ($csvFiles as $module => $paths) {
             foreach ($paths as $path) {
-                $csvData[$module] = $this->_getCsvData($path);
+                $csvData[$module] = $this->_prepareCsvData(
+                    $this->_getCsvData($path)
+                );
             }
         }
 

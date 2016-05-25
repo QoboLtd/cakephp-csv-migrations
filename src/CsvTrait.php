@@ -6,6 +6,17 @@ use Cake\Core\Configure;
 trait CsvTrait
 {
     /**
+     * Field parameters. Order is important.
+     * @var array
+     */
+    private $__defaultParams = [
+        'name' => '',
+        'type' => '',
+        'required' => '',
+        'non-searchable' => ''
+    ];
+
+    /**
      * Method that restructures csv data for better handling and searching through.
      *
      * @param  array  $csvData csv data
@@ -15,8 +26,15 @@ trait CsvTrait
     {
         $result = [];
         foreach ($csvData as $col) {
-            $col += array_values($this->_defaultParams);
-            $result[$col[0]] = array_combine(array_keys($this->_defaultParams), $col);
+            $fields = array_keys($this->__defaultParams);
+            $namedCol = array();
+            foreach ($fields as $i => $field) {
+                if (!empty($col[$i])) {
+                    $namedCol[$field] = $col[$i];
+                }
+            }
+            $namedCol = array_merge($this->__defaultParams, $namedCol);
+            $result[$namedCol['name']] = $namedCol;
         }
 
         return $result;

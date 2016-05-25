@@ -3,6 +3,7 @@ namespace CsvMigrations\FieldHandlers;
 
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\ForeignKeysHandler;
 
 class FieldHandlerFactory
@@ -77,17 +78,15 @@ class FieldHandlerFactory
     }
 
     /**
-     * Method responsible for converting field for migration.
+     * Method responsible for converting csv field instance to database field instance.
      *
-     * @param  string $field field name
-     * @return array         converted field
+     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @return \CsvMigrations\FieldHandlers\DbFieldld            DbField instance
      */
-    public function fieldToDb($field)
+    public function fieldToDb(CsvField $csvField)
     {
-        $handler = $this->_getHandler($field['type']);
-        $field = $handler->fieldToDb($field);
-
-        $this->_validateField($field);
+        $handler = $this->_getHandler($csvField->getType());
+        $field = $handler->fieldToDb($csvField);
 
         return $field;
     }

@@ -93,16 +93,22 @@ class ListFieldHandler extends BaseFieldHandler
     }
 
     /**
-     * Method responsible for converting field for migration.
+     * Method responsible for converting csv field instance to database field instance.
      *
-     * @param  string $field field name
-     * @return array         converted field
+     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @return \CsvMigrations\FieldHandlers\DbField            DbField instance
      */
-    public function fieldToDb($field)
+    public function fieldToDb(CsvField $csvField)
     {
-        $field['type'] = static::FIELD_TYPE;
+        $dbField = new DbField(
+            $csvField->getName(),
+            static::FIELD_TYPE,
+            null,
+            $csvField->getRequired(),
+            $csvField->getNonSearchable()
+        );
 
-        return $field;
+        return $dbField;
     }
 
     /**

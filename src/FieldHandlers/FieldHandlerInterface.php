@@ -1,6 +1,8 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use CsvMigrations\FieldHandlers\CsvField;
+
 interface FieldHandlerInterface
 {
     /**
@@ -26,10 +28,10 @@ interface FieldHandlerInterface
     public function renderValue($table, $field, $data, array $options = []);
 
     /**
-     * Method responsible for converting field for migration.
+     * Method responsible for converting csv field instance to database field instance.
      *
-     * @param  string $field field name
-     * @return array         converted field
+     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @return \CsvMigrations\FieldHandlers\DbField            DbField instance
      */
-    public function fieldToDb($field);
+    public function fieldToDb(CsvField $csvField);
 }

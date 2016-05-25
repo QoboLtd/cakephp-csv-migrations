@@ -12,23 +12,16 @@ trait MigrationTrait
     use CsvTrait;
 
     /**
+     * File extension
+     */
+    private $__extension = 'csv';
+
+    /**
      * Associated fields identifier
      *
      * @var string
      */
-    protected $_assocIdentifier = 'related';
-
-    /**
-     * Field parameters
-     *
-     * @var array
-     */
-    protected $_defaultParams = [
-        'name' => '',
-        'type' => '',
-        'required' => '',
-        'non-searchable' => ''
-    ];
+    private $__assocIdentifier = 'related';
 
     /**
      * Method that retrieves fields from csv file and returns them in associate array format.
@@ -38,49 +31,9 @@ trait MigrationTrait
     public function getFieldsDefinitions()
     {
         $path = Configure::readOrFail('CsvMigrations.migrations.path') . $this->alias() . DS;
+        $path .= Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . $this->__extension;
 
-        $csvFiles = $this->_getCsvFile($path);
-
-        $csvData = [];
-        foreach ($csvFiles as $module => $paths) {
-            foreach ($paths as $path) {
-                $csvData[$module] = $this->_prepareCsvData(
-                    $this->_getCsvData($path)
-                );
-            }
-        }
-
-        $result = [];
-        if (!empty($csvData)) {
-            foreach ($csvData as $module => $fields) {
-                foreach ($fields as $row) {
-                    $field = array_combine(array_keys($this->_defaultParams), $row);
-                    $result[$field['name']] = $field;
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Method that retrieves csv file path from specified directory.
-     *
-     * @param  string $path directory to search in
-     * @return array        csv file path
-     */
-    protected function _getCsvFile($path)
-    {
-        $result = [];
-        $fileName = Configure::readOrFail('CsvMigrations.migrations.filename');
-        if (file_exists($path)) {
-            $di = new \DirectoryIterator($path);
-            foreach ($di as $fileInfo) {
-                if ($fileInfo->isFile() && $fileName . '.csv' === $fileInfo->getFilename()) {
-                    $result[$this->alias()][] = $fileInfo->getPathname();
-                }
-            }
-        }
+        $result = $this->_prepareCsvData($this->_getCsvData($path));
 
         return $result;
     }
@@ -146,7 +99,7 @@ trait MigrationTrait
                 /*
                 Skip if not associated module name was found
                  */
-                if ($this->_assocIdentifier !== $csvField->getType()) {
+                if ($this->__assocIdentifier !== $csvField->getType()) {
                     continue;
                 }
                 $assocModule = $csvField->getLimit();

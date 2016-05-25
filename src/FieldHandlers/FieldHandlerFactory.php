@@ -8,6 +8,11 @@ use CsvMigrations\ForeignKeysHandler;
 class FieldHandlerFactory
 {
     /**
+     * Field limit match pattern
+     */
+    const PATTERN_LIMIT = '/\((\d+)\)/';
+
+    /**
      * Default Field Handler class name
      */
     const DEFAULT_HANDLER_CLASS = 'Default';
@@ -201,7 +206,7 @@ class FieldHandlerFactory
      * Method that retrieves handler class name based on provided field type.
      * It also handles more advanced field types like foreign key and list fields.
      * Example: if field type is 'string' then 'StringFieldHandler' will be returned.
-     * Example: if field type is 'related:users' then 'RelatedFieldHandler' will be returned.
+     * Example: if field type is 'related(Users)' then 'RelatedFieldHandler' will be returned.
      *
      * @param  string $type field type
      * @param  bool   $fqcn true to use fully-qualified class name
@@ -209,7 +214,7 @@ class FieldHandlerFactory
      */
     protected function _getHandlerByFieldType($type, $fqcn = false)
     {
-        if (false !== $pos = strpos($type, ':')) {
+        if (false !== $pos = strpos($type, '(')) {
             $type = substr($type, 0, $pos);
         }
 

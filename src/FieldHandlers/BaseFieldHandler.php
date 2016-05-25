@@ -7,6 +7,11 @@ use CsvMigrations\FieldHandlers\FieldHandlerInterface;
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
     /**
+     * Field type match pattern
+     */
+    const FIELD_TYPE_PATTERN = '/\(.*?\)/';
+
+    /**
      * Csv field types respective input field types
      * @var array
      */
@@ -68,6 +73,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function fieldToDb($field)
     {
+        $field['type'] = preg_replace(static::FIELD_TYPE_PATTERN, '', $field['type']);
+
         return $field;
     }
 

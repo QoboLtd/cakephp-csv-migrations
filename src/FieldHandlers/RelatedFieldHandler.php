@@ -19,7 +19,7 @@ class RelatedFieldHandler extends BaseFieldHandler
     /**
      * Field type match pattern
      */
-    const FIELD_TYPE_PATTERN = 'related:';
+    const FIELD_TYPE_PATTERN = '/related\((.*?)\)/';
 
     /**
      * Action name for html link
@@ -163,7 +163,7 @@ class RelatedFieldHandler extends BaseFieldHandler
      */
     protected function _getRelatedName($type)
     {
-        $result = str_replace(static::FIELD_TYPE_PATTERN, '', $type);
+        $result = preg_replace(static::FIELD_TYPE_PATTERN, '$1', $type);
 
         return $result;
     }

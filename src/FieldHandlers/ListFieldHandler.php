@@ -16,7 +16,7 @@ class ListFieldHandler extends BaseFieldHandler
     /**
      * Field type match pattern
      */
-    const FIELD_TYPE_PATTERN = 'list:';
+    const FIELD_TYPE_PATTERN = '/list\((.*?)\)/';
 
     /**
      * Field parameters
@@ -113,7 +113,7 @@ class ListFieldHandler extends BaseFieldHandler
      */
     protected function _getListName($type)
     {
-        $result = str_replace(static::FIELD_TYPE_PATTERN, '', $type);
+        $result = preg_replace(static::FIELD_TYPE_PATTERN, '$1', $type);
 
         return $result;
     }

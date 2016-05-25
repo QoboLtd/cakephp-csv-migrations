@@ -25,7 +25,6 @@ trait MigrationTrait
     protected $_defaultParams = [
         'name' => '',
         'type' => '',
-        'limit' => '',
         'required' => '',
         'non-searchable' => ''
     ];

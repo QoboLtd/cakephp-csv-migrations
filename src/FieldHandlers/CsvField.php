@@ -5,7 +5,36 @@ use InvalidArgumentException;
 
 class CsvField
 {
+    /**
+     * Type and limit matching pattern.
+     * Examples: string(100) or uuid or list(currencies)
+     */
     const PATTERN_TYPE = '/(.*?)\((.*?)\)/';
+
+    /**
+     * Field name property
+     */
+    const FIELD_NAME = 'name';
+
+    /**
+     * Field type property
+     */
+    const FIELD_TYPE = 'type';
+
+    /**
+     * Field limit property
+     */
+    const FIELD_LIMIT = 'limit';
+
+    /**
+     * Field required property
+     */
+    const FIELD_REQUIRED = 'required';
+
+    /**
+     * Field non-searchable property
+     */
+    const FIELD_NON_SEARCHABLE = 'non-searchable';
 
     /**
      * field name
@@ -64,39 +93,50 @@ class CsvField
     /**
      * Constructor
      *
-     * @param string $name          field name
-     * @param string $type          field type
-     * @param string $required      field required flag
-     * @param string $nonSearchable field non-searchable flag
+     * @array string $row csv row
      */
-    public function __construct($name, $type, $required, $nonSearchable)
+    public function __construct(array $row)
     {
-        list($type, $limit) = $this->_extractTypeAndLimit($type);
-        $this->setName($name);
-        $this->setType($type);
-        $this->setLimit($limit);
-        $this->setRequired($required);
-        $this->setNonSearchable($nonSearchable);
+        $this->setName($row[static::FIELD_NAME]);
+        $this->setType($row[static::FIELD_TYPE]);
+        $this->setLimit($row[static::FIELD_TYPE]);
+        $this->setRequired($row[static::FIELD_REQUIRED]);
+        $this->setNonSearchable($row[static::FIELD_NON_SEARCHABLE]);
 
     }
 
     /**
-     * Extract field type and limit from type value.
+     * Extract field type from type value.
      *
      * @param  string $type field type
-     * @return array        field type and limit
+     * @return string       field type
      */
-    protected function _extractTypeAndLimit($type)
+    protected function _extractType($type)
     {
         if (false !== strpos($type, '(')) {
             preg_match(static::PATTERN_TYPE, $type, $matches);
             $type = $matches[1];
+        }
+
+        return $type;
+    }
+
+    /**
+     * Extract field limit from type value.
+     *
+     * @param  string $type field type
+     * @return mixed        field limit
+     */
+    protected function _extractLimit($type)
+    {
+        if (false !== strpos($type, '(')) {
+            preg_match(static::PATTERN_TYPE, $type, $matches);
             $limit = $matches[2];
         } else {
             $limit = null;
         }
 
-        return [$type, $limit];
+        return $limit;
     }
 
     /**
@@ -134,6 +174,8 @@ class CsvField
             throw new InvalidArgumentException('Empty field type is not allowed: ' . $this->getName());
         }
 
+        $type = $this->_extractType($type);
+
         if (!in_array($type, $this->_supportedTypes)) {
             throw new InvalidArgumentException('Unsupported field type: ' . $type);
         }
@@ -156,9 +198,14 @@ class CsvField
      *
      * @param string $limit field limit
      */
-    public function setLimit($limit)
+    public function setLimit($type)
     {
-        $this->_limit = (int)$limit;
+        if (empty($type)) {
+            throw new InvalidArgumentException('Empty field type is not allowed: ' . $this->getName());
+        }
+
+        $limit = $this->_extractLimit($type);
+        $this->_limit = $limit;
     }
 
     /**

@@ -66,7 +66,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * @param  string $field field name
      * @return array         converted field
      */
-    public function convertField($field)
+    public function fieldToDb($field)
     {
         return $field;
     }

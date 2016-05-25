@@ -31,5 +31,5 @@ interface FieldHandlerInterface
      * @param  string $field field name
      * @return array         converted field
      */
-    public function convertField($field);
+    public function fieldToDb($field);
 }

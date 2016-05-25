@@ -161,7 +161,7 @@ class CsvMigration extends AbstractMigration
     protected function _createFromCsv(array $csvData)
     {
         foreach ($csvData as $col) {
-            $field = $this->_fhf->convertField($col);
+            $field = $this->_fhf->fieldToDb($col);
 
             $this->_table->addColumn($field['name'], $field['type'], [
                 'limit' => $field['limit'],
@@ -194,7 +194,7 @@ class CsvMigration extends AbstractMigration
             if (!in_array($tableFieldName, array_keys($csvData))) {
                 $this->_table->removeColumn($tableFieldName);
             } else {
-                $field = $this->_fhf->convertField($csvData[$tableFieldName]);
+                $field = $this->_fhf->fieldToDb($csvData[$tableFieldName]);
 
                 $this->_table->changeColumn($field['name'], $field['type'], [
                     'limit' => $field['limit'],

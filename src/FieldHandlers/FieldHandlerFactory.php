@@ -92,10 +92,11 @@ class FieldHandlerFactory
      * @param  string $field field name
      * @return array         converted field
      */
-    public function convertField($field)
+    public function fieldToDb($field)
     {
         $handler = $this->_getHandler($field['type']);
-        $field = $handler->convertField($field);
+        $field = $handler->fieldToDb($field);
+
         $this->_validateField($field);
 
         return $field;

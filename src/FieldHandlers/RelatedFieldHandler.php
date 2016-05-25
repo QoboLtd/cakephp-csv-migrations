@@ -148,7 +148,7 @@ class RelatedFieldHandler extends BaseFieldHandler
      * @param  string $field field name
      * @return array         converted field
      */
-    public function convertField($field)
+    public function fieldToDb($field)
     {
         $field['type'] = static::FIELD_TYPE;
 

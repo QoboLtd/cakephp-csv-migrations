@@ -81,14 +81,14 @@ class FieldHandlerFactory
      * Method responsible for converting csv field instance to database field instance.
      *
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @return \CsvMigrations\FieldHandlers\DbFieldld            DbField instance
+     * @return array list of DbField instances
      */
     public function fieldToDb(CsvField $csvField)
     {
         $handler = $this->_getHandler($csvField->getType());
-        $field = $handler->fieldToDb($csvField);
+        $fields = $handler->fieldToDb($csvField);
 
-        return $field;
+        return $fields;
     }
 
     /**

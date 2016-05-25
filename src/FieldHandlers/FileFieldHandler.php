@@ -81,18 +81,18 @@ class FileFieldHandler extends BaseFieldHandler
      * Method responsible for converting csv field instance to database field instance.
      *
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @return \CsvMigrations\FieldHandlers\DbField            DbField instance
+     * @return array list of DbField instances
      */
     public function fieldToDb(CsvField $csvField)
     {
-        $dbField = new DbField(
+        $dbFields[] = new DbField(
             $csvField->getName(),
             static::FIELD_TYPE,
-            $csvField->getLimit(),
+            null,
             $csvField->getRequired(),
             $csvField->getNonSearchable()
         );
 
-        return $dbField;
+        return $dbFields;
     }
 }

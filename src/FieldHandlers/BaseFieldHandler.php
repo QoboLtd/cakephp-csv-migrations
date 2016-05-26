@@ -2,6 +2,8 @@
 namespace CsvMigrations\FieldHandlers;
 
 use App\View\AppView;
+use CsvMigrations\FieldHandlers\CsvField;
+use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
 
 abstract class BaseFieldHandler implements FieldHandlerInterface
@@ -58,6 +60,25 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         $result = $data;
 
         return $result;
+    }
+
+    /**
+     * Method responsible for converting csv field instance to database field instance.
+     *
+     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @return array list of DbField instances
+     */
+    public function fieldToDb(CsvField $csvField)
+    {
+        $dbFields[] = new DbField(
+            $csvField->getName(),
+            $csvField->getType(),
+            $csvField->getLimit(),
+            $csvField->getRequired(),
+            $csvField->getNonSearchable()
+        );
+
+        return $dbFields;
     }
 
     /**

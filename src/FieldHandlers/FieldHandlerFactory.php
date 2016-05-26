@@ -3,7 +3,10 @@ namespace CsvMigrations\FieldHandlers;
 
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\ForeignKeysHandler;
+use DirectoryIterator;
+use RegexIterator;
 
 class FieldHandlerFactory
 {
@@ -70,6 +73,40 @@ class FieldHandlerFactory
         $handler = $this->_getHandler($options['fieldDefinitions']['type']);
 
         return $handler->renderValue($table, $field, $data, $options);
+    }
+
+    /**
+     * Method responsible for converting csv field instance to database field instance.
+     *
+     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @return array list of DbField instances
+     */
+    public function fieldToDb(CsvField $csvField)
+    {
+        $handler = $this->_getHandler($csvField->getType());
+        $fields = $handler->fieldToDb($csvField);
+
+        return $fields;
+    }
+
+    /**
+     * Get field handlers list.
+     *
+     * @return array
+     */
+    public static function getList()
+    {
+        $di = new DirectoryIterator(__DIR__);
+        $pattern = '/^(\w+)' . static::HANDLER_SUFFIX . '.php$/';
+        $ri = new RegexIterator($di, $pattern, RegexIterator::REPLACE);
+        $ri->replacement = '$1';
+
+        $result = [];
+        foreach ($ri as $name) {
+            $result[] = Inflector::underscore($name);
+        }
+
+        return $result;
     }
 
     /**
@@ -156,7 +193,7 @@ class FieldHandlerFactory
      * Method that retrieves handler class name based on provided field type.
      * It also handles more advanced field types like foreign key and list fields.
      * Example: if field type is 'string' then 'StringFieldHandler' will be returned.
-     * Example: if field type is 'related:users' then 'RelatedFieldHandler' will be returned.
+     * Example: if field type is 'related(Users)' then 'RelatedFieldHandler' will be returned.
      *
      * @param  string $type field type
      * @param  bool   $fqcn true to use fully-qualified class name
@@ -164,7 +201,7 @@ class FieldHandlerFactory
      */
     protected function _getHandlerByFieldType($type, $fqcn = false)
     {
-        if (false !== $pos = strpos($type, ':')) {
+        if (false !== $pos = strpos($type, '(')) {
             $type = substr($type, 0, $pos);
         }
 

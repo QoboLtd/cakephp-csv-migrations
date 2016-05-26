@@ -6,6 +6,10 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
 class FileFieldHandler extends BaseFieldHandler
 {
+    /**
+     * Field type
+     */
+    const FIELD_TYPE = 'uuid';
 
     /**
      * Defines the layout of the wrapper
@@ -75,5 +79,24 @@ class FileFieldHandler extends BaseFieldHandler
             ['target' => '_blank']
         );
         return $result;
+    }
+
+    /**
+     * Method responsible for converting csv field instance to database field instance.
+     *
+     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @return array list of DbField instances
+     */
+    public function fieldToDb(CsvField $csvField)
+    {
+        $dbFields[] = new DbField(
+            $csvField->getName(),
+            static::FIELD_TYPE,
+            null,
+            $csvField->getRequired(),
+            $csvField->getNonSearchable()
+        );
+
+        return $dbFields;
     }
 }

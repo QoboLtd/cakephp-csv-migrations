@@ -4,15 +4,24 @@ namespace CsvMigrations;
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
 use CsvMigrations\CsvMigrationsUtils;
+use CsvMigrations\CsvTrait;
+use CsvMigrations\FieldHandlers\CsvField;
 
-trait CsvMigrationsTableTrait
+trait MigrationTrait
 {
+    use CsvTrait;
+
     /**
-     * Field parameters
-     *
-     * @var array
+     * File extension
      */
-    protected $_fieldParams = ['name', 'type', 'limit', 'required', 'non-searchable'];
+    private $__extension = 'csv';
+
+    /**
+     * Associated fields identifier
+     *
+     * @var string
+     */
+    private $__assocIdentifier = 'related';
 
     /**
      * Method that retrieves fields from csv file and returns them in associate array format.
@@ -22,41 +31,9 @@ trait CsvMigrationsTableTrait
     public function getFieldsDefinitions()
     {
         $path = Configure::readOrFail('CsvMigrations.migrations.path') . $this->alias() . DS;
+        $path .= Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . $this->__extension;
 
-        $csvFiles = $this->_getCsvFile($path);
-        $csvData = $this->_getCsvData($csvFiles);
-
-        $result = [];
-        if (!empty($csvData)) {
-            foreach ($csvData as $module => $fields) {
-                foreach ($fields as $row) {
-                    $field = array_combine($this->_fieldParams, $row);
-                    $result[$field['name']] = $field;
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Method that retrieves csv file path from specified directory.
-     *
-     * @param  string $path directory to search in
-     * @return array        csv file path
-     */
-    protected function _getCsvFile($path)
-    {
-        $result = [];
-        $fileName = Configure::readOrFail('CsvMigrations.migrations.filename');
-        if (file_exists($path)) {
-            $di = new \DirectoryIterator($path);
-            foreach ($di as $fileInfo) {
-                if ($fileInfo->isFile() && $fileName . '.csv' === $fileInfo->getFilename()) {
-                    $result[$this->alias()][] = $fileInfo->getPathname();
-                }
-            }
-        }
+        $result = $this->_prepareCsvData($this->_getCsvData($path));
 
         return $result;
     }
@@ -102,7 +79,15 @@ trait CsvMigrationsTableTrait
     {
         $path = Configure::readOrFail('CsvMigrations.migrations.path');
         $csvFiles = $this->_getCsvFiles($path);
-        $csvData = $this->_getCsvData($csvFiles);
+
+        $csvData = [];
+        foreach ($csvFiles as $module => $paths) {
+            foreach ($paths as $path) {
+                $csvData[$module] = $this->_prepareCsvData(
+                    $this->_getCsvData($path)
+                );
+            }
+        }
 
         if (empty($csvData)) {
             return;
@@ -110,29 +95,30 @@ trait CsvMigrationsTableTrait
 
         foreach ($csvData as $module => $fields) {
             foreach ($fields as $row) {
-                $assocModule = $this->_getAssociatedModuleName($row[1]);
+                $csvField = new CsvField($row);
                 /*
                 Skip if not associated module name was found
                  */
-                if ('' === trim($assocModule)) {
+                if ($this->__assocIdentifier !== $csvField->getType()) {
                     continue;
                 }
+                $assocModule = $csvField->getLimit();
 
                 /*
                 If current model alias matches csv module, then assume belongsTo association.
                 Else if it matches associated module, then assume hasMany association.
                  */
                 if ($config['alias'] === $module) {
-                    $assocName = CsvMigrationsUtils::createAssociationName($assocModule, $row[0]);
+                    $assocName = CsvMigrationsUtils::createAssociationName($assocModule, $row['name']);
                     $this->belongsTo($assocName, [
                         'className' => $assocModule,
-                        'foreignKey' => $row[0]
+                        'foreignKey' => $row['name']
                     ]);
                 } elseif ($config['registryAlias'] === $assocModule) {
-                    $assocName = CsvMigrationsUtils::createAssociationName($module, $row[0]);
+                    $assocName = CsvMigrationsUtils::createAssociationName($module, $row['name']);
                     $this->hasMany($assocName, [
                         'className' => $module,
-                        'foreignKey' => $row[0]
+                        'foreignKey' => $row['name']
                     ]);
                 }
             }
@@ -161,63 +147,6 @@ trait CsvMigrationsTableTrait
                     }
                 }
             }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Method that retrieves csv file data.
-     *
-     * @param  array $csvFiles csv file path(s)
-     * @return array           csv data
-     */
-    protected function _getCsvData(array $csvFiles)
-    {
-        $result = [];
-        $count = count($this->_fieldParams);
-        foreach ($csvFiles as $module => $paths) {
-            foreach ($paths as $path) {
-                if (file_exists($path)) {
-                    if (false !== ($handle = fopen($path, 'r'))) {
-                        $row = 0;
-                        while (false !== ($data = fgetcsv($handle, 0, ','))) {
-                            // skip first row
-                            if (0 === $row) {
-                                $row++;
-                                continue;
-                            }
-                            /*
-                            Skip if row is incomplete
-                             */
-                            if ($count !== count($data)) {
-                                continue;
-                            }
-
-                            $result[$module][] = $data;
-                        }
-                        fclose($handle);
-                    }
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Method that extracts module name from field type definition.
-     *
-     * @param  string $name field type
-     * @return string
-     */
-    protected function _getAssociatedModuleName($name)
-    {
-        $result = '';
-        $pattern = 'related:';
-        if (false !== $pos = strpos($name, $pattern)) {
-            $result = str_replace($pattern, '', $name);
-            $result = Inflector::camelize($result);
         }
 
         return $result;

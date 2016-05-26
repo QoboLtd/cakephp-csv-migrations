@@ -5,15 +5,17 @@ use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
+use CsvMigrations\FieldHandlers\CsvField;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use Migrations\AbstractMigration;
 use Migrations\Table;
-
 /**
  * CSV Migration class
  */
 class CsvMigration extends AbstractMigration
 {
     use ConfigurationTrait;
+    use MigrationTrait;
 
     /**
      * File extension
@@ -27,25 +29,10 @@ class CsvMigration extends AbstractMigration
     protected $_table;
 
     /**
-     * Field parameters
-     * @var array
+     * Field handler factory instance
+     * @var object
      */
-    protected $_fieldParams = ['name', 'type', 'limit', 'required', 'non-searchable'];
-
-    /**
-     * Supported field types
-     * @var array
-     */
-    protected $_supportedTypes = ['uuid', 'string', 'integer', 'boolean', 'text', 'datetime', 'date', 'time'];
-
-    /**
-     * Error messages
-     * @var array
-     */
-    protected $_errorMessages = [
-        '_createFromCsv' => 'Field parameters count [%s] does not match required parameters count [%s]',
-        '_validateField' => 'Field type [%s] not supported'
-    ];
+    protected $_fhf;
 
     public $autoId = false;
 
@@ -57,6 +44,7 @@ class CsvMigration extends AbstractMigration
      */
     public function csv(\Migrations\Table $table, $path = '')
     {
+        $this->_fhf = new FieldHandlerFactory();
         $this->_table = $table;
         $this->_handleCsv($path);
 
@@ -71,6 +59,7 @@ class CsvMigration extends AbstractMigration
             $path .= Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . static::EXTENSION;
         }
         $csvData = $this->_getCsvData($path);
+        $csvData = $this->_prepareCsvData($csvData);
         $tableFields = $this->_getTableFields();
 
         if (empty($tableFields)) {
@@ -149,33 +138,6 @@ class CsvMigration extends AbstractMigration
     }
 
     /**
-     * Method that retrieves csv file data.
-     * @param  string $path csv file path
-     * @return array        csv data
-     * @todo this method should be moved to a Trait class as is used throught Csv Migrations and Csv Views plugins
-     */
-    protected function _getCsvData($path)
-    {
-        $result = [];
-        if (file_exists($path)) {
-            if (false !== ($handle = fopen($path, 'r'))) {
-                $row = 0;
-                while (false !== ($data = fgetcsv($handle, 0, ','))) {
-                    // skip first row
-                    if (0 === $row) {
-                        $row++;
-                        continue;
-                    }
-                    $result[] = $data;
-                }
-                fclose($handle);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Get existing table fields.
      * @return array table fields objects
      */
@@ -199,34 +161,23 @@ class CsvMigration extends AbstractMigration
      */
     protected function _createFromCsv(array $csvData)
     {
-        $paramsCount = count($this->_fieldParams);
         foreach ($csvData as $col) {
-            $colCount = count($col);
-            if ($colCount !== $paramsCount) {
-                throw new \RuntimeException(sprintf($this->_errorMessages[__FUNCTION__], $colCount, $paramsCount));
+            $csvField = new CsvField($col);
+            $dbFields = $this->_fhf->fieldToDb($csvField);
+
+            if (empty($dbFields)) {
+                continue;
             }
-            $field = array_combine($this->_fieldParams, $col);
-            // set to uuid if file field
-            if ($this->_isFileField($field['type'])) {
-                $field['type'] = 'uuid';
-            }
-            // set to string if list field
-            if ($this->_isListField($field['type'])) {
-                $field['type'] = 'string';
-            }
-            // set to uuid if foreign key
-            if ($this->_isForeignKey($field['type'])) {
-                $field['type'] = 'uuid';
-            }
-            if ($this->_validateField($field)) {
-                $this->_table->addColumn($field['name'], $field['type'], [
-                    'limit' => $field['limit'],
-                    'null' => (bool)$field['required'] ? false : true
+
+            foreach ($dbFields as $dbField) {
+                $this->_table->addColumn($dbField->getName(), $dbField->getType(), [
+                    'limit' => $dbField->getLimit(),
+                    'null' => $dbField->getRequired() ? false : true
                 ]);
                 // set id as primary key
-                if ('id' === $field['name']) {
+                if ('id' === $dbField->getName()) {
                     $this->_table->addPrimaryKey([
-                        $field['name'],
+                        $dbField->getName(),
                     ]);
                 }
             }
@@ -241,8 +192,6 @@ class CsvMigration extends AbstractMigration
      */
     protected function _updateFromCsv(array $csvData, array $tableFields)
     {
-        $csvData = $this->_prepareCsvData($csvData);
-
         // store all table field names
         $tableFieldNames = [];
         foreach ($tableFields as $tableField) {
@@ -253,23 +202,19 @@ class CsvMigration extends AbstractMigration
             if (!in_array($tableFieldName, array_keys($csvData))) {
                 $this->_table->removeColumn($tableFieldName);
             } else {
-                $result = array_combine($this->_fieldParams, $csvData[$tableFieldName]);
-                // set to uuid if file field
-                if ($this->_isFileField($result['type'])) {
-                    $result['type'] = 'uuid';
+                $csvField = new CsvField($csvData[$tableFieldName]);
+                $dbFields = $this->_fhf->fieldToDb($csvField);
+
+                if (empty($dbFields)) {
+                    continue;
                 }
-                // set to string if list field
-                if ($this->_isListField($result['type'])) {
-                    $result['type'] = 'string';
+
+                foreach ($dbFields as $dbField) {
+                    $this->_table->changeColumn($dbField->getName(), $dbField->getType(), [
+                        'limit' => $dbField->getLimit(),
+                        'null' => (bool)$dbField->getRequired() ? false : true
+                    ]);
                 }
-                // set to uuid if foreign key
-                if ($this->_isForeignKey($result['type'])) {
-                    $result['type'] = 'uuid';
-                }
-                $this->_table->changeColumn($result['name'], $result['type'], [
-                    'limit' => $result['limit'],
-                    'null' => (bool)$result['required'] ? false : true
-                ]);
             }
         }
 
@@ -281,65 +226,5 @@ class CsvMigration extends AbstractMigration
             }
         }
         $this->_createFromCsv($newFields);
-    }
-
-    /**
-     * Method that determines, from its type, if field is a file type.
-     * @param  string  $type field type
-     * @return boolean       true if is file field, false otherwise
-     */
-    protected function _isFileField($type)
-    {
-        return $type === 'file';
-    }
-
-    /**
-     * Method that determines, from its type, if field is a list type.
-     * @param  string  $type field type
-     * @return boolean       true if is list field, false otherwise
-     */
-    protected function _isListField($type)
-    {
-        return false !== strpos($type, 'list:');
-    }
-
-    /**
-     * Method that determines, from its type, if field is a foreign key.
-     * @param  string $type field type
-     * @return boolean      true if is foreign key, false otherwise
-     */
-    protected function _isForeignKey($type)
-    {
-        return false !== strpos($type, 'related:');
-    }
-
-    /**
-     * Validate field.
-     * @param  array $field field info
-     * @throws \RuntimeException when field type is not supported
-     * @return bool
-     */
-    protected function _validateField(array $field)
-    {
-        if (!in_array($field['type'], $this->_supportedTypes)) {
-            throw new \RuntimeException(sprintf($this->_errorMessages[__FUNCTION__], $field['type']));
-        }
-
-        return true;
-    }
-
-    /**
-     * Method that restructures csv data for better handling and searching through.
-     * @param  array  $csvData csv data
-     * @return array
-     */
-    protected function _prepareCsvData(array $csvData)
-    {
-        $result = [];
-        foreach ($csvData as $v) {
-            $result[$v[0]] = array_combine($this->_fieldParams, $v);
-        }
-
-        return $result;
     }
 }

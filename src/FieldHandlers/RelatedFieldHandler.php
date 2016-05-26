@@ -12,9 +12,14 @@ class RelatedFieldHandler extends BaseFieldHandler
     use IdGeneratorTrait;
 
     /**
+     * Field type
+     */
+    const FIELD_TYPE = 'uuid';
+
+    /**
      * Field type match pattern
      */
-    const FIELD_TYPE_PATTERN = 'related:';
+    const FIELD_TYPE_PATTERN = '/related\((.*?)\)/';
 
     /**
      * Action name for html link
@@ -138,6 +143,25 @@ class RelatedFieldHandler extends BaseFieldHandler
     }
 
     /**
+     * Method responsible for converting csv field instance to database field instance.
+     *
+     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @return array list of DbField instances
+     */
+    public function fieldToDb(CsvField $csvField)
+    {
+        $dbFields[] = new DbField(
+            $csvField->getName(),
+            static::FIELD_TYPE,
+            null,
+            $csvField->getRequired(),
+            $csvField->getNonSearchable()
+        );
+
+        return $dbFields;
+    }
+
+    /**
      * Method that extracts list name from field type definition.
      *
      * @param  string $type field type
@@ -145,7 +169,7 @@ class RelatedFieldHandler extends BaseFieldHandler
      */
     protected function _getRelatedName($type)
     {
-        $result = str_replace(static::FIELD_TYPE_PATTERN, '', $type);
+        $result = preg_replace(static::FIELD_TYPE_PATTERN, '$1', $type);
 
         return $result;
     }

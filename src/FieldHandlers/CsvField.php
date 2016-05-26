@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use InvalidArgumentException;
 
 class CsvField
@@ -176,7 +177,7 @@ class CsvField
 
         $type = $this->_extractType($type);
 
-        if (!in_array($type, $this->_supportedTypes)) {
+        if (!in_array($type, FieldHandlerFactory::getList())) {
             throw new InvalidArgumentException('Unsupported field type: ' . $type);
         }
 

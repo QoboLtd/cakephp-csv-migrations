@@ -5,6 +5,8 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\ForeignKeysHandler;
+use DirectoryIterator;
+use RegexIterator;
 
 class FieldHandlerFactory
 {
@@ -89,6 +91,26 @@ class FieldHandlerFactory
         $fields = $handler->fieldToDb($csvField);
 
         return $fields;
+    }
+
+    /**
+     * Get field handlers list.
+     *
+     * @return array
+     */
+    public static function getList()
+    {
+        $di = new DirectoryIterator(__DIR__);
+        $pattern = '/^(\w+)' . static::HANDLER_SUFFIX . '.php$/';
+        $ri = new RegexIterator($di, $pattern, RegexIterator::REPLACE);
+        $ri->replacement = '$1';
+
+        $result = [];
+        foreach ($ri as $name) {
+            $result[] = Inflector::underscore($name);
+        }
+
+        return $result;
     }
 
     /**

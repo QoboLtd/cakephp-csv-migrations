@@ -39,10 +39,6 @@ class FieldHandlerFactory
      */
     protected $_tableInstances = [];
 
-    /**     * @var array
-     */
-    protected $_supportedTypes = ['uuid', 'string', 'integer', 'boolean', 'text', 'datetime', 'date', 'time'];
-
     /**
      * Method responsible for rendering field's input.
      *

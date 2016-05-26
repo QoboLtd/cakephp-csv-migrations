@@ -41,13 +41,6 @@ class DbField
     protected $_nonSearchable;
 
     /**
-     * Supported field types
-     *
-     * @var array
-     */
-    protected $_supportedTypes = ['uuid', 'string', 'integer', 'boolean', 'text', 'datetime', 'date', 'time'];
-
-    /**
      * Constructor
      *
      * @param string $name          field name

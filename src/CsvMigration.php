@@ -9,6 +9,8 @@ use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use Migrations\AbstractMigration;
 use Migrations\Table;
+use RuntimeException;
+
 /**
  * CSV Migration class
  */
@@ -40,6 +42,7 @@ class CsvMigration extends AbstractMigration
      * Method that handles migrations using csv file.
      * @param  \Migrations\Table $table Migrations table object
      * @param  string            $path  csv file path
+     * @throws \RuntimeException
      * @return \Migrations\Table
      */
     public function csv(\Migrations\Table $table, $path = '')
@@ -53,12 +56,18 @@ class CsvMigration extends AbstractMigration
 
     protected function _handleCsv($path = '')
     {
+        $tableName = Inflector::pluralize(Inflector::classify($this->_table->getName()));
         if ('' === trim($path)) {
-            $path = Configure::readOrFail('CsvMigrations.migrations.path');
-            $path .= Inflector::pluralize(Inflector::classify($this->_table->getName())) . DS;
+            $path = Configure::readOrFail('CsvMigrations.migrations.path') . $tableName . DS;
             $path .= Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . static::EXTENSION;
         }
+
         $csvData = $this->_getCsvData($path);
+
+        if (empty($csvData)) {
+            throw new RuntimeException('No CSV data found for [' . $tableName . '] module.');
+        }
+
         $csvData = $this->_prepareCsvData($csvData);
         $tableFields = $this->_getTableFields();
 
@@ -155,8 +164,8 @@ class CsvMigration extends AbstractMigration
 
     /**
      * Create new fields from csv data.
+     *
      * @param  array $csvData csv data
-     * @throws \RuntimeException when csv field parameters count does not match
      * @return void
      */
     protected function _createFromCsv(array $csvData)

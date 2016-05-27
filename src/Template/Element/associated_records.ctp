@@ -103,7 +103,7 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                     /*
                     set field type to 'hasMany'
                      */
-                    $handlerOptions['fieldDefinitions']['type'] = 'hasMany:' . $assocData['class_name'];
+                    $handlerOptions['fieldDefinitions']['type'] = 'hasMany(' . $assocData['class_name'] . ')';
                     /*
                     set field as required
                      */

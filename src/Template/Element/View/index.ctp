@@ -64,7 +64,15 @@ if (empty($options['title'])) {
                                 if (!is_null($this->plugin)) {
                                     $tableName = $this->plugin . '.' . $tableName;
                                 }
-                                echo $fhf->renderValue($tableName, $field[0]['name'], $entity->$field[0]['name']);
+                                $renderOptions = [
+                                    'entity' => $entity
+                                ];
+                                echo $fhf->renderValue(
+                                    $tableName,
+                                    $field[0]['name'],
+                                    $entity->$field[0]['name'],
+                                    $renderOptions
+                                );
                             ?>
                             </td>
                         <?php endforeach; ?>

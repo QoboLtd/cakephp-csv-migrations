@@ -109,7 +109,15 @@ if (empty($options['title'])) {
                             if (!is_null($field['plugin'])) {
                                 $tableName = $field['plugin'] . '.' . $tableName;
                             }
-                            $value = $fhf->renderValue($tableName, $field['name'], $options['entity']->$field['name']);
+                            $renderOptions = [
+                                'entity' => $options['entity']
+                            ];
+                            $value = $fhf->renderValue(
+                                $tableName,
+                                $field['name'],
+                                $options['entity']->$field['name'],
+                                $renderOptions
+                            );
                             echo !empty($value) ? $value : '&nbsp;';
                         ?>
                         </div>

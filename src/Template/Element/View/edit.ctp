@@ -73,11 +73,13 @@ $formOptions = ['type' => 'file'];
                                         continue;
                                     }
 
-                                    $handlerOptions = [];
+                                    $renderOptions = [
+                                        'entity' => $options['entity']
+                                    ];
 
                                     if ($embeddedDirty) {
                                         $embeddedFields[] = $field;
-                                        $handlerOptions['embModal'] = true;
+                                        $renderOptions['embModal'] = true;
                                         $field['name'] = substr($field['name'], strrpos($field['name'], '.') + 1);
                                     }
 
@@ -90,13 +92,13 @@ $formOptions = ['type' => 'file'];
                                         $tableName = $field['plugin'] . '.' . $tableName;
                                     }
                                     if (!empty($this->request->query['embedded'])) {
-                                        $handlerOptions['embedded'] = $this->request->query['embedded'];
+                                        $renderOptions['embedded'] = $this->request->query['embedded'];
                                     }
                                     echo $fhf->renderInput(
                                         $tableName,
                                         $field['name'],
                                         $options['entity']->$field['name'],
-                                        $handlerOptions
+                                        $renderOptions
                                     );
                                     echo '</div>';
                                     $embeddedDirty = false;

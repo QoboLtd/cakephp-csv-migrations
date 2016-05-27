@@ -73,25 +73,6 @@ class CsvField
     protected $_nonSearchable;
 
     /**
-     * Supported field types
-     *
-     * @var array
-     */
-    protected $_supportedTypes = [
-        'uuid',
-        'string',
-        'integer',
-        'boolean',
-        'text',
-        'datetime',
-        'date',
-        'time',
-        'list',
-        'related',
-        'file'
-    ];
-
-    /**
      * Constructor
      *
      * @array string $row csv row

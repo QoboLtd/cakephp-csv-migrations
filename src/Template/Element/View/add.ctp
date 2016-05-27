@@ -55,7 +55,6 @@ $formOptions['type'] = 'file';
 ?>
 <div class="row">
     <div class="col-xs-12">
-        <?= $this->Form->create($options['entity'], $formOptions) ?>
     <?php
         /**
          * Conversion logic

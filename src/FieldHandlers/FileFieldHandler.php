@@ -92,7 +92,7 @@ class FileFieldHandler extends BaseFieldHandler
         $dbFields[] = new DbField(
             $csvField->getName(),
             static::FIELD_TYPE,
-            null,
+            $csvField->getLimit(),
             $csvField->getRequired(),
             $csvField->getNonSearchable()
         );

@@ -59,7 +59,7 @@ $formOptions['type'] = 'file';
          * Conversion logic
          * @todo probably this has to be moved to another plugin
          */
-        if (empty($isConversion)) {
+        if (!$this->request->param('pass.conversion')) {
             echo $this->Form->create($options['entity'], $formOptions);
         }
     ?>
@@ -135,16 +135,17 @@ $formOptions['type'] = 'file';
          * Conversion logic
          * @todo probably this has to be moved to another plugin
          */
-        if (empty($isConversion)) {
+        if (!$this->request->param('pass.conversion')) {
             echo $this->Form->button(__('Submit'), ['class' => 'btn btn-primary']);
             echo $this->Form->end();
         }
     ?>
         <?php
         /*
-        Fetch embedded module(s) using CakePHP's requestAction() method
+        Fetch embedded module(s) using CakePHP's requestAction() method,
+        if request is not coming from requestAction()
          */
-        if (!empty($embeddedFields)) :
+        if (!empty($embeddedFields) && !$this->request->param('pass.conversion')) :
             foreach ($embeddedFields as $embeddedField) :
                 $embeddedFieldName = substr($embeddedField['name'], strrpos($embeddedField['name'], '.') + 1);
                 list($embeddedPlugin, $embeddedController) = pluginSplit(

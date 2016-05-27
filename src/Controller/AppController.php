@@ -78,15 +78,6 @@ class AppController extends BaseController
             }
         }
 
-        /**
-         * Conversion logic
-         * @todo probably this has to be moved to another plugin
-         */
-        if (!empty($this->request->params['convert'])) {
-            $this->request->data = $this->request->params['convert']['data'];
-            $this->set('isConversion', true);
-        }
-
         $this->set(compact('entity'));
         $this->render('CsvMigrations.Common/add');
         $this->set('_serialize', ['entity']);

@@ -59,16 +59,10 @@ class FileFieldHandler extends BaseFieldHandler
                 'pathPrefix' => '/uploads'
             ]
         ]);
-        $assocFile = $table->association('documentidfiles');
-        if ($assocFile) {
-            $entity = $table->documentidfiles->find()
-                ->where(['file_id' => $data])
-                ->first();
-        } else {
-            $entity = $table->uploaddocuments->find()
-                ->where(['id' => $data])
-                ->first();
-        }
+        $entity = $table->uploaddocuments->find()
+            ->where(['id' => $data])
+            ->first();
+
         if (!$entity) {
             return $result;
         }

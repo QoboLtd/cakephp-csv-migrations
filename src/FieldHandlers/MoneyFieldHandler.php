@@ -7,6 +7,11 @@ use CsvMigrations\FieldHandlers\ListFieldHandler;
 class MoneyFieldHandler extends ListFieldHandler
 {
     /**
+     * {@inheritDoc}
+     */
+    const FIELD_TYPE_PATTERN = '/money\((.*?)\)/';
+
+    /**
      * Money fields
      *
      * @var array
@@ -14,8 +19,7 @@ class MoneyFieldHandler extends ListFieldHandler
     protected $_fields = [
         'currency' => [
             'type' => 'string',
-            'field' => 'select',
-            'list' => 'currencies'
+            'field' => 'select'
         ],
         'amount' => [
             'type' => 'string',
@@ -24,17 +28,10 @@ class MoneyFieldHandler extends ListFieldHandler
     ];
 
     /**
-     * Method responsible for rendering field's input.
-     *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string          field input
+     * {@inheritDoc}
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        // load AppView
         $cakeView = new AppView();
 
         $input = $cakeView->Form->label($field);
@@ -57,7 +54,7 @@ class MoneyFieldHandler extends ListFieldHandler
             $input .= '<div class="input-group-btn">';
             switch ($preOptions['field']) {
                 case 'select':
-                    $selectOptions = $this->_getSelectOptions($preOptions['list']);
+                    $selectOptions = $this->_getSelectOptions($options['fieldDefinitions']['type']);
                     $input .= $cakeView->Form->select($fullFieldName, $selectOptions, $fieldOptions);
                     break;
 
@@ -73,13 +70,7 @@ class MoneyFieldHandler extends ListFieldHandler
     }
 
     /**
-     * Method that renders list field's value.
-     *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string
+     * {@inheritDoc}
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
@@ -100,7 +91,7 @@ class MoneyFieldHandler extends ListFieldHandler
 
             switch ($preOptions['field']) {
                 case 'select':
-                    $selectOptions = $this->_getSelectOptions($preOptions['list']);
+                    $selectOptions = $this->_getSelectOptions($options['fieldDefinitions']['type']);
                     $result .= h($selectOptions[$data]);
                     break;
 
@@ -114,10 +105,7 @@ class MoneyFieldHandler extends ListFieldHandler
     }
 
     /**
-     * Method responsible for converting csv field instance to database field instance.
-     *
-     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @return array list of DbField instances
+     * {@inheritDoc}
      */
     public function fieldToDb(CsvField $csvField)
     {
@@ -125,7 +113,7 @@ class MoneyFieldHandler extends ListFieldHandler
             $dbFields[] = new DbField(
                 $csvField->getName() . '_' . $suffix,
                 $options['type'],
-                $csvField->getLimit(),
+                null,
                 $csvField->getRequired(),
                 $csvField->getNonSearchable()
             );

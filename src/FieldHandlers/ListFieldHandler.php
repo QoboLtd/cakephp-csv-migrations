@@ -44,14 +44,7 @@ class ListFieldHandler extends BaseFieldHandler
         $cakeView = new AppView();
 
         $listName = $this->_getListName($options['fieldDefinitions']['type']);
-        $fieldOptions = $this->_getListFieldOptions($listName);
-        $fieldOptions = $this->_filterOptions($fieldOptions);
-
-        /*
-        nested list options
-         */
-        $collection = new Collection($fieldOptions);
-        $fieldOptions = $collection->listNested()->printer('name', 'id', '--')->toArray();
+        $fieldOptions = $this->_getSelectOptions($listName);
 
         $input = $cakeView->Form->label($field);
         $input .= $cakeView->Form->select($this->_getFieldName($table, $field, $options), $fieldOptions, [
@@ -76,14 +69,7 @@ class ListFieldHandler extends BaseFieldHandler
     {
         $result = $data;
         $listName = $this->_getListName($options['fieldDefinitions']['type']);
-        $fieldOptions = $this->_getListFieldOptions($listName);
-        $fieldOptions = $this->_filterOptions($fieldOptions);
-
-        /*
-        nested list options
-         */
-        $collection = new Collection($fieldOptions);
-        $fieldOptions = $collection->listNested()->printer('name', 'id', null)->toArray();
+        $fieldOptions = $this->_getSelectOptions($listName);
 
         if (isset($fieldOptions[$data])) {
             $result = h($fieldOptions[$data]);
@@ -120,6 +106,26 @@ class ListFieldHandler extends BaseFieldHandler
     protected function _getListName($type)
     {
         $result = preg_replace(static::FIELD_TYPE_PATTERN, '$1', $type);
+
+        return $result;
+    }
+
+    /**
+     * Method that retrieves select input options by defined list name.
+     *
+     * @param  string $listName list name
+     * @return array            list options
+     */
+    protected function _getSelectOptions($listName)
+    {
+        $result = $this->_getListFieldOptions($listName);
+        $result = $this->_filterOptions($result);
+
+        /*
+        nested list options
+         */
+        $collection = new Collection($result);
+        $result = $collection->listNested()->printer('name', 'id', null)->toArray();
 
         return $result;
     }

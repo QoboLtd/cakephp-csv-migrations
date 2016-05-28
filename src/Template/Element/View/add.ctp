@@ -1,5 +1,4 @@
 <?php
-use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
@@ -60,7 +59,7 @@ $formOptions['type'] = 'file';
          * Conversion logic
          * @todo probably this has to be moved to another plugin
          */
-        if (empty($isConversion)) {
+        if (!$this->request->param('pass.conversion')) {
             echo $this->Form->create($options['entity'], $formOptions);
         }
     ?>
@@ -136,16 +135,17 @@ $formOptions['type'] = 'file';
          * Conversion logic
          * @todo probably this has to be moved to another plugin
          */
-        if (empty($isConversion)) {
+        if (!$this->request->param('pass.conversion')) {
             echo $this->Form->button(__('Submit'), ['class' => 'btn btn-primary']);
             echo $this->Form->end();
         }
     ?>
         <?php
         /*
-        Fetch embedded module(s) using CakePHP's requestAction() method
+        Fetch embedded module(s) using CakePHP's requestAction() method,
+        if request is not coming from requestAction()
          */
-        if (!empty($embeddedFields)) :
+        if (!empty($embeddedFields) && !$this->request->param('pass.conversion')) :
             foreach ($embeddedFields as $embeddedField) :
                 $embeddedFieldName = substr($embeddedField['name'], strrpos($embeddedField['name'], '.') + 1);
                 list($embeddedPlugin, $embeddedController) = pluginSplit(
@@ -199,15 +199,5 @@ $formOptions['type'] = 'file';
  * - When there is file input
  * - load these files only if foreign/related field exists
  */
-echo $this->Html->css('QoboAdminPanel.fileinput.min', ['block' => 'cssBottom']);
-echo $this->Html->script('QoboAdminPanel.canvas-to-blob.min', ['block' => 'scriptBottom']);
-echo $this->Html->script('QoboAdminPanel.fileinput.min', ['block' => 'scriptBottom']);
-echo $this->Html->script('QoboAdminPanel.fileinput-load', ['block' => 'scriptBottom']);
-echo $this->Html->script('CsvMigrations.bootstrap-typeahead.min.js', ['block' => 'scriptBottom']);
-echo $this->Html->scriptBlock(
-    'typeahead_options = ' . json_encode(Configure::read('CsvMigrations.typeahead')) . ';',
-    ['block' => 'scriptBottom']
-);
-echo $this->Html->script('CsvMigrations.typeahead', ['block' => 'scriptBottom']);
-echo $this->Html->script('CsvMigrations.embedded', ['block' => 'scriptBottom']);
+echo $this->element('CsvMigrations.common_js_libs');
 ?>

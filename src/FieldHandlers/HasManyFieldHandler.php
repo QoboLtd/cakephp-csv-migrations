@@ -5,16 +5,14 @@ use App\View\AppView;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\View\Helper\IdGeneratorTrait;
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\RelatedFieldHandler;
 
-class HasManyFieldHandler extends BaseFieldHandler
+class HasManyFieldHandler extends RelatedFieldHandler
 {
-    use IdGeneratorTrait;
-
     /**
      * Field type match pattern
      */
-    const FIELD_TYPE_PATTERN = 'hasMany:';
+    const FIELD_TYPE_PATTERN = '/hasMany\((.*?)\)/';
 
     /**
      * Action name for html link
@@ -96,18 +94,5 @@ class HasManyFieldHandler extends BaseFieldHandler
         );
 
         return $input;
-    }
-
-    /**
-     * Method that extracts list name from field type definition.
-     *
-     * @param  string $type field type
-     * @return string       list name
-     */
-    protected function _getRelatedName($type)
-    {
-        $result = str_replace(static::FIELD_TYPE_PATTERN, '', $type);
-
-        return $result;
     }
 }

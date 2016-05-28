@@ -103,7 +103,7 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                     /*
                     set field type to 'hasMany'
                      */
-                    $handlerOptions['fieldDefinitions']['type'] = 'hasMany:' . $assocData['class_name'];
+                    $handlerOptions['fieldDefinitions']['type'] = 'hasMany(' . $assocData['class_name'] . ')';
                     /*
                     set field as required
                      */
@@ -249,10 +249,12 @@ if (!empty($embFields)) :
     </div>
     <?php endforeach; ?>
 <?php
-// enable typeahead and embedded library
-echo $this->Html->script('CsvMigrations.bootstrap-typeahead.min.js', ['block' => 'scriptBottom']);
-echo $this->Html->script('CsvMigrations.typeahead', ['block' => 'scriptBottom']);
-echo $this->Html->script('CsvMigrations.embedded', ['block' => 'scriptBottom']);
+/**
+ * @todo  Load when needed.
+ * - When there is file input
+ * - load these files only if foreign/related field exists
+ */
+echo $this->element('CsvMigrations.common_js_libs');
 ?>
 <?php endif; ?>
 

@@ -25,36 +25,50 @@ trait CsvMigrationUploadTrait
     /**
      * Uploads the file and stores it to its related model.
      *
-     * @param  Entity $relatedEntity Related entity of the upload.
+     * @param  Entity $relatedEnt Related entity of the upload.
      * @return void
      */
-    protected function _upload($relatedEntity, $uploadField)
+    protected function _upload($relatedEnt, $uploadField)
     {
         $user = $this->Auth->identify();
-        $entity = $this->{$this->name}->uploaddocuments->newEntity($this->request->data);
-        $entity = $this->{$this->name}->uploaddocuments->patchEntity(
-            $entity,
+        //Store the File Storage entity
+        $fileStorEnt = $this->{$this->name}->uploaddocuments->newEntity($this->request->data);
+        $fileStorEnt = $this->{$this->name}->uploaddocuments->patchEntity(
+            $fileStorEnt,
             [
-                'foreign_key' => $relatedEntity->get('id'),
+                'foreign_key' => $relatedEnt->get('id'), //We need the id of the stored record as foreign key
                 'user_id' => $user['id'],
             ]
         );
-        if ($this->{$this->name}->uploaddocuments->save($entity)) {
-            $assocFile = $this->{$this->name}->association('documentidfiles');
-            $fileEntity = $this->{$this->name}->documentidfiles->newEntity([
-                        'document_id' => $relatedEntity->get('id'),
-                        'file_id' => $entity->get('id')
-                    ]);
-            if (!$this->{$this->name}->documentidfiles->save($fileEntity)) {
-                $this->Flash->error(__('Failed to update related entity.'));
-            }
-            $relatedEntity = $this->{$this->name}->patchEntity($relatedEntity, [$uploadField => $entity->get('id')]);
-            if (!$this->{$this->name}->save($relatedEntity)) {
+        if ($this->{$this->name}->uploaddocuments->save($fileStorEnt)) {
+            $this->Flash->success(__('File uploaded.'));
+            //Store to the upload field the ID of the File Storage entity
+            //This is helpful for rendering the output.
+            $relatedEnt = $this->{$this->name}->patchEntity(
+                $relatedEnt,
+                [$uploadField => $fileStorEnt->get('id')]
+            );
+            if (!$this->{$this->name}->save($relatedEnt)) {
                 $this->Flash->error(__('Failed to update related to entity\'s field.'));
             }
-            $this->Flash->success(__('File uploaded.'));
+            //Documents entities are also stored in files table.
+            $this->_hasFiles($fileStorEnt, $relatedEnt, 'documentidfiles');
         } else {
             $this->Flash->error(__('Failed to upload.'));
+        }
+    }
+
+    protected function _hasFiles($fileStorEnt, $relatedEnt, $assoc)
+    {
+        $filesAssoc = $this->{$this->name}->association($assoc);
+        if ($filesAssoc) {
+            $fileEntity = $this->{$this->name}->$assoc->newEntity([
+                        'document_id' => $relatedEnt->get('id'),
+                        'file_id' => $fileStorEnt->get('id')
+                    ]);
+            if (!$this->{$this->name}->$assoc->save($fileEntity)) {
+                $this->Flash->error(__('Failed to update related entity.'));
+            }
         }
     }
 

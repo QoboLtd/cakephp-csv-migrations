@@ -73,12 +73,20 @@ trait CsvMigrationUploadTrait
         }
     }
 
-    protected function _hasFiles($fileStorEnt, $relatedEnt, $assoc)
+    /**
+     * Only for the Documents module which has association with files.
+     *
+     * @param  object  $fileStorEnt FileStorage entity
+     * @param  object  $documentEnt Document entity
+     * @param  string $assoc        name of the association between Documents and Files
+     * @return void
+     */
+    protected function _hasFiles($fileStorEnt, $documentEnt, $assoc)
     {
         $filesAssoc = $this->{$this->name}->association($assoc);
         if ($filesAssoc) {
             $fileEntity = $this->{$this->name}->$assoc->newEntity([
-                        'document_id' => $relatedEnt->get('id'),
+                        'document_id' => $documentEnt->get('id'),
                         'file_id' => $fileStorEnt->get('id')
                     ]);
             if (!$this->{$this->name}->$assoc->save($fileEntity)) {

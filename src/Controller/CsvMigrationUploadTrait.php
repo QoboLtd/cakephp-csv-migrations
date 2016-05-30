@@ -1,8 +1,18 @@
 <?php
 namespace CsvMigrations\Controller;
 
+use Cake\Utility\Hash;
+
 trait CsvMigrationUploadTrait
 {
+
+    /**
+     * Upload field name
+     *
+     * @var string
+     */
+    protected $_upField = '';
+
     /**
      * Unlink the upload field from the given module record.
      * @todo Replace 'document' with dynamic field, Should be called only by ajax calls.
@@ -30,9 +40,19 @@ trait CsvMigrationUploadTrait
      */
     protected function _upload($relatedEnt, $uploadField)
     {
-        $user = $this->Auth->identify();
+        if (empty($this->_upField)) {
+            //Set the uplaod field
+            $this->_setUploadField($uploadField);
+        }
+        //Check for valid upload
+        if ($this->_isInValidUpload()) {
+            return;
+        }
+        //File Storage plugin store one upload file at a time.
+        $data = $this->_UploadArrayPer($uploadField);
         //Store the File Storage entity
-        $fileStorEnt = $this->{$this->name}->uploaddocuments->newEntity($this->request->data);
+        $fileStorEnt = $this->{$this->name}->uploaddocuments->newEntity($data);
+        $user = $this->Auth->identify();
         $fileStorEnt = $this->{$this->name}->uploaddocuments->patchEntity(
             $fileStorEnt,
             [
@@ -46,7 +66,7 @@ trait CsvMigrationUploadTrait
             //This is helpful for rendering the output.
             $relatedEnt = $this->{$this->name}->patchEntity(
                 $relatedEnt,
-                [$uploadField => $fileStorEnt->get('id')]
+                [$this->_upField => $fileStorEnt->get('id')]
             );
             if (!$this->{$this->name}->save($relatedEnt)) {
                 $this->Flash->error(__('Failed to update related to entity\'s field.'));
@@ -79,11 +99,7 @@ trait CsvMigrationUploadTrait
      */
     protected function _hasUpload()
     {
-        if (!isset($this->request->data['UploadDocuments'])) {
-            return false;
-        }
-
-        if (!is_array($this->request->data['UploadDocuments']['file'])) {
+        if (!is_array($this->request->data['UploadDocuments']['file'][$this->_upField])) {
             return false;
         }
 
@@ -97,7 +113,7 @@ trait CsvMigrationUploadTrait
      */
     protected function _isInValidUpload()
     {
-        return (bool)$this->request->data['UploadDocuments']['file']['error'];
+        return (bool)$this->request->data['UploadDocuments']['file'][$this->_upField]['error'];
     }
 
     /**
@@ -116,5 +132,47 @@ trait CsvMigrationUploadTrait
         }
 
         return $result;
+    }
+
+    /**
+     * Setter of _upField variable
+     *
+     * @param [type] $field [description]
+     */
+    protected function _setUploadField($field = null)
+    {
+        $this->_upField = $field;
+    }
+
+    /**
+     * Getter of _upField variable
+     *
+     * @return string
+     */
+    protected function _getUploadField()
+    {
+        return $this->_upField;
+    }
+
+    /**
+     * Extract from the request the given field and return it.
+     *
+     * @param  string $field name of the field to be extracted from the upload(s).
+     * @return array|false
+     */
+    protected function _UploadArrayPer($field = '')
+    {
+        if (empty($field)) {
+            $field = $this->_upField;
+        }
+        $data = $this->request->data;
+        $uploadArray = Hash::get($data, 'UploadDocuments.file.' . $field);
+        $data = Hash::remove($data, 'UploadDocuments.file' . $field);
+        if (empty($uploadArray)) {
+            return false;
+        }
+        $data = Hash::insert($data, 'UploadDocuments.file', $uploadArray);
+
+        return $data;
     }
 }

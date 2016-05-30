@@ -106,6 +106,12 @@ class RelatedFieldHandler extends BaseFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
+        $result = null;
+
+        if (empty($data)) {
+            return $result;
+        }
+
         // load AppView
         $cakeView = new AppView();
         // get related table name
@@ -120,12 +126,6 @@ class RelatedFieldHandler extends BaseFieldHandler
             if ($pos !== false) {
                 $relatedPlugin = substr($relatedPlugin, $pos + 1);
             }
-        }
-
-        $result = null;
-
-        if (empty($data)) {
-            return $result;
         }
 
         // generate related record html link

@@ -44,31 +44,32 @@ trait CsvMigrationUploadTrait
         $user = $this->Auth->identify();
         //File Storage plugin store one upload file at a time.
         $data = $this->_UploadArrayPer($uploadField);
-        //Store the File Storage entity
-        $fileStorEnt = $this->{$this->name}->uploaddocuments->newEntity($data);
-        $user = $this->Auth->identify();
-        $fileStorEnt = $this->{$this->name}->uploaddocuments->patchEntity(
-            $fileStorEnt,
-            [
-                'foreign_key' => $relatedEnt->get('id'), //We need the id of the stored record as foreign key
-                'user_id' => $user['id'],
-            ]
-        );
-        if ($this->{$this->name}->uploaddocuments->save($fileStorEnt)) {
-            $this->Flash->success(__('File uploaded.'));
-            //Store to the upload field the ID of the File Storage entity
-            //This is helpful for rendering the output.
-            $relatedEnt = $this->{$this->name}->patchEntity(
-                $relatedEnt,
-                [$this->_upField => $fileStorEnt->get('id')]
+        if (!$this->_isInValidUpload($data)) {
+            //Store the File Storage entity
+            $fileStorEnt = $this->{$this->name}->uploaddocuments->newEntity($data);
+            $fileStorEnt = $this->{$this->name}->uploaddocuments->patchEntity(
+                $fileStorEnt,
+                [
+                    'foreign_key' => $relatedEnt->get('id'), //We need the id of the stored record as foreign key
+                    'user_id' => $user['id'],
+                ]
             );
-            if (!$this->{$this->name}->save($relatedEnt)) {
-                $this->Flash->error(__('Failed to update related to entity\'s field.'));
+            if ($this->{$this->name}->uploaddocuments->save($fileStorEnt)) {
+                $this->Flash->success(__('File uploaded.'));
+                //Store to the upload field the ID of the File Storage entity
+                //This is helpful for rendering the output.
+                $relatedEnt = $this->{$this->name}->patchEntity(
+                    $relatedEnt,
+                    [$this->_upField => $fileStorEnt->get('id')]
+                );
+                if (!$this->{$this->name}->save($relatedEnt)) {
+                    $this->Flash->error(__('Failed to update related to entity\'s field.'));
+                }
+                //Documents entities are also stored in files table.
+                $this->_hasFiles($fileStorEnt, $relatedEnt, 'documentidfiles');
+            } else {
+                $this->Flash->error(__('Failed to upload.'));
             }
-            //Documents entities are also stored in files table.
-            $this->_hasFiles($fileStorEnt, $relatedEnt, 'documentidfiles');
-        } else {
-            $this->Flash->error(__('Failed to upload.'));
         }
     }
 
@@ -105,9 +106,9 @@ trait CsvMigrationUploadTrait
      *
      * @return boolean true for invalid upload and vice versa.
      */
-    protected function _isInValidUpload()
+    protected function _isInValidUpload($data = [])
     {
-        return (bool)$this->request->data['UploadDocuments']['file'][$this->_upField]['error'];
+        return (bool)Hash::get($data, 'UploadDocuments.file.error');
     }
 
     /**

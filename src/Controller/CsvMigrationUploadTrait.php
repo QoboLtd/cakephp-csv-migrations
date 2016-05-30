@@ -1,8 +1,18 @@
 <?php
 namespace CsvMigrations\Controller;
 
+use Cake\Utility\Hash;
+
 trait CsvMigrationUploadTrait
 {
+
+    /**
+     * Upload field name
+     *
+     * @var string
+     */
+    protected $_upField = '';
+
     /**
      * Unlink the upload field from the given module record.
      * @todo Replace 'document' with dynamic field, Should be called only by ajax calls.
@@ -25,36 +35,55 @@ trait CsvMigrationUploadTrait
     /**
      * Uploads the file and stores it to its related model.
      *
-     * @param  Entity $relatedEntity Related entity of the upload.
+     * @param  Entity $relatedEnt Related entity of the upload.
      * @return void
      */
-    protected function _upload($relatedEntity, $uploadField)
+    protected function _upload($relatedEnt, $uploadField)
     {
+        $this->_setUploadField($uploadField);
         $user = $this->Auth->identify();
-        $entity = $this->{$this->name}->uploaddocuments->newEntity($this->request->data);
-        $entity = $this->{$this->name}->uploaddocuments->patchEntity(
-            $entity,
-            [
-                'foreign_key' => $relatedEntity->get('id'),
-                'user_id' => $user['id'],
-            ]
-        );
-        if ($this->{$this->name}->uploaddocuments->save($entity)) {
-            $assocFile = $this->{$this->name}->association('documentidfiles');
-            $fileEntity = $this->{$this->name}->documentidfiles->newEntity([
-                        'document_id' => $relatedEntity->get('id'),
-                        'file_id' => $entity->get('id')
+        //File Storage plugin store one upload file at a time.
+        $data = $this->_UploadArrayPer($uploadField);
+        if (!$this->_isInValidUpload($data)) {
+            //Store the File Storage entity
+            $fileStorEnt = $this->{$this->name}->uploaddocuments->newEntity($data);
+            $fileStorEnt = $this->{$this->name}->uploaddocuments->patchEntity(
+                $fileStorEnt,
+                [
+                    'foreign_key' => $relatedEnt->get('id'), //We need the id of the stored record as foreign key
+                    'user_id' => $user['id'],
+                ]
+            );
+            if ($this->{$this->name}->uploaddocuments->save($fileStorEnt)) {
+                $this->Flash->success(__('File uploaded.'));
+                //Store to the upload field the ID of the File Storage entity
+                //This is helpful for rendering the output.
+                $relatedEnt = $this->{$this->name}->patchEntity(
+                    $relatedEnt,
+                    [$this->_upField => $fileStorEnt->get('id')]
+                );
+                if (!$this->{$this->name}->save($relatedEnt)) {
+                    $this->Flash->error(__('Failed to update related to entity\'s field.'));
+                }
+                //Documents entities are also stored in files table.
+                $this->_hasFiles($fileStorEnt, $relatedEnt, 'documentidfiles');
+            } else {
+                $this->Flash->error(__('Failed to upload.'));
+            }
+        }
+    }
+
+    protected function _hasFiles($fileStorEnt, $relatedEnt, $assoc)
+    {
+        $filesAssoc = $this->{$this->name}->association($assoc);
+        if ($filesAssoc) {
+            $fileEntity = $this->{$this->name}->$assoc->newEntity([
+                        'document_id' => $relatedEnt->get('id'),
+                        'file_id' => $fileStorEnt->get('id')
                     ]);
-            if (!$this->{$this->name}->documentidfiles->save($fileEntity)) {
+            if (!$this->{$this->name}->$assoc->save($fileEntity)) {
                 $this->Flash->error(__('Failed to update related entity.'));
             }
-            $relatedEntity = $this->{$this->name}->patchEntity($relatedEntity, [$uploadField => $entity->get('id')]);
-            if (!$this->{$this->name}->save($relatedEntity)) {
-                $this->Flash->error(__('Failed to update related to entity\'s field.'));
-            }
-            $this->Flash->success(__('File uploaded.'));
-        } else {
-            $this->Flash->error(__('Failed to upload.'));
         }
     }
 
@@ -65,11 +94,7 @@ trait CsvMigrationUploadTrait
      */
     protected function _hasUpload()
     {
-        if (!isset($this->request->data['UploadDocuments'])) {
-            return false;
-        }
-
-        if (!is_array($this->request->data['UploadDocuments']['file'])) {
+        if (!is_array($this->request->data['UploadDocuments']['file'][$this->_upField])) {
             return false;
         }
 
@@ -81,9 +106,9 @@ trait CsvMigrationUploadTrait
      *
      * @return boolean true for invalid upload and vice versa.
      */
-    protected function _isInValidUpload()
+    protected function _isInValidUpload($data = [])
     {
-        return (bool)$this->request->data['UploadDocuments']['file']['error'];
+        return (bool)Hash::get($data, 'UploadDocuments.file.error');
     }
 
     /**
@@ -102,5 +127,47 @@ trait CsvMigrationUploadTrait
         }
 
         return $result;
+    }
+
+    /**
+     * Setter of _upField variable
+     *
+     * @param [type] $field [description]
+     */
+    protected function _setUploadField($field = null)
+    {
+        $this->_upField = $field;
+    }
+
+    /**
+     * Getter of _upField variable
+     *
+     * @return string
+     */
+    protected function _getUploadField()
+    {
+        return $this->_upField;
+    }
+
+    /**
+     * Extract from the request the given field and return it.
+     *
+     * @param  string $field name of the field to be extracted from the upload(s).
+     * @return array|false
+     */
+    protected function _UploadArrayPer($field = '')
+    {
+        if (empty($field)) {
+            $field = $this->_upField;
+        }
+        $data = $this->request->data;
+        $uploadArray = Hash::get($data, 'UploadDocuments.file.' . $field);
+        $data = Hash::remove($data, 'UploadDocuments.file' . $field);
+        if (empty($uploadArray)) {
+            return false;
+        }
+        $data = Hash::insert($data, 'UploadDocuments.file', $uploadArray);
+
+        return $data;
     }
 }

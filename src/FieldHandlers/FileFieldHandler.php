@@ -25,7 +25,7 @@ class FileFieldHandler extends BaseFieldHandler
     {
         $cakeView = new AppView();
         if (!$data) {
-            $uploadField = $cakeView->Form->file('UploadDocuments.file', ['class' => 'file']);
+            $uploadField = $cakeView->Form->file('UploadDocuments.file.' . $field, ['class' => 'file']);
             $label = $cakeView->Form->label($field);
             $result = sprintf(self::WRAPPER, $label, $uploadField);
         } else {

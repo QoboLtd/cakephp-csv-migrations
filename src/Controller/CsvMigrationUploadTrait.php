@@ -41,12 +41,12 @@ trait CsvMigrationUploadTrait
     protected function _upload($relatedEnt, $uploadField)
     {
         $this->_setUploadField($uploadField);
-        $user = $this->Auth->identify();
         //File Storage plugin store one upload file at a time.
         $data = $this->_UploadArrayPer($uploadField);
         if (!$this->_isInValidUpload($data)) {
             //Store the File Storage entity
             $fileStorEnt = $this->{$this->name}->uploaddocuments->newEntity($data);
+            $user = $this->Auth->identify();
             $fileStorEnt = $this->{$this->name}->uploaddocuments->patchEntity(
                 $fileStorEnt,
                 [

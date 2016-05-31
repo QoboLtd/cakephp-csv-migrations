@@ -100,8 +100,8 @@ class AppController extends BaseController
             $patchOptions = $this->{$this->name}->enablePrimaryKeyAccess();
             $entity = $this->{$this->name}->patchEntity($entity, $this->request->data, $patchOptions);
             if ($this->{$this->name}->save($entity)) {
-                if ($this->_hasUpload() && !$this->_isInValidUpload()) {
-                    $this->_upload($entity);
+                foreach ($this->_getCsvUploadFields() as $field) {
+                    $this->_upload($entity, $field);
                 }
                 $this->Flash->success(__('The record has been saved.'));
                 return $this->redirect(['action' => 'view', $id]);

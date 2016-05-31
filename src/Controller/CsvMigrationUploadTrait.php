@@ -27,7 +27,7 @@ trait CsvMigrationUploadTrait
             throw new InvalidArgumentException();
         }
         $entity = $this->{$this->name}->get($id);
-        $entity = $this->{$this->name}->patchEntity($entity, ['document' => null]);
+        $entity = $this->{$this->name}->patchEntity($entity, [$field => null]);
         if ($this->{$this->name}->save($entity)) {
             $result['message'] = __d('CsvMigrations', 'Upload has been unlinked.');
         } else {

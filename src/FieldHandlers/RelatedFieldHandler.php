@@ -2,6 +2,7 @@
 namespace CsvMigrations\FieldHandlers;
 
 use App\View\AppView;
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\View\Helper\IdGeneratorTrait;
@@ -41,17 +42,8 @@ class RelatedFieldHandler extends BaseFieldHandler
         $cakeView = new AppView();
         // get related table name
         $relatedName = $this->_getRelatedName($options['fieldDefinitions']['type']);
-        // get related table's displayField value
-        $displayFieldValue = $this->_getDisplayFieldValueByPrimaryKey($relatedName, $data);
-        // get plugin and controller names
-        list($relatedPlugin, $relatedController) = pluginSplit($relatedName);
-        // remove vendor from plugin name
-        if (!is_null($relatedPlugin)) {
-            $pos = strpos($relatedPlugin, '/');
-            if ($pos !== false) {
-                $relatedPlugin = substr($relatedPlugin, $pos + 1);
-            }
-        }
+
+        $relatedProperties = $this->_getRelatedProperties($relatedName, $data);
 
         $fieldName = $this->_getFieldName($table, $field, $options);
 
@@ -69,14 +61,14 @@ class RelatedFieldHandler extends BaseFieldHandler
             'type' => 'text',
             'data-type' => 'typeahead',
             'readonly' => (bool)$data,
-            'value' => $displayFieldValue,
+            'value' => $relatedProperties['dispFieldVal'],
             'data-id' => $this->_domId($fieldName),
             'autocomplete' => 'off',
             'required' => (bool)$options['fieldDefinitions']['required'],
             'data-url' => $cakeView->Url->build([
                 'prefix' => 'api',
-                'plugin' => $relatedPlugin,
-                'controller' => $relatedController,
+                'plugin' => $relatedProperties['plugin'],
+                'controller' => $relatedProperties['controller'],
                 'action' => 'lookup.json'
             ])
         ]);
@@ -116,28 +108,33 @@ class RelatedFieldHandler extends BaseFieldHandler
         $cakeView = new AppView();
         // get related table name
         $relatedName = $this->_getRelatedName($options['fieldDefinitions']['type']);
-        // get related table's displayField value
-        $displayFieldValue = $this->_getDisplayFieldValueByPrimaryKey($relatedName, $data);
-        // get plugin and controller names
-        list($relatedPlugin, $relatedController) = pluginSplit($relatedName);
-        // remove vendor from plugin name
-        if (!is_null($relatedPlugin)) {
-            $pos = strpos($relatedPlugin, '/');
-            if ($pos !== false) {
-                $relatedPlugin = substr($relatedPlugin, $pos + 1);
-            }
+
+        $relatedProperties[] = $this->_getRelatedProperties($relatedName, $data);
+
+        if (!empty($relatedProperties[0]['config']['parent']['module'])) {
+            array_unshift(
+                $relatedProperties,
+                $this->_getRelatedParentProperties($relatedProperties[0])
+            );
         }
 
-        // generate related record html link
-        $result = $cakeView->Html->link(
-            h($displayFieldValue),
-            $cakeView->Url->build([
-                'plugin' => $relatedPlugin,
-                'controller' => $relatedController,
-                'action' => static::LINK_ACTION,
-                $data
-            ])
-        );
+        $inputs = [];
+        foreach ($relatedProperties as $properties) {
+            // generate related record(s) html link
+            $inputs[] = $cakeView->Html->link(
+                h($properties['dispFieldVal']),
+                $cakeView->Url->build([
+                    'plugin' => $properties['plugin'],
+                    'controller' => $properties['controller'],
+                    'action' => static::LINK_ACTION,
+                    $properties['id']
+                ])
+            );
+        }
+
+        if (!empty($inputs)) {
+            $result .= implode(' &gt; ', $inputs);
+        }
 
         return $result;
     }
@@ -175,35 +172,90 @@ class RelatedFieldHandler extends BaseFieldHandler
     }
 
     /**
-     * Method that retrieves provided Table's displayField value,
-     * based on provided primary key's value.
+     * Get related model's parent model properties.
      *
-     * @param  mixed  $table      Table object or name
-     * @param  sting  $value      query parameter value
-     * @return string             displayField value
+     * @param  array $table related model properties
+     * @return void
      */
-    protected function _getDisplayFieldValueByPrimaryKey($table, $value)
+    protected function _getRelatedParentProperties($relatedProperties)
     {
-        $result = '';
+        $parentTable = TableRegistry::get($relatedProperties['config']['parent']['module']);
+        $foreignKey = $this->_getForeignKey($parentTable, $relatedProperties['controller']);
 
+        return $this->_getRelatedProperties($parentTable, $relatedProperties['entity']->{$foreignKey});
+    }
+
+    /**
+     * Get related model's properties.
+     *
+     * @param  mixed $table related table instance or name
+     * @param  sting $data  query parameter value
+     * @return void
+     */
+    protected function _getRelatedProperties($table, $data)
+    {
         if (!is_object($table)) {
-            $table = TableRegistry::get($table);
+            $tableName = $table;
+            $table = TableRegistry::get($tableName);
+        } else {
+            $tableName = $table->registryAlias();
         }
-        $primaryKey = $table->primaryKey();
-        $displayField = $table->displayField();
 
-        $query = $table->find('all', [
-            'conditions' => [$primaryKey => $value],
-            'fields' => [$displayField],
-            'limit' => 1
-        ]);
-
-        $record = $query->first();
-
-        if (!is_null($record)) {
-            $result = $record->$displayField;
+        $result['id'] = $data;
+        $result['config'] = $table->getConfig();
+        // get associated entity record
+        $result['entity'] = $this->_getAssociatedRecord($table, $data);
+        // get related table's displayField value
+        $result['dispFieldVal'] = !empty($result['entity']->{$table->displayField()})
+            ? $result['entity']->{$table->displayField()}
+            : null
+        ;
+        // get plugin and controller names
+        list($result['plugin'], $result['controller']) = pluginSplit($tableName);
+        // remove vendor from plugin name
+        if (!is_null($result['plugin'])) {
+            $pos = strpos($result['plugin'], '/');
+            if ($pos !== false) {
+                $result['plugin'] = substr($result['plugin'], $pos + 1);
+            }
         }
 
         return $result;
+    }
+
+    /**
+     * Get parent model association's foreign key.
+     *
+     * @param  \Cake\ORM\Table $table          Table instance
+     * @param  string          $controllerName Controller name
+     * @return string
+     */
+    protected function _getForeignKey(Table $table, $controllerName)
+    {
+        $result = null;
+        foreach ($table->associations() as $association) {
+            if ($controllerName === $association->className()) {
+                $result = $association->foreignKey();
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Retrieve and return associated record Entity, by primary key value.
+     *
+     * @param  \Cake\ORM\Table $table Table instance
+     * @param  string          $value Primary key value
+     * @return object
+     */
+    protected function _getAssociatedRecord(Table $table, $value)
+    {
+        $query = $table->find('all', [
+            'conditions' => [$table->primaryKey() => $value],
+            'limit' => 1
+        ]);
+
+        return $query->first();
     }
 }

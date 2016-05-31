@@ -16,6 +16,13 @@ trait RelatedFieldTrait
     protected $_fieldTypePattern = '/related\((.*?)\)/';
 
     /**
+     * Field value separator
+     *
+     * @var string
+     */
+    protected $_separator = '&gt;';
+
+    /**
      * Method that extracts list name from field type definition.
      *
      * @param  string $type field type

@@ -41,6 +41,16 @@ class RelatedFieldHandler extends BaseFieldHandler
 
         $relatedProperties = $this->_getRelatedProperties($relatedName, $data);
 
+        if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
+            $relatedParentProperties = $this->_getRelatedParentProperties($relatedProperties);
+            if (!empty($relatedParentProperties['dispFieldVal'])) {
+                $relatedProperties['dispFieldVal'] = implode(' ' . $this->_separator . ' ', [
+                    $relatedParentProperties['dispFieldVal'],
+                    $relatedProperties['dispFieldVal']
+                ]);
+            }
+        }
+
         $fieldName = $this->_getFieldName($table, $field, $options);
 
         $input = '';
@@ -58,6 +68,7 @@ class RelatedFieldHandler extends BaseFieldHandler
             'data-type' => 'typeahead',
             'readonly' => (bool)$data,
             'value' => $relatedProperties['dispFieldVal'],
+            'escape' => false,
             'data-id' => $this->_domId($fieldName),
             'autocomplete' => 'off',
             'required' => (bool)$options['fieldDefinitions']['required'],
@@ -129,7 +140,7 @@ class RelatedFieldHandler extends BaseFieldHandler
         }
 
         if (!empty($inputs)) {
-            $result .= implode(' &gt; ', $inputs);
+            $result .= implode(' ' . $this->_separator . ' ', $inputs);
         }
 
         return $result;

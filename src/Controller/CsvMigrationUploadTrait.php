@@ -100,20 +100,7 @@ trait CsvMigrationUploadTrait
     /**
      * Check for upload in the post data.
      *
-     * @return boolean true if there is an upload array as defined by PHP.
-     */
-    protected function _hasUpload()
-    {
-        if (!is_array($this->request->data['UploadDocuments']['file'][$this->_upField])) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Check for upload in the post data.
-     *
+     * @param  array $data Data to be checked for invalid upload.
      * @return boolean true for invalid upload and vice versa.
      */
     protected function _isInValidUpload($data = [])

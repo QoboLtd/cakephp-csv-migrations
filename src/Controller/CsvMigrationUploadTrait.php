@@ -18,6 +18,7 @@ trait CsvMigrationUploadTrait
      * @todo Replace 'document' with dynamic field, Should be called only by ajax calls.
      *
      * @param  int $id record id
+     * @return void
      */
     public function unlinkUpload($id = null)
     {
@@ -35,7 +36,8 @@ trait CsvMigrationUploadTrait
     /**
      * Uploads the file and stores it to its related model.
      *
-     * @param  Entity $relatedEnt Related entity of the upload.
+     * @param  object $relatedEnt Stored entity associated with file storage entity which is stored in this function.
+     * @param  string $uploadField Name of the field.
      * @return void
      */
     protected function _upload($relatedEnt, $uploadField)
@@ -140,7 +142,8 @@ trait CsvMigrationUploadTrait
     /**
      * Setter of _upField variable
      *
-     * @param [type] $field [description]
+     * @param string $field Name of the upload field.
+     * @return void
      */
     protected function _setUploadField($field = null)
     {
@@ -163,7 +166,7 @@ trait CsvMigrationUploadTrait
      * @param  string $field name of the field to be extracted from the upload(s).
      * @return array|false
      */
-    protected function _UploadArrayPer($field = '')
+    protected function _uploadArrayPer($field = '')
     {
         if (empty($field)) {
             $field = $this->_upField;

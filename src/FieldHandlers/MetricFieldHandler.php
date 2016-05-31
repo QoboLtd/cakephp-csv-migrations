@@ -4,12 +4,12 @@ namespace CsvMigrations\FieldHandlers;
 use App\View\AppView;
 use CsvMigrations\FieldHandlers\BaseCombinedFieldHandler;
 
-class MoneyFieldHandler extends BaseCombinedFieldHandler
+class MetricFieldHandler extends BaseCombinedFieldHandler
 {
     /**
      * {@inheritDoc}
      */
-    const FIELD_TYPE_PATTERN = '/money\((.*?)\)/';
+    const FIELD_TYPE_PATTERN = '/metric\((.*?)\)/';
 
     /**
      * {@inheritDoc}
@@ -17,12 +17,12 @@ class MoneyFieldHandler extends BaseCombinedFieldHandler
     protected function _setCombinedFields()
     {
         $this->_fields = [
-            'currency' => [
+            'unit' => [
                 'type' => 'string',
                 'field' => 'select'
             ],
             'amount' => [
-                'type' => 'string',
+                'type' => 'integer',
                 'field' => 'input'
             ]
         ];

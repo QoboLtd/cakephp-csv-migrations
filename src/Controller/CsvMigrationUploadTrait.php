@@ -2,6 +2,7 @@
 namespace CsvMigrations\Controller;
 
 use Cake\Utility\Hash;
+use InvalidArgumentException;
 
 trait CsvMigrationUploadTrait
 {
@@ -20,8 +21,11 @@ trait CsvMigrationUploadTrait
      * @param  int $id record id
      * @return void
      */
-    public function unlinkUpload($id = null)
+    public function unlinkUpload($id = null, $field = null)
     {
+        if (is_null($id) || is_null($field)) {
+            throw new InvalidArgumentException();
+        }
         $entity = $this->{$this->name}->get($id);
         $entity = $this->{$this->name}->patchEntity($entity, ['document' => null]);
         if ($this->{$this->name}->save($entity)) {

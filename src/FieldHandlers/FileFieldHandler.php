@@ -39,7 +39,7 @@ class FileFieldHandler extends BaseFieldHandler
                 ->first();
             $url = $cakeView->Storage->url($entity);
             $img = $cakeView->Html->image($url);
-            $uploadField = $cakeView->Form->file('UploadDocuments.file', ['data-upload-url' => $url]);
+            $uploadField = $cakeView->Form->file('UploadDocuments.file.' . $field, ['data-upload-url' => $url]);
             $label = $cakeView->Form->label($field);
             $result = sprintf(self::WRAPPER, $label, $uploadField);
         }

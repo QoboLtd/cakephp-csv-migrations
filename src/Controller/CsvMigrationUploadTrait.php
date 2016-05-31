@@ -18,6 +18,7 @@ trait CsvMigrationUploadTrait
      * @todo Replace 'document' with dynamic field, Should be called only by ajax calls.
      *
      * @param  int $id record id
+     * @return void
      */
     public function unlinkUpload($id = null)
     {
@@ -35,18 +36,19 @@ trait CsvMigrationUploadTrait
     /**
      * Uploads the file and stores it to its related model.
      *
-     * @param  Entity $relatedEnt Related entity of the upload.
+     * @param  object $relatedEnt Stored entity associated with file storage entity which is stored in this function.
+     * @param  string $uploadField Name of the field.
      * @return void
      */
     protected function _upload($relatedEnt, $uploadField)
     {
         $this->_setUploadField($uploadField);
-        $user = $this->Auth->identify();
         //File Storage plugin store one upload file at a time.
         $data = $this->_UploadArrayPer($uploadField);
         if (!$this->_isInValidUpload($data)) {
             //Store the File Storage entity
             $fileStorEnt = $this->{$this->name}->uploaddocuments->newEntity($data);
+            $user = $this->Auth->identify();
             $fileStorEnt = $this->{$this->name}->uploaddocuments->patchEntity(
                 $fileStorEnt,
                 [
@@ -73,12 +75,20 @@ trait CsvMigrationUploadTrait
         }
     }
 
-    protected function _hasFiles($fileStorEnt, $relatedEnt, $assoc)
+    /**
+     * Only for the Documents module which has association with files.
+     *
+     * @param  object  $fileStorEnt FileStorage entity
+     * @param  object  $documentEnt Document entity
+     * @param  string $assoc        name of the association between Documents and Files
+     * @return void
+     */
+    protected function _hasFiles($fileStorEnt, $documentEnt, $assoc)
     {
         $filesAssoc = $this->{$this->name}->association($assoc);
         if ($filesAssoc) {
             $fileEntity = $this->{$this->name}->$assoc->newEntity([
-                        'document_id' => $relatedEnt->get('id'),
+                        'document_id' => $documentEnt->get('id'),
                         'file_id' => $fileStorEnt->get('id')
                     ]);
             if (!$this->{$this->name}->$assoc->save($fileEntity)) {
@@ -90,20 +100,7 @@ trait CsvMigrationUploadTrait
     /**
      * Check for upload in the post data.
      *
-     * @return boolean true if there is an upload array as defined by PHP.
-     */
-    protected function _hasUpload()
-    {
-        if (!is_array($this->request->data['UploadDocuments']['file'][$this->_upField])) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Check for upload in the post data.
-     *
+     * @param  array $data Data to be checked for invalid upload.
      * @return boolean true for invalid upload and vice versa.
      */
     protected function _isInValidUpload($data = [])
@@ -132,7 +129,8 @@ trait CsvMigrationUploadTrait
     /**
      * Setter of _upField variable
      *
-     * @param [type] $field [description]
+     * @param string $field Name of the upload field.
+     * @return void
      */
     protected function _setUploadField($field = null)
     {
@@ -155,7 +153,7 @@ trait CsvMigrationUploadTrait
      * @param  string $field name of the field to be extracted from the upload(s).
      * @return array|false
      */
-    protected function _UploadArrayPer($field = '')
+    protected function _uploadArrayPer($field = '')
     {
         if (empty($field)) {
             $field = $this->_upField;

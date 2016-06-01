@@ -109,9 +109,15 @@ class FileFieldHandler extends BaseFieldHandler
         return $result;
     }
 
-    protected function _renderValueImage(Entity $entity)
+    protected function _renderValueImage($entity)
     {
-        return 'Not yet implemented';
+        $cakeView = new AppView();
+        $cakeView->loadHelper(
+            'Burzum/FileStorage.Storage',
+            Configure::read('FileStorage.pathBuilderOptions')
+        );
+        $url = $cakeView->Storage->url($entity);
+        return $cakeView->Html->image($cakeView->Url->build($url), ['class' => 'img-responsive']);
     }
 
     /**

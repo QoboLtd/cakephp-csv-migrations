@@ -21,6 +21,7 @@ class FileFieldHandler extends BaseFieldHandler
     const DIV = '<div>%s&nbsp;%s</div>';
     /**
      * {@inheritDoc}
+     * In this case, it renders the output based on the given value of data.
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
@@ -81,6 +82,7 @@ class FileFieldHandler extends BaseFieldHandler
 
     /**
      * {@inheritDoc}
+     * In this case, it renders img tag or anchor to view the upload files.
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
@@ -109,6 +111,12 @@ class FileFieldHandler extends BaseFieldHandler
         return $result;
     }
 
+    /**
+     * Displays the uploaded img.
+     *
+     * @param  object $entity FileStorage entity
+     * @return string HTML img tag
+     */
     protected function _renderValueImage($entity)
     {
         $cakeView = new AppView();

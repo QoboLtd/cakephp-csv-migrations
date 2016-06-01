@@ -12,7 +12,7 @@ class HasManyFieldHandler extends RelatedFieldHandler
     /**
      * Field type match pattern
      */
-    const FIELD_TYPE_PATTERN = '/hasMany\((.*?)\)/';
+    protected $_fieldTypePattern = '/hasMany\((.*?)\)/';
 
     /**
      * Action name for html link

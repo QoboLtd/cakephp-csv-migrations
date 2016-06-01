@@ -43,7 +43,10 @@ class FileFieldHandler extends BaseFieldHandler
     protected function _renderInput($field)
     {
         $cakeView = new AppView();
-        $uploadField = $cakeView->Form->file('UploadDocuments.file.' . $field, ['class' => 'file']);
+        $uploadField = $cakeView->Form->file(
+            'UploadDocuments.file.' . $field,
+            ['class' => 'file']
+        );
         $label = $cakeView->Form->label($field);
 
         return sprintf(self::WRAPPER, $label, $uploadField);
@@ -58,13 +61,19 @@ class FileFieldHandler extends BaseFieldHandler
     protected function _renderInputWithValue($field)
     {
         $cakeView = new AppView();
-        $cakeView->loadHelper('Burzum/FileStorage.Storage', Configure::read('FileStorage.pathBuilderOptions'));
+        $cakeView->loadHelper(
+            'Burzum/FileStorage.Storage',
+            Configure::read('FileStorage.pathBuilderOptions')
+        );
         $entity = $table->uploaddocuments->find()
             ->where(['id' => $data])
             ->first();
         $url = $cakeView->Storage->url($entity);
-        $img = $cakeView->Html->image($url);
-        $uploadField = $cakeView->Form->file('UploadDocuments.file.' . $field, ['data-upload-url' => $url]);
+        //$img = $cakeView->Html->image($url);
+        $uploadField = $cakeView->Form->file(
+            'UploadDocuments.file.' . $field,
+            ['data-upload-url' => $url]
+        );
         $label = $cakeView->Form->label($field);
 
         return sprintf(self::WRAPPER, $label, $uploadField);

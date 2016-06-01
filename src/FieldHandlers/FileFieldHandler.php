@@ -24,27 +24,53 @@ class FileFieldHandler extends BaseFieldHandler
     public function renderInput($table, $field, $data = '', array $options = [])
     {
         $cakeView = new AppView();
-        if (!$data) {
-            $uploadField = $cakeView->Form->file('UploadDocuments.file.' . $field, ['class' => 'file']);
-            $label = $cakeView->Form->label($field);
-            $result = sprintf(self::WRAPPER, $label, $uploadField);
+        if (empty($data)) {
+            $result = $this->_renderInput($field);
         } else {
-            $cakeView->loadHelper('Burzum/FileStorage.Storage', [
-                'pathBuilderOptions' => [
-                    'pathPrefix' => '/uploads'
-                ]
-            ]);
-            $entity = $table->uploaddocuments->find()
-                ->where(['id' => $data])
-                ->first();
-            $url = $cakeView->Storage->url($entity);
-            $img = $cakeView->Html->image($url);
-            $uploadField = $cakeView->Form->file('UploadDocuments.file.' . $field, ['data-upload-url' => $url]);
-            $label = $cakeView->Form->label($field);
-            $result = sprintf(self::WRAPPER, $label, $uploadField);
+            $result = $this->_renderInputWithValue($field);
         }
 
         return $result;
+    }
+
+    /**
+     * Renders new file input field with no value. Applicable for add action.
+     *
+     * @param  string $field name
+     * @return string HTML input field.
+     */
+    protected function _renderInput($field)
+    {
+        $cakeView = new AppView();
+        $uploadField = $cakeView->Form->file('UploadDocuments.file.' . $field, ['class' => 'file']);
+        $label = $cakeView->Form->label($field);
+
+        return sprintf(self::WRAPPER, $label, $uploadField);
+    }
+
+    /**
+     * Renders new file input field with value. Applicable for edit action.
+     *
+     * @param  string $field name
+     * @return string HTML input field with data attribute.
+     */
+    protected function _renderInputWithValue($field)
+    {
+        $cakeView = new AppView();
+        $cakeView->loadHelper('Burzum/FileStorage.Storage', [
+            'pathBuilderOptions' => [
+                'pathPrefix' => '/uploads'
+            ]
+        ]);
+        $entity = $table->uploaddocuments->find()
+            ->where(['id' => $data])
+            ->first();
+        $url = $cakeView->Storage->url($entity);
+        $img = $cakeView->Html->image($url);
+        $uploadField = $cakeView->Form->file('UploadDocuments.file.' . $field, ['data-upload-url' => $url]);
+        $label = $cakeView->Form->label($field);
+
+        return sprintf(self::WRAPPER, $label, $uploadField);
     }
 
     /**

@@ -14,18 +14,5 @@ Configure::write('CsvMigrations.typeahead.timeout', 300);
 
 EventManager::instance()->on(new ViewMenuListener());
 
-StorageManager::config(
-    'Local',
-    [
-        'adapterOptions' => [WWW_ROOT, true],
-        'adapterClass' => '\Gaufrette\Adapter\Local',
-        'class' => '\Gaufrette\Filesystem'
-    ]
-);
-$listener = new BaseListener([
-    'pathBuilderOptions' => [
-        'pathPrefix' => '/uploads'
-    ]
-]);
-
-EventManager::instance()->on($listener);
+//Load upload plugin configuration
+include 'file_storage.php';

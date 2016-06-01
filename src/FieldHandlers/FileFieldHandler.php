@@ -85,22 +85,54 @@ class FileFieldHandler extends BaseFieldHandler
     public function renderValue($table, $field, $data, array $options = [])
     {
         $result = __d('CsvMigration', 'No upload file');
-        $cakeView = new AppView();
-        $cakeView->loadHelper('Burzum/FileStorage.Storage', Configure::read('FileStorage.pathBuilderOptions'));
-        $entity = $table->uploaddocuments->find()
-            ->where(['id' => $data])
-            ->first();
-
-        if (!$entity) {
+        if (empty($data)) {
             return $result;
+        } else {
+            $entity = $table->uploaddocuments->find()
+                ->where(['id' => $data])
+                ->first();
+            if (!$entity) {
+                return $result;
+            }
+            $mime = $entity->get('mime_type');
+            list($type) = explode('/', $mime);
+            switch ($type) {
+                case 'image':
+                    $result = $this->_renderValueImage($entity);
+                    break;
+                default:
+                    $result = $this->_renderOtherFiles($entity);
+                    break;
+            }
         }
+
+        return $result;
+    }
+
+    protected function _renderValueImage(Entity $entity)
+    {
+        return 'Not yet implemented';
+    }
+
+    /**
+     * Creates a link to view the uploaded file.
+     *
+     * @param  Entity $entity Based on the entity the URL is being created by the plugin's helper.
+     * @return string Link redirecting to the source of the uploaded file.
+     */
+    protected function _renderValueOtherFiles(Entity $entity)
+    {
+        $cakeView = new AppView();
+        $cakeView->loadHelper(
+            'Burzum/FileStorage.Storage',
+            Configure::read('FileStorage.pathBuilderOptions')
+        );
         $url = $cakeView->Storage->url($entity);
-        $result = $cakeView->Html->link(
+        return $cakeView->Html->link(
             __d('CsvMigrations', 'View File'),
             $cakeView->Url->build($url),
             ['target' => '_blank']
         );
-        return $result;
     }
 
     /**

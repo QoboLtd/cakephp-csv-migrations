@@ -2,6 +2,7 @@
 namespace CsvMigrations\FieldHandlers;
 
 use App\View\AppView;
+use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
 class FileFieldHandler extends BaseFieldHandler
@@ -57,11 +58,7 @@ class FileFieldHandler extends BaseFieldHandler
     protected function _renderInputWithValue($field)
     {
         $cakeView = new AppView();
-        $cakeView->loadHelper('Burzum/FileStorage.Storage', [
-            'pathBuilderOptions' => [
-                'pathPrefix' => '/uploads'
-            ]
-        ]);
+        $cakeView->loadHelper('Burzum/FileStorage.Storage', Configure::read('FileStorage.pathBuilderOptions'));
         $entity = $table->uploaddocuments->find()
             ->where(['id' => $data])
             ->first();
@@ -80,11 +77,7 @@ class FileFieldHandler extends BaseFieldHandler
     {
         $result = __d('CsvMigration', 'No upload file');
         $cakeView = new AppView();
-        $cakeView->loadHelper('Burzum/FileStorage.Storage', [
-            'pathBuilderOptions' => [
-                'pathPrefix' => '/uploads'
-            ]
-        ]);
+        $cakeView->loadHelper('Burzum/FileStorage.Storage', Configure::read('FileStorage.pathBuilderOptions'));
         $entity = $table->uploaddocuments->find()
             ->where(['id' => $data])
             ->first();

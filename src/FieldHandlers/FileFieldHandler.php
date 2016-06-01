@@ -101,7 +101,7 @@ class FileFieldHandler extends BaseFieldHandler
                     $result = $this->_renderValueImage($entity);
                     break;
                 default:
-                    $result = $this->_renderOtherFiles($entity);
+                    $result = $this->_renderValueOtherFiles($entity);
                     break;
             }
         }
@@ -120,7 +120,7 @@ class FileFieldHandler extends BaseFieldHandler
      * @param  Entity $entity Based on the entity the URL is being created by the plugin's helper.
      * @return string Link redirecting to the source of the uploaded file.
      */
-    protected function _renderValueOtherFiles(Entity $entity)
+    protected function _renderValueOtherFiles($entity)
     {
         $cakeView = new AppView();
         $cakeView->loadHelper(

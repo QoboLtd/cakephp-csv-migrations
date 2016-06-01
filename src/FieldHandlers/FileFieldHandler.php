@@ -29,7 +29,7 @@ class FileFieldHandler extends BaseFieldHandler
         if (empty($data)) {
             $result = $this->_renderInput($field);
         } else {
-            $result = $this->_renderInputWithValue($field);
+            $result = $this->_renderInputWithValue($table, $field, $data);
         }
 
         return $result;
@@ -59,7 +59,7 @@ class FileFieldHandler extends BaseFieldHandler
      * @param  string $field name
      * @return string HTML input field with data attribute.
      */
-    protected function _renderInputWithValue($field)
+    protected function _renderInputWithValue($table, $field, $data)
     {
         $cakeView = new AppView();
         $cakeView->loadHelper(

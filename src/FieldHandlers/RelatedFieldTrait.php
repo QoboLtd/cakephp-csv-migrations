@@ -66,7 +66,11 @@ trait RelatedFieldTrait
         }
 
         $result['id'] = $data;
-        $result['config'] = $table->getConfig();
+
+        if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
+            $result['config'] = $table->getConfig();
+        }
+
         // get associated entity record
         $result['entity'] = $this->_getAssociatedRecord($table, $data);
         // get related table's displayField value

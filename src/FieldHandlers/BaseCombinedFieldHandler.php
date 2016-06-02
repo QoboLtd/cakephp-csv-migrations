@@ -30,7 +30,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
     {
         $cakeView = new AppView();
 
-        $input = $cakeView->Form->label($field);
+        $input = $cakeView->Form->label($field . ' ' . key($this->_fields));
 
         $input .= '<div class="row">';
         foreach ($this->_fields as $suffix => $preOptions) {
@@ -44,6 +44,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
                 'label' => false,
                 'type' => $preOptions['type'],
                 'required' => (bool)$options['fieldDefinitions']['required'],
+                'escape' => false,
                 'value' => $data
             ];
 
@@ -84,17 +85,10 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
             }
             $fullFieldName = $this->_getFieldName($table, $fieldName, $preOptions);
 
-            $fieldOptions = [
-                'label' => false,
-                'type' => $preOptions['type'],
-                'required' => (bool)$options['fieldDefinitions']['required'],
-                'value' => $data
-            ];
-
             switch ($preOptions['field']) {
                 case 'select':
                     $selectOptions = $this->_getSelectOptions($options['fieldDefinitions']['type']);
-                    $result .= h($selectOptions[$data]);
+                    $result .= $selectOptions[$data];
                     break;
 
                 case 'input':

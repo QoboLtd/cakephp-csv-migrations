@@ -17,13 +17,13 @@ class MoneyFieldHandler extends BaseCombinedFieldHandler
     protected function _setCombinedFields()
     {
         $this->_fields = [
-            'currency' => [
-                'type' => 'string',
-                'field' => 'select'
-            ],
             'amount' => [
                 'type' => 'string',
                 'field' => 'input'
+            ],
+            'currency' => [
+                'type' => 'string',
+                'field' => 'select'
             ]
         ];
     }

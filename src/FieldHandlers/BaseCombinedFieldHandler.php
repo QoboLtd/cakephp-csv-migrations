@@ -32,7 +32,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
 
         $input = $cakeView->Form->label($field);
 
-        $input .= '<div class="input-group">';
+        $input .= '<div class="row">';
         foreach ($this->_fields as $suffix => $preOptions) {
             $fieldName = $field . '_' . $suffix;
             if (isset($options['entity'])) {
@@ -51,14 +51,16 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
                 $fieldOptions['type'] = $this->_fieldTypes[$fieldOptions['type']];
             }
 
-            $input .= '<div class="input-group-btn">';
+            $input .= '<div class="';
             switch ($preOptions['field']) {
                 case 'select':
+                    $input .= 'col-xs-6 col-sm-4 col-sm-offset-2">';
                     $selectOptions = $this->_getSelectOptions($options['fieldDefinitions']['type']);
                     $input .= $cakeView->Form->select($fullFieldName, $selectOptions, $fieldOptions);
                     break;
 
                 case 'input':
+                    $input .= 'col-xs-6">';
                     $input .= $cakeView->Form->input($fullFieldName, $fieldOptions);
                     break;
             }

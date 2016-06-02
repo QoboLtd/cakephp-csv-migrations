@@ -44,6 +44,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
                 'label' => false,
                 'type' => $preOptions['type'],
                 'required' => (bool)$options['fieldDefinitions']['required'],
+                'escape' => false,
                 'value' => $data
             ];
 
@@ -94,7 +95,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
             switch ($preOptions['field']) {
                 case 'select':
                     $selectOptions = $this->_getSelectOptions($options['fieldDefinitions']['type']);
-                    $result .= h($selectOptions[$data]);
+                    $result .= $selectOptions[$data];
                     break;
 
                 case 'input':

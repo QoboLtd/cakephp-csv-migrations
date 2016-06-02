@@ -85,13 +85,6 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
             }
             $fullFieldName = $this->_getFieldName($table, $fieldName, $preOptions);
 
-            $fieldOptions = [
-                'label' => false,
-                'type' => $preOptions['type'],
-                'required' => (bool)$options['fieldDefinitions']['required'],
-                'value' => $data
-            ];
-
             switch ($preOptions['field']) {
                 case 'select':
                     $selectOptions = $this->_getSelectOptions($options['fieldDefinitions']['type']);

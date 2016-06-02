@@ -17,13 +17,13 @@ class MetricFieldHandler extends BaseCombinedFieldHandler
     protected function _setCombinedFields()
     {
         $this->_fields = [
-            'unit' => [
-                'type' => 'string',
-                'field' => 'select'
-            ],
             'amount' => [
                 'type' => 'integer',
                 'field' => 'input'
+            ],
+            'unit' => [
+                'type' => 'string',
+                'field' => 'select'
             ]
         ];
     }

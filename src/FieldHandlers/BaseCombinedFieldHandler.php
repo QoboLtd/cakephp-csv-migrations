@@ -30,7 +30,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
     {
         $cakeView = new AppView();
 
-        $input = $cakeView->Form->label($field);
+        $input = $cakeView->Form->label($field . ' ' . key($this->_fields));
 
         $input .= '<div class="row">';
         foreach ($this->_fields as $suffix => $preOptions) {

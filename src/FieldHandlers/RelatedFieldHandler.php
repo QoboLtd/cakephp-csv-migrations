@@ -36,10 +36,7 @@ class RelatedFieldHandler extends BaseFieldHandler
     {
         // load AppView
         $cakeView = new AppView();
-        // get related table name
-        $relatedName = $this->_getRelatedName($options['fieldDefinitions']['type']);
-
-        $relatedProperties = $this->_getRelatedProperties($relatedName, $data);
+        $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
             $relatedParentProperties = $this->_getRelatedParentProperties($relatedProperties);
@@ -54,7 +51,7 @@ class RelatedFieldHandler extends BaseFieldHandler
         $fieldName = $this->_getFieldName($table, $field, $options);
 
         $input = '';
-        $input .= '<div class="form-group' . ((bool)$options['fieldDefinitions']['required'] ? ' required' : '') . '">';
+        $input .= '<div class="form-group' . ((bool)$options['fieldDefinitions']->getRequired() ? ' required' : '') . '">';
         $input .= $cakeView->Form->label($field);
         $input .= '<div class="input-group">';
         $input .= '<span class="input-group-addon" title="Auto-complete"><strong>&hellip;</strong></span>';
@@ -70,7 +67,7 @@ class RelatedFieldHandler extends BaseFieldHandler
             'escape' => false,
             'data-id' => $this->_domId($fieldName),
             'autocomplete' => 'off',
-            'required' => (bool)$options['fieldDefinitions']['required'],
+            'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'data-url' => $cakeView->Url->build([
                 'prefix' => 'api',
                 'plugin' => $relatedProperties['plugin'],
@@ -113,10 +110,8 @@ class RelatedFieldHandler extends BaseFieldHandler
 
         // load AppView
         $cakeView = new AppView();
-        // get related table name
-        $relatedName = $this->_getRelatedName($options['fieldDefinitions']['type']);
 
-        $relatedProperties[] = $this->_getRelatedProperties($relatedName, $data);
+        $relatedProperties[] = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
         if (!empty($relatedProperties[0]['config']['parent']['module'])) {
             array_unshift(

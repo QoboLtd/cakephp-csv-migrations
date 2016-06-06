@@ -10,11 +10,6 @@ use CsvMigrations\FieldHandlers\RelatedFieldHandler;
 class HasManyFieldHandler extends RelatedFieldHandler
 {
     /**
-     * Field type match pattern
-     */
-    protected $_fieldTypePattern = '/hasMany\((.*?)\)/';
-
-    /**
      * Action name for html link
      */
     const LINK_ACTION = 'view';
@@ -32,10 +27,8 @@ class HasManyFieldHandler extends RelatedFieldHandler
     {
         // load AppView
         $cakeView = new AppView();
-        // get related table name
-        $relatedName = $this->_getRelatedName($options['fieldDefinitions']['type']);
         // get plugin and controller names
-        list($relatedPlugin, $relatedController) = pluginSplit($relatedName);
+        list($relatedPlugin, $relatedController) = pluginSplit($options['fieldDefinitions']->getLimit());
         // remove vendor from plugin name
         if (!is_null($relatedPlugin)) {
             $pos = strpos($relatedPlugin, '/');
@@ -66,7 +59,7 @@ class HasManyFieldHandler extends RelatedFieldHandler
             'value' => null,
             'data-id' => $this->_domId($fieldName),
             'autocomplete' => 'off',
-            'required' => (bool)$options['fieldDefinitions']['required'],
+            'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'data-url' => $cakeView->Url->build([
                 'prefix' => 'api',
                 'plugin' => $relatedPlugin,

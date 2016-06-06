@@ -27,7 +27,7 @@ class DateFieldHandler extends BaseFieldHandler
                 'fieldName' => $this->_getFieldName($table, $field, $options),
                 'type' => static::FIELD_TYPE,
                 'label' => true,
-                'required' => (bool)$options['fieldDefinitions']['required'],
+                'required' => (bool)$options['fieldDefinitions']->getRequired(),
                 'value' => $data
             ]
         ]);

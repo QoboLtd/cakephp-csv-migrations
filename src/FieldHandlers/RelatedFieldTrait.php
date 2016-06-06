@@ -11,29 +11,11 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 trait RelatedFieldTrait
 {
     /**
-     * Field type match pattern
-     */
-    protected $_fieldTypePattern = '/related\((.*?)\)/';
-
-    /**
      * Field value separator
      *
      * @var string
      */
     protected $_separator = '&gt;';
-
-    /**
-     * Method that extracts list name from field type definition.
-     *
-     * @param  string $type field type
-     * @return string       list name
-     */
-    protected function _getRelatedName($type)
-    {
-        $result = preg_replace($this->_fieldTypePattern, '$1', $type);
-
-        return $result;
-    }
 
     /**
      * Get related model's parent model properties.

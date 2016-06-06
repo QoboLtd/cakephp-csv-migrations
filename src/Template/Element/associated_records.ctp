@@ -101,13 +101,12 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                      */
                     $handlerOptions['embModal'] = true;
                     /*
-                    set field type to 'hasMany'
+                    set field type to 'has_many' and default parameters
                      */
-                    $handlerOptions['fieldDefinitions']['type'] = 'hasMany(' . $assocData['class_name'] . ')';
-                    /*
-                    set field as required
-                     */
+                    $handlerOptions['fieldDefinitions']['type'] = 'has_many(' . $assocData['class_name'] . ')';
                     $handlerOptions['fieldDefinitions']['required'] = true;
+                    $handlerOptions['fieldDefinitions']['non-searchable'] = true;
+                    $handlerOptions['fieldDefinitions']['unique'] = false;
 
                     /*
                     display typeahead field for associated module(s)

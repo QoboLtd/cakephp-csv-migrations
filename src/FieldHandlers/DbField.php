@@ -41,6 +41,13 @@ class DbField
     protected $_nonSearchable;
 
     /**
+     * field unique flag
+     *
+     * @var bool
+     */
+    protected $_unique;
+
+    /**
      * Supported field types
      *
      * @var array
@@ -55,14 +62,16 @@ class DbField
      * @param int    $limit         field limit
      * @param bool   $required      field required flag
      * @param bool   $nonSearchable field non-searchable flag
+     * @param bool   $unique        field unique flag
      */
-    public function __construct($name, $type, $limit, $required, $nonSearchable)
+    public function __construct($name, $type, $limit, $required, $nonSearchable, $unique)
     {
         $this->setName($name);
         $this->setType($type);
         $this->setLimit($limit);
         $this->setRequired($required);
         $this->setNonSearchable($nonSearchable);
+        $this->setUnique($unique);
 
     }
 
@@ -176,5 +185,25 @@ class DbField
     public function getNonSearchable()
     {
         return $this->_nonSearchable;
+    }
+
+    /**
+     * Field unique flag setter.
+     *
+     * @param string $unique field unique flag
+     */
+    public function setUnique($unique)
+    {
+        $this->_unique = $unique;
+    }
+
+    /**
+     * Field unique flag getter.
+     *
+     * @return bool
+     */
+    public function getUnique()
+    {
+        return $this->_unique;
     }
 }

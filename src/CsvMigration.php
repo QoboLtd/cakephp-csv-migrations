@@ -183,6 +183,10 @@ class CsvMigration extends AbstractMigration
                     'limit' => $dbField->getLimit(),
                     'null' => $dbField->getRequired() ? false : true
                 ]);
+                // set field as unique
+                if ($dbField->getUnique()) {
+                    $this->_table->addIndex([$dbField->getName()], ['unique' => $dbField->getUnique()]);
+                }
                 // set id as primary key
                 if ('id' === $dbField->getName()) {
                     $this->_table->addPrimaryKey([
@@ -223,6 +227,10 @@ class CsvMigration extends AbstractMigration
                         'limit' => $dbField->getLimit(),
                         'null' => (bool)$dbField->getRequired() ? false : true
                     ]);
+                    // set field as unique
+                    if ($dbField->getUnique()) {
+                        $this->_table->addIndex([$dbField->getName()], ['unique' => $dbField->getUnique()]);
+                    }
                 }
             }
         }

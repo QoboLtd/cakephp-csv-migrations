@@ -38,6 +38,11 @@ class CsvField
     const FIELD_NON_SEARCHABLE = 'non-searchable';
 
     /**
+     * Field unique property
+     */
+    const FIELD_UNIQUE = 'unique';
+
+    /**
      * field name
      *
      * @var string
@@ -73,6 +78,13 @@ class CsvField
     protected $_nonSearchable;
 
     /**
+     * field unique flag
+     *
+     * @var bool
+     */
+    protected $_unique;
+
+    /**
      * Constructor
      *
      * @array string $row csv row
@@ -84,6 +96,7 @@ class CsvField
         $this->setLimit($row[static::FIELD_TYPE]);
         $this->setRequired($row[static::FIELD_REQUIRED]);
         $this->setNonSearchable($row[static::FIELD_NON_SEARCHABLE]);
+        $this->setUnique($row[static::FIELD_UNIQUE]);
 
     }
 
@@ -238,5 +251,25 @@ class CsvField
     public function getNonSearchable()
     {
         return $this->_nonSearchable;
+    }
+
+    /**
+     * Field unique flag setter.
+     *
+     * @param string $unique field unique flag
+     */
+    public function setUnique($unique)
+    {
+        $this->_unique = (bool)$unique;
+    }
+
+    /**
+     * Field unique flag getter.
+     *
+     * @return bool
+     */
+    public function getUnique()
+    {
+        return $this->_unique;
     }
 }

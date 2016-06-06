@@ -159,7 +159,8 @@ class RelatedFieldHandler extends BaseFieldHandler
             static::FIELD_TYPE,
             null,
             $csvField->getRequired(),
-            $csvField->getNonSearchable()
+            $csvField->getNonSearchable(),
+            $csvField->getUnique()
         );
 
         return $dbFields;

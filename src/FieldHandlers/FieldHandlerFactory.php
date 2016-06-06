@@ -52,7 +52,7 @@ class FieldHandlerFactory
     {
         $table = $this->_getTableInstance($table);
         $options = $this->_getExtraOptions($table, $field, $options);
-        $handler = $this->_getHandler($options['fieldDefinitions']['type']);
+        $handler = $this->_getHandler($options['fieldDefinitions']->getType());
 
         return $handler->renderInput($table, $field, $data, $options);
     }
@@ -70,7 +70,7 @@ class FieldHandlerFactory
     {
         $table = $this->_getTableInstance($table);
         $options = $this->_getExtraOptions($table, $field, $options);
-        $handler = $this->_getHandler($options['fieldDefinitions']['type']);
+        $handler = $this->_getHandler($options['fieldDefinitions']->getType());
 
         return $handler->renderValue($table, $field, $data, $options);
     }
@@ -148,9 +148,15 @@ class FieldHandlerFactory
         if (empty($options['fieldDefinitions']['type'])) {
             $options['fieldDefinitions']['type'] = 'string';
         }
+
+        /*
+        add field definitions to options array as CsvField Instance
+         */
         if (!empty($fieldsDefinitions[$field])) {
-            // add field definitions to options array
-            $options['fieldDefinitions'] = $fieldsDefinitions[$field];
+            $options['fieldDefinitions'] = new CsvField($fieldsDefinitions[$field]);
+        } else {
+            $options['fieldDefinitions']['name'] = $field;
+            $options['fieldDefinitions'] = new CsvField($options['fieldDefinitions']);
         }
 
         return $options;
@@ -201,10 +207,6 @@ class FieldHandlerFactory
      */
     protected function _getHandlerByFieldType($type, $fqcn = false)
     {
-        if (false !== $pos = strpos($type, '(')) {
-            $type = substr($type, 0, $pos);
-        }
-
         $result = Inflector::classify($type) . static::HANDLER_SUFFIX;
 
         if ($fqcn) {

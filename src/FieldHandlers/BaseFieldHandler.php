@@ -33,7 +33,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         // load AppView
         $cakeView = new AppView();
 
-        $fieldType = $options['fieldDefinitions']['type'];
+        $fieldType = $options['fieldDefinitions']->getType();
 
         if (in_array($fieldType, array_keys($this->_fieldTypes))) {
             $fieldType = $this->_fieldTypes[$fieldType];
@@ -41,7 +41,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         return $cakeView->Form->input($this->_getFieldName($table, $field, $options), [
             'type' => $fieldType,
-            'required' => (bool)$options['fieldDefinitions']['required'],
+            'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'value' => $data
         ]);
     }

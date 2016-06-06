@@ -24,7 +24,7 @@ class BooleanFieldHandler extends BaseFieldHandler
 
         return $cakeView->Form->input($this->_getFieldName($table, $field, $options), [
             'type' => static::FIELD_TYPE,
-            'required' => (bool)$options['fieldDefinitions']['required'],
+            'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'checked' => $data
         ]);
     }

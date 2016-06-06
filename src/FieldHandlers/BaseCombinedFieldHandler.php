@@ -43,7 +43,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
             $fieldOptions = [
                 'label' => false,
                 'type' => $preOptions['type'],
-                'required' => (bool)$options['fieldDefinitions']['required'],
+                'required' => (bool)$options['fieldDefinitions']->getRequired(),
                 'escape' => false,
                 'value' => $data
             ];
@@ -56,7 +56,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
             switch ($preOptions['field']) {
                 case 'select':
                     $input .= 'col-xs-6 col-sm-4 col-sm-offset-2">';
-                    $selectOptions = $this->_getSelectOptions($options['fieldDefinitions']['type']);
+                    $selectOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
                     $input .= $cakeView->Form->select($fullFieldName, $selectOptions, $fieldOptions);
                     break;
 
@@ -87,7 +87,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
 
             switch ($preOptions['field']) {
                 case 'select':
-                    $selectOptions = $this->_getSelectOptions($options['fieldDefinitions']['type']);
+                    $selectOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
                     $result .= $selectOptions[$data];
                     break;
 

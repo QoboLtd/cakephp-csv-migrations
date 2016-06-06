@@ -43,12 +43,12 @@ class ListFieldHandler extends BaseFieldHandler
         // load AppView
         $cakeView = new AppView();
 
-        $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']['type']);
+        $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
 
         $input = $cakeView->Form->label($field);
         $input .= $cakeView->Form->select($this->_getFieldName($table, $field, $options), $fieldOptions, [
             'class' => 'form-control',
-            'required' => (bool)$options['fieldDefinitions']['required'],
+            'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'value' => $data
         ]);
 
@@ -68,7 +68,7 @@ class ListFieldHandler extends BaseFieldHandler
     {
         $result = $data;
 
-        $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']['type']);
+        $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getType());
 
         if (isset($fieldOptions[$data])) {
             $result = h($fieldOptions[$data]);
@@ -98,14 +98,13 @@ class ListFieldHandler extends BaseFieldHandler
     }
 
     /**
-     * Method that retrieves select input options by field type.
+     * Method that retrieves select input options by list name.
      *
-     * @param  string $type field type
-     * @return array        list options
+     * @param  string $listName list name
+     * @return array            list options
      */
-    protected function _getSelectOptions($type)
+    protected function _getSelectOptions($listName)
     {
-        $listName = $this->_getListName($type);
         $result = $this->_getListFieldOptions($listName);
         $result = $this->_filterOptions($result);
 
@@ -114,19 +113,6 @@ class ListFieldHandler extends BaseFieldHandler
          */
         $collection = new Collection($result);
         $result = $collection->listNested()->printer('name', 'id', null)->toArray();
-
-        return $result;
-    }
-
-    /**
-     * Method that extracts list name from field type definition.
-     *
-     * @param  string $type field type
-     * @return string       list name
-     */
-    protected function _getListName($type)
-    {
-        $result = preg_replace(static::FIELD_TYPE_PATTERN, '$1', $type);
 
         return $result;
     }

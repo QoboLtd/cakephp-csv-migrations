@@ -13,7 +13,8 @@ trait CsvTrait
         'name' => '',
         'type' => '',
         'required' => '',
-        'non-searchable' => ''
+        'non-searchable' => '',
+        'unique' => false
     ];
 
     /**

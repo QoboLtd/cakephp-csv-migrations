@@ -20,7 +20,8 @@ class TextFieldHandler extends BaseFieldHandler
             $csvField->getType(),
             MysqlAdapter::TEXT_LONG,
             $csvField->getRequired(),
-            $csvField->getNonSearchable()
+            $csvField->getNonSearchable(),
+            $csvField->getUnique()
         );
 
         return $dbFields;

@@ -111,7 +111,8 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
                 $options['type'],
                 null,
                 $csvField->getRequired(),
-                $csvField->getNonSearchable()
+                $csvField->getNonSearchable(),
+                $csvField->getUnique()
             );
         }
 

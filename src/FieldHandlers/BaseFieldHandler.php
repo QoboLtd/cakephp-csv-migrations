@@ -75,7 +75,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $csvField->getType(),
             $csvField->getLimit(),
             $csvField->getRequired(),
-            $csvField->getNonSearchable()
+            $csvField->getNonSearchable(),
+            $csvField->getUnique()
         );
 
         return $dbFields;

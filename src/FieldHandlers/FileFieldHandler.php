@@ -162,7 +162,8 @@ class FileFieldHandler extends BaseFieldHandler
             static::FIELD_TYPE,
             $csvField->getLimit(),
             $csvField->getRequired(),
-            $csvField->getNonSearchable()
+            $csvField->getNonSearchable(),
+            $csvField->getUnique()
         );
 
         return $dbFields;

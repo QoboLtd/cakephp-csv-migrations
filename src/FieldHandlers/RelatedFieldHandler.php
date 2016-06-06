@@ -54,9 +54,8 @@ class RelatedFieldHandler extends BaseFieldHandler
         $fieldName = $this->_getFieldName($table, $field, $options);
 
         $input = '';
-
+        $input .= '<div class="form-group' . ((bool)$options['fieldDefinitions']['required'] ? ' required' : '') . '">';
         $input .= $cakeView->Form->label($field);
-
         $input .= '<div class="input-group">';
         $input .= '<span class="input-group-addon" title="Auto-complete"><strong>&hellip;</strong></span>';
 
@@ -87,6 +86,7 @@ class RelatedFieldHandler extends BaseFieldHandler
             $input .= '</button>';
             $input .= '</div>';
         }
+        $input .= '</div>';
         $input .= '</div>';
 
         $input .= $cakeView->Form->input($fieldName, ['type' => 'hidden', 'value' => $data]);

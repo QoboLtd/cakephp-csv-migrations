@@ -44,10 +44,7 @@ class FileFieldHandler extends BaseFieldHandler
     protected function _renderInput($field)
     {
         $cakeView = new AppView();
-        $uploadField = $cakeView->Form->file(
-            'UploadDocuments.file.' . $field,
-            ['class' => 'file']
-        );
+        $uploadField = $cakeView->Form->file('file[]', ['multiple' => true, 'class' => 'file-uploading']);
         $label = $cakeView->Form->label($field);
 
         return sprintf(self::WRAPPER, $label, $uploadField);

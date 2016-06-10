@@ -171,30 +171,7 @@ class ViewMenuListener implements EventListenerInterface
             $controllerName = $request->plugin . '.' . $controllerName;
         }
 
-        $model = TableRegistry::get($controllerName);
-
-        $config = $model->getConfig();
-
-        $displayField = $model->displayField();
-
-        /**
-         * Conversion logic
-         * @todo probably this has to be moved to another plugin
-         */
-        if (!empty($config['conversion']['modules'])) {
-            $urlConvert = [
-                'plugin' => null,
-                'controller' => 'conversions',
-                'action' => 'prepare',
-                $controllerName,
-                $options['entity']->id
-            ];
-            $btnConvert = ' ' . $appView->Html->link(
-                __('Convert') . ' ' . Inflector::singularize($model->alias()),
-                $urlConvert,
-                ['title' => __('Convert'), 'class' => 'btn btn-default']
-            );
-        }
+        $displayField = TableRegistry::get($controllerName)->displayField();
 
         $urlChangelog = [
             'plugin' => null,
@@ -238,17 +215,7 @@ class ViewMenuListener implements EventListenerInterface
         );
 
         $menu = [];
-        /**
-         * Conversion logic
-         * @todo probably this has to be moved to another plugin
-         */
-        if (!empty($config['conversion']['modules'])) {
-            $menu[] = [
-                'label' => $btnConvert,
-                'url' => $urlConvert,
-                'capabilities' => 'fromUrl'
-            ];
-        }
+
         $menu[] = [
             'label' => $btnChangelog,
             'url' => $urlChangelog,
@@ -265,22 +232,16 @@ class ViewMenuListener implements EventListenerInterface
             'capabilities' => 'fromUrl'
         ];
 
-        $result = null;
+        $html = null;
         if ($appView->elementExists(static::MENU_ELEMENT)) {
-            $result .= $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
+            $html .= $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
         } else {
-            /**
-             * Conversion logic
-             * @todo probably this has to be moved to another plugin
-             */
-            if (!empty($config['conversion']['modules'])) {
-                $result .= $btnConvert;
-            }
-
-            $result .= $btnChangelog . $btnEdit . $btnDel;
+            $html .= $btnChangelog . $btnEdit . $btnDel;
         }
 
-        return $result;
+        $event->result = $html . $event->result;
+
+        return $event->result;
     }
 
     /**

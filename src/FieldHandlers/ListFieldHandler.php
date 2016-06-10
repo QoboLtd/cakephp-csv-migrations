@@ -68,7 +68,7 @@ class ListFieldHandler extends BaseFieldHandler
     {
         $result = $data;
 
-        $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getType());
+        $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
 
         if (isset($fieldOptions[$data])) {
             $result = h($fieldOptions[$data]);

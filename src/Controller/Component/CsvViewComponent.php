@@ -207,7 +207,7 @@ class CsvViewComponent extends Component
         $fields = array_unique(
             array_merge(
                 [$association->displayField()],
-                $this->_getTableFields($association->className(), static::ASSOC_FIELDS_ACTION)
+                $this->_getAssociationCsvFields($association, static::ASSOC_FIELDS_ACTION)
             )
         );
 
@@ -220,7 +220,7 @@ class CsvViewComponent extends Component
         // store associated table name
         $result['table_name'] = $assocTableName;
         // store associated table class name
-        $result['class_name'] = 'CrmRe.' . $association->className();
+        $result['class_name'] = $association->className();
         // store associated table display field
         $result['display_field'] =  $association->displayField();
         // store associated table primary key
@@ -252,7 +252,7 @@ class CsvViewComponent extends Component
         $fields = array_unique(
             array_merge(
                 [$association->displayField()],
-                $this->_getTableFields($assocName, static::ASSOC_FIELDS_ACTION)
+                $this->_getAssociationCsvFields($association, static::ASSOC_FIELDS_ACTION)
             )
         );
         $query = $this->_tableInstance->find('all', [
@@ -283,13 +283,27 @@ class CsvViewComponent extends Component
     }
 
     /**
-     * Method that retrieves table fields defined in the csv file, based on specified action
+     * Method that retrieves associated table csv fields, by specified action.
+     *
+     * @param  \Cake\ORM\Association $association Association
+     * @param  string                $action      Action name
+     * @return array                              table fields
+     */
+    protected function _getAssociationCsvFields(Association $association, $action)
+    {
+        list($plugin, $controller) = pluginSplit($association->className());
+
+        return $this->_getCsvFields($controller, $action);
+    }
+
+    /**
+     * Method that retrieves table csv fields, by specified action.
      *
      * @param  string $tableName Table name
      * @param  string $action    Action name
      * @return array             table fields
      */
-    protected function _getTableFields($tableName, $action)
+    protected function _getCsvFields($tableName, $action)
     {
         $path = Configure::readOrFail('CsvMigrations.views.path');
         $path .= $tableName . DS . $action . '.csv';

@@ -115,6 +115,14 @@ trait MigrationTrait
                         'foreignKey' => $row['name']
                     ]);
                 } elseif ($config['registryAlias'] === $assocModule) {
+                    list($plugin, $controller) = pluginSplit($config['registryAlias']);
+                    /**
+                     * appending plugin name from current table to associated module.
+                     * @todo investigate more, it might break in some cases, such as Files plugin association.
+                     */
+                    if (!is_null($plugin)) {
+                        $module = $plugin . '.' . $module;
+                    }
                     $assocName = CsvMigrationsUtils::createAssociationName($module, $row['name']);
                     $this->hasMany($assocName, [
                         'className' => $module,

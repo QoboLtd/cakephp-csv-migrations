@@ -58,8 +58,8 @@ class RelatedFieldHandler extends BaseFieldHandler
 
         $input .= $cakeView->Form->input($field, [
             'label' => false,
-            'name' => $field . '_label',
-            'id' => $field . '_label',
+            'name' => false,
+            'id' => false,
             'type' => 'text',
             'data-type' => 'typeahead',
             'readonly' => (bool)$data,

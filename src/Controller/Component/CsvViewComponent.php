@@ -220,7 +220,7 @@ class CsvViewComponent extends Component
         // store associated table name
         $result['table_name'] = $assocTableName;
         // store associated table class name
-        $result['class_name'] = 'CrmRe.' . $association->className();
+        $result['class_name'] = $association->className();
         // store associated table display field
         $result['display_field'] =  $association->displayField();
         // store associated table primary key

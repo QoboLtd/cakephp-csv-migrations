@@ -47,8 +47,9 @@ class AppController extends Controller
         $this->Crud->on('beforeFind', function(Event $event) {
             $uniqueFields = $event->subject()->repository->getUniqueFields();
 
-            /*
-            check for record by table's unique fields (not only by id)
+            /**
+             * check for record by table's unique fields (not only by id)
+             * @todo currently if two unique fields have the same value the query will only return the first one
              */
             foreach ($uniqueFields as $uniqueField) {
                 $event->subject()->query->orWhere([$uniqueField => $event->subject()->id]);

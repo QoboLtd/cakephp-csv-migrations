@@ -3,6 +3,7 @@ namespace CsvMigrations;
 
 use Cake\ORM\Table as BaseTable;
 use CsvMigrations\ConfigurationTrait;
+use CsvMigrations\FieldTrait;
 use CsvMigrations\MigrationTrait;
 
 /**
@@ -12,6 +13,7 @@ use CsvMigrations\MigrationTrait;
 class Table extends BaseTable
 {
     use ConfigurationTrait;
+    use FieldTrait;
     use MigrationTrait;
 
     /**

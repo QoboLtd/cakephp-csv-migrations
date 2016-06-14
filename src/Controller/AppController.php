@@ -2,12 +2,9 @@
 namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
-use CsvMigrations\Controller\CsvMigrationUploadTrait;
 
 class AppController extends BaseController
 {
-    use CsvMigrationUploadTrait;
-
     /**
      * Called before the controller action. You can use this method to configure and customize components
      * or perform logic that needs to happen before each controller action.
@@ -66,9 +63,6 @@ class AppController extends BaseController
         if ($this->request->is('post')) {
             $entity = $this->{$this->name}->patchEntity($entity, $this->request->data);
             if ($this->{$this->name}->save($entity)) {
-                foreach ($this->_getCsvUploadFields() as $field) {
-                    $this->_upload($entity, $field);
-                }
                 $this->Flash->success(__('The record has been saved.'));
                 return $this->redirect(['action' => 'view', $entity->{$this->{$this->name}->primaryKey()}]);
             } else {
@@ -100,9 +94,6 @@ class AppController extends BaseController
             $patchOptions = $this->{$this->name}->enablePrimaryKeyAccess();
             $entity = $this->{$this->name}->patchEntity($entity, $this->request->data, $patchOptions);
             if ($this->{$this->name}->save($entity)) {
-                foreach ($this->_getCsvUploadFields() as $field) {
-                    $this->_upload($entity, $field);
-                }
                 $this->Flash->success(__('The record has been saved.'));
                 return $this->redirect(['action' => 'view', $id]);
             } else {

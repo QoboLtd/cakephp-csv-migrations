@@ -19,7 +19,67 @@ var embedded = embedded || {};
 
         $(that.formId).submit(function(e) {
             e.preventDefault();
-            that._submitForm(this);
+            if (files) {
+                that.uploadFiles(this);
+            } else {
+               that._submitForm(this);
+            }
+        });
+    };
+
+    Embedded.prototype.uploadFiles = function(form) {
+        var that = this;
+        var data = new FormData();
+        var modalId = $(form).data('modal_id');
+
+        $.each(files, function(key, value)
+        {
+            data.append('file[]', value);
+        });
+
+        if (uploadFieldName) {
+            data.append('fieldName', uploadFieldName);
+        }
+
+        $.ajax({
+            url: '/crm-re/api/documents/add',
+            type: 'POST',
+            data: data,
+            cache: false,
+            dataType: 'json',
+            processData: false, // Don't process the files
+            contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+            success: function(data, textStatus, jqXHR)
+            {
+                if(typeof data.error === 'undefined')
+                {
+                    /*
+                    set related field display-field and value
+                     */
+                    that._setRelatedField('/crm-re/api/documents/add', data.data.id, form);
+
+                    /*
+                    clear embedded form
+                     */
+                    that._resetForm(form);
+
+                    /*
+                    hide modal
+                     */
+                    $('#' + modalId).modal('hide');
+                }
+                else
+                {
+                    // Handle errors here
+                    console.log('ERRORS: ' + data.error);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus);
+                // STOP LOADING SPINNER
+            }
         });
     };
 

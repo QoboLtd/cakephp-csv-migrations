@@ -27,7 +27,7 @@ class FileFieldHandler extends BaseFieldHandler
     {
         $cakeView = new AppView();
         if (empty($data)) {
-            $result = $this->_renderInput($field);
+            $result = $this->_renderInput($table, $field, $options);
         } else {
             $result = $this->_renderInputWithValue($table, $field, $data);
         }
@@ -41,12 +41,12 @@ class FileFieldHandler extends BaseFieldHandler
      * @param  string $field name
      * @return string HTML input field.
      */
-    protected function _renderInput($field)
+    protected function _renderInput($table, $field, $options)
     {
         $cakeView = new AppView();
         $uploadField = $cakeView->Form->file(
-            'UploadDocuments.file.' . $field,
-            ['class' => 'file']
+            $this->_getFieldName($table, $field, $options),
+            ['multiple' => true]
         );
         $label = $cakeView->Form->label($field);
 

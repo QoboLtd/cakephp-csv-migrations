@@ -38,6 +38,27 @@ class AppController extends Controller
     ];
 
     /**
+     * View CRUD action events handling logic.
+     *
+     * @return \Cake\Network\Response
+     */
+    public function view()
+    {
+        $this->Crud->on('beforeFind', function(Event $event) {
+            $uniqueFields = $event->subject()->repository->getUniqueFields();
+
+            /*
+            check for record by table's unique fields (not only by id)
+             */
+            foreach ($uniqueFields as $uniqueField) {
+                $event->subject()->query->orWhere([$uniqueField => $event->subject()->id]);
+            }
+        });
+
+        return $this->Crud->execute();
+    }
+
+    /**
      * Lookup CRUD action events handling logic.
      *
      * @return \Cake\Network\Response

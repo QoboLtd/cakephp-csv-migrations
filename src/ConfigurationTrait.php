@@ -54,12 +54,13 @@ trait ConfigurationTrait
     /**
      * Method that sets table configuration.
      *
+     * @param string $tableName table name
      * @return void
      */
-    protected function _setConfiguration()
+    protected function _setConfiguration($tableName)
     {
         $path = Configure::read('CsvMigrations.migrations.path');
-        $path .= Inflector::camelize($this->_table->getName()) . DS . $this->_filename . '.' . $this->_extension;
+        $path .= Inflector::camelize($tableName) . DS . $this->_filename . '.' . $this->_extension;
         if (file_exists($path)) {
             $this->_config = parse_ini_file($path, true);
         }

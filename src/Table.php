@@ -32,7 +32,7 @@ class Table extends BaseTable
         /*
         set table/module configuration
          */
-        $this->_setConfiguration();
+        $this->_setConfiguration($this->table());
 
         /*
         display field from configuration file

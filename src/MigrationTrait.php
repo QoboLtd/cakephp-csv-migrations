@@ -64,7 +64,7 @@ trait MigrationTrait
 
         $manyToMany = explode(',', $this->_config['manyToMany']['modules']);
 
-        foreach($manyToMany as $module) {
+        foreach ($manyToMany as $module) {
             $this->belongsToMany($module);
         }
     }

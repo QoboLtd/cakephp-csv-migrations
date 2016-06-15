@@ -64,7 +64,7 @@ trait MigrationTrait
 
         $manyToMany = explode(',', $this->_config['manyToMany']['modules']);
 
-        foreach($manyToMany as $module) {
+        foreach ($manyToMany as $module) {
             $this->belongsToMany($module);
         }
     }
@@ -121,11 +121,11 @@ trait MigrationTrait
                      * @todo investigate more, it might break in some cases, such as Files plugin association.
                      */
                     if (!is_null($plugin)) {
-                        $module = $plugin . '.' . $module;
+                        $assocModule = $plugin . '.' . $module;
                     }
-                    $assocName = CsvMigrationsUtils::createAssociationName($module, $row['name']);
+                    $assocName = CsvMigrationsUtils::createAssociationName($assocModule, $row['name']);
                     $this->hasMany($assocName, [
-                        'className' => $module,
+                        'className' => $assocModule,
                         'foreignKey' => $row['name']
                     ]);
                 }

@@ -18,6 +18,11 @@ class CsvMigrationsUtils
         if ('' !== $foreignKey) {
             $foreignKey = Inflector::camelize($foreignKey);
         }
+        $pos = strpos($plugin, '/');
+        if ($pos) {
+            $plugin = substr($plugin, $pos + 1);
+        }
+
         return $foreignKey . $plugin . $model;
     }
 }

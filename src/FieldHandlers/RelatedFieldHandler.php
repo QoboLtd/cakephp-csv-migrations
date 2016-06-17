@@ -24,6 +24,11 @@ class RelatedFieldHandler extends BaseFieldHandler
     const LINK_ACTION = 'view';
 
     /**
+     * Suffix for label field
+     */
+    const LABEL_FIELD_SUFFIX = '_label';
+
+    /**
      * Method responsible for rendering field's input.
      *
      * @param  mixed  $table   name or instance of the Table
@@ -59,7 +64,7 @@ class RelatedFieldHandler extends BaseFieldHandler
         $input .= $cakeView->Form->input($field, [
             'label' => false,
             'name' => false,
-            'id' => false,
+            'id' => $field . static::LABEL_FIELD_SUFFIX,
             'type' => 'text',
             'data-type' => 'typeahead',
             'readonly' => (bool)$data,

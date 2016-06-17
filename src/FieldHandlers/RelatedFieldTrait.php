@@ -26,7 +26,16 @@ trait RelatedFieldTrait
     protected function _getRelatedParentProperties($relatedProperties)
     {
         $parentTable = TableRegistry::get($relatedProperties['config']['parent']['module']);
-        $foreignKey = $this->_getForeignKey($parentTable, $relatedProperties['controller']);
+        $modelName = $relatedProperties['controller'];
+
+        /*
+        prepend plugin name
+         */
+        if (!is_null($relatedProperties['plugin'])) {
+            $modelName = $relatedProperties['plugin'] . '.' . $modelName;
+        }
+
+        $foreignKey = $this->_getForeignKey($parentTable, $modelName);
 
         return $this->_getRelatedProperties($parentTable, $relatedProperties['entity']->{$foreignKey});
     }
@@ -76,15 +85,15 @@ trait RelatedFieldTrait
     /**
      * Get parent model association's foreign key.
      *
-     * @param  \Cake\ORM\Table $table          Table instance
-     * @param  string          $controllerName Controller name
+     * @param  \Cake\ORM\Table $table     Table instance
+     * @param  string          $modelName Model name
      * @return string
      */
-    protected function _getForeignKey(Table $table, $controllerName)
+    protected function _getForeignKey(Table $table, $modelName)
     {
         $result = null;
         foreach ($table->associations() as $association) {
-            if ($controllerName === $association->className()) {
+            if ($modelName === $association->className()) {
                 $result = $association->foreignKey();
             }
         }

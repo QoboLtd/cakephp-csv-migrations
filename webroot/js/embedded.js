@@ -19,7 +19,7 @@ var embedded = embedded || {};
 
         $(that.formId).submit(function(e) {
             e.preventDefault();
-            if (files) {
+            if ('undefined' !== typeof files) {
                 that.uploadFiles(this);
             } else {
                that._submitForm(this);
@@ -154,26 +154,26 @@ var embedded = embedded || {};
             contentType: 'application/json',
             success: function(data, textStatus, jqXHR) {
                 /*
-                get typeahead field
+                get typeahead label field
                  */
-                $field = $('input[name=' + $(form).data('field_name') + ']');
+                $labelField = $('#' + $(form).data('field_id'));
 
                 displayField = $(form).data('display_field');
 
                 /*
                 set typeahead value
                  */
-                $field.val(data.data[displayField]);
+                $labelField.val(data.data[displayField]);
 
                 /*
                 set typeahead as read-only
                  */
-                $field.prop('readonly', true);
+                $labelField.prop('readonly', true);
 
                 /*
-                set hidden foreign_key value
+                set typeahead hidden foreign_key value
                  */
-                $('#' + $field.data('id')).val(id);
+                $('#' + $labelField.data('id')).val(id);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);

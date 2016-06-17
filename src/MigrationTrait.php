@@ -2,7 +2,6 @@
 namespace CsvMigrations;
 
 use Cake\Core\Configure;
-use Cake\Utility\Inflector;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\CsvTrait;
 use CsvMigrations\FieldHandlers\CsvField;
@@ -78,31 +77,25 @@ trait MigrationTrait
     protected function _setAssociationsFromCsv(array $config)
     {
         $csvData = $this->_csvData();
-        $curModule = Inflector::camelize($this->table());
+        $csvObjData = $this->_csvDataToCsvObj($csvData);
+        $csvFilteredData = $this->_csvDataFilter($csvObjData, $this->__assocIdentifier);
 
-        foreach ($csvData as $csvModule => $fields) {
-            foreach ($fields as $field) {
-                $csvField = new CsvField($field);
-                /*
-                Skip if not associated csvModule name was found
-                 */
-                if ($this->__assocIdentifier !== $csvField->getType()) {
-                    continue;
-                }
-                $assoccsvModule = $csvField->getLimit();
-                /*
-                If current model alias matches csv csvModule, then assume belongsTo association.
-                Else if it matches associated csvModule, then assume hasMany association.
-                 */
-                if ($curModule === $csvModule) {
-                    $assocName = CsvMigrationsUtils::createAssociationName($assoccsvModule, $field['name']);
+        foreach ($csvFilteredData as $csvModule => $fields) {
+            foreach ($fields as $csvObjField) {
+                $assoccsvModule = $csvObjField->getAssocCsvModule();
+
+                //Belongs to association of the curren running module.
+                if ($config['currentMod'] === $csvModule) {
+                    $assocName = CsvMigrationsUtils::createAssociationName($assoccsvModule, $csvObjField->getName());
                     $this->belongsTo($assocName, [
                         'className' => $assoccsvModule,
-                        'foreignKey' => $field['name']
+                        'foreignKey' => $csvObjField->getName()
                     ]);
                 } else {
                     list(, $mod) = pluginSplit($assoccsvModule);
-                    if ($curModule === $mod) {
+                    //Foreignkey found in other module
+                    //Let's create hasMany association.
+                    if ($config['currentMod'] === $mod) {
                         list($plugin, $controller) = pluginSplit($config['registryAlias']);
                         /**
                          * appending plugin name from current table to associated csvModule.
@@ -111,10 +104,10 @@ trait MigrationTrait
                         if (!is_null($plugin)) {
                             $assoccsvModule = $plugin . '.' . $csvModule;
                         }
-                        $assocName = CsvMigrationsUtils::createAssociationName($assoccsvModule, $field['name']);
+                        $assocName = CsvMigrationsUtils::createAssociationName($assoccsvModule, $csvObjField->getName());
                         $this->hasMany($assocName, [
                             'className' => $assoccsvModule,
-                            'foreignKey' => $field['name']
+                            'foreignKey' => $csvObjField->getName()
                         ]);
                     }
 
@@ -126,9 +119,47 @@ trait MigrationTrait
     }
 
     /**
-     * [_csvData description]
-     * @param  [type] $path [description]
-     * @return [type]       [description]
+     * Filter the CSV data by type.
+     *
+     * @param  array  $data CSV data.
+     * @param  string $type Type to filter.
+     * @return array  Filtered data.
+     */
+    protected function _csvDataFilter(array $data = [], $type = null)
+    {
+        foreach ($data as $csvModule => &$fields) {
+            foreach ($fields as $key => $field) {
+                if ($field->getType() !== $type) {
+                    unset($fields[$key]);
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Convert array to object function.
+     *
+     * @see  _csvData();
+     * @param  array  $data The return of _csvData function
+     * @return array        An array containing CSV objects.
+     */
+    protected function _csvDataToCsvObj(array $data = [])
+    {
+        foreach ($data as $csvModule => &$fields) {
+            foreach ($fields as $key => $fieldDetails) {
+                $fields[$key] = new CsvField($fieldDetails);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get all modules data.
+     *
+     * @return array      Modules, fields and fields types.
      */
     protected function _csvData()
     {

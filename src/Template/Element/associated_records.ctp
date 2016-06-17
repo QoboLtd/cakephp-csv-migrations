@@ -148,31 +148,35 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                         <?php foreach ($assocData['records'] as $record) : ?>
                             <tr>
                             <?php foreach ($assocData['fields'] as $assocField) : ?>
-                                <?php if ('' !== trim($record->$assocField)) : ?>
                                 <td>
                                 <?php
-                                    if (is_bool($record->$assocField)) {
-                                        echo $record->$assocField ? __('Yes') : __('No');
+                                    $renderOptions = [
+                                        'entity' => $record
+                                    ];
+                                    $value = $fhf->renderValue(
+                                        $assocData['class_name'],
+                                        $assocField,
+                                        $record->$assocField,
+                                        $renderOptions
+                                    );
+
+
+
+                                    if ($assocData['display_field'] === $assocField) {
+                                        list($assocPlugin, $assocModel) = pluginSplit($assocData['class_name']);
+                                        echo $this->Html->link(
+                                            h($value), [
+                                                'plugin' => $assocPlugin,
+                                                'controller' => $assocModel,
+                                                'action' => 'view',
+                                                $record->$assocData['primary_key']
+                                            ]
+                                        );
                                     } else {
-                                        if ($assocData['display_field'] === $assocField) {
-                                            list($assocPlugin, $assocModel) = pluginSplit($assocData['class_name']);
-                                            echo $this->Html->link(
-                                                h($record->$assocField), [
-                                                    'plugin' => $assocPlugin,
-                                                    'controller' => $assocModel,
-                                                    'action' => 'view',
-                                                    $record->$assocData['primary_key']
-                                                ]
-                                            );
-                                        } else {
-                                            echo h($record->$assocField);
-                                        }
+                                        echo !empty($value) ? $value : '&nbsp;';
                                     }
                                 ?>
                                 </td>
-                                <?php else : ?>
-                                <td>&nbsp;</td>
-                                <?php endif; ?>
                             <?php endforeach; ?>
                             <td class="actions">
                             <?php

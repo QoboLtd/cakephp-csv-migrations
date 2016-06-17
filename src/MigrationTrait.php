@@ -83,13 +83,14 @@ trait MigrationTrait
         foreach ($csvFilteredData as $csvModule => $fields) {
             foreach ($fields as $csvObjField) {
                 $assoccsvModule = $csvObjField->getAssocCsvModule();
+                $fieldName = $csvObjField->getName();
 
                 //Belongs to association of the curren running module.
                 if ($config['currentMod'] === $csvModule) {
-                    $assocName = CsvMigrationsUtils::createAssociationName($assoccsvModule, $csvObjField->getName());
+                    $assocName = CsvMigrationsUtils::createAssociationName($assoccsvModule, $fieldName);
                     $this->belongsTo($assocName, [
                         'className' => $assoccsvModule,
-                        'foreignKey' => $csvObjField->getName()
+                        'foreignKey' => $fieldName
                     ]);
                 } else {
                     list(, $mod) = pluginSplit($assoccsvModule);
@@ -104,10 +105,10 @@ trait MigrationTrait
                         if (!is_null($plugin)) {
                             $assoccsvModule = $plugin . '.' . $csvModule;
                         }
-                        $assocName = CsvMigrationsUtils::createAssociationName($assoccsvModule, $csvObjField->getName());
+                        $assocName = CsvMigrationsUtils::createAssociationName($assoccsvModule, $fieldName);
                         $this->hasMany($assocName, [
                             'className' => $assoccsvModule,
-                            'foreignKey' => $csvObjField->getName()
+                            'foreignKey' => $fieldName
                         ]);
                     }
 

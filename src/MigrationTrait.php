@@ -80,46 +80,47 @@ trait MigrationTrait
         $csvData = $this->_csvData();
         $curModule = Inflector::camelize($this->table());
 
-        if (empty($csvData)) {
-            return;
-        }
-
-        foreach ($csvData as $module => $fields) {
-            foreach ($fields as $row) {
-                $csvField = new CsvField($row);
+        foreach ($csvData as $csvModule => $fields) {
+            foreach ($fields as $field) {
+                $csvField = new CsvField($field);
                 /*
-                Skip if not associated module name was found
+                Skip if not associated csvModule name was found
                  */
                 if ($this->__assocIdentifier !== $csvField->getType()) {
                     continue;
                 }
-                $assocModule = $csvField->getLimit();
-
+                $assoccsvModule = $csvField->getLimit();
                 /*
-                If current model alias matches csv module, then assume belongsTo association.
-                Else if it matches associated module, then assume hasMany association.
+                If current model alias matches csv csvModule, then assume belongsTo association.
+                Else if it matches associated csvModule, then assume hasMany association.
                  */
-                if ($config['alias'] === $module) {
-                    $assocName = CsvMigrationsUtils::createAssociationName($assocModule, $row['name']);
+                if ($curModule === $csvModule) {
+                    $assocName = CsvMigrationsUtils::createAssociationName($assoccsvModule, $field['name']);
                     $this->belongsTo($assocName, [
-                        'className' => $assocModule,
-                        'foreignKey' => $row['name']
+                        'className' => $assoccsvModule,
+                        'foreignKey' => $field['name']
                     ]);
-                } elseif ($config['registryAlias'] === $assocModule) {
-                    list($plugin, $controller) = pluginSplit($config['registryAlias']);
-                    /**
-                     * appending plugin name from current table to associated module.
-                     * @todo investigate more, it might break in some cases, such as Files plugin association.
-                     */
-                    if (!is_null($plugin)) {
-                        $assocModule = $plugin . '.' . $module;
+                } else {
+                    list(, $mod) = pluginSplit($assoccsvModule);
+                    if ($curModule === $mod) {
+                        list($plugin, $controller) = pluginSplit($config['registryAlias']);
+                        /**
+                         * appending plugin name from current table to associated csvModule.
+                         * @todo investigate more, it might break in some cases, such as Files plugin association.
+                         */
+                        if (!is_null($plugin)) {
+                            $assoccsvModule = $plugin . '.' . $csvModule;
+                        }
+                        $assocName = CsvMigrationsUtils::createAssociationName($assoccsvModule, $field['name']);
+                        $this->hasMany($assocName, [
+                            'className' => $assoccsvModule,
+                            'foreignKey' => $field['name']
+                        ]);
                     }
-                    $assocName = CsvMigrationsUtils::createAssociationName($assocModule, $row['name']);
-                    $this->hasMany($assocName, [
-                        'className' => $assocModule,
-                        'foreignKey' => $row['name']
-                    ]);
+
                 }
+
+
             }
         }
     }

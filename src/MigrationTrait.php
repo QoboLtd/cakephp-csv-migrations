@@ -77,17 +77,8 @@ trait MigrationTrait
      */
     protected function _setAssociationsFromCsv(array $config)
     {
-        $path = Configure::readOrFail('CsvMigrations.migrations.path');
-        $csvFiles = $this->_getCsvFiles($path);
-
-        $csvData = [];
-        foreach ($csvFiles as $module => $paths) {
-            foreach ($paths as $path) {
-                $csvData[$module] = $this->_prepareCsvData(
-                    $this->_getCsvData($path)
-                );
-            }
-        }
+        $csvData = $this->_csvData();
+        $curModule = Inflector::camelize($this->table());
 
         if (empty($csvData)) {
             return;
@@ -131,6 +122,26 @@ trait MigrationTrait
                 }
             }
         }
+    }
+
+    /**
+     * [_csvData description]
+     * @param  [type] $path [description]
+     * @return [type]       [description]
+     */
+    protected function _csvData()
+    {
+        $result = [];
+        $path = Configure::readOrFail('CsvMigrations.migrations.path');
+        $csvFiles = $this->_getCsvFiles($path);
+
+        foreach ($csvFiles as $csvModule => $paths) {
+            foreach ($paths as $path) {
+                $result[$csvModule] = $this->_prepareCsvData($this->_getCsvData($path));
+            }
+        }
+
+        return $result;
     }
 
     /**

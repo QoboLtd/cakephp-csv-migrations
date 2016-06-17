@@ -3,9 +3,12 @@ namespace CsvMigrations;
 
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
+use CsvMigrations\CsvTrait;
 
 trait ListTrait
 {
+    use CsvTrait;
+
     /**
      * Field parameters
      * @var array
@@ -73,42 +76,6 @@ trait ListTrait
              */
             if (isset($v['children'])) {
                 $result[$index]['children'] = $this->__filterOptions($v['children'], $index, $k);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Method that retrieves csv file data.
-     *
-     * @param  string $path csv file path
-     * @return array        csv data
-     * @todo this method should be moved to a Trait class as is used throught Csv Migrations and Csv Views plugins
-     */
-    protected function _getCsvData($path)
-    {
-        $result = [];
-        $count = count($this->_fieldParams);
-        if (file_exists($path)) {
-            if (false !== ($handle = fopen($path, 'r'))) {
-                $row = 0;
-                while (false !== ($data = fgetcsv($handle, 0, ','))) {
-                    // skip first row
-                    if (0 === $row) {
-                        $row++;
-                        continue;
-                    }
-                    /*
-                    Skip if row is incomplete
-                     */
-                    if ($count !== count($data)) {
-                        continue;
-                    }
-
-                    $result[] = $data;
-                }
-                fclose($handle);
             }
         }
 

@@ -2,6 +2,7 @@
 namespace CsvMigrations;
 
 use Cake\ORM\Table as BaseTable;
+use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldTrait;
 use CsvMigrations\MigrationTrait;
@@ -56,6 +57,9 @@ class Table extends BaseTable
         if (isset($this->_config['table']['searchable'])) {
             $this->isSearchable($this->_config['table']['searchable']);
         }
+
+        //Set the current module
+        $config['currentMod'] = Inflector::camelize($this->table());
 
         $this->_setAssociations($config);
     }

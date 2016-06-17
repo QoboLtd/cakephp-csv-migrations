@@ -156,7 +156,7 @@ var embedded = embedded || {};
                 /*
                 get typeahead field
                  */
-                $field = $('input[name=' + $(form).data('field_name') + ']');
+                $field = $('#' + $(form).data('field_id'));
 
                 displayField = $(form).data('display_field');
 

@@ -19,7 +19,7 @@ var embedded = embedded || {};
 
         $(that.formId).submit(function(e) {
             e.preventDefault();
-            if (files) {
+            if ('undefined' !== typeof files) {
                 that.uploadFiles(this);
             } else {
                that._submitForm(this);

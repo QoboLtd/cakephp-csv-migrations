@@ -139,7 +139,7 @@ trait MigrationTrait
     }
 
     /**
-     * Convert array to object function.
+     * Convert field details into CSV object.
      *
      * @see  _csvData();
      * @param  array  $data The return of _csvData function

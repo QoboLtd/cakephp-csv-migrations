@@ -59,8 +59,7 @@ class Table extends BaseTable
         }
 
         //Set the current module
-        $config['currentMod'] = Inflector::camelize($this->table());
-
+        $config['table'] = $this->_currentTable();
         $this->_setAssociations($config);
     }
 
@@ -97,5 +96,23 @@ class Table extends BaseTable
         }
 
         return $result;
+    }
+
+    /**
+     * Return current table in camelCase form.
+     * It adds plugin name as a prefix.
+     *
+     * @return string Table Name
+     */
+    protected function _currentTable()
+    {
+        list($namespace, $alias) = namespaceSplit(get_class($this));
+        $alias = substr($alias, 0, -5);
+        list($plugin) = explode('\\', $namespace);
+        if ($plugin === 'App') {
+            return Inflector::camelize($alias);
+        }
+
+        return Inflector::camelize($plugin . '.' . $alias);
     }
 }

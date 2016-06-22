@@ -79,7 +79,7 @@ class Table extends BaseTable
     public function getSearchableFields()
     {
         $result = [];
-        foreach ($this->getFieldsDefinitions() as $field) {
+        foreach ($this->getFieldsDefinitions($this->alias()) as $field) {
             if (!$field[static::PARAM_NON_SEARCHABLE]) {
                 $result[] = $field['name'];
             }
@@ -101,7 +101,7 @@ class Table extends BaseTable
         if (empty($fields)) {
             return $result;
         }
-        foreach ($this->getFieldsDefinitions() as $field => $definitions) {
+        foreach ($this->getFieldsDefinitions($this->alias()) as $field => $definitions) {
             if (in_array($field, $fields)) {
                 $csvField = new CsvField($definitions);
                 $type = $csvField->getType();

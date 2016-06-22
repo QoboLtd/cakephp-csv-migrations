@@ -26,11 +26,12 @@ trait MigrationTrait
     /**
      * Method that retrieves fields from csv file and returns them in associate array format.
      *
+     * @param  string $moduleName Module Name
      * @return array
      */
-    public function getFieldsDefinitions()
+    public function getFieldsDefinitions($moduleName)
     {
-        $path = Configure::readOrFail('CsvMigrations.migrations.path') . $this->alias() . DS;
+        $path = Configure::readOrFail('CsvMigrations.migrations.path') . $moduleName . DS;
         $path .= Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . $this->__extension;
 
         $result = $this->_prepareCsvData($this->_getCsvData($path));

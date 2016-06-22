@@ -102,7 +102,7 @@ class Table extends BaseTable
      * Return current table in camelCase form.
      * It adds plugin name as a prefix.
      *
-     * @return string Table Name
+     * @return string Table Name along with its prefix if found.
      */
     protected function _currentTable()
     {

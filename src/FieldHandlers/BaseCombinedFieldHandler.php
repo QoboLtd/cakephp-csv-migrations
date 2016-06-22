@@ -88,7 +88,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
             switch ($preOptions['field']) {
                 case 'select':
                     $selectOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
-                    $result .= $selectOptions[$data];
+                    $result .= array_key_exists($data, $selectOptions) ? $selectOptions[$data] : null;
                     break;
 
                 case 'input':

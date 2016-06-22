@@ -3,7 +3,9 @@ namespace CsvMigrations;
 
 use Cake\ORM\Table as BaseTable;
 use CsvMigrations\ConfigurationTrait;
+use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldTrait;
+use CsvMigrations\ListTrait;
 use CsvMigrations\MigrationTrait;
 
 /**
@@ -14,7 +16,12 @@ class Table extends BaseTable
 {
     use ConfigurationTrait;
     use FieldTrait;
-    use MigrationTrait;
+
+    use ListTrait, MigrationTrait
+    {
+     ListTrait::_prepareCsvData insteadof MigrationTrait;
+     ListTrait::_getCsvData insteadof MigrationTrait;
+    }
 
     /**
      * Searchable parameter name
@@ -75,6 +82,35 @@ class Table extends BaseTable
         foreach ($this->getFieldsDefinitions() as $field) {
             if (!$field[static::PARAM_NON_SEARCHABLE]) {
                 $result[] = $field['name'];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns searchable fields properties.
+     *
+     * @param  array $fields searchable fields
+     * @return array
+     */
+    public function getSearchableFieldProperties(array $fields)
+    {
+        $result = [];
+
+        if (empty($fields)) {
+            return $result;
+        }
+        foreach ($this->getFieldsDefinitions() as $field => $definitions) {
+            if (in_array($field, $fields)) {
+                $csvField = new CsvField($definitions);
+                $type = $csvField->getType();
+                $result[$field] = [
+                    'type' => $type
+                ];
+                if ('list' === $type) {
+                    $result[$field]['fieldOptions'] = $this->_getSelectOptions($csvField->getLimit());
+                }
             }
         }
 

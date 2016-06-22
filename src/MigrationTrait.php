@@ -5,6 +5,7 @@ use Cake\Core\Configure;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\CsvTrait;
 use CsvMigrations\FieldHandlers\CsvField;
+use RuntimeException;
 
 trait MigrationTrait
 {
@@ -85,33 +86,20 @@ trait MigrationTrait
                 $assoccsvModule = $csvObjField->getAssocCsvModule();
                 $fieldName = $csvObjField->getName();
 
-                //Belongs to association of the curren running module.
-                if ($config['currentMod'] === $csvModule) {
+                if ($config['table'] === $csvModule) {
                     $assocName = CsvMigrationsUtils::createAssociationName($assoccsvModule, $fieldName);
+                    //Belongs to association of the curren running module.
                     $this->belongsTo($assocName, [
                         'className' => $assoccsvModule,
                         'foreignKey' => $fieldName
                     ]);
-                } else {
-                    list(, $mod) = pluginSplit($assoccsvModule);
+                } elseif ($config['table'] === $assoccsvModule) {
                     //Foreignkey found in other module
-                    //Let's create hasMany association.
-                    if ($config['currentMod'] === $mod) {
-                        list($plugin, $controller) = pluginSplit($config['registryAlias']);
-                        /**
-                         * appending plugin name from current table to associated csvModule.
-                         * @todo investigate more, it might break in some cases, such as Files plugin association.
-                         */
-                        if (!is_null($plugin)) {
-                            $assoccsvModule = $plugin . '.' . $csvModule;
-                        }
-                        $assocName = CsvMigrationsUtils::createAssociationName($assoccsvModule, $fieldName);
-                        $this->hasMany($assocName, [
-                            'className' => $assoccsvModule,
-                            'foreignKey' => $fieldName
-                        ]);
-                    }
-
+                    $assocName = CsvMigrationsUtils::createAssociationName($csvModule, $fieldName);
+                    $this->hasMany($assocName, [
+                        'className' => $csvModule,
+                        'foreignKey' => $fieldName
+                    ]);
                 }
 
 

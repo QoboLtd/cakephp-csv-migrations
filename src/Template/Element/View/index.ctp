@@ -42,13 +42,13 @@ if (empty($options['title'])) {
 
 <div class="row">
     <div class="col-xs-12">
-        <div class=" table-responsive">
-            <table class="table table-hover">
+        <div class="table-responsive">
+            <table class="table table-hover table-datatable">
                 <thead>
                     <tr>
                         <?php
                             foreach ($options['fields'] as $field) {
-                                echo '<th>' . $this->Paginator->sort($field[0]['name']) . '</th>';
+                                echo '<th>' . Inflector::humanize($field[0]['name']) . '</th>';
                             }
                             echo '<th class="actions">' . __('Actions') . '</th>';
                         ?>
@@ -96,11 +96,8 @@ if (empty($options['title'])) {
     </div>
 </div>
 
-<div class="paginator">
-    <ul class="pagination">
-        <?= $this->Paginator->prev('< ' . __('previous')) ?>
-        <?= $this->Paginator->numbers(['before' => '', 'after' => '']) ?>
-        <?= $this->Paginator->next(__('next') . ' >') ?>
-    </ul>
-    <p><?= $this->Paginator->counter() ?></p>
-</div>
+<?php
+echo $this->Html->css('CsvMigrations.datatables.min', ['block' => 'cssBottom']);
+echo $this->Html->script('CsvMigrations.datatables.min', ['block' => 'scriptBottom']);
+echo $this->Html->script('CsvMigrations.data-tables', ['block' => 'scriptBottom']);
+?>

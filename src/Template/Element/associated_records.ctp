@@ -135,11 +135,11 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
 
             <?php if (!empty($assocData['records'])) : ?>
                 <div class=" table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover table-datatable">
                         <thead>
                             <tr>
                             <?php foreach ($assocData['fields'] as $assocField) : ?>
-                                <th><?= $this->Paginator->sort($assocField); ?></th>
+                                <th><?= Inflector::humanize($assocField); ?></th>
                             <?php endforeach; ?>
                                 <th class="actions"><?= __('Actions'); ?></th>
                             </tr>
@@ -258,6 +258,10 @@ if (!empty($embFields)) :
  * - load these files only if foreign/related field exists
  */
 echo $this->element('CsvMigrations.common_js_libs');
+
+echo $this->Html->css('CsvMigrations.datatables.min', ['block' => 'cssBottom']);
+echo $this->Html->script('CsvMigrations.datatables.min', ['block' => 'scriptBottom']);
+echo $this->Html->script('CsvMigrations.data-tables', ['block' => 'scriptBottom']);
 ?>
 <?php endif; ?>
 

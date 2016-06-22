@@ -76,7 +76,7 @@ trait MigrationTrait
      */
     protected function _setAssociationsFromCsv(array $config)
     {
-        $csvData = $this->_csvData();
+        $csvData = $this->_csvData(true);
         $csvObjData = $this->_csvDataToCsvObj($csvData);
         $csvFilteredData = $this->_csvDataFilter($csvObjData, $this->__assocIdentifier);
 
@@ -160,15 +160,23 @@ trait MigrationTrait
     /**
      * Get all modules data.
      *
-     * @return array      Modules, fields and fields types.
+     * @param string $prefix Include plugins name based as per CakePHP's convetion.
+     * @return array         Modules, fields and fields types.
      */
-    protected function _csvData()
+    protected function _csvData($prefix = true)
     {
         $result = [];
         $path = Configure::readOrFail('CsvMigrations.migrations.path');
         $csvFiles = $this->_getCsvFiles($path);
+        $plugin = $this->_getPluginNameFromPath($path);
 
         foreach ($csvFiles as $csvModule => $paths) {
+            if ($prefix) {
+                if (empty($plugin)) {
+                    throw new RuntimeException('Plugin name cannot be prefixed because it was not found.');
+                }
+                $csvModule = $plugin . '.' . $csvModule;
+            }
             foreach ($paths as $path) {
                 $result[$csvModule] = $this->_prepareCsvData($this->_getCsvData($path));
             }
@@ -202,5 +210,22 @@ trait MigrationTrait
         }
 
         return $result;
+    }
+
+    /**
+     * Returns the name of the plugin from its path.
+     *
+     * @param  string $path Path of the plugin.
+     * @return string       Name of plugin.
+     */
+    protected function _getPluginNameFromPath($path = null)
+    {
+        foreach (Configure::read('plugins') as $name => $pluginPath) {
+            $pos = strpos($path, $pluginPath);
+            if ($pos !== false) {
+                return $name;
+            }
+        }
+        return null;
     }
 }

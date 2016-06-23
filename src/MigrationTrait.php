@@ -6,6 +6,7 @@ use Cake\Utility\Inflector;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\CsvTrait;
 use CsvMigrations\FieldHandlers\CsvField;
+use RuntimeException;
 
 trait MigrationTrait
 {
@@ -29,8 +30,16 @@ trait MigrationTrait
      * @param  string $moduleName Module Name
      * @return array
      */
-    public function getFieldsDefinitions($moduleName)
+    public function getFieldsDefinitions($moduleName = null)
     {
+        if (is_null($moduleName)) {
+            if (is_callable([$this, 'alias'])) {
+                $moduleName = $this->alias();
+            } else {
+                throw new RuntimeException("Failed getting field definitions for unknown module");
+            }
+        }
+
         $path = Configure::readOrFail('CsvMigrations.migrations.path') . $moduleName . DS;
         $path .= Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . $this->__extension;
 

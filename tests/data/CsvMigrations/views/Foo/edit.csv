@@ -1,0 +1,6 @@
+PANEL NAME,FIRST COLUMN FIELD NAME,SECOND COLUMN FIELD NAME
+Details,status,type
+Details,name,description
+Details,cost,
+Personal,gender,birthdate,
+Personal,city,country

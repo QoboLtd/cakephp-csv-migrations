@@ -161,10 +161,7 @@ trait MigrationTrait
         $plugin = $this->_getPluginNameFromPath($path);
 
         foreach ($csvFiles as $csvModule => $paths) {
-            if ($prefix) {
-                if (empty($plugin)) {
-                    throw new RuntimeException('Plugin name cannot be prefixed because it was not found.');
-                }
+            if ($prefix && !is_null($plugin)) {
                 $csvModule = $plugin . '.' . $csvModule;
             }
             foreach ($paths as $path) {

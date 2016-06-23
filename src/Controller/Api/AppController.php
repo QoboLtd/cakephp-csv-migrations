@@ -5,12 +5,11 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
-use Cake\ORM\Entity;
 use Crud\Controller\ControllerTrait;
 use CsvMigrations\FieldHandlers\RelatedFieldTrait;
-use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\CsvTrait;
 use CsvMigrations\MigrationTrait;
+use CsvMigrations\PrettifyTrait;
 
 class AppController extends Controller
 {
@@ -22,6 +21,7 @@ class AppController extends Controller
     use ControllerTrait;
     use MigrationTrait;
     use RelatedFieldTrait;
+    use PrettifyTrait;
 
     public $components = [
         'RequestHandler',
@@ -68,13 +68,7 @@ class AppController extends Controller
         });
 
         $this->Crud->on('afterFind', function(Event $event) {
-            if (static::FORMAT_PRETTY === $this->request->query('format')) {
-                $table = $event->subject()->repository->registryAlias();
-                $fields = $this->getFieldsDefinitions($event->subject()->repository->alias());
-                $fhf = new FieldHandlerFactory();
-                $entity = $event->subject()->entity;
-                $event->subject()->entity = $this->_getPrettyValues($entity, $table, $fields, $fhf);
-            }
+            $event = $this->_prepareToPrettify($event);
         });
 
         return $this->Crud->execute();
@@ -88,14 +82,7 @@ class AppController extends Controller
     public function index()
     {
         $this->Crud->on('afterPaginate', function(Event $event) {
-            if (static::FORMAT_PRETTY === $this->request->query('format')) {
-                $table = $event->subject()->query->repository()->registryAlias();
-                $fields = $this->getFieldsDefinitions($event->subject()->query->repository()->alias());
-                $fhf = new FieldHandlerFactory();
-                foreach ($event->subject()->entities as $entity) {
-                    $entity = $this->_getPrettyValues($entity, $table, $fields, $fhf);
-                }
-            }
+            $event = $this->_prepareToPrettify($event);
         });
 
         return $this->Crud->execute();
@@ -180,26 +167,29 @@ class AppController extends Controller
     }
 
     /**
-     * Method that renders Entity values through Field Handler Factory.
+     * Method that prepares entity(ies) to run through pretiffy logic.
+     * It then returns the event object.
      *
-     * @param  Cake\ORM\Entity     $entity    Entity instance
-     * @param  [type]              $tableName Table name
-     * @param  array               $fields    Migration fields
-     * @param  FieldHandlerFactory $fhf       Field Handler Factory instance
-     * @return Cake\ORM\Entity
+     * @param  Cake\Event\Event $event Event instance
+     * @return Cake\Event\Event
      */
-    protected function _getPrettyValues(Entity $entity, $tableName, array $fields, FieldHandlerFactory $fhf)
+    protected function _prepareToPrettify(Event $event)
     {
-        foreach ($fields as $field => $definitions) {
-            $renderOptions = ['entity' => $entity];
-            $entity->{$field} = $fhf->renderValue(
-                $tableName,
-                $field,
-                $entity->{$field},
-                $renderOptions
-            );
+        if (static::FORMAT_PRETTY === $this->request->query('format')) {
+            $table = $event->subject()->query->repository()->registryAlias();
+            $fields = array_keys($this->getFieldsDefinitions($event->subject()->query->repository()->alias()));
+
+            if (isset($event->subject()->entities)) {
+                foreach ($event->subject()->entities as $entity) {
+                    $entity = $this->_prettify($entity, $table, $fields);
+                }
+            }
+
+            if (isset($event->subject()->entity)) {
+                $event->subject()->entity = $this->_prettify($event->subject()->entity, $table, $fields);
+            }
         }
 
-        return $entity;
+        return $event;
     }
 }

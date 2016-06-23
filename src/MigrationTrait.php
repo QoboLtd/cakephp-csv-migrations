@@ -2,10 +2,10 @@
 namespace CsvMigrations;
 
 use Cake\Core\Configure;
-use Cake\Utility\Inflector;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\CsvTrait;
 use CsvMigrations\FieldHandlers\CsvField;
+use RuntimeException;
 
 trait MigrationTrait
 {
@@ -77,60 +77,100 @@ trait MigrationTrait
      */
     protected function _setAssociationsFromCsv(array $config)
     {
+        $csvData = $this->_csvData(true);
+        $csvObjData = $this->_csvDataToCsvObj($csvData);
+        $csvFilteredData = $this->_csvDataFilter($csvObjData, $this->__assocIdentifier);
+
+        foreach ($csvFilteredData as $csvModule => $fields) {
+            foreach ($fields as $csvObjField) {
+                $assoccsvModule = $csvObjField->getAssocCsvModule();
+                $fieldName = $csvObjField->getName();
+
+                if ($config['table'] === $csvModule) {
+                    $assocName = CsvMigrationsUtils::createAssociationName($assoccsvModule, $fieldName);
+                    //Belongs to association of the curren running module.
+                    $this->belongsTo($assocName, [
+                        'className' => $assoccsvModule,
+                        'foreignKey' => $fieldName
+                    ]);
+                } elseif ($config['table'] === $assoccsvModule) {
+                    //Foreignkey found in other module
+                    $assocName = CsvMigrationsUtils::createAssociationName($csvModule, $fieldName);
+                    $this->hasMany($assocName, [
+                        'className' => $csvModule,
+                        'foreignKey' => $fieldName
+                    ]);
+                }
+
+
+            }
+        }
+    }
+
+    /**
+     * Filter the CSV data by type.
+     *
+     * @param  array  $data CSV data.
+     * @param  string $type Type to filter.
+     * @return array  Filtered data.
+     */
+    protected function _csvDataFilter(array $data = [], $type = null)
+    {
+        foreach ($data as $csvModule => &$fields) {
+            foreach ($fields as $key => $field) {
+                if ($field->getType() !== $type) {
+                    unset($fields[$key]);
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Convert field details into CSV object.
+     *
+     * @see  _csvData();
+     * @param  array  $data The return of _csvData function
+     * @return array        An array containing CSV objects.
+     */
+    protected function _csvDataToCsvObj(array $data = [])
+    {
+        foreach ($data as $csvModule => &$fields) {
+            foreach ($fields as $key => $fieldDetails) {
+                $fields[$key] = new CsvField($fieldDetails);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get all modules data.
+     *
+     * @param string $prefix Include plugins name based as per CakePHP's convetion.
+     * @return array         Modules, fields and fields types.
+     */
+    protected function _csvData($prefix = true)
+    {
+        $result = [];
         $path = Configure::readOrFail('CsvMigrations.migrations.path');
         $csvFiles = $this->_getCsvFiles($path);
+        $plugin = $this->_getPluginNameFromPath($path);
 
-        $csvData = [];
-        foreach ($csvFiles as $module => $paths) {
+        foreach ($csvFiles as $csvModule => $paths) {
+            if ($prefix) {
+                if (empty($plugin)) {
+                    throw new RuntimeException('Plugin name cannot be prefixed because it was not found.');
+                }
+                $csvModule = $plugin . '.' . $csvModule;
+            }
             foreach ($paths as $path) {
-                $csvData[$module] = $this->_prepareCsvData(
-                    $this->_getCsvData($path)
-                );
+                $result[$csvModule] = $this->_prepareCsvData($this->_getCsvData($path));
             }
         }
 
-        if (empty($csvData)) {
-            return;
-        }
-
-        foreach ($csvData as $module => $fields) {
-            foreach ($fields as $row) {
-                $csvField = new CsvField($row);
-                /*
-                Skip if not associated module name was found
-                 */
-                if ($this->__assocIdentifier !== $csvField->getType()) {
-                    continue;
-                }
-                $assocModule = $csvField->getLimit();
-
-                /*
-                If current model alias matches csv module, then assume belongsTo association.
-                Else if it matches associated module, then assume hasMany association.
-                 */
-                if ($config['alias'] === $module) {
-                    $assocName = CsvMigrationsUtils::createAssociationName($assocModule, $row['name']);
-                    $this->belongsTo($assocName, [
-                        'className' => $assocModule,
-                        'foreignKey' => $row['name']
-                    ]);
-                } elseif ($config['registryAlias'] === $assocModule) {
-                    list($plugin, $controller) = pluginSplit($config['registryAlias']);
-                    /**
-                     * appending plugin name from current table to associated module.
-                     * @todo investigate more, it might break in some cases, such as Files plugin association.
-                     */
-                    if (!is_null($plugin)) {
-                        $assocModule = $plugin . '.' . $module;
-                    }
-                    $assocName = CsvMigrationsUtils::createAssociationName($assocModule, $row['name']);
-                    $this->hasMany($assocName, [
-                        'className' => $assocModule,
-                        'foreignKey' => $row['name']
-                    ]);
-                }
-            }
-        }
+        return $result;
     }
 
     /**
@@ -158,5 +198,22 @@ trait MigrationTrait
         }
 
         return $result;
+    }
+
+    /**
+     * Returns the name of the plugin from its path.
+     *
+     * @param  string $path Path of the plugin.
+     * @return string       Name of plugin.
+     */
+    protected function _getPluginNameFromPath($path = null)
+    {
+        foreach (Configure::read('plugins') as $name => $pluginPath) {
+            $pos = strpos($path, $pluginPath);
+            if ($pos !== false) {
+                return $name;
+            }
+        }
+        return null;
     }
 }

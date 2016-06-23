@@ -214,6 +214,16 @@ class CsvField
     }
 
     /**
+     * The column limit is used also for the module association.
+     *
+     * @return int
+     */
+    public function getAssocCsvModule()
+    {
+        return $this->_limit;
+    }
+
+    /**
      * Field required flag setter.
      *
      * @param string $required field required flag

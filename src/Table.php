@@ -2,6 +2,7 @@
 namespace CsvMigrations;
 
 use Cake\ORM\Table as BaseTable;
+use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldTrait;
@@ -64,10 +65,8 @@ class Table extends BaseTable
             $this->isSearchable($this->_config['table']['searchable']);
         }
 
-        $this->hasMany('UploadDocuments', [
-            'className' => 'Burzum/FileStorage.FileStorage',
-            'foreignKey' => 'foreign_key',
-        ]);
+        //Set the current module
+        $config['table'] = $this->_currentTable();
         $this->_setAssociations($config);
     }
 
@@ -133,5 +132,23 @@ class Table extends BaseTable
         }
 
         return $result;
+    }
+
+    /**
+     * Return current table in camelCase form.
+     * It adds plugin name as a prefix.
+     *
+     * @return string Table Name along with its prefix if found.
+     */
+    protected function _currentTable()
+    {
+        list($namespace, $alias) = namespaceSplit(get_class($this));
+        $alias = substr($alias, 0, -5);
+        list($plugin) = explode('\\', $namespace);
+        if ($plugin === 'App') {
+            return Inflector::camelize($alias);
+        }
+
+        return Inflector::camelize($plugin . '.' . $alias);
     }
 }

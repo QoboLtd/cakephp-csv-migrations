@@ -24,6 +24,14 @@ class MigrationTraitTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->mock->getFieldsDefinitions($name));
     }
 
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testGetFieldsDefinitionsThrowsException()
+    {
+        $this->mock->getFieldsDefinitions();
+    }
+
     public function csvProvider()
     {
         return [

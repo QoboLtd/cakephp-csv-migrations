@@ -140,7 +140,7 @@ class FieldHandlerFactory
     protected function _getExtraOptions($tableInstance, $field, array $options = [])
     {
         // get fields definitions
-        $fieldsDefinitions = $tableInstance->getFieldsDefinitions();
+        $fieldsDefinitions = $tableInstance->getFieldsDefinitions($tableInstance->alias());
 
         /**
          * @todo make this better, probably define defaults (scenario virtual fields)

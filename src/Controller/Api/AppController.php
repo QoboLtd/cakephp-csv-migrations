@@ -2,15 +2,26 @@
 namespace CsvMigrations\Controller\Api;
 
 use Cake\Controller\Controller;
+use Cake\Core\Configure;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
 use Crud\Controller\ControllerTrait;
 use CsvMigrations\FieldHandlers\RelatedFieldTrait;
+use CsvMigrations\CsvTrait;
+use CsvMigrations\MigrationTrait;
+use CsvMigrations\PrettifyTrait;
 
 class AppController extends Controller
 {
+    /**
+     * Pretty format identifier
+     */
+    const FORMAT_PRETTY = 'pretty';
+
     use ControllerTrait;
+    use MigrationTrait;
     use RelatedFieldTrait;
+    use PrettifyTrait;
 
     public $components = [
         'RequestHandler',
@@ -54,6 +65,24 @@ class AppController extends Controller
             foreach ($uniqueFields as $uniqueField) {
                 $event->subject()->query->orWhere([$uniqueField => $event->subject()->id]);
             }
+        });
+
+        $this->Crud->on('afterFind', function(Event $event) {
+            $event = $this->_prettifyEntity($event);
+        });
+
+        return $this->Crud->execute();
+    }
+
+    /**
+     * Index CRUD action events handling logic.
+     *
+     * @return \Cake\Network\Response
+     */
+    public function index()
+    {
+        $this->Crud->on('afterPaginate', function(Event $event) {
+            $event = $this->_prettifyEntity($event);
         });
 
         return $this->Crud->execute();
@@ -135,5 +164,32 @@ class AppController extends Controller
         if ('OPTIONS' === $this->request->method()) {
             return $this->response;
         }
+    }
+
+    /**
+     * Method that prepares entity(ies) to run through pretiffy logic.
+     * It then returns the event object.
+     *
+     * @param  Cake\Event\Event $event Event instance
+     * @return Cake\Event\Event
+     */
+    protected function _prettifyEntity(Event $event)
+    {
+        if (static::FORMAT_PRETTY === $this->request->query('format')) {
+            $table = $event->subject()->query->repository()->registryAlias();
+            $fields = array_keys($this->getFieldsDefinitions($event->subject()->query->repository()->alias()));
+
+            if (isset($event->subject()->entities)) {
+                foreach ($event->subject()->entities as $entity) {
+                    $entity = $this->_prettify($entity, $table, $fields);
+                }
+            }
+
+            if (isset($event->subject()->entity)) {
+                $event->subject()->entity = $this->_prettify($event->subject()->entity, $table, $fields);
+            }
+        }
+
+        return $event;
     }
 }

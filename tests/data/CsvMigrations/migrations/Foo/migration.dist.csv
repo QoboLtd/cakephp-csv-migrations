@@ -1,0 +1,13 @@
+FIELD NAME,FIELD TYPE,REQUIRED,NOT SEARCHABLE,UNIQUE
+id,uuid
+description,text
+name,string,1
+status,list(foo_statuses),1
+type,list(foo_types),1
+gender,list(genders)
+city,list(cities)
+country,list(countries)
+cost,money(currencies)
+birthdate,date
+created,datetime
+modified,datetime

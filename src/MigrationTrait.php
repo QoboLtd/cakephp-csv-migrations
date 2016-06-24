@@ -159,10 +159,9 @@ trait MigrationTrait
     /**
      * Get all modules data.
      *
-     * @param string $prefix Include plugins name based as per CakePHP's convetion.
-     * @return array         Modules, fields and fields types.
+     * @return array Modules, fields and fields types.
      */
-    protected function _csvData($prefix = true)
+    protected function _csvData()
     {
         $result = [];
         $path = Configure::readOrFail('CsvMigrations.migrations.path');
@@ -170,7 +169,7 @@ trait MigrationTrait
         $plugin = $this->_getPluginNameFromPath($path);
 
         foreach ($csvFiles as $csvModule => $paths) {
-            if ($prefix && !is_null($plugin)) {
+            if (!is_null($plugin)) {
                 $csvModule = $plugin . '.' . $csvModule;
             }
             foreach ($paths as $path) {
@@ -214,7 +213,7 @@ trait MigrationTrait
      * @param  string $path Path of the plugin.
      * @return string       Name of plugin.
      */
-    protected function _getPluginNameFromPath($path = null)
+    protected function _getPluginNameFromPath($path)
     {
         foreach (Configure::read('plugins') as $name => $pluginPath) {
             $pos = strpos($path, $pluginPath);

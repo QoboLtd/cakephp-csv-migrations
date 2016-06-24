@@ -68,7 +68,7 @@ class AppController extends Controller
         });
 
         $this->Crud->on('afterFind', function(Event $event) {
-            $event = $this->_prepareToPrettify($event);
+            $event = $this->_prettifyEntity($event);
         });
 
         return $this->Crud->execute();
@@ -82,7 +82,7 @@ class AppController extends Controller
     public function index()
     {
         $this->Crud->on('afterPaginate', function(Event $event) {
-            $event = $this->_prepareToPrettify($event);
+            $event = $this->_prettifyEntity($event);
         });
 
         return $this->Crud->execute();
@@ -173,7 +173,7 @@ class AppController extends Controller
      * @param  Cake\Event\Event $event Event instance
      * @return Cake\Event\Event
      */
-    protected function _prepareToPrettify(Event $event)
+    protected function _prettifyEntity(Event $event)
     {
         if (static::FORMAT_PRETTY === $this->request->query('format')) {
             $table = $event->subject()->query->repository()->registryAlias();

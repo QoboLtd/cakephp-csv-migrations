@@ -46,4 +46,5 @@ script:
   - sh -c "if [ '$COVERALLS' = '1' ]; then bash codecov.sh; fi"
 
 notifications:
-  email: false
+  email:
+    - webdev@qobocloud.com

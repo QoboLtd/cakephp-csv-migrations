@@ -5,12 +5,13 @@
     "license": "GPL-2.0",
     "require": {
         "php": ">=5.4.16",
-        "cakephp/cakephp": "~3.0",
+        "cakephp/cakephp": ">3.0.0 <4.0",
         "cakephp/migrations": "~1.0",
         "burzum/cakephp-file-storage": "^1.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "*",
+        "cakephp/cakephp-codesniffer": "dev-master"
     },
     "replace": {
         "qobo/cakephp-csv-views": "1.0.0 - 1.0.5"

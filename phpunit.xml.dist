@@ -5,6 +5,7 @@
     stopOnFailure="false"
     syntaxCheck="false"
     bootstrap="./vendor/cakephp/cakephp/tests/bootstrap.php"
+    verbose="true"
     >
     <php>
         <ini name="memory_limit" value="-1"/>
@@ -29,9 +30,11 @@
         </listener>
     </listeners>
 
-    <!-- Prevent coverage reports from looking in tests and vendors -->
+    <!-- Prevent coverage reports from looking in config, tests and vendors -->
     <filter>
         <blacklist>
+            <directory suffix=".php">./config/</directory>
+
             <directory suffix=".php">./vendor/</directory>
             <directory suffix=".ctp">./vendor/</directory>
 

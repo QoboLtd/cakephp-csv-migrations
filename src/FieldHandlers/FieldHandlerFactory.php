@@ -142,7 +142,7 @@ class FieldHandlerFactory
         // get fields definitions
         $fieldsDefinitions = $tableInstance->getFieldsDefinitions($tableInstance->alias());
 
-        /**
+        /*
          * @todo make this better, probably define defaults (scenario virtual fields)
          */
         if (empty($options['fieldDefinitions']['type'])) {

@@ -72,13 +72,13 @@ class DbField
         $this->setRequired($required);
         $this->setNonSearchable($nonSearchable);
         $this->setUnique($unique);
-
     }
 
     /**
      * Field name setter.
      *
      * @param string $name field name
+     * @return void
      */
     public function setName($name)
     {
@@ -103,6 +103,7 @@ class DbField
      * Field type setter.
      *
      * @param string $type field type
+     * @return void
      */
     public function setType($type)
     {
@@ -131,6 +132,7 @@ class DbField
      * Field limit setter.
      *
      * @param int $limit field limit
+     * @return void
      */
     public function setLimit($limit)
     {
@@ -151,6 +153,7 @@ class DbField
      * Field required flag setter.
      *
      * @param bool $required field required flag
+     * @return void
      */
     public function setRequired($required)
     {
@@ -171,6 +174,7 @@ class DbField
      * Field non-searchable flag setter.
      *
      * @param bool $nonSearchable field non-searchable flag
+     * @return void
      */
     public function setNonSearchable($nonSearchable)
     {
@@ -191,6 +195,7 @@ class DbField
      * Field unique flag setter.
      *
      * @param string $unique field unique flag
+     * @return void
      */
     public function setUnique($unique)
     {

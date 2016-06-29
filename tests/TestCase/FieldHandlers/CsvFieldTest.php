@@ -77,7 +77,6 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
 
     public function testGetType()
     {
-
         foreach ($this->getterProvider() as $v) {
             $csvField = new CsvField(array_shift($this->csvData));
             $this->assertEquals($v[1], $csvField->getType());
@@ -105,7 +104,6 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
 
     public function testGetLimit()
     {
-
         foreach ($this->getterProvider() as $v) {
             $csvField = new CsvField(array_shift($this->csvData));
             $this->assertEquals($v[2], $csvField->getLimit());
@@ -114,7 +112,6 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
 
     public function testGetAssocCsvModule()
     {
-
         foreach ($this->getterProvider() as $v) {
             $csvField = new CsvField(array_shift($this->csvData));
             $this->assertEquals($v[2], $csvField->getAssocCsvModule());
@@ -133,7 +130,6 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
 
     public function testGetRequired()
     {
-
         foreach ($this->getterProvider() as $v) {
             $csvField = new CsvField(array_shift($this->csvData));
             $this->assertEquals($v[3], $csvField->getRequired());
@@ -152,7 +148,6 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
 
     public function testGetNonSearchable()
     {
-
         foreach ($this->getterProvider() as $v) {
             $csvField = new CsvField(array_shift($this->csvData));
             $this->assertEquals($v[4], $csvField->getNonSearchable());
@@ -171,7 +166,6 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
 
     public function testGetUnique()
     {
-
         foreach ($this->getterProvider() as $v) {
             $csvField = new CsvField(array_shift($this->csvData));
             $this->assertEquals($v[5], $csvField->getUnique());

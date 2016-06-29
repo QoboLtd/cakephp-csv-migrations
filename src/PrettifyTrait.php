@@ -43,5 +43,4 @@ trait PrettifyTrait
 
         return $entity;
     }
-
 }

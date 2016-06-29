@@ -18,7 +18,8 @@ trait CsvMigrationUploadTrait
      * Unlink the upload field from the given module record.
      * @todo Replace 'document' with dynamic field, Should be called only by ajax calls.
      *
-     * @param  int $id record id
+     * @param int $id record id
+     * @param string $field Field
      * @return void
      */
     public function unlinkUpload($id = null, $field = null)
@@ -105,7 +106,7 @@ trait CsvMigrationUploadTrait
      * Check for upload in the post data.
      *
      * @param  array $data Data to be checked for invalid upload.
-     * @return boolean true for invalid upload and vice versa.
+     * @return bool true for invalid upload and vice versa.
      */
     protected function _isInValidUpload($data = [])
     {

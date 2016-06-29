@@ -13,22 +13,22 @@ trait CsvTrait
      */
     protected function _prepareCsvData(array $csvData)
     {
-        /**
+        /*
          * Field parameters. Order is important.
          * @var array
          */
-         $defaultParams = [
-            'name' => '',
-            'type' => '',
-            'required' => '',
-            'non-searchable' => '',
-            'unique' => false
+        $defaultParams = [
+           'name' => '',
+           'type' => '',
+           'required' => '',
+           'non-searchable' => '',
+           'unique' => false,
         ];
 
         $result = [];
         foreach ($csvData as $col) {
             $fields = array_keys($defaultParams);
-            $namedCol = array();
+            $namedCol = [];
             foreach ($fields as $i => $field) {
                 if (!empty($col[$i])) {
                     $namedCol[$field] = $col[$i];

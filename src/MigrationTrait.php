@@ -112,8 +112,6 @@ trait MigrationTrait
                         'foreignKey' => $fieldName
                     ]);
                 }
-
-
             }
         }
     }

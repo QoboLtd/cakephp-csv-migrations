@@ -12,7 +12,7 @@ class CsvMigrationsUtils
      * @param  string $foreignKey foreign key name
      * @return string
      */
-    static public function createAssociationName($module, $foreignKey = '')
+    public static function createAssociationName($module, $foreignKey = '')
     {
         list($plugin, $model) = pluginSplit($module);
         if ('' !== $foreignKey) {

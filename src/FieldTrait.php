@@ -6,6 +6,7 @@ trait FieldTrait
     /**
      * Method that returns table's unique constrained fields.
      *
+     * @param Table $table Table
      * @return array unique fields
      */
     public function getUniqueFields(Table $table = null)

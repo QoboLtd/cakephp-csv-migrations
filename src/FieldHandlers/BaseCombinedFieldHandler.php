@@ -13,6 +13,11 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
      */
     protected $_fields = [];
 
+    /**
+     * Constructor
+     *
+     * @return object
+     */
     public function __construct()
     {
         $this->_setCombinedFields();
@@ -20,6 +25,8 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
 
     /**
      * Set combined fields
+     *
+     * @return void
      */
     abstract protected function _setCombinedFields();
 

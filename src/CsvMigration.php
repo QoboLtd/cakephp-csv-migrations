@@ -54,6 +54,12 @@ class CsvMigration extends AbstractMigration
         return $this->_table;
     }
 
+    /**
+     * Apply changes from the CSV file
+     *
+     * @param string $path Path to the CSV file
+     * @return void
+     */
     protected function _handleCsv($path = '')
     {
         $tableName = Inflector::pluralize(Inflector::classify($this->_table->getName()));
@@ -141,6 +147,11 @@ class CsvMigration extends AbstractMigration
         return $result;
     }
 
+    /**
+     * Get table alias
+     *
+     * @return string
+     */
     public function alias()
     {
         return Inflector::pluralize(Inflector::classify($this->_table->getName()));

@@ -17,12 +17,12 @@ class Table extends BaseTable
 {
     use ConfigurationTrait;
     use FieldTrait;
-
-    use ListTrait, MigrationTrait
+    use ListTrait
     {
-     ListTrait::_prepareCsvData insteadof MigrationTrait;
-     ListTrait::_getCsvData insteadof MigrationTrait;
+        ListTrait::_prepareCsvData insteadof MigrationTrait;
+        ListTrait::_getCsvData insteadof MigrationTrait;
     }
+    use MigrationTrait;
 
     /**
      * Searchable parameter name

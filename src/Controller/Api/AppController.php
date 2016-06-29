@@ -6,8 +6,8 @@ use Cake\Core\Configure;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
 use Crud\Controller\ControllerTrait;
-use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 use CsvMigrations\CsvTrait;
+use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 use CsvMigrations\MigrationTrait;
 use CsvMigrations\PrettifyTrait;
 
@@ -20,8 +20,8 @@ class AppController extends Controller
 
     use ControllerTrait;
     use MigrationTrait;
-    use RelatedFieldTrait;
     use PrettifyTrait;
+    use RelatedFieldTrait;
 
     public $components = [
         'RequestHandler',
@@ -55,10 +55,10 @@ class AppController extends Controller
      */
     public function view()
     {
-        $this->Crud->on('beforeFind', function(Event $event) {
+        $this->Crud->on('beforeFind', function (Event $event) {
             $uniqueFields = $event->subject()->repository->getUniqueFields();
 
-            /**
+            /*
              * check for record by table's unique fields (not only by id)
              * @todo currently if two unique fields have the same value the query will only return the first one
              */
@@ -67,7 +67,7 @@ class AppController extends Controller
             }
         });
 
-        $this->Crud->on('afterFind', function(Event $event) {
+        $this->Crud->on('afterFind', function (Event $event) {
             $event = $this->_prettifyEntity($event);
         });
 
@@ -81,7 +81,7 @@ class AppController extends Controller
      */
     public function index()
     {
-        $this->Crud->on('afterPaginate', function(Event $event) {
+        $this->Crud->on('afterPaginate', function (Event $event) {
             $event = $this->_prettifyEntity($event);
         });
 
@@ -103,7 +103,7 @@ class AppController extends Controller
             }
         });
 
-        $this->Crud->on('afterLookup', function(Event $event) {
+        $this->Crud->on('afterLookup', function (Event $event) {
             $tableConfig = [];
             if (method_exists($this->{$this->name}, 'getConfig') && is_callable([$this->{$this->name}, 'getConfig'])) {
                 $tableConfig = $this->{$this->name}->getConfig();
@@ -120,7 +120,7 @@ class AppController extends Controller
     /**
      * Prepend parent module display field value to resultset.
      *
-     * @param  \Cake\Datasource\ResultSetDecorator $entities
+     * @param  \Cake\Datasource\ResultSetDecorator $entities Entities
      * @return array
      */
     protected function _prependParentModule(ResultSetDecorator $entities)
@@ -129,7 +129,7 @@ class AppController extends Controller
 
         foreach ($result as $id => &$value) {
             $parentProperties = $this->_getRelatedParentProperties(
-                 $this->_getRelatedProperties($this->{$this->name}->registryAlias(), $id)
+                $this->_getRelatedProperties($this->{$this->name}->registryAlias(), $id)
             );
             if (!empty($parentProperties['dispFieldVal'])) {
                 $value = implode(' ' . $this->_separator . ' ', [

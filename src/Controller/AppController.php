@@ -55,7 +55,7 @@ class AppController extends BaseController
     /**
      * Add method
      *
-     * @return void Redirects on successful add, renders view otherwise.
+     * @return mixed Redirects on successful add, renders view otherwise.
      */
     public function add()
     {
@@ -78,9 +78,9 @@ class AppController extends BaseController
     /**
      * Edit method
      *
-     * @param string|null $id Entity id.
-     * @return void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     * @param string|null $id Entity id.
+     * @return mixed Redirects on successful edit, renders view otherwise.
      */
     public function edit($id = null)
     {

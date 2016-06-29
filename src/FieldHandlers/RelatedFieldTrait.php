@@ -20,8 +20,8 @@ trait RelatedFieldTrait
     /**
      * Get related model's parent model properties.
      *
-     * @param  array $table related model properties
-     * @return void
+     * @param  array $relatedProperties related model properties
+     * @return mixed
      */
     protected function _getRelatedParentProperties($relatedProperties)
     {
@@ -45,7 +45,7 @@ trait RelatedFieldTrait
      *
      * @param  mixed $table related table instance or name
      * @param  sting $data  query parameter value
-     * @return void
+     * @return mixed
      */
     protected function _getRelatedProperties($table, $data)
     {
@@ -67,8 +67,7 @@ trait RelatedFieldTrait
         // get related table's displayField value
         $result['dispFieldVal'] = !empty($result['entity']->{$table->displayField()})
             ? $result['entity']->{$table->displayField()}
-            : null
-        ;
+            : null;
         // get plugin and controller names
         list($result['plugin'], $result['controller']) = pluginSplit($tableName);
         // remove vendor from plugin name

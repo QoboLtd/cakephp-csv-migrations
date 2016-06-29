@@ -167,7 +167,7 @@ class CsvViewComponent extends Component
         $recordId = $this->request->params['pass'][0];
         $displayField = $association->displayField();
 
-        /**
+        /*
          * skip inverse relationship
          *
          * @todo find better way to handle it
@@ -222,11 +222,11 @@ class CsvViewComponent extends Component
         // store associated table class name
         $result['class_name'] = $association->className();
         // store associated table display field
-        $result['display_field'] =  $association->displayField();
+        $result['display_field'] = $association->displayField();
         // store associated table primary key
-        $result['primary_key'] =  $association->primaryKey();
+        $result['primary_key'] = $association->primaryKey();
         // store associated table foreign key
-        $result['foreign_key'] =  $association->foreignKey();
+        $result['foreign_key'] = $association->foreignKey();
         // store associated table fields
         $result['fields'] = $fields;
         // store associated table records
@@ -269,11 +269,11 @@ class CsvViewComponent extends Component
         // store associated table class name
         $result['class_name'] = $association->className();
         // store associated table display field
-        $result['display_field'] =  $association->displayField();
+        $result['display_field'] = $association->displayField();
         // store associated table primary key
-        $result['primary_key'] =  $association->primaryKey();
+        $result['primary_key'] = $association->primaryKey();
         // store associated table foreign key
-        $result['foreign_key'] =  Inflector::singularize($assocTableName) . '_' . $association->primaryKey();
+        $result['foreign_key'] = Inflector::singularize($assocTableName) . '_' . $association->primaryKey();
         // store associated table fields
         $result['fields'] = $fields;
         // store associated table records
@@ -318,7 +318,7 @@ class CsvViewComponent extends Component
 
     /**
      * Method that passes csv defined Table fields to the View
-     * @param \Cake\Event\Event $event An Event instance
+     *
      * @param  string           $path  file path
      * @return void
      */
@@ -428,7 +428,6 @@ class CsvViewComponent extends Component
                 throw new \RuntimeException(
                     sprintf($this->_errorMessages[__FUNCTION__], $fieldCount, static::PANEL_COUNT)
                 );
-
             }
             $panel = array_shift($fields);
             $result[$panel['name']][] = $fields;

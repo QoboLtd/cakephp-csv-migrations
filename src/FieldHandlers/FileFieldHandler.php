@@ -38,7 +38,9 @@ class FileFieldHandler extends BaseFieldHandler
     /**
      * Renders new file input field with no value. Applicable for add action.
      *
-     * @param  string $field name
+     * @param  Table $table Table
+     * @param  string $field Field
+     * @param  array $options Options
      * @return string HTML input field.
      */
     protected function _renderInput($table, $field, $options)
@@ -56,7 +58,9 @@ class FileFieldHandler extends BaseFieldHandler
     /**
      * Renders new file input field with value. Applicable for edit action.
      *
-     * @param  string $field name
+     * @param  Table $table Table
+     * @param  string $field Field
+     * @param  array $data Data
      * @return string HTML input field with data attribute.
      */
     protected function _renderInputWithValue($table, $field, $data)

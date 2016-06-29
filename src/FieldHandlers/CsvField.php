@@ -87,7 +87,7 @@ class CsvField
     /**
      * Constructor
      *
-     * @array string $row csv row
+     * @param array string $row csv row
      */
     public function __construct(array $row)
     {
@@ -97,7 +97,6 @@ class CsvField
         $this->setRequired($row[static::FIELD_REQUIRED]);
         $this->setNonSearchable($row[static::FIELD_NON_SEARCHABLE]);
         $this->setUnique($row[static::FIELD_UNIQUE]);
-
     }
 
     /**
@@ -138,6 +137,7 @@ class CsvField
      * Field name setter.
      *
      * @param string $name field name
+     * @return void
      */
     public function setName($name)
     {
@@ -162,6 +162,7 @@ class CsvField
      * Field type setter.
      *
      * @param string $type field type
+     * @return void
      */
     public function setType($type)
     {
@@ -191,7 +192,8 @@ class CsvField
     /**
      * Field limit setter.
      *
-     * @param string $limit field limit
+     * @param string $type field type
+     * @return void
      */
     public function setLimit($type)
     {
@@ -227,6 +229,7 @@ class CsvField
      * Field required flag setter.
      *
      * @param string $required field required flag
+     * @return void
      */
     public function setRequired($required)
     {
@@ -247,6 +250,7 @@ class CsvField
      * Field non-searchable flag setter.
      *
      * @param string $nonSearchable field non-searchable flag
+     * @return void
      */
     public function setNonSearchable($nonSearchable)
     {
@@ -267,6 +271,7 @@ class CsvField
      * Field unique flag setter.
      *
      * @param string $unique field unique flag
+     * @return void
      */
     public function setUnique($unique)
     {

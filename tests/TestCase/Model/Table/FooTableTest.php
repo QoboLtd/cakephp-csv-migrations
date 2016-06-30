@@ -77,16 +77,6 @@ class FooTableTest extends TestCase
         parent::tearDown();
     }
 
-    /**
-     * Test initialize method
-     *
-     * @return void
-     */
-    public function testInitialize()
-    {
-        // $this->markTestIncomplete('Not implemented yet.');
-    }
-
     public function testGetConfig()
     {
         $this->assertSame(

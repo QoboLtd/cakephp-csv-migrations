@@ -115,6 +115,11 @@ class FooTableTest extends TestCase
         $this->assertSame($this->FooTable->getSearchableFieldProperties($fields), $expected);
     }
 
+    public function testGetSearchableFieldPropertiesEmptyFields()
+    {
+        $this->assertSame($this->FooTable->getSearchableFieldProperties([]), []);
+    }
+
     public function moduleAliasProvider()
     {
         return [

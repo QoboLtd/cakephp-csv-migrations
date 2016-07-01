@@ -1,10 +1,10 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\View\AppView;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
+use CsvMigrations\View\AppView;
 
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {

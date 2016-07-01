@@ -84,7 +84,9 @@ class FieldHandlerFactoryTest extends TestCase
 
         $mockTrait = $this->getMockForTrait(MigrationTrait::class);
         $this->csvData = $mockTrait->getFieldsDefinitions($this->tableName);
-        $config = TableRegistry::exists($this->tableName) ? [] : ['className' => 'CsvMigrations\Test\TestCase\Model\Table\FooTable'];
+        $config = TableRegistry::exists($this->tableName)
+            ? []
+            : ['className' => 'CsvMigrations\Test\TestCase\Model\Table\FooTable'];
         $this->FooTable = TableRegistry::get($this->tableName, $config);
 
         $this->fhf = new FieldHandlerFactory();

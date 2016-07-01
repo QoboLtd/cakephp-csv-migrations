@@ -30,7 +30,7 @@ class FooTable extends Table
 }
 
 /**
- * CsvMigrations\Test\Data\Model\Table\FooTable Test Case
+ * CsvMigrations\Test\TestCase\Model\Table\FooTable Test Case
  */
 class FooTableTest extends TestCase
 {
@@ -38,7 +38,7 @@ class FooTableTest extends TestCase
     /**
      * Test subject
      *
-     * @var \CsvMigrations\Model\Table\FooTable
+     * @var CsvMigrations\Test\TestCase\Model\Table\FooTable
      */
     public $FooTable;
 

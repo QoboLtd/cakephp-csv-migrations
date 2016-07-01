@@ -14,8 +14,6 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
 
     /**
      * Constructor
-     *
-     * @return object
      */
     public function __construct()
     {

@@ -25,6 +25,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         'integer' => 'number'
     ];
 
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         // load AppView

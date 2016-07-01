@@ -1,7 +1,6 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use App\View\AppView;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
@@ -39,8 +38,6 @@ class RelatedFieldHandler extends BaseFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        // load AppView
-        $cakeView = new AppView();
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
@@ -57,11 +54,11 @@ class RelatedFieldHandler extends BaseFieldHandler
 
         $input = '';
         $input .= '<div class="form-group' . ((bool)$options['fieldDefinitions']->getRequired() ? ' required' : '') . '">';
-        $input .= $cakeView->Form->label($field);
+        $input .= $this->cakeView->Form->label($field);
         $input .= '<div class="input-group">';
         $input .= '<span class="input-group-addon" title="Auto-complete"><strong>&hellip;</strong></span>';
 
-        $input .= $cakeView->Form->input($field, [
+        $input .= $this->cakeView->Form->input($field, [
             'label' => false,
             'name' => false,
             'id' => $field . static::LABEL_FIELD_SUFFIX,
@@ -73,7 +70,7 @@ class RelatedFieldHandler extends BaseFieldHandler
             'data-id' => $this->_domId($fieldName),
             'autocomplete' => 'off',
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
-            'data-url' => $cakeView->Url->build([
+            'data-url' => $this->cakeView->Url->build([
                 'prefix' => 'api',
                 'plugin' => $relatedProperties['plugin'],
                 'controller' => $relatedProperties['controller'],
@@ -91,7 +88,7 @@ class RelatedFieldHandler extends BaseFieldHandler
         $input .= '</div>';
         $input .= '</div>';
 
-        $input .= $cakeView->Form->input($fieldName, ['type' => 'hidden', 'value' => $data]);
+        $input .= $this->cakeView->Form->input($fieldName, ['type' => 'hidden', 'value' => $data]);
 
         return $input;
     }
@@ -113,9 +110,6 @@ class RelatedFieldHandler extends BaseFieldHandler
             return $result;
         }
 
-        // load AppView
-        $cakeView = new AppView();
-
         $relatedProperties[] = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
         if (!empty($relatedProperties[0]['config']['parent']['module'])) {
@@ -128,9 +122,9 @@ class RelatedFieldHandler extends BaseFieldHandler
         $inputs = [];
         foreach ($relatedProperties as $properties) {
             // generate related record(s) html link
-            $inputs[] = $cakeView->Html->link(
+            $inputs[] = $this->cakeView->Html->link(
                 h($properties['dispFieldVal']),
-                $cakeView->Url->build([
+                $this->cakeView->Url->build([
                     'plugin' => $properties['plugin'],
                     'controller' => $properties['controller'],
                     'action' => static::LINK_ACTION,

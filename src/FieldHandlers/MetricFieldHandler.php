@@ -1,7 +1,6 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use App\View\AppView;
 use CsvMigrations\FieldHandlers\BaseCombinedFieldHandler;
 
 class MetricFieldHandler extends BaseCombinedFieldHandler

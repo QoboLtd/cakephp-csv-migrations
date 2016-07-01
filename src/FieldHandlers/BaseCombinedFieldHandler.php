@@ -1,7 +1,6 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use App\View\AppView;
 use CsvMigrations\FieldHandlers\ListFieldHandler;
 
 abstract class BaseCombinedFieldHandler extends ListFieldHandler
@@ -15,11 +14,11 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
 
     /**
      * Constructor
-     *
-     * @return object
      */
     public function __construct()
     {
+        parent::__construct();
+
         $this->_setCombinedFields();
     }
 
@@ -35,9 +34,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        $cakeView = new AppView();
-
-        $input = $cakeView->Form->label($field . ' ' . key($this->_fields));
+        $input = $this->cakeView->Form->label($field . ' ' . key($this->_fields));
 
         $input .= '<div class="row">';
         foreach ($this->_fields as $suffix => $preOptions) {
@@ -64,12 +61,12 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
                 case 'select':
                     $input .= 'col-xs-6 col-sm-4 col-sm-offset-2">';
                     $selectOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
-                    $input .= $cakeView->Form->select($fullFieldName, $selectOptions, $fieldOptions);
+                    $input .= $this->cakeView->Form->select($fullFieldName, $selectOptions, $fieldOptions);
                     break;
 
                 case 'input':
                     $input .= 'col-xs-6">';
-                    $input .= $cakeView->Form->input($fullFieldName, $fieldOptions);
+                    $input .= $this->cakeView->Form->input($fullFieldName, $fieldOptions);
                     break;
             }
             $input .= '</div>';

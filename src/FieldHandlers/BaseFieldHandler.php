@@ -1,13 +1,19 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use App\View\AppView;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
+use CsvMigrations\View\AppView;
 
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
+    /**
+     * CsvMigrations View instance.
+     *
+     * @var \CsvMigrations\View\AppView
+     */
+    public $cakeView;
     /**
      * Csv field types respective input field types
      * @var array
@@ -20,6 +26,15 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     ];
 
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        // load AppView
+        $this->cakeView = new AppView();
+    }
+
+    /**
      * Method responsible for rendering field's input.
      *
      * @param  mixed  $table   name or instance of the Table
@@ -30,16 +45,13 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        // load AppView
-        $cakeView = new AppView();
-
         $fieldType = $options['fieldDefinitions']->getType();
 
         if (in_array($fieldType, array_keys($this->_fieldTypes))) {
             $fieldType = $this->_fieldTypes[$fieldType];
         }
 
-        return $cakeView->Form->input($this->_getFieldName($table, $field, $options), [
+        return $this->cakeView->Form->input($this->_getFieldName($table, $field, $options), [
             'type' => $fieldType,
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'value' => $data

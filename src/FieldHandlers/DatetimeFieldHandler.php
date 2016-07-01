@@ -1,7 +1,6 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use App\View\AppView;
 use Cake\I18n\Date;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
@@ -28,14 +27,11 @@ class DatetimeFieldHandler extends BaseFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        // load AppView
-        $cakeView = new AppView();
-
         if ($data instanceof Date) {
             $data = $data->i18nFormat(static::DATETIME_FORMAT);
         }
 
-        return $cakeView->element('QoboAdminPanel.datepicker', [
+        return $this->cakeView->element('QoboAdminPanel.datepicker', [
             'options' => [
                 'fieldName' => $this->_getFieldName($table, $field, $options),
                 'type' => static::FIELD_TYPE,

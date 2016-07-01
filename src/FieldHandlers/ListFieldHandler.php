@@ -1,7 +1,6 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use App\View\AppView;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 use CsvMigrations\ListTrait;
 
@@ -35,13 +34,10 @@ class ListFieldHandler extends BaseFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        // load AppView
-        $cakeView = new AppView();
-
         $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
 
-        $input = $cakeView->Form->label($field);
-        $input .= $cakeView->Form->select($this->_getFieldName($table, $field, $options), $fieldOptions, [
+        $input = $this->cakeView->Form->label($field);
+        $input .= $this->cakeView->Form->select($this->_getFieldName($table, $field, $options), $fieldOptions, [
             'class' => 'form-control',
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'value' => $data

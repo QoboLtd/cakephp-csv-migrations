@@ -82,7 +82,7 @@ class CsvMigrationTask extends MigrationTask
      *
      * @return string
      */
-    protected function _getUniqueName($timestamp = null)
+    protected function _getUniqueName()
     {
         $alphas = range('A', 'Z');
         $numbers = str_split($this->__timestamp);

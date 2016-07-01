@@ -213,12 +213,19 @@ trait MigrationTrait
      */
     protected function _getPluginNameFromPath($path)
     {
-        foreach (Configure::read('plugins') as $name => $pluginPath) {
+        $plugins = Configure::read('plugins');
+
+        if (is_null($plugins)) {
+            return null;
+        }
+
+        foreach ($plugins as $name => $pluginPath) {
             $pos = strpos($path, $pluginPath);
             if ($pos !== false) {
                 return $name;
             }
         }
+
         return null;
     }
 }

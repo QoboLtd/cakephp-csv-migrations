@@ -1,7 +1,7 @@
 <?php
 namespace CsvMigrations\Events;
 
-use App\View\AppView;
+use CsvMigrations\View\AppView;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Network\Request;

@@ -1,7 +1,6 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use App\View\AppView;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
 class BooleanFieldHandler extends BaseFieldHandler
@@ -19,10 +18,7 @@ class BooleanFieldHandler extends BaseFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        // load AppView
-        $cakeView = new AppView();
-
-        return $cakeView->Form->input($this->_getFieldName($table, $field, $options), [
+        return $this->cakeView->Form->input($this->_getFieldName($table, $field, $options), [
             'type' => static::FIELD_TYPE,
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'checked' => $data

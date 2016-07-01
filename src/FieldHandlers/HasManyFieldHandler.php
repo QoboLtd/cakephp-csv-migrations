@@ -1,7 +1,6 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use App\View\AppView;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\View\Helper\IdGeneratorTrait;
@@ -25,8 +24,6 @@ class HasManyFieldHandler extends RelatedFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        // load AppView
-        $cakeView = new AppView();
         // get plugin and controller names
         list($relatedPlugin, $relatedController) = pluginSplit($options['fieldDefinitions']->getLimit());
         // remove vendor from plugin name
@@ -42,14 +39,14 @@ class HasManyFieldHandler extends RelatedFieldHandler
         $input = '';
 
         if (empty($options['embModal'])) {
-            $input .= $cakeView->Form->label($field);
+            $input .= $this->cakeView->Form->label($field);
         }
 
         if (!empty($options['embModal'])) {
             $input .= '<div class="input-group">';
         }
 
-        $input .= $cakeView->Form->input($field, [
+        $input .= $this->cakeView->Form->input($field, [
             'label' => false,
             'name' => $field . '_label',
             'id' => $field . '_label',
@@ -60,7 +57,7 @@ class HasManyFieldHandler extends RelatedFieldHandler
             'data-id' => $this->_domId($fieldName),
             'autocomplete' => 'off',
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
-            'data-url' => $cakeView->Url->build([
+            'data-url' => $this->cakeView->Url->build([
                 'prefix' => 'api',
                 'plugin' => $relatedPlugin,
                 'controller' => $relatedController,
@@ -70,7 +67,7 @@ class HasManyFieldHandler extends RelatedFieldHandler
 
         if (!empty($options['embModal'])) {
             $input .= '<div class="input-group-btn">';
-            $input .= $cakeView->Form->button(
+            $input .= $this->cakeView->Form->button(
                 __('<span class="fa fa-link" aria-hidden="true"></span>'),
                 ['class' => 'btn btn-primary', 'title' => __('Link record')]
             );
@@ -81,7 +78,7 @@ class HasManyFieldHandler extends RelatedFieldHandler
             $input .= '</div>';
         }
 
-        $input .= $cakeView->Form->input(
+        $input .= $this->cakeView->Form->input(
             $options['associated_table_name'] . '._ids[]',
             ['type' => 'hidden', 'value' => $data, 'id' => $this->_domId($fieldName)]
         );

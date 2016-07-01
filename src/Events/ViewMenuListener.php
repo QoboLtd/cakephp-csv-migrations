@@ -1,13 +1,13 @@
 <?php
 namespace CsvMigrations\Events;
 
-use App\View\AppView;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use CsvMigrations\View\AppView;
 
 class ViewMenuListener implements EventListenerInterface
 {

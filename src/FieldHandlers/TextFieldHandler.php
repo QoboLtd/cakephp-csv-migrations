@@ -1,7 +1,6 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use App\View\AppView;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 use Phinx\Db\Adapter\MysqlAdapter;
 

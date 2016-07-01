@@ -6,7 +6,6 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\Table;
 
-
 /**
  * Foo Model
  *

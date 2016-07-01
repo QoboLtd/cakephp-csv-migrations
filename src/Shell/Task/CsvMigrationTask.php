@@ -53,7 +53,7 @@ class CsvMigrationTask extends MigrationTask
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function templateData()
     {

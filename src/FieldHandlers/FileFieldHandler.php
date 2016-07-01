@@ -1,7 +1,6 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use App\View\AppView;
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
@@ -25,7 +24,6 @@ class FileFieldHandler extends BaseFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        $cakeView = new AppView();
         if (empty($data)) {
             $result = $this->_renderInput($table, $field, $options);
         } else {
@@ -45,12 +43,11 @@ class FileFieldHandler extends BaseFieldHandler
      */
     protected function _renderInput($table, $field, $options)
     {
-        $cakeView = new AppView();
-        $uploadField = $cakeView->Form->file(
+        $uploadField = $this->cakeView->Form->file(
             $this->_getFieldName($table, $field, $options),
             ['multiple' => true]
         );
-        $label = $cakeView->Form->label($field);
+        $label = $this->cakeView->Form->label($field);
 
         return sprintf(self::WRAPPER, $label, $uploadField);
     }
@@ -65,21 +62,20 @@ class FileFieldHandler extends BaseFieldHandler
      */
     protected function _renderInputWithValue($table, $field, $data)
     {
-        $cakeView = new AppView();
-        $cakeView->loadHelper(
+        $this->cakeView->loadHelper(
             'Burzum/FileStorage.Storage',
             Configure::read('FileStorage.pathBuilderOptions')
         );
         $entity = $table->uploaddocuments->find()
             ->where(['id' => $data])
             ->first();
-        $url = $cakeView->Storage->url($entity);
-        //$img = $cakeView->Html->image($url);
-        $uploadField = $cakeView->Form->file(
+        $url = $this->cakeView->Storage->url($entity);
+        //$img = $this->cakeView->Html->image($url);
+        $uploadField = $this->cakeView->Form->file(
             'UploadDocuments.file.' . $field,
             ['data-upload-url' => $url]
         );
-        $label = $cakeView->Form->label($field);
+        $label = $this->cakeView->Form->label($field);
 
         return sprintf(self::WRAPPER, $label, $uploadField);
     }
@@ -123,13 +119,12 @@ class FileFieldHandler extends BaseFieldHandler
      */
     protected function _renderValueImage($entity)
     {
-        $cakeView = new AppView();
-        $cakeView->loadHelper(
+        $this->cakeView->loadHelper(
             'Burzum/FileStorage.Storage',
             Configure::read('FileStorage.pathBuilderOptions')
         );
-        $url = $cakeView->Storage->url($entity);
-        return $cakeView->Html->image($cakeView->Url->build($url), ['class' => 'img-responsive']);
+        $url = $this->cakeView->Storage->url($entity);
+        return $this->cakeView->Html->image($this->cakeView->Url->build($url), ['class' => 'img-responsive']);
     }
 
     /**
@@ -140,15 +135,14 @@ class FileFieldHandler extends BaseFieldHandler
      */
     protected function _renderValueOtherFiles($entity)
     {
-        $cakeView = new AppView();
-        $cakeView->loadHelper(
+        $this->cakeView->loadHelper(
             'Burzum/FileStorage.Storage',
             Configure::read('FileStorage.pathBuilderOptions')
         );
-        $url = $cakeView->Storage->url($entity);
-        return $cakeView->Html->link(
+        $url = $this->cakeView->Storage->url($entity);
+        return $this->cakeView->Html->link(
             __d('CsvMigrations', 'View File'),
-            $cakeView->Url->build($url),
+            $this->cakeView->Url->build($url),
             ['target' => '_blank']
         );
     }

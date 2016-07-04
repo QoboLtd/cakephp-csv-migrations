@@ -114,24 +114,6 @@ trait CsvMigrationUploadTrait
     }
 
     /**
-     * Find the field which are typed file
-     *
-     * @return array
-     */
-    protected function _getCsvUploadFields()
-    {
-        $result = [];
-        $csvFields = $this->{$this->name}->getFieldsDefinitions();
-        foreach ($csvFields as $field) {
-            if ($field['type'] === 'file') {
-                $result[] = $field['name'];
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Setter of _upField variable
      *
      * @param string $field Name of the upload field.

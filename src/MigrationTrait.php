@@ -164,7 +164,18 @@ trait MigrationTrait
         $result = [];
         $path = Configure::readOrFail('CsvMigrations.migrations.path');
         $csvFiles = $this->_getCsvFiles($path);
+        /*
+        covers case where CsvMigration configuration files reside in a plugin.
+         */
         $plugin = $this->_getPluginNameFromPath($path);
+
+        if (is_null($plugin)) {
+            /*
+            covers case where CsvMigration model and controller reside in
+            a plugin (even if configuration files reside in the APP level).
+             */
+            $plugin = $this->_getPluginNameFromRegistryAlias();
+        }
 
         foreach ($csvFiles as $csvModule => $paths) {
             if (!is_null($plugin)) {
@@ -227,5 +238,17 @@ trait MigrationTrait
         }
 
         return null;
+    }
+
+    /**
+     * Returns the name of the plugin from current Table's registry alias value.
+     *
+     * @return string Name of plugin.
+     */
+    protected function _getPluginNameFromRegistryAlias()
+    {
+        list($plugin) = pluginSplit($this->registryAlias());
+
+        return $plugin;
     }
 }

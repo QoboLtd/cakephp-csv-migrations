@@ -100,8 +100,9 @@ class CsvMigrationTask extends MigrationTask
     /**
      * Get csv file's last modified time.
      *
-     * @param  $tableName target table name
+     * @param  string $tableName target table name
      * @return string
+     * @throws \CsvMigrations\View\Exception\MissingCsvException
      */
     protected function _getLastModifiedTime($tableName)
     {

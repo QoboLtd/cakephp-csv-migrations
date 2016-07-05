@@ -41,7 +41,7 @@ class CsvMigrationTask extends MigrationTask
     {
         $name = $this->getMigrationName($name);
 
-        return $this->__timestamp . '_' . Inflector::camelize($name) . $this->_getUniqueName() . '.php';
+        return $this->__timestamp . '_' . Inflector::camelize($name) . $this->__timestamp . '.php';
     }
 
     /**
@@ -68,31 +68,12 @@ class CsvMigrationTask extends MigrationTask
         }
         $table = Inflector::tableize($table);
 
-        $name = Inflector::camelize($className) . $this->_getUniqueName();
+        $name = Inflector::camelize($className) . $this->__timestamp;
 
         return [
             'action' => $action,
             'table' => $table,
             'name' => $name
         ];
-    }
-
-    /**
-     * Generate and return unique alphabetic string.
-     *
-     * @return string
-     */
-    protected function _getUniqueName()
-    {
-        $alphas = range('A', 'Z');
-        $numbers = str_split($this->__timestamp);
-
-        array_walk($numbers, function (&$number, $k, $alphas) {
-            if (array_key_exists($number, $alphas)) {
-                $number = $alphas[$number];
-            }
-        }, $alphas);
-
-        return implode('', $numbers);
     }
 }

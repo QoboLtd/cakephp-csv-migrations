@@ -30,7 +30,7 @@ class AppController extends BaseController
      */
     public function index()
     {
-        $this->set('entities', $this->paginate($this->{$this->name}));
+        $this->set('entities', $this->{$this->name}->find('all'));
         $this->render('CsvMigrations.Common/index');
         $this->set('_serialize', ['entities']);
     }

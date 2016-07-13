@@ -28,6 +28,11 @@ class RelatedFieldHandler extends BaseFieldHandler
     const LABEL_FIELD_SUFFIX = '_label';
 
     /**
+     * Flag for rendering value without url
+     */
+    const RENDER_PLAIN_VALUE = 'plain';
+
+    /**
      * Method responsible for rendering field's input.
      *
      * @param  mixed  $table   name or instance of the Table
@@ -121,16 +126,20 @@ class RelatedFieldHandler extends BaseFieldHandler
 
         $inputs = [];
         foreach ($relatedProperties as $properties) {
-            // generate related record(s) html link
-            $inputs[] = $this->cakeView->Html->link(
-                h($properties['dispFieldVal']),
-                $this->cakeView->Url->build([
-                    'plugin' => $properties['plugin'],
-                    'controller' => $properties['controller'],
-                    'action' => static::LINK_ACTION,
-                    $properties['id']
-                ])
-            );
+            if (isset($options['renderAs']) && $options['renderAs'] === static::RENDER_PLAIN_VALUE) {
+                $inputs[] = h($properties['dispFieldVal']);
+            } else {
+                // generate related record(s) html link
+                $inputs[] = $this->cakeView->Html->link(
+                    h($properties['dispFieldVal']),
+                    $this->cakeView->Url->build([
+                        'plugin' => $properties['plugin'],
+                        'controller' => $properties['controller'],
+                        'action' => static::LINK_ACTION,
+                        $properties['id']
+                    ])
+                );
+            }
         }
 
         if (!empty($inputs)) {

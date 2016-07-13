@@ -39,7 +39,13 @@ if (empty($options['title'])) {
         ['plugin' => $options['plugin'], 'controller' => $options['controller'], 'action' => 'index']
     );
     $options['title'] .= ' &raquo; ';
-    $options['title'] .= $options['entity']->$displayField;
+    $value = $fhf->renderValue(
+        !is_null($options['plugin']) ? $options['plugin'] . '.' . $options['controller'] : $options['controller'],
+        $displayField,
+        $options['entity']->$displayField,
+        ['entity' => $options['entity']]
+    );
+    $options['title'] .= $value;
 }
 ?>
 

@@ -28,9 +28,17 @@ class <%= $name %> extends CsvMigration
      */
     public function change()
     {
+<% if ('create' === $tableMethod): %>
+        if (!$this->hasTable('<%= $table%>')) {
+            $table = $this->table('<%= $table%>');
+            $table = $this->csv($table);
+            $table-><%= $tableMethod %>();
+        }
+<% else: %>
         $table = $this->table('<%= $table%>');
         $table = $this->csv($table);
         $table-><%= $tableMethod %>();
+<% endif; %>
 
         $joinedTables = $this->joins('<%= $table%>');
         if (!empty($joinedTables)) {

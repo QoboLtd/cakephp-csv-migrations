@@ -151,7 +151,8 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                                 <td>
                                 <?php
                                     $renderOptions = [
-                                        'entity' => $record
+                                        'entity' => $record,
+                                        'renderAs' => 'plain'
                                     ];
                                     $value = $fhf->renderValue(
                                         $assocData['class_name'],
@@ -159,8 +160,6 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                                         $record->$assocField,
                                         $renderOptions
                                     );
-
-
 
                                     if ($assocData['display_field'] === $assocField) {
                                         list($assocPlugin, $assocModel) = pluginSplit($assocData['class_name']);

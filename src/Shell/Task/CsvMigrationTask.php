@@ -1,7 +1,9 @@
 <?php
 namespace CsvMigrations\Shell\Task;
 
+use Cake\Core\Configure;
 use Cake\Utility\Inflector;
+use CsvMigrations\View\Exception\MissingCsvException;
 use Migrations\Shell\Task\MigrationTask;
 use Phinx\Util\Util;
 
@@ -10,6 +12,11 @@ use Phinx\Util\Util;
  */
 class CsvMigrationTask extends MigrationTask
 {
+    /**
+     * File extension
+     */
+    const FILE_EXTENSION = 'csv';
+
     /**
      * Timestamp
      * @var string
@@ -40,8 +47,9 @@ class CsvMigrationTask extends MigrationTask
     public function fileName($name)
     {
         $name = $this->getMigrationName($name);
+        list(, $table) = $this->_getVars($this->args[0]);
 
-        return $this->__timestamp . '_' . Inflector::camelize($name) . $this->_getUniqueName() . '.php';
+        return $this->__timestamp . '_' . Inflector::camelize($name) . $this->_getLastModifiedTime($table) . '.php';
     }
 
     /**
@@ -57,18 +65,7 @@ class CsvMigrationTask extends MigrationTask
      */
     public function templateData()
     {
-        $className = $this->BakeTemplate->viewVars['name'];
-        $action = $this->detectAction($className);
-
-        if (empty($action)) {
-            $table = $className;
-            $action = 'create_table';
-        } else {
-            list($action, $table) = $action;
-        }
-        $table = Inflector::tableize($table);
-
-        $name = Inflector::camelize($className) . $this->_getUniqueName();
+        list($action, $table, $name) = $this->_getVars($this->BakeTemplate->viewVars['name']);
 
         return [
             'action' => $action,
@@ -78,21 +75,46 @@ class CsvMigrationTask extends MigrationTask
     }
 
     /**
-     * Generate and return unique alphabetic string.
+     * Returns variables for bake template.
      *
-     * @return string
+     * @param  string $actionName action name
+     * @return array
      */
-    protected function _getUniqueName()
+    protected function _getVars($actionName)
     {
-        $alphas = range('A', 'Z');
-        $numbers = str_split($this->__timestamp);
+        $action = $this->detectAction($actionName);
 
-        array_walk($numbers, function (&$number, $k, $alphas) {
-            if (array_key_exists($number, $alphas)) {
-                $number = $alphas[$number];
-            }
-        }, $alphas);
+        if (empty($action)) {
+            $table = $actionName;
+            $action = 'create_table';
+        } else {
+            list($action, $table) = $action;
+        }
+        $table = Inflector::tableize($table);
 
-        return implode('', $numbers);
+        $name = Inflector::camelize($actionName) . $this->_getLastModifiedTime($table);
+
+        return [$action, $table, $name];
+    }
+
+    /**
+     * Get csv file's last modified time.
+     *
+     * @param  string $tableName target table name
+     * @return string
+     * @throws \CsvMigrations\View\Exception\MissingCsvException
+     */
+    protected function _getLastModifiedTime($tableName)
+    {
+        $tableName = Inflector::humanize($tableName);
+
+        $path = Configure::readOrFail('CsvMigrations.migrations.path') . $tableName;
+        $path .= DS . Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . static::FILE_EXTENSION;
+
+        if (!file_exists($path)) {
+            throw new MissingCsvException($tableName);
+        }
+
+        return filemtime($path);
     }
 }

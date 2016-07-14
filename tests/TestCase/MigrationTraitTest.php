@@ -132,6 +132,13 @@ class MigrationTraitTest extends PHPUnit_Framework_TestCase
                         'required' => '',
                         'non-searchable' => '',
                         'unique' => false
+                    ],
+                    'is_primary' => [
+                        'name' => 'is_primary',
+                        'type' => 'boolean',
+                        'required' => '',
+                        'non-searchable' => '',
+                        'unique' => false
                     ]
                 ]
             ]

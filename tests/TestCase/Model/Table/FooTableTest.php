@@ -153,7 +153,8 @@ class FooTableTest extends TestCase
                     'birthdate',
                     'created',
                     'modified',
-                    'garden_area'
+                    'garden_area',
+                    'is_primary'
                 ]
             ]
         ];
@@ -228,6 +229,9 @@ class FooTableTest extends TestCase
                     ],
                     'garden_area' => [
                         'type' => 'metric'
+                    ],
+                    'is_primary' => [
+                        'type' => 'boolean'
                     ]
                 ]
             ]
@@ -327,6 +331,13 @@ class FooTableTest extends TestCase
                     'garden_area' => [
                         'name' => 'garden_area',
                         'type' => 'metric(units_area)',
+                        'required' => '',
+                        'non-searchable' => '',
+                        'unique' => false
+                    ],
+                    'is_primary' => [
+                        'name' => 'is_primary',
+                        'type' => 'boolean',
                         'required' => '',
                         'non-searchable' => '',
                         'unique' => false

@@ -6,6 +6,8 @@ use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use CsvMigrations\FieldHandlers\DbField;
+use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\MigrationTrait;
 
@@ -118,24 +120,15 @@ class FieldHandlerFactoryTest extends TestCase
         }
     }
 
-    /**
-     * Method responsible for converting csv field instance to database field instance.
-     *
-     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @return array list of DbField instances
-     */
-    public function fieldToDb(CsvField $csvField)
+    public function testFieldToDb()
     {
-        $dbFields[] = new DbField(
-            $csvField->getName(),
-            $csvField->getType(),
-            $csvField->getLimit(),
-            $csvField->getRequired(),
-            $csvField->getNonSearchable(),
-            $csvField->getUnique()
-        );
-
-        return $dbFields;
+        foreach ($this->csvData as $field) {
+            $dbFields = $this->fhf->fieldToDb(new CsvField($field));
+            $this->assertInternalType('array', $dbFields);
+            foreach ($dbFields as $dbField) {
+                $this->assertInstanceOf(DbField::class, $dbField);
+            }
+        }
     }
 
     public function renderValuesProvider()

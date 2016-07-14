@@ -124,6 +124,7 @@ class FileFieldHandler extends BaseFieldHandler
             Configure::read('FileStorage.pathBuilderOptions')
         );
         $url = $this->cakeView->Storage->url($entity);
+
         return $this->cakeView->Html->image($this->cakeView->Url->build($url), ['class' => 'img-responsive']);
     }
 
@@ -140,6 +141,7 @@ class FileFieldHandler extends BaseFieldHandler
             Configure::read('FileStorage.pathBuilderOptions')
         );
         $url = $this->cakeView->Storage->url($entity);
+
         return $this->cakeView->Html->link(
             __d('CsvMigrations', 'View File'),
             $this->cakeView->Url->build($url),

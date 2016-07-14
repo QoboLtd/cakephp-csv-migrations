@@ -6,8 +6,8 @@ use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\CsvField;
+use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\MigrationTrait;
 

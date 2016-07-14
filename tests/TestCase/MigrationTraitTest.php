@@ -125,6 +125,13 @@ class MigrationTraitTest extends PHPUnit_Framework_TestCase
                         'required' => '',
                         'non-searchable' => '',
                         'unique' => false
+                    ],
+                    'garden_area' => [
+                        'name' => 'garden_area',
+                        'type' => 'metric(units_area)',
+                        'required' => '',
+                        'non-searchable' => '',
+                        'unique' => false
                     ]
                 ]
             ]

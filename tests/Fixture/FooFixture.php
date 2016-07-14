@@ -21,6 +21,8 @@ class FooFixture extends TestFixture
         'country' => ['type' => 'string', 'length' => 255, 'null' => true],
         'cost_amount' => ['type' => 'string', 'length' => 255, 'null' => true],
         'cost_currency' => ['type' => 'string', 'length' => 255, 'null' => true],
+        'garden_area_amount' => ['type' => 'integer', 'length' => 11, 'null' => true],
+        'garden_area_unit' => ['type' => 'string', 'length' => 255, 'null' => true],
         'birthdate' => ['type' => 'date', 'null' => true],
         'created' => ['type' => 'datetime'],
         'modified' => ['type' => 'datetime'],
@@ -41,6 +43,8 @@ class FooFixture extends TestFixture
             'country' => 'cy',
             'cost_amount' => '1000',
             'cost_currency' => 'eur',
+            'garden_area_amount' => '50',
+            'garden_area_unit' => 'm',
             'birthdate' => '1985-04-22',
             'created' => '2016-07-01 10:39:23',
             'modified' => '2016-07-01 10:41:31'

@@ -141,7 +141,20 @@ class FooTableTest extends TestCase
     {
         return [
             [
-                ['id', 'name', 'status', 'type', 'gender', 'city', 'country', 'cost', 'birthdate', 'created', 'modified']
+                [
+                    'id',
+                    'name',
+                    'status',
+                    'type',
+                    'gender',
+                    'city',
+                    'country',
+                    'cost',
+                    'birthdate',
+                    'created',
+                    'modified',
+                    'garden_area'
+                ]
             ]
         ];
     }
@@ -212,6 +225,9 @@ class FooTableTest extends TestCase
                     ],
                     'modified' => [
                         'type' => 'datetime'
+                    ],
+                    'garden_area' => [
+                        'type' => 'metric'
                     ]
                 ]
             ]
@@ -304,6 +320,13 @@ class FooTableTest extends TestCase
                     'modified' => [
                         'name' => 'modified',
                         'type' => 'datetime',
+                        'required' => '',
+                        'non-searchable' => '',
+                        'unique' => false
+                    ],
+                    'garden_area' => [
+                        'name' => 'garden_area',
+                        'type' => 'metric(units_area)',
                         'required' => '',
                         'non-searchable' => '',
                         'unique' => false

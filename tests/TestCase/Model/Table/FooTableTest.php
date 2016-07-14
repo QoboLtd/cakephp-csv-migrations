@@ -154,7 +154,8 @@ class FooTableTest extends TestCase
                     'created',
                     'modified',
                     'garden_area',
-                    'is_primary'
+                    'is_primary',
+                    'start_time'
                 ]
             ]
         ];
@@ -232,6 +233,9 @@ class FooTableTest extends TestCase
                     ],
                     'is_primary' => [
                         'type' => 'boolean'
+                    ],
+                    'start_time' => [
+                        'type' => 'time'
                     ]
                 ]
             ]
@@ -338,6 +342,13 @@ class FooTableTest extends TestCase
                     'is_primary' => [
                         'name' => 'is_primary',
                         'type' => 'boolean',
+                        'required' => '',
+                        'non-searchable' => '',
+                        'unique' => false
+                    ],
+                    'start_time' => [
+                        'name' => 'start_time',
+                        'type' => 'time',
                         'required' => '',
                         'non-searchable' => '',
                         'unique' => false

@@ -139,6 +139,13 @@ class MigrationTraitTest extends PHPUnit_Framework_TestCase
                         'required' => '',
                         'non-searchable' => '',
                         'unique' => false
+                    ],
+                    'start_time' => [
+                        'name' => 'start_time',
+                        'type' => 'time',
+                        'required' => '',
+                        'non-searchable' => '',
+                        'unique' => false
                     ]
                 ]
             ]

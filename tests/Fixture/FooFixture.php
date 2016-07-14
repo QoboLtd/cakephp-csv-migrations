@@ -24,6 +24,7 @@ class FooFixture extends TestFixture
         'garden_area_amount' => ['type' => 'integer', 'length' => 11, 'null' => true],
         'garden_area_unit' => ['type' => 'string', 'length' => 255, 'null' => true],
         'birthdate' => ['type' => 'date', 'null' => true],
+        'start_time' => ['type' => 'time', 'null' => true],
         'created' => ['type' => 'datetime'],
         'modified' => ['type' => 'datetime'],
         'is_primary' => ['type' => 'boolean', 'null' => true],
@@ -47,6 +48,7 @@ class FooFixture extends TestFixture
             'garden_area_amount' => '50',
             'garden_area_unit' => 'm',
             'birthdate' => '1985-04-22',
+            'start_time' => '16:15',
             'created' => '2016-07-01 10:39:23',
             'modified' => '2016-07-01 10:41:31',
             'is_primary' => 1

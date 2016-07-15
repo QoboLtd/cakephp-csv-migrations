@@ -98,7 +98,6 @@ class AppController extends Controller
         $this->Crud->on('beforeLookup', function (Event $event) {
             if (!empty($this->request->query['query'])) {
                 $displayField = $this->{$this->name}->displayField();
-                // $primaryKey = $this->{$this->name}->primaryKey();
                 $this->paginate['conditions'] = [$displayField . ' LIKE' => '%' . $this->request->query['query'] . '%'];
             }
         });

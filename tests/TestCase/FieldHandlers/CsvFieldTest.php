@@ -177,7 +177,7 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
         return [
             ['id', 'uuid', '', '', '', false],
             ['description', 'text', '', '', true, false],
-            ['name', 'string', '', '1', '', false],
+            ['name', 'string', '', '1', '', true],
             ['status', 'list', 'foo_statuses', '1', '', false],
             ['type', 'list', 'foo_types', '1', '', false],
             ['gender', 'list', 'genders', '', '', false],

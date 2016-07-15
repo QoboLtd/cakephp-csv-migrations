@@ -1,7 +1,7 @@
 FIELD NAME,FIELD TYPE,REQUIRED,NOT SEARCHABLE,UNIQUE
 id,uuid
 description,text,,1
-name,string,1
+name,string,1,,1
 status,list(foo_statuses),1
 type,list(foo_types),1
 gender,list(genders)

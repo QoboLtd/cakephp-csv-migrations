@@ -29,7 +29,8 @@ class FooFixture extends TestFixture
         'modified' => ['type' => 'datetime'],
         'is_primary' => ['type' => 'boolean', 'null' => true],
         '_constraints' => [
-            'primary' => ['type' => 'primary', 'columns' => ['id']]
+            'primary' => ['type' => 'primary', 'columns' => ['id']],
+            'unique' => ['type' => 'unique', 'columns' => ['name']]
         ]
     ];
 

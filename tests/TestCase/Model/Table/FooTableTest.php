@@ -267,7 +267,7 @@ class FooTableTest extends TestCase
                         'type' => 'string',
                         'required' => '1',
                         'non-searchable' => '',
-                        'unique' => false
+                        'unique' => true
                     ],
                     'status' => [
                         'name' => 'status',

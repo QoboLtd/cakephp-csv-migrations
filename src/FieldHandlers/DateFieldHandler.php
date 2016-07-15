@@ -34,8 +34,12 @@ class DateFieldHandler extends BaseFieldHandler
         $required = (bool)$options['fieldDefinitions']->getRequired();
         $fieldName = $this->_getFieldName($table, $field, $options);
 
-        if ($this->cakeView->elementExists('QoboAdminPanel.datepicker')) {
-            return $this->cakeView->element('QoboAdminPanel.datepicker', [
+        if (!isset($options['element']) && $this->cakeView->elementExists('QoboAdminPanel.datepicker')) {
+            $options['element'] = 'QoboAdminPanel.datepicker';
+        }
+
+        if (isset($options['element'])) {
+            return $this->cakeView->element($options['element'], [
                 'options' => [
                     'fieldName' => $fieldName,
                     'type' => static::FIELD_TYPE,

@@ -9,7 +9,7 @@ use CsvMigrations\FieldTrait;
 class FieldTraitTest extends TestCase
 {
     /**
-     * Test subject
+     * FooTable instance
      *
      * @var CsvMigrations\Test\TestCase\Model\Table\FooTable
      */

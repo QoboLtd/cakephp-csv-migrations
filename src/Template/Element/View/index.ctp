@@ -96,6 +96,14 @@ if (empty($options['title'])) {
     </div>
 </div>
 
+<div class="paginator">
+    <ul class="pagination">
+        <?= $this->Paginator->prev('< ' . __('previous')) ?>
+        <?= $this->Paginator->numbers(['before' => '', 'after' => '']) ?>
+        <?= $this->Paginator->next(__('next') . ' >') ?>
+    </ul>
+    <p><?= $this->Paginator->counter() ?></p>
+</div>
 <?php
 echo $this->Html->css('CsvMigrations.datatables.min', ['block' => 'cssBottom']);
 echo $this->Html->script('CsvMigrations.datatables.min', ['block' => 'scriptBottom']);

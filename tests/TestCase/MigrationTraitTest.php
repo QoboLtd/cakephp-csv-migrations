@@ -61,7 +61,7 @@ class MigrationTraitTest extends PHPUnit_Framework_TestCase
                         'type' => 'string',
                         'required' => '1',
                         'non-searchable' => '',
-                        'unique' => false
+                        'unique' => true
                     ],
                     'status' => [
                         'name' => 'status',

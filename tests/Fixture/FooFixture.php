@@ -30,7 +30,7 @@ class FooFixture extends TestFixture
         'is_primary' => ['type' => 'boolean', 'null' => true],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
-            'unique' => ['type' => 'unique', 'columns' => ['name']]
+            'unique' => ['type' => 'unique', 'columns' => ['name', 'id']]
         ]
     ];
 

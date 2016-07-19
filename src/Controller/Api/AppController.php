@@ -56,14 +56,11 @@ class AppController extends Controller
     public function view()
     {
         $this->Crud->on('beforeFind', function (Event $event) {
-            $uniqueFields = $event->subject()->repository->getUniqueFields();
+            $lookupFields = $event->subject()->repository->lookupFields();
 
-            /*
-             * check for record by table's unique fields (not only by id)
-             * @todo currently if two unique fields have the same value the query will only return the first one
-             */
-            foreach ($uniqueFields as $uniqueField) {
-                $event->subject()->query->orWhere([$uniqueField => $event->subject()->id]);
+            // check for record by table's lookup fields (not only by id)
+            foreach ($lookupFields as $lookupField) {
+                $event->subject()->query->orWhere([$lookupField => $event->subject()->id]);
             }
         });
 

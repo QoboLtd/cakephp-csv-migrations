@@ -81,6 +81,24 @@ class AppController extends Controller
     }
 
     /**
+     * Edit CRUD action events handling logic.
+     *
+     * @return \Cake\Network\Response
+     */
+    public function edit()
+    {
+        $this->Crud->on('beforeFind', function (Event $event) {
+            $event->subject()->repository->findByLookupFields($event->subject()->query, $event->subject()->id);
+        });
+
+        $this->Crud->on('afterFind', function (Event $event) {
+            $event = $this->_prettifyEntity($event);
+        });
+
+        return $this->Crud->execute();
+    }
+
+    /**
      * Lookup CRUD action events handling logic.
      *
      * @return \Cake\Network\Response

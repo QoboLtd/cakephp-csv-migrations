@@ -151,8 +151,14 @@ class Table extends BaseTable
      */
     public function findByLookupFields(Query $query, $id)
     {
+        $lookupFields = $this->lookupFields();
+
+        if (empty($lookupFields)) {
+            return $query;
+        }
+
         // check for record by table's lookup fields
-        foreach ($this->lookupFields() as $lookupField) {
+        foreach ($lookupFields as $lookupField) {
             $query->orWhere([$lookupField => $id]);
         }
 
@@ -168,8 +174,14 @@ class Table extends BaseTable
      */
     public function findByLookupFieldsWithValues(Query $query, array $values)
     {
+        $lookupFields = $this->lookupFields();
+
+        if (empty($lookupFields)) {
+            return $query;
+        }
+
         // check for record by table's lookup fields
-        foreach ($this->lookupFields() as $lookupField) {
+        foreach ($lookupFields as $lookupField) {
             if (!isset($values[$lookupField])) {
                 continue;
             }

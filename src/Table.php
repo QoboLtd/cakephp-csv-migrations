@@ -52,6 +52,13 @@ class Table extends BaseTable
         }
 
         /*
+        lookup field(s) from configuration file
+         */
+        if (isset($this->_config['table']['lookup_fields'])) {
+            $this->lookupFields($this->_config['table']['lookup_fields']);
+        }
+
+        /*
         set module alias from configuration file
          */
         if (isset($this->_config['table']['alias'])) {

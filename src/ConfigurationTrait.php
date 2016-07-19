@@ -35,6 +35,13 @@ trait ConfigurationTrait
     protected $_searchable = false;
 
     /**
+     * Lookup fields used for fetching record(s) through the API
+     *
+     * @var array
+     */
+    protected $_lookupFields;
+
+    /**
      * Module alias
      *
      * @var string
@@ -79,6 +86,21 @@ trait ConfigurationTrait
         }
 
         return $this->_searchable;
+    }
+
+    /**
+     * Returns the lookup fields or sets a new one
+     *
+     * @param string|null $fields sets lookup fields
+     * @return string
+     */
+    public function lookupFields($fields = null)
+    {
+        if ($fields !== null) {
+            $this->_lookupFields = explode(',', $fields);
+        }
+
+        return $this->_lookupFields;
     }
 
     /**

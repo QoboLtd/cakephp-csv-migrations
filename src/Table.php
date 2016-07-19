@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations;
 
+use Cake\ORM\Query;
 use Cake\ORM\Table as BaseTable;
 use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
@@ -49,6 +50,13 @@ class Table extends BaseTable
          */
         if (isset($this->_config['table']['display_field'])) {
             $this->displayField($this->_config['table']['display_field']);
+        }
+
+        /*
+        lookup field(s) from configuration file
+         */
+        if (isset($this->_config['table']['lookup_fields'])) {
+            $this->lookupFields($this->_config['table']['lookup_fields']);
         }
 
         /*
@@ -132,6 +140,55 @@ class Table extends BaseTable
         }
 
         return $result;
+    }
+
+    /**
+     * Method that adds lookup fields with the id value to the Where clause in ORM Query
+     *
+     * @param  \Cake\ORM\Query $query Query instance
+     * @param  string          $id    Record id
+     * @return \Cake\ORM\Query
+     */
+    public function findByLookupFields(Query $query, $id)
+    {
+        $lookupFields = $this->lookupFields();
+
+        if (empty($lookupFields)) {
+            return $query;
+        }
+
+        // check for record by table's lookup fields
+        foreach ($lookupFields as $lookupField) {
+            $query->orWhere([$lookupField => $id]);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Method that adds lookup fields with the matching values to the Where clause in ORM Query
+     *
+     * @param  \Cake\ORM\Query $query Query instance
+     * @param  string          $id    Record id
+     * @return \Cake\ORM\Query
+     */
+    public function findByLookupFieldsWithValues(Query $query, array $values)
+    {
+        $lookupFields = $this->lookupFields();
+
+        if (empty($lookupFields)) {
+            return $query;
+        }
+
+        // check for record by table's lookup fields
+        foreach ($lookupFields as $lookupField) {
+            if (!isset($values[$lookupField])) {
+                continue;
+            }
+            $query->orWhere([$lookupField => $values[$lookupField]]);
+        }
+
+        return $query;
     }
 
     /**

@@ -56,15 +56,7 @@ class AppController extends Controller
     public function view()
     {
         $this->Crud->on('beforeFind', function (Event $event) {
-            $uniqueFields = $event->subject()->repository->getUniqueFields();
-
-            /*
-             * check for record by table's unique fields (not only by id)
-             * @todo currently if two unique fields have the same value the query will only return the first one
-             */
-            foreach ($uniqueFields as $uniqueField) {
-                $event->subject()->query->orWhere([$uniqueField => $event->subject()->id]);
-            }
+            $event->subject()->repository->findByLookupFields($event->subject()->query, $event->subject()->id);
         });
 
         $this->Crud->on('afterFind', function (Event $event) {
@@ -82,6 +74,24 @@ class AppController extends Controller
     public function index()
     {
         $this->Crud->on('afterPaginate', function (Event $event) {
+            $event = $this->_prettifyEntity($event);
+        });
+
+        return $this->Crud->execute();
+    }
+
+    /**
+     * Edit CRUD action events handling logic.
+     *
+     * @return \Cake\Network\Response
+     */
+    public function edit()
+    {
+        $this->Crud->on('beforeFind', function (Event $event) {
+            $event->subject()->repository->findByLookupFields($event->subject()->query, $event->subject()->id);
+        });
+
+        $this->Crud->on('afterFind', function (Event $event) {
             $event = $this->_prettifyEntity($event);
         });
 

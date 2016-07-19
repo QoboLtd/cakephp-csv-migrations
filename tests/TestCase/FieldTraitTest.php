@@ -39,6 +39,8 @@ class FieldTraitTest extends TestCase
 
     public function testGetUniqueFields()
     {
-        $this->assertEquals(['name', 'id'], $this->mock->getUniqueFields($this->FooTable));
+        $uniqueFields = $this->mock->getUniqueFields($this->FooTable);
+        sort($uniqueFields);
+        $this->assertEquals(['id', 'name'], $uniqueFields);
     }
 }

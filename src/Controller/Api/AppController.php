@@ -56,12 +56,7 @@ class AppController extends Controller
     public function view()
     {
         $this->Crud->on('beforeFind', function (Event $event) {
-            $lookupFields = $event->subject()->repository->lookupFields();
-
-            // check for record by table's lookup fields (not only by id)
-            foreach ($lookupFields as $lookupField) {
-                $event->subject()->query->orWhere([$lookupField => $event->subject()->id]);
-            }
+            $event->subject()->repository->findByLookupFields($event->subject()->query, $event->subject()->id);
         });
 
         $this->Crud->on('afterFind', function (Event $event) {

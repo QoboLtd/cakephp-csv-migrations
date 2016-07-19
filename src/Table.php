@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations;
 
+use Cake\ORM\Query;
 use Cake\ORM\Table as BaseTable;
 use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
@@ -139,6 +140,43 @@ class Table extends BaseTable
         }
 
         return $result;
+    }
+
+    /**
+     * Method that adds lookup fields with the id value to the Where clause in ORM Query
+     *
+     * @param  \Cake\ORM\Query $query Query instance
+     * @param  string          $id    Record id
+     * @return \Cake\ORM\Query
+     */
+    public function findByLookupFields(Query $query, $id)
+    {
+        // check for record by table's lookup fields
+        foreach ($this->lookupFields() as $lookupField) {
+            $query->orWhere([$lookupField => $id]);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Method that adds lookup fields with the matching values to the Where clause in ORM Query
+     *
+     * @param  \Cake\ORM\Query $query Query instance
+     * @param  string          $id    Record id
+     * @return \Cake\ORM\Query
+     */
+    public function findByLookupFieldsWithValues(Query $query, array $values)
+    {
+        // check for record by table's lookup fields
+        foreach ($this->lookupFields() as $lookupField) {
+            if (!isset($values[$lookupField])) {
+                continue;
+            }
+            $query->orWhere([$lookupField => $values[$lookupField]]);
+        }
+
+        return $query;
     }
 
     /**

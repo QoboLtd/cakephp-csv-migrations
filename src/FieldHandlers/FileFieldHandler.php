@@ -25,9 +25,9 @@ class FileFieldHandler extends BaseFieldHandler
     public function renderInput($table, $field, $data = '', array $options = [])
     {
         if (empty($data)) {
-            $result = $this->_renderInput($table, $field, $options);
+            $result = $this->_renderInputWithoutData($table, $field, $options);
         } else {
-            $result = $this->_renderInputWithValue($table, $field, $data);
+            $result = $this->_renderInputWithData($table, $field, $data);
         }
 
         return $result;
@@ -41,7 +41,7 @@ class FileFieldHandler extends BaseFieldHandler
      * @param  array $options Options
      * @return string HTML input field.
      */
-    protected function _renderInput($table, $field, $options)
+    protected function _renderInputWithoutData($table, $field, $options)
     {
         $uploadField = $this->cakeView->Form->file(
             $this->_getFieldName($table, $field, $options),
@@ -60,7 +60,7 @@ class FileFieldHandler extends BaseFieldHandler
      * @param  array $data Data
      * @return string HTML input field with data attribute.
      */
-    protected function _renderInputWithValue($table, $field, $data)
+    protected function _renderInputWithData($table, $field, $data)
     {
         $this->cakeView->loadHelper(
             'Burzum/FileStorage.Storage',

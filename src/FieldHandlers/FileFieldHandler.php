@@ -2,6 +2,7 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\Core\Configure;
+use Cake\Utility\Hash;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
 class FileFieldHandler extends BaseFieldHandler
@@ -24,10 +25,11 @@ class FileFieldHandler extends BaseFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        if (empty($data)) {
+        $entity = Hash::get($options, 'entity');
+        if (empty($entity)) {
             $result = $this->_renderInputWithoutData($table, $field, $options);
         } else {
-            $result = $this->_renderInputWithData($table, $field, $data);
+            $result = $this->_renderInputWithData($table, $field, $options);
         }
 
         return $result;

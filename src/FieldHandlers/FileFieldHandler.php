@@ -20,6 +20,9 @@ class FileFieldHandler extends BaseFieldHandler
 
     /**
      * {@inheritDoc}
+     * @todo To avoid confusion: data param is not used because
+     * it has no value. We do not store anything in the file field on DB.
+     *
      * In this case, it renders the output based on the given value of data.
      */
     public function renderInput($table, $field, $data = '', array $options = [])
@@ -58,7 +61,7 @@ class FileFieldHandler extends BaseFieldHandler
      *
      * @param  Table $table Table
      * @param  string $field Field
-     * @param  array $data Data
+     * @param  array $options Options
      * @return string HTML input field with data attribute.
      */
     protected function _renderInputWithData($table, $field, $options)

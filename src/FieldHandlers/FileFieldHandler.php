@@ -62,20 +62,25 @@ class FileFieldHandler extends BaseFieldHandler
      * @param  array $data Data
      * @return string HTML input field with data attribute.
      */
-    protected function _renderInputWithData($table, $field, $data)
+    protected function _renderInputWithData($table, $field, $options)
     {
-        $this->cakeView->loadHelper(
-            'Burzum/FileStorage.Storage',
-            Configure::read('FileStorage.pathBuilderOptions')
-        );
-        $entity = $table->uploaddocuments->find()
-            ->where(['id' => $data])
-            ->first();
-        $url = $this->cakeView->Storage->url($entity);
-        //$img = $this->cakeView->Html->image($url);
+        $paths = [];
+        $entity = Hash::get($options, 'entity');
+        $document = $table->find()
+            ->contain(['DocumentIdCrmReFiles' => ['FileIdFileStorageFileStorage']])
+            ->where(['id' => $entity->get('id')])
+            ->first()
+            ->toArray();
+        $fileWrappers = Hash::get($document, 'document_id_crm_re_files');
+        foreach ($fileWrappers as $fw) {
+            $file = Hash::get($fw, 'file_id_file_storage_file_storage');
+            $path = Hash::get($file, 'path');
+            $paths[] = $path;
+        }
+
         $uploadField = $this->cakeView->Form->file(
-            'UploadDocuments.file.' . $field,
-            ['data-upload-url' => $url]
+            $this->_getFieldName($table, $field, $options),
+            ['multiple' => true, 'data-upload-paths' => implode($paths, ',')]
         );
         $label = $this->cakeView->Form->label($field);
 

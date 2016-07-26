@@ -77,6 +77,9 @@ class FileFieldHandler extends BaseFieldHandler
             $path = Hash::get($file, 'path');
             $paths[] = $path;
         }
+        if (empty($paths)) {
+            return $this->_renderInputWithoutData($table, $field, $options);
+        }
 
         $uploadField = $this->cakeView->Form->file(
             $this->_getFieldName($table, $field, $options),

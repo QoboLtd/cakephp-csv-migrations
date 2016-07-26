@@ -18,7 +18,6 @@ class FileFieldHandler extends BaseFieldHandler
      */
     const WRAPPER = '<div class="form-group">%s%s</div>';
 
-    const DIV = '<div>%s&nbsp;%s</div>';
     /**
      * {@inheritDoc}
      * In this case, it renders the output based on the given value of data.

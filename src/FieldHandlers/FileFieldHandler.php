@@ -66,7 +66,7 @@ class FileFieldHandler extends BaseFieldHandler
      */
     protected function _renderInputWithData($table, $field, $options)
     {
-        $paths = [];
+        $file = [];
         $entity = Hash::get($options, 'entity');
         $document = $table->find()
             ->contain(['DocumentIdCrmReFiles' => ['FileIdFileStorageFileStorage']])
@@ -75,17 +75,22 @@ class FileFieldHandler extends BaseFieldHandler
             ->toArray();
         $fileWrappers = Hash::get($document, 'document_id_crm_re_files');
         foreach ($fileWrappers as $fw) {
-            $file = Hash::get($fw, 'file_id_file_storage_file_storage');
-            $path = Hash::get($file, 'path');
-            $paths[] = $path;
+            $fileStorage = Hash::get($fw, 'file_id_file_storage_file_storage');
+            $path = Hash::get($fileStorage, 'path');
+            $id = Hash::get($fileStorage, 'id');
+            $files[] = ['id' => $id, 'path' => $path];
         }
-        if (empty($paths)) {
+        if (empty($files)) {
             return $this->_renderInputWithoutData($table, $field, $options);
         }
 
         $uploadField = $this->cakeView->Form->file(
             $this->_getFieldName($table, $field, $options),
-            ['multiple' => true, 'data-upload-paths' => implode($paths, ',')]
+            [
+                'multiple' => true,
+                'data-document-id' => $entity->get('id'),
+                'data-files' => json_encode($files),
+            ]
         );
         $label = $this->cakeView->Form->label($field);
 

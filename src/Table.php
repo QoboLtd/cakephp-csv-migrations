@@ -176,7 +176,7 @@ class Table extends BaseTable
     {
         $lookupFields = $this->lookupFields();
 
-        if (empty($lookupFields)) {
+        if (empty($lookupFields) || empty($values)) {
             return $query;
         }
 

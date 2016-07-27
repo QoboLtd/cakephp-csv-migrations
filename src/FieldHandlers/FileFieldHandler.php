@@ -96,7 +96,7 @@ class FileFieldHandler extends BaseFieldHandler
      * {@inheritDoc}
      * In this case, it renders img tag or anchor to view the upload files.
      */
-    public function renderValue($table, $field, $data = '', array $options = [])
+    public function renderValue($table, $field, $data, array $options = [])
     {
         $result = __d('CsvMigration', 'No upload file');
         if (empty($data)) {

@@ -168,8 +168,8 @@ class Table extends BaseTable
     /**
      * Method that adds lookup fields with the matching values to the Where clause in ORM Query
      *
-     * @param  \Cake\ORM\Query $query Query instance
-     * @param  string          $id    Record id
+     * @param  \Cake\ORM\Query $query  Query instance
+     * @param  array           $values Entity lookup-fields values
      * @return \Cake\ORM\Query
      */
     public function findByLookupFieldsWithValues(Query $query, array $values)

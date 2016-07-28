@@ -133,6 +133,31 @@ $formOptions = ['type' => 'file'];
                     $embeddedFieldName
                 );
 
+                $url = [
+                    'plugin' => $embeddedPlugin,
+                    'controller' => $embeddedController,
+                    'action' => 'add'
+                ];
+                /**
+                 * @todo Handling uploads of the Document module.
+                 * This is very ugly but works for now.
+                 */
+                if ($embeddedController == 'Documents') {
+                    $renderOptions['valueOnly'] = true;
+                    $renderOptions['fieldDefinitions']['type'] = 'file';
+                    $renderOptions['fieldDefinitions']['required'] = false;
+                    $renderOptions['fieldDefinitions']['unique'] = false;
+                    $renderOptions['fieldDefinitions']['non-searchable'] = false;
+                    $documentId = $fhf->renderValue(
+                        $tableName,
+                        $embeddedController . '.' . $embeddedFieldName,
+                        $options['entity']->get($embeddedFieldName),
+                        $renderOptions
+                    );
+                    if ($documentId) {
+                        $url = '/' . Inflector::delimit($embeddedPlugin, '-') . '/documents/edit/' . $documentId;
+                    }
+                }
                 /*
                 @note this only works for belongsTo for now.
                  */
@@ -149,11 +174,7 @@ $formOptions = ['type' => 'file'];
                         </div>
                         <div class="modal-body">
                         <?php echo $this->requestAction(
-                            [
-                                'plugin' => $embeddedPlugin,
-                                'controller' => $embeddedController,
-                                'action' => 'add'
-                            ],
+                            $url,
                             [
                                 'query' => [
                                     'embedded' => $this->request->controller . '.' . $embeddedAssocName,

@@ -73,6 +73,10 @@ class AppController extends Controller
      */
     public function index()
     {
+        $this->Crud->on('beforePaginate', function (Event $event) {
+            $event = $this->_filterByConditions($event);
+        });
+
         $this->Crud->on('afterPaginate', function (Event $event) {
             $event = $this->_prettifyEntity($event);
         });
@@ -173,6 +177,22 @@ class AppController extends Controller
         if ('OPTIONS' === $this->request->method()) {
             return $this->response;
         }
+    }
+
+    /**
+     * Method that filters ORM records by provided conditions.
+     *
+     * @param  \Cake\Event\Event $event The event.
+     * @return \Cake\Event\Event
+     */
+    protected function _filterByConditions(Event $event)
+    {
+        $conditions = $this->request->query('conditions');
+        if (!is_null($conditions)) {
+            $event->subject()->query->applyOptions(['conditions' => $conditions]);
+        }
+
+        return $event;
     }
 
     /**

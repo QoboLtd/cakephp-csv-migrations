@@ -2,6 +2,7 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\Core\Configure;
+use Cake\Utility\Hash;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
 class FileFieldHandler extends BaseFieldHandler
@@ -17,17 +18,20 @@ class FileFieldHandler extends BaseFieldHandler
      */
     const WRAPPER = '<div class="form-group">%s%s</div>';
 
-    const DIV = '<div>%s&nbsp;%s</div>';
     /**
      * {@inheritDoc}
+     * @todo To avoid confusion: data param is not used because
+     * it has no value. We do not store anything in the file field on DB.
+     *
      * In this case, it renders the output based on the given value of data.
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        if (empty($data)) {
+        $entity = Hash::get($options, 'entity');
+        if (empty($entity)) {
             $result = $this->_renderInputWithoutData($table, $field, $options);
         } else {
-            $result = $this->_renderInputWithData($table, $field, $data);
+            $result = $this->_renderInputWithData($table, $field, $options);
         }
 
         return $result;
@@ -57,23 +61,31 @@ class FileFieldHandler extends BaseFieldHandler
      *
      * @param  Table $table Table
      * @param  string $field Field
-     * @param  array $data Data
+     * @param  array $options Options
      * @return string HTML input field with data attribute.
      */
-    protected function _renderInputWithData($table, $field, $data)
+    protected function _renderInputWithData($table, $field, $options)
     {
-        $this->cakeView->loadHelper(
-            'Burzum/FileStorage.Storage',
-            Configure::read('FileStorage.pathBuilderOptions')
-        );
-        $entity = $table->uploaddocuments->find()
-            ->where(['id' => $data])
-            ->first();
-        $url = $this->cakeView->Storage->url($entity);
-        //$img = $this->cakeView->Html->image($url);
+        $paths = [];
+        $entity = Hash::get($options, 'entity');
+        $document = $table->find()
+            ->contain(['DocumentIdCrmReFiles' => ['FileIdFileStorageFileStorage']])
+            ->where(['id' => $entity->get('id')])
+            ->first()
+            ->toArray();
+        $fileWrappers = Hash::get($document, 'document_id_crm_re_files');
+        foreach ($fileWrappers as $fw) {
+            $file = Hash::get($fw, 'file_id_file_storage_file_storage');
+            $path = Hash::get($file, 'path');
+            $paths[] = $path;
+        }
+        if (empty($paths)) {
+            return $this->_renderInputWithoutData($table, $field, $options);
+        }
+
         $uploadField = $this->cakeView->Form->file(
-            'UploadDocuments.file.' . $field,
-            ['data-upload-url' => $url]
+            $this->_getFieldName($table, $field, $options),
+            ['multiple' => true, 'data-upload-paths' => implode($paths, ',')]
         );
         $label = $this->cakeView->Form->label($field);
 

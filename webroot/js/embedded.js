@@ -6,7 +6,10 @@ var embedded = embedded || {};
      * @param {object} options configuration options
      */
     function Embedded(options) {
+        this.files = null;
+        this.uploadFieldName = null;
         this.formId = options.hasOwnProperty('formId') ? options.formId : '.embeddedForm';
+        this.attachEvents();
     }
 
     /**
@@ -19,11 +22,23 @@ var embedded = embedded || {};
 
         $(that.formId).submit(function(e) {
             e.preventDefault();
-            if ('undefined' !== typeof files) {
+            if (that.files && that.uploadFieldName) {
                 that.uploadFiles(this);
             } else {
                that._submitForm(this);
             }
+        });
+    };
+
+    /**
+     * Attach events needed for the embedded form.
+     * @return void
+     */
+    Embedded.prototype.attachEvents = function() {
+        var that = this;
+        $(document).on('updateFiles', function(event, files, fieldName) {
+            that.files = files;
+            that.uploadFieldName = fieldName;
         });
     };
 
@@ -32,13 +47,13 @@ var embedded = embedded || {};
         var data = new FormData();
         var modalId = $(form).data('modal_id');
 
-        $.each(files, function(key, value)
+        $.each(that.files, function(key, value)
         {
             data.append('file[]', value);
         });
 
-        if (uploadFieldName) {
-            data.append('fieldName', uploadFieldName);
+        if (that.uploadFieldName) {
+            data.append('fieldName', that.uploadFieldName);
         }
 
         $.ajax({

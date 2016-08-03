@@ -46,6 +46,7 @@ var embedded = embedded || {};
         var that = this;
         var data = new FormData();
         var modalId = $(form).data('modal_id');
+        var url = $(form).attr('action');
 
         $.each(that.files, function(key, value)
         {
@@ -57,7 +58,7 @@ var embedded = embedded || {};
         }
 
         $.ajax({
-            url: '/crm-re/api/documents/add',
+            url: url,
             type: 'POST',
             data: data,
             cache: false,
@@ -71,7 +72,7 @@ var embedded = embedded || {};
                     /*
                     set related field display-field and value
                      */
-                    that._setRelatedField('/crm-re/api/documents/add', data.data.id, form);
+                    that._setRelatedField(url, data.data.id, form);
 
                     /*
                     clear embedded form

@@ -6,7 +6,10 @@ var embedded = embedded || {};
      * @param {object} options configuration options
      */
     function Embedded(options) {
+        this.files = null;
+        this.uploadFieldName = null;
         this.formId = options.hasOwnProperty('formId') ? options.formId : '.embeddedForm';
+        this.attachEvents();
     }
 
     /**
@@ -19,7 +22,7 @@ var embedded = embedded || {};
 
         $(that.formId).submit(function(e) {
             e.preventDefault();
-            if ('undefined' !== typeof files) {
+            if (that.files && that.uploadFieldName) {
                 that.uploadFiles(this);
             } else {
                that._submitForm(this);
@@ -27,22 +30,35 @@ var embedded = embedded || {};
         });
     };
 
+    /**
+     * Attach events needed for the embedded form.
+     * @return void
+     */
+    Embedded.prototype.attachEvents = function() {
+        var that = this;
+        $(document).on('updateFiles', function(event, files, fieldName) {
+            that.files = files;
+            that.uploadFieldName = fieldName;
+        });
+    };
+
     Embedded.prototype.uploadFiles = function(form) {
         var that = this;
         var data = new FormData();
         var modalId = $(form).data('modal_id');
+        var url = $(form).attr('action');
 
-        $.each(files, function(key, value)
+        $.each(that.files, function(key, value)
         {
             data.append('file[]', value);
         });
 
-        if (uploadFieldName) {
-            data.append('fieldName', uploadFieldName);
+        if (that.uploadFieldName) {
+            data.append('fieldName', that.uploadFieldName);
         }
 
         $.ajax({
-            url: '/crm-re/api/documents/add',
+            url: url,
             type: 'POST',
             data: data,
             cache: false,
@@ -56,7 +72,7 @@ var embedded = embedded || {};
                     /*
                     set related field display-field and value
                      */
-                    that._setRelatedField('/crm-re/api/documents/add', data.data.id, form);
+                    that._setRelatedField(url, data.data.id, form);
 
                     /*
                     clear embedded form

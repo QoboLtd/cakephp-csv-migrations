@@ -49,6 +49,37 @@ class AppController extends Controller
     ];
 
     /**
+     * {@inheritDoc}
+     */
+    public function initialize()
+    {
+        parent::initialize();
+
+        $this->loadComponent('Auth', [
+            // non-persistent storage, for stateless authentication
+            'storage' => 'Memory',
+            'authenticate' => [
+                // used for validating user credentials before the token is generated
+                'Form' => [
+                    'scope' => ['Users.active' => 1]
+                ],
+                // used for token validation
+                'ADmad/JwtAuth.Jwt' => [
+                    'parameter' => 'token',
+                    'userModel' => 'Users',
+                    'scope' => ['Users.active' => 1],
+                    'fields' => [
+                        'username' => 'id'
+                    ],
+                    'queryDatasource' => true
+                ]
+            ],
+            'unauthorizedRedirect' => false,
+            'checkAuthIn' => 'Controller.initialize'
+        ]);
+    }
+
+    /**
      * View CRUD action events handling logic.
      *
      * @return \Cake\Network\Response

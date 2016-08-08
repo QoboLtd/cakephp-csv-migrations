@@ -27,6 +27,11 @@ class CsvViewComponent extends Component
     const PANEL_COUNT = 3;
 
     /**
+     * Key for the type of panels. It is used in the CsvMigration module config.
+     */
+    const PANEL_CONFIG_FILTER = 'type_panels';
+
+    /**
      * Default configuration.
      * @var array
      */
@@ -61,6 +66,12 @@ class CsvViewComponent extends Component
      * @var array
      */
     protected $_panelActions = ['add', 'edit', 'view'];
+
+    /**
+     * Module's config, can be found in the CsvMigration module directory.
+     * @var array
+     */
+    protected $_parsedConfig = [];
 
     /**
      * Error messages.

@@ -105,6 +105,70 @@ class CsvViewComponent extends Component
     }
 
     /**
+     * Check/do things before rendering the output.
+     *
+     * @param  Event  $event [description]
+     * @return void
+     */
+    public function beforeRender(Event $event)
+    {
+        $this->_parseConfig();
+        if ($this->_hasFilteringPanels()) {
+            $this->filterPanels();
+        }
+    }
+
+    /**
+     * From the given panels in the CsvMigration module config.
+     * Remove only the specified panels in the config which
+     * their type is not matching with the type field of the entity.
+     *
+     * @return bool|void
+     */
+    public function filterPanels()
+    {
+        $controller = $this->_registry->getController();
+        $fields = &$controller->viewVars['fields'];
+        $entity = $controller->viewVars['entity'];
+        //When type field is not found then just stop here.
+        if (is_null($entity->get('type'))) {
+            return false;
+        }
+
+        foreach ($this->_parsedConfig[self::PANEL_CONFIG_FILTER] as $panelName => $type) {
+            if ($type !== $entity->get('type') && isset($fields[$panelName])) {
+                unset($fields[$panelName]);
+            }
+        }
+    }
+
+    /**
+     * Parse the config file and set to the _parseConfig.
+     *
+     * @return void
+     */
+    protected function _parseConfig()
+    {
+        $controller = $this->_registry->getController();
+        $path = Configure::read('CsvMigrations.migrations.path');
+        $path .= $controller->name . DS . 'config.ini';
+
+        if (is_readable($path)) {
+            $this->_parsedConfig = parse_ini_file($path, true);
+        }
+    }
+
+    /**
+     * Check module config file for panels to filter.
+     *
+     * @return boolean true if yes
+     */
+    protected function _hasFilteringPanels()
+    {
+        return isset($this->_parsedConfig[self::PANEL_CONFIG_FILTER]);
+    }
+
+    /**
      * Method that instantiates Table based on request parameters.
      *
      * @param  array  $params  Request parameters

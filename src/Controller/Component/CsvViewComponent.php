@@ -9,6 +9,7 @@ use Cake\Event\Event;
 use Cake\ORM\Association;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use \InvalidArgumentException;
 
 /**
  * CsvView component
@@ -131,16 +132,82 @@ class CsvViewComponent extends Component
         $controller = $this->_registry->getController();
         $fields = &$controller->viewVars['fields'];
         $entity = $controller->viewVars['entity'];
-        //When type field is not found then just stop here.
-        if (is_null($entity->get('type'))) {
-            return false;
-        }
 
-        foreach ($this->_parsedConfig[self::PANEL_CONFIG_FILTER] as $panelName => $type) {
-            if ($type !== $entity->get('type') && isset($fields[$panelName])) {
-                unset($fields[$panelName]);
+        $panels = $this->_parsedConfig[self::PANELS];
+        foreach ($panels as $name => $conditions) {
+            $conds = $this->_readConditions($conditions);
+            foreach ($conds as $cond) {
+                list($field, $operator, $condValue) = $cond;
+                $storedValue = $entity->get($field);
+                if (!$this->_compare($storedValue, $operator, $condValue)) {
+                    unset($fields[$name]);
+                }
             }
         }
+    }
+
+    /**
+     * Compare first against the second value based on the given operator.
+     *
+     * @throws InvalidArgumentException Operator MUST be supported.
+     * @param  string $first    First value
+     * @param  string $operator Comparison operator
+     * @param  string $second   Second value
+     * @return bool
+     */
+    protected function _compare($first, $operator, $second)
+    {
+        switch ($operator) {
+            case '==':
+                return $first == $second;
+            default:
+                throw new InvalidArgumentException(sprintf('Unsupported operator "%s" in comparing values.', $operator));
+        }
+    }
+
+    /**
+     * Read the conditions taken from the config.
+     * Conditions MUST be seperated by blank space.
+     *
+     * Expected format:
+     * - (type==company)
+     * - (type==individual first_name==b)
+     *
+     * Return is a nested array with the following format:
+     * ['field', 'operator', 'value']
+     *
+     * @param  array $conds Conditions to be read
+     * @return array
+     */
+    protected function _readConditions($conds)
+    {
+        $result = [];
+        $match = [];
+        preg_match('#\((.*?)\)#', $conds, $match);
+        if (count($match) < 1) {
+            throw new InvalidArgumentException(sprintf(
+                'Conditions format is invalid. Please check module config.',
+                $operator
+            ));
+        }
+        $conditions = explode(' ', $match[1]);
+        foreach ($conditions as $condition) {
+            preg_match('/[^A-Za-z0-9]+/', $condition, $operator);
+            if (empty($operator)) {
+                throw new InvalidArgumentException('Please check conditions. Comparison operator not found.');
+            }
+            list($field, $value) = explode($operator[0], $condition);
+            if (empty($field)) {
+                throw new InvalidArgumentException('Please check conditions. The field is not found or empty.');
+            }
+            if (empty($value)) {
+                throw new InvalidArgumentException('Please check conditions. The value is not found or empty.');
+            }
+
+            $result[] = [$field, $operator[0], $value];
+        }
+
+        return $result;
     }
 
     /**

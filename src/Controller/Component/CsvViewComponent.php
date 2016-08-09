@@ -74,13 +74,6 @@ class CsvViewComponent extends Component
     protected $_panelActions = ['add', 'edit', 'view'];
 
     /**
-     * Module's config, can be found in the CsvMigration module directory.
-     *
-     * @var array
-     */
-    protected $_parsedConfig = [];
-
-    /**
      * Error messages.
      * @var array
      */
@@ -119,8 +112,6 @@ class CsvViewComponent extends Component
      */
     public function beforeRender(Event $event)
     {
-        //Read module's config
-        $this->_parseConfig();
         if ($this->_hasPanels()) {
             $this->_excludePanels();
         }
@@ -140,7 +131,7 @@ class CsvViewComponent extends Component
         $fields = &$controller->viewVars['fields'];
         $entity = $controller->viewVars['entity'];
 
-        $panels = $this->_parsedConfig[self::PANELS];
+        $panels = $this->_tableInstance->getConfig()[self::PANELS];
         foreach ($panels as $name => $conditions) {
             $conds = $this->_readConditions($conditions);
             foreach ($conds as $cond) {
@@ -221,29 +212,13 @@ class CsvViewComponent extends Component
     }
 
     /**
-     * Parse the config file and set to the _parseConfig.
-     *
-     * @return void
-     */
-    protected function _parseConfig()
-    {
-        $controller = $this->_registry->getController();
-        $path = Configure::read('CsvMigrations.migrations.path');
-        $path .= $controller->name . DS . 'config.ini';
-
-        if (is_readable($path)) {
-            $this->_parsedConfig = parse_ini_file($path, true);
-        }
-    }
-
-    /**
      * Check module config file for panels to filter.
      *
      * @return boolean true if yes
      */
     protected function _hasPanels()
     {
-        return isset($this->_parsedConfig[self::PANELS]);
+        return isset($this->_tableInstance->getConfig()[self::PANELS]);
     }
 
     /**

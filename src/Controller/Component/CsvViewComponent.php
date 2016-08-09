@@ -10,6 +10,7 @@ use Cake\ORM\Association;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use \InvalidArgumentException;
+use \RuntimeException;
 
 /**
  * CsvView component
@@ -112,7 +113,7 @@ class CsvViewComponent extends Component
      */
     public function beforeRender(Event $event)
     {
-        if ($this->_hasPanels()) {
+        if (in_array($this->request->action, $this->_panelActions) && $this->_hasPanels()) {
             $this->_excludePanels();
         }
     }
@@ -564,7 +565,7 @@ class CsvViewComponent extends Component
         foreach ($data as $fields) {
             $fieldCount = count($fields);
             if (static::PANEL_COUNT !== $fieldCount) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     sprintf($this->_errorMessages[__FUNCTION__], $fieldCount, static::PANEL_COUNT)
                 );
             }

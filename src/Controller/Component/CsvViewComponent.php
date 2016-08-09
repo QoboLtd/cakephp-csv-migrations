@@ -29,7 +29,7 @@ class CsvViewComponent extends Component
     /**
      * Key for the type of panels. It is used in the CsvMigration module config.
      */
-    const PANEL_CONFIG_FILTER = 'type_panels';
+    const PANELS = 'panels';
 
     /**
      * Default configuration.
@@ -112,9 +112,10 @@ class CsvViewComponent extends Component
      */
     public function beforeRender(Event $event)
     {
+        //Read module's config
         $this->_parseConfig();
-        if ($this->_hasFilteringPanels()) {
-            $this->filterPanels();
+        if ($this->_isConditionalPanels()) {
+            $this->panelConditions();
         }
     }
 
@@ -125,7 +126,7 @@ class CsvViewComponent extends Component
      *
      * @return bool|void
      */
-    public function filterPanels()
+    public function panelConditions()
     {
         $controller = $this->_registry->getController();
         $fields = &$controller->viewVars['fields'];
@@ -163,9 +164,9 @@ class CsvViewComponent extends Component
      *
      * @return boolean true if yes
      */
-    protected function _hasFilteringPanels()
+    protected function _isConditionalPanels()
     {
-        return isset($this->_parsedConfig[self::PANEL_CONFIG_FILTER]);
+        return isset($this->_parsedConfig[self::PANELS]);
     }
 
     /**

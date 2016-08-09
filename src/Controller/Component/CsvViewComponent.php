@@ -75,6 +75,7 @@ class CsvViewComponent extends Component
 
     /**
      * Module's config, can be found in the CsvMigration module directory.
+     *
      * @var array
      */
     protected $_parsedConfig = [];
@@ -120,19 +121,20 @@ class CsvViewComponent extends Component
     {
         //Read module's config
         $this->_parseConfig();
-        if ($this->_isConditionalPanels()) {
-            $this->panelConditions();
+        if ($this->_hasPanels()) {
+            $this->_excludePanels();
         }
     }
 
     /**
-     * From the given panels in the CsvMigration module config.
-     * Remove only the specified panels in the config which
-     * their type is not matching with the type field of the entity.
+     * Exclude panels from rendering.
+     *
+     * Exclude panels that are not meeting the given conditions in
+     * the module's config.
      *
      * @return void
      */
-    public function panelConditions()
+    protected function _excludePanels()
     {
         $controller = $this->_registry->getController();
         $fields = &$controller->viewVars['fields'];
@@ -172,14 +174,13 @@ class CsvViewComponent extends Component
 
     /**
      * Read the conditions taken from the config.
-     * Conditions MUST be seperated by blank space.
      *
+     * Conditions MUST be separated by blank space.
      * Expected format:
      * - (type==company)
-     * - (type==individual first_name==b)
-     *
+     * - (type==individual first_name==b).
      * Return is a nested array with the following format:
-     * ['field', 'operator', 'value']
+     * ['field', 'operator', 'value'].
      *
      * @param  array $conds Conditions to be read
      * @return array
@@ -188,6 +189,7 @@ class CsvViewComponent extends Component
     {
         $result = [];
         $match = [];
+        //Remove wrapping parenthesis.
         preg_match('#\((.*?)\)#', $conds, $match);
         if (count($match) < 1) {
             throw new InvalidArgumentException(sprintf(
@@ -239,7 +241,7 @@ class CsvViewComponent extends Component
      *
      * @return boolean true if yes
      */
-    protected function _isConditionalPanels()
+    protected function _hasPanels()
     {
         return isset($this->_parsedConfig[self::PANELS]);
     }

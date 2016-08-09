@@ -55,29 +55,31 @@ class AppController extends Controller
     {
         parent::initialize();
 
-        // @link http://www.bravo-kernel.com/2015/04/how-to-add-jwt-authentication-to-a-cakephp-3-rest-api/
-        $this->loadComponent('Auth', [
-            // non-persistent storage, for stateless authentication
-            'storage' => 'Memory',
-            'authenticate' => [
-                // used for validating user credentials before the token is generated
-                'Form' => [
-                    'scope' => ['Users.active' => 1]
-                ],
-                // used for token validation
-                'ADmad/JwtAuth.Jwt' => [
-                    'parameter' => 'token',
-                    'userModel' => 'Users',
-                    'scope' => ['Users.active' => 1],
-                    'fields' => [
-                        'username' => 'id'
+        if (Configure::read('api_auth')) {
+            // @link http://www.bravo-kernel.com/2015/04/how-to-add-jwt-authentication-to-a-cakephp-3-rest-api/
+            $this->loadComponent('Auth', [
+                // non-persistent storage, for stateless authentication
+                'storage' => 'Memory',
+                'authenticate' => [
+                    // used for validating user credentials before the token is generated
+                    'Form' => [
+                        'scope' => ['Users.active' => 1]
                     ],
-                    'queryDatasource' => true
-                ]
-            ],
-            'unauthorizedRedirect' => false,
-            'checkAuthIn' => 'Controller.initialize'
-        ]);
+                    // used for token validation
+                    'ADmad/JwtAuth.Jwt' => [
+                        'parameter' => 'token',
+                        'userModel' => 'Users',
+                        'scope' => ['Users.active' => 1],
+                        'fields' => [
+                            'username' => 'id'
+                        ],
+                        'queryDatasource' => true
+                    ]
+                ],
+                'unauthorizedRedirect' => false,
+                'checkAuthIn' => 'Controller.initialize'
+            ]);
+        }
     }
 
     /**

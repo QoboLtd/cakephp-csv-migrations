@@ -197,7 +197,7 @@ class CsvViewComponent extends Component
         }
         $conditions = explode(self::COND_DELIMIT, $match[1]);
         foreach ($conditions as $condition) {
-            preg_match('/[^A-Za-z0-9]+/', $condition, $operator);
+            preg_match('/[^A-Za-z0-9_]+/', $condition, $operator);
             if (empty($operator)) {
                 throw new InvalidArgumentException(sprintf(
                     'Please check conditions. Comparison operator not found in %s.',

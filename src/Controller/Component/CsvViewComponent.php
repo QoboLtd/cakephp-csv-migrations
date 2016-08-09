@@ -158,6 +158,17 @@ class CsvViewComponent extends Component
         switch ($operator) {
             case '==':
                 return $first == $second;
+            case '!=':
+            case '<>':
+                return $first != $second;
+            case '>':
+                return $first > $second;
+            case '<':
+                return $first < $second;
+            case '>=':
+                return $first >= $second;
+            case '<=':
+                return $first <= $second;
             default:
                 throw new InvalidArgumentException(sprintf('Unsupported operator "%s" in comparing values.', $operator));
         }

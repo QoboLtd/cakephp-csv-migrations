@@ -125,7 +125,7 @@ class CsvViewComponent extends Component
      * Remove only the specified panels in the config which
      * their type is not matching with the type field of the entity.
      *
-     * @return bool|void
+     * @return void
      */
     public function panelConditions()
     {

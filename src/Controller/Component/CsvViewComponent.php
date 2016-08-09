@@ -186,7 +186,7 @@ class CsvViewComponent extends Component
         preg_match('#\((.*?)\)#', $conds, $match);
         if (count($match) < 1) {
             throw new InvalidArgumentException(sprintf(
-                'Conditions format is invalid. Please check module config.',
+                'Please check conditions. Invalid format.',
                 $operator
             ));
         }

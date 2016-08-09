@@ -33,6 +33,11 @@ class CsvViewComponent extends Component
     const PANELS = 'panels';
 
     /**
+     * Condition's delimit.
+     */
+    const COND_DELIMIT = ' and ';
+
+    /**
      * Default configuration.
      * @var array
      */
@@ -190,11 +195,14 @@ class CsvViewComponent extends Component
                 $operator
             ));
         }
-        $conditions = explode(' ', $match[1]);
+        $conditions = explode(self::COND_DELIMIT, $match[1]);
         foreach ($conditions as $condition) {
             preg_match('/[^A-Za-z0-9]+/', $condition, $operator);
             if (empty($operator)) {
-                throw new InvalidArgumentException('Please check conditions. Comparison operator not found.');
+                throw new InvalidArgumentException(sprintf(
+                    'Please check conditions. Comparison operator not found in %s.',
+                    $condition
+                ));
             }
             list($field, $value) = explode($operator[0], $condition);
             if (empty($field)) {

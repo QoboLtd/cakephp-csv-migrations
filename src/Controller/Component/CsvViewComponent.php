@@ -147,7 +147,7 @@ class CsvViewComponent extends Component
     protected function _evalExpression($exp, Entity $entity)
     {
         $placeholder = $this->_getExpPlaceholder($exp);
-        //Clean up expression from placeholder tokkens.
+        //Clean up expression from placeholder tokens.
         $exp = str_replace('%%', '', $exp);
         $words = $this->_getExpWords($exp, true);
         //Replace place holder with values

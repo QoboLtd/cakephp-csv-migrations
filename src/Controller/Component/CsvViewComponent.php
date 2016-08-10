@@ -195,7 +195,7 @@ class CsvViewComponent extends Component
     /**
      * Check module config file for panels to filter.
      *
-     * @return boolean true if yes
+     * @return bool true if yes
      */
     protected function _hasPanels()
     {

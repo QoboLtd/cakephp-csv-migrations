@@ -7,8 +7,10 @@ use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
 use Cake\ORM\Association;
+use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use \InvalidArgumentException;
 use \RuntimeException;
 
@@ -32,11 +34,6 @@ class CsvViewComponent extends Component
      * Key for the type of panels. It is used in the CsvMigration module config.
      */
     const PANELS = 'panels';
-
-    /**
-     * Condition's delimit.
-     */
-    const COND_DELIMIT = ' and ';
 
     /**
      * Default configuration.
@@ -133,92 +130,85 @@ class CsvViewComponent extends Component
         $entity = $controller->viewVars['entity'];
 
         $panels = $this->_tableInstance->getConfig()[self::PANELS];
-        foreach ($panels as $name => $conditions) {
-            $conds = $this->_readConditions($conditions);
-            foreach ($conds as $cond) {
-                list($field, $operator, $condValue) = $cond;
-                $storedValue = $entity->get($field);
-                if (!$this->_compare($storedValue, $operator, $condValue)) {
-                    unset($fields[$name]);
-                }
+        foreach ($panels as $name => $expression) {
+            if (!$this->_evalExpression($expression, $entity)) {
+                unset($fields[$name]);
             }
         }
     }
 
     /**
-     * Compare first against the second value based on the given operator.
+     * Evaluate the expression.
      *
-     * @throws InvalidArgumentException Operator MUST be supported.
-     * @param  string $first    First value
-     * @param  string $operator Comparison operator
-     * @param  string $second   Second value
-     * @return bool
+     * @param  string $exp    If-like expression
+     * @param  Entity $entity to get the values for placeholders
+     * @return bool           True if it matches, false otherwise.
      */
-    protected function _compare($first, $operator, $second)
+    protected function _evalExpression($exp, Entity $entity)
     {
-        switch ($operator) {
-            case '==':
-                return $first == $second;
-            case '!=':
-            case '<>':
-                return $first != $second;
-            case '>':
-                return $first > $second;
-            case '<':
-                return $first < $second;
-            case '>=':
-                return $first >= $second;
-            case '<=':
-                return $first <= $second;
-            default:
-                throw new InvalidArgumentException(sprintf('Unsupported operator "%s" in comparing values.', $operator));
-        }
+        $placeholder = $this->_getExpPlaceholder($exp);
+        //Clean up expression from placeholder tokkens.
+        $exp = str_replace('%%', '', $exp);
+        $words = $this->_getExpWords($exp, true);
+        //Replace place holder with values
+        $placeHolderValues = $this->_replaceWithValues($placeholder, $entity);
+        $values = array_merge($words, $placeHolderValues);
+        $language = new ExpressionLanguage();
+        $eval = $language->evaluate($exp, $values);
+
+        return $eval;
     }
 
     /**
-     * Read the conditions taken from the config.
+     * Replace placeholders with values.
      *
-     * Conditions MUST be separated by blank space.
-     * Expected format:
-     * - (type==company)
-     * - (type==individual first_name==b).
-     * Return is a nested array with the following format:
-     * ['field', 'operator', 'value'].
-     *
-     * @param  array $conds Conditions to be read
-     * @return array
+     * @param  array $placeholder  Array of placeholders
+     * @param  Entity $entity      to get the values for placeholders
+     * @return array               Associative array, Keys: placeholders Values: values
      */
-    protected function _readConditions($conds)
+    protected function _replaceWithValues(array $placeholder, Entity $entity)
     {
         $result = [];
-        $match = [];
-        //Remove wrapping parenthesis.
-        preg_match('#\((.*?)\)#', $conds, $match);
-        if (count($match) < 1) {
-            throw new InvalidArgumentException(sprintf(
-                'Please check conditions. Invalid format.',
-                $operator
-            ));
+        foreach ($placeholder as $p) {
+            $result[$p] = $entity->get($p);
         }
-        $conditions = explode(self::COND_DELIMIT, $match[1]);
-        foreach ($conditions as $condition) {
-            preg_match('/[^A-Za-z0-9_]+/', $condition, $operator);
-            if (empty($operator)) {
-                throw new InvalidArgumentException(sprintf(
-                    'Please check conditions. Comparison operator not found in %s.',
-                    $condition
-                ));
-            }
-            list($field, $value) = explode($operator[0], $condition);
-            if (empty($field)) {
-                throw new InvalidArgumentException('Please check conditions. The field is not found or empty.');
-            }
-            if (empty($value)) {
-                throw new InvalidArgumentException('Please check conditions. The value is not found or empty.');
-            }
 
-            $result[] = [$field, $operator[0], $value];
+        return $result;
+    }
+
+    /**
+     * Extract words from the expression.
+     *
+     * @param  string  $exp       If-like expression
+     * @param  bool $associative  Flag to return words in associative array with key same as values.
+     * @return array              Array of words.
+     */
+    protected function _getExpWords($exp, $associative = false)
+    {
+        $result = [];
+        preg_match_all('/[A-Za-z0-9_]+/', $exp, $matches);
+        if (empty($matches)) {
+            throw new InvalidArgumentException(sprintf('Cannot get the words read the expression: %s', $exp));
         }
+        $result = $matches[0];
+
+        return !$associative ? $result : array_combine($result, $result);
+    }
+
+    /**
+     * Extract placeholders from expression.
+     *
+     * @param  string $exp If-like expression
+     * @return array       placeholders
+     */
+    protected function _getExpPlaceholder($exp)
+    {
+        $result = [];
+        preg_match_all('#%%(.*?)%%#', $exp, $matches);
+        if (empty($matches)) {
+            throw new InvalidArgumentException(sprintf('Please wrap your placeholders with %%: %s', $exp));
+        }
+        $result = $matches[1];
 
         return $result;
     }

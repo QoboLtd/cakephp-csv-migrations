@@ -149,12 +149,10 @@ class CsvViewComponent extends Component
         $placeholder = $this->_getExpPlaceholder($exp);
         //Clean up expression from placeholder tokens.
         $exp = str_replace('%%', '', $exp);
-        $words = $this->_getExpWords($exp, true);
         //Replace place holder with values
         $placeHolderValues = $this->_replaceWithValues($placeholder, $entity);
-        $values = array_merge($words, $placeHolderValues);
         $language = new ExpressionLanguage();
-        $eval = $language->evaluate($exp, $values);
+        $eval = $language->evaluate($exp, $placeHolderValues);
 
         return $eval;
     }
@@ -174,25 +172,6 @@ class CsvViewComponent extends Component
         }
 
         return $result;
-    }
-
-    /**
-     * Extract words from the expression.
-     *
-     * @param  string  $exp       If-like expression
-     * @param  bool $associative  Flag to return words in associative array with key same as values.
-     * @return array              Array of words.
-     */
-    protected function _getExpWords($exp, $associative = false)
-    {
-        $result = [];
-        preg_match_all('/[A-Za-z0-9_]+/', $exp, $matches);
-        if (empty($matches)) {
-            throw new InvalidArgumentException(sprintf('Cannot get the words read the expression: %s', $exp));
-        }
-        $result = $matches[0];
-
-        return !$associative ? $result : array_combine($result, $result);
     }
 
     /**

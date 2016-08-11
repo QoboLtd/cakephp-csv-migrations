@@ -71,6 +71,26 @@ trait ConfigurationTrait
         if (file_exists($path)) {
             $this->_config = parse_ini_file($path, true);
         }
+
+        // display field from configuration file
+        if (isset($this->_config['table']['display_field']) && method_exists($this, 'displayField')) {
+            $this->displayField($this->_config['table']['display_field']);
+        }
+
+        // lookup field(s) from configuration file
+        if (isset($this->_config['table']['lookup_fields'])) {
+            $this->lookupFields($this->_config['table']['lookup_fields']);
+        }
+
+        // set module alias from configuration file
+        if (isset($this->_config['table']['alias'])) {
+            $this->moduleAlias($this->_config['table']['alias']);
+        }
+
+        // set searchable flag from configuration file
+        if (isset($this->_config['table']['searchable'])) {
+            $this->isSearchable($this->_config['table']['searchable']);
+        }
     }
 
     /**

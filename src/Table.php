@@ -40,38 +40,8 @@ class Table extends BaseTable
     {
         parent::initialize($config);
 
-        /*
-        set table/module configuration
-         */
+        // set table/module configuration
         $this->_setConfiguration($this->table());
-
-        /*
-        display field from configuration file
-         */
-        if (isset($this->_config['table']['display_field'])) {
-            $this->displayField($this->_config['table']['display_field']);
-        }
-
-        /*
-        lookup field(s) from configuration file
-         */
-        if (isset($this->_config['table']['lookup_fields'])) {
-            $this->lookupFields($this->_config['table']['lookup_fields']);
-        }
-
-        /*
-        set module alias from configuration file
-         */
-        if (isset($this->_config['table']['alias'])) {
-            $this->moduleAlias($this->_config['table']['alias']);
-        }
-
-        /*
-        set searchable flag from configuration file
-         */
-        if (isset($this->_config['table']['searchable'])) {
-            $this->isSearchable($this->_config['table']['searchable']);
-        }
 
         //Set the current module
         $config['table'] = $this->_currentTable();

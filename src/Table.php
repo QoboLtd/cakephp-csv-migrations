@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations;
 
+use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table as BaseTable;
 use Cake\Utility\Inflector;
@@ -133,6 +134,79 @@ class Table extends BaseTable
         }
 
         return $query;
+    }
+
+    /**
+     * Method that checks Entity's association fields (foreign keys) values and query's the database to find
+     * the associated record. If the record is not found, it query's the database again to find it by its
+     * display field. If found it replaces the associated field's value with the records id.
+     *
+     * This is useful for cases where the display field value is used on the associated field. For example
+     * a new post is created and in the 'owner' field the username of the user is used instead of its uuid.
+     *
+     * BEFORE:
+     * {
+     *    'title' => 'Lorem Ipsum',
+     *    'content' => '.....',
+     *    'owner' => 'admin',
+     * }
+     *
+     * AFTER:
+     * {
+     *    'title' => 'Lorem Ipsum',
+     *    'content' => '.....',
+     *    'owner' => '77dd9203-3f21-4571-8843-0264ae1cfa48',
+     * }
+     *
+     * @param  \Cake\ORM\Entity $entity Entity instance
+     * @return \Cake\ORM\Entity
+     */
+    public function setAssociatedByLookupFields(Entity $entity)
+    {
+        foreach ($this->associations() as $association) {
+            $lookupFields = $association->target()->lookupFields();
+
+            if (empty($lookupFields)) {
+                continue;
+            }
+
+            $value = $entity->{$association->foreignKey()};
+            // skip if association's foreign key is NOT set in the entity
+            if (is_null($value)) {
+                continue;
+            }
+
+            // check if record can be fetched by primary key
+            $found = (bool)$association->target()->find('all', [
+                'conditions' => [$association->primaryKey() => $value]
+            ])->count();
+
+            // skip if record found by primary key
+            if ($found) {
+                continue;
+            }
+
+            // check if record can be fetched by display field
+            $query = $association->target()->find()
+                // select associated record's primary key (usually id)
+                ->select($association->primaryKey());
+
+            // check for record by table's lookup fields
+            foreach ($lookupFields as $lookupField) {
+                $query->orWhere([$lookupField => $value]);
+            }
+
+            $associatedEntity = $query->first();
+
+            // skip if record cannot be found by display field
+            if (is_null($associatedEntity)) {
+                continue;
+            }
+
+            $entity->{$association->foreignKey()} = $associatedEntity->{$association->primaryKey()};
+        }
+
+        return $entity;
     }
 
     /**

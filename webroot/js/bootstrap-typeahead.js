@@ -176,7 +176,8 @@
                     data: params,
                     success: $.proxy(this.ajaxSource, this),
                     type: this.ajax.method || 'get',
-                    dataType: 'json'
+                    dataType: 'json',
+                    headers: this.ajax.headers || {}
                 });
                 this.ajax.timerId = null;
             }

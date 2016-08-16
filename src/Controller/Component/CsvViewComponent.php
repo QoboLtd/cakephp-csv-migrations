@@ -36,6 +36,11 @@ class CsvViewComponent extends Component
     const PANELS = 'panels';
 
     /**
+     * Token used in expression to distinquish placeholders.
+     */
+    const EXP_TOKEN = '%%';
+
+    /**
      * Default configuration.
      * @var array
      */
@@ -148,7 +153,7 @@ class CsvViewComponent extends Component
     {
         $placeholder = $this->_getExpPlaceholder($exp);
         //Clean up expression from placeholder tokens.
-        $exp = str_replace('%%', '', $exp);
+        $exp = str_replace(self::EXP_TOKEN, '', $exp);
         //Replace place holder with values
         $placeHolderValues = $this->_replaceWithValues($placeholder, $entity);
         $language = new ExpressionLanguage();
@@ -183,9 +188,9 @@ class CsvViewComponent extends Component
     protected function _getExpPlaceholder($exp)
     {
         $result = [];
-        preg_match_all('#%%(.*?)%%#', $exp, $matches);
+        preg_match_all('#' . self::EXP_TOKEN . '(.*?)' . self::EXP_TOKEN . '#', $exp, $matches);
         if (empty($matches)) {
-            throw new InvalidArgumentException(sprintf('Please wrap your placeholders with %%: %s', $exp));
+            throw new InvalidArgumentException(sprintf('Please wrap your placeholders with ' . self::EXP_TOKEN . ': %s', $exp));
         }
         $result = $matches[1];
 

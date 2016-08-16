@@ -56,7 +56,7 @@ class AppController extends Controller
     {
         parent::initialize();
 
-        if (Configure::read('api_auth')) {
+        if (Configure::read('API.auth')) {
             // @link http://www.bravo-kernel.com/2015/04/how-to-add-jwt-authentication-to-a-cakephp-3-rest-api/
             $this->loadComponent('Auth', [
                 // non-persistent storage, for stateless authentication

@@ -53,6 +53,7 @@ $formOptions['type'] = 'file';
             <?php
                 if (!empty($options['fields'])) {
                     $embeddedFields = [];
+                    $embeddedForms = [];
                     $embeddedDirty = false;
                     foreach ($options['fields'] as $panelName => $panelFields) {
                         echo '<div class="panel panel-default">';
@@ -93,12 +94,21 @@ $formOptions['type'] = 'file';
                                     if (!empty($this->request->query['embedded'])) {
                                         $renderOptions['embedded'] = $this->request->query['embedded'];
                                     }
-                                    echo $fhf->renderInput(
+                                    $input = $fhf->renderInput(
                                         $tableName,
                                         $field['name'],
                                         $options['entity']->$field['name'],
                                         $renderOptions
                                     );
+
+                                    if (is_string($input)) {
+                                        echo $input;
+                                    } elseif (is_array($input)) {
+                                        echo $input['html'];
+                                        if (isset($input['embeddedForm'])) {
+                                            $embeddedForms[] = $input['embeddedForm'];
+                                        }
+                                    }
                                     echo '</div>';
                                     $embeddedDirty = false;
                                 } else {
@@ -138,26 +148,7 @@ $formOptions['type'] = 'file';
                     'controller' => $embeddedController,
                     'action' => 'add'
                 ];
-                /**
-                 * @todo Handling uploads of the Document module.
-                 * This is very ugly but works for now.
-                 */
-                if ($embeddedController == 'Documents') {
-                    $renderOptions['valueOnly'] = true;
-                    $renderOptions['fieldDefinitions']['type'] = 'file';
-                    $renderOptions['fieldDefinitions']['required'] = false;
-                    $renderOptions['fieldDefinitions']['unique'] = false;
-                    $renderOptions['fieldDefinitions']['non-searchable'] = false;
-                    $documentId = $fhf->renderValue(
-                        $tableName,
-                        $embeddedController . '.' . $embeddedFieldName,
-                        $options['entity']->get($embeddedFieldName),
-                        $renderOptions
-                    );
-                    if ($documentId) {
-                        $url = '/' . Inflector::delimit($embeddedPlugin, '-') . '/documents/edit/' . $documentId;
-                    }
-                }
+
                 /*
                 @note this only works for belongsTo for now.
                  */
@@ -188,6 +179,14 @@ $formOptions['type'] = 'file';
             </div>
             <?php endforeach; ?>
         <?php endif; ?>
+        <?php
+        // print embedded forms
+        if (!empty($embeddedForms)) {
+            foreach ($embeddedForms as $embeddedForm) {
+                echo $embeddedForm;
+            }
+        }
+        ?>
     </div>
 </div>
 <?php

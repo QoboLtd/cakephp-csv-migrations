@@ -71,6 +71,9 @@ class FileFieldHandler extends BaseFieldHandler
         $entity = Hash::get($options, 'entity');
 
         foreach ($table->associations() as $association) {
+            /**
+             * @todo get foreign_key string dynamically, see API DocumentsController
+             */
             if ('foreign_key' === $association->foreignKey()) {
                 $assocName = $association->name();
                 $assocNameTableized = Inflector::tableize($assocName);

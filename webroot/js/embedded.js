@@ -9,6 +9,7 @@ var embedded = embedded || {};
         this.files = null;
         this.uploadFieldName = null;
         this.formId = options.hasOwnProperty('formId') ? options.formId : '.embeddedForm';
+        this.api_token = api_options.hasOwnProperty('token') ? api_options.token : null;
         this.attachEvents();
     }
 
@@ -65,6 +66,9 @@ var embedded = embedded || {};
             dataType: 'json',
             processData: false, // Don't process the files
             contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+            headers: {
+                'Authorization': 'Bearer ' + that.api_token
+            },
             success: function(data, textStatus, jqXHR)
             {
                 if(typeof data.error === 'undefined')
@@ -129,6 +133,9 @@ var embedded = embedded || {};
             data: data,
             dataType: 'json',
             contentType: 'application/json',
+            headers: {
+                'Authorization': 'Bearer ' + that.api_token
+            },
             success: function(data, textStatus, jqXHR) {
                 /*
                 set related field display-field and value
@@ -162,12 +169,16 @@ var embedded = embedded || {};
      * @return {void}
      */
     Embedded.prototype._setRelatedField = function(url, id, form) {
+        that = this;
         url = url.replace('/add', '/' + id + '.json');
         $.ajax({
             url: url,
             type: 'get',
             dataType: 'json',
             contentType: 'application/json',
+            headers: {
+                'Authorization': 'Bearer ' + that.api_token
+            },
             success: function(data, textStatus, jqXHR) {
                 /*
                 get typeahead label field

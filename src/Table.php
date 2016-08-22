@@ -46,6 +46,10 @@ class Table extends BaseTable
 
         //Set the current module
         $config['table'] = $this->_currentTable();
+        $this->hasMany('UploadDocuments', [
+            'className' => 'Burzum/FileStorage.FileStorage',
+            'foreignKey' => 'foreign_key',
+        ]);
         $this->_setAssociations($config);
     }
 

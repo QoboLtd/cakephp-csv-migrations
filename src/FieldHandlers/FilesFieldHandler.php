@@ -1,10 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
-use Cake\View\Helper\IdGeneratorTrait;
 use CsvMigrations\FieldHandlers\RelatedFieldHandler;
 
 class FilesFieldHandler extends RelatedFieldHandler
@@ -19,6 +16,29 @@ class FilesFieldHandler extends RelatedFieldHandler
      */
     const ACTION_ADD = 'add';
 
+    /**
+     * CSS Framework grid columns number
+     */
+    const GRID_COUNT = 12;
+
+    /**
+     * Limit of thumbnails to display
+     */
+    const THUMBNAIL_LIMIT = 3;
+
+    /**
+     * CSS Framework row html markup
+     */
+    const GRID_ROW_HTML = '<div class="row">%s</div>';
+
+    /**
+     * CSS Framework row html markup
+     */
+    const GRID_COL_HTML = '<div class="col-xs-%d col-sm-%d col-md-%d col-lg-%d">%s</div>';
+
+    /**
+     * Embedded Form html markup
+     */
     const EMBEDDED_FORM_HTML = '
         <div id="%s_modal" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-lg">
@@ -33,6 +53,11 @@ class FilesFieldHandler extends RelatedFieldHandler
             </div>
         </div>
     ';
+
+    /**
+     * Thumbnail html markup
+     */
+    const THUMBNAIL_HTML = '<div class="thumbnail"><img src="%s" /></div>';
 
     /**
      * {@inheritDoc}
@@ -102,5 +127,83 @@ class FilesFieldHandler extends RelatedFieldHandler
         $input['embeddedForm'] = sprintf(static::EMBEDDED_FORM_HTML, $field, $embeddedForm);
 
         return $input;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function renderValue($table, $field, $data, array $options = [])
+    {
+        $result = null;
+
+        if (empty($data)) {
+            return $result;
+        }
+
+        $entities = $this->_getFiles($table, $data);
+
+        if (empty($entities)) {
+            return $result;
+        }
+
+        $result = $this->_thumbnailsHtml($entities);
+
+        return $result;
+    }
+
+    /**
+     * Get files of current record.
+     *
+     * @param  \Cake\ORM\Table     $table Table instance to find association with FileStorage
+     * @param  string              $data  Record id
+     * @return \Cake\ORM\ResultSet
+     */
+    protected function _getFiles($table, $data)
+    {
+        foreach ($table->associations() as $association) {
+            if ('file_storage' === $association->target()->table()) {
+                $fileTable = $association->target();
+                break;
+            }
+        }
+
+        $query = $fileTable->find('all', [
+            'conditions' => ['foreign_key' => $data]
+        ]);
+
+        return $query->all();
+    }
+
+    /**
+     * Method that generates and returns thumbnails html markup.
+     *
+     * @param  \Cake\ORM\ResultSet $entities File Entities
+     * @return string
+     */
+    protected function _thumbnailsHtml($entities)
+    {
+        $result = null;
+        $colWidth = static::GRID_COUNT / static::THUMBNAIL_LIMIT;
+        $count = 0;
+        $rows = [];
+
+        foreach ($entities as $k => $entity) {
+            if ($k >= static::THUMBNAIL_LIMIT) {
+                break;
+            }
+
+            $result .= sprintf(
+                static::GRID_COL_HTML,
+                $colWidth,
+                $colWidth,
+                $colWidth,
+                $colWidth,
+                sprintf(static::THUMBNAIL_HTML, $entity->path)
+            );
+        }
+
+        $result = sprintf(static::GRID_ROW_HTML, $result);
+
+        return $result;
     }
 }

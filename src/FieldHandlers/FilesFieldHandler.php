@@ -34,6 +34,9 @@ class FilesFieldHandler extends RelatedFieldHandler
         </div>
     ';
 
+    /**
+     * {@inheritDoc}
+     */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);

@@ -207,7 +207,7 @@ class FieldHandlerFactory
      */
     protected function _getHandlerByFieldType($type, $fqcn = false)
     {
-        $result = Inflector::classify($type) . static::HANDLER_SUFFIX;
+        $result = Inflector::camelize($type) . static::HANDLER_SUFFIX;
 
         if ($fqcn) {
             $result = __NAMESPACE__ . '\\' . $result;

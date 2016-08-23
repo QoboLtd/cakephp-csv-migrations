@@ -15,5 +15,9 @@ echo $this->Html->scriptBlock(
     ) . ';',
     ['block' => 'scriptBottom']
 );
+echo $this->Html->scriptBlock(
+    'api_options = ' . json_encode(Configure::read('API')) . ';',
+    ['block' => 'scriptBottom']
+);
 echo $this->Html->script('CsvMigrations.typeahead', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.embedded', ['block' => 'scriptBottom']);

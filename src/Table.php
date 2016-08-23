@@ -46,6 +46,14 @@ class Table extends BaseTable
 
         //Set the current module
         $config['table'] = $this->_currentTable();
+
+        // @todo probably this can be set through migration files, see Files migration.csv
+        // but to do this the 'foreign_key' part must be defined somewhere within csv migrations.
+        // Or maybe there is way to avoid this association all together.
+        $this->hasMany('UploadDocuments', [
+            'className' => 'Burzum/FileStorage.FileStorage',
+            'foreignKey' => 'foreign_key',
+        ]);
         $this->_setAssociations($config);
     }
 

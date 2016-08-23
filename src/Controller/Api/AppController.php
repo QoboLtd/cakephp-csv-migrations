@@ -5,6 +5,7 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
+use Cake\ORM\TableRegistry;
 use Crud\Controller\ControllerTrait;
 use CsvMigrations\CsvTrait;
 use CsvMigrations\FieldHandlers\RelatedFieldTrait;
@@ -55,7 +56,7 @@ class AppController extends Controller
     {
         parent::initialize();
 
-        if (Configure::read('api_auth')) {
+        if (Configure::read('API.auth')) {
             // @link http://www.bravo-kernel.com/2015/04/how-to-add-jwt-authentication-to-a-cakephp-3-rest-api/
             $this->loadComponent('Auth', [
                 // non-persistent storage, for stateless authentication
@@ -119,6 +120,22 @@ class AppController extends Controller
     }
 
     /**
+     * Add CRUD action events handling logic.
+     *
+     * @return \Cake\Network\Response
+     */
+    public function add()
+    {
+        $this->Crud->on('beforeSave', function (Event $event) {
+            // get Entity's Table instance
+            $table = TableRegistry::get($event->subject()->entity->source());
+            $table->setAssociatedByLookupFields($event->subject()->entity);
+        });
+
+        return $this->Crud->execute();
+    }
+
+    /**
      * Edit CRUD action events handling logic.
      *
      * @return \Cake\Network\Response
@@ -131,6 +148,10 @@ class AppController extends Controller
 
         $this->Crud->on('afterFind', function (Event $event) {
             $event = $this->_prettifyEntity($event);
+        });
+
+        $this->Crud->on('beforeSave', function (Event $event) {
+            $event->subject()->repository->setAssociatedByLookupFields($event->subject()->entity);
         });
 
         return $this->Crud->execute();

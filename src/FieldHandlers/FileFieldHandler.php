@@ -3,6 +3,7 @@ namespace CsvMigrations\FieldHandlers;
 
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
 class FileFieldHandler extends BaseFieldHandler
@@ -68,18 +69,31 @@ class FileFieldHandler extends BaseFieldHandler
     {
         $file = [];
         $entity = Hash::get($options, 'entity');
-        $document = $table->find()
-            ->contain(['DocumentIdCrmReFiles' => ['FileIdFileStorageFileStorage']])
-            ->where(['id' => $entity->get('id')])
-            ->first()
-            ->toArray();
-        $fileWrappers = Hash::get($document, 'document_id_crm_re_files');
-        foreach ($fileWrappers as $fw) {
-            $fileStorage = Hash::get($fw, 'file_id_file_storage_file_storage');
-            $path = Hash::get($fileStorage, 'path');
-            $id = Hash::get($fileStorage, 'id');
-            $files[] = ['id' => $id, 'path' => $path];
+
+        foreach ($table->associations() as $association) {
+            // @todo get foreign_key string dynamically, see API DocumentsController
+            if ('foreign_key' === $association->foreignKey()) {
+                $assocName = $association->name();
+                $assocNameTableized = Inflector::tableize($assocName);
+                break;
+            }
         }
+        if (is_null($assocName)) {
+            return $this->_renderInputWithoutData($table, $field, $options);
+        }
+
+        $document = $table->find()
+        ->contain([$assocName])
+        ->where([$table->alias() . '.id' => $entity->get('id')])
+        ->first();
+
+        foreach ($document->{$assocNameTableized} as $file) {
+            $files[] = [
+                'id' => $file->id,
+                'path' => $file->path
+            ];
+        }
+
         if (empty($files)) {
             return $this->_renderInputWithoutData($table, $field, $options);
         }

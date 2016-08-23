@@ -7,7 +7,16 @@ echo $this->Html->script('QoboAdminPanel.fileinput.min', ['block' => 'scriptBott
 echo $this->Html->script('QoboAdminPanel.fileinput-load', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.bootstrap-typeahead.min.js', ['block' => 'scriptBottom']);
 echo $this->Html->scriptBlock(
-    'typeahead_options = ' . json_encode(Configure::read('CsvMigrations.typeahead')) . ';',
+    'typeahead_options = ' . json_encode(
+        array_merge(
+            Configure::read('CsvMigrations.typeahead'),
+            Configure::read('API')
+        )
+    ) . ';',
+    ['block' => 'scriptBottom']
+);
+echo $this->Html->scriptBlock(
+    'api_options = ' . json_encode(Configure::read('API')) . ';',
     ['block' => 'scriptBottom']
 );
 echo $this->Html->script('CsvMigrations.typeahead', ['block' => 'scriptBottom']);

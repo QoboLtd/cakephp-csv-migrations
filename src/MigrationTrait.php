@@ -17,11 +17,11 @@ trait MigrationTrait
     private $__extension = 'csv';
 
     /**
-     * Associated fields identifier
+     * Associated fields identifiers
      *
-     * @var string
+     * @var array
      */
-    private $__assocIdentifier = 'related';
+    private $__assocIdentifiers = ['related', 'files'];
 
     /**
      * Method that retrieves fields from csv file and returns them in associate array format.
@@ -90,7 +90,7 @@ trait MigrationTrait
     {
         $csvData = $this->_csvData(true);
         $csvObjData = $this->_csvDataToCsvObj($csvData);
-        $csvFilteredData = $this->_csvDataFilter($csvObjData, $this->__assocIdentifier);
+        $csvFilteredData = $this->_csvDataFilter($csvObjData, $this->__assocIdentifiers);
 
         foreach ($csvFilteredData as $csvModule => $fields) {
             foreach ($fields as $csvObjField) {
@@ -119,15 +119,19 @@ trait MigrationTrait
     /**
      * Filter the CSV data by type.
      *
-     * @param  array  $data CSV data.
-     * @param  string $type Type to filter.
-     * @return array  Filtered data.
+     * @param  array  $data  CSV data.
+     * @param  array  $types Types to filter.
+     * @return array         Filtered data.
      */
-    protected function _csvDataFilter(array $data = [], $type = null)
+    protected function _csvDataFilter(array $data = [], array $types = [])
     {
+        if (empty($data)) {
+            return $data;
+        }
+
         foreach ($data as $csvModule => &$fields) {
             foreach ($fields as $key => $field) {
-                if ($field->getType() !== $type) {
+                if (!in_array($field->getType(), $types)) {
                     unset($fields[$key]);
                 }
             }

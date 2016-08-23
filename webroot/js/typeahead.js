@@ -8,6 +8,7 @@ var typeahead = typeahead || {};
     function Typeahead(options) {
         this.min_length = options.hasOwnProperty('min_length') ? options.min_length : 1;
         this.timeout = options.hasOwnProperty('timeout') ? options.timeout : 300;
+        this.api_token = options.hasOwnProperty('token') ? options.token : null;
     }
 
     /**
@@ -65,6 +66,11 @@ var typeahead = typeahead || {};
                 timeout: that.timeout,
                 triggerLength: that.min_length,
                 method: 'get',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + that.api_token
+                },
                 preProcess: function(data) {
                     if (data.success === false) {
                         // Hide the list, there was some error

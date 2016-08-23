@@ -68,6 +68,7 @@ $formOptions['type'] = 'file';
             <?php
                 if (!empty($options['fields'])) {
                     $embeddedFields = [];
+                    $embeddedForms = [];
                     $embeddedDirty = false;
                     foreach ($options['fields'] as $panelName => $panelFields) {
                         echo '<div class="panel panel-default">';
@@ -106,7 +107,7 @@ $formOptions['type'] = 'file';
                                     if (!empty($this->request->query['embedded'])) {
                                         $handlerOptions['embedded'] = $this->request->query['embedded'];
                                     }
-                                    echo $fhf->renderInput(
+                                    $input = $fhf->renderInput(
                                         $tableName,
                                         $field['name'],
                                         isset($this->request->data[$field['name']])
@@ -114,6 +115,15 @@ $formOptions['type'] = 'file';
                                             : null,
                                         $handlerOptions
                                     );
+
+                                    if (is_string($input)) {
+                                        echo $input;
+                                    } elseif (is_array($input)) {
+                                        echo $input['html'];
+                                        if (isset($input['embeddedForm'])) {
+                                            $embeddedForms[] = $input['embeddedForm'];
+                                        }
+                                    }
                                     echo '</div>';
                                     $embeddedDirty = false;
                                 } else {
@@ -191,6 +201,14 @@ $formOptions['type'] = 'file';
             </div>
             <?php endforeach; ?>
         <?php endif; ?>
+        <?php
+        // print embedded forms
+        if (!empty($embeddedForms)) {
+            foreach ($embeddedForms as $embeddedForm) {
+                echo $embeddedForm;
+            }
+        }
+        ?>
     </div>
 </div>
 <?php

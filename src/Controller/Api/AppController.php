@@ -27,6 +27,7 @@ class AppController extends Controller
 
     public $components = [
         'RequestHandler',
+        'CsvMigrations.CsvView',
         'Crud.Crud' => [
             'actions' => [
                 'Crud.Index',
@@ -228,12 +229,10 @@ class AppController extends Controller
         $tableConfig = $table->getConfig();
         $entity = $table->newEntity($this->request->data);
         $panels = Panel::getPanelNames($tableConfig) ?: [];
-        foreach ($panels as $name) {
-            $panel = new Panel($name, $tableConfig);
-            if ($panel->evalExpression($entity)) {
-                $result['success'] = true;
-                $result['data'][] = $panel->getName();
-            }
+        $evalPanels = $this->CsvView->getEvalPanels($tableConfig, $entity);
+        if (!empty($evalPanels)) {
+            $result['success'] = true;
+            $result['data'] = $evalPanels;
         }
 
         $this->set('result', $result);

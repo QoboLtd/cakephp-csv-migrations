@@ -113,16 +113,35 @@ class CsvViewComponent extends Component
             !empty($controller->viewVars['fields']) &&
             !empty($controller->viewVars['entity']) &&
             $this->request->action === 'view') {
-            $fields = &$controller->viewVars['fields'];
+            $panelFields = $controller->viewVars['fields'];
             $entity = $controller->viewVars['entity'];
-            $panels = Panel::getPanelNames($tableConfig) ?: [];
-            foreach ($panels as $name) {
-                $panel = new Panel($name, $tableConfig);
-                if ($panel->evalExpression($entity)) {
-                    unset($fields[$name]);
-                }
+            $evalPanels = $this->getEvalPanels($tableConfig, $entity);
+            $controller->viewVars['fields'] = array_diff_key($panelFields, array_flip($evalPanels));
+        }
+    }
+
+    /**
+     * List of evaluated Panels.
+     *
+     * Returns the panels which theirs expression has been evaluated successfully.
+     *
+     * @see \CsvMigrations\Panel::evalExpression How the expression is evaluated.
+     * @param  array  $config Table's config.
+     * @param  Entity $entity Entity of data.
+     * @return array          Evaluated panel list.
+     */
+    public function getEvalPanels(array $config, Entity $entity)
+    {
+        $result = [];
+        $panels = Panel::getPanelNames($config) ?: [];
+        foreach ($panels as $name) {
+            $panel = new Panel($name, $config);
+            if ($panel->evalExpression($entity)) {
+                array_push($result, $panel->getName());
             }
         }
+
+        return $result;
     }
 
     /**

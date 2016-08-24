@@ -90,9 +90,9 @@ class Panel
      * @param  string $name Panel name
      * @return void
      */
-    public function setName($name)
+    public function setName($name = '')
     {
-        if (!$name) {
+        if (empty($name)) {
             throw new RuntimeException('Panel name not found therefore the object cannot be created');
         }
         $this->name = $name;

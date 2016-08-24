@@ -10,6 +10,7 @@ use Crud\Controller\ControllerTrait;
 use CsvMigrations\CsvTrait;
 use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 use CsvMigrations\MigrationTrait;
+use CsvMigrations\Panel;
 use CsvMigrations\PrettifyTrait;
 
 class AppController extends Controller
@@ -208,6 +209,35 @@ class AppController extends Controller
         }
 
         return $result;
+    }
+
+
+    /**
+     * Panels to show.
+     *
+     * @return void
+     */
+    public function panels()
+    {
+        $this->request->allowMethod(['ajax', 'post']);
+        $result = [
+            'success' => false,
+            'data' => [],
+        ];
+        $table = $this->loadModel();
+        $tableConfig = $table->getConfig();
+        $entity = $table->newEntity($this->request->data);
+        $panels = Panel::getPanelNames($tableConfig) ?: [];
+        foreach ($panels as $name) {
+            $panel = new Panel($name, $tableConfig);
+            if (!$panel->evalExpression($entity)) {
+                $result['success'] = true;
+                $result['data'][] = $panel->getName();
+            }
+        }
+
+        $this->set('result', $result);
+        $this->set('_serialize', 'result');
     }
 
     /**

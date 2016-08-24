@@ -104,29 +104,21 @@ class CsvViewComponent extends Component
      */
     public function beforeRender(Event $event)
     {
-        if (in_array($this->request->action, $this->_panelActions) && $this->_hasPanels()) {
-            $this->_excludePanels();
+        if (method_exists($this->_tableInstance, 'getConfig')) {
+            $tableConfig = $this->_tableInstance->getConfig();
         }
-    }
-
-    /**
-     * Exclude panels from rendering.
-     *
-     * Exclude panels that are not meeting the given conditions in
-     * the module's config.
-     *
-     * @return void
-     */
-    protected function _excludePanels()
-    {
-        $controller = $this->_registry->getController();
-        $fields = &$controller->viewVars['fields'];
-        $entity = $controller->viewVars['entity'];
-
-        $panels = $this->_tableInstance->getConfig()[self::PANELS];
-        foreach ($panels as $name => $expression) {
-            if (!$this->_evalExpression($expression, $entity)) {
-                unset($fields[$name]);
+        $controller = $event->subject();
+        if ($tableConfig &&
+            !empty($controller->viewVars['fields']) &&
+            !empty($controller->viewVars['entity'])) {
+            $fields = &$controller->viewVars['fields'];
+            $entity = $controller->viewVars['entity'];
+            $panels = Panel::getPanelNames($tableConfig) ?: [];
+            foreach ($panels as $name) {
+                $panel = new Panel($name, $tableConfig);
+                if ($panel->evalExpression($entity)) {
+                    unset($fields[$name]);
+                }
             }
         }
     }

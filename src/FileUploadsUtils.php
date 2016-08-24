@@ -157,7 +157,6 @@ class FileUploadsUtils
     /**
      * Get files by foreign key record.
      *
-     * @param  \Cake\ORM\Table     $table Table instance to find association with FileStorage
      * @param  string              $data  Record id
      * @return \Cake\ORM\ResultSet
      */
@@ -298,7 +297,7 @@ class FileUploadsUtils
      *
      * @see http://php.net/manual/en/features.file-upload.errors.php
      * @param  int  $error PHP validation error
-     * @return boolean true for invalid.
+     * @return bool true for invalid.
      */
     protected function _isInValidUpload($error)
     {

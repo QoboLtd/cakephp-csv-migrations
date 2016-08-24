@@ -17,6 +17,29 @@
         });
     };
 
+    Panel.prototype.hidePanels = function(panels) {
+        if (!panels instanceof Array) {
+            return false;
+        }
+
+        panels.forEach(function(cur){
+            var current = cur;
+            var $panel = $('.panel');
+            $panel.each(function() {
+                var title = $(this).find('.panel-title').text();
+                if (current === title) {
+                    if (!$(this).hasClass('hidden')) {
+                        $(this).addClass('hidden');
+                    }
+                }
+            });
+        });
+    };
+
+    Panel.prototype.resetVisibility = function() {
+        $('.panel').removeClass('hidden');
+    };
+
     Panel.prototype.observe = function() {
         var that = this;
         var $form = $('form');
@@ -34,7 +57,8 @@
                 success: function(data)
                 {
                     if(typeof data.error === 'undefined') {
-                        console.log('success');
+                        that.resetVisibility();
+                        that.hidePanels(data.data);
                     } else {
                         console.log('fail');
                     }

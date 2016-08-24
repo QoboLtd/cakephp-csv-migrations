@@ -27,7 +27,7 @@
                 url: '/api/contacts/panels/',
                 type: 'POST',
                 data: that.buildData(),
-                cache: false,
+                dataType: 'json',
                 headers: {
                     'Authorization': 'Bearer ' + token
                 },

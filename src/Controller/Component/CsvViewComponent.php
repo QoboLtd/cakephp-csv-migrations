@@ -110,7 +110,8 @@ class CsvViewComponent extends Component
         $controller = $event->subject();
         if ($tableConfig &&
             !empty($controller->viewVars['fields']) &&
-            !empty($controller->viewVars['entity'])) {
+            !empty($controller->viewVars['entity']) &&
+            $this->request->action === 'view') {
             $fields = &$controller->viewVars['fields'];
             $entity = $controller->viewVars['entity'];
             $panels = Panel::getPanelNames($tableConfig) ?: [];

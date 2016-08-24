@@ -230,7 +230,7 @@ class AppController extends Controller
         $panels = Panel::getPanelNames($tableConfig) ?: [];
         foreach ($panels as $name) {
             $panel = new Panel($name, $tableConfig);
-            if (!$panel->evalExpression($entity)) {
+            if ($panel->evalExpression($entity)) {
                 $result['success'] = true;
                 $result['data'][] = $panel->getName();
             }

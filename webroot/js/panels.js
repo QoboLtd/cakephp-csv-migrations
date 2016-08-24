@@ -74,7 +74,7 @@
                         that.resetVisibility();
                         that.hidePanels(data.data);
                     } else {
-                        console.log('fail');
+                        console.log('Panel - Ajax failing. Unable to hide panels.');
                     }
                 },
             });

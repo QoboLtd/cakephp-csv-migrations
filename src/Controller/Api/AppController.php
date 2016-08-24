@@ -228,7 +228,6 @@ class AppController extends Controller
         $table = $this->loadModel();
         $tableConfig = $table->getConfig();
         $entity = $table->newEntity($this->request->data);
-        $panels = Panel::getPanelNames($tableConfig) ?: [];
         $evalPanels = $this->CsvView->getEvalPanels($tableConfig, $entity);
         if (!empty($evalPanels)) {
             $result['success'] = true;

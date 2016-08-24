@@ -186,7 +186,7 @@ class Panel
      * Returns panel names.
      *
      * @param  array  $config Table's config
-     * @return array|boolean  Panel names or false
+     * @return array|bool  Panel names or false
      */
     public static function getPanelNames(array $config)
     {

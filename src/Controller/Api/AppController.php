@@ -137,7 +137,7 @@ class AppController extends Controller
             $table->setAssociatedByLookupFields($event->subject()->entity);
         });
 
-        $this->Crud->on('afterSave', function(Event $event) {
+        $this->Crud->on('afterSave', function (Event $event) {
             // handle file uploads if found in the request data
             if (isset($this->request->data['file'])) {
                 $this->_fileUploadsUtils->save($event->subject()->entity, $this->request->data['file']);
@@ -166,7 +166,7 @@ class AppController extends Controller
             $event->subject()->repository->setAssociatedByLookupFields($event->subject()->entity);
         });
 
-        $this->Crud->on('afterSave', function(Event $event) {
+        $this->Crud->on('afterSave', function (Event $event) {
             // handle file uploads if found in the request data
             if (isset($this->request->data['file'])) {
                 $this->_fileUploadsUtils->save($event->subject()->entity, $this->request->data['file']);

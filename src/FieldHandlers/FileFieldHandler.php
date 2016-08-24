@@ -84,7 +84,7 @@ class FileFieldHandler extends BaseFileFieldHandler
         }
 
         $uploadField = $this->cakeView->Form->file(
-            $this->_getFieldName($table, $field, $options). '[]',
+            $this->_getFieldName($table, $field, $options) . '[]',
             [
                 'multiple' => true,
                 'data-document-id' => $entity->get('id'),

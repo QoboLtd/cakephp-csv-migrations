@@ -69,6 +69,8 @@ class FileUploadsUtils
 
     /**
      * Contructor method
+     *
+     * @param UploadTable $table Upload Table Instance
      */
     public function __construct(UploadTable $table)
     {
@@ -168,31 +170,13 @@ class FileUploadsUtils
         return $query->all();
     }
 
-    public function getFileAssociation()
-	{
-		return $this->_fileAssociation;
-	}
-
-    public function getFileStorageAssociation()
-	{
-		return $this->_fileStorageAssociation;
-	}
-
-    public function getDocumentForeignKey()
-	{
-		return $this->_documentForeignKey;
-	}
-
-    public function getFileForeignKey()
-	{
-		return $this->_fileForeignKey;
-	}
-
-    public function getFileStorageForeignKey()
-	{
-		return $this->_fileStorageForeignKey;
-	}
-
+    /**
+     * File save method.
+     *
+     * @param  \Cake\ORM\Entity $entity Associated Entity
+     * @param  array            $files  Uploaded files
+     * @return bool
+     */
     public function save(Entity $entity, array $files = [])
     {
         $result = false;
@@ -255,6 +239,12 @@ class FileUploadsUtils
         return $this->_fileAssociation->save($entity);
     }
 
+    /**
+     * File delete method.
+     *
+     * @param  string $id Associated Entity id
+     * @return bool
+     */
     public function delete($id)
     {
         $result = $this->_deleteFileAssociationRecord($id);

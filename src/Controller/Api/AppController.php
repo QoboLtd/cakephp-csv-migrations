@@ -9,6 +9,7 @@ use Cake\ORM\TableRegistry;
 use Crud\Controller\ControllerTrait;
 use CsvMigrations\CsvTrait;
 use CsvMigrations\FieldHandlers\RelatedFieldTrait;
+use CsvMigrations\FileUploadsUtils;
 use CsvMigrations\MigrationTrait;
 use CsvMigrations\PrettifyTrait;
 
@@ -49,12 +50,16 @@ class AppController extends Controller
         'maxLimit' => 100,
     ];
 
+    protected $_fileUploadsUtils;
+
     /**
      * {@inheritDoc}
      */
     public function initialize()
     {
         parent::initialize();
+
+        $this->_fileUploadsUtils = new FileUploadsUtils($this->{$this->name});
 
         if (Configure::read('API.auth')) {
             // @link http://www.bravo-kernel.com/2015/04/how-to-add-jwt-authentication-to-a-cakephp-3-rest-api/
@@ -132,6 +137,13 @@ class AppController extends Controller
             $table->setAssociatedByLookupFields($event->subject()->entity);
         });
 
+        $this->Crud->on('afterSave', function(Event $event) {
+            // handle file uploads if found in the request data
+            if (isset($this->request->data['file'])) {
+                $this->_fileUploadsUtils->save($event->subject()->entity, $this->request->data['file']);
+            }
+        });
+
         return $this->Crud->execute();
     }
 
@@ -152,6 +164,13 @@ class AppController extends Controller
 
         $this->Crud->on('beforeSave', function (Event $event) {
             $event->subject()->repository->setAssociatedByLookupFields($event->subject()->entity);
+        });
+
+        $this->Crud->on('afterSave', function(Event $event) {
+            // handle file uploads if found in the request data
+            if (isset($this->request->data['file'])) {
+                $this->_fileUploadsUtils->save($event->subject()->entity, $this->request->data['file']);
+            }
         });
 
         return $this->Crud->execute();

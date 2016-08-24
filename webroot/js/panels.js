@@ -11,7 +11,7 @@
         $form.find(':input').each(function() {
             var name = $(this).attr('name');
             var value = $(this).val();
-            if (typeof name !== 'undefined' || typeof value !== 'undefined') {
+            if (typeof name !== 'undefined' && typeof value !== 'undefined' ) {
                 data[name] = value;
             }
         });

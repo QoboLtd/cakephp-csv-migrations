@@ -1,12 +1,11 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use Cake\Core\Configure;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\BaseFileFieldHandler;
+use CsvMigrations\FileUploadsUtils;
 
-class FileFieldHandler extends BaseFieldHandler
+class FileFieldHandler extends BaseFileFieldHandler
 {
     /**
      * Field type
@@ -49,7 +48,7 @@ class FileFieldHandler extends BaseFieldHandler
     protected function _renderInputWithoutData($table, $field, $options)
     {
         $uploadField = $this->cakeView->Form->file(
-            $this->_getFieldName($table, $field, $options),
+            $this->_getFieldName($table, $field, $options) . '[]',
             ['multiple' => true]
         );
         $label = $this->cakeView->Form->label($field);
@@ -67,39 +66,25 @@ class FileFieldHandler extends BaseFieldHandler
      */
     protected function _renderInputWithData($table, $field, $options)
     {
-        $file = [];
+        $fileUploadsUtils = new FileUploadsUtils($table);
         $entity = Hash::get($options, 'entity');
 
-        foreach ($table->associations() as $association) {
-            // @todo get foreign_key string dynamically, see API DocumentsController
-            if ('foreign_key' === $association->foreignKey()) {
-                $assocName = $association->name();
-                $assocNameTableized = Inflector::tableize($assocName);
-                break;
-            }
-        }
-        if (is_null($assocName)) {
+        $entities = $fileUploadsUtils->getFiles($entity->get('id'));
+
+        if (is_null($entities)) {
             return $this->_renderInputWithoutData($table, $field, $options);
         }
 
-        $document = $table->find()
-        ->contain([$assocName])
-        ->where([$table->alias() . '.id' => $entity->get('id')])
-        ->first();
-
-        foreach ($document->{$assocNameTableized} as $file) {
+        $files = [];
+        foreach ($entities as $file) {
             $files[] = [
                 'id' => $file->id,
                 'path' => $file->path
             ];
         }
 
-        if (empty($files)) {
-            return $this->_renderInputWithoutData($table, $field, $options);
-        }
-
         $uploadField = $this->cakeView->Form->file(
-            $this->_getFieldName($table, $field, $options),
+            $this->_getFieldName($table, $field, $options) . '[]',
             [
                 'multiple' => true,
                 'data-document-id' => $entity->get('id'),
@@ -113,54 +98,12 @@ class FileFieldHandler extends BaseFieldHandler
 
     /**
      * {@inheritDoc}
-     * In this case, it renders img tag or anchor to view the upload files.
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $result = '';
-        if (Hash::get($options, 'valueOnly')) {
-            return $data;
-        }
+        $data = $options['entity']['id'];
 
-        return $result;
-    }
-
-    /**
-     * Displays the uploaded img.
-     *
-     * @param  object $entity FileStorage entity
-     * @return string HTML img tag
-     */
-    protected function _renderValueImage($entity)
-    {
-        $this->cakeView->loadHelper(
-            'Burzum/FileStorage.Storage',
-            Configure::read('FileStorage.pathBuilderOptions')
-        );
-        $url = $this->cakeView->Storage->url($entity);
-
-        return $this->cakeView->Html->image($this->cakeView->Url->build($url), ['class' => 'img-responsive']);
-    }
-
-    /**
-     * Creates a link to view the uploaded file.
-     *
-     * @param  Entity $entity Based on the entity the URL is being created by the plugin's helper.
-     * @return string Link redirecting to the source of the uploaded file.
-     */
-    protected function _renderValueOtherFiles($entity)
-    {
-        $this->cakeView->loadHelper(
-            'Burzum/FileStorage.Storage',
-            Configure::read('FileStorage.pathBuilderOptions')
-        );
-        $url = $this->cakeView->Storage->url($entity);
-
-        return $this->cakeView->Html->link(
-            __d('CsvMigrations', 'View File'),
-            $this->cakeView->Url->build($url),
-            ['target' => '_blank']
-        );
+        return parent::renderValue($table, $field, $data, $options);
     }
 
     /**

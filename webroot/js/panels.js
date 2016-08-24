@@ -49,12 +49,19 @@
 
     Panel.prototype.observe = function() {
         var that = this;
-        var $form = $('form');
-        var url = $form.attr('action');
+        var $form = this.form;
+        var action = $form.attr('action');
+        var matches = action.split('/', 2);
+        var module = matches[1];
+        if (!module) {
+            return false;
+        }
+        var url = '/api/' + module + '/panels/';
         var token = api_options.token;
+
         $form.find(':input').change(function() {
             $.ajax({
-                url: '/api/contacts/panels/',
+                url: url,
                 type: 'POST',
                 data: that.buildData(),
                 dataType: 'json',

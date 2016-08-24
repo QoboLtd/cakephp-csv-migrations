@@ -15,6 +15,8 @@
                 data[name] = value;
             }
         });
+
+        return data;
     };
 
     Panel.prototype.hidePanels = function(panels) {

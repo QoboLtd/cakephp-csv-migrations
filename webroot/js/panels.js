@@ -2,11 +2,12 @@
     'use strict'
 
     var Panel = function() {
+        this.setForm();
         this.observe();
     };
 
     Panel.prototype.buildData = function() {
-        var $form = $('form');
+        var $form = this.form;
         var data = {};
         $form.find(':input').each(function() {
             var name = $(this).attr('name');
@@ -40,6 +41,10 @@
 
     Panel.prototype.resetVisibility = function() {
         $('.panel').removeClass('hidden');
+    };
+
+    Panel.prototype.setForm = function() {
+        this.form = $('.panel').closest('form');
     };
 
     Panel.prototype.observe = function() {

@@ -10,8 +10,7 @@ use Cake\ORM\Association;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use \InvalidArgumentException;
+use CsvMigrations\Panel;
 use \RuntimeException;
 
 /**
@@ -29,16 +28,6 @@ class CsvViewComponent extends Component
      * Count of fields per row for panel logic
      */
     const PANEL_COUNT = 3;
-
-    /**
-     * Key for the type of panels. It is used in the CsvMigration module config.
-     */
-    const PANELS = 'panels';
-
-    /**
-     * Token used in expression to distinquish placeholders.
-     */
-    const EXP_TOKEN = '%%';
 
     /**
      * Default configuration.
@@ -140,71 +129,6 @@ class CsvViewComponent extends Component
                 unset($fields[$name]);
             }
         }
-    }
-
-    /**
-     * Evaluate the expression.
-     *
-     * @param  string $exp    If-like expression
-     * @param  Entity $entity to get the values for placeholders
-     * @return bool           True if it matches, false otherwise.
-     */
-    protected function _evalExpression($exp, Entity $entity)
-    {
-        $placeholder = $this->_getExpPlaceholder($exp);
-        //Clean up expression from placeholder tokens.
-        $exp = str_replace(self::EXP_TOKEN, '', $exp);
-        //Replace place holder with values
-        $placeHolderValues = $this->_replaceWithValues($placeholder, $entity);
-        $language = new ExpressionLanguage();
-        $eval = $language->evaluate($exp, $placeHolderValues);
-
-        return $eval;
-    }
-
-    /**
-     * Replace placeholders with values.
-     *
-     * @param  array $placeholder  Array of placeholders
-     * @param  Entity $entity      to get the values for placeholders
-     * @return array               Associative array, Keys: placeholders Values: values
-     */
-    protected function _replaceWithValues(array $placeholder, Entity $entity)
-    {
-        $result = [];
-        foreach ($placeholder as $p) {
-            $result[$p] = $entity->get($p);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Extract placeholders from expression.
-     *
-     * @param  string $exp If-like expression
-     * @return array       placeholders
-     */
-    protected function _getExpPlaceholder($exp)
-    {
-        $result = [];
-        preg_match_all('#' . self::EXP_TOKEN . '(.*?)' . self::EXP_TOKEN . '#', $exp, $matches);
-        if (empty($matches)) {
-            throw new InvalidArgumentException(sprintf('Please wrap your placeholders with ' . self::EXP_TOKEN . ': %s', $exp));
-        }
-        $result = $matches[1];
-
-        return $result;
-    }
-
-    /**
-     * Check module config file for panels to filter.
-     *
-     * @return bool true if yes
-     */
-    protected function _hasPanels()
-    {
-        return isset($this->_tableInstance->getConfig()[self::PANELS]);
     }
 
     /**

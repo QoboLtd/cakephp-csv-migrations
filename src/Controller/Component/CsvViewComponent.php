@@ -104,11 +104,12 @@ class CsvViewComponent extends Component
      */
     public function beforeRender(Event $event)
     {
+        $tableConfig = [];
         if (method_exists($this->_tableInstance, 'getConfig')) {
             $tableConfig = $this->_tableInstance->getConfig();
         }
         $controller = $event->subject();
-        if ($tableConfig &&
+        if (!empty($tableConfig) &&
             !empty($controller->viewVars['fields']) &&
             !empty($controller->viewVars['entity']) &&
             $this->request->action === 'view') {

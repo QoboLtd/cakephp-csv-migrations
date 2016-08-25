@@ -93,11 +93,43 @@ class PanelTest extends TestCase
 
     public function testEvalExpression()
     {
+        $scenario = 'Scenario 1 - string comparison';
         $panelName = 'Foobar';
-        $config['panels']['Foobar'] = "%%status%% = 'first attempt'";
+        $config['panels']['Foobar'] = "%%status%% == 'first attempt'";
         $panel = new Panel($panelName, $config);
-        $entity = $this->table->newEntity(['status' => 'first attempt']);
-        $this->assertTrue($panel->evalExpression($entity), 'Expression evaluated with success');
-    }
+        $data = ['status' => 'first attempt'];
+        $this->assertTrue($panel->evalExpression($data), sprintf('%s - Expression evaluation failed', $scenario));
+        unset($panel, $scenario);
 
+        $scenario = 'Scenario 2 - string with special character';
+        $panelName = 'Foobar';
+        $config['panels']['Foobar'] = "%%status%% == 'attempt #1'";
+        $panel = new Panel($panelName, $config);
+        $data = ['status' => 'attempt #1'];
+        $this->assertTrue($panel->evalExpression($data), sprintf('%s - Expression evaluation failed', $scenario));
+
+        $scenario = 'Scenario 3 - logical operator AND';
+        $panelName = 'Foobar';
+        $config['panels']['Foobar'] = "%%status%% == 'active' && %%active%% == false";
+        $panel = new Panel($panelName, $config);
+        $data = ['status' => 'active', 'active' => false];
+        $this->assertTrue($panel->evalExpression($data), sprintf('%s - Expression evaluation failed', $scenario));
+        unset($panel, $scenario);
+
+        $scenario = 'Scenario 4 - logical operator NOT';
+        $panelName = 'Foobar';
+        $config['panels']['Foobar'] = "!(%%status%% == 'active')";
+        $panel = new Panel($panelName, $config);
+        $data = ['status' => 'deactive'];
+        $this->assertTrue($panel->evalExpression($data), sprintf('%s - Expression evaluation failed', $scenario));
+        unset($panel, $scenario);
+
+        $scenario = 'Scenario 5 - logical operator OR';
+        $panelName = 'Foobar';
+        $config['panels']['Foobar'] = "%%status%% == 'active' || %%active%% == false";
+        $panel = new Panel($panelName, $config);
+        $data = ['status' => 'active', 'active' => true];
+        $this->assertTrue($panel->evalExpression($data), sprintf('%s - Expression evaluation failed', $scenario));
+        unset($panel, $scenario);
+    }
 }

@@ -88,45 +88,26 @@ class PanelTest extends TestCase
         $this->assertTrue(in_array('name', $panelB->getFields()), 'Given field name is not in the array');
     }
 
-    public function testEvalExpression()
+    /**
+     * @dataProvider evalExpressionScenariosProvider
+     */
+    public function testEvalExpression($scenario, $expression, $data)
     {
-        $scenario = 'Scenario 1 - string comparison';
         $panelName = 'Foobar';
-        $config['panels']['Foobar'] = "%%status%% == 'first attempt'";
+        $config['panels']['Foobar'] = $expression;
         $panel = new Panel($panelName, $config);
-        $data = ['status' => 'first attempt'];
         $this->assertTrue($panel->evalExpression($data), sprintf('%s - Expression evaluation failed', $scenario));
-        unset($panel, $scenario);
+        unset($panel);
+    }
 
-        $scenario = 'Scenario 2 - string with special character';
-        $panelName = 'Foobar';
-        $config['panels']['Foobar'] = "%%status%% == 'attempt #1'";
-        $panel = new Panel($panelName, $config);
-        $data = ['status' => 'attempt #1'];
-        $this->assertTrue($panel->evalExpression($data), sprintf('%s - Expression evaluation failed', $scenario));
-
-        $scenario = 'Scenario 3 - logical operator AND';
-        $panelName = 'Foobar';
-        $config['panels']['Foobar'] = "%%status%% == 'active' && %%active%% == false";
-        $panel = new Panel($panelName, $config);
-        $data = ['status' => 'active', 'active' => false];
-        $this->assertTrue($panel->evalExpression($data), sprintf('%s - Expression evaluation failed', $scenario));
-        unset($panel, $scenario);
-
-        $scenario = 'Scenario 4 - logical operator NOT';
-        $panelName = 'Foobar';
-        $config['panels']['Foobar'] = "!(%%status%% == 'active')";
-        $panel = new Panel($panelName, $config);
-        $data = ['status' => 'deactive'];
-        $this->assertTrue($panel->evalExpression($data), sprintf('%s - Expression evaluation failed', $scenario));
-        unset($panel, $scenario);
-
-        $scenario = 'Scenario 5 - logical operator OR';
-        $panelName = 'Foobar';
-        $config['panels']['Foobar'] = "%%status%% == 'active' || %%active%% == false";
-        $panel = new Panel($panelName, $config);
-        $data = ['status' => 'active', 'active' => true];
-        $this->assertTrue($panel->evalExpression($data), sprintf('%s - Expression evaluation failed', $scenario));
-        unset($panel, $scenario);
+    public function evalExpressionScenariosProvider()
+    {
+        return [
+            ['Scenario 1 - string comparison', "%%status%% == 'first attempt'", ['status' => 'first attempt']],
+            ['Scenario 2 - string with special character', "%%status%% == 'attempt #1'", ['status' => 'attempt #1']],
+            ['Scenario 3 - logical operator AND', "%%status%% == 'active' && %%active%% == false", ['status' => 'active', 'active' => false]],
+            ['Scenario 4 - logical operator NOT', "!(%%status%% == 'active')", ['status' => 'deactive']],
+            ['Scenario 5 - logical operator OR', "%%status%% == 'active' || %%active%% == false", ['status' => 'active', 'active' => true]],
+        ];
     }
 }

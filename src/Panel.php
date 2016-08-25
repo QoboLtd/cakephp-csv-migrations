@@ -154,14 +154,16 @@ class Panel
     /**
      * Returns field values from the given entity.
      *
-     * @param  Entity $entity Entity holding data
+     * @param  array $data    to get the values for placeholders
      * @return array          Associative array, Keys: placeholders Values: values
      */
-    public function getFieldValues(Entity $entity)
+    public function getFieldValues(array $data)
     {
         $result = [];
         foreach ($this->getFields() as $f) {
-            $result[$f] = $entity->get($f);
+            if (isset($data[$f])) {
+                $result[$f] = $data[$f];
+            }
         }
 
         return $result;
@@ -170,13 +172,13 @@ class Panel
     /**
      * Evaluate the expression.
      *
-     * @param  Entity $entity to get the values for placeholders
+     * @param  array $data    to get the values for placeholders
      * @return bool           True if it matches, false otherwise.
      */
-    public function evalExpression(Entity $entity)
+    public function evalExpression(array $data)
     {
         $language = new ExpressionLanguage();
-        $values = $this->getFieldValues($entity);
+        $values = $this->getFieldValues($data);
         $eval = $language->evaluate($this->getExpression(true), $values);
 
         return $eval;

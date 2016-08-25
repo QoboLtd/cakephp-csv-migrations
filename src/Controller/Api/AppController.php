@@ -6,6 +6,7 @@ use Cake\Core\Configure;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Hash;
 use Crud\Controller\ControllerTrait;
 use CsvMigrations\CsvTrait;
 use CsvMigrations\FieldHandlers\RelatedFieldTrait;
@@ -227,8 +228,9 @@ class AppController extends Controller
         ];
         $table = $this->loadModel();
         $tableConfig = $table->getConfig();
-        $entity = $table->newEntity($this->request->data);
-        $evalPanels = $this->CsvView->getEvalPanels($tableConfig, $entity);
+        $moduleData = $this->request->data;
+        $data = Hash::get($moduleData, $this->name);
+        $evalPanels = $this->CsvView->getEvalPanels($tableConfig, $data);
         if (!empty($evalPanels)) {
             $result['success'] = true;
             $result['data'] = $evalPanels;

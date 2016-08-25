@@ -2,32 +2,12 @@
     'use strict'
 
     var Panel = function() {
-        if (!this.isEligibleAction()) {
-            return false;
-        }
         //set the monitoring form.
         this.setForm();
         //run an initial evaluation with current form's settings.
         this.evaluateWithServer();
         //Observe the form.
         this.observe();
-    };
-
-    /**
-     * Check if the running action is eligible.
-     *
-     * This function provides the eligible actions for hiding and
-     * showing the panels.
-     * @return {Boolean} True if the current is action is eligible.
-     */
-    Panel.prototype.isEligibleAction = function() {
-        var actions = ['add', 'edit'];
-        var pathname = window.location.pathname;
-        var matches = pathname.split('/', 3);
-        var action = matches[matches.length - 1];
-        var pos = actions.indexOf(action);
-
-        return (pos > -1) ? true : false;
     };
 
     Panel.prototype.buildData = function() {

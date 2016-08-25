@@ -66,14 +66,11 @@ class PanelTest extends TestCase
         $panel = new Panel($this->first, $this->config);
         $expression = $panel->getExpression();
 
-        //Should not be empty.
-        $this->assertTrue(!empty($expression));
-        //Should be string
-        $this->assertTrue(is_string($expression));
-        //Check for tokens
-        $this->assertContains(Panel::EXP_TOKEN, $expression);
+        $this->assertFalse(empty($expression), 'Expression should not be empty');
+        $this->assertTrue(is_string($expression), 'Expression should be string`');
+        $this->assertContains(Panel::EXP_TOKEN, $expression, sprintf('Expression\'s placeholders have %s', Panel::EXP_TOKEN));
         $expressionWithoutTokens = $panel->getExpression(true);
-        $this->assertFalse(strpos($expressionWithoutTokens, Panel::EXP_TOKEN));
+        $this->assertFalse(strpos($expressionWithoutTokens, Panel::EXP_TOKEN), sprintf('Clean expression should not have any %s', Panel::EXP_TOKEN));
     }
 
     public function testGetFields()

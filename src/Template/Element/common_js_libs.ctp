@@ -21,3 +21,4 @@ echo $this->Html->scriptBlock(
 );
 echo $this->Html->script('CsvMigrations.typeahead', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.embedded', ['block' => 'scriptBottom']);
+echo $this->Html->script('CsvMigrations.panels', ['block' => 'scriptBottom']);

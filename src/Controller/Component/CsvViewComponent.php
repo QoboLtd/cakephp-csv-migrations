@@ -7,8 +7,11 @@ use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
 use Cake\ORM\Association;
+use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use CsvMigrations\Panel;
+use \RuntimeException;
 
 /**
  * CsvView component
@@ -91,6 +94,54 @@ class CsvViewComponent extends Component
 
         $path = Configure::readOrFail('CsvMigrations.views.path');
         $this->_setTableFields($path);
+    }
+
+    /**
+     * Check/do things before rendering the output.
+     *
+     * @param  Event  $event [description]
+     * @return void
+     */
+    public function beforeRender(Event $event)
+    {
+        $tableConfig = [];
+        if (method_exists($this->_tableInstance, 'getConfig')) {
+            $tableConfig = $this->_tableInstance->getConfig();
+        }
+        $controller = $event->subject();
+        if (!empty($tableConfig) &&
+            !empty($controller->viewVars['fields']) &&
+            !empty($controller->viewVars['entity']) &&
+            $this->request->action === 'view') {
+            $panelFields = $controller->viewVars['fields'];
+            $entity = $controller->viewVars['entity'];
+            $evalPanels = $this->getEvalPanels($tableConfig, $entity->toArray());
+            $controller->viewVars['fields'] = array_diff_key($panelFields, array_flip($evalPanels));
+        }
+    }
+
+    /**
+     * List of evaluated Panels.
+     *
+     * Returns the panels which theirs expression has been evaluated successfully.
+     *
+     * @see \CsvMigrations\Panel::evalExpression How the expression is evaluated.
+     * @param  array  $config Table's config.
+     * @param  array  $data to get the values for placeholders
+     * @return array          Evaluated panel list.
+     */
+    public function getEvalPanels(array $config, array $data)
+    {
+        $result = [];
+        $panels = Panel::getPanelNames($config) ?: [];
+        foreach ($panels as $name) {
+            $panel = new Panel($name, $config);
+            if ($panel->evalExpression($data)) {
+                array_push($result, $panel->getName());
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -425,7 +476,7 @@ class CsvViewComponent extends Component
         foreach ($data as $fields) {
             $fieldCount = count($fields);
             if (static::PANEL_COUNT !== $fieldCount) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     sprintf($this->_errorMessages[__FUNCTION__], $fieldCount, static::PANEL_COUNT)
                 );
             }

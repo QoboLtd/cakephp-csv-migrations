@@ -6,11 +6,13 @@ use Cake\Core\Configure;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Hash;
 use Crud\Controller\ControllerTrait;
 use CsvMigrations\CsvTrait;
 use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 use CsvMigrations\FileUploadsUtils;
 use CsvMigrations\MigrationTrait;
+use CsvMigrations\Panel;
 use CsvMigrations\PrettifyTrait;
 
 class AppController extends Controller
@@ -27,6 +29,7 @@ class AppController extends Controller
 
     public $components = [
         'RequestHandler',
+        'CsvMigrations.CsvView',
         'Crud.Crud' => [
             'actions' => [
                 'Crud.Index',
@@ -227,6 +230,33 @@ class AppController extends Controller
         }
 
         return $result;
+    }
+
+
+    /**
+     * Panels to show.
+     *
+     * @return void
+     */
+    public function panels()
+    {
+        $this->request->allowMethod(['ajax', 'post']);
+        $result = [
+            'success' => false,
+            'data' => [],
+        ];
+        $table = $this->loadModel();
+        $tableConfig = $table->getConfig();
+        $moduleData = $this->request->data;
+        $data = Hash::get($moduleData, $this->name);
+        $evalPanels = $this->CsvView->getEvalPanels($tableConfig, $data);
+        if (!empty($evalPanels)) {
+            $result['success'] = true;
+            $result['data'] = $evalPanels;
+        }
+
+        $this->set('result', $result);
+        $this->set('_serialize', 'result');
     }
 
     /**

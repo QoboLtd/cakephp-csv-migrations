@@ -9,6 +9,7 @@
         "cakephp/migrations": "~1.0",
         "burzum/cakephp-file-storage": "^1.1",
         "friendsofcake/bootstrap-ui": "~0.3",
+        "symfony/expression-language": "^3.1",
         "admad/cakephp-jwt-auth": "^2.0"
     },
     "require-dev": {

@@ -1,13 +1,26 @@
 (function($) {
     'use strict'
 
-    var Panel = function() {
-        //set the monitoring form.
-        this.setForm();
+    var Panel = function(form) {
+        this.form = form;
+        //Eligible form
+        if (!this.isEligible()) {
+            return false;
+        }
         //run an initial evaluation with current form's settings.
         this.evaluateWithServer();
         //Observe the form.
         this.observe();
+    };
+
+    /**
+     * Eligible forms contain panels.
+     *
+     * @return {Boolean} True if there is/are panel(s).
+     */
+    Panel.prototype.isEligible = function() {
+        var $form = this.form;
+        return $form.has('.panel').length ? true : false;
     };
 
     Panel.prototype.buildData = function() {
@@ -49,10 +62,6 @@
         $('.panel').removeClass('hidden');
     };
 
-    Panel.prototype.setForm = function() {
-        this.form = $('.panel').closest('form');
-    };
-
     Panel.prototype.observe = function() {
         var $form = this.form;
         var that = this;
@@ -92,7 +101,10 @@
         });
     };
 
-    new Panel();
 
+    $('form').find(':input').focus(function (){
+        var $form = $(this).closest('form');
+        new Panel($form);
+    });
 
 })(jQuery);

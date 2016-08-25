@@ -88,6 +88,23 @@ class PanelTest extends TestCase
         $this->assertTrue(in_array('name', $panelB->getFields()), 'Given field name is not in the array');
     }
 
+
+    public function testGetFieldValues()
+    {
+        $panelName = 'Foobar';
+        $config['panels']['Foobar'] = "(%%type%% == 'foobar' && %%name%% == 'somename')";
+        $panel = new Panel($panelName, $config);
+        $data = ['type' => 'company', 'name' => 'amazon'];
+        $actual = $panel->getFieldValues($data);
+        $expected = ['type' => 'company', 'name' => 'amazon'];
+        $this->assertEquals($actual, $expected, 'Data and field values should be equal.');
+
+        $data = [];
+        $actual = $panel->getFieldValues($data);
+        $expected = [];
+        $this->assertEquals($actual, $expected, 'When data is empty the the field values should be empty.');
+    }
+
     /**
      * @dataProvider evalExpressionScenariosProvider
      */
@@ -134,5 +151,21 @@ class PanelTest extends TestCase
                 true
             ],
         ];
+    }
+
+    public function testGetPanels()
+    {
+        $config['panels']['Company'] = "(%%type%% == 'individual')";
+        $config['panels']['Personal'] = "(%%type%% == 'company')";
+        $actual = Panel::getPanelNames($config);
+        $expected = ['Company', 'Personal'];
+
+        $this->assertEquals($actual, $expected, 'Does not return the actual panel names from config.');
+
+        $config = [];
+        $actual = Panel::getPanelNames($config);
+        $expected = false;
+
+        $this->assertEquals($actual, $expected, 'On an empty config, the function should return false.');
     }
 }

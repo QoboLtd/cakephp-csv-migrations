@@ -91,23 +91,48 @@ class PanelTest extends TestCase
     /**
      * @dataProvider evalExpressionScenariosProvider
      */
-    public function testEvalExpression($scenario, $expression, $data)
+    public function testEvalExpression($scenario, $expression, $data, $expected)
     {
         $panelName = 'Foobar';
         $config['panels']['Foobar'] = $expression;
         $panel = new Panel($panelName, $config);
-        $this->assertTrue($panel->evalExpression($data), sprintf('%s - Expression evaluation failed', $scenario));
+        $this->assertEquals($expected, $panel->evalExpression($data), sprintf('%s - Expression evaluation failed', $scenario));
         unset($panel);
     }
 
     public function evalExpressionScenariosProvider()
     {
         return [
-            ['Scenario 1 - string comparison', "%%status%% == 'first attempt'", ['status' => 'first attempt']],
-            ['Scenario 2 - string with special character', "%%status%% == 'attempt #1'", ['status' => 'attempt #1']],
-            ['Scenario 3 - logical operator AND', "%%status%% == 'active' && %%active%% == false", ['status' => 'active', 'active' => false]],
-            ['Scenario 4 - logical operator NOT', "!(%%status%% == 'active')", ['status' => 'deactive']],
-            ['Scenario 5 - logical operator OR', "%%status%% == 'active' || %%active%% == false", ['status' => 'active', 'active' => true]],
+            [
+                'Scenario 1 - string comparison',
+                "%%status%% == 'first attempt'",
+                ['status' => 'first attempt'],
+                true
+            ],
+            [
+                'Scenario 2 - string with special character',
+                "%%status%% == 'attempt #1'",
+                ['status' => 'attempt #1'],
+                true
+            ],
+            [
+                'Scenario 3 - logical operator AND',
+                "%%status%% == 'active' && %%active%% == false",
+                ['status' => 'active', 'active' => false],
+                true
+            ],
+            [
+                'Scenario 4 - logical operator NOT',
+                "!(%%status%% == 'active')",
+                ['status' => 'deactive'],
+                true
+            ],
+            [
+                'Scenario 5 - logical operator OR',
+                "%%status%% == 'active' || %%active%% == false",
+                ['status' => 'active', 'active' => true],
+                true
+            ],
         ];
     }
 }

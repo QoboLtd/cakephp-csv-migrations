@@ -57,13 +57,15 @@
                 if (current === title) {
                     if (!$(this).hasClass('hidden')) {
                         $(this).addClass('hidden');
+                        $(this).find(':input').attr('disabled', true);
                     }
                 }
             });
         });
     };
 
-    Panel.prototype.resetVisibility = function() {
+    Panel.prototype.resetPanels = function() {
+        $('.panel.hidden').find(':input').attr('disabled', false);
         $('.panel').removeClass('hidden');
     };
 
@@ -101,7 +103,7 @@
             success: function(data)
             {
                 if(typeof data.error === 'undefined') {
-                    that.resetVisibility();
+                    that.resetPanels();
                     that.hidePanels(data.data);
                 } else {
                     console.log('Panel - Ajax failing. Unable to hide panels.');

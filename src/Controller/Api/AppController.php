@@ -247,8 +247,21 @@ class AppController extends Controller
         ];
         $table = $this->loadModel();
         $tableConfig = $table->getConfig();
-        $moduleData = $this->request->data;
-        $data = Hash::get($moduleData, $this->name);
+        $data = $this->request->data;
+        if (empty($data) || !is_array($data)) {
+            return $result;
+        }
+        $key = key($data);
+        if (is_array($data[$key])) {
+            $innerKey = key($data[$key]);
+            if (!is_array($data[$key][$innerKey])) {
+                //Regular form format - [module][inputName]
+                $data = $data[$key];
+            } else {
+                //Embedded form - [module][dynamicField][inputName]
+                $data = $data[$key][$innerKey];
+            }
+        }
         $evalPanels = $this->CsvView->getEvalPanels($tableConfig, $data);
         if (!empty($evalPanels)) {
             $result['success'] = true;

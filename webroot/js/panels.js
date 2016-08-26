@@ -1,9 +1,31 @@
 (function($) {
     'use strict'
 
-    var Panel = function() {
-        this.setForm();
+    var Panel = function(form) {
+        this.form = form;
+        this.module = form.attr('name');
+
+        if (!this.form || !this.module) {
+            return false;
+        }
+
+        if (!this.isEligible()) {
+            return false;
+        }
+        //run an initial evaluation with current form's settings.
+        this.evaluateWithServer();
+        //Observe the form.
         this.observe();
+    };
+
+    /**
+     * Eligible forms contain panels.
+     *
+     * @return {Boolean} True if there is/are panel(s).
+     */
+    Panel.prototype.isEligible = function() {
+        var $form = this.form;
+        return $form.has('.panel').length ? true : false;
     };
 
     Panel.prototype.buildData = function() {
@@ -33,55 +55,55 @@
                 if (current === title) {
                     if (!$(this).hasClass('hidden')) {
                         $(this).addClass('hidden');
+                        $(this).find(':input').attr('disabled', true);
                     }
                 }
             });
         });
     };
 
-    Panel.prototype.resetVisibility = function() {
+    Panel.prototype.resetPanels = function() {
+        $('.panel.hidden').find(':input').attr('disabled', false);
         $('.panel').removeClass('hidden');
     };
 
-    Panel.prototype.setForm = function() {
-        this.form = $('.panel').closest('form');
-    };
-
     Panel.prototype.observe = function() {
-        var that = this;
         var $form = this.form;
-        var action = $form.attr('action');
-        var matches = action.split('/', 2);
-        var module = matches[1];
-        if (!module) {
-            return false;
-        }
-        var url = '/api/' + module + '/panels/';
-        var token = api_options.token;
-
+        var that = this;
         $form.find(':input').change(function() {
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: that.buildData(),
-                dataType: 'json',
-                headers: {
-                    'Authorization': 'Bearer ' + token
-                },
-                success: function(data)
-                {
-                    if(typeof data.error === 'undefined') {
-                        that.resetVisibility();
-                        that.hidePanels(data.data);
-                    } else {
-                        console.log('Panel - Ajax failing. Unable to hide panels.');
-                    }
-                },
-            });
+            that.evaluateWithServer();
         });
     };
 
-    new Panel();
+    Panel.prototype.evaluateWithServer = function() {
+        var $form = this.form;
+        var url = '/api/' + this.module + '/panels/';
+        var token = api_options.token;
+        var that = this;
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: that.buildData(),
+            dataType: 'json',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            },
+            success: function(data)
+            {
+                if(typeof data.error === 'undefined') {
+                    that.resetPanels();
+                    that.hidePanels(data.data);
+                } else {
+                    console.log('Panel - Ajax failing. Unable to hide panels.');
+                }
+            },
+        });
+    };
 
+
+    $('form').find(':input').focus(function (){
+        var $form = $(this).closest('form');
+        new Panel($form);
+    });
 
 })(jQuery);

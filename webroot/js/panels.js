@@ -3,7 +3,12 @@
 
     var Panel = function(form) {
         this.form = form;
-        //Eligible form
+        this.module = form.attr('name');
+
+        if (!this.form || !this.module) {
+            return false;
+        }
+
         if (!this.isEligible()) {
             return false;
         }
@@ -72,15 +77,9 @@
 
     Panel.prototype.evaluateWithServer = function() {
         var $form = this.form;
-        var action = $form.attr('action');
-        var matches = action.split('/', 2);
-        var module = matches[1];
-        var that = this;
-        if (!module) {
-            return false;
-        }
-        var url = '/api/' + module + '/panels/';
+        var url = '/api/' + this.module + '/panels/';
         var token = api_options.token;
+        var that = this;
         $.ajax({
             url: url,
             type: 'POST',

@@ -29,7 +29,8 @@ $formOptions = [
         'plugin' => $this->request->plugin,
         'controller' => $this->request->controller,
         'action' => $this->request->action
-    ]
+    ],
+    'name' => strtolower($moduleAlias),
 ];
 if (!empty($this->request->query['embedded'])) {
     $embControllerName = $this->request->controller;

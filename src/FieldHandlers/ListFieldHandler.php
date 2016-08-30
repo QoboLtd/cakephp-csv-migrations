@@ -57,12 +57,24 @@ class ListFieldHandler extends BaseFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $result = $data;
+        $result = '';
 
         $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
 
         if (isset($fieldOptions[$data])) {
-            $result = h($fieldOptions[$data]);
+            // Concatenate all parents together with value
+            $parents = explode('.', $data);
+            if (!empty($parents)) {
+                $path = '';
+                foreach ($parents as $parent) {
+                    $path = empty($path) ? $parent : $path . '.' . $parent;
+                    if (isset($fieldOptions[$path])) {
+                        $result .= $fieldOptions[$path];
+                    }
+                }
+            }
+        } else {
+            $result = $data;
         }
 
         return $result;

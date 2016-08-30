@@ -5,6 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Utility\Hash;
 
 /**
  * DbLists Model
@@ -63,5 +64,36 @@ class DbListsTable extends Table
             ->notEmpty('name');
 
         return $validator;
+    }
+
+    /**
+     * Reusable query options.
+     *
+     * It can be used for retreving the options of the select field(list).
+     * Options:
+     * - name: List name (required)
+     *
+     * @param  Query $query   Query object
+     * @param  array $options Options see function's long description.
+     * @return array          Options for the select option field.
+     */
+    public function findOptions(Query $query, array $options)
+    {
+        $result = [];
+        $name = Hash::get($options, 'name');
+        $list = $this->find()
+            ->where(['name' => $name])
+            ->contain(['DbListItems' => ['sort' => ['DbListItems.name' => 'ASC']]])
+            ->first();
+        if ($list) {
+            $items = Hash::get($list, 'db_list_items') ?: [];
+            foreach ($items as $entity) {
+                $name = h($entity->get('name'));
+                $value = h($entity->get('value'));
+                $result[$name] = $value;
+            }
+        }
+
+        return $result;
     }
 }

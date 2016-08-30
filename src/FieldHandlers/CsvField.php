@@ -223,7 +223,7 @@ class CsvField
      */
     public function getListName()
     {
-        return $this->_limit;
+        return $this->getLimit();
     }
 
     /**

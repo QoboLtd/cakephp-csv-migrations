@@ -183,14 +183,14 @@ class FooTableTest extends TestCase
                         'type' => 'list',
                         'fieldOptions' => [
                             'bronze' => 'Bronze',
-                            'bronze.new' => 'New',
-                            'bronze.used' => 'Used',
+                            'bronze.new' => ' - New',
+                            'bronze.used' => ' - Used',
                             'silver' => 'Silver',
-                            'silver.new' => 'New',
-                            'silver.used' => 'Used',
+                            'silver.new' => ' - New',
+                            'silver.used' => ' - Used',
                             'gold' => 'Gold',
-                            'gold.new' => 'New',
-                            'gold.used' => 'Used'
+                            'gold.new' => ' - New',
+                            'gold.used' => ' - Used'
                         ]
                     ],
                     'gender' => [

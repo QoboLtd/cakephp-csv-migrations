@@ -33,7 +33,7 @@ class AppController extends BaseController
         /*
         pass module alias to the View
          */
-        $this->set('moduleAlias', $this->{$this->name}->moduleAlias());
+        //$this->set('moduleAlias', $this->{$this->name}->moduleAlias());
     }
 
     /**

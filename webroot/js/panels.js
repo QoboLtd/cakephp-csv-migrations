@@ -4,7 +4,6 @@
     var Panel = function(form) {
         this.form = form;
         this.module = form.attr('name');
-
         if (!this.form || !this.module) {
             return false;
         }
@@ -43,13 +42,14 @@
     };
 
     Panel.prototype.hidePanels = function(panels) {
-        if (!panels instanceof Array) {
+        var $form = this.form;
+        if (typeof panels === 'undefined' || !panels instanceof Array) {
             return false;
         }
 
         panels.forEach(function(cur){
             var current = cur;
-            var $panel = $('.panel');
+            var $panel = $form.find('.panel');
             $panel.each(function() {
                 var title = $(this).find('.panel-title').text();
                 if (current === title) {
@@ -90,20 +90,17 @@
             },
             success: function(data)
             {
-                if(typeof data.error === 'undefined') {
+                if(data.success) {
                     that.resetPanels();
-                    that.hidePanels(data.data);
-                } else {
-                    console.log('Panel - Ajax failing. Unable to hide panels.');
+                    that.hidePanels(data.data['fail']);
                 }
             },
         });
     };
 
 
-    $('form').find(':input').focus(function (){
-        var $form = $(this).closest('form');
-        new Panel($form);
+    $('form').each(function (i) {
+        new Panel($(this));
     });
 
 })(jQuery);

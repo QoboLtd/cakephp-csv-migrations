@@ -116,14 +116,19 @@ class CsvViewComponent extends Component
             $panelFields = $controller->viewVars['fields'];
             $entity = $controller->viewVars['entity'];
             $evalPanels = $this->getEvalPanels($tableConfig, $entity->toArray());
-            $controller->viewVars['fields'] = array_diff_key($panelFields, array_flip($evalPanels));
+            if (!empty($evalPanels['fail'])) {
+                $controller->viewVars['fields'] = array_diff_key($panelFields, array_flip($evalPanels['fail']));
+            }
         }
     }
 
     /**
      * List of evaluated Panels.
      *
-     * Returns the panels which theirs expression has been evaluated successfully.
+     * Returns the all the evaluated panels which are split into two
+     * types success and fail.
+     * Success type contains the panels have been evaluated with success
+     * and vice verca for fail type.
      *
      * @see \CsvMigrations\Panel::evalExpression How the expression is evaluated.
      * @param  array  $config Table's config.
@@ -137,7 +142,9 @@ class CsvViewComponent extends Component
         foreach ($panels as $name) {
             $panel = new Panel($name, $config);
             if ($panel->evalExpression($data)) {
-                array_push($result, $panel->getName());
+                $result['success'][] = $panel->getName();
+            } else {
+                $result['fail'][] = $panel->getName();
             }
         }
 

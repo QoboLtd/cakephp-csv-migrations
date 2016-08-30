@@ -92,7 +92,7 @@
             {
                 if(typeof data.error === 'undefined') {
                     that.resetPanels();
-                    that.hidePanels(data.data);
+                    that.hidePanels(data.data['fail']);
                 } else {
                     console.log('Panel - Ajax failing. Unable to hide panels.');
                 }

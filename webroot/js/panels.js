@@ -49,7 +49,7 @@
 
         panels.forEach(function(cur){
             var current = cur;
-            var $panel = $('.panel');
+            var $panel = $form.find('.panel');
             $panel.each(function() {
                 var title = $(this).find('.panel-title').text();
                 if (current === title) {

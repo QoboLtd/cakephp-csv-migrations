@@ -33,7 +33,13 @@ class AppController extends BaseController
         /*
         pass module alias to the View
          */
-        //$this->set('moduleAlias', $this->{$this->name}->moduleAlias());
+        $table = $this->loadModel();
+        if (method_exists($table, 'moduleAlias')) {
+            $alias = $table->moduleAlias();
+        } else {
+            $alias = $table->alias();
+        }
+        $this->set('moduleAlias', $alias);
     }
 
     /**

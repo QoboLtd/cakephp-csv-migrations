@@ -30,7 +30,7 @@ trait ListTrait
         nested list options
          */
         $collection = new Collection($result);
-        $result = $collection->listNested()->printer('name', 'id', null)->toArray();
+        $result = $collection->listNested()->printer('name', 'id', ' - ')->toArray();
 
         return $result;
     }

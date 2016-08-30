@@ -61,7 +61,10 @@ class DbListFieldHandler extends BaseFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $result = $data;
+    /**
+     * @todo: Check $data if it exists in the DBListItems values instead of just showing it.
+     */
+        $result = h($data);
 
         return $result;
     }

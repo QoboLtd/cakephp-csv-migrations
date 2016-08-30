@@ -11,16 +11,6 @@ class DbListFieldHandler extends BaseFieldHandler
     const FIELD_TYPE = 'string';
 
     /**
-     * Field type match pattern
-     */
-    const FIELD_TYPE_PATTERN = '/list\((.*?)\)/';
-
-    /**
-     * Input field html markup
-     */
-    const INPUT_HTML = '<div class="form-group">%s</div>';
-
-    /**
      * Method responsible for rendering field's input.
      *
      * @param  mixed  $table   name or instance of the Table

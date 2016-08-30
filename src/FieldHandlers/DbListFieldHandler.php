@@ -42,7 +42,8 @@ class DbListFieldHandler extends BaseFieldHandler
         $field = $this->_getFieldName($table, $field, $options);
         $options = [
             'class' => 'form-control',
-            'value' => $data
+            'value' => $data,
+            'required' => $csvObj->getRequired(),
         ];
         $result = $this->cakeView->cell('CsvMigrations.DbList', [$field, $list, $options])->render();
 

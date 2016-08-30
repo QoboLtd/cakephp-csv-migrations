@@ -147,6 +147,7 @@ class CsvViewComponent extends Component
                 $result['fail'][] = $panel->getName();
             }
         }
+
         return $result;
     }
 

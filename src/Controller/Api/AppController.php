@@ -13,6 +13,7 @@ use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 use CsvMigrations\FileUploadsUtils;
 use CsvMigrations\MigrationTrait;
 use CsvMigrations\Panel;
+use CsvMigrations\PanelUtilTrait;
 use CsvMigrations\PrettifyTrait;
 
 class AppController extends Controller
@@ -24,12 +25,12 @@ class AppController extends Controller
 
     use ControllerTrait;
     use MigrationTrait;
+    use PanelUtilTrait;
     use PrettifyTrait;
     use RelatedFieldTrait;
 
     public $components = [
         'RequestHandler',
-        'CsvMigrations.CsvView',
         'Crud.Crud' => [
             'actions' => [
                 'Crud.Index',
@@ -262,7 +263,7 @@ class AppController extends Controller
                 $data = $data[$key][$innerKey];
             }
         }
-        $evalPanels = $this->CsvView->getEvalPanels($tableConfig, $data);
+        $evalPanels = $this->getEvalPanels($tableConfig, $data);
         if (!empty($evalPanels)) {
             $result['success'] = true;
             $result['data'] = $evalPanels;

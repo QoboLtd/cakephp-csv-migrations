@@ -4,7 +4,6 @@
     var Panel = function(form) {
         this.form = form;
         this.module = form.attr('name');
-
         if (!this.form || !this.module) {
             return false;
         }
@@ -101,9 +100,8 @@
     };
 
 
-    $('form').find(':input').focus(function (){
-        var $form = $(this).closest('form');
-        new Panel($form);
+    $('form').each(function (i) {
+        new Panel($(this));
     });
 
 })(jQuery);

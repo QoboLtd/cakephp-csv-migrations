@@ -42,7 +42,8 @@
     };
 
     Panel.prototype.hidePanels = function(panels) {
-        if (!panels instanceof Array) {
+        var $form = this.form;
+        if (typeof panels === 'undefined' || !panels instanceof Array) {
             return false;
         }
 
@@ -89,11 +90,9 @@
             },
             success: function(data)
             {
-                if(typeof data.error === 'undefined') {
+                if(data.success) {
                     that.resetPanels();
                     that.hidePanels(data.data['fail']);
-                } else {
-                    console.log('Panel - Ajax failing. Unable to hide panels.');
                 }
             },
         });

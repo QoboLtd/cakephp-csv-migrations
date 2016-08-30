@@ -216,6 +216,17 @@ class CsvField
     }
 
     /**
+     * Alias of getLimit.
+     *
+     * @see CsvField::getLimit
+     * @return string
+     */
+    public function getListName()
+    {
+        return $this->_limit;
+    }
+
+    /**
      * The column limit is used also for the module association.
      *
      * @return int

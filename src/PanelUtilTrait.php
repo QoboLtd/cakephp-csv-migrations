@@ -7,7 +7,6 @@ use CsvMigrations\Panel;
  * Utilities trait provides assistance in using Panels.
  */
 trait PanelUtilTrait {
-
     /**
      * List of evaluated Panels.
      *

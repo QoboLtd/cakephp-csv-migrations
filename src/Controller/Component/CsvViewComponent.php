@@ -137,7 +137,7 @@ class CsvViewComponent extends Component
      */
     public function getEvalPanels(array $config, array $data)
     {
-        $result = [];
+        $result = ['success' => [], 'fail' => []];
         $panels = Panel::getPanelNames($config) ?: [];
         foreach ($panels as $name) {
             $panel = new Panel($name, $config);

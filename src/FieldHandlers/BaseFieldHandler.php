@@ -22,7 +22,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         'text' => 'textarea',
         'string' => 'text',
         'uuid' => 'text',
-        'integer' => 'number'
+        'integer' => 'number',
+        'url' => 'url',
+        'email' => 'email',
+        'phone' => 'tel',
     ];
 
     /**

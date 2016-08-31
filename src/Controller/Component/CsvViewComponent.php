@@ -208,15 +208,20 @@ class CsvViewComponent extends Component
         }
 
         $connection = ConnectionManager::get('default');
+        // NOTE: This will break if $assocTableName has no primary key or has a combined primary key
         $records = $connection
             ->execute(
-                'SELECT ' . $assocTableName . '.' . $displayField . ' FROM ' . $tableName . ' LEFT JOIN ' . $assocTableName . ' ON ' . $tableName . '.' . $assocForeignKey . ' = ' . $assocTableName . '.' . $assocPrimaryKey . ' WHERE ' . $tableName . '.' . $primaryKey . ' = :id LIMIT 1',
+                'SELECT ' . $assocTableName . '.' . $assocPrimaryKey . ' FROM ' . $tableName . ' LEFT JOIN ' . $assocTableName . ' ON ' . $tableName . '.' . $assocForeignKey . ' = ' . $assocTableName . '.' . $assocPrimaryKey . ' WHERE ' . $tableName . '.' . $primaryKey . ' = :id LIMIT 1',
                 ['id' => $recordId]
             )
             ->fetchAll('assoc');
 
         // store associated table records
-        $result = $records[0][$displayField];
+        if (!empty($records[0][$assocPrimaryKey])) {
+            $result = $association->get($records[0][$assocPrimaryKey])->$displayField;
+        } else {
+            $result = null;
+        }
 
         return $result;
     }

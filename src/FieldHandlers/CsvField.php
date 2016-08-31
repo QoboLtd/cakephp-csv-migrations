@@ -167,13 +167,14 @@ class CsvField
     public function setType($type)
     {
         if (empty($type)) {
-            throw new InvalidArgumentException('Empty field type is not allowed: ' . $this->getName());
+            throw new InvalidArgumentException(__CLASS__ . ': Empty field type is not allowed: ' . $this->getName());
         }
 
         $type = $this->_extractType($type);
 
+        $type = 'aaa';
         if (!in_array($type, FieldHandlerFactory::getList())) {
-            throw new InvalidArgumentException('Unsupported field type: ' . $type);
+            throw new InvalidArgumentException(__CLASS__ . ': Unsupported field type: ' . $type);
         }
 
         $this->_type = $type;

@@ -108,11 +108,11 @@ class DbField
     public function setType($type)
     {
         if (empty($type)) {
-            throw new InvalidArgumentException('Empty field type is not allowed');
+            throw new InvalidArgumentException(__CLASS__ . ': Empty field type is not allowed');
         }
 
         if (!in_array($type, $this->_supportedTypes)) {
-            throw new InvalidArgumentException('Unsupported field type: ' . $type);
+            throw new InvalidArgumentException(__CLASS__ . ': Unsupported field type: ' . $type);
         }
 
         $this->_type = $type;

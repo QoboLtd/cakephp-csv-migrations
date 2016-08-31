@@ -29,6 +29,4 @@ class PhoneFieldHandler extends BaseFieldHandler
 
         return $dbFields;
     }
-
-
 }

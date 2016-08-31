@@ -9,7 +9,7 @@ class TimeFieldHandler extends BaseFieldHandler
     /**
      * Field type
      */
-    const FIELD_TYPE = 'timepicker';
+    const INPUT_FIELD_TYPE = 'timepicker';
 
     /**
      * Time format
@@ -42,7 +42,7 @@ class TimeFieldHandler extends BaseFieldHandler
             return $this->cakeView->element($options['element'], [
                 'options' => [
                     'fieldName' => $fieldName,
-                    'type' => static::FIELD_TYPE,
+                    'type' => static::INPUT_FIELD_TYPE,
                     'label' => true,
                     'required' => $required,
                     'value' => $data

@@ -9,7 +9,7 @@ class DatetimeFieldHandler extends BaseFieldHandler
     /**
      * Field type
      */
-    const FIELD_TYPE = 'datetimepicker';
+    const INPUT_FIELD_TYPE = 'datetimepicker';
 
     /**
      * Datetime format
@@ -42,7 +42,7 @@ class DatetimeFieldHandler extends BaseFieldHandler
             return $this->cakeView->element($options['element'], [
                 'options' => [
                     'fieldName' => $fieldName,
-                    'type' => static::FIELD_TYPE,
+                    'type' => static::INPUT_FIELD_TYPE,
                     'label' => true,
                     'required' => $required,
                     'value' => $data

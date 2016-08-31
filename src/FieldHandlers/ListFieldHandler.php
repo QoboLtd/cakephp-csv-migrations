@@ -9,11 +9,6 @@ class ListFieldHandler extends BaseFieldHandler
     use ListTrait;
 
     /**
-     * Field type
-     */
-    const FIELD_TYPE = 'string';
-
-    /**
      * Field type match pattern
      */
     const FIELD_TYPE_PATTERN = '/list\((.*?)\)/';

@@ -7,7 +7,12 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 class DatetimeFieldHandler extends BaseFieldHandler
 {
     /**
-     * Field type
+     * Database field type
+     */
+    const DB_FIELD_TYPE = 'datetime';
+
+    /**
+     * Input field type
      */
     const INPUT_FIELD_TYPE = 'datetimepicker';
 

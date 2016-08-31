@@ -7,22 +7,7 @@ use Phinx\Db\Adapter\MysqlAdapter;
 class TextFieldHandler extends BaseFieldHandler
 {
     /**
-     * Method responsible for converting csv field instance to database field instance.
-     *
-     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @return array list of DbField instances
+     * Database field type
      */
-    public function fieldToDb(CsvField $csvField)
-    {
-        $dbFields[] = new DbField(
-            $csvField->getName(),
-            $csvField->getType(),
-            MysqlAdapter::TEXT_LONG,
-            $csvField->getRequired(),
-            $csvField->getNonSearchable(),
-            $csvField->getUnique()
-        );
-
-        return $dbFields;
-    }
+    const DB_FIELD_TYPE = MysqlAdapter::TEXT_LONG;
 }

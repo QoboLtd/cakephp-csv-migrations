@@ -8,9 +8,9 @@ use CsvMigrations\FileUploadsUtils;
 class FileFieldHandler extends BaseFileFieldHandler
 {
     /**
-     * Field type
+     * Database field type
      */
-    const FIELD_TYPE = 'uuid';
+    const DB_FIELD_TYPE = 'uuid';
 
     /**
      * Defines the layout of the wrapper

@@ -5,6 +5,14 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
 class BooleanFieldHandler extends BaseFieldHandler
 {
+    /**
+     * Database field type
+     */
+    const DB_FIELD_TYPE = 'boolean';
+
+    /**
+     * Input field type
+     */
     const INPUT_FIELD_TYPE = 'checkbox';
 
     /**

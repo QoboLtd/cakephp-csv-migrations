@@ -15,7 +15,7 @@ class RelatedFieldHandler extends BaseFieldHandler
     /**
      * Field type
      */
-    const FIELD_TYPE = 'uuid';
+    const DB_FIELD_TYPE = 'uuid';
 
     /**
      * Action name for html link
@@ -159,7 +159,7 @@ class RelatedFieldHandler extends BaseFieldHandler
     {
         $dbFields[] = new DbField(
             $csvField->getName(),
-            static::FIELD_TYPE,
+            static::DB_FIELD_TYPE,
             null,
             $csvField->getRequired(),
             $csvField->getNonSearchable(),

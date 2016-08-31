@@ -11,7 +11,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * Field type
      */
-    const FIELD_TYPE = 'string';
+    const DB_FIELD_TYPE = 'string';
 
     /**
      * CsvMigrations View instance.
@@ -92,7 +92,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $dbFields[] = new DbField(
             $csvField->getName(),
-            $csvField->getType(),
+            static::DB_FIELD_TYPE,
             $csvField->getLimit(),
             $csvField->getRequired(),
             $csvField->getNonSearchable(),

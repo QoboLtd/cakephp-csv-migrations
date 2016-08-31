@@ -7,6 +7,11 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 class DateFieldHandler extends BaseFieldHandler
 {
     /**
+     * Database field type
+     */
+    const DB_FIELD_TYPE = 'date';
+
+    /**
      * Field type
      */
     const INPUT_FIELD_TYPE = 'datepicker';

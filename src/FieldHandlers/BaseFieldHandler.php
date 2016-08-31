@@ -9,7 +9,7 @@ use CsvMigrations\View\AppView;
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
     /**
-     * Field type
+     * Default Database Field type
      */
     const DB_FIELD_TYPE = 'string';
 

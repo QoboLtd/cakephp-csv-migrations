@@ -189,8 +189,31 @@ class AppController extends Controller
     {
         $this->Crud->on('beforeLookup', function (Event $event) {
             if (!empty($this->request->query['query'])) {
-                $displayField = $this->{$this->name}->displayField();
-                $this->paginate['conditions'] = [$displayField . ' LIKE' => '%' . $this->request->query['query'] . '%'];
+                $typeaheadFields = [];
+
+                // Get typeahead fields from configuration
+                if (method_exists($this->{$this->name}, 'typeaheadFields') && is_callable([$this->{$this->name}, 'typeaheadFields'])) {
+                    $typeaheadFields = $this->{$this->name}->typeaheadFields();
+                }
+
+                // If there are no typeahead fields configured, use displayFields()
+                if (empty($typeaheadFields)) {
+                    $typeaheadFields[] = $this->{$this->name}->displayField();
+                }
+
+                $conditions = [];
+                if (count($typeaheadFields) > 1) {
+                    $conditions['OR'] = [];
+                    foreach ($typeaheadFields as $field) {
+                        $conditions['OR'][] = [ $field . ' LIKE' => '%' . $this->request->query['query'] . '%'];
+                    }
+                } elseif (count($typeaheadFields) == 1) {
+                        $conditions[] = [ $typeaheadFields[0] . ' LIKE' => '%' . $this->request->query['query'] . '%'];
+                } else {
+                    throw new \RuntimeException("No typeahead or display field configured for " . $this->name);
+                }
+
+                $this->paginate['conditions'] = $conditions;
             }
         });
 

@@ -42,6 +42,13 @@ trait ConfigurationTrait
     protected $_lookupFields;
 
     /**
+     * Typeahead fields used for searching in related fields
+     *
+     * @var array
+     */
+    protected $_typeaheadFields;
+
+    /**
      * Module alias
      *
      * @var string
@@ -80,6 +87,11 @@ trait ConfigurationTrait
         // lookup field(s) from configuration file
         if (isset($this->_config['table']['lookup_fields'])) {
             $this->lookupFields($this->_config['table']['lookup_fields']);
+        }
+
+        // typeahead field(s) from configuration file
+        if (isset($this->_config['table']['typeahead_fields'])) {
+            $this->typeaheadFields($this->_config['table']['typeahead_fields']);
         }
 
         // set module alias from configuration file
@@ -121,6 +133,21 @@ trait ConfigurationTrait
         }
 
         return $this->_lookupFields;
+    }
+
+    /**
+     * Returns the typeahead fields or sets a new one
+     *
+     * @param string|null $fields sets typeahead fields
+     * @return string
+     */
+    public function typeaheadFields($fields = null)
+    {
+        if ($fields !== null) {
+            $this->_typeaheadFields = explode(',', $fields);
+        }
+
+        return $this->_typeaheadFields;
     }
 
     /**

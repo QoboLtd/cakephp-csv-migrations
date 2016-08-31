@@ -89,7 +89,11 @@ var typeahead = typeahead || {};
             },
             onSelect: function(data) {
                 that._onSelect(input, hidden_input, data);
-            }
+            },
+            // No need to run matcher as ajax results are already filtered
+            matcher: function (item) {
+                return true;
+            },
         });
     };
 

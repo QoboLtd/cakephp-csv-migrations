@@ -23,6 +23,7 @@ class DbListsFixture extends TestFixture
         'modified' => ['type' => 'datetime', 'length' => null, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
+            'UNIQUE_NAME' => ['type' => 'unique', 'columns' => ['name'], 'length' => []],
         ],
         '_options' => [
             'engine' => 'InnoDB',
@@ -38,10 +39,10 @@ class DbListsFixture extends TestFixture
      */
     public $records = [
         [
-            'id' => '476d97d9-d53d-4f09-a68d-a0eed330ad5a',
+            'id' => 'faf27922-ab04-475d-b923-5dd15c59c85e',
             'name' => 'Lorem ipsum dolor sit amet',
-            'created' => '2016-08-30 09:07:50',
-            'modified' => '2016-08-30 09:07:50'
+            'created' => '2016-08-31 00:05:05',
+            'modified' => '2016-08-31 00:05:05'
         ],
     ];
 }

@@ -9,6 +9,11 @@ use CsvMigrations\View\AppView;
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
     /**
+     * Field type
+     */
+    const FIELD_TYPE = 'string';
+
+    /**
      * CsvMigrations View instance.
      *
      * @var \CsvMigrations\View\AppView

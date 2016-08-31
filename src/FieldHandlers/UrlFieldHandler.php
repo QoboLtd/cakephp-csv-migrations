@@ -6,11 +6,6 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 class UrlFieldHandler extends BaseFieldHandler
 {
     /**
-     * Field type
-     */
-    const FIELD_TYPE = 'string';
-
-    /**
      * Method that renders default type field's value.
      *
      * @param  mixed  $table   name or instance of the Table
@@ -36,7 +31,7 @@ class UrlFieldHandler extends BaseFieldHandler
     {
         $dbFields[] = new DbField(
             $csvField->getName(),
-            self::FIELD_TYPE,
+            parent::FIELD_TYPE,
             $csvField->getLimit(),
             $csvField->getRequired(),
             $csvField->getNonSearchable(),

@@ -48,6 +48,11 @@ class CsvField
     const DEFAULT_FIELD_TYPE = 'string';
 
     /**
+     * Default value for field limit
+     */
+    const DEFAULT_FIELD_LIMIT = null;
+
+    /**
      * Default value for field required
      */
     const DEFAULT_FIELD_REQUIRED = false;
@@ -168,7 +173,7 @@ class CsvField
             preg_match(static::PATTERN_TYPE, $type, $matches);
             $limit = $matches[2];
         } else {
-            $limit = null;
+            $limit = static::DEFAULT_FIELD_LIMIT;
         }
 
         return $limit;

@@ -6,6 +6,10 @@ use Phinx\Db\Adapter\MysqlAdapter;
 
 class TextFieldHandler extends BaseFieldHandler
 {
+    /**
+     * {@inheritDoc}
+     * In addtion, it sets the limit to Phinx\Db\Adapter\MysqlAdapter::TEXT_LONG
+     */
     public function fieldToDb(CsvField $csvField)
     {
         $dbFields[] = new DbField(

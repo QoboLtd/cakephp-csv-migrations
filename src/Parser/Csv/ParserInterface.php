@@ -9,7 +9,7 @@ interface ParserInterface
      * Parses a given file according to the specified structure
      *
      * @param string $path      Path to file
-     * @param array  $structure Structure of the of the file
+     * @param array  $structure Structure of the file
      * @return array
      */
     public function parseFromPath($path, array $structure = []);

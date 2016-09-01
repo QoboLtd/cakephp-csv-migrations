@@ -106,7 +106,7 @@ class CsvMigrationTask extends MigrationTask
      */
     protected function _getLastModifiedTime($tableName)
     {
-        $tableName = Inflector::humanize($tableName);
+        $tableName = Inflector::camelize($tableName);
 
         $path = Configure::readOrFail('CsvMigrations.migrations.path') . $tableName;
         $path .= DS . Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . static::FILE_EXTENSION;

@@ -43,6 +43,31 @@ class CsvField
     const FIELD_UNIQUE = 'unique';
 
     /**
+     * Default value for field type
+     */
+    const DEFAULT_FIELD_TYPE = 'string';
+
+    /**
+     * Default value for field limit
+     */
+    const DEFAULT_FIELD_LIMIT = null;
+
+    /**
+     * Default value for field required
+     */
+    const DEFAULT_FIELD_REQUIRED = false;
+
+    /**
+     * Default value for field non-searchable
+     */
+    const DEFAULT_FIELD_NON_SEARCHABLE = false;
+
+    /**
+     * Default value for field unique
+     */
+    const DEFAULT_FIELD_UNIQUE = false;
+
+    /**
      * field name
      *
      * @var string
@@ -91,12 +116,33 @@ class CsvField
      */
     public function __construct(array $row)
     {
+        // Merge row values with defaults
+        $defaults = $this->_getDefaults();
+        $row = array_merge($defaults, $row);
+
         $this->setName($row[static::FIELD_NAME]);
         $this->setType($row[static::FIELD_TYPE]);
         $this->setLimit($row[static::FIELD_TYPE]);
         $this->setRequired($row[static::FIELD_REQUIRED]);
         $this->setNonSearchable($row[static::FIELD_NON_SEARCHABLE]);
         $this->setUnique($row[static::FIELD_UNIQUE]);
+    }
+
+    /**
+     * Get default values
+     *
+     * @return array
+     */
+    protected function _getDefaults()
+    {
+        $result = [
+            static::FIELD_TYPE => static::DEFAULT_FIELD_TYPE,
+            static::FIELD_REQUIRED => static::DEFAULT_FIELD_REQUIRED,
+            static::FIELD_NON_SEARCHABLE => static::DEFAULT_FIELD_NON_SEARCHABLE,
+            static::FIELD_UNIQUE => static::DEFAULT_FIELD_UNIQUE,
+        ];
+
+        return $result;
     }
 
     /**
@@ -127,7 +173,7 @@ class CsvField
             preg_match(static::PATTERN_TYPE, $type, $matches);
             $limit = $matches[2];
         } else {
-            $limit = null;
+            $limit = static::DEFAULT_FIELD_LIMIT;
         }
 
         return $limit;

@@ -21,6 +21,33 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test that default values are set correct
+     *
+     * @see Task #2431
+     */
+    public function testDefaults()
+    {
+        $csvField = new CsvField(['name' => 'foobar']);
+
+        $this->assertEquals('foobar', $csvField->getName(), "Field name was not set correctly");
+
+        $this->assertEquals('string', $csvField->getType(), "Default field type was not set to string");
+        $this->assertEquals(CsvField::DEFAULT_FIELD_TYPE, $csvField->getType(), "Default field type was not set to correctly");
+
+        $this->assertEquals(null, $csvField->getLimit(), "Field limit was not set to null");
+        $this->assertEquals(CsvField::DEFAULT_FIELD_LIMIT, $csvField->getLimit(), "Default field limit was not set coorectly");
+
+        $this->assertEquals(false, $csvField->getRequired(), "Field required was not set to false");
+        $this->assertEquals(CsvField::DEFAULT_FIELD_REQUIRED, $csvField->getRequired(), "Default field required was not set coorectly");
+
+        $this->assertEquals(false, $csvField->getNonSearchable(), "Field non-searchable was not set to false");
+        $this->assertEquals(CsvField::DEFAULT_FIELD_NON_SEARCHABLE, $csvField->getNonSearchable(), "Default field non-searchable was not set coorectly");
+
+        $this->assertEquals(false, $csvField->getUnique(), "Field unique was not set to false");
+        $this->assertEquals(CsvField::DEFAULT_FIELD_UNIQUE, $csvField->getUnique(), "Default field unique was not set coorectly");
+    }
+
+    /**
      * @dataProvider nameSetterProvider
      */
     public function testSetName($expected, $name)

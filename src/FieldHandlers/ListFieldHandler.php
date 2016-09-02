@@ -9,11 +9,6 @@ class ListFieldHandler extends BaseFieldHandler
     use ListTrait;
 
     /**
-     * Field type
-     */
-    const FIELD_TYPE = 'string';
-
-    /**
      * Field type match pattern
      */
     const FIELD_TYPE_PATTERN = '/list\((.*?)\)/';
@@ -90,7 +85,7 @@ class ListFieldHandler extends BaseFieldHandler
     {
         $dbFields[] = new DbField(
             $csvField->getName(),
-            static::FIELD_TYPE,
+            static::DB_FIELD_TYPE,
             null,
             $csvField->getRequired(),
             $csvField->getNonSearchable(),

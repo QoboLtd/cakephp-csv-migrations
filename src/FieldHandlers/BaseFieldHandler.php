@@ -9,6 +9,11 @@ use CsvMigrations\View\AppView;
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
     /**
+     * Default Database Field type
+     */
+    const DB_FIELD_TYPE = 'string';
+
+    /**
      * CsvMigrations View instance.
      *
      * @var \CsvMigrations\View\AppView
@@ -87,7 +92,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $dbFields[] = new DbField(
             $csvField->getName(),
-            $csvField->getType(),
+            static::DB_FIELD_TYPE,
             $csvField->getLimit(),
             $csvField->getRequired(),
             $csvField->getNonSearchable(),

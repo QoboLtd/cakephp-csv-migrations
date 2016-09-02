@@ -7,9 +7,14 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 class DateFieldHandler extends BaseFieldHandler
 {
     /**
+     * Database field type
+     */
+    const DB_FIELD_TYPE = 'date';
+
+    /**
      * Field type
      */
-    const FIELD_TYPE = 'datepicker';
+    const INPUT_FIELD_TYPE = 'datepicker';
 
     /**
      * Date format
@@ -42,7 +47,7 @@ class DateFieldHandler extends BaseFieldHandler
             return $this->cakeView->element($options['element'], [
                 'options' => [
                     'fieldName' => $fieldName,
-                    'type' => static::FIELD_TYPE,
+                    'type' => static::INPUT_FIELD_TYPE,
                     'label' => true,
                     'required' => $required,
                     'value' => $data

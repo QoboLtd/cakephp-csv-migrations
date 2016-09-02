@@ -7,10 +7,8 @@ use Phinx\Db\Adapter\MysqlAdapter;
 class TextFieldHandler extends BaseFieldHandler
 {
     /**
-     * Method responsible for converting csv field instance to database field instance.
-     *
-     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @return array list of DbField instances
+     * {@inheritDoc}
+     * In addtion, it sets the limit to Phinx\Db\Adapter\MysqlAdapter::TEXT_LONG
      */
     public function fieldToDb(CsvField $csvField)
     {

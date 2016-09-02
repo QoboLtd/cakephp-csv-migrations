@@ -260,7 +260,7 @@ class AppController extends Controller
     /**
      * Panels to show.
      *
-     * @return void
+     * @return array|void
      */
     public function panels()
     {

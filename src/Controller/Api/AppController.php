@@ -8,7 +8,6 @@ use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Crud\Controller\ControllerTrait;
-use CsvMigrations\CsvTrait;
 use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 use CsvMigrations\FileUploadsUtils;
 use CsvMigrations\MigrationTrait;

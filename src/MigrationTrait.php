@@ -3,14 +3,12 @@ namespace CsvMigrations;
 
 use Cake\Core\Configure;
 use CsvMigrations\CsvMigrationsUtils;
-use CsvMigrations\CsvTrait;
 use CsvMigrations\FieldHandlers\CsvField;
+use CsvMigrations\Parser\Csv\MigrationParser;
 use RuntimeException;
 
 trait MigrationTrait
 {
-    use CsvTrait;
-
     /**
      * File extension
      */
@@ -31,6 +29,8 @@ trait MigrationTrait
      */
     public function getFieldsDefinitions($moduleName = null)
     {
+        $result = [];
+
         if (is_null($moduleName)) {
             if (is_callable([$this, 'alias'])) {
                 $moduleName = $this->alias();
@@ -42,7 +42,13 @@ trait MigrationTrait
         $path = Configure::readOrFail('CsvMigrations.migrations.path') . $moduleName . DS;
         $path .= Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . $this->__extension;
 
-        $result = $this->_prepareCsvData($this->_getCsvData($path));
+        // Parser knows how to make sure that the file exists.  But it can
+        // also throw other exceptions, which we don't want to avoid for
+        // now.
+        if (is_readable($path)) {
+            $parser = new MigrationParser();
+            $result = $parser->wrapFromPath($path);
+        }
 
         return $result;
     }
@@ -181,12 +187,13 @@ trait MigrationTrait
             $plugin = $this->_getPluginNameFromRegistryAlias();
         }
 
+        $parser = new MigrationParser();
         foreach ($csvFiles as $csvModule => $paths) {
             if (!is_null($plugin)) {
                 $csvModule = $plugin . '.' . $csvModule;
             }
             foreach ($paths as $path) {
-                $result[$csvModule] = $this->_prepareCsvData($this->_getCsvData($path));
+                $result[$csvModule] = $parser->wrapFromPath($path);
             }
         }
 

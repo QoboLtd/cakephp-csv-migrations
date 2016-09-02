@@ -12,6 +12,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
+use CsvMigrations\Parser\Csv\ViewParser;
 use \RuntimeException;
 
 /**
@@ -390,8 +391,9 @@ class CsvViewComponent extends Component
     protected function _getFieldsFromCsv($path)
     {
         $result = [];
-        if (file_exists($path)) {
-            $result = $this->_getCsvData($path);
+        if (is_readable($path)) {
+            $parser = new ViewParser();
+            $result = $parser->parseFromPath($path);
         }
 
         return $result;
@@ -418,33 +420,6 @@ class CsvViewComponent extends Component
         }
 
         return $data;
-    }
-
-    /**
-     * Method that retrieves csv file data.
-     * @param  string $path csv file path
-     * @return array        csv data
-     * @todo this method should be moved to a Trait class as is used throught Csv Migrations and Csv Views plugins
-     */
-    protected function _getCsvData($path)
-    {
-        $result = [];
-        if (file_exists($path)) {
-            if (false !== ($handle = fopen($path, 'r'))) {
-                $row = 0;
-                while (false !== ($data = fgetcsv($handle, 0, ','))) {
-                    // skip first row
-                    if (0 === $row) {
-                        $row++;
-                        continue;
-                    }
-                    $result[] = $data;
-                }
-                fclose($handle);
-            }
-        }
-
-        return $result;
     }
 
     /**

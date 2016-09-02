@@ -7,6 +7,7 @@ use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\Parser\Csv\MigrationParser;
 use Migrations\AbstractMigration;
 use Migrations\Table;
 use RuntimeException;
@@ -68,13 +69,9 @@ class CsvMigration extends AbstractMigration
             $path .= Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . static::EXTENSION;
         }
 
-        $csvData = $this->_getCsvData($path);
+        $parser = new MigrationParser();
+        $csvData = $parser->wrapFromPath($path);
 
-        if (empty($csvData)) {
-            throw new RuntimeException('No CSV data found for [' . $tableName . '] module.');
-        }
-
-        $csvData = $this->_prepareCsvData($csvData);
         $tableFields = $this->_getTableFields();
 
         if (empty($tableFields)) {

@@ -19,11 +19,7 @@ class Table extends BaseTable
 {
     use ConfigurationTrait;
     use FieldTrait;
-    use ListTrait
-    {
-        ListTrait::_prepareCsvData insteadof MigrationTrait;
-        ListTrait::_getCsvData insteadof MigrationTrait;
-    }
+    use ListTrait;
     use MigrationTrait;
 
     /**

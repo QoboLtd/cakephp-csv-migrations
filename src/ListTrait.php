@@ -3,18 +3,10 @@ namespace CsvMigrations;
 
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
-use CsvMigrations\CsvTrait;
+use CsvMigrations\Parser\Csv\ListParser;
 
 trait ListTrait
 {
-    use CsvTrait;
-
-    /**
-     * Field parameters
-     * @var array
-     */
-    protected $_fieldParams = ['value', 'label', 'inactive'];
-
     /**
      * Method that retrieves select input options by list name.
      *
@@ -45,8 +37,24 @@ trait ListTrait
     private function __getListFieldOptions($listName, $prefix = null)
     {
         $result = [];
+
         $path = Configure::readOrFail('CsvMigrations.lists.path') . $listName . '.csv';
-        $listData = $this->_getCsvData($path);
+        $listData = [];
+
+        // ListParser does its own check for whether or not the
+        // file is_readable(), and if not - throws an exception.
+        // In this particular case though, we are called recursively,
+        // to fetch child list items, if any.  Before we attempt to
+        // get those, it's good to check if they exist.
+        //
+        // This can also be implemented with try/catch, but there
+        // might be more reasons for exceptions during parsing, so
+        // this check is the easiest approach.
+        if (is_readable($path)) {
+            $parser = new ListParser();
+            $listData = $parser->parseFromPath($path);
+        }
+
         if (!empty($listData)) {
             $result = $this->__prepareListOptions($listData, $listName, $prefix);
         }
@@ -95,15 +103,8 @@ trait ListTrait
     private function __prepareListOptions($data, $listName, $prefix = null)
     {
         $result = [];
-        $paramsCount = count($this->_fieldParams);
 
-        foreach ($data as $row) {
-            $colCount = count($row);
-            if ($colCount !== $paramsCount) {
-                throw new \RuntimeException(sprintf($this->_errorMessages[__FUNCTION__], $colCount, $paramsCount));
-            }
-            $field = array_combine($this->_fieldParams, $row);
-
+        foreach ($data as $field) {
             $result[$prefix . $field['value']] = [
                 'label' => $field['label'],
                 'inactive' => (bool)$field['inactive']

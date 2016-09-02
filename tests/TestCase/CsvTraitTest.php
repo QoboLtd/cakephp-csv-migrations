@@ -32,6 +32,41 @@ use PHPUnit_Framework_TestCase;
 class CsvTraitTest extends PHPUnit_Framework_TestCase
 {
     /**
+     * Old implementation of CsvViewComponent::_getCsvData()
+     */
+    protected function oldCompGetCsvData($path)
+    {
+        $result = [];
+        if (file_exists($path)) {
+            if (false !== ($handle = fopen($path, 'r'))) {
+                $row = 0;
+                while (false !== ($data = fgetcsv($handle, 0, ','))) {
+                    // skip first row
+                    if (0 === $row) {
+                        $row++;
+                        continue;
+                    }
+                    $result[] = $data;
+                }
+                fclose($handle);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * New implementation of CsvViewComponent::_getCsvData()
+     */
+    protected function newCompGetCsvData($path)
+    {
+        $reader = Reader::createFromPath($path);
+        $result = $reader->setOffset(1)->fetchAll();
+
+        return $result;
+    }
+
+    /**
      * New implementation of CsvTrait::_getCsvData()
      */
     protected function newGetCsvData($path, $skipHeaders = true)
@@ -182,4 +217,35 @@ class CsvTraitTest extends PHPUnit_Framework_TestCase
         $newResult = $this->newPrepareCsvData($file);
         $this->assertEquals($oldResult, $newResult, "New CSV preparation returns different result from the old one");
     }
+
+    /**
+     * Temporary test of CsvViewComponent::_getCsvData()
+     *
+     * This test is here temporarily just for the
+     * migration from our CSV parsing implementation
+     * to that one of the league/csv.
+     *
+     * It makes sure that new implementation returns
+     * exactly the same results as the old one.
+     */
+    public function testCompGetCsvData()
+    {
+        // View with panels (add/edit/view)
+        $file = dirname(__DIR__) . DS . 'data' . DS . 'CsvMigrations' . DS . 'views' . DS . 'Foo' . DS . 'view.csv';
+
+        $oldResult = $this->oldCompGetCsvData($file);
+        $newResult = $this->newCompGetCsvData($file);
+
+        $this->assertEquals($oldResult, $newResult, "New view CSV parsing returns different result from the old one");
+
+        // View without panels (index)
+        $file = dirname(__DIR__) . DS . 'data' . DS . 'CsvMigrations' . DS . 'views' . DS . 'Foo' . DS . 'index.csv';
+
+        $oldResult = $this->oldCompGetCsvData($file);
+        $newResult = $this->newCompGetCsvData($file);
+
+        $this->assertEquals($oldResult, $newResult, "New view CSV parsing returns different result from the old one");
+
+    }
+
 }

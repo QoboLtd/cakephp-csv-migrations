@@ -115,6 +115,9 @@ class CsvMigrationTask extends MigrationTask
             throw new MissingCsvException($tableName);
         }
 
-        return filemtime($path);
+        // Unit time stamp to YYYYMMDDhhmmss
+        $result = date('YmdHis', filemtime($path));
+
+        return $result;
     }
 }

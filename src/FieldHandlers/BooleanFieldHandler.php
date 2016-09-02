@@ -5,7 +5,15 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
 class BooleanFieldHandler extends BaseFieldHandler
 {
-    const FIELD_TYPE = 'checkbox';
+    /**
+     * Database field type
+     */
+    const DB_FIELD_TYPE = 'boolean';
+
+    /**
+     * Input field type
+     */
+    const INPUT_FIELD_TYPE = 'checkbox';
 
     /**
      * Method responsible for rendering field's input.
@@ -19,7 +27,7 @@ class BooleanFieldHandler extends BaseFieldHandler
     public function renderInput($table, $field, $data = '', array $options = [])
     {
         return $this->cakeView->Form->input($this->_getFieldName($table, $field, $options), [
-            'type' => static::FIELD_TYPE,
+            'type' => static::INPUT_FIELD_TYPE,
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'checked' => $data
         ]);

@@ -8,9 +8,9 @@ use CsvMigrations\FileUploadsUtils;
 class FileFieldHandler extends BaseFileFieldHandler
 {
     /**
-     * Field type
+     * Database field type
      */
-    const FIELD_TYPE = 'uuid';
+    const DB_FIELD_TYPE = 'uuid';
 
     /**
      * Defines the layout of the wrapper
@@ -104,25 +104,5 @@ class FileFieldHandler extends BaseFileFieldHandler
         $data = $options['entity']['id'];
 
         return parent::renderValue($table, $field, $data, $options);
-    }
-
-    /**
-     * Method responsible for converting csv field instance to database field instance.
-     *
-     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @return array list of DbField instances
-     */
-    public function fieldToDb(CsvField $csvField)
-    {
-        $dbFields[] = new DbField(
-            $csvField->getName(),
-            static::FIELD_TYPE,
-            $csvField->getLimit(),
-            $csvField->getRequired(),
-            $csvField->getNonSearchable(),
-            $csvField->getUnique()
-        );
-
-        return $dbFields;
     }
 }

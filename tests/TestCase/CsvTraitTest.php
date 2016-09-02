@@ -245,7 +245,5 @@ class CsvTraitTest extends PHPUnit_Framework_TestCase
         $newResult = $this->newCompGetCsvData($file);
 
         $this->assertEquals($oldResult, $newResult, "New view CSV parsing returns different result from the old one");
-
     }
-
 }

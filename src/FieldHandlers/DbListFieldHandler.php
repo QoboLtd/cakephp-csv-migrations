@@ -8,7 +8,7 @@ class DbListFieldHandler extends BaseFieldHandler
     /**
      * Field type
      */
-    const FIELD_TYPE = 'string';
+    const DB_FIELD_TYPE = 'string';
 
     /**
      * Method responsible for rendering field's input.
@@ -69,7 +69,7 @@ class DbListFieldHandler extends BaseFieldHandler
     {
         $dbFields[] = new DbField(
             $csvField->getName(),
-            static::FIELD_TYPE,
+            static::DB_FIELD_TYPE,
             null,
             $csvField->getRequired(),
             $csvField->getNonSearchable(),

@@ -3,7 +3,7 @@ namespace CsvMigrations\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
-class DbListFieldHandler extends BaseFieldHandler
+class DblistFieldHandler extends BaseFieldHandler
 {
     /**
      * Field type

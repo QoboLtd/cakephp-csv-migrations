@@ -37,21 +37,21 @@ class DblistCell extends Cell
      *
      * @throws RunTimeException If the value is not found
      * @param  string $listItemValue List item value
-     * @param  string $name Name of the list
+     * @param  string $list Name of the list
      * @return void
      */
-    public function renderValue($listItemValue, $name = null)
+    public function renderValue($listItemValue, $list = null)
     {
         $this->loadModel('CsvMigrations.Dblists');
-        $this->_createList($name);
-        $query = $this->findByName($name);
+        $this->_createList($list);
+        $query = $this->Dblists->findByName($list);
         $query = $query->matching('DblistItems', function ($q) use ($listItemValue) {
             return $q->where(['DblistItems.value' => $listItemValue]);
         });
         if (!$query->isEmpty()) {
             $data = $query->first()->_matchingData['DblistItems']->get('name');
         } else {
-            $data = __d('CsvMigrations', 'The value "{0}" cannot be found in the list "{1}"', $listItemValue, $name);
+            $data = __d('CsvMigrations', 'The value "{0}" cannot be found in the list "{1}"', $listItemValue, $list);
         }
 
         $this->set('data', $data);

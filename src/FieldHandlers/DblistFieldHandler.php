@@ -35,7 +35,7 @@ class DblistFieldHandler extends BaseFieldHandler
             'value' => $data,
             'required' => $csvObj->getRequired(),
         ];
-        $result = $this->cakeView->cell('CsvMigrations.Dblist', [$field, $list, $options])->render();
+        $result = $this->cakeView->cell('CsvMigrations.Dblist::' . __FUNCTION__, [$field, $list, $options])->render(__FUNCTION__);
 
         return $result;
     }
@@ -59,7 +59,7 @@ class DblistFieldHandler extends BaseFieldHandler
         $csvObj = $options['fieldDefinitions'];
         $list = $csvObj->getListName();
 
-        return $this->cakeView->cell('CsvMigrations.Dblist::renderValue', [$data, $list])->render(__FUNCTION__);
+        return $this->cakeView->cell('CsvMigrations.Dblist::' . __FUNCTION__, [$data, $list])->render(__FUNCTION__);
     }
 
     /**

@@ -22,7 +22,7 @@ class DblistCell extends Cell
      *
      * @return void
      */
-    public function display($field, $list, array $options = [])
+    public function renderInput($field, $list, array $options = [])
     {
         $this->loadModel('CsvMigrations.Dblists');
         $selOptions = $this->Dblists->find('options', ['name' => $list]);

@@ -15,7 +15,6 @@ class AppController extends BaseController
     {
         parent::initialize();
         $this->_fileUploadsUtils = new FileUploadsUtils($this->{$this->name});
-        //$this->loadComponent('CsvMigrations.CsvView');
     }
 
     /**

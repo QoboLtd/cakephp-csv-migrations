@@ -18,8 +18,11 @@ class DblistCell extends Cell
     protected $_validCellOptions = [];
 
     /**
-     * Default display method.
+     * Render the select options.
      *
+     * @param  string $field   field name
+     * @param  string $list    List name
+     * @param  array  $options Input options
      * @return void
      */
     public function renderInput($field, $list, array $options = [])

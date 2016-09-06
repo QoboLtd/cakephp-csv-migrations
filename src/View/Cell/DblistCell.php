@@ -25,7 +25,7 @@ class DblistCell extends Cell
      * @param  array  $options Input options
      * @return void
      */
-    public function renderInput($field, $list, array $options = [])
+    public function renderInput($field, $list = null, array $options = [])
     {
         $this->loadModel('CsvMigrations.Dblists');
         $this->_createList($list);

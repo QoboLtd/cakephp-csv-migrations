@@ -6,7 +6,7 @@ use Cake\View\Cell;
 /**
  * DbList cell
  */
-class DbListCell extends Cell
+class DblistCell extends Cell
 {
 
     /**

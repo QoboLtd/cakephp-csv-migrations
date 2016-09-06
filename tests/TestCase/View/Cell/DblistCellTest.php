@@ -2,7 +2,7 @@
 namespace CsvMigrations\Test\TestCase\View\Cell;
 
 use Cake\TestSuite\TestCase;
-use CsvMigrations\View\Cell\DbListCell;
+use CsvMigrations\View\Cell\DblistCell;
 
 /**
  * CsvMigrations\View\Cell\DbListCell Test Case
@@ -41,7 +41,7 @@ class DblistCellTest extends TestCase
         parent::setUp();
         $this->request = $this->getMockBuilder('Cake\Network\Request')->getMock();
         $this->response = $this->getMockBuilder('Cake\Network\Response')->getMock();
-        $this->DbList = new DbListCell($this->request, $this->response);
+        $this->Dblist = new DblistCell($this->request, $this->response);
     }
 
     /**

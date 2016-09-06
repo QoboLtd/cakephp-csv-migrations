@@ -106,7 +106,7 @@ class DblistsTable extends Table
             foreach ($items as $entity) {
                 $name = h($entity->get('name'));
                 $value = h($entity->get('value'));
-                $result[$name] = $value;
+                $result[$value] = $name;
             }
         }
 

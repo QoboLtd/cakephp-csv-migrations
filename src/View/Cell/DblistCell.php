@@ -29,14 +29,30 @@ class DblistCell extends Cell
         $this->set(compact('field', 'list', 'options', 'selOptions'));
     }
 
-    public function renderValue($name = null, $data)
+    /**
+     * Match and render the sucessfull value.
+     *
+     * Checks the given list if it has the given value in its list items.
+     *
+     * @throws RunTimeException If the value is not found
+     * @param  string $listItemValue List item value
+     * @param  string $name Name of the list
+     * @return void
+     */
+    public function renderValue($listItemValue, $name = null)
     {
-        $name = 'contact-types';
         $this->loadModel('CsvMigrations.Dblists');
-        $list = $this->Dblists->findByName($name)->first();
-        if (!$list) {
-            return false;
+        $query = $this->Dblists
+            ->findByName($name);
+        $query = $query->matching('DblistItems', function ($q) use ($listItemValue) {
+            return $q->where(['DblistItems.value' => $listItemValue]);
+        });
+        if (!$query->isEmpty()) {
+            $data = $query->first()->_matchingData['DblistItems']->get('name');
+        } else {
+            $data = __d('CsvMigrations', 'The value "{0}" cannot be found in the list "{1}"', $listItemValue, $name);
         }
+
         $this->set('data', $data);
     }
 }

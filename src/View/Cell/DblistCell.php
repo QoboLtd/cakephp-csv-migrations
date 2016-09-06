@@ -60,6 +60,8 @@ class DblistCell extends Cell
     /**
      * Create new list.
      *
+     * It will fail to create a new list if the given name already exists.
+     *
      * @param  string $name List's name
      * @return bool         True on sucess.
      */

@@ -7,7 +7,7 @@ use CsvMigrations\View\Cell\DbListCell;
 /**
  * CsvMigrations\View\Cell\DbListCell Test Case
  */
-class DbListCellTest extends TestCase
+class DblistCellTest extends TestCase
 {
 
     /**

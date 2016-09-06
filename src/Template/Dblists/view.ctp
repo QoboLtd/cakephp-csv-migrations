@@ -5,14 +5,14 @@ $this->assign('panel-title', __('Details'));
 <table class="table table-striped" cellpadding="0" cellspacing="0">
     <tr>
         <td><?= __('Name') ?></td>
-        <td><?= h($dbList->name) ?></td>
+        <td><?= h($dblist->name) ?></td>
     </tr>
     <tr>
         <td><?= __('Created') ?></td>
-        <td><?= h($dbList->created) ?></td>
+        <td><?= h($dblist->created) ?></td>
     </tr>
     <tr>
         <td><?= __('Modified') ?></td>
-        <td><?= h($dbList->modified) ?></td>
+        <td><?= h($dblist->modified) ?></td>
     </tr>
 </table>

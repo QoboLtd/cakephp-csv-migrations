@@ -4,10 +4,10 @@ namespace CsvMigrations\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * DbListItemsFixture
+ * DblistItemsFixture
  *
  */
-class DbListItemsFixture extends TestFixture
+class DblistItemsFixture extends TestFixture
 {
 
     /**
@@ -40,12 +40,12 @@ class DbListItemsFixture extends TestFixture
      */
     public $records = [
         [
-            'id' => '70a565df-6c97-4b7a-ae9c-9ba699582a3f',
-            'dblist_id' => '427ad7cb-9b71-4348-9989-23e480963f32',
+            'id' => '20ec756e-5425-4f91-909c-edd1a4c77b07',
+            'dblist_id' => '6a25e0c9-6e4c-4040-a03e-4dfc000d192b',
             'name' => 'Lorem ipsum dolor sit amet',
             'value' => 'Lorem ipsum dolor sit amet',
-            'created' => '2016-08-30 09:07:56',
-            'modified' => '2016-08-30 09:07:56'
+            'created' => '2016-09-06 07:59:15',
+            'modified' => '2016-09-06 07:59:15'
         ],
     ];
 }

@@ -2,13 +2,13 @@
 $this->extend('QoboAdminPanel./Common/panel-wrapper');
 $this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
 ?>
-<?= $this->Form->create($dbListItem); ?>
+<?= $this->Form->create($dblistItem); ?>
 <div class="row">
     <div class="col-xs-12">
         <fieldset>
         <div class="row">
             <div class="col-xs-6">
-                <?= $this->Form->input('db_list_id', ['options' => $dbLists]); ?>
+                <?= $this->Form->input('dblist_id', ['options' => $dblists]); ?>
             </div>
         </div>
         <div class="row">

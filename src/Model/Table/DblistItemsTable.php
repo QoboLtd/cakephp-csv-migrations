@@ -7,21 +7,21 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * DbListItems Model
+ * DblistItems Model
  *
- * @property \Cake\ORM\Association\BelongsTo $DbLists
+ * @property \Cake\ORM\Association\BelongsTo $Dblists
  *
- * @method \CsvMigrations\Model\Entity\DbListItem get($primaryKey, $options = [])
- * @method \CsvMigrations\Model\Entity\DbListItem newEntity($data = null, array $options = [])
- * @method \CsvMigrations\Model\Entity\DbListItem[] newEntities(array $data, array $options = [])
- * @method \CsvMigrations\Model\Entity\DbListItem|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \CsvMigrations\Model\Entity\DbListItem patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \CsvMigrations\Model\Entity\DbListItem[] patchEntities($entities, array $data, array $options = [])
- * @method \CsvMigrations\Model\Entity\DbListItem findOrCreate($search, callable $callback = null)
+ * @method \CsvMigrations\Model\Entity\DblistItem get($primaryKey, $options = [])
+ * @method \CsvMigrations\Model\Entity\DblistItem newEntity($data = null, array $options = [])
+ * @method \CsvMigrations\Model\Entity\DblistItem[] newEntities(array $data, array $options = [])
+ * @method \CsvMigrations\Model\Entity\DblistItem|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \CsvMigrations\Model\Entity\DblistItem patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \CsvMigrations\Model\Entity\DblistItem[] patchEntities($entities, array $data, array $options = [])
+ * @method \CsvMigrations\Model\Entity\DblistItem findOrCreate($search, callable $callback = null)
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class DbListItemsTable extends Table
+class DblistItemsTable extends Table
 {
 
     /**
@@ -34,16 +34,16 @@ class DbListItemsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('db_list_items');
+        $this->table('dblist_items');
         $this->displayField('name');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('DbLists', [
-            'foreignKey' => 'db_list_id',
+        $this->belongsTo('Dblists', [
+            'foreignKey' => 'dblist_id',
             'joinType' => 'INNER',
-            'className' => 'CsvMigrations.DbLists'
+            'className' => 'CsvMigrations.Dblists'
         ]);
     }
 
@@ -79,7 +79,7 @@ class DbListItemsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['db_list_id'], 'DbLists'));
+        $rules->add($rules->existsIn(['dblist_id'], 'Dblists'));
 
         return $rules;
     }

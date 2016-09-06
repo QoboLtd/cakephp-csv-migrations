@@ -1,7 +1,7 @@
 <?php
 use Migrations\AbstractMigration;
 
-class CreateDbListItems extends AbstractMigration
+class CreateDblistItems extends AbstractMigration
 {
     /**
      * Change Method.
@@ -12,12 +12,12 @@ class CreateDbListItems extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('db_list_items', ['id' => false, 'primary_key' => ['id']]);
+        $table = $this->table('dblist_items', ['id' => false, 'primary_key' => ['id']]);
         $table->addColumn('id', 'uuid', [
             'default' => null,
             'null' => false,
         ]);
-        $table->addColumn('db_list_id', 'uuid', [
+        $table->addColumn('dblist_id', 'uuid', [
             'default' => null,
             'null' => false,
         ]);

@@ -12,7 +12,7 @@ class CreateDbLists extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('db_lists', ['id' => false, 'primary_key' => ['id']]);
+        $table = $this->table('dblists', ['id' => false, 'primary_key' => ['id']]);
         $table->addColumn('id', 'uuid', [
             'default' => null,
             'null' => false,

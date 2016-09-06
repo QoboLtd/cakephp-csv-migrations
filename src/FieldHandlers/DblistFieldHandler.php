@@ -51,12 +51,15 @@ class DblistFieldHandler extends BaseFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-    /**
-     * @todo: Check $data if it exists in the DBListItems values instead of just showing it.
-     */
-        $result = h($data);
+        //CsvField object is mandatory
+        if (!isset($options['fieldDefinitions']) ||
+            !($options['fieldDefinitions'] instanceof CsvField)) {
+            return $result;
+        }
+        $csvObj = $options['fieldDefinitions'];
+        $list = $csvObj->getListName();
 
-        return $result;
+        return $this->cakeView->cell('CsvMigrations.DbList::renderValue', [$list, $data])->render(__FUNCTION__);
     }
 
     /**

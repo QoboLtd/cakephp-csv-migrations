@@ -24,8 +24,19 @@ class DbListCell extends Cell
      */
     public function display($field, $list, array $options = [])
     {
-        $this->loadModel('CsvMigrations.DbLists');
-        $selOptions = $this->DbLists->find('options', ['name' => $list]);
+        $this->loadModel('CsvMigrations.Dblists');
+        $selOptions = $this->Dblists->find('options', ['name' => $list]);
         $this->set(compact('field', 'list', 'options', 'selOptions'));
+    }
+
+    public function renderValue($name = null, $data)
+    {
+        $name = 'contact-types';
+        $this->loadModel('CsvMigrations.Dblists');
+        $list = $this->Dblists->findByName($name)->first();
+        if (!$list) {
+            return false;
+        }
+        $this->set('data', $data);
     }
 }

@@ -12,15 +12,15 @@ $this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($dbLists as $dbList): ?>
+        <?php foreach ($dblists as $dblist): ?>
         <tr>
-            <td><?= h($dbList->name) ?></td>
-            <td><?= h($dbList->created) ?></td>
-            <td><?= h($dbList->modified) ?></td>
+            <td><?= h($dblist->name) ?></td>
+            <td><?= h($dblist->created) ?></td>
+            <td><?= h($dblist->modified) ?></td>
             <td class="actions">
-                <?= $this->Html->link('', ['action' => 'view', $dbList->id], ['title' => __('View'), 'class' => 'btn btn-default glyphicon glyphicon-eye-open']) ?>
-                <?= $this->Html->link('', ['action' => 'edit', $dbList->id], ['title' => __('Edit'), 'class' => 'btn btn-default glyphicon glyphicon-pencil']) ?>
-                <?= $this->Form->postLink('', ['action' => 'delete', $dbList->id], ['confirm' => __('Are you sure you want to delete # {0}?', $dbList->id), 'title' => __('Delete'), 'class' => 'btn btn-default glyphicon glyphicon-trash']) ?>
+                <?= $this->Html->link('', ['action' => 'view', $dblist->id], ['title' => __('View'), 'class' => 'btn btn-default glyphicon glyphicon-eye-open']) ?>
+                <?= $this->Html->link('', ['action' => 'edit', $dblist->id], ['title' => __('Edit'), 'class' => 'btn btn-default glyphicon glyphicon-pencil']) ?>
+                <?= $this->Form->postLink('', ['action' => 'delete', $dblist->id], ['confirm' => __('Are you sure you want to delete # {0}?', $dblist->id), 'title' => __('Delete'), 'class' => 'btn btn-default glyphicon glyphicon-trash']) ?>
             </td>
         </tr>
         <?php endforeach; ?>

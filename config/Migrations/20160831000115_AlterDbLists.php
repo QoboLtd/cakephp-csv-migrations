@@ -12,7 +12,7 @@ class AlterDbLists extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('db_lists');
+        $table = $this->table('dblists');
         $table->addIndex([
             'name',
         ], [

@@ -22,7 +22,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class DbListsTable extends Table
+class DblistsTable extends Table
 {
 
     /**
@@ -35,15 +35,15 @@ class DbListsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('db_lists');
+        $this->table('dblists');
         $this->displayField('name');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
 
-        $this->hasMany('DbListItems', [
-            'foreignKey' => 'db_list_id',
-            'className' => 'CsvMigrations.DbListItems'
+        $this->hasMany('DblistItems', [
+            'foreignKey' => 'dblist_id',
+            'className' => 'CsvMigrations.DblistItems'
         ]);
     }
 
@@ -99,10 +99,10 @@ class DbListsTable extends Table
         $name = Hash::get($options, 'name');
         $list = $this->find()
             ->where(['name' => $name])
-            ->contain(['DbListItems' => ['sort' => ['DbListItems.name' => 'ASC']]])
+            ->contain(['DblistItems' => ['sort' => ['DblistItems.name' => 'ASC']]])
             ->first();
         if ($list) {
-            $items = Hash::get($list, 'db_list_items') ?: [];
+            $items = Hash::get($list, 'dblist_items') ?: [];
             foreach ($items as $entity) {
                 $name = h($entity->get('name'));
                 $value = h($entity->get('value'));

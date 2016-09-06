@@ -14,7 +14,7 @@ class DblistItemsController extends AppController
     /**
      * Index method
      *
-     * @return \Cake\Network\Response|null
+     * @return void
      */
     public function index()
     {
@@ -30,9 +30,9 @@ class DblistItemsController extends AppController
     /**
      * View method
      *
-     * @param string|null $id Dblist Item id.
-     * @return \Cake\Network\Response|null
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @param string|null $id Dblist Item id.
+     * @return void
      */
     public function view($id = null)
     {

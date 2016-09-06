@@ -8,17 +8,17 @@ use Cake\Utility\Hash;
 use Cake\Validation\Validator;
 
 /**
- * DbLists Model
+ * Dblists Model
  *
- * @property \Cake\ORM\Association\HasMany $DbListItems
+ * @property \Cake\ORM\Association\HasMany $DblistItems
  *
- * @method \CsvMigrations\Model\Entity\DbList get($primaryKey, $options = [])
- * @method \CsvMigrations\Model\Entity\DbList newEntity($data = null, array $options = [])
- * @method \CsvMigrations\Model\Entity\DbList[] newEntities(array $data, array $options = [])
- * @method \CsvMigrations\Model\Entity\DbList|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \CsvMigrations\Model\Entity\DbList patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \CsvMigrations\Model\Entity\DbList[] patchEntities($entities, array $data, array $options = [])
- * @method \CsvMigrations\Model\Entity\DbList findOrCreate($search, callable $callback = null)
+ * @method \CsvMigrations\Model\Entity\Dblist get($primaryKey, $options = [])
+ * @method \CsvMigrations\Model\Entity\Dblist newEntity($data = null, array $options = [])
+ * @method \CsvMigrations\Model\Entity\Dblist[] newEntities(array $data, array $options = [])
+ * @method \CsvMigrations\Model\Entity\Dblist|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \CsvMigrations\Model\Entity\Dblist patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \CsvMigrations\Model\Entity\Dblist[] patchEntities($entities, array $data, array $options = [])
+ * @method \CsvMigrations\Model\Entity\Dblist findOrCreate($search, callable $callback = null)
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */

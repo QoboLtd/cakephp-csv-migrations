@@ -4,14 +4,14 @@ namespace CsvMigrations\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * DbList Entity
+ * Dblist Entity
  *
  * @property string $id
  * @property string $name
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
  *
- * @property \CsvMigrations\Model\Entity\DbListItem[] $db_list_items
+ * @property \CsvMigrations\Model\Entity\DblistItem[] $dblist_items
  */
 class Dblist extends Entity
 {

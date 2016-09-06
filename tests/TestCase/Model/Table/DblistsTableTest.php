@@ -3,20 +3,20 @@ namespace CsvMigrations\Test\TestCase\Model\Table;
 
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use CsvMigrations\Model\Table\DbListItemsTable;
+use CsvMigrations\Model\Table\DblistsTable;
 
 /**
- * CsvMigrations\Model\Table\DbListItemsTable Test Case
+ * CsvMigrations\Model\Table\DblistsTable Test Case
  */
-class DbListItemsTableTest extends TestCase
+class DblistsTableTest extends TestCase
 {
 
     /**
      * Test subject
      *
-     * @var \CsvMigrations\Model\Table\DbListItemsTable
+     * @var \CsvMigrations\Model\Table\DblistsTable
      */
-    public $DbListItems;
+    public $Dblists;
 
     /**
      * Fixtures
@@ -24,8 +24,8 @@ class DbListItemsTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.csv_migrations.db_list_items',
-        'plugin.csv_migrations.db_lists'
+        'plugin.csv_migrations.dblists',
+        'plugin.csv_migrations.dblist_items'
     ];
 
     /**
@@ -36,8 +36,8 @@ class DbListItemsTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::exists('DbListItems') ? [] : ['className' => 'CsvMigrations\Model\Table\DbListItemsTable'];
-        $this->DbListItems = TableRegistry::get('DbListItems', $config);
+        $config = TableRegistry::exists('Dblists') ? [] : ['className' => 'CsvMigrations\Model\Table\DblistsTable'];
+        $this->Dblists = TableRegistry::get('Dblists', $config);
     }
 
     /**
@@ -47,7 +47,7 @@ class DbListItemsTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->DbListItems);
+        unset($this->Dblists);
 
         parent::tearDown();
     }

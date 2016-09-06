@@ -25,6 +25,7 @@ class DblistCell extends Cell
     public function renderInput($field, $list, array $options = [])
     {
         $this->loadModel('CsvMigrations.Dblists');
+        $this->_createList($list);
         $selOptions = $this->Dblists->find('options', ['name' => $list]);
         $this->set(compact('field', 'list', 'options', 'selOptions'));
     }
@@ -42,8 +43,8 @@ class DblistCell extends Cell
     public function renderValue($listItemValue, $name = null)
     {
         $this->loadModel('CsvMigrations.Dblists');
-        $query = $this->Dblists
-            ->findByName($name);
+        $this->_createList($name);
+        $query = $this->findByName($name);
         $query = $query->matching('DblistItems', function ($q) use ($listItemValue) {
             return $q->where(['DblistItems.value' => $listItemValue]);
         });
@@ -54,5 +55,22 @@ class DblistCell extends Cell
         }
 
         $this->set('data', $data);
+    }
+
+    /**
+     * Create new list.
+     *
+     * @param  string $name List's name
+     * @return bool         True on sucess.
+     */
+    protected function _createList($name = '')
+    {
+        $this->loadModel('CsvMigrations.Dblists');
+        if (!$this->Dblists->exists(['name' => $name])) {
+            $entity = $this->Dblists->newEntity(['name' => $name]);
+            return $this->Dblists->save($entity);
+        }
+
+        return false;
     }
 }

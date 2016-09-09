@@ -18,6 +18,11 @@ use League\Csv\Reader;
 class Parser implements ParserInterface
 {
     /**
+     * Mode to use for opening CSV files
+     */
+    protected $open_mode = 'r';
+
+    /**
      * File structure
      */
     protected $structure = [];
@@ -47,7 +52,7 @@ class Parser implements ParserInterface
             $this->structure = $this->getHeadersFromPath($path);
         }
 
-        $reader = Reader::createFromPath($path);
+        $reader = Reader::createFromPath($path, $this->open_mode);
         $rows = $reader->setOffset(1)->fetchAssoc($this->structure);
         foreach ($rows as $row) {
             $result[] = $row;
@@ -68,7 +73,7 @@ class Parser implements ParserInterface
 
         $this->validatePath($path);
 
-        $reader = Reader::createFromPath($path);
+        $reader = Reader::createFromPath($path, $this->open_mode);
         $result = $reader->fetchOne();
 
         return $result;

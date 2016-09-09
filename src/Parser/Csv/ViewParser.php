@@ -23,6 +23,11 @@ use League\Csv\Reader;
 class ViewParser implements ParserInterface
 {
     /**
+     * Mode to use for opening CSV files
+     */
+    protected $open_mode = 'r';
+
+    /**
      * Parse from path
      *
      * Parses a given file and return a list of all
@@ -52,7 +57,7 @@ class ViewParser implements ParserInterface
             $this->structure = $this->getHeadersFromPath($path);
         }
 
-        $reader = Reader::createFromPath($path);
+        $reader = Reader::createFromPath($path, $this->open_mode);
         $result = $reader->setOffset(1)->fetchAll();
 
         return $result;
@@ -70,7 +75,7 @@ class ViewParser implements ParserInterface
 
         $this->validatePath($path);
 
-        $reader = Reader::createFromPath($path);
+        $reader = Reader::createFromPath($path, $this->open_mode);
         $result = $reader->fetchOne();
 
         return $result;

@@ -90,20 +90,27 @@ class FieldHandlerFactory
     }
 
     /**
-     * Get field handlers list.
+     * Check if given field type has a field handler
      *
-     * @return array
+     * Previously, we used to load all available field handlers
+     * via getList() method and check if the handler for the given
+     * type was in that list.  However, this doesn't play well
+     * with autoloaders.  It's better to rely on the autoloader
+     * and namespaces, rather than on our search through directories.
+     * Hence this check whether a particular handler exists.
+     *
+     * @param string $fieldType Field type
+     * @return bool             True if yes, false otherwise
      */
-    public static function getList()
+    public function hasFieldHandler($fieldType)
     {
-        $di = new DirectoryIterator(__DIR__);
-        $pattern = '/^(\w+)' . static::HANDLER_SUFFIX . '.php$/';
-        $ri = new RegexIterator($di, $pattern, RegexIterator::REPLACE);
-        $ri->replacement = '$1';
+        $result = false;
 
-        $result = [];
-        foreach ($ri as $name) {
-            $result[] = Inflector::underscore($name);
+        try {
+            $handler = $this->_getHandler($fieldType, true);
+            $result = true;
+        } catch (\Exception $e) {
+            $result = false;
         }
 
         return $result;
@@ -163,25 +170,42 @@ class FieldHandlerFactory
     }
 
     /**
-     * Method that returns an instance of the appropriate
+     * Get field handler instance
+     *
+     * This method returns an instance of the appropriate
      * FieldHandler class based on field Type.
      *
-     * @param  array  $fieldType field type
+     * In case the field handler cannot be found or instantiated
+     * the method either returns a default handler, or throws an
+     * expcetion (based on $failOnError parameter).
+     *
+     * @throws \RuntimeException when failed to instantiate field handler and $failOnError is true
+     * @param  string  $fieldType field type
+     * @param  bool   $failOnError Whether or not to throw exception on failure
      * @return object            FieldHandler instance
      */
-    protected function _getHandler($fieldType)
+    protected function _getHandler($fieldType, $failOnError = false)
     {
-        // get appropriate field handler
-        $handlerName = $this->_getHandlerByFieldType($fieldType, true);
-
         $interface = __NAMESPACE__ . '\\' . static::FIELD_HANDLER_INTERFACE;
+
+        $handlerName = $this->_getHandlerByFieldType($fieldType, true);
         if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
-            //
-        } else { // switch to default field handler
-            $handlerName = __NAMESPACE__ . '\\' . static::DEFAULT_HANDLER_CLASS . static::HANDLER_SUFFIX;
+            return new $handlerName;
         }
 
-        return new $handlerName;
+        // Field hanlder does not exist, throw exception if necessary
+        if ($failOnError) {
+            throw new \RuntimeException("No field handler defined for field type [$fieldType]");
+        }
+
+        // Use default field handler
+        $handlerName = __NAMESPACE__ . '\\' . static::DEFAULT_HANDLER_CLASS . static::HANDLER_SUFFIX;
+        if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
+            return new $handlerName;
+        }
+
+        // Neither the handler, nor the default handler can be used
+        throw new \RuntimeException("Default field handler [" . static::DEFAULT_HANDLER_CLASS . "] cannot be used");
     }
 
     /**
@@ -196,20 +220,19 @@ class FieldHandlerFactory
     }
 
     /**
-     * Method that retrieves handler class name based on provided field type.
-     * It also handles more advanced field types like foreign key and list fields.
-     * Example: if field type is 'string' then 'StringFieldHandler' will be returned.
-     * Example: if field type is 'related(Users)' then 'RelatedFieldHandler' will be returned.
+     * Get field handler class name
      *
-     * @param  string $type field type
-     * @param  bool   $fqcn true to use fully-qualified class name
-     * @return string       handler class name
+     * This method constructs handler class name based on provided field type.
+     *
+     * @param  string $type          field type
+     * @param  bool   $withNamespace whether or not to include namespace
+     * @return string                handler class name
      */
-    protected function _getHandlerByFieldType($type, $fqcn = false)
+    protected function _getHandlerByFieldType($type, $withNamespace = false)
     {
         $result = Inflector::camelize($type) . static::HANDLER_SUFFIX;
 
-        if ($fqcn) {
+        if ($withNamespace) {
             $result = __NAMESPACE__ . '\\' . $result;
         }
 

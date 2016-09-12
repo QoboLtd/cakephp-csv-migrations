@@ -218,7 +218,8 @@ class CsvField
 
         $type = $this->_extractType($type);
 
-        if (!in_array($type, FieldHandlerFactory::getList())) {
+        $fhf = new FieldHandlerFactory();
+        if (!$fhf->hasFieldHandler($type)) {
             throw new InvalidArgumentException(__CLASS__ . ': Unsupported field type: ' . $type);
         }
 

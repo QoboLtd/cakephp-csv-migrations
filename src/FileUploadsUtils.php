@@ -337,6 +337,9 @@ class FileUploadsUtils
     /**
      * Method used for handling image file thumbnails creation and removal.
      *
+     * Note that the code on this method was borrowed fromBurzum/FileStorage
+     * plugin, ImageVersionShell Class _loop method.
+     *
      * @param  \Cake\ORM\Entity $entity    File Entity
      * @param  string           $eventName Event name
      * @return void

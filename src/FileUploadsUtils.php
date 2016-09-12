@@ -6,8 +6,8 @@ use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\ORM\Entity;
-use Cake\ORM\Table as UploadTable;
 use Cake\ORM\TableRegistry;
+use Cake\ORM\Table as UploadTable;
 
 class FileUploadsUtils
 {
@@ -353,14 +353,14 @@ class FileUploadsUtils
         $operations = Configure::read('FileStorage.imageSizes.' . static::TABLE_FILE_STORAGE);
         $storageTable = TableRegistry::get('Burzum/FileStorage.ImageStorage');
         foreach ($operations as $version => $operation) {
-            $payload = array(
+            $payload = [
                 'record' => $entity,
                 'storage' => StorageManager::adapter($entity->adapter),
                 'operations' => [$version => $operation],
                 'versions' => [$version],
                 'table' => $storageTable,
                 'options' => []
-            );
+            ];
 
             $event = new Event($eventName, $storageTable, $payload);
             EventManager::instance()->dispatch($event);

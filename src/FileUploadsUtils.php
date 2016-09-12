@@ -77,7 +77,7 @@ class FileUploadsUtils
      *
      * @var array
      */
-    protected $_imgExtensions = ['jpg', 'png', 'jpeg'];
+    protected $_imgExtensions = ['jpg', 'png', 'jpeg', 'gif'];
 
     /**
      * Contructor method

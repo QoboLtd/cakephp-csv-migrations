@@ -1,8 +1,13 @@
 <?php
 namespace CsvMigrations;
 
+use Burzum\FileStorage\Storage\StorageManager;
+use Cake\Core\Configure;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Table as UploadTable;
+use Cake\ORM\TableRegistry;
 
 class FileUploadsUtils
 {
@@ -66,6 +71,13 @@ class FileUploadsUtils
      * @var string
      */
     protected $_fileStorageForeignKey;
+
+    /**
+     * Image file extensions
+     *
+     * @var array
+     */
+    protected $_imgExtensions = ['jpg', 'png', 'jpeg'];
 
     /**
      * Contructor method
@@ -215,6 +227,8 @@ class FileUploadsUtils
         );
 
         if ($this->_fileStorageAssociation->save($fileStorEnt)) {
+            $this->_createThumbnails($fileStorEnt);
+
             return $fileStorEnt;
         }
 
@@ -289,7 +303,65 @@ class FileUploadsUtils
     {
         $entity = $this->_fileStorageAssociation->get($id);
 
-        return $this->_fileStorageAssociation->delete($entity);
+        $result = $this->_fileStorageAssociation->delete($entity);
+
+        if ($result) {
+            $this->_removeThumbnails($entity);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Method used for creating image file thumbnails.
+     *
+     * @param  \Cake\ORM\Entity $entity File Entity
+     * @return void
+     */
+    protected function _createThumbnails(Entity $entity)
+    {
+        $this->_handleThumbnails($entity, 'ImageVersion.createVersion');
+    }
+
+    /**
+     * Method used for removing image file thumbnails.
+     *
+     * @param  \Cake\ORM\Entity $entity File Entity
+     * @return void
+     */
+    protected function _removeThumbnails(Entity $entity)
+    {
+        $this->_handleThumbnails($entity, 'ImageVersion.removeVersion');
+    }
+
+    /**
+     * Method used for handling image file thumbnails creation and removal.
+     *
+     * @param  \Cake\ORM\Entity $entity    File Entity
+     * @param  string           $eventName Event name
+     * @return void
+     */
+    protected function _handleThumbnails(Entity $entity, $eventName)
+    {
+        if (!in_array($entity->extension, $this->_imgExtensions)) {
+            return;
+        }
+
+        $operations = Configure::read('FileStorage.imageSizes.' . static::TABLE_FILE_STORAGE);
+        $storageTable = TableRegistry::get('Burzum/FileStorage.ImageStorage');
+        foreach ($operations as $version => $operation) {
+            $payload = array(
+                'record' => $entity,
+                'storage' => StorageManager::adapter($entity->adapter),
+                'operations' => [$version => $operation],
+                'versions' => [$version],
+                'table' => $storageTable,
+                'options' => []
+            );
+
+            $event = new Event($eventName, $storageTable, $payload);
+            EventManager::instance()->dispatch($event);
+        }
     }
 
     /**

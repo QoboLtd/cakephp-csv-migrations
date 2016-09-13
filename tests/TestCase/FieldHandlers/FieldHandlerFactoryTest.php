@@ -94,6 +94,15 @@ class FieldHandlerFactoryTest extends TestCase
         $this->fhf = new FieldHandlerFactory();
     }
 
+    public function testHasFieldHandler()
+    {
+        $result = $this->fhf->hasFieldHandler('string');
+        $this->assertTrue($result, "Failed to find field handler for type 'string'");
+
+        $result = $this->fhf->hasFieldHandler('non-existing-field-type');
+        $this->assertFalse($result, "Found field handler for type 'non-existing-field-type'");
+    }
+
     public function testRenderInput()
     {
         $foos = $this->FooTable->find();

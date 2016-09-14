@@ -11,7 +11,7 @@ abstract class AbstractCsvParser extends AbstractParser
      */
     protected $open_mode = 'r';
 
-     /**
+    /**
      * Get headers from path
      *
      * @param string $path Path to file

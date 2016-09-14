@@ -116,7 +116,8 @@ if (empty($options['title'])) {
                                 $tableName = $field['plugin'] . '.' . $tableName;
                             }
                             $renderOptions = [
-                                'entity' => $options['entity']
+                                'entity' => $options['entity'],
+                                'imageSize' => 'small'
                             ];
                             $value = $fhf->renderValue(
                                 $tableName,

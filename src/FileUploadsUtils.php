@@ -104,7 +104,8 @@ class FileUploadsUtils
     protected function _getFileAssociationInstance()
     {
         foreach ($this->_table->associations() as $association) {
-            if (static::TABLE_FILES === $association->target()->table()) {
+            // @todo temporary performance fix
+            if (ucfirst(static::TABLE_FILES) === $association->className()) {
                 $this->_fileAssociation = $association;
                 break;
             }

@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\RelatedFieldHandler;
@@ -136,6 +137,8 @@ class BaseFileFieldHandler extends RelatedFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
+        $defaultOptions = ['imageSize' => getenv('DEFAULT_IMAGE_SIZE')];
+        $options = array_merge($defaultOptions, $options);
         $fileUploadsUtils = new FileUploadsUtils($table);
         $result = null;
 
@@ -147,6 +150,15 @@ class BaseFileFieldHandler extends RelatedFieldHandler
 
         if (empty($entities)) {
             return $result;
+        }
+
+        // get file storage image hashes
+        $hashes = Configure::read('FileStorage.imageHashes');
+        if (isset($hashes['file_storage'][$options['imageSize']])) {
+            foreach ($entities as $entity) {
+                $entity->path = dirname($entity->path) . '/' . basename($entity->path, $entity->extension);
+                $entity->path .= $hashes['file_storage'][$options['imageSize']] . '.' . $entity->extension;
+            }
         }
 
         $result = $this->_thumbnailsHtml($entities);

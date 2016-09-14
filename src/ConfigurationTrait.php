@@ -3,6 +3,7 @@ namespace CsvMigrations;
 
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
+use CsvMigrations\Parser\Ini\Parser;
 
 trait ConfigurationTrait
 {
@@ -75,8 +76,12 @@ trait ConfigurationTrait
     {
         $path = Configure::read('CsvMigrations.migrations.path');
         $path .= Inflector::camelize($tableName) . DS . $this->_filename . '.' . $this->_extension;
-        if (file_exists($path)) {
-            $this->_config = parse_ini_file($path, true);
+
+        try {
+            $parser = new Parser();
+            $this->_config = $parser->parseFromPath($path);
+        } catch (\Exception $e) {
+            // config.ini does not exist or we failed to parse it
         }
 
         // display field from configuration file

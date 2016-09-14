@@ -15,81 +15,39 @@ use League\Csv\Reader;
  *
  * @author Leonid Mamchenkov <l.mamchenkov@qobo.biz>
  */
-class Parser implements ParserInterface
+class Parser extends AbstractCsvParser
 {
-    /**
-     * Mode to use for opening CSV files
-     */
-    protected $open_mode = 'r';
-
-    /**
-     * File structure
-     */
-    protected $structure = [];
-
     /**
      * Parse from path
      *
-     * Parses a given file according to the specified structure
+     * Parses a given file according to the specified options
      *
-     * @param string $path      Path to file
-     * @param array  $structure Structure of the file
+     * @param string $path    Path to file
+     * @param array  $options Parsing options
      * @return array
      */
-    public function parseFromPath($path, array $structure = [])
+    public function parseFromPath($path, array $options = [])
     {
         $result = [];
 
         $this->validatePath($path);
 
         // Overwrite defaults
-        if (!empty($structure)) {
-            $this->structure = $structure;
+        if (!empty($options)) {
+            $this->options = $options;
         }
 
         // If no structure specified (default or param), then use headers
-        if (empty($this->structure)) {
-            $this->structure = $this->getHeadersFromPath($path);
+        if (empty($this->options['structure'])) {
+            $this->options['structure'] = $this->getHeadersFromPath($path);
         }
 
         $reader = Reader::createFromPath($path, $this->open_mode);
-        $rows = $reader->setOffset(1)->fetchAssoc($this->structure);
+        $rows = $reader->setOffset(1)->fetchAssoc($this->options['structure']);
         foreach ($rows as $row) {
             $result[] = $row;
         }
 
         return $result;
-    }
-
-    /**
-     * Get headers from path
-     *
-     * @param string $path Path to file
-     * @return array
-     */
-    public function getHeadersFromPath($path)
-    {
-        $result = [];
-
-        $this->validatePath($path);
-
-        $reader = Reader::createFromPath($path, $this->open_mode);
-        $result = $reader->fetchOne();
-
-        return $result;
-    }
-
-    /**
-     * Validate path
-     *
-     * @throws \InvalidArgumentException If $path does not exist or is not readable
-     * @param string $path Path to validate
-     * @return void
-     */
-    protected function validatePath($path)
-    {
-        if (!is_readable($path)) {
-            throw new \InvalidArgumentException("Path does not exist or is not readable: $path");
-        }
     }
 }

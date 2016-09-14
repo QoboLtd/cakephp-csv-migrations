@@ -12,14 +12,17 @@ namespace CsvMigrations\Parser\Csv;
 class MigrationParser extends Parser
 {
     /**
-     * Structure of the migration.csv file
+     * Parsing options
      */
-    protected $structure = [
-        'name',
-        'type',
-        'required',
-        'non-searchable',
-        'unique',
+    protected $options = [
+        // Structure of the migration.csv file
+        'structure' => [
+            'name',
+            'type',
+            'required',
+            'non-searchable',
+            'unique',
+        ],
     ];
 
     /**
@@ -38,11 +41,11 @@ class MigrationParser extends Parser
      *
      * @throws \InvalidArgumentException If $wrapField is not in the structure
      * @param string $path      Path to file
-     * @param array  $structure Structure of the file
+     * @param array  $options   Parsing options
      * @param string $wrapField Field to use as the key
      * @return array
      */
-    public function wrapFromPath($path, array $structure = [], $wrapField = null)
+    public function wrapFromPath($path, array $options = [], $wrapField = null)
     {
         $result = [];
 
@@ -51,12 +54,17 @@ class MigrationParser extends Parser
             $this->wrapField = $wrapField;
         }
 
+        // Overwrite defaults
+        if (!empty($options)) {
+            $this->options = $options;
+        }
+
         // Make sure that wrap field is in the list of structure fields
-        if (!in_array($this->wrapField, $this->structure)) {
+        if (!in_array($this->wrapField, $this->options['structure'])) {
             throw new \InvalidArgumentException("Wrap field [" . $this->wrapField . "] is not in the structure");
         }
 
-        $fields = $this->parseFromPath($path, $structure, $this->wrapField);
+        $fields = $this->parseFromPath($path, $options, $this->wrapField);
         foreach ($fields as $field) {
             $result[$field[$this->wrapField]] = $field;
         }

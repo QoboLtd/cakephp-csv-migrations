@@ -62,7 +62,15 @@ class DblistsTable extends Table
         $validator
             ->requirePresence('name', 'create')
             ->notEmpty('name')
-            ->add('name', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->add(
+                'name',
+                'unique',
+                [
+                    'rule' => 'validateUnique',
+                    'provider' => 'table',
+                    'message' => __d('CsvMigrations', 'Name MUST be unique')
+                ]
+            );
 
         return $validator;
     }

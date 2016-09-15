@@ -449,7 +449,7 @@ class AppController extends Controller
      *
      * @param  Cake\ORM\AssociationCollection $associations       Table associations
      * @param  array                          $nestedAssociations Nested associations
-     * @param  boolean                        $onlyNested         Flag for including only nested associations
+     * @param  bool                           $onlyNested         Flag for including only nested associations
      * @return array
      */
     protected function _containAssociations(

@@ -70,6 +70,15 @@ class AppController extends Controller
     protected $_nestedAssociations = [];
 
     /**
+     * Nested association chain for retrieving associated file records
+     *
+     * @var array
+     */
+    protected $_fileAssociations = [
+        ['Documents', 'Files', 'Burzum/FileStorage.FileStorage']
+    ];
+
+    /**
      * {@inheritDoc}
      */
     public function initialize()
@@ -398,6 +407,16 @@ class AppController extends Controller
             );
         }
 
+        // always include file associations
+        $result = array_merge(
+            $result,
+            $this->_containAssociations(
+                $associations,
+                $this->_fileAssociations,
+                true
+            )
+        );
+
         return $result;
     }
 
@@ -430,16 +449,20 @@ class AppController extends Controller
      *
      * @param  Cake\ORM\AssociationCollection $associations       Table associations
      * @param  array                          $nestedAssociations Nested associations
+     * @param  boolean                        $onlyNested         Flag for including only nested associations
      * @return array
      */
     protected function _containAssociations(
         AssociationCollection $associations,
-        array $nestedAssociations = []
+        array $nestedAssociations = [],
+        $onlyNested = false
     ) {
         $result = [];
 
         foreach ($associations as $association) {
-            $result[$association->name()] = [];
+            if (!$onlyNested) {
+                $result[$association->name()] = [];
+            }
 
             if (empty($nestedAssociations)) {
                 continue;

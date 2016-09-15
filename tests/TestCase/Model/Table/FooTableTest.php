@@ -83,7 +83,7 @@ class FooTableTest extends TestCase
             [
                 'table' => [
                     'alias' => 'Foobar',
-                    'searchable' => '1',
+                    'searchable' => true,
                     'display_field' => 'name'
                 ]
             ]

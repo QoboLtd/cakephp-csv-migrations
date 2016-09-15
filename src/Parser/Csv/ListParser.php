@@ -12,11 +12,14 @@ namespace CsvMigrations\Parser\Csv;
 class ListParser extends Parser
 {
     /**
-     * Structure of the some_list.csv file
+     * Parsing options
      */
-    protected $structure = [
-        'value',
-        'label',
-        'inactive',
+    protected $options = [
+        // Structure of the some_list.csv file
+        'structure' => [
+            'value',
+            'label',
+            'inactive',
+        ],
     ];
 }

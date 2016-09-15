@@ -5,6 +5,7 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
+use Cake\ORM\AssociationCollection;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Crud\Controller\ControllerTrait;
@@ -56,6 +57,19 @@ class AppController extends Controller
     protected $_fileUploadsUtils;
 
     /**
+     * Here we list forced associations when fetching record(s) associated data.
+     * This is useful, for example, when trying to fetch a record(s) associated
+     * documents (such as photos, pdfs etc), which are nested two levels deep.
+     *
+     * To detect these nested associations, since our association names
+     * are constructed dynamically, we use the associations class names
+     * as identifiers.
+     *
+     * @var array
+     */
+    protected $_nestedAssociations = [];
+
+    /**
      * {@inheritDoc}
      */
     public function initialize()
@@ -100,6 +114,8 @@ class AppController extends Controller
     {
         $this->Crud->on('beforeFind', function (Event $event) {
             $event->subject()->repository->findByLookupFields($event->subject()->query, $event->subject()->id);
+
+            $event->subject()->query->contain($this->_getAssociations($event));
         });
 
         $this->Crud->on('afterFind', function (Event $event) {
@@ -117,6 +133,7 @@ class AppController extends Controller
     public function index()
     {
         $this->Crud->on('beforePaginate', function (Event $event) {
+            $event->subject()->query->contain($this->_getAssociations($event));
             $event = $this->_filterByConditions($event);
         });
 
@@ -360,5 +377,120 @@ class AppController extends Controller
         }
 
         return $event;
+    }
+
+    /**
+     * Method responsible for retrieving current Table's associations
+     *
+     * @param  Cake\Event\Event $event Event instance
+     * @return array
+     */
+    protected function _getAssociations(Event $event)
+    {
+        $result = [];
+
+        $associations = $event->subject()->query->repository()->associations();
+
+        if ($this->request->query('associated')) {
+            $result = $this->_containAssociations(
+                $associations,
+                $this->_nestedAssociations
+            );
+        }
+
+        return $result;
+    }
+
+    /**
+     * Method that retrieve's Table association names
+     * to be passed to the ORM Query.
+     *
+     * Nested associations can travel as many levels deep
+     * as defined in the parameter array. Using the example
+     * array below, our code will look for a direct association
+     * with class name 'Documents'. If found, it will add the
+     * association's name to the result array and it will loop
+     * through its associations to look for a direct association
+     * with class name 'Files'. If found again, it will add it to
+     * the result array (nested within the Documents association name)
+     * and will carry on until it runs out of nesting levels or
+     * matching associations.
+     *
+     * Example array:
+     * ['Documents', 'Files', 'Burzum/FileStorage.FileStorage']
+     *
+     * Example result:
+     * [
+     *     'PhotosDocuments' => [
+     *         'DocumentIdFiles' => [
+     *             'FileIdFileStorageFileStorage' => []
+     *         ]
+     *     ]
+     * ]
+     *
+     * @param  Cake\ORM\AssociationCollection $associations       Table associations
+     * @param  array                          $nestedAssociations Nested associations
+     * @return array
+     */
+    protected function _containAssociations(
+        AssociationCollection $associations,
+        array $nestedAssociations = []
+    ) {
+        $result = [];
+
+        foreach ($associations as $association) {
+            $result[$association->name()] = [];
+
+            if (empty($nestedAssociations)) {
+                continue;
+            }
+
+            foreach ($nestedAssociations as $levels) {
+                if (current($levels) !== $association->className()) {
+                    continue;
+                }
+
+                if (!next($levels)) {
+                    continue;
+                }
+
+                $result[$association->name()] = $this->_containNestedAssociations(
+                    $association->target()->associations(),
+                    array_slice($levels, key($levels))
+                );
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Method that retrieve's Table association nested associations
+     * names to be passed to the ORM Query.
+     *
+     * @param  Cake\ORM\AssociationCollection $associations Table associations
+     * @param  array                          $levels       Nested associations
+     * @return array
+     */
+    protected function _containNestedAssociations(AssociationCollection $associations, array $levels)
+    {
+        $result = [];
+        foreach ($associations as $association) {
+            if (current($levels) !== $association->className()) {
+                continue;
+            }
+            $result[$association->name()] = [];
+
+            if (!next($levels)) {
+                continue;
+            }
+
+            $result[$association->name()] = $this->_containNestedAssociations(
+                $association->target()->associations(),
+                array_slice($levels, key($levels))
+            );
+        }
+
+        return $result;
     }
 }

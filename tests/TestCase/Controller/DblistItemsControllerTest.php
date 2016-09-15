@@ -10,14 +10,6 @@ use CsvMigrations\Controller\DblistItemsController;
 class DblistItemsControllerTest extends IntegrationTestCase
 {
 
-    /**
-     * Fixtures
-     *
-     * @var array
-     */
-    public $fixtures = [
-        'plugin.csv_migrations.dblist_items'
-    ];
 
     /**
      * Test index method

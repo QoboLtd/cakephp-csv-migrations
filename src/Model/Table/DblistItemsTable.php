@@ -80,6 +80,12 @@ class DblistItemsTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['dblist_id'], 'Dblists'));
+        $rules->add(
+            $rules->isUnique(
+                ['dblist_id', 'name', 'value'],
+                __d('CsvMigrations', 'This list item is already in this list.')
+            )
+        );
 
         return $rules;
     }

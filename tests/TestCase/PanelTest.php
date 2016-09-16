@@ -3,8 +3,8 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use Cake\TestSuite\TestCase;
 use CsvMigrations\Panel;
-use \RuntimeException;
 use \InvalidArgumentException;
+use \RuntimeException;
 
 class PanelTest extends TestCase
 {
@@ -62,7 +62,7 @@ class PanelTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public  function testSetFields()
+    public function testSetFields()
     {
         $panel = new Panel('Foobar', ['panels' => ['Foobar' => '(this is not a valid expression)']]);
     }

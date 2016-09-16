@@ -4,6 +4,7 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\Panel;
 use \RuntimeException;
+use \InvalidArgumentException;
 
 class PanelTest extends TestCase
 {
@@ -58,6 +59,13 @@ class PanelTest extends TestCase
         $this->assertTrue(in_array('name', $panel->getFields()), 'Field name is missing');
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public  function testSetFields()
+    {
+        $panel = new Panel('Foobar', ['panels' => ['Foobar' => '(this is not a valid expression)']]);
+    }
 
     public function testGetFieldValues()
     {

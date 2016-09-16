@@ -1,55 +1,28 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
-use Cake\Core\Configure;
-use Cake\Orm\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\Panel;
-use CsvMigrations\Table;
+use \InvalidArgumentException;
 use \RuntimeException;
 
 class PanelTest extends TestCase
 {
-    /**
-     * PanelTable instance
-     *
-     * @var CsvMigrations\Test\TestCase\Model\Table\Panel
-     */
-    public $table;
+    protected $config;
 
-    /**
-     * Table's config
-     * @var array
-     */
-    public $config;
-
-    /**
-     * setUp method
-     *
-     * @return void
-     */
     public function setUp()
     {
-        parent::setUp();
-
-        $dir = dirname(__DIR__) . DS . 'data' . DS . 'CsvMigrations' . DS;
-        Configure::write('CsvMigrations.migrations.path', $dir . 'migrations' . DS);
-        Configure::write('CsvMigrations.lists.path', $dir . 'lists' . DS);
-        Configure::write('CsvMigrations.migrations.filename', 'migration.dist');
-        $config = TableRegistry::exists('Panel') ? [] : ['className' => 'CsvMigrations\Test\TestCase\Model\Table\PanelTable'];
-        $this->table = TableRegistry::get('Panel', $config);
-        $this->config = $this->table->getConfig();
-        $panels = Panel::getPanelNames($this->config);
-        $this->first = array_pop($panels);
+        $this->config = [
+            'panels' => [
+                'Foobar' => "(%%type%% == 'foobar' && %%name%% == 'antonis')",
+            ],
+        ];
     }
 
     public function testgetName()
     {
-        $panel = new Panel($this->first, $this->config);
-        $expected = $this->first;
-
-        $this->assertEquals($expected, $panel->getName());
+        $panel = new Panel('Foobar', $this->config);
+        $this->assertEquals('Foobar', $panel->getName());
     }
 
     /**
@@ -57,44 +30,47 @@ class PanelTest extends TestCase
      */
     public function testSetNameException()
     {
-        $panel = new Panel($this->first, $this->config);
+        $panel = new Panel('Foobar', $this->config);
         $panel->setName();
     }
 
     public function testGetExpression()
     {
-        $panel = new Panel($this->first, $this->config);
-        $expression = $panel->getExpression();
+        $panel = new Panel('Foobar', $this->config);
+        $result = $panel->getExpression();
 
-        $this->assertFalse(empty($expression), 'Expression should not be empty');
-        $this->assertTrue(is_string($expression), 'Expression should be string`');
-        $this->assertContains(Panel::EXP_TOKEN, $expression, sprintf('Expression\'s placeholders have %s', Panel::EXP_TOKEN));
-        $expressionWithoutTokens = $panel->getExpression(true);
-        $this->assertFalse(strpos($expressionWithoutTokens, Panel::EXP_TOKEN), sprintf('Clean expression should not have any %s', Panel::EXP_TOKEN));
+        $this->assertFalse(empty($result), 'Expression is empty');
+        $this->assertTrue(is_string($result), 'Expression is not a string`');
+        $this->assertContains(Panel::EXP_TOKEN, $result, 'Expression does not contain tokens');
+
+        // Cleaned up expression
+        $result = $panel->getExpression(true);
+        $this->assertNotContains(Panel::EXP_TOKEN, $result, 'Expression contains tokens');
     }
 
     public function testGetFields()
     {
-        $panel = new Panel($this->first, $this->config);
-        $fields = $panel->getFields();
-        $this->assertTrue(!empty($fields), 'Fields should not be empty');
-        $this->assertTrue(is_array($fields), 'Fields should be array');
+        $panel = new Panel('Foobar', $this->config);
+        $result = $panel->getFields();
+        $this->assertFalse(empty($result), 'Fields are empty');
+        $this->assertTrue(is_array($result), 'Fields is not an array');
 
-        $panelName = 'Foobar';
-        $config['panels']['Foobar'] = "(%%type%% == 'foobar' && %%name%% == 'antonis')";
-        $panelB = new Panel($panelName, $config);
-
-        $this->assertTrue(in_array('type', $panelB->getFields()), 'Given field name is not in the array');
-        $this->assertTrue(in_array('name', $panelB->getFields()), 'Given field name is not in the array');
+        $this->assertTrue(in_array('type', $panel->getFields()), 'Field type is missing');
+        $this->assertTrue(in_array('name', $panel->getFields()), 'Field name is missing');
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testSetFields()
+    {
+        $panel = new Panel('Foobar', ['panels' => ['Foobar' => '(this is not a valid expression)']]);
+    }
 
     public function testGetFieldValues()
     {
-        $panelName = 'Foobar';
-        $config['panels']['Foobar'] = "(%%type%% == 'foobar' && %%name%% == 'somename')";
-        $panel = new Panel($panelName, $config);
-        $data = ['type' => 'company', 'name' => 'amazon'];
+        $panel = new Panel('Foobar', $this->config);
+        $data = ['type' => 'company', 'name' => 'amazon', 'dummy' => 'foo'];
         $actual = $panel->getFieldValues($data);
         $expected = ['type' => 'company', 'name' => 'amazon'];
         $this->assertEquals($actual, $expected, 'Data and field values should be equal.');

@@ -40,6 +40,21 @@ class CsvMigration extends AbstractMigration
     public $autoId = false;
 
     /**
+     * Required table fields
+     *
+     * @var array
+     */
+    protected $_requiredFields = [
+        'trashed' => [
+            'name' => 'trashed',
+            'type' => 'datetime',
+            'required' => true,
+            'non-searchable' => true,
+            'unique' => false
+        ]
+    ];
+
+    /**
      * Method that handles migrations using csv file.
      * @param  \Migrations\Table $table Migrations table object
      * @param  string            $path  csv file path
@@ -71,6 +86,7 @@ class CsvMigration extends AbstractMigration
 
         $parser = new MigrationParser();
         $csvData = $parser->wrapFromPath($path);
+        $csvData = array_merge($csvData, $this->_requiredFields);
 
         $tableFields = $this->_getTableFields();
 

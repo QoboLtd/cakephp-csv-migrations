@@ -63,7 +63,8 @@ class DblistItemsController extends AppController
             }
         }
         $dblists = $this->DblistItems->Dblists->find('list', ['limit' => 200]);
-        $this->set(compact('dblistItem', 'dblists'));
+        $tree = $this->DblistItems->find('treeList');
+        $this->set(compact('dblistItem', 'dblists', 'tree'));
         $this->set('_serialize', ['dblistItem']);
     }
 
@@ -90,7 +91,8 @@ class DblistItemsController extends AppController
             }
         }
         $dblists = $this->DblistItems->Dblists->find('list', ['limit' => 200]);
-        $this->set(compact('dblistItem', 'dblists'));
+        $tree = $this->DblistItems->find('treeList');
+        $this->set(compact('dblistItem', 'dblists', 'tree'));
         $this->set('_serialize', ['dblistItem']);
     }
 

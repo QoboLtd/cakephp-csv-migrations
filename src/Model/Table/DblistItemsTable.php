@@ -39,6 +39,7 @@ class DblistItemsTable extends Table
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('Tree');
 
         $this->belongsTo('Dblists', [
             'foreignKey' => 'dblist_id',

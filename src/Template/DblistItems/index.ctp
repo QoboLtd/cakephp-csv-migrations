@@ -1,11 +1,12 @@
 <?php
 $this->extend('QoboAdminPanel./Common/panel-wrapper');
+$this->assign('title', 'List items of ' . $list->get('name'));
 $this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
 ?>
 <table class="table table-striped" cellpadding="0" cellspacing="0">
     <thead>
         <tr>
-            <th><?= __d('CsvMigrations', 'Item'); ?></th>
+            <th><?= __d('CsvMigrations', 'Name'); ?></th>
             <th class="actions"><?= __('Actions'); ?></th>
         </tr>
     </thead>

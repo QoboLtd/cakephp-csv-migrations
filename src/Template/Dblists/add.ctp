@@ -1,5 +1,6 @@
 <?php
 $this->extend('QoboAdminPanel./Common/panel-wrapper');
+$this->assign('title', __d('CsvMigrations', 'Create new database list'));
 $this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
 ?>
 <div class="row">

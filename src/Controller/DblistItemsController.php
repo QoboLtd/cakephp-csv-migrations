@@ -10,7 +10,6 @@ use CsvMigrations\Controller\AppController;
  */
 class DblistItemsController extends AppController
 {
-
     /**
      * Index method
      *
@@ -19,28 +18,23 @@ class DblistItemsController extends AppController
      */
     public function index($listId = null)
     {
-        $dblistItems = [];
-        if ($this->DblistItems->Dblists->exists(['id' => $listId])) {
-            $dblistItems = $this->DblistItems
-                ->find('treeList', ['spacer' => '&nbsp;&nbsp;&nbsp;&nbsp;'])
-                ->where(['dblist_id' => $listId]);
-            if ($dblistItems->isEmpty()) {
-                $this->Flash->set(__d('CsvMigrations', 'List is empty, do you want to add new item?'));
+        $list = $this->DblistItems->Dblists->get($listId);
+        $dblistItems = $this->DblistItems
+            ->find('treeList', ['spacer' => '&nbsp;&nbsp;&nbsp;&nbsp;'])
+            ->where(['dblist_id' => $listId]);
+        if ($dblistItems->isEmpty()) {
+            $this->Flash->set(__d('CsvMigrations', 'List is empty, do you want to add new item?'));
 
-                return $this->redirect(['controller' => 'DblistItems', 'action' => 'add', $listId]);
-            }
-        } else {
-            $this->Flash->set(__d('CsvMigrations', 'Error, the list cannot be found.'));
-
-            return $this->redirect(['controller' => 'Dblists', 'action' => 'index']);
+            return $this->redirect(['action' => 'add', $listId]);
         }
-        $this->set(compact('dblistItems'));
+        $this->set(compact('dblistItems', 'list'));
     }
 
     /**
      * Add method
      *
-     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
+     * @param string $listId List's id
+     * @return \Cake\Network\Response|null
      */
     public function add($listId = null)
     {
@@ -48,17 +42,18 @@ class DblistItemsController extends AppController
         if ($this->request->is('post')) {
             $dblistItem = $this->DblistItems->patchEntity($dblistItem, $this->request->data);
             if ($this->DblistItems->save($dblistItem)) {
-                $this->Flash->success(__('The dblist item has been saved.'));
+                $this->Flash->success(__d('CsvMigrations', 'The dblist item has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'index', $listId]);
             } else {
-                $this->Flash->error(__('The dblist item could not be saved. Please, try again.'));
+                $this->Flash->error(__d('CsvMigrations', 'The dblist item could not be saved. Please, try again.'));
             }
         }
-        $dblists = $this->DblistItems->Dblists->find('list', ['limit' => 200]);
-        $tree = $this->DblistItems->find('treeList');
-        $this->set(compact('dblistItem', 'dblists', 'tree'));
-        $this->set('_serialize', ['dblistItem']);
+        $list = $this->DblistItems->Dblists->get($listId);
+        $tree = $this->DblistItems
+            ->find('treeList', ['spacer' => '&nbsp;&nbsp;&nbsp;&nbsp;'])
+            ->where(['dblist_id' => $listId]);
+        $this->set(compact('dblistItem', 'tree', 'dblistItems', 'list'));
     }
 
     /**
@@ -70,9 +65,7 @@ class DblistItemsController extends AppController
      */
     public function edit($id = null)
     {
-        $dblistItem = $this->DblistItems->get($id, [
-            'contain' => []
-        ]);
+        $dblistItem = $this->DblistItems->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $dblistItem = $this->DblistItems->patchEntity($dblistItem, $this->request->data);
             if ($this->DblistItems->save($dblistItem)) {
@@ -83,9 +76,11 @@ class DblistItemsController extends AppController
                 $this->Flash->error(__('The dblist item could not be saved. Please, try again.'));
             }
         }
-        $dblists = $this->DblistItems->Dblists->find('list', ['limit' => 200]);
-        $tree = $this->DblistItems->find('treeList');
-        $this->set(compact('dblistItem', 'dblists', 'tree'));
+        $list = $this->DblistItems->Dblists->get($dblistItem->get('dblist_id'));
+        $tree = $this->DblistItems
+            ->find('treeList', ['spacer' => '&nbsp;&nbsp;&nbsp;&nbsp;'])
+            ->where(['dblist_id' => $dblistItem->get('dblist_id')]);
+        $this->set(compact('dblistItem', 'list', 'tree'));
         $this->set('_serialize', ['dblistItem']);
     }
 
@@ -106,6 +101,6 @@ class DblistItemsController extends AppController
             $this->Flash->error(__('The dblist item could not be deleted. Please, try again.'));
         }
 
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect($this->referer());
     }
 }

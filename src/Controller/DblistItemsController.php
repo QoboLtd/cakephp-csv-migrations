@@ -14,17 +14,27 @@ class DblistItemsController extends AppController
     /**
      * Index method
      *
-     * @return void
+     * @param string $listId List's id
+     * @return \Cake\Network\Response|null
      */
-    public function index()
+    public function index($listId = null)
     {
-        $this->paginate = [
-            'contain' => ['Dblists']
-        ];
-        $dblistItems = $this->paginate($this->DblistItems);
+        $dblistItems = [];
+        if ($this->DblistItems->Dblists->exists(['id' => $listId])) {
+            $dblistItems = $this->DblistItems
+                ->find('treeList', ['spacer' => '&nbsp;&nbsp;&nbsp;&nbsp;'])
+                ->where(['dblist_id' => $listId]);
+            if ($dblistItems->isEmpty()) {
+                $this->Flash->set(__d('CsvMigrations', 'List is empty, do you want to add new item?'));
 
+                return $this->redirect(['controller' => 'DblistItems', 'action' => 'add', $listId]);
+            }
+        } else {
+            $this->Flash->set(__d('CsvMigrations', 'Error, the list cannot be found.'));
+
+            return $this->redirect(['controller' => 'Dblists', 'action' => 'index']);
+        }
         $this->set(compact('dblistItems'));
-        $this->set('_serialize', ['dblistItems']);
     }
 
     /**
@@ -49,7 +59,7 @@ class DblistItemsController extends AppController
      *
      * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add($listId = null)
     {
         $dblistItem = $this->DblistItems->newEntity();
         if ($this->request->is('post')) {

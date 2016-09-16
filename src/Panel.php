@@ -145,8 +145,8 @@ class Panel
     public function setFields()
     {
         preg_match_all('#' . self::EXP_TOKEN . '(.*?)' . self::EXP_TOKEN . '#', $this->getExpression(), $matches);
-        if (empty($matches)) {
-            throw new InvalidArgumentException(sprintf('Please wrap your placeholders with ' . self::EXP_TOKEN . ': %s', $exp));
+        if (empty($matches[1])) {
+            throw new InvalidArgumentException("No tokens found in expression");
         }
         $this->fields = $matches[1];
     }

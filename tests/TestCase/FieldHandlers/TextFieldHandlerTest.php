@@ -22,25 +22,25 @@ class TextFieldHandlerTest extends PHPUnit_Framework_TestCase
     public function getValues()
     {
         return [
-            [true, 'Boolean true'],
-            [false, 'Boolean false'],
-            [0, 'Integer zero'],
-            [1, 'Positive integer'],
-            [-1, 'Negative integer'],
-            [1.501, 'Positive float'],
-            [-1.501, 'Negative float'],
-            ['', 'Empty string'],
-            ['foobar', 'String'],
-            ['2017-07-05', 'Date'],
+            [true, "<p>1</p>\n", 'Boolean true'],
+            [false, '', 'Boolean false'],
+            [0, "<p>0</p>\n", 'Integer zero'],
+            [1, "<p>1</p>\n", 'Positive integer'],
+            [-1, "<p>-1</p>\n", 'Negative integer'],
+            [1.501, "<p>1.501</p>\n", 'Positive float'],
+            [-1.501, "<p>-1.501</p>\n", 'Negative float'],
+            ['', '', 'Empty string'],
+            ['foobar', "<p>foobar</p>\n", 'String'],
+            ['2017-07-05', "<p>2017-07-05</p>\n", 'Date'],
         ];
     }
 
     /**
      * @dataProvider getValues
      */
-    public function testRenderValue($value, $description)
+    public function testRenderValue($value, $expected, $description)
     {
         $result = $this->fh->renderValue(null, null, $value, []);
-        $this->assertEquals($value, $result, "Value rendering is broken for: $description");
+        $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 }

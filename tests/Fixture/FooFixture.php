@@ -28,6 +28,7 @@ class FooFixture extends TestFixture
         'created' => ['type' => 'datetime'],
         'modified' => ['type' => 'datetime'],
         'is_primary' => ['type' => 'boolean', 'null' => true],
+        'trashed' => ['type' => 'datetime'],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
             'unique' => ['type' => 'unique', 'columns' => ['name', 'id']]
@@ -52,6 +53,7 @@ class FooFixture extends TestFixture
             'start_time' => '16:15',
             'created' => '2016-07-01 10:39:23',
             'modified' => '2016-07-01 10:41:31',
+            'trashed' => '0000-00-00 00:00:00',
             'is_primary' => 1
         ]
     ];

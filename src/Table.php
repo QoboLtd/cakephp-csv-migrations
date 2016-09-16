@@ -37,6 +37,8 @@ class Table extends BaseTable
     {
         parent::initialize($config);
 
+        $this->addBehavior('Muffin/Trash.Trash');
+
         // set table/module configuration
         $this->_setConfiguration($this->table());
 

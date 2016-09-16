@@ -43,7 +43,8 @@ class DblistsTable extends Table
 
         $this->hasMany('DblistItems', [
             'foreignKey' => 'dblist_id',
-            'className' => 'CsvMigrations.DblistItems'
+            'className' => 'CsvMigrations.DblistItems',
+            'dependent' => true,
         ]);
     }
 

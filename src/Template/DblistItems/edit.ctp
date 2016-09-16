@@ -10,6 +10,9 @@ $this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
             <div class="col-xs-6">
                 <?= $this->Form->input('dblist_id', ['options' => $dblists]); ?>
             </div>
+            <div class="col-xs-6">
+                <?= $this->Form->input('parent_id', ['options' => $tree, 'escape' => true, 'empty' => true]); ?>
+            </div>
         </div>
         <div class="row">
             <div class="col-xs-6">

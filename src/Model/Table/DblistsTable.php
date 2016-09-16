@@ -43,7 +43,8 @@ class DblistsTable extends Table
 
         $this->hasMany('DblistItems', [
             'foreignKey' => 'dblist_id',
-            'className' => 'CsvMigrations.DblistItems'
+            'className' => 'CsvMigrations.DblistItems',
+            'dependent' => true,
         ]);
     }
 
@@ -105,17 +106,11 @@ class DblistsTable extends Table
     {
         $result = [];
         $name = Hash::get($options, 'name');
-        $list = $this->find()
-            ->where(['name' => $name])
-            ->contain(['DblistItems' => ['sort' => ['DblistItems.name' => 'ASC']]])
-            ->first();
+        $list = $this->findByName($name)->first();
         if ($list) {
-            $items = Hash::get($list, 'dblist_items') ?: [];
-            foreach ($items as $entity) {
-                $name = h($entity->get('name'));
-                $value = h($entity->get('value'));
-                $result[$value] = $name;
-            }
+            $result = $this
+                ->DblistItems->find('treeList')
+                ->where(['dblist_id' => $list->get('id')]);
         }
 
         return $result;

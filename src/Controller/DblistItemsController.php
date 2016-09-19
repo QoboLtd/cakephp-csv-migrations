@@ -117,15 +117,15 @@ class DblistItemsController extends AppController
         $this->request->allowMethod('post');
         $moveActions = ['up', 'down'];
         if (!in_array($action, $moveActions)) {
-            $this->Flash->error(__('Unknown move action.'));
+            $this->Flash->error(__d('CsvMigrations', 'Unknown move action.'));
             return $this->redirect($this->referer());
         }
         $node = $this->DblistItems->get($id);
         $moveFunction = 'move' . $action;
         if ($this->DblistItems->{$moveFunction}($node)) {
-            $this->Flash->success(__('{0} has been moved {1} successfully.', $node->name, $action));
+            $this->Flash->success(__d('CsvMigrations', '{0} has been moved {1} successfully.', $node->name, $action));
         } else {
-            $this->Flash->error(__('Fail to move {0} {1}.', $node->name, $action));
+            $this->Flash->error(__d('CsvMigrations', 'Fail to move {0} {1}.', $node->name, $action));
         }
 
         return $this->redirect($this->referer());

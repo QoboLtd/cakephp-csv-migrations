@@ -118,6 +118,7 @@ class DblistItemsController extends AppController
         $moveActions = ['up', 'down'];
         if (!in_array($action, $moveActions)) {
             $this->Flash->error(__d('CsvMigrations', 'Unknown move action.'));
+
             return $this->redirect($this->referer());
         }
         $node = $this->DblistItems->get($id);

@@ -109,7 +109,7 @@ class DblistsTable extends Table
         $list = $this->findByName($name)->first();
         if ($list) {
             $result = $this
-                ->DblistItems->find('treeList')
+                ->DblistItems->find('treeList', ['keyPath' => 'value', 'valuePath' => 'name'])
                 ->where(['dblist_id' => $list->get('id')]);
         }
 

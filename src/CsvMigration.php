@@ -115,6 +115,11 @@ class CsvMigration extends AbstractMigration
         $manyToMany = explode(',', $this->_config['manyToMany']['modules']);
 
         foreach ($manyToMany as $module) {
+            // skip manyToMany table creation if one of the tables does not exist
+            if (!$this->hasTable(Inflector::tableize($module))) {
+                continue;
+            }
+
             $tables = [];
             $tables[] = $tableName;
             /*

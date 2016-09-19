@@ -20,6 +20,11 @@ $this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
                 <?= $this->Form->input('value'); ?>
             </div>
         </div>
+        <div class="row">
+            <div class="col-xs-6">
+                <?= $this->Form->input('active', ['checked' => 'checked']); ?>
+            </div>
+        </div>
         </fieldset>
         <?= $this->Form->hidden('dblist_id',['value' => $list['id']]); ?>
         <?= $this->Form->button(__("Submit"), ['class' => 'btn btn-primary']); ?>

@@ -71,7 +71,7 @@ class DblistItemsController extends AppController
             if ($this->DblistItems->save($dblistItem)) {
                 $this->Flash->success(__('The dblist item has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'index', $dblistItem->get('dblist_id')]);
             } else {
                 $this->Flash->error(__('The dblist item could not be saved. Please, try again.'));
             }

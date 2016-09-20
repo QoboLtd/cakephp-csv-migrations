@@ -1,6 +1,16 @@
 <?php
 $this->extend('QoboAdminPanel./Common/panel-wrapper');
-$this->assign('title', 'List items of ' . $list->get('name'));
+$addUrl = [
+    'plugin' => $this->request->plugin,
+    'controller' => $this->request->controller,
+    'action' => 'add',
+    $list->get('id')
+];
+$mainTitle = $this->element(
+    'QoboAdminPanel.main-title',
+    ['link' => $addUrl, 'title' => 'List items of ' . $list->get('name')]
+);
+$this->assign('main-title', $mainTitle);
 $this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
 ?>
 <table class="table">

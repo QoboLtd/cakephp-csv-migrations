@@ -25,23 +25,6 @@ class DblistsController extends AppController
     }
 
     /**
-     * View method
-     *
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     * @param string|null $id Dblist id.
-     * @return void
-     */
-    public function view($id = null)
-    {
-        $dblist = $this->Dblists->get($id, [
-            'contain' => ['DblistItems']
-        ]);
-
-        $this->set('dblist', $dblist);
-        $this->set('_serialize', ['dblist']);
-    }
-
-    /**
      * Add method
      *
      * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.

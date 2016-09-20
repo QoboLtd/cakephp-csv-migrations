@@ -23,7 +23,7 @@ $this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
     <tbody>
         <?php foreach ($tree as $entity): ?>
         <tr class="<?= !($entity->get('active')) ? 'warning' : ''; ?>">
-            <td><?= $entity->get('spacer') ?></td>
+            <td><?= $entity->get('spacer')?> (<?= $entity->get('value') ?>)</td>
             <td class="actions">
                 <?= $this->Form->postLink('', ['action' => 'move_node', $entity->get('id'), 'up'], ['title' => __('Move up'), 'class' => 'btn btn-default glyphicon glyphicon-arrow-up']) ?>
                 <?= $this->Form->postLink('', ['action' => 'move_node', $entity->get('id'), 'down'], ['title' => __('Move down'), 'class' => 'btn btn-default glyphicon glyphicon-arrow-down']) ?>

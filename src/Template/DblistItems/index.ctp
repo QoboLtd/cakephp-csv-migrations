@@ -11,7 +11,6 @@ $mainTitle = $this->element(
     ['link' => $addUrl, 'title' => 'List items of ' . $list->get('name'), 'showOptions' => ['back' => true, 'add' => true]]
 );
 $this->assign('main-title', $mainTitle);
-$this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
 ?>
 <table class="table">
     <thead>

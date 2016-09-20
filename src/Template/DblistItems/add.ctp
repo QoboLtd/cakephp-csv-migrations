@@ -1,7 +1,20 @@
 <?php
-$this->extend('QoboAdminPanel./Common/panel-wrapper');
-$this->assign('title', __d('CsvMigrations', 'Add item to {0}', $list->get('name')));
-$this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
+$this->extend('/Common/panel-wrapper');
+$addUrl = [
+    'plugin' => $this->request->plugin,
+    'controller' => $this->request->controller,
+    'action' => 'add',
+    $list->get('id')
+];
+$mainTitle = $this->element(
+    'top-row',
+    [
+        'link' => $addUrl,
+        'title' => __d('CsvMigrations', 'Add new list item to {0}', $list->get('name'))
+    ]
+);
+$this->assign('main-title', $mainTitle);
+$this->assign('panel-title', __d('CsvMigrations', 'Details'));
 ?>
 <?= $this->Form->create($dblistItem); ?>
 <div class="row">

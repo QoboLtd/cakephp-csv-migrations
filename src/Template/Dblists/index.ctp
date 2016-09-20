@@ -1,7 +1,8 @@
 <?php
-$this->extend('QoboAdminPanel./Common/panel-wrapper');
-$this->assign('title', __d('CsvMigrations', 'Database Lists'));
-$this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
+echo $this->element(
+    'top-row',
+    ['title' => __d('CsvMigrations', 'Database Lists')]
+);
 ?>
 <table class="table table-striped" cellpadding="0" cellspacing="0">
     <thead>

@@ -1,6 +1,10 @@
 <?php
-$this->extend('QoboAdminPanel./Common/panel-wrapper');
-$this->assign('title', __d('CsvMigrations', 'Edit database list'));
+$this->extend('/Common/panel-wrapper');
+$mainTitle = $this->element(
+    'top-row',
+    ['title' => __d('CsvMigrations', 'Edit database list')]
+);
+$this->assign('main-title', $mainTitle);
 $this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
 ?>
 <div class="row">

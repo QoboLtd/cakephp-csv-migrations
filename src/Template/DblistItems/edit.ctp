@@ -1,6 +1,18 @@
 <?php
 $this->extend('QoboAdminPanel./Common/panel-wrapper');
 $this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
+$addUrl = [
+    'plugin' => $this->request->plugin,
+    'controller' => $this->request->controller,
+    'action' => 'add',
+    $list->get('id')
+];
+$mainTitle = $this->element(
+    'QoboAdminPanel.main-title',
+    ['link' => $addUrl, 'showOptions' => ['add' => true]]
+);
+$this->assign('main-title', $mainTitle);
+$this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
 ?>
 <?= $this->Form->create($dblistItem); ?>
 <div class="row">

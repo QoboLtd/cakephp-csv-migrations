@@ -19,15 +19,14 @@ class DblistItemsController extends AppController
     public function index($listId = null)
     {
         $list = $this->DblistItems->Dblists->get($listId);
-        $dblistItems = $this->DblistItems
-            ->find('treeList', ['spacer' => '&nbsp;&nbsp;&nbsp;&nbsp;'])
-            ->where(['dblist_id' => $listId]);
-        if ($dblistItems->isEmpty()) {
+        $tree = $this->DblistItems->find('treeEntities', ['listId' => $listId]);
+        if ($tree->isEmpty()) {
             $this->Flash->set(__d('CsvMigrations', 'List is empty, do you want to add new item?'));
 
             return $this->redirect(['action' => 'add', $listId]);
         }
-        $this->set(compact('dblistItems', 'list'));
+
+        $this->set(compact('tree', 'list'));
     }
 
     /**

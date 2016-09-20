@@ -8,7 +8,7 @@ $addUrl = [
 ];
 $mainTitle = $this->element(
     'QoboAdminPanel.main-title',
-    ['link' => $addUrl, 'title' => 'List items of ' . $list->get('name'), 'showOptions' => ['back' => true]]
+    ['link' => $addUrl, 'title' => 'List items of ' . $list->get('name'), 'showOptions' => ['back' => true, 'add' => true]]
 );
 $this->assign('main-title', $mainTitle);
 $this->assign('panel-title', __d('QoboAdminPanel', 'Details'));

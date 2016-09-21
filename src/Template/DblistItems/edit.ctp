@@ -1,18 +1,25 @@
 <?php
-$this->extend('QoboAdminPanel./Common/panel-wrapper');
-$this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
-$addUrl = [
+$this->extend('/Common/panel-wrapper');
+$backUrl = [
     'plugin' => $this->request->plugin,
     'controller' => $this->request->controller,
-    'action' => 'add',
+    'action' => 'index',
     $list->get('id')
 ];
 $mainTitle = $this->element(
-    'QoboAdminPanel.main-title',
-    ['link' => $addUrl, 'showOptions' => ['back' => true]]
+    'top-row',
+    [
+        'title' => 'List items of ' . $list->get('name'),
+        'options' => [
+            'back' => [
+                'display' => true,
+                'url' => $backUrl,
+            ]
+        ]
+    ]
 );
 $this->assign('main-title', $mainTitle);
-$this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
+$this->assign('panel-title', __d('CsvMigrations', 'Details'));
 ?>
 <?= $this->Form->create($dblistItem); ?>
 <div class="row">
@@ -38,7 +45,7 @@ $this->assign('panel-title', __d('QoboAdminPanel', 'Details'));
         </div>
         </fieldset>
         <?= $this->Form->hidden('dblist_id',['value' => $list['id']]); ?>
-        <?= $this->Form->button(__("Submit"), ['class' => 'btn btn-primary']); ?>
+        <?= $this->Form->button(__d('CsvMigrations', "Submit"), ['class' => 'btn btn-primary']); ?>
         <?= $this->Form->end() ?>
     </div>
 </div>

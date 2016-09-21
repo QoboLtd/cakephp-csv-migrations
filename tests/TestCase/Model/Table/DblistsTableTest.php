@@ -12,6 +12,16 @@ class DblistsTableTest extends TestCase
 {
 
     /**
+     * Fixtures
+     *
+     * @var array
+     */
+    public $fixtures = [
+        'plugin.CsvMigrations.Dblists',
+        'plugin.CsvMigrations.DblistItems',
+    ];
+
+    /**
      * Test subject
      *
      * @var \CsvMigrations\Model\Table\DblistsTable
@@ -49,7 +59,10 @@ class DblistsTableTest extends TestCase
      */
     public function testInitialize()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $assoc = $this->Dblists->association('DblistItems');
+        $this->assertTrue($this->Dblists->hasBehavior('Timestamp'));
+        $this->assertFalse(is_null($assoc), 'DblistItems cannot be found');
+        $this->assertInstanceOf('Cake\ORM\Association\HasMany', $assoc, 'Dblists\'s association with DblistItems should be hasMany');
     }
 
     /**
@@ -59,7 +72,9 @@ class DblistsTableTest extends TestCase
      */
     public function testValidationDefault()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $validator = $this->Dblists->validator();
+        $this->assertTrue($validator->hasField('id'));
+        $this->assertTrue($validator->hasField('name'));
     }
 
     /**
@@ -70,5 +85,22 @@ class DblistsTableTest extends TestCase
     public function testBuildRules()
     {
         $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    /**
+     * Test Options query.
+     *
+     * @return void
+     */
+    public function testOptions()
+    {
+        $list = 'categories';
+        $query = $this->Dblists->find('options', ['name' => $list]);
+        $this->assertInstanceOf('Cake\ORM\Query', $query);
+        $this->assertFalse($query->isEmpty());
+
+        $list = null;
+        $result = $this->Dblists->find('options', ['name' => $list]);
+        $this->assertTrue(is_array($result));
     }
 }

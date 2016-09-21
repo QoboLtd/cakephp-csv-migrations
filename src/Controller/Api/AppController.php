@@ -122,7 +122,9 @@ class AppController extends Controller
     public function view()
     {
         $this->Crud->on('beforeFind', function (Event $event) {
-            $event->subject()->repository->findByLookupFields($event->subject()->query, $event->subject()->id);
+            if (method_exists($event->subject()->repository, 'findByLookupFields')) {
+                $event->subject()->repository->findByLookupFields($event->subject()->query, $event->subject()->id);
+            }
 
             $event->subject()->query->contain($this->_getAssociations($event));
         });
@@ -163,7 +165,9 @@ class AppController extends Controller
         $this->Crud->on('beforeSave', function (Event $event) {
             // get Entity's Table instance
             $table = TableRegistry::get($event->subject()->entity->source());
-            $table->setAssociatedByLookupFields($event->subject()->entity);
+            if (method_exists($table, 'setAssociatedByLookupFields')) {
+                $table->setAssociatedByLookupFields($event->subject()->entity);
+            }
         });
 
         $this->Crud->on('afterSave', function (Event $event) {
@@ -184,7 +188,9 @@ class AppController extends Controller
     public function edit()
     {
         $this->Crud->on('beforeFind', function (Event $event) {
-            $event->subject()->repository->findByLookupFields($event->subject()->query, $event->subject()->id);
+            if (method_exists($event->subject()->repository, 'findByLookupFields')) {
+                $event->subject()->repository->findByLookupFields($event->subject()->query, $event->subject()->id);
+            }
         });
 
         $this->Crud->on('afterFind', function (Event $event) {
@@ -192,7 +198,9 @@ class AppController extends Controller
         });
 
         $this->Crud->on('beforeSave', function (Event $event) {
-            $event->subject()->repository->setAssociatedByLookupFields($event->subject()->entity);
+            if (method_exists($event->subject()->repository, 'setAssociatedByLookupFields')) {
+                $event->subject()->repository->setAssociatedByLookupFields($event->subject()->entity);
+            }
         });
 
         $this->Crud->on('afterSave', function (Event $event) {

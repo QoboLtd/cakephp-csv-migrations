@@ -5,7 +5,7 @@ $defaultOptions = [
     'add' => [
         'display' => false,
         'url' => null,
-        'title' => 'foobar',
+        'title' => __d('CsvMigrations', 'Add new'),
         'ccsClass' => 'btn btn-default glyphicon glyphicon-plus',
     ],
     'back' => [

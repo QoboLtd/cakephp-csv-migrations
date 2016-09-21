@@ -19,16 +19,6 @@ class DblistsTableTest extends TestCase
     public $Dblists;
 
     /**
-     * Fixtures
-     *
-     * @var array
-     */
-    public $fixtures = [
-        'plugin.csv_migrations.dblists',
-        'plugin.csv_migrations.dblist_items'
-    ];
-
-    /**
      * setUp method
      *
      * @return void

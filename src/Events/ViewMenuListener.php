@@ -6,6 +6,7 @@ use Cake\Event\EventListenerInterface;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use CsvMigrations\View\AppView;
 
@@ -27,7 +28,8 @@ class ViewMenuListener implements EventListenerInterface
             'View.Index.Menu.Top' => 'getIndexMenuTop',
             'View.Index.Menu.Actions' => 'getIndexMenuActions',
             'View.Associated.Menu.Actions' => 'getAssociatedMenuActions',
-            'View.View.Menu.Top' => 'getViewMenuTop'
+            'View.View.Menu.Top' => 'getViewMenuTop',
+            'View.View.Menu.Top.Row' => 'getViewMenuTopRow',
         ];
     }
 
@@ -237,6 +239,62 @@ class ViewMenuListener implements EventListenerInterface
             $html .= $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
         } else {
             $html .= $btnChangelog . $btnEdit . $btnDel;
+        }
+
+        $event->result = $html . $event->result;
+
+        return $event->result;
+    }
+
+    /**
+     * Creates menu with buttons.
+     *
+     * Button Options
+     * - display*: Showing the button flag
+     * - url*: URL MUST be array format.
+     * - title: Title
+     * - ccsClass: CSS classes
+     *
+     * @param  Cake\Event\Event     $event   Event object
+     * @param  Cake\Network\Request $request Request object
+     * @param  array                $options Entity options
+     * @return string
+     */
+    public function getViewMenuTopRow(Event $event, Request $request, array $options)
+    {
+        $view = $event->subject();
+        $menu = [];
+        $result = '';
+        foreach ($options as $key => $btOptions) {
+            $display = Hash::get($btOptions, 'display', false);
+            if (!$display) {
+                continue;
+            }
+            $url = Hash::get($btOptions, 'url');
+            //This is for the menu plugin which requires URL in array format.
+            if (!is_array($url)) {
+                continue;
+            }
+            $title = Hash::get($btOptions, 'title');
+            $class = Hash::get($btOptions, 'ccsClass');
+            $btn = ' ' . $view->Html->link(
+                ' ',
+                $url,
+                ['title' => $title, 'class' => $class]
+            );
+            $result .= $btn;
+            $menu[] = [
+                'label' => $btn,
+                'url' => $url,
+                'capabilities' => 'fromUrl'
+            ];
+        }
+
+        $html = null;
+        if ($view->elementExists(static::MENU_ELEMENT)) {
+            $html .= $view->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
+        } else {
+            $html .= $result;
         }
 
         $event->result = $html . $event->result;

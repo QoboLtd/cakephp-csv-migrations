@@ -39,6 +39,7 @@ class DblistItemsTable extends Table
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('Tree');
 
         $this->belongsTo('Dblists', [
             'foreignKey' => 'dblist_id',
@@ -80,7 +81,41 @@ class DblistItemsTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['dblist_id'], 'Dblists'));
+        $rules->add(
+            $rules->isUnique(
+                ['dblist_id', 'name', 'value'],
+                __d('CsvMigrations', 'This list item is already in this list.')
+            )
+        );
 
         return $rules;
+    }
+
+    /**
+     * Return all the entities along with the spacer from the treeList.
+     *
+     * Options should be
+     * - listId: List Id to fetch its items.
+     * @see  Cake\ORM\Behavior\TreeBehavior::findTreeList
+     * @param  Query  $query   [description]
+     * @param  array  $options [description]
+     * @return [type]          [description]
+     */
+    public function findTreeEntities(Query $query, array $options)
+    {
+        $query = $query
+            ->where(['dblist_id' => $options['listId']])
+            ->order(['lft' => 'asc']);
+        //Workaround for getting spacer.
+        $tree = $this->find('treeList', ['spacer' => '&nbsp;&nbsp;&nbsp;&nbsp;'])
+                ->toArray();
+        foreach ($query as $item) {
+            $id = $item->get('id');
+            if (in_array($id, array_keys($tree))) {
+                $item->set('spacer', $tree[$id]);
+            }
+        }
+
+        return $query;
     }
 }

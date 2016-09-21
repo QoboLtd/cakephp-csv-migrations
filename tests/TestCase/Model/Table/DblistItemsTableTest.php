@@ -18,15 +18,6 @@ class DblistItemsTableTest extends TestCase
      */
     public $DblistItems;
 
-    /**
-     * Fixtures
-     *
-     * @var array
-     */
-    public $fixtures = [
-        'plugin.csv_migrations.dblist_items',
-        'plugin.csv_migrations.dblists'
-    ];
 
     /**
      * setUp method

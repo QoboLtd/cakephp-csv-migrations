@@ -9,16 +9,6 @@ use CsvMigrations\Controller\DblistsController;
  */
 class DblistsControllerTest extends IntegrationTestCase
 {
-
-    /**
-     * Fixtures
-     *
-     * @var array
-     */
-    public $fixtures = [
-        'plugin.csv_migrations.dblists'
-    ];
-
     /**
      * Test index method
      *

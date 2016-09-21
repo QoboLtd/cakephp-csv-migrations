@@ -5,7 +5,7 @@ if (!$this->fetch('top-row')) {
     $this->end('top-row');
 }
 ?>
-<?= $this->fetch('main-title'); ?>
+<?= $this->fetch('top-row'); ?>
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default">

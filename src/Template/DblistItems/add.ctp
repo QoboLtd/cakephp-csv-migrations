@@ -13,7 +13,7 @@ $mainTitle = $this->element(
         'title' => __d('CsvMigrations', 'Add new list item to {0}', $list->get('name'))
     ]
 );
-$this->assign('main-title', $mainTitle);
+$this->assign('top-row', $mainTitle);
 $this->assign('panel-title', __d('CsvMigrations', 'Details'));
 ?>
 <?= $this->Form->create($dblistItem); ?>

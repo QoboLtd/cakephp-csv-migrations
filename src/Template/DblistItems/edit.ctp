@@ -18,7 +18,7 @@ $mainTitle = $this->element(
         ]
     ]
 );
-$this->assign('main-title', $mainTitle);
+$this->assign('top-row', $mainTitle);
 $this->assign('panel-title', __d('CsvMigrations', 'Details'));
 ?>
 <?= $this->Form->create($dblistItem); ?>

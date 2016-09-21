@@ -5,9 +5,26 @@ $addUrl = [
     'action' => 'add',
     $list->get('id')
 ];
+$backUrl = [
+    'plugin' => $this->request->plugin,
+    'controller' => 'dblists',
+    'action' => 'index',
+];
 echo $this->element(
     'top-row',
-    ['link' => $addUrl, 'title' => 'List items of ' . $list->get('name'), 'showOptions' => ['back' => true, 'add' => true]]
+    [
+        'title' => 'List items of ' . $list->get('name'),
+        'options' => [
+            'add' => [
+                'display' => true,
+                'url' => $addUrl,
+            ],
+            'back' => [
+                'display' => true,
+                'url' => $backUrl,
+            ]
+        ]
+    ]
 );
 ?>
 <table class="table">

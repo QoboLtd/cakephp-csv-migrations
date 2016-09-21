@@ -1,17 +1,21 @@
 <?php
 $this->extend('/Common/panel-wrapper');
-$addUrl = [
+$backUrl = [
     'plugin' => $this->request->plugin,
     'controller' => $this->request->controller,
-    'action' => 'add',
+    'action' => 'index',
     $list->get('id')
 ];
 $mainTitle = $this->element(
     'top-row',
     [
-        'link' => $addUrl,
-        'showOptions' => ['back' => true],
-        'title' => __d('CsvMigrations', 'Edit Dblist Item of {0}', $list->get('name')),
+        'title' => 'List items of ' . $list->get('name'),
+        'options' => [
+            'back' => [
+                'display' => true,
+                'url' => $backUrl,
+            ]
+        ]
     ]
 );
 $this->assign('main-title', $mainTitle);

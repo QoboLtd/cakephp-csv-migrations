@@ -12,7 +12,6 @@ $mainTitle = $this->element(
         'title' => 'List items of ' . $list->get('name'),
         'options' => [
             'back' => [
-                'display' => true,
                 'url' => $backUrl,
             ]
         ]

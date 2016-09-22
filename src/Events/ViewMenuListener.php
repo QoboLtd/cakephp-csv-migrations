@@ -18,6 +18,11 @@ class ViewMenuListener implements EventListenerInterface
     const MENU_ELEMENT = 'Menu.menu';
 
     /**
+     * Blank space
+     */
+    const BLANK_SPACE = '&nbsp;';
+
+    /**
      * Implemented Events
      *
      * @return array
@@ -250,10 +255,10 @@ class ViewMenuListener implements EventListenerInterface
      * Creates menu with buttons.
      *
      * Button Options
-     * - display*: Showing the button flag
-     * - url*: URL MUST be array format.
-     * - title: Title
-     * - ccsClass: CSS classes
+     * - title*: Title
+     * - icon*: Glyphicon class
+     * - url*: CakePHP array format only
+     * - class: CSS classes
      *
      * @param  Cake\Event\Event     $event   Event object
      * @param  Cake\Network\Request $request Request object
@@ -266,8 +271,9 @@ class ViewMenuListener implements EventListenerInterface
         $menu = [];
         $result = '';
         foreach ($options as $key => $btOptions) {
-            $display = Hash::get($btOptions, 'display', false);
-            if (!$display) {
+            $icon = Hash::get($btOptions, 'icon', false);
+            $title = Hash::get($btOptions, 'title', false);
+            if (!$icon && !$title) {
                 continue;
             }
             $url = Hash::get($btOptions, 'url');
@@ -275,20 +281,29 @@ class ViewMenuListener implements EventListenerInterface
             if (!is_array($url)) {
                 continue;
             }
-            $title = Hash::get($btOptions, 'title');
-            $class = Hash::get($btOptions, 'class');
-            $displayTitle = Hash::get($btOptions, 'displayTitle');
-            $btn = ' ' . $view->Html->link(
-                !$displayTitle ? '' : $title,
+            unset($btOptions['url']);
+            $name = '';
+            if ($icon) {
+                $name .= $view->Html->icon($icon) . static::BLANK_SPACE;
+                $btOptions += ['escape' => false];
+                unset($btOptions['icon']);
+            }
+            if ($title) {
+                $name .= $title;
+            }
+            $btn = static::BLANK_SPACE . $view->Html->link(
+                $name,
                 $url,
-                ['title' => $title, 'class' => $class]
+                $btOptions
             );
-            $result .= $btn;
+            //insert to menu
             $menu[] = [
                 'label' => $btn,
                 'url' => $url,
                 'capabilities' => 'fromUrl'
             ];
+            //Insert to variable if menu is not loaded.
+            $result .= $btn;
         }
 
         $html = null;

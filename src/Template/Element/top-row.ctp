@@ -4,18 +4,16 @@ use Cake\Event\Event;
 
 $defaultOptions = [
     'add' => [
-        'display' => false,
-        'displayTitle' => false,
         'url' => null,
         'title' => __d('CsvMigrations', 'Add new'),
-        'class' => 'btn btn-default glyphicon glyphicon-plus',
+        'class' => 'btn btn-primary',
+        'icon' => 'plus',
     ],
     'back' => [
-        'display' => false,
-        'displayTitle' => false,
         'url' => null,
         'title' => __d('CsvMigrations', 'Back'),
-        'class' => 'btn btn-default glyphicon glyphicon-arrow-left',
+        'class' => 'btn btn-default',
+        'icon' => 'arrow-left',
     ],
 ];
 if (empty($options)) {

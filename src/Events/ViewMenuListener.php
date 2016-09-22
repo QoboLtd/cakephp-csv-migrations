@@ -276,9 +276,10 @@ class ViewMenuListener implements EventListenerInterface
                 continue;
             }
             $title = Hash::get($btOptions, 'title');
-            $class = Hash::get($btOptions, 'ccsClass');
+            $class = Hash::get($btOptions, 'class');
+            $displayTitle = Hash::get($btOptions, 'displayTitle');
             $btn = ' ' . $view->Html->link(
-                ' ',
+                !$displayTitle ? '' : $title,
                 $url,
                 ['title' => $title, 'class' => $class]
             );

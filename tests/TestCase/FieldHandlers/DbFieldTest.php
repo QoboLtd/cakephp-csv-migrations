@@ -18,6 +18,15 @@ class DbFieldTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($dbField->getUnique(), "Field unique was not properly set");
     }
 
+    public function testSetOptions()
+    {
+        $dbField = new DbField('field', 'string', 255, true, true, true);
+        $options = ['limit' => 100];
+        $dbField->setOptions($options);
+        $result = $dbField->getOptions();
+        $this->assertEquals($options, $result, "Setting options is broken");
+    }
+
     /**
      * @expectedException InvalidArgumentException
      */

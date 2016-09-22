@@ -20,20 +20,6 @@ class DbField
     protected $_type;
 
     /**
-     * field limit
-     *
-     * @var int
-     */
-    protected $_limit;
-
-    /**
-     * field required flag
-     *
-     * @var bool
-     */
-    protected $_required;
-
-    /**
      * field non-searchable flag
      *
      * @var bool
@@ -48,11 +34,31 @@ class DbField
     protected $_unique;
 
     /**
-     * Supported field types
+     * Column options
+     *
+     * Initially populated from the default options,
+     * based on the column type.
      *
      * @var array
      */
-    protected $_supportedTypes = ['uuid', 'string', 'integer', 'boolean', 'text', 'datetime', 'date', 'time'];
+    protected $_options;
+
+    /**
+     * Supported field types and their default options
+     *
+     * @var array
+     */
+    protected $_defaultOptions = [
+        'uuid' => [],
+        'string' => ['limit' => 255],
+        'integer' => [],
+        'decimal' => ['scale' => 8, 'precision' => 2],
+        'boolean' => [],
+        'text' => [],
+        'datetime' => [],
+        'date' => [],
+        'time' => [],
+    ];
 
     /**
      * Constructor
@@ -68,10 +74,46 @@ class DbField
     {
         $this->setName($name);
         $this->setType($type);
+        $this->setDefaultOptions();
+
         $this->setLimit($limit);
         $this->setRequired($required);
         $this->setNonSearchable($nonSearchable);
         $this->setUnique($unique);
+    }
+
+    /**
+     * Populate options with defaults
+     *
+     * @return void
+     */
+    protected function setDefaultOptions()
+    {
+        $type = $this->getType();
+        if (!empty($this->_defaultOptions[$type])) {
+            $this->_options = $this->_defaultOptions[$type];
+        }
+    }
+
+    /**
+     * Set options
+     *
+     * @param array $options Options to set
+     * @return void
+     */
+    public function setOptions(array $options = [])
+    {
+        $this->_options = $options;
+    }
+
+    /**
+     * Get options
+     *
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->_options;
     }
 
     /**
@@ -80,7 +122,7 @@ class DbField
      * @param string $name field name
      * @return void
      */
-    public function setName($name)
+    protected function setName($name)
     {
         if (empty($name)) {
             throw new InvalidArgumentException('Empty field name is not allowed');
@@ -105,13 +147,13 @@ class DbField
      * @param string $type field type
      * @return void
      */
-    public function setType($type)
+    protected function setType($type)
     {
         if (empty($type)) {
             throw new InvalidArgumentException(__CLASS__ . ': Empty field type is not allowed');
         }
 
-        if (!in_array($type, $this->_supportedTypes)) {
+        if (!in_array($type, array_keys($this->_defaultOptions))) {
             throw new InvalidArgumentException(__CLASS__ . ': Unsupported field type: ' . $type);
         }
 
@@ -134,9 +176,11 @@ class DbField
      * @param int $limit field limit
      * @return void
      */
-    public function setLimit($limit)
+    public function setLimit($limit = null)
     {
-        $this->_limit = $limit;
+        if ($limit !== null) {
+            $this->_options['limit'] = $limit;
+        }
     }
 
     /**
@@ -146,7 +190,12 @@ class DbField
      */
     public function getLimit()
     {
-        return $this->_limit;
+        $result = null;
+        if (isset($this->_options['limit'])) {
+            $result = $this->_options['limit'];
+        }
+
+        return $result;
     }
 
     /**
@@ -155,9 +204,12 @@ class DbField
      * @param bool $required field required flag
      * @return void
      */
-    public function setRequired($required)
+    public function setRequired($required = null)
     {
-        $this->_required = $required;
+        if ($required !== null) {
+            // Flip $required into allow null flag
+            $this->_options['null'] = !$required;
+        }
     }
 
     /**
@@ -167,7 +219,13 @@ class DbField
      */
     public function getRequired()
     {
-        return $this->_required;
+        $result = null;
+        if (isset($this->_options['null'])) {
+            // Flip allow null flag into $required
+            $result = !$this->_options['null'];
+        }
+
+        return $result;
     }
 
     /**

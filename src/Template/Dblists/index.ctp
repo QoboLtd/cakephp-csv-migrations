@@ -12,6 +12,7 @@ echo $this->element(
             'add' => [
                 'display' => true,
                 'url' => $addUrl,
+                'class' => 'btn btn-primary glyphicon glyphicon-plus',
             ],
         ]
     ]

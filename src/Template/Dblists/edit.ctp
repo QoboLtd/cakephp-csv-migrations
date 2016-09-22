@@ -4,7 +4,7 @@ $mainTitle = $this->element(
     'top-row',
     ['title' => __d('CsvMigrations', 'Edit database list')]
 );
-$this->assign('main-title', $mainTitle);
+$this->assign('top-row', $mainTitle);
 $this->assign('panel-title', __d('CsvMigrations', 'Details'));
 ?>
 <div class="row">

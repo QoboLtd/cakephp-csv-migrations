@@ -1,7 +1,20 @@
 <?php
+$addUrl = [
+    'plugin' => $this->request->plugin,
+    'controller' => $this->request->controller,
+    'action' => 'add',
+];
 echo $this->element(
     'top-row',
-    ['title' => __d('CsvMigrations', 'Database Lists')]
+    [
+        'title' => __d('CsvMigrations', 'Database Lists'),
+        'options' => [
+            'add' => [
+                'display' => true,
+                'url' => $addUrl,
+            ],
+        ]
+    ]
 );
 ?>
 <table class="table table-striped">

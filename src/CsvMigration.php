@@ -208,10 +208,7 @@ class CsvMigration extends AbstractMigration
             }
 
             foreach ($dbFields as $dbField) {
-                $this->_table->addColumn($dbField->getName(), $dbField->getType(), [
-                    'limit' => $dbField->getLimit(),
-                    'null' => $dbField->getRequired() ? false : true
-                ]);
+                $this->_table->addColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
                 // set field as unique
                 if ($dbField->getUnique()) {
                     $this->_table->addIndex([$dbField->getName()], ['unique' => $dbField->getUnique()]);
@@ -252,10 +249,7 @@ class CsvMigration extends AbstractMigration
                 }
 
                 foreach ($dbFields as $dbField) {
-                    $this->_table->changeColumn($dbField->getName(), $dbField->getType(), [
-                        'limit' => $dbField->getLimit(),
-                        'null' => (bool)$dbField->getRequired() ? false : true
-                    ]);
+                    $this->_table->changeColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
                     // set field as unique
                     if ($dbField->getUnique()) {
                         $this->_table->addIndex([$dbField->getName()], ['unique' => $dbField->getUnique()]);

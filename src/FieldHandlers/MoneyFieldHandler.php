@@ -17,7 +17,7 @@ class MoneyFieldHandler extends BaseCombinedFieldHandler
     {
         $this->_fields = [
             'amount' => [
-                'type' => 'string',
+                'type' => 'decimal',
                 'field' => 'input'
             ],
             'currency' => [

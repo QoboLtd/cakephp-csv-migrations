@@ -7,13 +7,13 @@ $defaultOptions = [
         'display' => false,
         'url' => null,
         'title' => __d('CsvMigrations', 'Add new'),
-        'ccsClass' => 'btn btn-default glyphicon glyphicon-plus',
+        'class' => 'btn btn-default glyphicon glyphicon-plus',
     ],
     'back' => [
         'display' => false,
         'url' => null,
         'title' => __d('CsvMigrations', 'Back'),
-        'ccsClass' => 'btn btn-default glyphicon glyphicon-arrow-left',
+        'class' => 'btn btn-default glyphicon glyphicon-arrow-left',
     ],
 ];
 if (empty($options)) {

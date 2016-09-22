@@ -16,11 +16,9 @@ echo $this->element(
         'title' => 'List items of ' . $list->get('name'),
         'options' => [
             'add' => [
-                'display' => true,
                 'url' => $addUrl,
             ],
             'back' => [
-                'display' => true,
                 'url' => $backUrl,
             ]
         ]

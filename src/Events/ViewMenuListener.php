@@ -291,7 +291,6 @@ class ViewMenuListener implements EventListenerInterface
             if ($title) {
                 $name .= $title;
             }
-            $class = Hash::get($btOptions, 'class');
             $btn = static::BLANK_SPACE . $view->Html->link(
                 $name,
                 $url,

@@ -52,7 +52,7 @@ class DbField
         'uuid' => [],
         'string' => ['limit' => 255],
         'integer' => [],
-        'decimal' => ['scale' => 8, 'precision' => 2],
+        'decimal' => ['precision' => 10, 'scale' => 2],
         'boolean' => [],
         'text' => [],
         'datetime' => [],

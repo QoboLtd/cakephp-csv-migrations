@@ -30,7 +30,7 @@ $formOptions = [
         'controller' => $this->request->controller,
         'action' => $this->request->action
     ],
-    'name' => strtolower($moduleAlias),
+    'name' => Inflector::dasherize($moduleAlias),
 ];
 if (!empty($this->request->query['embedded'])) {
     $embControllerName = $this->request->controller;

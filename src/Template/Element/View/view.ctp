@@ -191,4 +191,11 @@ if (empty($options['title'])) {
     <?= $this->element('CsvMigrations.associated_records'); ?>
 <?php endif; ?>
 
+<?php
+    // Event dispatcher for bottom section
+    $event = new Event('View.View.Body.Bottom', $this, ['request' => $this->request, 'options' => $options]);
+    $this->eventManager()->dispatch($event);
+    echo $event->result;
+?>
+
 <?= $this->Html->css('CsvMigrations.style', ['block' => 'cssBottom']); ?>

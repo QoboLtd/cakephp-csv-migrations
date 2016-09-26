@@ -28,12 +28,14 @@ class CsvMigration extends AbstractMigration
 
     /**
      * Migrations table object
+     *
      * @var \Migrations\Table
      */
     protected $_table;
 
     /**
      * Field handler factory instance
+     *
      * @var object
      */
     protected $_fhf;
@@ -57,12 +59,13 @@ class CsvMigration extends AbstractMigration
 
     /**
      * Method that handles migrations using csv file.
+     *
      * @param  \Migrations\Table $table Migrations table object
      * @param  string            $path  csv file path
      * @throws \RuntimeException
      * @return \Migrations\Table
      */
-    public function csv(\Migrations\Table $table, $path = '')
+    public function csv(Table $table, $path = '')
     {
         $this->_fhf = new FieldHandlerFactory();
         $this->_table = $table;
@@ -178,6 +181,7 @@ class CsvMigration extends AbstractMigration
 
     /**
      * Get existing table fields.
+     *
      * @return array table fields objects
      */
     protected function _getTableFields()
@@ -216,6 +220,7 @@ class CsvMigration extends AbstractMigration
 
     /**
      * Update (modify/delete) table fields in comparison to the csv data.
+     *
      * @param  array $csvData      csv data
      * @param  array $tableFields  existing table fields
      * @return void

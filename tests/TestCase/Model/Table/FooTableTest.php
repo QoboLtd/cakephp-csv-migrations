@@ -90,12 +90,23 @@ class FooTableTest extends TestCase
         );
     }
 
+    public function testModuleAliasGetter()
+    {
+        $this->assertSame('Foobar', $this->FooTable->moduleAlias());
+    }
+
     /**
      * @dataProvider moduleAliasProvider
      */
-    public function testModuleAlias($alias, $expected)
+    public function testModuleAliasSetter($alias, $expected)
     {
-        $this->assertSame($this->FooTable->moduleAlias($alias), $expected);
+        $this->assertSame($expected, $this->FooTable->moduleAlias($alias));
+    }
+
+    public function testModuleAliasGetterDefault()
+    {
+        $this->FooTable->moduleAlias('Foo');
+        $this->assertSame('Foo', $this->FooTable->moduleAlias(null));
     }
 
     /**
@@ -132,8 +143,7 @@ class FooTableTest extends TestCase
     {
         return [
             [null, 'Foobar'],
-            ['Foo', 'Foo'],
-            [null, 'Foo']
+            ['Foo', 'Foo']
         ];
     }
 

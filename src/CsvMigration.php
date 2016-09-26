@@ -6,6 +6,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\CsvField;
+use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Parser\Csv\MigrationParser;
 use Migrations\AbstractMigration;
@@ -27,12 +28,14 @@ class CsvMigration extends AbstractMigration
 
     /**
      * Migrations table object
+     *
      * @var \Migrations\Table
      */
     protected $_table;
 
     /**
      * Field handler factory instance
+     *
      * @var object
      */
     protected $_fhf;
@@ -56,12 +59,13 @@ class CsvMigration extends AbstractMigration
 
     /**
      * Method that handles migrations using csv file.
+     *
      * @param  \Migrations\Table $table Migrations table object
      * @param  string            $path  csv file path
      * @throws \RuntimeException
      * @return \Migrations\Table
      */
-    public function csv(\Migrations\Table $table, $path = '')
+    public function csv(Table $table, $path = '')
     {
         $this->_fhf = new FieldHandlerFactory();
         $this->_table = $table;
@@ -177,6 +181,7 @@ class CsvMigration extends AbstractMigration
 
     /**
      * Get existing table fields.
+     *
      * @return array table fields objects
      */
     protected function _getTableFields()
@@ -208,63 +213,97 @@ class CsvMigration extends AbstractMigration
             }
 
             foreach ($dbFields as $dbField) {
-                $this->_table->addColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
-                // set field as unique
-                if ($dbField->getUnique()) {
-                    $this->_table->addIndex([$dbField->getName()], ['unique' => $dbField->getUnique()]);
-                }
-                // set id as primary key
-                if ('id' === $dbField->getName()) {
-                    $this->_table->addPrimaryKey([
-                        $dbField->getName(),
-                    ]);
-                }
+                $this->_createColumn($dbField);
             }
         }
     }
 
     /**
      * Update (modify/delete) table fields in comparison to the csv data.
+     *
      * @param  array $csvData      csv data
      * @param  array $tableFields  existing table fields
      * @return void
      */
     protected function _updateFromCsv(array $csvData, array $tableFields)
     {
-        // store all table field names
-        $tableFieldNames = [];
-        foreach ($tableFields as $tableField) {
-            $tableFieldName = $tableField->getName();
-            $tableFieldNames[] = $tableFieldName;
+        // get existing table column names
+        foreach ($tableFields as &$tableField) {
+            $tableField = $tableField->getName();
+        }
 
-            // remove missing fields
-            if (!in_array($tableFieldName, array_keys($csvData))) {
-                $this->_table->removeColumn($tableFieldName);
-            } else {
-                $csvField = new CsvField($csvData[$tableFieldName]);
-                $dbFields = $this->_fhf->fieldToDb($csvField);
+        // keep track of edited columns
+        $editedColumns = [];
+        foreach ($csvData as $col) {
+            $csvField = new CsvField($col);
+            $dbFields = $this->_fhf->fieldToDb($csvField);
 
-                if (empty($dbFields)) {
-                    continue;
-                }
+            if (empty($dbFields)) {
+                continue;
+            }
 
-                foreach ($dbFields as $dbField) {
-                    $this->_table->changeColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
-                    // set field as unique
-                    if ($dbField->getUnique()) {
-                        $this->_table->addIndex([$dbField->getName()], ['unique' => $dbField->getUnique()]);
-                    }
+            foreach ($dbFields as $dbField) {
+                // edit existing column
+                if (in_array($dbField->getName(), $tableFields)) {
+                    $editedColumns[] = $dbField->getName();
+                    $this->_updateColumn($dbField);
+                } else { // add new column
+                    $this->_createColumn($dbField);
                 }
             }
         }
 
-        // add new fields
-        $newFields = [];
-        foreach (array_keys($csvData) as $csvField) {
-            if (!in_array($csvData[$csvField]['name'], $tableFieldNames)) {
-                $newFields[] = $csvData[$csvField];
-            }
+        // remove unneeded columns
+        foreach (array_diff($tableFields, $editedColumns) as $fieldName) {
+            $this->_deleteColumn($fieldName);
         }
-        $this->_createFromCsv($newFields);
+    }
+
+    /**
+     * Method used for creating new DB table column.
+     *
+     * @param  \CsvMigrations\FieldHandlers\DbField $dbField DbField object
+     * @return void
+     */
+    protected function _createColumn(DbField $dbField)
+    {
+        $this->_table->addColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
+        // set field as unique
+        if ($dbField->getUnique()) {
+            $this->_table->addIndex([$dbField->getName()], ['unique' => $dbField->getUnique()]);
+        }
+        // set id as primary key
+        if ('id' === $dbField->getName()) {
+            $this->_table->addPrimaryKey([
+                $dbField->getName(),
+            ]);
+        }
+    }
+
+    /**
+     * Method used for updating an existing DB table column.
+     *
+     * @param  \CsvMigrations\FieldHandlers\DbField $dbField DbField object
+     * @return void
+     */
+    protected function _updateColumn(DbField $dbField)
+    {
+        $this->_table->changeColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
+        // set field as unique
+        if ($dbField->getUnique()) {
+            $this->_table->addIndex([$dbField->getName()], ['unique' => $dbField->getUnique()]);
+        }
+    }
+
+
+    /**
+     * Method used for deleting an existing DB table column.
+     *
+     * @param  string $fieldName Table column name
+     * @return void
+     */
+    protected function _deleteColumn($fieldName)
+    {
+        $this->_table->removeColumn($fieldName);
     }
 }

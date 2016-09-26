@@ -222,41 +222,36 @@ class CsvMigration extends AbstractMigration
      */
     protected function _updateFromCsv(array $csvData, array $tableFields)
     {
-        // store all table field names
-        $tableFieldNames = [];
-        foreach ($tableFields as $tableField) {
-            $tableFieldName = $tableField->getName();
-            $tableFieldNames[] = $tableFieldName;
+        // get existing table column names
+        foreach ($tableFields as &$tableField) {
+            $tableField = $tableField->getName();
+        }
 
-            // remove missing fields
-            if (!in_array($tableFieldName, array_keys($csvData))) {
-                $this->_table->removeColumn($tableFieldName);
-            } else {
-                $csvField = new CsvField($csvData[$tableFieldName]);
-                $dbFields = $this->_fhf->fieldToDb($csvField);
+        // keep track of edited columns
+        $editedColumns = [];
+        foreach ($csvData as $col) {
+            $csvField = new CsvField($col);
+            $dbFields = $this->_fhf->fieldToDb($csvField);
 
-                if (empty($dbFields)) {
-                    continue;
-                }
+            if (empty($dbFields)) {
+                continue;
+            }
 
-                foreach ($dbFields as $dbField) {
-                    $this->_table->changeColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
-                    // set field as unique
-                    if ($dbField->getUnique()) {
-                        $this->_table->addIndex([$dbField->getName()], ['unique' => $dbField->getUnique()]);
-                    }
+            foreach ($dbFields as $dbField) {
+                // edit existing column
+                if (in_array($dbField->getName(), $tableFields)) {
+                    $editedColumns[] = $dbField->getName();
+                    $this->_updateColumn($dbField);
+                } else { // add new column
+                    $this->_createColumn($dbField);
                 }
             }
         }
 
-        // add new fields
-        $newFields = [];
-        foreach (array_keys($csvData) as $csvField) {
-            if (!in_array($csvData[$csvField]['name'], $tableFieldNames)) {
-                $newFields[] = $csvData[$csvField];
-            }
+        // remove unneeded columns
+        foreach (array_diff($tableFields, $editedColumns) as $fieldName) {
+            $this->_deleteColumn($fieldName);
         }
-        $this->_createFromCsv($newFields);
     }
 
     /**

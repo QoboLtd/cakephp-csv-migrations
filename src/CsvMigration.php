@@ -238,12 +238,12 @@ class CsvMigration extends AbstractMigration
             }
 
             foreach ($dbFields as $dbField) {
-                // add new column
-                if (!in_array($dbField->getName(), $tableFields)) {
-                    $this->_createColumn($dbField);
-                } else { // edit existing column
+                // edit existing column
+                if (in_array($dbField->getName(), $tableFields)) {
                     $editedColumns[] = $dbField->getName();
                     $this->_updateColumn($dbField);
+                } else { // add new column
+                    $this->_createColumn($dbField);
                 }
             }
         }

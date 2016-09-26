@@ -6,6 +6,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\CsvField;
+use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Parser\Csv\MigrationParser;
 use Migrations\AbstractMigration;
@@ -208,17 +209,7 @@ class CsvMigration extends AbstractMigration
             }
 
             foreach ($dbFields as $dbField) {
-                $this->_table->addColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
-                // set field as unique
-                if ($dbField->getUnique()) {
-                    $this->_table->addIndex([$dbField->getName()], ['unique' => $dbField->getUnique()]);
-                }
-                // set id as primary key
-                if ('id' === $dbField->getName()) {
-                    $this->_table->addPrimaryKey([
-                        $dbField->getName(),
-                    ]);
-                }
+                $this->_createColumn($dbField);
             }
         }
     }
@@ -266,5 +257,59 @@ class CsvMigration extends AbstractMigration
             }
         }
         $this->_createFromCsv($newFields);
+    }
+
+    /**
+     * Method used for creating new DB table column.
+     *
+     * @param  \CsvMigrations\FieldHandlers\DbField $dbField DbField object
+     * @return void
+     */
+    protected function _createColumn(DbField $dbField)
+    {
+        $this->_table->addColumn($dbField->getName(), $dbField->getType(), [
+            'limit' => $dbField->getLimit(),
+            'null' => $dbField->getRequired() ? false : true
+        ]);
+        // set field as unique
+        if ($dbField->getUnique()) {
+            $this->_table->addIndex([$dbField->getName()], ['unique' => $dbField->getUnique()]);
+        }
+        // set id as primary key
+        if ('id' === $dbField->getName()) {
+            $this->_table->addPrimaryKey([
+                $dbField->getName(),
+            ]);
+        }
+    }
+
+    /**
+     * Method used for updating an existing DB table column.
+     *
+     * @param  \CsvMigrations\FieldHandlers\DbField $dbField DbField object
+     * @return void
+     */
+    protected function _updateColumn(DbField $dbField)
+    {
+        $this->_table->changeColumn($dbField->getName(), $dbField->getType(), [
+            'limit' => $dbField->getLimit(),
+            'null' => (bool)$dbField->getRequired() ? false : true
+        ]);
+        // set field as unique
+        if ($dbField->getUnique()) {
+            $this->_table->addIndex([$dbField->getName()], ['unique' => $dbField->getUnique()]);
+        }
+    }
+
+
+    /**
+     * Method used for deleting an existing DB table column.
+     *
+     * @param  string $fieldName Table column name
+     * @return void
+     */
+    protected function _deleteColumn($fieldName)
+    {
+        $this->_table->removeColumn($fieldName);
     }
 }

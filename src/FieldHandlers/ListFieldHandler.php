@@ -56,6 +56,10 @@ class ListFieldHandler extends BaseFieldHandler
     {
         $result = '';
 
+        if (empty($data)) {
+            return $result;
+        }
+
         $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
 
         if (isset($fieldOptions[$data])) {

@@ -31,6 +31,8 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
 
     /**
      * {@inheritDoc}
+     *
+     * @todo refactor to use base fields as renderValue() does now
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
@@ -81,25 +83,17 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $result = '';
-        foreach ($this->_fields as $suffix => $preOptions) {
+        $result = [];
+        foreach ($this->_fields as $suffix => $fieldOptions) {
             $fieldName = $field . '_' . $suffix;
             if (isset($options['entity'])) {
                 $data = $options['entity']->{$fieldName};
             }
-            $fullFieldName = $this->_getFieldName($table, $fieldName, $preOptions);
-
-            switch ($preOptions['field']) {
-                case 'select':
-                    $selectOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
-                    $result .= array_key_exists($data, $selectOptions) ? $selectOptions[$data] : null;
-                    break;
-
-                case 'input':
-                    $result = h($data) . ' ' . $result;
-                    break;
-            }
+            $handler = new $fieldOptions['handler'];
+            $result[] = $handler->renderValue($table, $fieldName, $data, $options);
         }
+
+        $result = implode('&nbsp;', $result);
 
         return $result;
     }

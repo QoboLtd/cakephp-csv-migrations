@@ -3,7 +3,7 @@ namespace CsvMigrations\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
-class IntegerFieldHandler extends BaseFieldHandler
+class DecimalFieldHandler extends BaseFieldHandler
 {
     /**
      * {@inheritDoc}
@@ -13,7 +13,7 @@ class IntegerFieldHandler extends BaseFieldHandler
         $result = $data;
 
         if (!empty($data) && is_numeric($data)) {
-            $result = number_format($data);
+            $result = number_format($data, 2);
         }
 
         return $result;

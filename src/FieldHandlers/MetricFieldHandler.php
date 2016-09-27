@@ -18,10 +18,12 @@ class MetricFieldHandler extends BaseCombinedFieldHandler
         $this->_fields = [
             'amount' => [
                 'type' => 'integer',
+                'handler' => __NAMESPACE__ . '\\IntegerFieldHandler',
                 'field' => 'input'
             ],
             'unit' => [
                 'type' => 'string',
+                'handler' => __NAMESPACE__ . '\\ListFieldHandler',
                 'field' => 'select'
             ]
         ];

@@ -1,16 +1,16 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\IntegerFieldHandler;
+use CsvMigrations\FieldHandlers\DecimalFieldHandler;
 use PHPUnit_Framework_TestCase;
 
-class IntegerFieldHandlerTest extends PHPUnit_Framework_TestCase
+class DecimalFieldHandlerTest extends PHPUnit_Framework_TestCase
 {
     protected $fh;
 
     protected function setUp()
     {
-        $this->fh = new IntegerFieldHandler();
+        $this->fh = new DecimalFieldHandler();
     }
 
     public function testInterface()
@@ -27,6 +27,8 @@ class IntegerFieldHandlerTest extends PHPUnit_Framework_TestCase
             [0, 'Integer zero'],
             [1, 'Positive integer'],
             [-1, 'Negative integer'],
+            [1.50, 'Positive float'],
+            [-1.50, 'Negative float'],
             ['', 'Empty string'],
             ['foobar', 'String'],
             ['2017-07-05', 'Date'],

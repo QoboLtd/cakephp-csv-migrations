@@ -18,6 +18,8 @@ class ListFieldHandler extends BaseFieldHandler
      */
     const INPUT_HTML = '<div class="form-group">%s</div>';
 
+    const VALUE_NOT_FOUND_HTML = '%s <span class="text-danger glyphicon glyphicon-exclamation-sign" title="Invalid list item" aria-hidden="true"></span>';
+
     /**
      * Method responsible for rendering field's input.
      *
@@ -69,7 +71,7 @@ class ListFieldHandler extends BaseFieldHandler
                 }
             }
         } else {
-            $result = $data;
+            $result = sprintf(static::VALUE_NOT_FOUND_HTML, $data);
         }
 
         return $result;

@@ -36,7 +36,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        $input = $this->cakeView->Form->label($field . ' ' . key($this->_fields));
+        $input = $this->cakeView->Form->label($field);
 
         $input .= '<div class="row">';
         foreach ($this->_fields as $suffix => $preOptions) {

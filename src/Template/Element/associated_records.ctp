@@ -163,13 +163,16 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
 
                                     if ($assocData['display_field'] === $assocField) {
                                         list($assocPlugin, $assocModel) = pluginSplit($assocData['class_name']);
+                                        // Not doing any escaping as it messes up display of
+                                        // things like email fields with the mailto: link.
                                         echo $this->Html->link(
-                                            h($value), [
+                                            $value, [
                                                 'plugin' => $assocPlugin,
                                                 'controller' => $assocModel,
                                                 'action' => 'view',
                                                 $record->$assocData['primary_key']
-                                            ]
+                                            ],
+                                            ['escape' => false]
                                         );
                                     } else {
                                         echo !empty($value) ? $value : '&nbsp;';

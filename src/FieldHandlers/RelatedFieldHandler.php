@@ -137,7 +137,8 @@ class RelatedFieldHandler extends BaseFieldHandler
                         'controller' => $properties['controller'],
                         'action' => static::LINK_ACTION,
                         $properties['id']
-                    ])
+                    ]),
+                    ['class' => 'label label-primary']
                 );
             }
         }

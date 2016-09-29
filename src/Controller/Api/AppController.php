@@ -23,6 +23,26 @@ class AppController extends BaseController
      */
     const FORMAT_PRETTY = 'pretty';
 
+    /**
+     * Events identifier
+     */
+    const EVENTS = 'CsvMigrations.events';
+
+    /**
+     * Menu events identifier
+     */
+    const EVENTS_MENU = 'menus';
+
+    /**
+     * Include menus identifier
+     */
+    const FLAG_INCLUDE_MENUS = 'menus';
+
+    /**
+     * Property name for menu items
+     */
+    const MENU_PROPERTY_NAME = '_Menus';
+
     use ControllerTrait;
     use MigrationTrait;
     use PanelUtilTrait;
@@ -182,6 +202,7 @@ class AppController extends BaseController
 
         $this->Crud->on('afterPaginate', function (Event $event) {
             $event = $this->_prettifyEntity($event);
+            $this->_includeMenus($event);
         });
 
         return $this->Crud->execute();
@@ -426,6 +447,53 @@ class AppController extends BaseController
         }
 
         return $event;
+    }
+
+    /**
+     * Method that retrieves and attaches menu elements to API response.
+     *
+     * @param  Cake\Event\Event $event Event instance
+     * @return void
+     */
+    protected function _includeMenus(Event $event)
+    {
+        if (!$this->request->query(static::FLAG_INCLUDE_MENUS)) {
+            return $event;
+        }
+
+        // get all menu events
+        $menuEvents = Configure::read(static::EVENTS . '.' . $this->request->action . '.' . static::EVENTS_MENU);
+
+        if (empty($menuEvents)) {
+            return $event;
+        }
+
+        // get menus from query string
+        $menus = (array)$this->request->query(static::FLAG_INCLUDE_MENUS);
+
+        // get menus property name
+        $menuProperty = Configure::read('CsvMigrations.api.menus_property');
+        $menuProperty = !is_null($menuProperty) ? $menuProperty : static::MENU_PROPERTY_NAME;
+
+        $result = [];
+        foreach ($event->subject()->entities as $entity) {
+            foreach ($menus as $menu) {
+                // skip if menu has no event
+                if (!isset($menuEvents[$menu])) {
+                    continue;
+                }
+
+                // broadcast menu event
+                $ev = new Event(key($menuEvents[$menu]), $this, [
+                    'request' => $this->request,
+                    'options' => $entity,
+                ]);
+                $this->eventManager()->dispatch($ev);
+                $result[$menu] = $ev->result;
+            }
+
+            $entity->{$menuProperty} = $result;
+        }
     }
 
     /**

@@ -54,6 +54,34 @@ class AppController extends BaseController
         'maxLimit' => 100,
     ];
 
+    /**
+     * Authentication config
+     *
+     * @var array
+     */
+    protected $_authConfig = [
+        // non-persistent storage, for stateless authentication
+        'storage' => 'Memory',
+        'authenticate' => [
+            // used for validating user credentials before the token is generated
+            'Form' => [
+                'scope' => ['Users.active' => 1]
+            ],
+            // used for token validation
+            'ADmad/JwtAuth.Jwt' => [
+                'parameter' => 'token',
+                'userModel' => 'Users',
+                'scope' => ['Users.active' => 1],
+                'fields' => [
+                    'username' => 'id'
+                ],
+                'queryDatasource' => true
+            ]
+        ],
+        'unauthorizedRedirect' => false,
+        'checkAuthIn' => 'Controller.initialize'
+    ];
+
     protected $_fileUploadsUtils;
 
     /**
@@ -87,30 +115,34 @@ class AppController extends BaseController
 
         $this->_fileUploadsUtils = new FileUploadsUtils($this->{$this->name});
 
-        if (Configure::read('API.auth')) {
-            // @link http://www.bravo-kernel.com/2015/04/how-to-add-jwt-authentication-to-a-cakephp-3-rest-api/
-            $this->loadComponent('Auth', [
-                // non-persistent storage, for stateless authentication
-                'storage' => 'Memory',
-                'authenticate' => [
-                    // used for validating user credentials before the token is generated
-                    'Form' => [
-                        'scope' => ['Users.active' => 1]
-                    ],
-                    // used for token validation
-                    'ADmad/JwtAuth.Jwt' => [
-                        'parameter' => 'token',
-                        'userModel' => 'Users',
-                        'scope' => ['Users.active' => 1],
-                        'fields' => [
-                            'username' => 'id'
-                        ],
-                        'queryDatasource' => true
-                    ]
-                ],
-                'unauthorizedRedirect' => false,
-                'checkAuthIn' => 'Controller.initialize'
-            ]);
+        $this->_authentication();
+    }
+
+    /**
+     * Method that sets up API Authentication.
+     *
+     * @link http://www.bravo-kernel.com/2015/04/how-to-add-jwt-authentication-to-a-cakephp-3-rest-api/
+     * @return void
+     */
+    protected function _authentication()
+    {
+        if (isset($this->Auth)) {
+            // overwrite Authentication component config, with API authentication
+            foreach ($this->_authConfig as $key => $value) {
+                $this->Auth->config($key, $value, false);
+            }
+        } else {
+            $this->loadComponent('Auth', $this->_authConfig);
+        }
+
+        // If API authentication is disabled, allow access to all actions. This is useful when using some
+        // other kind of access control check.
+        // @todo currently, even if API authentication is disabled, we are always generating an API token
+        // within the Application for internal system use. That way we populate the Auth->user() information
+        // which allows other access control systems to work as expected. This logic can be removed if API
+        // authentication is always forced.
+        if (!Configure::read('API.auth')) {
+            $this->Auth->allow();
         }
     }
 

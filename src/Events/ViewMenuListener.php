@@ -169,7 +169,10 @@ class ViewMenuListener implements EventListenerInterface
         ];
 
         if ($appView->elementExists(static::MENU_ELEMENT)) {
-            $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
+            $result = $appView->element(
+                static::MENU_ELEMENT,
+                ['menu' => $menu, 'renderAs' => 'provided', 'user' => $event->subject()->Auth->user()]
+            );
         } else {
             $result = $btnView . $btnEdit . $btnDel;
         }

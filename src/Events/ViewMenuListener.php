@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\Events;
 
+use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Network\Request;
@@ -12,6 +13,11 @@ use CsvMigrations\View\AppView;
 
 class ViewMenuListener implements EventListenerInterface
 {
+    /**
+     * Event listener type
+     */
+    const EVENT_TYPE = 'menus';
+
     /**
      * Menu element name
      */
@@ -29,13 +35,20 @@ class ViewMenuListener implements EventListenerInterface
      */
     public function implementedEvents()
     {
-        return [
-            'View.Index.Menu.Top' => 'getIndexMenuTop',
-            'View.Index.Menu.Actions' => 'getIndexMenuActions',
-            'View.Associated.Menu.Actions' => 'getAssociatedMenuActions',
-            'View.View.Menu.Top' => 'getViewMenuTop',
-            'View.View.Menu.Top.Row' => 'getViewMenuTopRow',
-        ];
+        $menus = Configure::read('CsvMigrations.menus');
+        $events = Configure::read('CsvMigrations.events');
+
+        $result = [];
+        foreach ($events as $type) {
+            if (empty($type[static::EVENT_TYPE])) {
+                continue;
+            }
+            foreach ($type[static::EVENT_TYPE] as $key => $value) {
+                $result[key($value)] = current($value);
+            }
+        }
+
+        return $result;
     }
 
     /**

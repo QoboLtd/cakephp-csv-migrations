@@ -108,6 +108,7 @@ class ViewMenuListener implements EventListenerInterface
         $displayField = TableRegistry::get($controllerName)->displayField();
 
         $urlView = [
+            'prefix' => false,
             'plugin' => $request->plugin,
             'controller' => $request->controller,
             'action' => 'view',
@@ -120,6 +121,7 @@ class ViewMenuListener implements EventListenerInterface
         );
 
         $urlEdit = [
+            'prefix' => false,
             'plugin' => $request->plugin,
             'controller' => $request->controller,
             'action' => 'edit',
@@ -132,6 +134,7 @@ class ViewMenuListener implements EventListenerInterface
         );
 
         $urlDel = [
+            'prefix' => false,
             'plugin' => $request->plugin,
             'controller' => $request->controller,
             'action' => 'delete',

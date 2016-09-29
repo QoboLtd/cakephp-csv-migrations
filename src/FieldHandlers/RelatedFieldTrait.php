@@ -69,13 +69,6 @@ trait RelatedFieldTrait
             : null;
         // get plugin and controller names
         list($result['plugin'], $result['controller']) = pluginSplit($tableName);
-        // remove vendor from plugin name
-        if (!is_null($result['plugin'])) {
-            $pos = strpos($result['plugin'], '/');
-            if ($pos !== false) {
-                $result['plugin'] = substr($result['plugin'], $pos + 1);
-            }
-        }
 
         return $result;
     }

@@ -43,6 +43,11 @@ class AppController extends Controller
      */
     const MENU_PROPERTY_NAME = '_Menus';
 
+    /**
+     * API authentication action identifier
+     */
+    const AUTH_ACTION = 'token';
+
     use ControllerTrait;
     use MigrationTrait;
     use PanelUtilTrait;
@@ -394,6 +399,12 @@ class AppController extends Controller
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
+
+        if (static::AUTH_ACTION === $this->request->action) {
+            // disable CSRF Component for API authentication action
+            // @link http://book.cakephp.org/3.0/en/controllers/components/csrf.html#disabling-the-csrf-component-for-specific-actions
+            $this->eventManager()->off($this->Csrf);
+        }
 
         $this->response->cors($this->request)
             ->allowOrigin(['*'])

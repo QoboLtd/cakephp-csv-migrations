@@ -29,7 +29,7 @@ $formOptions = [
         'controller' => $this->request->controller,
         'action' => $this->request->action
     ],
-    'data-panels_url' => $this->Url->build([
+    'data-panels-url' => $this->Url->build([
         'prefix' => 'api',
         'plugin' => $this->request->plugin,
         'controller' => $this->request->controller,

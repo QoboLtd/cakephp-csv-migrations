@@ -3,7 +3,7 @@
 
     var Panel = function(form) {
         this.form = form;
-        this.url = $(form).data('panels_url');
+        this.url = $(form).data('panels-url');
         if (!this.form || !this.url) {
             return false;
         }

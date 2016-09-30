@@ -15,6 +15,7 @@ use CsvMigrations\MigrationTrait;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
 use CsvMigrations\PrettifyTrait;
+use ReflectionMethod;
 
 class AppController extends Controller
 {
@@ -143,6 +144,8 @@ class AppController extends Controller
         $this->loadComponent('Csrf');
 
         $this->_authentication();
+
+        $this->_acl();
     }
 
     /**
@@ -168,8 +171,42 @@ class AppController extends Controller
         // within the Application for internal system use. That way we populate the Auth->user() information
         // which allows other access control systems to work as expected. This logic can be removed if API
         // authentication is always forced.
-        if (!Configure::read('API.auth')) {
+        if (!Configure::read('CsvMigrations.api.auth')) {
             $this->Auth->allow();
+        }
+    }
+
+    /**
+     * Method that handles ACL checks from third party libraries,
+     * if the associated parameters are set in the plugin's configuration.
+     *
+     * @return void
+     * @todo currently only copes with Table class instances. Probably there is better way to handle this.
+     */
+    protected function _acl()
+    {
+        $className = Configure::read('CsvMigrations.acl.class');
+        $methodName = Configure::read('CsvMigrations.acl.method');
+        if (!$className || !$methodName) {
+            return;
+        }
+
+        $class = TableRegistry::get($className);
+
+        if (!method_exists($class, $methodName)) {
+            return;
+        }
+
+        $method = new ReflectionMethod($class, $methodName);
+
+        if (!$method->isPublic()) {
+            return;
+        }
+
+        if ($method->isStatic()) {
+            $class::{$methodName}($this->request->params, $this->Auth->user());
+        } else {
+            $class->{$methodName}($this->request->params, $this->Auth->user());
         }
     }
 

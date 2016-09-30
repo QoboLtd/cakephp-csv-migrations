@@ -135,6 +135,8 @@ class AppController extends BaseController
 
         $this->_fileUploadsUtils = new FileUploadsUtils($this->{$this->name});
 
+        $this->loadComponent('Csrf');
+
         $this->_authentication();
     }
 

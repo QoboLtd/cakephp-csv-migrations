@@ -1,7 +1,7 @@
 <?php
 namespace CsvMigrations\Controller\Api;
 
-use App\Controller\AppController as BaseController;
+use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
@@ -16,7 +16,7 @@ use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
 use CsvMigrations\PrettifyTrait;
 
-class AppController extends BaseController
+class AppController extends Controller
 {
     /**
      * Pretty format identifier

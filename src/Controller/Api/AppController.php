@@ -156,14 +156,11 @@ class AppController extends Controller
      */
     protected function _authentication()
     {
-        if (isset($this->Auth)) {
-            // overwrite Authentication component config, with API authentication
-            foreach ($this->_authConfig as $key => $value) {
-                $this->Auth->config($key, $value, false);
-            }
-        } else {
-            $this->loadComponent('Auth', $this->_authConfig);
-        }
+        $this->loadComponent('Auth', $this->_authConfig);
+
+        // set auth user from token
+        $user = $this->Auth->getAuthenticate('ADmad/JwtAuth.Jwt')->getUser($this->request);
+        $this->Auth->setUser($user);
 
         // If API authentication is disabled, allow access to all actions. This is useful when using some
         // other kind of access control check.

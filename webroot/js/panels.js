@@ -3,8 +3,8 @@
 
     var Panel = function(form) {
         this.form = form;
-        this.module = form.attr('name');
-        if (!this.form || !this.module) {
+        this.url = $(form).data('panels_url');
+        if (!this.form || !this.url) {
             return false;
         }
 
@@ -77,11 +77,10 @@
 
     Panel.prototype.evaluateWithServer = function() {
         var $form = this.form;
-        var url = '/api/' + this.module + '/panels/';
         var token = api_options.token;
         var that = this;
         $.ajax({
-            url: url,
+            url: that.url,
             type: 'POST',
             data: that.buildData(),
             dataType: 'json',

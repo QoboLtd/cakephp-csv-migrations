@@ -12,6 +12,8 @@ Configure::write('CsvMigrations.migrations.filename', 'migration');
 Configure::write('CsvMigrations.typeahead.min_length', 1);
 Configure::write('CsvMigrations.typeahead.timeout', 300);
 Configure::write('CsvMigrations.api', [
+    'auth' => true,
+    'token' => null,
     'menus_property' => '_Menus',
     'excluded_menus' => [
         'index' => ['top']

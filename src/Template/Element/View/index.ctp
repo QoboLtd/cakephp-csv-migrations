@@ -1,10 +1,35 @@
 <?php
+use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Utility\Inflector;
-use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+?>
 
-$fhf = new FieldHandlerFactory();
+<?php
+// Setup Index View js logic
+echo $this->Html->css('CsvMigrations.datatables.min', ['block' => 'cssBottom']);
+echo $this->Html->script('CsvMigrations.datatables.min', ['block' => 'scriptBottom']);
+echo $this->Html->script('CsvMigrations.view-index', ['block' => 'scriptBottom']);
+echo $this->Html->scriptBlock(
+    'view_index.init({
+        table_id: \'.table-datatable\',
+        api_url: \'' . $this->Url->build([
+            'prefix' => 'api',
+            'plugin' => $this->request->plugin,
+            'controller' => $this->request->controller,
+            'action' => $this->request->action
+        ]) . '\',
+        api_ext: \'json\',
+        api_token: ' . json_encode(Configure::read('CsvMigrations.api.token')) . ',
+        fields: '. json_encode($options['fields']) . ',
+        menus: ' . json_encode($menus) . ',
+        format: \'pretty\',
+        menu_property: \'' . Configure::read('CsvMigrations.api.menus_property') . '\'
+    });',
+    ['block' => 'scriptBottom']
+);
+?>
 
+<?php
 $defaultOptions = [
     'title' => null,
     'fields' => [],
@@ -46,67 +71,15 @@ if (empty($options['title'])) {
             <table class="table table-hover table-datatable">
                 <thead>
                     <tr>
-                        <?php
-                            foreach ($options['fields'] as $field) {
-                                echo '<th>' . Inflector::humanize($field[0]['name']) . '</th>';
-                            }
-                            echo '<th class="actions">' . __('Actions') . '</th>';
-                        ?>
+                    <?php foreach ($options['fields'] as $field) : ?>
+                        <th><?= Inflector::humanize($field[0]['name']); ?></th>
+                    <?php endforeach; ?>
+                    <?php foreach ($menus as $menu) : ?>
+                        <th><?= Inflector::humanize($menu); ?></th>
+                    <?php endforeach; ?>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php foreach ($options['entities'] as $entity): ?>
-                    <tr>
-                        <?php foreach ($options['fields'] as $field): ?>
-                            <td>
-                            <?php
-                                $tableName = $this->name;
-                                if (!is_null($this->plugin)) {
-                                    $tableName = $this->plugin . '.' . $tableName;
-                                }
-                                $renderOptions = [
-                                    'entity' => $entity,
-                                    'imageSize' => 'tiny'
-                                ];
-                                echo $fhf->renderValue(
-                                    $tableName,
-                                    $field[0]['name'],
-                                    $entity->$field[0]['name'],
-                                    $renderOptions
-                                );
-                            ?>
-                            </td>
-                        <?php endforeach; ?>
-                        <td class="actions">
-                            <?php
-                                $event = new Event('View.Index.Menu.Actions', $this, [
-                                    'request' => $this->request,
-                                    'options' => $entity,
-                                ]);
-                                $this->eventManager()->dispatch($event);
-                                if (!empty($event->result)) {
-                                    echo $event->result;
-                                }
-                            ?>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
             </table>
         </div>
     </div>
 </div>
-
-<div class="paginator">
-    <ul class="pagination">
-        <?= $this->Paginator->prev('< ' . __('previous')) ?>
-        <?= $this->Paginator->numbers(['before' => '', 'after' => '']) ?>
-        <?= $this->Paginator->next(__('next') . ' >') ?>
-    </ul>
-    <p><?= $this->Paginator->counter() ?></p>
-</div>
-<?php
-echo $this->Html->css('CsvMigrations.datatables.min', ['block' => 'cssBottom']);
-echo $this->Html->script('CsvMigrations.datatables.min', ['block' => 'scriptBottom']);
-echo $this->Html->script('CsvMigrations.data-tables', ['block' => 'scriptBottom']);
-?>

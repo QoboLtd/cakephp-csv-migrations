@@ -78,16 +78,6 @@ class DblistsTableTest extends TestCase
     }
 
     /**
-     * Test buildRules method
-     *
-     * @return void
-     */
-    public function testBuildRules()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
      * Test Options query.
      *
      * @return void

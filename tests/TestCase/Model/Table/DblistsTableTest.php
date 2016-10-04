@@ -41,18 +41,6 @@ class DblistsTableTest extends TestCase
     }
 
     /**
-     * tearDown method
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        unset($this->Dblists);
-
-        parent::tearDown();
-    }
-
-    /**
      * Test initialize method
      *
      * @return void
@@ -92,5 +80,17 @@ class DblistsTableTest extends TestCase
         $list = null;
         $result = $this->Dblists->find('options', ['name' => $list]);
         $this->assertTrue(is_array($result), 'Return shouold be an empty array on wrong name lists');
+    }
+
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        unset($this->Dblists);
+
+        parent::tearDown();
     }
 }

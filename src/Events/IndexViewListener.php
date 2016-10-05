@@ -182,6 +182,11 @@ class IndexViewListener extends BaseViewListener
         }
 
         $fields = $this->_getActionFields($event->subject()->request);
+
+        if (empty($fields)) {
+            return;
+        }
+
         $fields[] = static::MENU_PROPERTY_NAME;
 
         $primaryKey = $event->subject()->{$event->subject()->name}->primaryKey();

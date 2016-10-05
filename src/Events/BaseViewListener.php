@@ -5,12 +5,14 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\Log\Log;
 use Cake\Network\Request;
 use Cake\ORM\AssociationCollection;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use CsvMigrations\Parser\Csv\ViewParser;
 use CsvMigrations\PrettifyTrait;
+use InvalidArgumentException;
 
 abstract class BaseViewListener implements EventListenerInterface
 {
@@ -78,9 +80,11 @@ abstract class BaseViewListener implements EventListenerInterface
 
         $path = Configure::read('CsvMigrations.views.path') . $controller . DS . $action . '.csv';
 
-        if (is_readable($path)) {
+        try {
             $parser = new ViewParser();
             $result = $parser->parseFromPath($path);
+        } catch (InvalidArgumentException $e) {
+            Log::error($e);
         }
 
         return $result;

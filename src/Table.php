@@ -127,8 +127,13 @@ class Table extends BaseTable
             return $query;
         }
 
+        $tableName = $this->alias();
         // check for record by table's lookup fields
         foreach ($lookupFields as $lookupField) {
+            // prepend table name to avoid CakePHP ORM's ambiguous column errors
+            if (false === strpos($lookupField, '.')) {
+                $lookupField = $tableName . '.' . $lookupField;
+            }
             $query->orWhere([$lookupField => $id]);
         }
 

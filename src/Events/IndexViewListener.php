@@ -177,7 +177,7 @@ class IndexViewListener extends BaseViewListener
      */
     protected function _datatablesStructure(ResultSet $entities, Event $event)
     {
-        if (!in_array($event->subject()->request->query('format'), [static::FORMAT_DATATABLES])) {
+        if (static::FORMAT_DATATABLES !== $event->subject()->request->query('format')) {
             return;
         }
 

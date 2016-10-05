@@ -41,26 +41,14 @@ class DblistsTableTest extends TestCase
     }
 
     /**
-     * tearDown method
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        unset($this->Dblists);
-
-        parent::tearDown();
-    }
-
-    /**
      * Test initialize method
      *
      * @return void
      */
     public function testInitialize()
     {
+        $this->assertTrue($this->Dblists->hasBehavior('Timestamp'), 'Missing behavior Timestamp.');
         $assoc = $this->Dblists->association('DblistItems');
-        $this->assertTrue($this->Dblists->hasBehavior('Timestamp'));
         $this->assertFalse(is_null($assoc), 'DblistItems cannot be found');
         $this->assertInstanceOf('Cake\ORM\Association\HasMany', $assoc, 'Dblists\'s association with DblistItems should be hasMany');
     }
@@ -73,18 +61,8 @@ class DblistsTableTest extends TestCase
     public function testValidationDefault()
     {
         $validator = $this->Dblists->validator();
-        $this->assertTrue($validator->hasField('id'));
-        $this->assertTrue($validator->hasField('name'));
-    }
-
-    /**
-     * Test buildRules method
-     *
-     * @return void
-     */
-    public function testBuildRules()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->assertTrue($validator->hasField('id'), 'Missing validation for id');
+        $this->assertTrue($validator->hasField('name'), 'Missing validation for name');
     }
 
     /**
@@ -101,6 +79,18 @@ class DblistsTableTest extends TestCase
 
         $list = null;
         $result = $this->Dblists->find('options', ['name' => $list]);
-        $this->assertTrue(is_array($result));
+        $this->assertTrue(is_array($result), 'Return shouold be an empty array on wrong name lists');
+    }
+
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        unset($this->Dblists);
+
+        parent::tearDown();
     }
 }

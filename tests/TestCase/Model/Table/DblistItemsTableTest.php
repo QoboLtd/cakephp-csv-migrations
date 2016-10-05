@@ -97,10 +97,12 @@ class DblistItemsTableTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Query', $query);
         $this->assertFalse($query->isEmpty(), 'List with items, then all items should be returned');
         foreach ($query as $item) {
-            $this->assertNotEmpty($item->get('spacer'), 'Spacer must be part of each entity');
-            $spacer = '&nbsp;&nbsp;&nbsp;&nbsp;';
-            $this->assertContains($spacer, $item->get('spacer'), 'Spacer field should contain ' . $spacer);
-            break;
+            if ($item->parent_id) {
+                $this->assertNotEmpty($item->get('spacer'), 'Spacer must be part of each entity');
+                $spacer = '&nbsp;&nbsp;&nbsp;&nbsp;';
+                $this->assertContains($spacer, $item->get('spacer'), 'Spacer field should contain ' . $spacer);
+                break;
+            }
         }
     }
 

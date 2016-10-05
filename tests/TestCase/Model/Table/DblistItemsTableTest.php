@@ -117,5 +117,4 @@ class DblistItemsTableTest extends TestCase
 
         parent::tearDown();
     }
-
 }

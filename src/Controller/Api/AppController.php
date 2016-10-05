@@ -280,7 +280,6 @@ class AppController extends Controller
         });
 
         $this->Crud->on('afterFind', function (Event $event) {
-            $event = $this->_prettifyEntity($event);
         });
 
         $this->Crud->on('beforeSave', function (Event $event) {

@@ -34,7 +34,7 @@ class EditViewListener extends BaseViewListener
      */
     public function afterFind(Event $event, Entity $entity)
     {
-        // $this->_prettifyEntity($entity, $event);
+        //
     }
 
     /**

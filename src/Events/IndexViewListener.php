@@ -27,11 +27,6 @@ class IndexViewListener extends BaseViewListener
     const FORMAT_PRETTY = 'pretty';
 
     /**
-     * Datatables format identifier
-     */
-    const FORMAT_DATATABLES = 'datatables';
-
-    /**
      * {@inheritDoc}
      */
     public function implementedEvents()

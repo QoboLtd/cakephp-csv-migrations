@@ -45,6 +45,14 @@ abstract class BaseViewListener implements EventListenerInterface
         ['Documents', 'Files', 'Burzum/FileStorage.FileStorage']
     ];
 
+    /**
+     * Wrapper method that checks if Table instance has method 'findByLookupFields'
+     * and if it does, it calls it, passing along the required arguments.
+     *
+     * @param  \Cake\ORM\Entity  $entity Entity
+     * @param  \Cake\Event\Event $event  Event instance
+     * @return void
+     */
     protected function _lookupFields(Query $query, Event $event)
     {
         $methodName = 'findByLookupFields';
@@ -57,6 +65,14 @@ abstract class BaseViewListener implements EventListenerInterface
         $table->{$methodName}($query, $id);
     }
 
+    /**
+     * Wrapper method that checks if Table instance has method 'setAssociatedByLookupFields'
+     * and if it does, it calls it, passing along the required arguments.
+     *
+     * @param  \Cake\ORM\Entity  $entity Entity
+     * @param  \Cake\Event\Event $event  Event instance
+     * @return void
+     */
     protected function _associatedByLookupFields(Entity $entity, Event $event)
     {
         $methodName = 'setAssociatedByLookupFields';
@@ -68,6 +84,13 @@ abstract class BaseViewListener implements EventListenerInterface
         $table->{$methodName}($entity);
     }
 
+    /**
+     * Method that fetches action fields from the corresponding csv file.
+     *
+     * @param  \Cake\Network\Request $request Request object
+     * @param  string                $action  Action name
+     * @return array
+     */
     protected function _getActionFields(Request $request, $action = null)
     {
         $result = [];

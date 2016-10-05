@@ -73,6 +73,9 @@ class IndexViewListener extends BaseViewListener
         $this->_datatablesStructure($entities, $event);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function _getActionFields(Request $request, $action = null)
     {
         $fields = parent::_getActionFields($request, $action);
@@ -92,7 +95,8 @@ class IndexViewListener extends BaseViewListener
     }
 
     /**
-     *
+     * Method that adds SELECT clause to the Query to only include
+     * action fields (as defined in the csv file).
      *
      * @param  \Cake\ORM\Query   $query Query object
      * @param  \Cake\Event\Event $event The event

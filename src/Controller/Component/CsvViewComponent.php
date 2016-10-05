@@ -23,16 +23,6 @@ class CsvViewComponent extends Component
     use PanelUtilTrait;
 
     /**
-     * Menus identifier
-     */
-    const MENUS = 'CsvMigrations.menus';
-
-    /**
-     * Excluded API menus identifier
-     */
-    const MENUS_API_EXCLUDED = 'CsvMigrations.api.excluded_menus';
-
-    /**
      * Associated fields action name.
      */
     const ASSOC_FIELDS_ACTION = 'index';
@@ -107,7 +97,6 @@ class CsvViewComponent extends Component
 
         $path = Configure::readOrFail('CsvMigrations.views.path');
         $this->_setTableFields($path);
-        $this->_setMenus($this->request->action);
     }
 
     /**
@@ -392,20 +381,6 @@ class CsvViewComponent extends Component
         }
         $this->_controllerInstance->set('fields', $result);
         $this->_controllerInstance->set('_serialize', ['fields']);
-    }
-
-    /**
-     * Method that passes, to the View, a list of menu names based on specified action.
-     *
-     * @param  string $action Action name
-     * @return void
-     */
-    protected function _setMenus($action)
-    {
-        $menus = (array)Configure::read(static::MENUS . '.' . $action);
-        $excludedMenus = (array)Configure::read(static::MENUS_API_EXCLUDED . '.' . $action);
-
-        $this->_registry->getController()->set('menus', array_diff($menus, $excludedMenus));
     }
 
     /**

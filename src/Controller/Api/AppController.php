@@ -25,16 +25,6 @@ class AppController extends Controller
     const FORMAT_PRETTY = 'pretty';
 
     /**
-     * Events identifier
-     */
-    const EVENTS = 'CsvMigrations.events';
-
-    /**
-     * Menu events identifier
-     */
-    const EVENTS_MENU = 'menus';
-
-    /**
      * Include menus identifier
      */
     const FLAG_INCLUDE_MENUS = 'menus';

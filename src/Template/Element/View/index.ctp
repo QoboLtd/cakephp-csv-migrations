@@ -21,9 +21,8 @@ echo $this->Html->scriptBlock(
         api_ext: \'json\',
         api_token: ' . json_encode(Configure::read('CsvMigrations.api.token')) . ',
         fields: '. json_encode($options['fields']) . ',
-        menus: ' . json_encode($menus) . ',
         format: \'pretty\',
-        menu_property: \'' . Configure::read('CsvMigrations.api.menus_property') . '\'
+        menus: true,
     });',
     ['block' => 'scriptBottom']
 );
@@ -74,9 +73,7 @@ if (empty($options['title'])) {
                     <?php foreach ($options['fields'] as $field) : ?>
                         <th><?= Inflector::humanize($field[0]['name']); ?></th>
                     <?php endforeach; ?>
-                    <?php foreach ($menus as $menu) : ?>
-                        <th><?= Inflector::humanize($menu); ?></th>
-                    <?php endforeach; ?>
+                    <th><?= __('Actions'); ?></th>
                     </tr>
                 </thead>
             </table>

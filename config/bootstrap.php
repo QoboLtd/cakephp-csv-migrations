@@ -23,25 +23,6 @@ Configure::write('CsvMigrations.api', [
         'index' => ['top']
     ]
 ]);
-Configure::write('CsvMigrations.menus', [
-    'index' => ['top', 'actions'],
-    'view' => ['top', 'top-row', 'associated']
-]);
-Configure::write('CsvMigrations.events', [
-    'index' => [
-        'menus' => [
-            'top' => ['View.Index.Menu.Top' => 'getIndexMenuTop'],
-            'actions' => ['View.Index.Menu.Actions' => 'getIndexMenuActions']
-        ]
-    ],
-    'view' => [
-        'menus' => [
-            'top' => ['View.View.Menu.Top' => 'getViewMenuTop'],
-            'top-row' => ['View.View.Menu.Top.Row' => 'getViewMenuTopRow'],
-            'associated' => ['View.Associated.Menu.Actions' => 'getAssociatedMenuActions']
-        ]
-    ]
-]);
 
 EventManager::instance()->on(new ViewMenuListener());
 

@@ -52,7 +52,6 @@ class AppController extends BaseController
     public function index()
     {
         $this->render('CsvMigrations.Common/index');
-        $this->set('_serialize', ['entities']);
     }
 
     /**

@@ -5,7 +5,6 @@ use Cake\Event\Event;
 use Cake\ORM\Entity;
 use CsvMigrations\Events\BaseViewListener;
 
-
 class AddViewListener extends BaseViewListener
 {
     /**

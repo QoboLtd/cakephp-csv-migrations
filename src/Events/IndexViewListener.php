@@ -8,7 +8,6 @@ use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use CsvMigrations\Events\BaseViewListener;
 
-
 class IndexViewListener extends BaseViewListener
 {
     /**
@@ -85,10 +84,7 @@ class IndexViewListener extends BaseViewListener
         }
 
         foreach ($fields as &$field) {
-            if (!array($field)) {
-                continue;
-            }
-            $field = current($field);
+            $field = current((array)$field);
         }
 
         return $fields;

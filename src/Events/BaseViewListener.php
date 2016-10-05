@@ -49,8 +49,8 @@ abstract class BaseViewListener implements EventListenerInterface
      * Wrapper method that checks if Table instance has method 'findByLookupFields'
      * and if it does, it calls it, passing along the required arguments.
      *
-     * @param  \Cake\ORM\Entity  $entity Entity
-     * @param  \Cake\Event\Event $event  Event instance
+     * @param  \Cake\ORM\Query   $query the Query
+     * @param  \Cake\Event\Event $event Event instance
      * @return void
      */
     protected function _lookupFields(Query $query, Event $event)

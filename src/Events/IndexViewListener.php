@@ -45,7 +45,7 @@ class IndexViewListener extends BaseViewListener
     {
         $query->contain($this->_getAssociations($event));
         $this->_filterByConditions($query, $event);
-        $this->_viewFields($query, $event);
+        $this->_selectActionFields($query, $event);
     }
 
     /**
@@ -98,7 +98,7 @@ class IndexViewListener extends BaseViewListener
      * @param  \Cake\Event\Event $event The event
      * @return void
      */
-    protected function _viewFields(Query $query, Event $event)
+    protected function _selectActionFields(Query $query, Event $event)
     {
         if (!in_array($event->subject()->request->query('format'), [static::FORMAT_DATATABLES])) {
             return;

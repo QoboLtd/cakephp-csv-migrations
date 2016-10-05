@@ -20,9 +20,8 @@ echo $this->Html->scriptBlock(
         ]) . '\',
         api_ext: \'json\',
         api_token: ' . json_encode(Configure::read('CsvMigrations.api.token')) . ',
-        fields: '. json_encode($options['fields']) . ',
-        format: \'pretty\',
         menus: true,
+        format: \'datatables\'
     });',
     ['block' => 'scriptBottom']
 );

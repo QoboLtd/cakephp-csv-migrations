@@ -5,39 +5,19 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
-use Cake\ORM\AssociationCollection;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Crud\Controller\ControllerTrait;
 use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 use CsvMigrations\FileUploadsUtils;
-use CsvMigrations\MigrationTrait;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
-use CsvMigrations\PrettifyTrait;
 use ReflectionMethod;
 
 class AppController extends Controller
 {
-    /**
-     * Pretty format identifier
-     */
-    const FORMAT_PRETTY = 'pretty';
-
-    /**
-     * Include menus identifier
-     */
-    const FLAG_INCLUDE_MENUS = 'menus';
-
-    /**
-     * Property name for menu items
-     */
-    const MENU_PROPERTY_NAME = '_Menus';
-
     use ControllerTrait;
-    use MigrationTrait;
     use PanelUtilTrait;
-    use PrettifyTrait;
     use RelatedFieldTrait;
 
     public $components = [
@@ -98,31 +78,9 @@ class AppController extends Controller
      *
      * @var array
      */
-    protected $_nonCsrfActions = ['token'];
+    protected $_nonCsrfActions = ['token', 'add', 'edit'];
 
     protected $_fileUploadsUtils;
-
-    /**
-     * Here we list forced associations when fetching record(s) associated data.
-     * This is useful, for example, when trying to fetch a record(s) associated
-     * documents (such as photos, pdfs etc), which are nested two levels deep.
-     *
-     * To detect these nested associations, since our association names
-     * are constructed dynamically, we use the associations class names
-     * as identifiers.
-     *
-     * @var array
-     */
-    protected $_nestedAssociations = [];
-
-    /**
-     * Nested association chain for retrieving associated file records
-     *
-     * @var array
-     */
-    protected $_fileAssociations = [
-        ['Documents', 'Files', 'Burzum/FileStorage.FileStorage']
-    ];
 
     /**
      * {@inheritDoc}
@@ -207,15 +165,17 @@ class AppController extends Controller
     public function view()
     {
         $this->Crud->on('beforeFind', function (Event $event) {
-            if (method_exists($event->subject()->repository, 'findByLookupFields')) {
-                $event->subject()->repository->findByLookupFields($event->subject()->query, $event->subject()->id);
-            }
-
-            $event->subject()->query->contain($this->_getAssociations($event));
+            $ev = new Event('CsvMigrations.View.beforeFind', $this, [
+                'query' => $event->subject()->query
+            ]);
+            $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('afterFind', function (Event $event) {
-            $event = $this->_prettifyEntity($event);
+            $ev = new Event('CsvMigrations.View.afterFind', $this, [
+                'entity' => $event->subject()->entity
+            ]);
+            $this->eventManager()->dispatch($ev);
         });
 
         return $this->Crud->execute();
@@ -229,13 +189,24 @@ class AppController extends Controller
     public function index()
     {
         $this->Crud->on('beforePaginate', function (Event $event) {
-            $event->subject()->query->contain($this->_getAssociations($event));
-            $event = $this->_filterByConditions($event);
+            $ev = new Event('CsvMigrations.Index.beforePaginate', $this, [
+                'query' => $event->subject()->query
+            ]);
+            $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('afterPaginate', function (Event $event) {
-            $event = $this->_prettifyEntity($event);
-            $this->_includeMenus($event);
+            $ev = new Event('CsvMigrations.Index.afterPaginate', $this, [
+                'entities' => $event->subject()->entities
+            ]);
+            $this->eventManager()->dispatch($ev);
+        });
+
+        $this->Crud->on('beforeRender', function (Event $event) {
+            $ev = new Event('CsvMigrations.Index.beforeRender', $this, [
+                'entities' => $event->subject()->entities
+            ]);
+            $this->eventManager()->dispatch($ev);
         });
 
         return $this->Crud->execute();
@@ -249,11 +220,10 @@ class AppController extends Controller
     public function add()
     {
         $this->Crud->on('beforeSave', function (Event $event) {
-            // get Entity's Table instance
-            $table = TableRegistry::get($event->subject()->entity->source());
-            if (method_exists($table, 'setAssociatedByLookupFields')) {
-                $table->setAssociatedByLookupFields($event->subject()->entity);
-            }
+            $ev = new Event('CsvMigrations.Add.beforeSave', $this, [
+                'entity' => $event->subject()->entity
+            ]);
+            $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('afterSave', function (Event $event) {
@@ -261,6 +231,10 @@ class AppController extends Controller
             if (isset($this->request->data['file'])) {
                 $this->_fileUploadsUtils->save($event->subject()->entity, $this->request->data['file']);
             }
+            $ev = new Event('CsvMigrations.Add.afterSave', $this, [
+                'entity' => $event->subject()->entity
+            ]);
+            $this->eventManager()->dispatch($ev);
         });
 
         return $this->Crud->execute();
@@ -274,18 +248,24 @@ class AppController extends Controller
     public function edit()
     {
         $this->Crud->on('beforeFind', function (Event $event) {
-            if (method_exists($event->subject()->repository, 'findByLookupFields')) {
-                $event->subject()->repository->findByLookupFields($event->subject()->query, $event->subject()->id);
-            }
+            $ev = new Event('CsvMigrations.Edit.beforeFind', $this, [
+                'query' => $event->subject()->query
+            ]);
+            $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('afterFind', function (Event $event) {
+            $ev = new Event('CsvMigrations.Edit.afterFind', $this, [
+                'entity' => $event->subject()->entity
+            ]);
+            $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('beforeSave', function (Event $event) {
-            if (method_exists($event->subject()->repository, 'setAssociatedByLookupFields')) {
-                $event->subject()->repository->setAssociatedByLookupFields($event->subject()->entity);
-            }
+            $ev = new Event('CsvMigrations.Edit.beforeSave', $this, [
+                'entity' => $event->subject()->entity
+            ]);
+            $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('afterSave', function (Event $event) {
@@ -442,224 +422,5 @@ class AppController extends Controller
         if ('OPTIONS' === $this->request->method()) {
             return $this->response;
         }
-    }
-
-    /**
-     * Method that filters ORM records by provided conditions.
-     *
-     * @param  \Cake\Event\Event $event The event.
-     * @return \Cake\Event\Event
-     */
-    protected function _filterByConditions(Event $event)
-    {
-        $conditions = $this->request->query('conditions');
-        if (!is_null($conditions)) {
-            $event->subject()->query->applyOptions(['conditions' => $conditions]);
-        }
-
-        return $event;
-    }
-
-    /**
-     * Method that prepares entity(ies) to run through pretiffy logic.
-     * It then returns the event object.
-     *
-     * @param  Cake\Event\Event $event Event instance
-     * @return Cake\Event\Event
-     */
-    protected function _prettifyEntity(Event $event)
-    {
-        if (static::FORMAT_PRETTY === $this->request->query('format')) {
-            $table = $event->subject()->query->repository()->registryAlias();
-            $fields = array_keys($this->getFieldsDefinitions($event->subject()->query->repository()->alias()));
-
-            if (isset($event->subject()->entities)) {
-                foreach ($event->subject()->entities as $entity) {
-                    $entity = $this->_prettify($entity, $table, $fields);
-                }
-            }
-
-            if (isset($event->subject()->entity)) {
-                $event->subject()->entity = $this->_prettify($event->subject()->entity, $table, $fields);
-            }
-        }
-
-        return $event;
-    }
-
-    /**
-     * Method that retrieves and attaches menu elements to API response.
-     *
-     * @param  Cake\Event\Event $event Event instance
-     * @return void
-     */
-    protected function _includeMenus(Event $event)
-    {
-        if (!$this->request->query(static::FLAG_INCLUDE_MENUS)) {
-            return $event;
-        }
-
-        // get all menu events
-        $menuEvents = Configure::read(static::EVENTS . '.' . $this->request->action . '.' . static::EVENTS_MENU);
-
-        if (empty($menuEvents)) {
-            return $event;
-        }
-
-        // get menus from query string
-        $menus = (array)$this->request->query(static::FLAG_INCLUDE_MENUS);
-
-        // get menus property name
-        $menuProperty = Configure::read('CsvMigrations.api.menus_property');
-        $menuProperty = !is_null($menuProperty) ? $menuProperty : static::MENU_PROPERTY_NAME;
-
-        $result = [];
-        foreach ($event->subject()->entities as $entity) {
-            foreach ($menus as $menu) {
-                // skip if menu has no event
-                if (!isset($menuEvents[$menu])) {
-                    continue;
-                }
-
-                // broadcast menu event
-                $ev = new Event(key($menuEvents[$menu]), $this, [
-                    'request' => $this->request,
-                    'options' => $entity,
-                ]);
-                $this->eventManager()->dispatch($ev);
-                $result[$menu] = $ev->result;
-            }
-
-            $entity->{$menuProperty} = $result;
-        }
-    }
-
-    /**
-     * Method responsible for retrieving current Table's associations
-     *
-     * @param  Cake\Event\Event $event Event instance
-     * @return array
-     */
-    protected function _getAssociations(Event $event)
-    {
-        $result = [];
-
-        $associations = $event->subject()->query->repository()->associations();
-
-        if ($this->request->query('associated')) {
-            $result = $this->_containAssociations(
-                $associations,
-                $this->_nestedAssociations
-            );
-        }
-
-        // always include file associations
-        $result = array_merge(
-            $result,
-            $this->_containAssociations(
-                $associations,
-                $this->_fileAssociations,
-                true
-            )
-        );
-
-        return $result;
-    }
-
-    /**
-     * Method that retrieve's Table association names
-     * to be passed to the ORM Query.
-     *
-     * Nested associations can travel as many levels deep
-     * as defined in the parameter array. Using the example
-     * array below, our code will look for a direct association
-     * with class name 'Documents'. If found, it will add the
-     * association's name to the result array and it will loop
-     * through its associations to look for a direct association
-     * with class name 'Files'. If found again, it will add it to
-     * the result array (nested within the Documents association name)
-     * and will carry on until it runs out of nesting levels or
-     * matching associations.
-     *
-     * Example array:
-     * ['Documents', 'Files', 'Burzum/FileStorage.FileStorage']
-     *
-     * Example result:
-     * [
-     *     'PhotosDocuments' => [
-     *         'DocumentIdFiles' => [
-     *             'FileIdFileStorageFileStorage' => []
-     *         ]
-     *     ]
-     * ]
-     *
-     * @param  Cake\ORM\AssociationCollection $associations       Table associations
-     * @param  array                          $nestedAssociations Nested associations
-     * @param  bool                           $onlyNested         Flag for including only nested associations
-     * @return array
-     */
-    protected function _containAssociations(
-        AssociationCollection $associations,
-        array $nestedAssociations = [],
-        $onlyNested = false
-    ) {
-        $result = [];
-
-        foreach ($associations as $association) {
-            if (!$onlyNested) {
-                $result[$association->name()] = [];
-            }
-
-            if (empty($nestedAssociations)) {
-                continue;
-            }
-
-            foreach ($nestedAssociations as $levels) {
-                if (current($levels) !== $association->className()) {
-                    continue;
-                }
-
-                if (!next($levels)) {
-                    continue;
-                }
-
-                $result[$association->name()] = $this->_containNestedAssociations(
-                    $association->target()->associations(),
-                    array_slice($levels, key($levels))
-                );
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Method that retrieve's Table association nested associations
-     * names to be passed to the ORM Query.
-     *
-     * @param  Cake\ORM\AssociationCollection $associations Table associations
-     * @param  array                          $levels       Nested associations
-     * @return array
-     */
-    protected function _containNestedAssociations(AssociationCollection $associations, array $levels)
-    {
-        $result = [];
-        foreach ($associations as $association) {
-            if (current($levels) !== $association->className()) {
-                continue;
-            }
-            $result[$association->name()] = [];
-
-            if (!next($levels)) {
-                continue;
-            }
-
-            $result[$association->name()] = $this->_containNestedAssociations(
-                $association->target()->associations(),
-                array_slice($levels, key($levels))
-            );
-        }
-
-        return $result;
     }
 }

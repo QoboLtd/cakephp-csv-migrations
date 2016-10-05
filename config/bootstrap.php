@@ -3,7 +3,11 @@ use Burzum\FileStorage\Storage\Listener\BaseListener;
 use Burzum\FileStorage\Storage\StorageManager;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
+use CsvMigrations\Events\AddViewListener;
+use CsvMigrations\Events\EditViewListener;
+use CsvMigrations\Events\IndexViewListener;
 use CsvMigrations\Events\ViewMenuListener;
+use CsvMigrations\Events\ViewViewListener;
 
 Configure::write('CsvMigrations.migrations.path', CONFIG . 'CsvMigrations' . DS . 'migrations' . DS);
 Configure::write('CsvMigrations.views.path', CONFIG . 'CsvMigrations' . DS . 'views' . DS);
@@ -17,14 +21,14 @@ Configure::write('CsvMigrations.acl', [
 ]);
 Configure::write('CsvMigrations.api', [
     'auth' => true,
-    'token' => null,
-    'menus_property' => '_Menus',
-    'excluded_menus' => [
-        'index' => ['top']
-    ]
+    'token' => null
 ]);
 
+EventManager::instance()->on(new AddViewListener());
+EventManager::instance()->on(new EditViewListener());
+EventManager::instance()->on(new IndexViewListener());
 EventManager::instance()->on(new ViewMenuListener());
+EventManager::instance()->on(new ViewViewListener());
 
 //Load upload plugin configuration
 include 'file_storage.php';

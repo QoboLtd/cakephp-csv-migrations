@@ -8,7 +8,6 @@ use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
-use CsvMigrations\View\AppView;
 
 class ViewMenuListener implements EventListenerInterface
 {
@@ -53,12 +52,11 @@ class ViewMenuListener implements EventListenerInterface
      */
     public function getIndexMenuTop(Event $event, Request $request, array $options)
     {
-        $appView = new AppView();
-
+        $appView = $event->subject();
         $urlAdd = ['plugin' => $request->plugin, 'controller' => $request->controller, 'action' => 'add'];
 
         $btnAdd = $appView->Html->link(
-            '<span class="glyphicon glyphicon-plus"></span> ' .
+            $appView->Html->icon('plus') . self::BLANK_SPACE .
             __('Add {0}', Inflector::singularize($options['title'])),
             $urlAdd,
             ['escape' => false, 'class' => 'btn btn-primary']
@@ -91,7 +89,7 @@ class ViewMenuListener implements EventListenerInterface
      */
     public function getIndexMenuActions(Event $event, Request $request, Entity $options)
     {
-        $appView = new AppView();
+        $appView = $event->subject();
 
         $controllerName = $request->controller;
         if (!empty($request->plugin)) {
@@ -183,7 +181,7 @@ class ViewMenuListener implements EventListenerInterface
      */
     public function getViewMenuTop(Event $event, Request $request, array $options)
     {
-        $appView = new AppView();
+        $appView = $event->subject();
 
         $controllerName = $request->controller;
         if (!empty($request->plugin)) {
@@ -340,7 +338,7 @@ class ViewMenuListener implements EventListenerInterface
      */
     public function getAssociatedMenuActions(Event $event, Request $request, array $options)
     {
-        $appView = new AppView();
+        $appView = $event->subject();
 
         $controllerName = $request->controller;
         if (!empty($request->plugin)) {

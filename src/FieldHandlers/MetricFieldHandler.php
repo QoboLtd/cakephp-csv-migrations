@@ -17,8 +17,8 @@ class MetricFieldHandler extends BaseCombinedFieldHandler
     {
         $this->_fields = [
             'amount' => [
-                'type' => 'integer',
-                'handler' => __NAMESPACE__ . '\\IntegerFieldHandler',
+                'type' => 'decimal',
+                'handler' => __NAMESPACE__ . '\\DecimalFieldHandler',
                 'field' => 'input'
             ],
             'unit' => [

@@ -35,7 +35,11 @@ class TextFieldHandler extends BaseFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $result = $this->cakeView->Text->autoParagraph($data);
+        $result = filter_var($data, FILTER_SANITIZE_STRING);
+
+        if (!empty($result)) {
+            $result = $this->cakeView->Text->autoParagraph($result);
+        }
 
         return $result;
     }

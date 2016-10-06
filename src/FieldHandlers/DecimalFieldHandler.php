@@ -10,10 +10,10 @@ class DecimalFieldHandler extends BaseFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $result = $data;
+        $result = filter_var($data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
-        if (!empty($data) && is_numeric($data)) {
-            $result = number_format($data, 2);
+        if (!empty($result) && is_numeric($result)) {
+            $result = number_format($result, 2);
         }
 
         return $result;

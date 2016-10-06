@@ -22,25 +22,26 @@ class DecimalFieldHandlerTest extends PHPUnit_Framework_TestCase
     public function getValues()
     {
         return [
-            [true, 'Boolean true'],
-            [false, 'Boolean false'],
-            [0, 'Integer zero'],
-            [1, 'Positive integer'],
-            [-1, 'Negative integer'],
-            [1.50, 'Positive float'],
-            [-1.50, 'Negative float'],
-            ['', 'Empty string'],
-            ['foobar', 'String'],
-            ['2017-07-05', 'Date'],
+            [true, '1.00', 'Boolean true'],
+            [false, '', 'Boolean false'],
+            [0, '0', 'Integer zero'],
+            [1, '1.00', 'Positive integer'],
+            [-1, '-1.00', 'Negative integer'],
+            [1.50, '1.50', 'Positive float'],
+            [-1.50, '-1.50', 'Negative float'],
+            ['', '', 'Empty string'],
+            ['foobar', '', 'String'],
+            ['foobar15', '15', 'String with number'],
+            ['2017-07-05', '2017-07-05', 'Date'],
         ];
     }
 
     /**
      * @dataProvider getValues
      */
-    public function testRenderValue($value, $description)
+    public function testRenderValue($value, $expected, $description)
     {
         $result = $this->fh->renderValue(null, null, $value, []);
-        $this->assertEquals($value, $result, "Value rendering is broken for: $description");
+        $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 }

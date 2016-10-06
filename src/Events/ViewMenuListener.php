@@ -56,7 +56,7 @@ class ViewMenuListener implements EventListenerInterface
         $urlAdd = ['plugin' => $request->plugin, 'controller' => $request->controller, 'action' => 'add'];
 
         $btnAdd = $appView->Html->link(
-            '<span class="glyphicon glyphicon-plus"></span> ' .
+            $appView->Html->icon('plus') . self::BLANK_SPACE .
             __('Add {0}', Inflector::singularize($options['title'])),
             $urlAdd,
             ['escape' => false, 'class' => 'btn btn-primary']

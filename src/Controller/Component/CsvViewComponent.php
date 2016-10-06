@@ -385,6 +385,7 @@ class CsvViewComponent extends Component
 
     /**
      * Method that gets fields from a csv file
+     *
      * @param  string $path   csv file path
      * @return array          csv data
      */

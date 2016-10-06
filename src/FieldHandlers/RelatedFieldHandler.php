@@ -133,6 +133,7 @@ class RelatedFieldHandler extends BaseFieldHandler
                 $inputs[] = $this->cakeView->Html->link(
                     h($properties['dispFieldVal']),
                     $this->cakeView->Url->build([
+                        'prefix' => false,
                         'plugin' => $properties['plugin'],
                         'controller' => $properties['controller'],
                         'action' => static::LINK_ACTION,

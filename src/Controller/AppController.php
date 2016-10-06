@@ -14,7 +14,10 @@ class AppController extends BaseController
     public function initialize()
     {
         parent::initialize();
+
         $this->_fileUploadsUtils = new FileUploadsUtils($this->{$this->name});
+
+        $this->loadComponent('CsvMigrations.CsvView');
     }
 
     /**
@@ -48,9 +51,7 @@ class AppController extends BaseController
      */
     public function index()
     {
-        $this->set('entities', $this->paginate($this->{$this->name}));
         $this->render('CsvMigrations.Common/index');
-        $this->set('_serialize', ['entities']);
     }
 
     /**

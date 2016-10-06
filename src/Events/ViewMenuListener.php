@@ -13,6 +13,11 @@ use CsvMigrations\View\AppView;
 class ViewMenuListener implements EventListenerInterface
 {
     /**
+     * Event listener type
+     */
+    const EVENT_TYPE = 'menus';
+
+    /**
      * Menu element name
      */
     const MENU_ELEMENT = 'Menu.menu';
@@ -32,9 +37,9 @@ class ViewMenuListener implements EventListenerInterface
         return [
             'View.Index.Menu.Top' => 'getIndexMenuTop',
             'View.Index.Menu.Actions' => 'getIndexMenuActions',
-            'View.Associated.Menu.Actions' => 'getAssociatedMenuActions',
             'View.View.Menu.Top' => 'getViewMenuTop',
             'View.View.Menu.Top.Row' => 'getViewMenuTopRow',
+            'View.Associated.Menu.Actions' => 'getAssociatedMenuActions'
         ];
     }
 
@@ -96,6 +101,7 @@ class ViewMenuListener implements EventListenerInterface
         $displayField = TableRegistry::get($controllerName)->displayField();
 
         $urlView = [
+            'prefix' => false,
             'plugin' => $request->plugin,
             'controller' => $request->controller,
             'action' => 'view',
@@ -108,6 +114,7 @@ class ViewMenuListener implements EventListenerInterface
         );
 
         $urlEdit = [
+            'prefix' => false,
             'plugin' => $request->plugin,
             'controller' => $request->controller,
             'action' => 'edit',
@@ -120,6 +127,7 @@ class ViewMenuListener implements EventListenerInterface
         );
 
         $urlDel = [
+            'prefix' => false,
             'plugin' => $request->plugin,
             'controller' => $request->controller,
             'action' => 'delete',
@@ -154,7 +162,10 @@ class ViewMenuListener implements EventListenerInterface
         ];
 
         if ($appView->elementExists(static::MENU_ELEMENT)) {
-            $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
+            $result = $appView->element(
+                static::MENU_ELEMENT,
+                ['menu' => $menu, 'renderAs' => 'provided', 'user' => $event->subject()->Auth->user()]
+            );
         } else {
             $result = $btnView . $btnEdit . $btnDel;
         }

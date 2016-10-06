@@ -17,7 +17,8 @@ Configure::write('CsvMigrations.typeahead.min_length', 1);
 Configure::write('CsvMigrations.typeahead.timeout', 300);
 Configure::write('CsvMigrations.acl', [
     'class' => null, // currently only accepts Table class with prefixed plugin name. Example: 'MyPlugin.TableName'
-    'method' => null
+    'method' => null,
+    'component' => null
 ]);
 Configure::write('CsvMigrations.api', [
     'auth' => true,

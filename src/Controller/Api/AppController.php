@@ -134,6 +134,14 @@ class AppController extends Controller
     {
         $className = Configure::read('CsvMigrations.acl.class');
         $methodName = Configure::read('CsvMigrations.acl.method');
+        $componentName = Configure::read('CsvMigrations.acl.component');
+
+        if ($componentName) {
+            $this->loadComponent($componentName, [
+                'currentRequest' => $this->request->params
+            ]);
+        }
+
         if (!$className || !$methodName) {
             return;
         }

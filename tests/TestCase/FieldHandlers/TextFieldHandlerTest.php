@@ -24,7 +24,7 @@ class TextFieldHandlerTest extends PHPUnit_Framework_TestCase
         return [
             [true, "<p>1</p>\n", 'Boolean true'],
             [false, '', 'Boolean false'],
-            [0, "<p>0</p>\n", 'Integer zero'],
+            [0, 0, 'Integer zero'],
             [1, "<p>1</p>\n", 'Positive integer'],
             [-1, "<p>-1</p>\n", 'Negative integer'],
             [1.501, "<p>1.501</p>\n", 'Positive float'],

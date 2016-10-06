@@ -10,10 +10,10 @@ class IntegerFieldHandler extends BaseFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $result = $data;
+        $result = filter_var($data, FILTER_SANITIZE_NUMBER_INT);
 
-        if (!empty($data) && is_numeric($data)) {
-            $result = number_format($data);
+        if (!empty($result) && is_numeric($result)) {
+            $result = number_format($result);
         }
 
         return $result;

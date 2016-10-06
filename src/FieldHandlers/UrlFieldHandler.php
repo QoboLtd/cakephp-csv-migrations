@@ -16,7 +16,12 @@ class UrlFieldHandler extends BaseFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $result = $this->cakeView->Html->link($data, $data, ['target' => '_blank']);
+        $result = filter_var($data, FILTER_SANITIZE_URL);
+
+        // Only link to URLs with schema, to avoid unpredictable behavior
+        if (!empty($result) && filter_var($result, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED)) {
+            $result = $this->cakeView->Html->link($result, $result, ['target' => '_blank']);
+        }
 
         return $result;
     }

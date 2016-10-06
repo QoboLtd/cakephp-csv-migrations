@@ -16,7 +16,12 @@ class EmailFieldHandler extends BaseFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $result = $this->cakeView->Html->link($data, 'mailto:' . $data, ['target' => '_blank']);
+        $result = filter_var($data, FILTER_SANITIZE_EMAIL);
+
+        // Only link to valid emails, to avoid unpredictable behavior
+        if (!empty($result) && filter_var($result, FILTER_VALIDATE_EMAIL)) {
+            $result = $this->cakeView->Html->link($result, 'mailto:' . $result, ['target' => '_blank']);
+        }
 
         return $result;
     }

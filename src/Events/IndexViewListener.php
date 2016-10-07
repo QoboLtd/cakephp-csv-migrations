@@ -116,7 +116,7 @@ class IndexViewListener extends BaseViewListener
             array_push($fields, $primaryKey);
         }
 
-        $query->select($fields, true);
+        $query->select($this->_databaseFields($fields, $event), true);
     }
 
     /**
@@ -189,16 +189,16 @@ class IndexViewListener extends BaseViewListener
 
         $fields[] = static::MENU_PROPERTY_NAME;
 
-        $primaryKey = $event->subject()->{$event->subject()->name}->primaryKey();
-        $unsetPrimaryKey = !in_array($primaryKey, $fields);
         foreach ($entities as $entity) {
+            // remove non-action fields property
+            foreach (array_diff($entity->visibleProperties(), $fields) as $field) {
+                $entity->unsetProperty($field);
+            }
+
+            // set fields with numberic index
             foreach ($fields as $k => $v) {
                 $entity->{$k} = $entity->{$v};
                 $entity->unsetProperty($v);
-            }
-
-            if ($unsetPrimaryKey) {
-                $entity->unsetProperty($primaryKey);
             }
         }
     }

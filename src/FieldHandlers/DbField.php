@@ -55,6 +55,7 @@ class DbField
         'decimal' => ['precision' => 10, 'scale' => 2],
         'boolean' => [],
         'text' => [],
+        'blob' => [],
         'datetime' => [],
         'date' => [],
         'time' => [],

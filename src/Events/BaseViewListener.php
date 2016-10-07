@@ -149,7 +149,7 @@ abstract class BaseViewListener implements EventListenerInterface
      *
      * @param  array  $fields action fields
      * @param  Event  $event  Event instance
-     * @return
+     * @return array
      */
     protected function _databaseFields(array $fields, Event $event)
     {

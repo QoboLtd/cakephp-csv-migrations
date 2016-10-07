@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\Events;
 
+use App\View\AppView;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Network\Request;
@@ -8,6 +9,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
+use Cake\View\View;
 
 class ViewMenuListener implements EventListenerInterface
 {
@@ -53,6 +55,10 @@ class ViewMenuListener implements EventListenerInterface
     public function getIndexMenuTop(Event $event, Request $request, array $options)
     {
         $appView = $event->subject();
+        if (!$appView instanceof View) {
+            $appView = new AppView();
+        }
+
         $urlAdd = ['plugin' => $request->plugin, 'controller' => $request->controller, 'action' => 'add'];
 
         $btnAdd = $appView->Html->link(
@@ -90,6 +96,9 @@ class ViewMenuListener implements EventListenerInterface
     public function getIndexMenuActions(Event $event, Request $request, Entity $options)
     {
         $appView = $event->subject();
+        if (!$appView instanceof View) {
+            $appView = new AppView();
+        }
 
         $controllerName = $request->controller;
         if (!empty($request->plugin)) {
@@ -182,6 +191,9 @@ class ViewMenuListener implements EventListenerInterface
     public function getViewMenuTop(Event $event, Request $request, array $options)
     {
         $appView = $event->subject();
+        if (!$appView instanceof View) {
+            $appView = new AppView();
+        }
 
         $controllerName = $request->controller;
         if (!empty($request->plugin)) {
@@ -339,6 +351,9 @@ class ViewMenuListener implements EventListenerInterface
     public function getAssociatedMenuActions(Event $event, Request $request, array $options)
     {
         $appView = $event->subject();
+        if (!$appView instanceof View) {
+            $appView = new AppView();
+        }
 
         $controllerName = $request->controller;
         if (!empty($request->plugin)) {

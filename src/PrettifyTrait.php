@@ -32,11 +32,6 @@ trait PrettifyTrait
         }
 
         foreach ($fields as $field) {
-            // skip fields that are not set in the current entity
-            if (!isset($entity->{$field})) {
-                continue;
-            }
-
             $renderOptions = ['entity' => $entity];
             $entity->{$field} = $this->__fhf->renderValue(
                 $tableName,

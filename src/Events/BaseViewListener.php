@@ -10,6 +10,9 @@ use Cake\Network\Request;
 use Cake\ORM\AssociationCollection;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
+use CsvMigrations\FieldHandlers\CsvField;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\Parser\Csv\MigrationParser;
 use CsvMigrations\Parser\Csv\ViewParser;
 use CsvMigrations\PrettifyTrait;
 use InvalidArgumentException;
@@ -17,6 +20,11 @@ use InvalidArgumentException;
 abstract class BaseViewListener implements EventListenerInterface
 {
     use PrettifyTrait;
+
+    /**
+     * File extension
+     */
+    const EXTENSION = 'csv';
 
     /**
      * Datatables format identifier
@@ -85,6 +93,29 @@ abstract class BaseViewListener implements EventListenerInterface
     }
 
     /**
+     * Method that retrieves and returns csv migration fields.
+     *
+     * @param  Request $request Request object
+     * @return array
+     */
+    protected function _getMigrationFields(Request $request)
+    {
+        $result = [];
+
+        $path = Configure::readOrFail('CsvMigrations.migrations.path') . $request->controller . DS;
+        $path .= Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . static::EXTENSION;
+
+        $parser = new MigrationParser();
+        try {
+            $result = $parser->wrapFromPath($path);
+        } catch (InvalidArgumentException $e) {
+            Log::error($e);
+        }
+
+        return $result;
+    }
+
+    /**
      * Method that fetches action fields from the corresponding csv file.
      *
      * @param  \Cake\Network\Request $request Request object
@@ -108,6 +139,38 @@ abstract class BaseViewListener implements EventListenerInterface
             $result = $parser->parseFromPath($path);
         } catch (InvalidArgumentException $e) {
             Log::error($e);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Method that converts csv action fields to database fields and returns their names.
+     *
+     * @param  array  $fields action fields
+     * @param  Event  $event  Event instance
+     * @return array
+     */
+    protected function _databaseFields(array $fields, Event $event)
+    {
+        $result = [];
+
+        $migrationFields = $this->_getMigrationFields($event->subject()->request);
+        if (empty($migrationFields)) {
+            return $result;
+        }
+
+        $fhf = new FieldHandlerFactory();
+        foreach ($fields as $field) {
+            if (!array_key_exists($field, $migrationFields)) {
+                $result[] = $field;
+                continue;
+            }
+
+            $csvField = new CsvField($migrationFields[$field]);
+            foreach ($fhf->fieldToDb($csvField) as $dbField) {
+                $result[] = $dbField->getName();
+            }
         }
 
         return $result;

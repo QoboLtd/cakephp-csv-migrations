@@ -25,6 +25,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected $_fieldTypes = [
         'text' => 'textarea',
+        'blob' => 'textarea',
         'string' => 'text',
         'uuid' => 'text',
         'integer' => 'number',

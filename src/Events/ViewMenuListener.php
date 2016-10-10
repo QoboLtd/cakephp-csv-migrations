@@ -202,19 +202,6 @@ class ViewMenuListener implements EventListenerInterface
 
         $displayField = TableRegistry::get($controllerName)->displayField();
 
-        $urlChangelog = [
-            'plugin' => null,
-            'controller' => 'log_audit',
-            'action' => 'changelog',
-            $controllerName,
-            $options['entity']->id
-        ];
-        $btnChangelog = ' ' . $appView->Html->link(
-            '',
-            $urlChangelog,
-            ['title' => __('Changelog'), 'class' => 'btn btn-default glyphicon glyphicon-book']
-        );
-
         $urlEdit = [
             'plugin' => $request->plugin,
             'controller' => $request->controller,
@@ -246,11 +233,6 @@ class ViewMenuListener implements EventListenerInterface
         $menu = [];
 
         $menu[] = [
-            'label' => $btnChangelog,
-            'url' => $urlChangelog,
-            'capabilities' => 'fromUrl'
-        ];
-        $menu[] = [
             'label' => $btnEdit,
             'url' => $urlEdit,
             'capabilities' => 'fromUrl'
@@ -265,7 +247,7 @@ class ViewMenuListener implements EventListenerInterface
         if ($appView->elementExists(static::MENU_ELEMENT)) {
             $html .= $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);
         } else {
-            $html .= $btnChangelog . $btnEdit . $btnDel;
+            $html .= $btnEdit . $btnDel;
         }
 
         $event->result = $html . $event->result;

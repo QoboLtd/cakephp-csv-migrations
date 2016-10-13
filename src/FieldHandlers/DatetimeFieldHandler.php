@@ -1,7 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use Cake\I18n\Date;
+use Cake\I18n\Time;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
 class DatetimeFieldHandler extends BaseFieldHandler
@@ -32,7 +32,7 @@ class DatetimeFieldHandler extends BaseFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        if ($data instanceof Date) {
+        if ($data instanceof Time) {
             $data = $data->i18nFormat(static::DATETIME_FORMAT);
         }
 

@@ -186,30 +186,29 @@ abstract class BaseViewListener implements EventListenerInterface
     {
         $result = [];
 
-        if (!$event->subject()->request->query('associated')) {
-            return $result;
-        }
-
-        $table = $event->subject()->{$event->subject()->name};
-        $associations = $table->associations();
+        $associations = $event->subject()->{$event->subject()->name}->associations();
 
         if (empty($associations)) {
             return $result;
         }
 
+        // always include file associations
         $result = $this->_containAssociations(
             $associations,
-            $this->_nestedAssociations
+            $this->_fileAssociations,
+            true
         );
 
-        // always include file associations
+        if (!$event->subject()->request->query('associated')) {
+            return $result;
+        }
+
         $result = array_merge(
-            $result,
             $this->_containAssociations(
                 $associations,
-                $this->_fileAssociations,
-                true
-            )
+                $this->_nestedAssociations
+            ),
+            $result
         );
 
         return $result;

@@ -38,6 +38,9 @@ class ViewViewListener extends BaseViewListener
      */
     public function afterFind(Event $event, Entity $entity)
     {
+        // @todo temporary functionality, please see _includeFiles() method documentation.
+        $this->_includeFiles($entity, $event);
+
         $this->_prettifyEntity($entity, $event);
     }
 

@@ -10,6 +10,7 @@ use Cake\Network\Request;
 use Cake\ORM\AssociationCollection;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
+use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Parser\Csv\MigrationParser;
@@ -177,6 +178,81 @@ abstract class BaseViewListener implements EventListenerInterface
     }
 
     /**
+     * Method for including files.
+     *
+     * @param  Entity $entity Entity
+     * @param  Event  $event  Event instance
+     * @return void
+     * @todo   this method is very hardcoded and has been added because of an issue with the soft delete
+     *         plugin (https://github.com/UseMuffin/Trash), which affects contain() functionality with
+     *         belongsTo associations. Once the issue is resolved this method can be removed.
+     */
+    protected function _includeFiles(Entity $entity, Event $event)
+    {
+        $associations = $event->subject()->{$event->subject()->name}->associations();
+
+        foreach ($associations as $docAssoc) {
+            if ('Documents' !== $docAssoc->className()) {
+                continue;
+            }
+
+            // get id from current entity
+            $id = $entity->{$docAssoc->foreignKey()};
+
+            // skip if id is empty
+            if (empty($id)) {
+                continue;
+            }
+
+            // generate property name from association name (example: photos_document)
+            $docPropertyName = $this->_associationPropertyName($docAssoc->name());
+            $entity->{$docPropertyName} = $docAssoc->target()->get($id);
+
+            foreach ($docAssoc->target()->associations() as $fileAssoc) {
+                if ('Files' !== $fileAssoc->className()) {
+                    continue;
+                }
+
+                $query = $fileAssoc->target()->find('all', [
+                    'conditions' => [$fileAssoc->foreignKey() => $entity->{$docPropertyName}->id]
+                ]);
+
+                // generate property name from association name (document_id_files)
+                $filePropertyName = Inflector::underscore($fileAssoc->name());
+                $entity->{$docPropertyName}->{$filePropertyName} = $query->all();
+
+                foreach ($fileAssoc->target()->associations() as $fileStorageAssoc) {
+                    if ('Burzum/FileStorage.FileStorage' !== $fileStorageAssoc->className()) {
+                        continue;
+                    }
+
+                    $foreignKey = $fileStorageAssoc->foreignKey();
+                    // generate property name from association name (file_id_file_storage_file_storage)
+                    $fileStoragePropertyName = $this->_associationPropertyName($fileStorageAssoc->name());
+
+                    foreach ($entity->{$docPropertyName}->{$filePropertyName} as $file) {
+                        $fileStorage = $fileStorageAssoc->target()->get($file->{$foreignKey});
+                        $file->{$fileStoragePropertyName} = $fileStorage;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Method that generates property name for belongsTo and HasOne associations.
+     *
+     * @param  string $name Association name
+     * @return string
+     */
+    protected function _associationPropertyName($name)
+    {
+        list(, $name) = pluginSplit($name);
+
+        return Inflector::underscore(Inflector::singularize($name));
+    }
+
+    /**
      * Method responsible for retrieving current Table's associations
      *
      * @param  Cake\Event\Event $event Event instance
@@ -186,30 +262,29 @@ abstract class BaseViewListener implements EventListenerInterface
     {
         $result = [];
 
-        if (!$event->subject()->request->query('associated')) {
-            return $result;
-        }
-
-        $table = $event->subject()->{$event->subject()->name};
-        $associations = $table->associations();
+        $associations = $event->subject()->{$event->subject()->name}->associations();
 
         if (empty($associations)) {
             return $result;
         }
 
+        // always include file associations
         $result = $this->_containAssociations(
             $associations,
-            $this->_nestedAssociations
+            $this->_fileAssociations,
+            true
         );
 
-        // always include file associations
+        if (!$event->subject()->request->query('associated')) {
+            return $result;
+        }
+
         $result = array_merge(
-            $result,
             $this->_containAssociations(
                 $associations,
-                $this->_fileAssociations,
-                true
-            )
+                $this->_nestedAssociations
+            ),
+            $result
         );
 
         return $result;

@@ -38,6 +38,9 @@ class BlobFieldHandler extends BaseFieldHandler
     public function renderValue($table, $field, $data, array $options = [])
     {
         $result = $data;
+        if (is_resource($data)) {
+            $result = stream_get_contents($data);
+        }
 
         return $result;
     }

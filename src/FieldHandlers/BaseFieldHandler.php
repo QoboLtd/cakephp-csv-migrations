@@ -117,6 +117,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             return $options['embedded'] . '.' . $field;
         }
 
-        return $table->alias() . '.' . $field;
+        if (empty($table)) {
+            return $field;
+        }
+
+        if (is_object($table)) {
+            return $table->alias() . '.' . $field;
+        }
+
+        return $table . '.' . $field;
     }
 }

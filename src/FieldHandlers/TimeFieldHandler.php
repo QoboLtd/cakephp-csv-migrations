@@ -31,7 +31,10 @@ class TimeFieldHandler extends BaseFieldHandler
             $data = $data->i18nFormat(static::TIME_FORMAT);
         }
 
-        $required = (bool)$options['fieldDefinitions']->getRequired();
+        $required = false;
+        if (isset($options['fieldDefinitions']) && is_object($options['fieldDefinitions'])) {
+            $required = (bool)$options['fieldDefinitions']->getRequired();
+        }
         $fieldName = $this->_getFieldName($table, $field, $options);
 
         if (!isset($options['element']) && $this->cakeView->elementExists('QoboAdminPanel.datepicker')) {

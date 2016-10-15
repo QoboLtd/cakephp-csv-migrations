@@ -32,9 +32,7 @@ class EmailFieldHandlerTest extends PHPUnit_Framework_TestCase
             ['', '', 'Empty string'],
             ['foobar', 'foobar', 'String'],
             ['2017-07-05', '2017-07-05', 'Date'],
-            # throws: include(vendor/cakephp/cakephp/tests/test_app/config/routes.php): failed to open stream: No such file or directory
-            # commented out for now until the solution is found
-            #['user@example.com', '<a href="mailto:user@example.com">user@example.com</a>', 'Email'],
+            ['user@example.com', '<a href="mailto:user@example.com" target="_blank">user@example.com</a>', 'Email'],
         ];
     }
 

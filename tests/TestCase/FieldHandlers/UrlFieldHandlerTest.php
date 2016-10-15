@@ -33,9 +33,7 @@ class UrlFieldHandlerTest extends PHPUnit_Framework_TestCase
             ['foobar', 'foobar', 'String'],
             ['2017-07-05', '2017-07-05', 'Date'],
             ['www.google.com', 'www.google.com', 'URL without schema'],
-            # throws: include(vendor/cakephp/cakephp/tests/test_app/config/routes.php): failed to open stream: No such file or directory
-            # commented out for now until the solution is found
-            #['http://www.google.com', '<a href="http://www.google.com">http://www.google.com</a>', 'URL with schema'],
+            ['http://www.google.com', '<a href="http://www.google.com" target="_blank">http://www.google.com</a>', 'URL with schema'],
         ];
     }
 

@@ -17,6 +17,7 @@ class ValidateShell extends Shell
     {
         $parser = new ConsoleOptionParser('console');
         $parser->description('Validate CSV and configuration files of all CSV modules');
+
         return $parser;
     }
 
@@ -32,8 +33,7 @@ class ValidateShell extends Shell
         $this->out('Checking CSV files and configurations');
         try {
             $modules = $this->_findCsvModules();
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $this->abort("Failed to find CSV modules: " . $e->getMessage());
         }
 
@@ -75,7 +75,9 @@ class ValidateShell extends Shell
         }
 
         foreach (new \DirectoryIterator($path) as $fileinfo) {
-            if ($fileinfo->isDot()) continue;
+            if ($fileinfo->isDot()) {
+                continue;
+            }
             $result[$fileinfo->getFilename()] = $fileinfo->getPathname();
         }
         asort($result);
@@ -93,8 +95,7 @@ class ValidateShell extends Shell
     {
         if (empty($errors)) {
             $this->out('<info>All OK</info>');
-        }
-        else {
+        } else {
             foreach ($errors as $error) {
                 $this->out('<error>' . $error . '</error>');
             }
@@ -105,7 +106,7 @@ class ValidateShell extends Shell
      * Check if config.ini file is present for each module
      *
      * @param array $modules List of modules to check
-     * @return integer Count of errors found
+     * @return int Count of errors found
      */
     protected function _checkConfigPresence(array $modules = [])
     {
@@ -129,7 +130,7 @@ class ValidateShell extends Shell
      * Check if migration.csv file is present for each module
      *
      * @param array $modules List of modules to check
-     * @return integer Count of errors found
+     * @return int Count of errors found
      */
     protected function _checkMigrationPresence(array $modules = [])
     {
@@ -152,7 +153,7 @@ class ValidateShell extends Shell
      * Check if migration.csv file is can be parsed for each module
      *
      * @param array $modules List of modules to check
-     * @return integer Count of errors found
+     * @return int Count of errors found
      */
     protected function _checkMigrationParser(array $modules = [])
     {
@@ -165,8 +166,7 @@ class ValidateShell extends Shell
             $parser = new MigrationParser();
             try {
                 $csvData = $parser->parseFromPath($path);
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $errors[] = 'Migration file parsing failed for [' . $module . ']: ' . $e->getMessage();
             }
         }

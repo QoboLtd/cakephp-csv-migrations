@@ -45,6 +45,7 @@ class IndexViewListener extends BaseViewListener
         $query->contain($this->_getAssociations($event));
         $this->_filterByConditions($query, $event);
         $this->_selectActionFields($query, $event);
+        $this->_handleDtSorting($query, $event);
     }
 
     /**
@@ -122,6 +123,41 @@ class IndexViewListener extends BaseViewListener
         }
 
         $query->select($this->_databaseFields($fields, $event), true);
+    }
+
+    /**
+     * Handle datatables sorting parameters to match Query order() accepted parameters.
+     *
+     * @param  \Cake\ORM\Query   $query Query object
+     * @param  \Cake\Event\Event $event The event
+     * @return void
+     */
+    protected function _handleDtSorting(Query $query, Event $event)
+    {
+        if (!in_array($event->subject()->request->query('format'), [static::FORMAT_DATATABLES])) {
+            return;
+        }
+
+        if (!$event->subject()->request->query('order')) {
+            return;
+        }
+
+        $sortCol = $event->subject()->request->query('order.0.column') ?: 0;
+        $sortDir = $event->subject()->request->query('order.0.dir') ?: 'asc';
+        if (!in_array($sortDir, ['asc', 'desc'])) {
+            $sortDir = 'asc';
+        }
+
+        $fields = $this->_getActionFields($event->subject()->request);
+        if (empty($fields)) {
+            return;
+        }
+
+        if (!isset($fields[$sortCol])) {
+            return;
+        }
+
+        $query->order([$fields[$sortCol] => $sortDir]);
     }
 
     /**

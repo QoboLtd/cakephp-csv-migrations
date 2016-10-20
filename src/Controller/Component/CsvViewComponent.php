@@ -13,6 +13,7 @@ use Cake\Utility\Inflector;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
 use CsvMigrations\Parser\Csv\ViewParser;
+use CsvMigrations\PathFinder\ViewPathFinder;
 use \RuntimeException;
 
 /**
@@ -95,8 +96,7 @@ class CsvViewComponent extends Component
             $this->_controllerInstance->set('_serialize', ['csvAssociatedRecords']);
         }
 
-        $path = Configure::readOrFail('CsvMigrations.views.path');
-        $this->_setTableFields($path);
+        $this->_setTableFields();
     }
 
     /**
@@ -342,8 +342,14 @@ class CsvViewComponent extends Component
      */
     protected function _getCsvFields($tableName, $action)
     {
-        $path = Configure::readOrFail('CsvMigrations.views.path');
-        $path .= $tableName . DS . $action . '.csv';
+        $result = [];
+
+        if (empty($tableName) || empty($action)) {
+            return $result;
+        }
+
+        $pathFinder = new ViewPathFinder;
+        $path = $pathFinder->find($tableName, $action);
 
         $csvFields = $this->_getFieldsFromCsv($path);
         $result = array_map(function ($v) {
@@ -356,16 +362,15 @@ class CsvViewComponent extends Component
     /**
      * Method that passes csv defined Table fields to the View
      *
-     * @param  string           $path  file path
      * @return void
      */
-    protected function _setTableFields($path)
+    protected function _setTableFields()
     {
         $result = [];
-        if (file_exists($path)) {
-            $path .= $this->request->controller . DS . $this->request->action . '.csv';
-            $result = $this->_getFieldsFromCsv($path);
-        }
+
+        $pathFinder = new ViewPathFinder();
+        $path = $pathFinder->find($this->request->controller, $this->request->action);
+        $result = $this->_getFieldsFromCsv($path);
 
         list($plugin, $model) = pluginSplit($this->_tableInstance->registryAlias());
         /*

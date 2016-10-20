@@ -92,15 +92,16 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
      */
     public function fieldToDb(CsvField $csvField)
     {
+        $dbFields = [];
         foreach ($this->_fields as $suffix => $options) {
-            $dbFields[] = new DbField(
-                $csvField->getName() . '_' . $suffix,
-                $options['handler']::DB_FIELD_TYPE,
-                null,
-                $csvField->getRequired(),
-                $csvField->getNonSearchable(),
-                $csvField->getUnique()
-            );
+            $handler = new $options['handler'];
+            $subField = clone $csvField;
+            $subField->setName($csvField->getName() . '_' . $suffix);
+            if (isset($options['limit'])) {
+                $subField->setLimit($options['limit']);
+            }
+
+            $dbFields = array_merge($dbFields, $handler->fieldToDb($subField));
         }
 
         return $dbFields;

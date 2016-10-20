@@ -133,6 +133,26 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     }
 
     /**
+     * Method that generates input label based on field name or optional options label parameter.
+     * It can either return just the field label value or the html markup.
+     *
+     * @param  string  $field   Field name
+     * @param  array   $options Field options
+     * @param  boolean $html    Html flag
+     * @return string           Label value or html markup
+     */
+    protected function _fieldToLabel($field, array $options = [], $html = true)
+    {
+        $result = array_key_exists('label', $options) ? (string)$options['label'] : $field;
+
+        if (!$html || empty($result)) {
+            return $result;
+        }
+
+        return $this->cakeView->Form->label($result);
+    }
+
+    /**
      * Returns arguments from database column definition.
      *
      * @param  \Cake\ORM\Table|string $table  Table instance or name

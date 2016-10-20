@@ -152,11 +152,11 @@ class FieldHandlerFactoryTest extends TestCase
                 'gender' => 'Male',
                 'city' => 'Limassol',
                 'country' => 'Cyprus',
-                'cost' => '1000 EUR',
+                'cost' => '1,000.00&nbsp;EUR',
                 'birthdate' => '1985-04-22',
                 'created' => '2016-07-01 10:39',
                 'modified' => '2016-07-01 10:41',
-                'garden_area' => '50 m&sup2;',
+                'garden_area' => '50.00&nbsp;m&sup2;',
                 'is_primary' => 'Yes',
                 'start_time' => '16:15'
             ]

@@ -75,5 +75,4 @@ class MigrationPathFinderTest extends PHPUnit_Framework_TestCase
     {
         $path = $this->pf->find('Foo', 'some_non_existing_file.csv');
     }
-
 }

@@ -32,6 +32,31 @@ class DecimalFieldHandler extends BaseFieldHandler
     /**
      * {@inheritDoc}
      */
+    public function renderInput($table, $field, $data = '', array $options = [])
+    {
+        $fieldType = $options['fieldDefinitions']->getType();
+
+        if (in_array($fieldType, array_keys($this->_fieldTypes))) {
+            $fieldType = $this->_fieldTypes[$fieldType];
+        }
+
+        $input = $this->_fieldToLabel($field, $options);
+
+        $input .= $this->cakeView->Form->input($this->_getFieldName($table, $field, $options), [
+            'type' => $fieldType,
+            'required' => (bool)$options['fieldDefinitions']->getRequired(),
+            'value' => $data,
+            'step' => 'any',
+            'max' => $this->_getNumberMax($table, $field),
+            'label' => false
+        ]);
+
+        return $input;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function fieldToDb(CsvField $csvField)
     {
         $dbFields[] = new DbField(

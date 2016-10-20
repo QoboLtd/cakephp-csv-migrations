@@ -102,7 +102,7 @@ abstract class BaseViewListener implements EventListenerInterface
 
         try {
             $pathFinder = new MigrationPathFinder;
-            $path = $PathFinder->find($request->controller);
+            $path = $pathFinder->find($request->controller);
 
             $parser = new MigrationParser();
             $result = $parser->wrapFromPath($path);

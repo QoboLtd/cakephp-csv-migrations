@@ -25,10 +25,10 @@ class FooFixture extends TestFixture
         'garden_area_unit' => ['type' => 'string', 'length' => 255, 'null' => true],
         'birthdate' => ['type' => 'date', 'null' => true],
         'start_time' => ['type' => 'time', 'null' => true],
-        'created' => ['type' => 'datetime'],
-        'modified' => ['type' => 'datetime'],
+        'created' => ['type' => 'datetime', 'null' => true],
+        'modified' => ['type' => 'datetime', 'null' => true],
         'is_primary' => ['type' => 'boolean', 'null' => true],
-        'trashed' => ['type' => 'datetime'],
+        'trashed' => ['type' => 'datetime', 'null' => true],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
             'unique' => ['type' => 'unique', 'columns' => ['name', 'id']]
@@ -53,7 +53,7 @@ class FooFixture extends TestFixture
             'start_time' => '16:15',
             'created' => '2016-07-01 10:39:23',
             'modified' => '2016-07-01 10:41:31',
-            'trashed' => '0000-00-00 00:00:00',
+            'trashed' => null,
             'is_primary' => 1
         ]
     ];

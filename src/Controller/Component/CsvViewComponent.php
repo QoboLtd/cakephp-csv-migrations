@@ -29,11 +29,6 @@ class CsvViewComponent extends Component
     const ASSOC_FIELDS_ACTION = 'index';
 
     /**
-     * Count of fields per row for panel logic
-     */
-    const PANEL_COUNT = 3;
-
-    /**
      * Default configuration.
      * @var array
      */
@@ -68,14 +63,6 @@ class CsvViewComponent extends Component
      * @var array
      */
     protected $_panelActions = ['add', 'edit', 'view'];
-
-    /**
-     * Error messages.
-     * @var array
-     */
-    protected $_errorMessages = [
-        '_arrangePanels' => 'Field parameters count [%s] does not match required parameters count [%s]'
-    ];
 
     /**
      * Called before the controller action. You can use this method to configure and customize components
@@ -440,12 +427,6 @@ class CsvViewComponent extends Component
         $result = [];
 
         foreach ($data as $fields) {
-            $fieldCount = count($fields);
-            if (static::PANEL_COUNT !== $fieldCount) {
-                throw new RuntimeException(
-                    sprintf($this->_errorMessages[__FUNCTION__], $fieldCount, static::PANEL_COUNT)
-                );
-            }
             $panel = array_shift($fields);
             $result[$panel['name']][] = $fields;
         }

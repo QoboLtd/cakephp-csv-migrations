@@ -8,6 +8,11 @@ class DecimalFieldHandler extends BaseFieldHandler
     /**
      * {@inheritDoc}
      */
+    const DB_FIELD_TYPE = 'decimal';
+
+    /**
+     * {@inheritDoc}
+     */
     public function renderValue($table, $field, $data, array $options = [])
     {
         $result = filter_var($data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);

@@ -158,7 +158,8 @@ class FieldHandlerFactoryTest extends TestCase
                 'modified' => '2016-07-01 10:41',
                 'garden_area' => '50.00&nbsp;m&sup2;',
                 'is_primary' => 'Yes',
-                'start_time' => '16:15'
+                'start_time' => '16:15',
+                'balance' => '6,727.00'
             ]
         ];
     }

@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\ORM\Table;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
 class DecimalFieldHandler extends BaseFieldHandler
@@ -61,5 +62,29 @@ class DecimalFieldHandler extends BaseFieldHandler
         }
 
         return $dbFields;
+    }
+
+    /**
+     * Method that calculates max value for number input field.
+     *
+     * @param  \Cake\ORM\Table $table Table instance
+     * @param  string          $field Field name
+     * @return float
+     */
+    protected function _getNumberMax(Table $table, $field)
+    {
+        $result = null;
+
+        $args = $this->_getDbColumnArgs($table, $field);
+
+        if (!empty($args['length'])) {
+            $result = str_repeat('9', (int)$args['length']);
+        }
+
+        if ($result && !empty($args['precision'])) {
+            $result = substr_replace($result, '.', $args['length'] - $args['precision'], 0);
+        }
+
+        return (float)$result;
     }
 }

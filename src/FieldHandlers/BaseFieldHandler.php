@@ -19,8 +19,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * @var \CsvMigrations\View\AppView
      */
     public $cakeView;
+
     /**
      * Csv field types respective input field types
+     *
      * @var array
      */
     protected $_fieldTypes = [
@@ -29,6 +31,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         'string' => 'text',
         'uuid' => 'text',
         'integer' => 'number',
+        'decimal' => 'number',
         'url' => 'url',
         'email' => 'email',
         'phone' => 'tel',

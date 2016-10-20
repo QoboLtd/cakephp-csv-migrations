@@ -4,6 +4,7 @@ namespace CsvMigrations;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use CsvMigrations\Parser\Csv\ListParser;
+use CsvMigrations\PathFinder\ListPathFinder;
 
 trait ListTrait
 {
@@ -38,21 +39,24 @@ trait ListTrait
     {
         $result = [];
 
-        $path = Configure::readOrFail('CsvMigrations.lists.path') . $listName . '.csv';
         $listData = [];
-
-        // ListParser does its own check for whether or not the
-        // file is_readable(), and if not - throws an exception.
-        // In this particular case though, we are called recursively,
-        // to fetch child list items, if any.  Before we attempt to
-        // get those, it's good to check if they exist.
-        //
-        // This can also be implemented with try/catch, but there
-        // might be more reasons for exceptions during parsing, so
-        // this check is the easiest approach.
-        if (is_readable($path)) {
+        try {
+            $pathFinder = new ListPathFinder;
+            $path = $pathFinder->find(null, $listName);
             $parser = new ListParser();
             $listData = $parser->parseFromPath($path);
+        } catch (\Exception $e) {
+            /* Do nothing.
+             *
+             * ListPathFinder and ListParser check for the
+             * file to exist and to be readable and so on,
+             * but here we do load lists recursively (for
+             * sub-lists, etc), which might result in files
+             * not always being there.
+             *
+             * In this particular case, it's not the end of the
+             * world.
+             */
         }
 
         if (!empty($listData)) {

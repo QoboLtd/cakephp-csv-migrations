@@ -5,15 +5,11 @@ use Cake\Core\Configure;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\Parser\Csv\MigrationParser;
+use CsvMigrations\PathFinder\MigrationPathFinder;
 use RuntimeException;
 
 trait MigrationTrait
 {
-    /**
-     * File extension
-     */
-    private $__extension = 'csv';
-
     /**
      * Associated fields identifiers
      *
@@ -39,8 +35,8 @@ trait MigrationTrait
             }
         }
 
-        $path = Configure::readOrFail('CsvMigrations.migrations.path') . $moduleName . DS;
-        $path .= Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . $this->__extension;
+        $pathFinder = new MigrationPathFinder;
+        $path = $pathFinder->find($moduleName);
 
         // Parser knows how to make sure that the file exists.  But it can
         // also throw other exceptions, which we don't want to avoid for

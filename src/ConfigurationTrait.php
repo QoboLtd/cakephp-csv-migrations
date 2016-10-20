@@ -4,6 +4,7 @@ namespace CsvMigrations;
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
 use CsvMigrations\Parser\Ini\Parser;
+use CsvMigrations\PathFinder\ConfigPathFinder;
 
 trait ConfigurationTrait
 {
@@ -13,20 +14,6 @@ trait ConfigurationTrait
      * @var array
      */
     protected $_config = [];
-
-    /**
-     * Config filename
-     *
-     * @var string
-     */
-    protected $_filename = 'config';
-
-    /**
-     * Config file extension
-     *
-     * @var string
-     */
-    protected $_extension = 'ini';
 
     /**
      * Searchable flag
@@ -74,15 +61,10 @@ trait ConfigurationTrait
      */
     protected function _setConfiguration($tableName)
     {
-        $path = Configure::read('CsvMigrations.migrations.path');
-        $path .= Inflector::camelize($tableName) . DS . $this->_filename . '.' . $this->_extension;
-
-        try {
-            $parser = new Parser();
-            $this->_config = $parser->parseFromPath($path);
-        } catch (\Exception $e) {
-            // config.ini does not exist or we failed to parse it
-        }
+        $pathFinder = new ConfigPathFinder;
+        $path = $pathFinder->find(Inflector::camelize($tableName));
+        $parser = new Parser();
+        $this->_config = $parser->parseFromPath($path);
 
         // display field from configuration file
         if (isset($this->_config['table']['display_field']) && method_exists($this, 'displayField')) {

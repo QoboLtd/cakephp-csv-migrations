@@ -15,6 +15,8 @@ use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Parser\Csv\MigrationParser;
 use CsvMigrations\Parser\Csv\ViewParser;
+use CsvMigrations\PathFinder\MigrationPathFinder;
+use CsvMigrations\PathFinder\ViewPathFinder;
 use CsvMigrations\PrettifyTrait;
 use InvalidArgumentException;
 
@@ -103,11 +105,11 @@ abstract class BaseViewListener implements EventListenerInterface
     {
         $result = [];
 
-        $path = Configure::readOrFail('CsvMigrations.migrations.path') . $request->controller . DS;
-        $path .= Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . static::EXTENSION;
-
-        $parser = new MigrationParser();
         try {
+            $pathFinder = new MigrationPathFinder;
+            $path = $PathFinder->find($request->controller);
+
+            $parser = new MigrationParser();
             $result = $parser->wrapFromPath($path);
         } catch (InvalidArgumentException $e) {
             Log::error($e);
@@ -133,9 +135,10 @@ abstract class BaseViewListener implements EventListenerInterface
             $action = $request->action;
         }
 
-        $path = Configure::read('CsvMigrations.views.path') . $controller . DS . $action . '.csv';
-
         try {
+            $pathFinder = new ViewPathFinder;
+            $path = $pathFinder->find($controller, $action);
+
             $parser = new ViewParser();
             $result = $parser->parseFromPath($path);
         } catch (InvalidArgumentException $e) {

@@ -14,7 +14,7 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
 
         $dir = dirname(__DIR__) . DS . '..' . DS . 'data' . DS . 'CsvMigrations' . DS . 'migrations' . DS;
         Configure::write('CsvMigrations.migrations.path', $dir);
-        Configure::write('CsvMigrations.migrations.filename', 'migration.dist');
+        Configure::write('CsvMigrations.migrations.filename', 'migration');
 
         $mockTrait = $this->getMockForTrait(MigrationTrait::class);
         $this->csvData = $mockTrait->getFieldsDefinitions('Foo');

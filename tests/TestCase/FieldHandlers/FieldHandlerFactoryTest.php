@@ -82,7 +82,7 @@ class FieldHandlerFactoryTest extends TestCase
         $dir = dirname(__DIR__) . DS . '..' . DS . 'data' . DS . 'CsvMigrations' . DS;
         Configure::write('CsvMigrations.migrations.path', $dir . 'migrations' . DS);
         Configure::write('CsvMigrations.lists.path', $dir . 'lists' . DS);
-        Configure::write('CsvMigrations.migrations.filename', 'migration.dist');
+        Configure::write('CsvMigrations.migrations.filename', 'migration');
 
         $mockTrait = $this->getMockForTrait(MigrationTrait::class);
         $this->csvData = $mockTrait->getFieldsDefinitions($this->tableName);

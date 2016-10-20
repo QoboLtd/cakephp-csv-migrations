@@ -3,7 +3,7 @@ namespace CsvMigrations\Shell\Task;
 
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
-use CsvMigrations\View\Exception\MissingCsvException;
+use CsvMigrations\PathFinder\MigrationPathFinder;
 use Migrations\Shell\Task\MigrationTask;
 use Phinx\Util\Util;
 
@@ -12,10 +12,6 @@ use Phinx\Util\Util;
  */
 class CsvMigrationTask extends MigrationTask
 {
-    /**
-     * File extension
-     */
-    const FILE_EXTENSION = 'csv';
 
     /**
      * Timestamp
@@ -102,18 +98,13 @@ class CsvMigrationTask extends MigrationTask
      *
      * @param  string $tableName target table name
      * @return string
-     * @throws \CsvMigrations\View\Exception\MissingCsvException
      */
     protected function _getLastModifiedTime($tableName)
     {
         $tableName = Inflector::camelize($tableName);
 
-        $path = Configure::readOrFail('CsvMigrations.migrations.path') . $tableName;
-        $path .= DS . Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . static::FILE_EXTENSION;
-
-        if (!file_exists($path)) {
-            throw new MissingCsvException($tableName);
-        }
+        $pathFinder = new MigrationPathFinder;
+        $path = $pathFinder->find($tableName);
 
         // Unit time stamp to YYYYMMDDhhmmss
         $result = date('YmdHis', filemtime($path));

@@ -8,7 +8,7 @@ class MigrationParserTest extends PHPUnit_Framework_TestCase
 {
     public function testParseFromPath()
     {
-        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'CsvMigrations' . DS . 'migrations' . DS . 'Foo' . DS . 'migration.dist.csv';
+        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'CsvMigrations' . DS . 'migrations' . DS . 'Foo' . DS . 'migration.csv';
         $parser = new MigrationParser();
         $result = $parser->parseFromPath($file);
 
@@ -21,14 +21,14 @@ class MigrationParserTest extends PHPUnit_Framework_TestCase
      */
     public function testWrapFromPathException()
     {
-        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'CsvMigrations' . DS . 'migrations' . DS . 'Foo' . DS . 'migration.dist.csv';
+        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'CsvMigrations' . DS . 'migrations' . DS . 'Foo' . DS . 'migration.csv';
         $parser = new MigrationParser();
         $result = $parser->wrapFromPath($file, [], 'foobar');
     }
 
     public function testWrapFromPath()
     {
-        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'CsvMigrations' . DS . 'migrations' . DS . 'Foo' . DS . 'migration.dist.csv';
+        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'CsvMigrations' . DS . 'migrations' . DS . 'Foo' . DS . 'migration.csv';
         $parser = new MigrationParser();
         $result = $parser->wrapFromPath($file);
 

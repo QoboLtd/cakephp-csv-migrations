@@ -5,6 +5,9 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use CsvMigrations\Parser\Csv\MigrationParser;
+use CsvMigrations\Parser\Ini\Parser;
+use CsvMigrations\PathFinder\ConfigPathFinder;
+use CsvMigrations\PathFinder\MigrationPathFinder;
 
 class ValidateShell extends Shell
 {
@@ -49,7 +52,6 @@ class ValidateShell extends Shell
 
         $errorsCount += $this->_checkConfigPresence($modules);
         $errorsCount += $this->_checkMigrationPresence($modules);
-        $errorsCount += $this->_checkMigrationParser($modules);
 
         if ($errorsCount) {
             $this->abort('Errors found [' . $errorsCount . '].  Validation failed!');
@@ -114,11 +116,15 @@ class ValidateShell extends Shell
 
         $this->out('Checking the presence of configuration file');
 
-        $configFile = 'config.ini';
         foreach ($modules as $module => $path) {
-            $path .= DIRECTORY_SEPARATOR . $configFile;
-            if (!file_exists($path)) {
-                $errors[] = $module . " module is missing configuration file at [$path]";
+            try {
+                $pathFinder = new ConfigPathFinder;
+                $path = $pathFinder->find($module);
+                $parser = new Parser;
+                $config = $parser->parseFromPath($path);
+            } catch (\Exception $e) {
+                $path = $path ? '[' . $path . ']' : '';
+                $errors[] = $module . " module configuration file $path problem: " . $e->getMessage();
             }
         }
         $this->_printCheckStatus($errors);
@@ -137,37 +143,15 @@ class ValidateShell extends Shell
         $errors = [];
 
         $this->out('Checking the presence of migration file');
-        $migrationFile = 'migration.csv';
         foreach ($modules as $module => $path) {
-            $path .= DIRECTORY_SEPARATOR . $migrationFile;
-            if (!file_exists($path)) {
-                $errors[] = $module . " module is missing migration file at [$path]";
-            }
-        }
-        $this->_printCheckStatus($errors);
-
-        return count($errors);
-    }
-
-    /**
-     * Check if migration.csv file is can be parsed for each module
-     *
-     * @param array $modules List of modules to check
-     * @return int Count of errors found
-     */
-    protected function _checkMigrationParser(array $modules = [])
-    {
-        $errors = [];
-
-        $this->out('Checking if migration file is parseable');
-        $migrationFile = 'migration.csv';
-        foreach ($modules as $module => $path) {
-            $path .= DIRECTORY_SEPARATOR . $migrationFile;
-            $parser = new MigrationParser();
             try {
-                $csvData = $parser->parseFromPath($path);
+                $pathFinder = new MigrationPathFinder;
+                $path = $pathFinder->find($module);
+                $parser = new MigrationParser;
+                $result = $parser->parseFromPath($path);
             } catch (\Exception $e) {
-                $errors[] = 'Migration file parsing failed for [' . $module . ']: ' . $e->getMessage();
+                $path = $path ? '[' . $path . ']' : '';
+                $errors[] = $module . " module migration file $path problem: " . $e->getMessage();
             }
         }
         $this->_printCheckStatus($errors);

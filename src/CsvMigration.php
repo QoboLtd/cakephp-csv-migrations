@@ -9,6 +9,7 @@ use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Parser\Csv\MigrationParser;
+use CsvMigrations\PathFinder\MigrationPathFinder;
 use Migrations\AbstractMigration;
 use Migrations\Table;
 use RuntimeException;
@@ -20,11 +21,6 @@ class CsvMigration extends AbstractMigration
 {
     use ConfigurationTrait;
     use MigrationTrait;
-
-    /**
-     * File extension
-     */
-    const EXTENSION = 'csv';
 
     /**
      * Migrations table object
@@ -84,8 +80,8 @@ class CsvMigration extends AbstractMigration
     {
         $tableName = Inflector::pluralize(Inflector::classify($this->_table->getName()));
         if ('' === trim($path)) {
-            $path = Configure::readOrFail('CsvMigrations.migrations.path') . $tableName . DS;
-            $path .= Configure::readOrFail('CsvMigrations.migrations.filename') . '.' . static::EXTENSION;
+            $pathFinder = new MigrationPathFinder;
+            $path = $pathFinder->find($tableName);
         }
 
         $parser = new MigrationParser();

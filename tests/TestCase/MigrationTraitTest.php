@@ -36,10 +36,6 @@ class MigrationTraitTest extends PHPUnit_Framework_TestCase
     {
         return [
             [
-                'WrongName',
-                []
-            ],
-            [
                 'Foo',
                 [
                     'id' => [

@@ -17,12 +17,10 @@ class MetricFieldHandler extends BaseCombinedFieldHandler
     {
         $this->_fields = [
             'amount' => [
-                'handler' => __NAMESPACE__ . '\\DecimalFieldHandler',
-                'field' => 'input'
+                'handler' => __NAMESPACE__ . '\\DecimalFieldHandler'
             ],
             'unit' => [
-                'handler' => __NAMESPACE__ . '\\ListFieldHandler',
-                'field' => 'select'
+                'handler' => __NAMESPACE__ . '\\ListFieldHandler'
             ]
         ];
     }

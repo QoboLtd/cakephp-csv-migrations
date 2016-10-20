@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\ORM\TableRgistry;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
@@ -129,5 +130,42 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         }
 
         return $table . '.' . $field;
+    }
+
+    /**
+     * Returns arguments from database column definition.
+     *
+     * @param  \Cake\ORM\Table|string $table  Table instance or name
+     * @param  string                 $column Column name
+     * @param  array                  $args   Column arguments
+     * @return array
+     */
+    protected function _getDbColumnArgs($table, $column, array $args = [])
+    {
+        $result = [];
+
+        if (is_string($table)) {
+            $table = TableRegistry::get($table);
+        }
+
+        $data = $table->schema()->column($column);
+
+        if (empty($data)) {
+            return $result;
+        }
+
+        if (empty($args)) {
+            return $data;
+        }
+
+        foreach ($data as $k => $v) {
+            if (!in_array($k, $args)) {
+                continue;
+            }
+
+            $result[$k] = $v;
+        }
+
+        return $result;
     }
 }

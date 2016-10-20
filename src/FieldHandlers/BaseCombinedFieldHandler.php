@@ -48,7 +48,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
 
             $fieldOptions = [
                 'label' => false,
-                'type' => $preOptions['type'],
+                'type' => $preOptions['handler']::DB_FIELD_TYPE,
                 'required' => (bool)$options['fieldDefinitions']->getRequired(),
                 'escape' => false,
                 'value' => $data
@@ -106,7 +106,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
         foreach ($this->_fields as $suffix => $options) {
             $dbFields[] = new DbField(
                 $csvField->getName() . '_' . $suffix,
-                $options['type'],
+                $options['handler']::DB_FIELD_TYPE,
                 null,
                 $csvField->getRequired(),
                 $csvField->getNonSearchable(),

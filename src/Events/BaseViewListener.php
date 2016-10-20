@@ -25,11 +25,6 @@ abstract class BaseViewListener implements EventListenerInterface
     use PrettifyTrait;
 
     /**
-     * File extension
-     */
-    const EXTENSION = 'csv';
-
-    /**
      * Datatables format identifier
      */
     const FORMAT_DATATABLES = 'datatables';

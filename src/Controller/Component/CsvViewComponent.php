@@ -84,7 +84,10 @@ class CsvViewComponent extends Component
             $this->_controllerInstance->set('_serialize', ['csvAssociatedRecords']);
         }
 
-        $this->_setTableFields();
+        // skip passing table fields if action is not supported by the plugin
+        if (in_array($this->request->action, Configure::readOrFail('CsvMigrations.actions'))) {
+            $this->_setTableFields();
+        }
     }
 
     /**

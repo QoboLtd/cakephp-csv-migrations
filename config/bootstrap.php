@@ -9,6 +9,7 @@ use CsvMigrations\Events\IndexViewListener;
 use CsvMigrations\Events\ViewMenuListener;
 use CsvMigrations\Events\ViewViewListener;
 
+Configure::write('CsvMigrations.actions', ['index', 'view', 'add', 'edit']);
 Configure::write('CsvMigrations.migrations.path', CONFIG . 'CsvMigrations' . DS . 'migrations' . DS);
 Configure::write('CsvMigrations.views.path', CONFIG . 'CsvMigrations' . DS . 'views' . DS);
 Configure::write('CsvMigrations.lists.path', CONFIG . 'CsvMigrations' . DS . 'lists' . DS);

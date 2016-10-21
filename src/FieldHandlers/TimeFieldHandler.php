@@ -7,6 +7,11 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 class TimeFieldHandler extends BaseFieldHandler
 {
     /**
+     * {@inheritDoc}
+     */
+    const DB_FIELD_TYPE = 'time';
+
+    /**
      * Field type
      */
     const INPUT_FIELD_TYPE = 'timepicker';

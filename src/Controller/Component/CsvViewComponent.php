@@ -14,6 +14,7 @@ use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
 use CsvMigrations\Parser\Csv\ViewParser;
 use CsvMigrations\PathFinder\ViewPathFinder;
+use \Exception;
 use \RuntimeException;
 
 /**
@@ -146,15 +147,17 @@ class CsvViewComponent extends Component
                 // get associated records
                 switch ($assocType) {
                     case 'manyToOne':
-                        $result[$assocType][$association->foreignKey()] = $this->_manyToOneAssociatedRecords(
-                            $association
-                        );
+                        $associatedRecords = $this->_manyToOneAssociatedRecords($association);
+                        if (!empty($associatedRecords)) {
+                            $result[$assocType][$association->foreignKey()] = $associatedRecords;
+                        }
                         break;
 
                     case 'oneToMany':
-                        $result[$assocType][$association->name()] = $this->_oneToManyAssociatedRecords(
-                            $association
-                        );
+                        $associatedRecords = $this->_oneToManyAssociatedRecords($association);
+                        if (!empty($associatedRecords)) {
+                            $result[$assocType][$association->name()] = $associatedRecords;
+                        }
                         break;
 
                     case 'manyToMany':
@@ -222,16 +225,22 @@ class CsvViewComponent extends Component
      */
     protected function _oneToManyAssociatedRecords(Association $association)
     {
+        $result = [];
         $assocName = $association->name();
         $assocTableName = $association->table();
         $assocForeignKey = $association->foreignKey();
         $recordId = $this->request->params['pass'][0];
 
+        $csvFields = $this->_getAssociationCsvFields($association, static::ASSOC_FIELDS_ACTION);
+        if (empty($csvFields)) {
+            return $result;
+        }
+
         // get associated index View csv fields
         $fields = array_unique(
             array_merge(
                 [$association->displayField()],
-                $this->_getAssociationCsvFields($association, static::ASSOC_FIELDS_ACTION)
+                $csvFields
             )
         );
 
@@ -268,15 +277,20 @@ class CsvViewComponent extends Component
      */
     protected function _manyToManyAssociatedRecords(Association $association)
     {
+        $result = [];
         $assocName = $association->name();
         $assocTableName = $association->table();
         $assocForeignKey = $association->foreignKey();
 
+        $csvFields = $this->_getAssociationCsvFields($association, static::ASSOC_FIELDS_ACTION);
+        if (empty($csvFields)) {
+            return $result;
+        }
         // get associated index View csv fields
         $fields = array_unique(
             array_merge(
                 [$association->displayField()],
-                $this->_getAssociationCsvFields($association, static::ASSOC_FIELDS_ACTION)
+                $csvFields
             )
         );
         $query = $this->_tableInstance->find('all', [
@@ -335,10 +349,18 @@ class CsvViewComponent extends Component
             return $result;
         }
 
-        $pathFinder = new ViewPathFinder;
-        $path = $pathFinder->find($tableName, $action);
+        try {
+            $pathFinder = new ViewPathFinder;
+            $path = $pathFinder->find($tableName, $action);
+            $csvFields = $this->_getFieldsFromCsv($path);
+        } catch (Exception $e) {
+            return $result;
+        }
 
-        $csvFields = $this->_getFieldsFromCsv($path);
+        if (empty($csvFields)) {
+            return $result;
+        }
+
         $result = array_map(function ($v) {
             return $v[0];
         }, $csvFields);

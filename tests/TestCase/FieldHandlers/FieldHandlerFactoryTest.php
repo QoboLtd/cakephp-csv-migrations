@@ -106,6 +106,7 @@ class FieldHandlerFactoryTest extends TestCase
     public function testRenderInput()
     {
         $foos = $this->FooTable->find();
+        $this->assertNotEmpty($foos->all());
         $provider = $this->renderInputsProvider();
         foreach ($foos as $k => $foo) {
             foreach (array_keys($this->csvData) as $field) {
@@ -119,6 +120,7 @@ class FieldHandlerFactoryTest extends TestCase
     public function testRenderValue()
     {
         $foos = $this->FooTable->find();
+        $this->assertNotEmpty($foos->all());
         $provider = $this->renderValuesProvider();
         foreach ($foos as $k => $foo) {
             foreach (array_keys($this->csvData) as $field) {

@@ -4,10 +4,13 @@ namespace CsvMigrations\Shell;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\Parser\Csv\ListParser;
 use CsvMigrations\Parser\Csv\MigrationParser;
 use CsvMigrations\Parser\Csv\ViewParser;
 use CsvMigrations\Parser\Ini\Parser;
 use CsvMigrations\PathFinder\ConfigPathFinder;
+use CsvMigrations\PathFinder\ListPathFinder;
 use CsvMigrations\PathFinder\MigrationPathFinder;
 use CsvMigrations\PathFinder\ViewPathFinder;
 
@@ -57,6 +60,7 @@ class ValidateShell extends Shell
         $errorsCount += $this->_checkMigrationPresence($modules);
         $errorsCount += $this->_checkViewsPresence($modules);
         $errorsCount += $this->_checkConfigOptions($modules);
+        $errorsCount += $this->_checkMigrationFields($modules);
 
         if ($errorsCount) {
             $this->abort("Errors found: $errorsCount.  Validation failed!");
@@ -131,6 +135,35 @@ class ValidateShell extends Shell
     }
 
     /**
+     * Check if the given list is valid
+     *
+     * Lists with no items are assumed to be
+     * invalid.
+     *
+     * @param string $list List name to check
+     * @return bool True if valid, false is otherwise
+     */
+    protected function _isValidList($list)
+    {
+        $result = false;
+
+        $listItems = [];
+        try {
+            $pathFinder = new ListPathFinder;
+            $path = $pathFinder->find(null, $list);
+            $parser = new ListParser;
+            $listItems = $parser->parseFromPath($path);
+        } catch (\Exception $e) {
+            // We don't care about the specifics of the failure
+        }
+
+        if ($listItems) {
+            $result = true;
+        }
+
+        return $result;
+    }
+    /**
      * Check if the given field is valid for given module
      *
      * If valid fields are not available from the migration
@@ -168,6 +201,26 @@ class ValidateShell extends Shell
                 $result = true;
                 break;
             }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Check if the field type is valid
+     *
+     * Migration field type needs a field handler.
+     *
+     * @param string $type Field type
+     * @return bool True if valid, false otherwise
+     */
+    protected function _isValidFieldType($type)
+    {
+        $result = false;
+
+        $fhf = new FieldHandlerFactory();
+        if ($fhf->hasFieldHandler($type)) {
+            $result = true;
         }
 
         return $result;
@@ -396,6 +449,107 @@ class ValidateShell extends Shell
                         if (!isset($config['conversion']['value'])) {
                             $moduleErrors[] = $module . " config [conversion] section references 'field' but does not set a 'value' key";
                         }
+                    }
+                }
+            }
+
+            $result = empty($moduleErrors) ? '<success>OK</success>' : '<error>FAIL</error>';
+            $this->out($result);
+            $errors = array_merge($errors, $moduleErrors);
+        }
+        $this->_printCheckStatus($errors);
+
+        return count($errors);
+    }
+
+    /**
+     * Check migration.csv fields
+     *
+     * @param array $modules List of modules to check
+     * @return int Count of errors found
+     */
+    protected function _checkMigrationFields(array $modules = [])
+    {
+        $errors = [];
+
+        $this->out('Checking migration fields:', 2);
+        foreach ($modules as $module => $path) {
+            $moduleErrors = [];
+            $this->out(' - ' . $module . ' ... ', 0);
+            $fields = null;
+            try {
+                $pathFinder = new MigrationPathFinder;
+                $path = $pathFinder->find($module);
+                $parser = new MigrationParser;
+                $fields = $parser->parseFromPath($path);
+            } catch (\Exception $e) {
+                // We've already reported this problem in _checkMigrationPresence();
+            }
+
+            if ($fields) {
+                $seenFields = [];
+
+                // Check each field one by one
+                foreach ($fields as $field) {
+                    // Field name is required
+                    if (empty($field['name'])) {
+                        $moduleErrors[] = $module . " migration has a field without a name";
+                    } else {
+                        // Check for field duplicates
+                        if (in_array($field['name'], $seenFields)) {
+                            $moduleErrors[] = $module . " migration specifies field '" . $field['name'] . "' more than once";
+                        } else {
+                            $seenFields[] = $field['name'];
+                        }
+                        // Field type is required
+                        if (empty($field['type'])) {
+                            $moduleErrors[] = $module . " migration does not specify type for field  '" . $field['name'] . "'";
+                        } else {
+                            $type = null;
+                            $limit = null;
+                            // Matches:
+                            // * date, time, string, and other simple types
+                            // * list(something), related(Others) and other simple limits
+                            // * related(Vendor/Plugin.Model) and other complex limits
+                            if (preg_match('/^(\w+?)\(([\w\/\.]+?)\)$/', $field['type'], $matches)) {
+                                $type = $matches[1];
+                                $limit = $matches[2];
+                            } else {
+                                $type = $field['type'];
+                            }
+                            // Field type must be valid
+                            if (!$this->_isValidFieldType($type)) {
+                                $moduleErrors[] = $module . " migration specifies invalid type '" . $type . "' for field  '" . $field['name'] . "'";
+                            } else {
+                                switch ($type) {
+                                    case 'related':
+                                        // Only check for simple modules, not the vendor/plugin ones
+                                        if (preg_match('/^\w+$/', $limit) && !$this->_isValidModule($limit, array_keys($modules))) {
+                                            $moduleErrors[] = $module . " migration relates to unknown module '$limit' in '" . $field['name'] . "' field";
+                                        }
+                                        break;
+                                    case 'list':
+                                    case 'money':
+                                    case 'metric':
+                                        if (!$this->_isValidList($limit)) {
+                                            $moduleErrors[] = $module . " migration uses unknown or empty list '$limit' in '" . $field['name'] . "' field";
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                // Check for the required fields
+                // TODO: Allow specifying the required fields as the command line argument (for things like trashed)
+                $requiredFields = [
+                    'id',
+                    'created',
+                    'modified',
+                ];
+                foreach ($requiredFields as $requiredField) {
+                    if (!in_array($requiredField, $seenFields)) {
+                        $moduleErrors[] = $module . " migration is missing a required field '$requiredField'";
                     }
                 }
             }

@@ -164,6 +164,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $result = [];
 
+        if (empty($table)) {
+            return $result;
+        }
+
         if (is_string($table)) {
             $table = TableRegistry::get($table);
         }

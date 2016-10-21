@@ -5,8 +5,8 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use CsvMigrations\Parser\Csv\MigrationParser;
-use CsvMigrations\Parser\Ini\Parser;
 use CsvMigrations\Parser\Csv\ViewParser;
+use CsvMigrations\Parser\Ini\Parser;
 use CsvMigrations\PathFinder\ConfigPathFinder;
 use CsvMigrations\PathFinder\MigrationPathFinder;
 use CsvMigrations\PathFinder\ViewPathFinder;
@@ -56,6 +56,7 @@ class ValidateShell extends Shell
         $errorsCount += $this->_checkConfigPresence($modules);
         $errorsCount += $this->_checkMigrationPresence($modules);
         $errorsCount += $this->_checkViewsPresence($modules);
+        $errorsCount += $this->_checkConfigOptions($modules);
 
         if ($errorsCount) {
             $this->abort("Errors found: $errorsCount.  Validation failed!");
@@ -109,6 +110,67 @@ class ValidateShell extends Shell
             }
         }
         $this->hr();
+    }
+
+    /**
+     * Check if the given module is valid
+     *
+     * @param string $module Module name to check
+     * @param array $validModules List of valid modules
+     * @return bool True if module is valid, false otherwise
+     */
+    protected function _isValidModule($module, $validModules)
+    {
+        $result = false;
+
+        if (in_array($module, $validModules)) {
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Check if the given field is valid for given module
+     *
+     * If valid fields are not available from the migration
+     * we will assume that the field is valid.
+     *
+     * @param string $module Module to check in
+     * @param string $field Field to check
+     * @return bool True if field is valid, false otherwise
+     */
+    protected function _isValidModuleField($module, $field)
+    {
+        $result = false;
+
+        $moduleFields = [];
+        try {
+            $pathFinder = new MigrationPathFinder;
+            $path = $pathFinder->find($module);
+            $parser = new MigrationParser;
+            $moduleFields = $parser->parseFromPath($path);
+        } catch (\Exception $e) {
+            // We already report issues with migration in _checkMigrationPresence()
+        }
+
+        // If we couldn't get the migration, we cannot verify if the
+        // field is valid or not.  To avoid unnecessary fails, we
+        // assume that it's valid.
+        if (empty($moduleFields)) {
+            $result = true;
+
+            return $result;
+        }
+
+        foreach ($moduleFields as $moduleField) {
+            if ($field == $moduleField['name']) {
+                $result = true;
+                break;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -219,7 +281,125 @@ class ValidateShell extends Shell
                     }
                 }
             }
-            $this->out('<info>' . (int) $viewCounter . ' views</info> ... ', 0);
+            // Warn if the module is missing standard views
+            if ($viewCounter < count($views)) {
+                $this->out('<warning>' . (int)$viewCounter . ' views</warning> ... ', 0);
+            } else {
+                $this->out('<info>' . (int)$viewCounter . ' views</info> ... ', 0);
+            }
+            $this->out('<info>' . (int)$viewCounter . ' views</info> ... ', 0);
+            $result = empty($moduleErrors) ? '<success>OK</success>' : '<error>FAIL</error>';
+            $this->out($result);
+            $errors = array_merge($errors, $moduleErrors);
+        }
+        $this->_printCheckStatus($errors);
+
+        return count($errors);
+    }
+
+    /**
+     * Check configuration options for each module
+     *
+     * @param array $modules List of modules to check
+     * @return int Count of errors found
+     */
+    protected function _checkConfigOptions(array $modules = [])
+    {
+        $errors = [];
+
+        $this->out('Checking configuration options:', 2);
+        foreach ($modules as $module => $path) {
+            $moduleErrors = [];
+            $this->out(' - ' . $module . ' ... ', 0);
+            $config = null;
+            try {
+                $pathFinder = new ConfigPathFinder;
+                $path = $pathFinder->find($module);
+                $parser = new Parser;
+                $config = $parser->parseFromPath($path);
+            } catch (\Exception $e) {
+                // We've already reported this problem in _checkConfigPresence();
+            }
+
+            // Check configuration options
+            if ($config) {
+                // [table] section
+                if (!empty($config['table'])) {
+                    // 'display_field' key is optional, but must contain valid field if specified
+                    if (!empty($config['table']['display_field'])) {
+                        if (!$this->_isValidModuleField($module, $config['table']['display_field'])) {
+                            $moduleErrors[] = $module . " config [table] section references unknown field '" . $config['table']['display_field'] . "' in 'display_field' key";
+                        }
+                    }
+                    // 'typeahead_fields' key is optional, but must contain valid fields if specified
+                    if (!empty($config['table']['typeahead_fields'])) {
+                        $typeaheadFields = explode(',', trim($config['table']['typeahead_fields']));
+                        foreach ($typeaheadFields as $typeaheadField) {
+                            if (!$this->_isValidModuleField($module, $typeaheadField)) {
+                                $moduleErrors[] = $module . " config [table] section references unknown field '" . $typeaheadField . "' in 'typeahead_fields' key";
+                            }
+                        }
+                    }
+                    // 'lookup_fields' key is optional, but must contain valid fields if specified
+                    if (!empty($config['table']['lookup_fields'])) {
+                        $lookupFields = explode(',', $config['table']['lookup_fields']);
+                        foreach ($lookupFields as $lookupField) {
+                            if (!$this->_isValidModuleField($module, $lookupField)) {
+                                $moduleErrors[] = $module . " config [table] section references unknown field '" . $lookupField . "' in 'lookup_fields' key";
+                            }
+                        }
+                    }
+                }
+                // [manyToMany] section
+                if (!empty($config['manyToMany'])) {
+                    // 'module' key is required and must contain valid modules
+                    if (empty($config['manyToMany']['modules'])) {
+                        $moduleErrors[] = $module . " config [manyToMany] section is missing 'modules' key";
+                    } else {
+                        $manyToManyModules = explode(',', $config['manyToMany']['modules']);
+                        foreach ($manyToManyModules as $manyToManyModule) {
+                            if (!$this->_isValidModule($manyToManyModule, array_keys($modules))) {
+                                $moduleErrors[] = $module . " config [manyToMany] section references unknown module '$manyToManyModule' in 'modules' key";
+                            }
+                        }
+                    }
+                }
+                // [conversion] section
+                if (!empty($config['conversion'])) {
+                    // 'module' key is required and must contain valid modules
+                    if (empty($config['conversion']['modules'])) {
+                        $moduleErrors[] = $module . " config [conversion] section is missing 'modules' key";
+                    } else {
+                        $conversionModules = explode(',', $config['conversion']['modules']);
+                        foreach ($conversionModules as $conversionModule) {
+                            if (!$this->_isValidModule($conversionModule, array_keys($modules))) {
+                                $moduleErrors[] = $module . " config [conversion] section references unknown module '$conversionModule' in 'modules' key";
+                            }
+                        }
+                    }
+                    // 'inherit' key is optional, but must contain valid modules if defined
+                    if (!empty($config['conversion']['inherit'])) {
+                        $inheritModules = explode(',', $config['conversion']['inherit']);
+                        foreach ($inheritModules as $inheritModule) {
+                            if (!$this->_isValidModule($inheritModule, array_keys($modules))) {
+                                $moduleErrors[] = $module . " config [conversion] section references unknown module '$inheritModule' in 'inherit' key";
+                            }
+                        }
+                    }
+                    // 'field' key is optional, but must contain valid field and 'value' if defined
+                    if (!empty($config['conversion']['field'])) {
+                        // 'field' key is optional, but must contain valid field is specified
+                        if (!$this->_isValidModuleField($module, $config['conversion']['field'])) {
+                            $moduleErrors[] = $module . " config [conversion] section references unknown field '" . $config['conversion']['field'] . "' in 'field' key";
+                        }
+                        // 'value' key must be set
+                        if (!isset($config['conversion']['value'])) {
+                            $moduleErrors[] = $module . " config [conversion] section references 'field' but does not set a 'value' key";
+                        }
+                    }
+                }
+            }
+
             $result = empty($moduleErrors) ? '<success>OK</success>' : '<error>FAIL</error>';
             $this->out($result);
             $errors = array_merge($errors, $moduleErrors);

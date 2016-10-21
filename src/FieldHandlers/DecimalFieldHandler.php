@@ -69,7 +69,7 @@ class DecimalFieldHandler extends BaseFieldHandler
         );
 
         // set precision and scale provided by csv migration decimal field type definition
-        foreach($dbFields as &$dbField) {
+        foreach ($dbFields as &$dbField) {
             // skip if scale and precision are not defined
             if (empty($dbField->getLimit())) {
                 continue;

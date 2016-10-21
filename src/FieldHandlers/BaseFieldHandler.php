@@ -138,7 +138,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      *
      * @param  string  $field   Field name
      * @param  array   $options Field options
-     * @param  boolean $html    Html flag
+     * @param  bool    $html    Html flag
      * @return string           Label value or html markup
      */
     protected function _fieldToLabel($field, array $options = [], $html = true)

@@ -157,7 +157,7 @@ class IndexViewListener extends BaseViewListener
             return;
         }
 
-        $query->order([$fields[$sortCol] => $sortDir]);
+        $query->order([$event->subject()->name . '.' . $fields[$sortCol] => $sortDir]);
     }
 
     /**

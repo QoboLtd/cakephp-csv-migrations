@@ -142,6 +142,13 @@ class MigrationTraitTest extends PHPUnit_Framework_TestCase
                         'required' => '',
                         'non-searchable' => '',
                         'unique' => false
+                    ],
+                    'balance' => [
+                        'name' => 'balance',
+                        'type' => 'decimal(12.4)',
+                        'required' => '',
+                        'non-searchable' => '',
+                        'unique' => false
                     ]
                 ]
             ]

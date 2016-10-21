@@ -6,6 +6,16 @@ use CsvMigrations\FieldHandlers\ListFieldHandler;
 abstract class BaseCombinedFieldHandler extends ListFieldHandler
 {
     /**
+     * Input(s) wrapper html markup
+     */
+    const WRAPPER_HTML = '%s<div class="row">%s</div>';
+
+    /**
+     * Input field html markup
+     */
+    const INPUT_HTML = '<div class="col-xs-6 col-lg-4">%s</div>';
+
+    /**
      * Combined fields
      *
      * @var array
@@ -36,46 +46,25 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        $input = $this->cakeView->Form->label($field);
+        $label = $this->cakeView->Form->label($field);
 
-        $input .= '<div class="row">';
+        $inputs = [];
         foreach ($this->_fields as $suffix => $preOptions) {
+            $options['fieldDefinitions']->setType($preOptions['handler']::DB_FIELD_TYPE);
+            $options['label'] = null;
             $fieldName = $field . '_' . $suffix;
+
+            $data = '';
             if (isset($options['entity'])) {
                 $data = $options['entity']->{$fieldName};
             }
-            $fullFieldName = $this->_getFieldName($table, $fieldName, $preOptions);
 
-            $fieldOptions = [
-                'label' => false,
-                'type' => $preOptions['type'],
-                'required' => (bool)$options['fieldDefinitions']->getRequired(),
-                'escape' => false,
-                'value' => $data
-            ];
+            $handler = new $preOptions['handler'];
 
-            if (array_key_exists($fieldOptions['type'], $this->_fieldTypes)) {
-                $fieldOptions['type'] = $this->_fieldTypes[$fieldOptions['type']];
-            }
-
-            $input .= '<div class="';
-            switch ($preOptions['field']) {
-                case 'select':
-                    $input .= 'col-xs-6 col-sm-4 col-sm-offset-2">';
-                    $selectOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
-                    $input .= $this->cakeView->Form->select($fullFieldName, $selectOptions, $fieldOptions);
-                    break;
-
-                case 'input':
-                    $input .= 'col-xs-6">';
-                    $input .= $this->cakeView->Form->input($fullFieldName, $fieldOptions);
-                    break;
-            }
-            $input .= '</div>';
+            $inputs[] = sprintf(static::INPUT_HTML, $handler->renderInput($table, $fieldName, $data, $options));
         }
-        $input .= '</div>';
 
-        return $input;
+        return sprintf(static::WRAPPER_HTML, $label, implode('', $inputs));
     }
 
     /**
@@ -103,15 +92,16 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
      */
     public function fieldToDb(CsvField $csvField)
     {
+        $dbFields = [];
         foreach ($this->_fields as $suffix => $options) {
-            $dbFields[] = new DbField(
-                $csvField->getName() . '_' . $suffix,
-                $options['type'],
-                null,
-                $csvField->getRequired(),
-                $csvField->getNonSearchable(),
-                $csvField->getUnique()
-            );
+            $handler = new $options['handler'];
+            $subField = clone $csvField;
+            $subField->setName($csvField->getName() . '_' . $suffix);
+            if (isset($options['limit'])) {
+                $subField->setLimit($options['limit']);
+            }
+
+            $dbFields = array_merge($dbFields, $handler->fieldToDb($subField));
         }
 
         return $dbFields;

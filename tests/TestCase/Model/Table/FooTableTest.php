@@ -165,7 +165,8 @@ class FooTableTest extends TestCase
                     'modified',
                     'garden_area',
                     'is_primary',
-                    'start_time'
+                    'start_time',
+                    'balance'
                 ]
             ]
         ];
@@ -246,6 +247,9 @@ class FooTableTest extends TestCase
                     ],
                     'start_time' => [
                         'type' => 'time'
+                    ],
+                    'balance' => [
+                        'type' => 'decimal'
                     ]
                 ]
             ]
@@ -359,6 +363,13 @@ class FooTableTest extends TestCase
                     'start_time' => [
                         'name' => 'start_time',
                         'type' => 'time',
+                        'required' => '',
+                        'non-searchable' => '',
+                        'unique' => false
+                    ],
+                    'balance' => [
+                        'name' => 'balance',
+                        'type' => 'decimal(12.4)',
                         'required' => '',
                         'non-searchable' => '',
                         'unique' => false

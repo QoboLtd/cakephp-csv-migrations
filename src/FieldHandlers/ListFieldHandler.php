@@ -33,7 +33,8 @@ class ListFieldHandler extends BaseFieldHandler
     {
         $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
 
-        $input = $this->cakeView->Form->label($field);
+        $input = $this->_fieldToLabel($field, $options);
+
         $input .= $this->cakeView->Form->select($this->_getFieldName($table, $field, $options), $fieldOptions, [
             'class' => 'form-control',
             'required' => (bool)$options['fieldDefinitions']->getRequired(),

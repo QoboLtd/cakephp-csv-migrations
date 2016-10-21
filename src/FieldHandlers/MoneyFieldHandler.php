@@ -17,14 +17,10 @@ class MoneyFieldHandler extends BaseCombinedFieldHandler
     {
         $this->_fields = [
             'amount' => [
-                'type' => 'decimal',
-                'handler' => __NAMESPACE__ . '\\DecimalFieldHandler',
-                'field' => 'input'
+                'handler' => __NAMESPACE__ . '\\DecimalFieldHandler'
             ],
             'currency' => [
-                'type' => 'string',
-                'handler' => __NAMESPACE__ . '\\ListFieldHandler',
-                'field' => 'select'
+                'handler' => __NAMESPACE__ . '\\ListFieldHandler'
             ]
         ];
     }

@@ -14,3 +14,4 @@ modified,datetime
 garden_area,metric(units_area)
 is_primary,boolean
 start_time,time
+balance,decimal(12.4)

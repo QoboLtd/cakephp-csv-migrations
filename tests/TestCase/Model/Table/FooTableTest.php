@@ -369,7 +369,7 @@ class FooTableTest extends TestCase
                     ],
                     'balance' => [
                         'name' => 'balance',
-                        'type' => 'decimal',
+                        'type' => 'decimal(12.4)',
                         'required' => '',
                         'non-searchable' => '',
                         'unique' => false

@@ -301,12 +301,7 @@ class ValidateShell extends Shell
     {
         $errors = [];
 
-        $views = [
-            'add',
-            'edit',
-            'view',
-            'index',
-        ];
+        $views = Configure::read('CsvMigrations.actions');
 
         $this->out('Trying to find and parse the view files:', 2);
         foreach ($modules as $module => $path) {

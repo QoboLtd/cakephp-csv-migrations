@@ -420,7 +420,8 @@ class ValidateShell extends Shell
                     } else {
                         $conversionModules = explode(',', $config['conversion']['modules']);
                         foreach ($conversionModules as $conversionModule) {
-                            if (!$this->_isValidModule($conversionModule, array_keys($modules))) {
+                            // Only check for simple modules, not the vendor/plugin ones
+                            if (preg_match('/^\w+$/', $conversionModule) && !$this->_isValidModule($conversionModule, array_keys($modules))) {
                                 $moduleErrors[] = $module . " config [conversion] section references unknown module '$conversionModule' in 'modules' key";
                             }
                         }

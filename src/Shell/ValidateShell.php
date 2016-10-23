@@ -61,6 +61,7 @@ class ValidateShell extends Shell
         $errorsCount += $this->_checkViewsPresence($modules);
         $errorsCount += $this->_checkConfigOptions($modules);
         $errorsCount += $this->_checkMigrationFields($modules);
+        $errorsCount += $this->_checkViewsFields($modules);
 
         if ($errorsCount) {
             $this->abort("Errors found: $errorsCount.  Validation failed!");
@@ -325,7 +326,7 @@ class ValidateShell extends Shell
                         $result = $parser->parseFromPath($path);
                     } catch (\Exception $e) {
                         $path = $path ? '[' . $path . ']' : '';
-                        $moduleErrors[] = $module . " module [$view] migration file problem: " . $e->getMessage();
+                        $moduleErrors[] = $module . " module [$view] view file problem: " . $e->getMessage();
                     }
                 }
             }
@@ -335,7 +336,6 @@ class ValidateShell extends Shell
             } else {
                 $this->out('<info>' . (int)$viewCounter . ' views</info> ... ', 0);
             }
-            $this->out('<info>' . (int)$viewCounter . ' views</info> ... ', 0);
             $result = empty($moduleErrors) ? '<success>OK</success>' : '<error>FAIL</error>';
             $this->out($result);
             $errors = array_merge($errors, $moduleErrors);
@@ -550,6 +550,100 @@ class ValidateShell extends Shell
                 }
             }
 
+            $result = empty($moduleErrors) ? '<success>OK</success>' : '<error>FAIL</error>';
+            $this->out($result);
+            $errors = array_merge($errors, $moduleErrors);
+        }
+        $this->_printCheckStatus($errors);
+
+        return count($errors);
+    }
+
+    /**
+     * Check fields in all views
+     *
+     * @param array $modules List of modules to check
+     * @return int Count of errors found
+     */
+    protected function _checkViewsFields(array $modules = [])
+    {
+        $errors = [];
+
+        $views = Configure::read('CsvMigrations.actions');
+
+        $this->out('Checking views fields:', 2);
+        foreach ($modules as $module => $path) {
+            $moduleErrors = [];
+            $viewCounter = 0;
+            $this->out(' - ' . $module . ' ... ', 0);
+            foreach ($views as $view) {
+                $fields = null;
+                try {
+                    $pathFinder = new ViewPathFinder;
+                    $path = $pathFinder->find($module, $view);
+                    $parser = new ViewParser;
+                    $fields = $parser->parseFromPath($path);
+                } catch (\Exception $e) {
+                    // It's OK for view files to be missing.
+                    // We already handle this in _checkViewsPresence()
+                }
+                // If the view file does exist, it has to be parseable.
+                if ($fields) {
+                    $viewCounter++;
+                    foreach ($fields as $field) {
+                        if (count($field) > 3) {
+                            $moduleErrors[] = $module . " module [$view] view has more than 2 columns";
+                        } elseif (count($field) == 3) {
+                            // Get rid of the first column, which is the panel name
+                            array_shift($field);
+                            $isEmbedded = false;
+                            foreach ($field as $column) {
+                                if ($column == 'EMBEDDED') {
+                                    $isEmbedded = true;
+                                    continue;
+                                } else {
+                                    if ($isEmbedded) {
+                                        list($embeddedModule, $embeddedModuleField) = explode('.', $column);
+                                        if (empty($embeddedModule)) {
+                                            $moduleErrors[] = $module . " module [$view] view reference EMBEDDED column without a module";
+                                        } else {
+                                            if (!$this->_isValidModule($embeddedModule, array_keys($modules))) {
+                                                $moduleErrors[] = $module . " module [$view] view reference EMBEDDED column with unknown module '$embeddedModule'";
+                                            }
+                                        }
+                                        if (empty($embeddedModuleField)) {
+                                            $moduleErrors[] = $module . " module [$view] view reference EMBEDDED column without a module field";
+                                        } else {
+                                            if (!$this->_isValidModuleField($module, $embeddedModuleField)) {
+                                                $moduleErrors[] = $module . " module [$view] view reference EMBEDDED column with unknown field '$embeddedModuleField' of module '$embeddedModule'";
+                                            }
+                                        }
+                                        $isEmbedded = false;
+                                    } else {
+                                        if ($column && !$this->_isValidModuleField($module, $column)) {
+                                            $moduleErrors[] = $module . " module [$view] view references unknown field '$column'";
+                                        }
+                                    }
+                                }
+                            }
+                            if ($isEmbedded) {
+                                $moduleErrors[] = $module . " module [$view] view incorrectly uses EMBEDDED in the last column";
+                            }
+                        } elseif (count($field) == 1) {
+                            // index view
+                            if ($field[0] && !$this->_isValidModuleField($module, $field[0])) {
+                                $moduleErrors[] = $module . " module [$view] view references unknown field '" . $field[0] . "'";
+                            }
+                        }
+                    }
+                }
+            }
+            // Warn if the module is missing standard views
+            if ($viewCounter < count($views)) {
+                $this->out('<warning>' . (int)$viewCounter . ' views</warning> ... ', 0);
+            } else {
+                $this->out('<info>' . (int)$viewCounter . ' views</info> ... ', 0);
+            }
             $result = empty($moduleErrors) ? '<success>OK</success>' : '<error>FAIL</error>';
             $this->out($result);
             $errors = array_merge($errors, $moduleErrors);

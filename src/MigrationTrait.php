@@ -230,8 +230,8 @@ trait MigrationTrait
      * model/table.
      * @return array $config containing all reports from ini files
      */
-     protected function _getReports()
-     {
+    protected function _getReports()
+    {
         $result = $config = [];
 
         $filename = Configure::read('CsvMigrations.reports.filename');
@@ -262,7 +262,6 @@ trait MigrationTrait
 
         return $config;
     }
-
 
     /**
      * Returns the name of the plugin from its path.

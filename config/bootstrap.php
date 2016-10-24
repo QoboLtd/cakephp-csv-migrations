@@ -8,12 +8,14 @@ use CsvMigrations\Events\EditViewListener;
 use CsvMigrations\Events\IndexViewListener;
 use CsvMigrations\Events\ViewMenuListener;
 use CsvMigrations\Events\ViewViewListener;
+use CsvMigrations\Events\ReportListener;
 
 Configure::write('CsvMigrations.actions', ['index', 'view', 'add', 'edit']);
 Configure::write('CsvMigrations.migrations.path', CONFIG . 'CsvMigrations' . DS . 'migrations' . DS);
 Configure::write('CsvMigrations.views.path', CONFIG . 'CsvMigrations' . DS . 'views' . DS);
 Configure::write('CsvMigrations.lists.path', CONFIG . 'CsvMigrations' . DS . 'lists' . DS);
 Configure::write('CsvMigrations.migrations.filename', 'migration');
+Configure::write('CsvMigrations.reports.filename', 'reports');
 Configure::write('CsvMigrations.typeahead.min_length', 1);
 Configure::write('CsvMigrations.typeahead.timeout', 300);
 Configure::write('CsvMigrations.acl', [
@@ -31,6 +33,7 @@ EventManager::instance()->on(new EditViewListener());
 EventManager::instance()->on(new IndexViewListener());
 EventManager::instance()->on(new ViewMenuListener());
 EventManager::instance()->on(new ViewViewListener());
+EventManager::instance()->on(new ReportListener());
 
 //Load upload plugin configuration
 include 'file_storage.php';

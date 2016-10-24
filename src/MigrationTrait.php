@@ -254,7 +254,7 @@ trait MigrationTrait
         if (!empty($result)) {
             $parser = new Parser();
             foreach ($result as $model => $paths) {
-                foreach($paths as $p) {
+                foreach ($paths as $p) {
                     $config[$model] = $parser->parseFromPath($p);
                 }
             }

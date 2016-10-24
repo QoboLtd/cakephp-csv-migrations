@@ -4,9 +4,9 @@ namespace CsvMigrations;
 use Cake\Core\Configure;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\PathFinder\MigrationPathFinder;
 use CsvMigrations\Parser\Csv\MigrationParser;
 use CsvMigrations\Parser\Ini\Parser;
+use CsvMigrations\PathFinder\MigrationPathFinder;
 use RuntimeException;
 
 trait MigrationTrait
@@ -228,7 +228,7 @@ trait MigrationTrait
      * Used in <model>/report/<slug> method
      * to get reports from the ini file on the dynamic
      * model/table.
-     * @return Array $config containing all reports from ini files
+     * @return array $config containing all reports from ini files
      */
      protected function _getReports()
      {
@@ -251,9 +251,9 @@ trait MigrationTrait
             }
         }
 
-        if( !empty($result) ) {
+        if (!empty($result)) {
             $parser = new Parser();
-            foreach($result as $model => $paths)  {
+            foreach ($result as $model => $paths) {
                 foreach($paths as $p) {
                     $config[$model] = $parser->parseFromPath($p);
                 }

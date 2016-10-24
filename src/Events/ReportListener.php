@@ -10,10 +10,9 @@ class ReportListener implements EventListenerInterface
     use MigrationTrait;
 
     /**
-    * Implemented Events
-    *
-    * @return array
-    */
+     * Implemented Events
+     * @return array
+     */
     public function implementedEvents()
     {
         return [
@@ -22,11 +21,12 @@ class ReportListener implements EventListenerInterface
     }
 
     /**
-    * getAllReports method
-    * @param object $event
-    *
-    * @return array $data with all .ini reports
-    */
+     * getAllReports method
+     *
+     * @param Cake\Event\Event $event used for getting reports
+     *
+     * @return array $data with all .ini reports
+     */
     public function getAllReports(Event $event)
     {
         $data = $this->_getReports();

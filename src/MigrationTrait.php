@@ -4,8 +4,8 @@ namespace CsvMigrations;
 use Cake\Core\Configure;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\Parser\Csv\MigrationParser;
 use CsvMigrations\PathFinder\MigrationPathFinder;
+use CsvMigrations\Parser\Csv\MigrationParser;
 use CsvMigrations\Parser\Ini\Parser;
 use RuntimeException;
 
@@ -224,14 +224,15 @@ trait MigrationTrait
         return $result;
     }
 
-	/**
+    /**
      * Used in <model>/report/<slug> method
      * to get reports from the ini file on the dynamic
      * model/table.
+     * @return Array $config containing all reports from ini files
      */
-     protected function _getReports() {
-        $result = [];
-        $config = [];
+     protected function _getReports()
+     {
+        $result = $config = [];
 
         $filename = Configure::read('CsvMigrations.reports.filename');
         $filename .= '.ini';
@@ -239,7 +240,7 @@ trait MigrationTrait
         $path = Configure::read('CsvMigrations.migrations.path');
         $dir = new \DirectoryIterator($path);
 
-        foreach( $dir as $it ) {
+        foreach ($dir as $it) {
             if ($it->isDir() && !$it->isDot()) {
                 $subDir = new \DirectoryIterator($it->getPathname());
                 foreach ($subDir as $fileInfo) {

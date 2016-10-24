@@ -16,8 +16,10 @@ class ReportListener implements EventListenerInterface
         ];
     }
 
-    public function getAllReports(Event $event) {
+    public function getAllReports(Event $event)
+    {
         $data = $this->_getReports();
+
         return $data;
     }
 }

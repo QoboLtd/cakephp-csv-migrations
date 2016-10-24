@@ -78,7 +78,7 @@ class AppController extends Controller
      *
      * @var array
      */
-    protected $_nonCsrfActions = ['token', 'add', 'edit'];
+    protected $_nonCsrfActions = ['token', 'add', 'edit', 'panels'];
 
     protected $_fileUploadsUtils;
 

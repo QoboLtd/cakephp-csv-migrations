@@ -28,7 +28,7 @@ class MigrationTraitTest extends PHPUnit_Framework_TestCase
         $result = $this->mock->_getReports();
 
         $this->assertNotEmpty($result);
-        $this->assertArrayHasKey('Foo', array_keys($result));
+        $this->assertArrayHasKey('Foo', $result);
 
     }
 

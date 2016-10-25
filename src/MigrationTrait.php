@@ -230,7 +230,7 @@ trait MigrationTrait
      * model/table.
      * @return array $config containing all reports from ini files
      */
-    protected function _getReports()
+    public function _getReports()
     {
         $result = $config = [];
 

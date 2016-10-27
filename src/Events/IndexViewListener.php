@@ -182,9 +182,8 @@ class IndexViewListener extends BaseViewListener
             $fields = $this->_getActionFields($event->subject()->request);
         }
 
-        $tableName = $event->subject()->name;
         foreach ($entities as $entity) {
-            $this->_prettify($entity, $tableName, $fields);
+            $this->_prettify($entity, $event->subject()->{$event->subject()->name}, $fields);
         }
     }
 

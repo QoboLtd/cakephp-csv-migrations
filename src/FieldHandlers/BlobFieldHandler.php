@@ -25,6 +25,18 @@ class BlobFieldHandler extends BaseFieldHandler
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function renderInput($table, $field, $data = '', array $options = [])
+    {
+        if (is_resource($data)) {
+            $data = stream_get_contents($data);
+        }
+
+        return parent::renderInput($table, $field, $data, $options);
+    }
+
+    /**
      * Render value as-is
      *
      * @todo Add support for encoding (base64, etc) via $options

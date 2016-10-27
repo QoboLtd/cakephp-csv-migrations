@@ -57,6 +57,10 @@ class IndexViewListener extends BaseViewListener
             return;
         }
 
+        foreach ($entities as $entity) {
+            $this->_resourceToString($entity);
+        }
+
         // @todo temporary functionality, please see _includeFiles() method documentation.
         foreach ($entities as $entity) {
             $this->_includeFiles($entity, $event);
@@ -178,9 +182,8 @@ class IndexViewListener extends BaseViewListener
             $fields = $this->_getActionFields($event->subject()->request);
         }
 
-        $tableName = $event->subject()->name;
         foreach ($entities as $entity) {
-            $this->_prettify($entity, $tableName, $fields);
+            $this->_prettify($entity, $event->subject()->{$event->subject()->name}, $fields);
         }
     }
 

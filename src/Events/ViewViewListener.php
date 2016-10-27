@@ -57,6 +57,6 @@ class ViewViewListener extends BaseViewListener
             return;
         }
 
-        $this->_prettify($entity, $event->subject()->name, []);
+        $this->_prettify($entity, $event->subject()->{$event->subject()->name}, []);
     }
 }

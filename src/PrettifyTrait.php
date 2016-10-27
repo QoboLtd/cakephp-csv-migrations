@@ -2,6 +2,7 @@
 namespace CsvMigrations;
 
 use Cake\ORM\Entity;
+use Cake\ORM\Table;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 trait PrettifyTrait
@@ -17,12 +18,12 @@ trait PrettifyTrait
     /**
      * Method that renders Entity values through Field Handler Factory.
      *
-     * @param  Cake\ORM\Entity     $entity    Entity instance
-     * @param  string              $tableName Table name
-     * @param  array               $fields    Fields to prettify
+     * @param  Cake\ORM\Entity       $entity    Entity instance
+     * @param  Cake\ORM\Table|string $table     Table instance
+     * @param  array                 $fields    Fields to prettify
      * @return Cake\ORM\Entity
      */
-    protected function _prettify(Entity $entity, $tableName, array $fields = [])
+    protected function _prettify(Entity $entity, $table, array $fields = [])
     {
         if (!$this->__fhf instanceof FieldHandlerFactory) {
             $this->__fhf = new FieldHandlerFactory();
@@ -32,15 +33,35 @@ trait PrettifyTrait
         }
 
         foreach ($fields as $field) {
+            // handle belongsTo associated data
+            if ($entity->{$field} instanceof Entity) {
+                $tableName = $table->association($entity->{$field}->source())->className();
+                $this->_prettify($entity->{$field}, $tableName);
+            }
+
+            // handle hasMany associated data
+            if (is_array($entity->{$field})) {
+                if (empty($entity->{$field})) {
+                    continue;
+                }
+                foreach ($entity->{$field} as $associatedEntity) {
+                    if (!$associatedEntity instanceof Entity) {
+                        continue;
+                    }
+
+                    $tableName = $table->association($associatedEntity->source())->className();
+                    $this->_prettify($associatedEntity, $tableName);
+                }
+            }
+
+
             $renderOptions = ['entity' => $entity];
             $entity->{$field} = $this->__fhf->renderValue(
-                $tableName,
+                $table instanceof Table ? $table->registryAlias() : $table,
                 $field,
                 $entity->{$field},
                 $renderOptions
             );
         }
-
-        return $entity;
     }
 }

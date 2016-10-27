@@ -384,4 +384,42 @@ abstract class BaseViewListener implements EventListenerInterface
 
         return $result;
     }
+
+    /**
+     * Convert Entity resource values to strings.
+     * Temporary fix for bug with resources and json_encode() (see link).
+     *
+     * @param  \Cake\ORM\Entity $entity Entity
+     * @return void
+     * @link   https://github.com/cakephp/cakephp/issues/9658
+     */
+    protected function _resourceToString(Entity $entity)
+    {
+        $fields = array_keys($entity->toArray());
+        foreach ($fields as $field) {
+            // handle belongsTo associated data
+            if ($entity->{$field} instanceof Entity) {
+                $this->_resourceToString($entity->{$field});
+            }
+
+            // handle hasMany associated data
+            if (is_array($entity->{$field})) {
+                if (empty($entity->{$field})) {
+                    continue;
+                }
+
+                foreach ($entity->{$field} as $associatedEntity) {
+                    if (!$associatedEntity instanceof Entity) {
+                        continue;
+                    }
+
+                    $this->_resourceToString($associatedEntity);
+                }
+            }
+
+            if (is_resource($entity->{$field})) {
+                $entity->{$field} = stream_get_contents($entity->{$field});
+            }
+        }
+    }
 }

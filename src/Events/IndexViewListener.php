@@ -57,6 +57,10 @@ class IndexViewListener extends BaseViewListener
             return;
         }
 
+        foreach ($entities as $entity) {
+            $this->_resourceToString($entity);
+        }
+
         // @todo temporary functionality, please see _includeFiles() method documentation.
         foreach ($entities as $entity) {
             $this->_includeFiles($entity, $event);

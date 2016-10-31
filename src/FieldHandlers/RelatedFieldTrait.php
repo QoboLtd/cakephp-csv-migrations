@@ -36,6 +36,10 @@ trait RelatedFieldTrait
 
         $foreignKey = $this->_getForeignKey($parentTable, $modelName);
 
+        if (empty($relatedProperties['entity']) || empty($relatedProperties['entity']->{$foreignKey})) {
+            return [];
+        }
+
         return $this->_getRelatedProperties($parentTable, $relatedProperties['entity']->{$foreignKey});
     }
 

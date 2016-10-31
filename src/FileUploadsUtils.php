@@ -175,8 +175,13 @@ class FileUploadsUtils
      */
     public function getFiles($data)
     {
+        $ids = $this->_fileAssociation->find('list', [
+            'valueField' => $this->_fileForeignKey,
+            'conditions' => [$this->_documentForeignKey => $data]
+        ])->toArray();
+
         $query = $this->_fileStorageAssociation->find('all', [
-            'conditions' => [$this->_fileStorageForeignKey => $data]
+            'conditions' => [$this->_fileStorageAssociation->primaryKey() . ' IN' => array_values($ids)]
         ]);
 
         return $query->all();

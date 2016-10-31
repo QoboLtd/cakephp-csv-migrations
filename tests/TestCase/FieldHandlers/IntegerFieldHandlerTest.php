@@ -23,14 +23,14 @@ class IntegerFieldHandlerTest extends PHPUnit_Framework_TestCase
     {
         return [
             [true, '1', 'Boolean true'],
-            [false, '', 'Boolean false'],
+            [false, '0', 'Boolean false'],
             [0, '0', 'Integer zero'],
             [1, '1', 'Positive integer'],
             [-1, '-1', 'Negative integer'],
-            ['', '', 'Empty string'],
-            ['foobar', '', 'String'],
+            ['', '0', 'Empty string'],
+            ['foobar', '0', 'String'],
             ['foobar15', '15', 'String with number'],
-            ['2017-07-05', '2017-07-05', 'Date'],
+            ['2017-07-05', '2,017', 'Date'],
         ];
     }
 

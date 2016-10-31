@@ -210,9 +210,11 @@ class CsvViewComponent extends Component
             )
             ->fetchAll('assoc');
 
-        // store associated table records
-        if (!empty($records[0][$assocPrimaryKey])) {
-            $result = $association->get($records[0][$assocPrimaryKey])->$displayField;
+        // store associated table records, make sure associated record still exists.
+        if (!empty($records[0][$assocPrimaryKey]) &&
+            $association->exists([$assocPrimaryKey => $records[0][$assocPrimaryKey]])
+        ) {
+            $result = $association->get($records[0][$assocPrimaryKey])->{$displayField};
         } else {
             $result = null;
         }

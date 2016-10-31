@@ -19,6 +19,8 @@ class IntegerFieldHandler extends BaseFieldHandler
 
         if (!empty($result) && is_numeric($result)) {
             $result = number_format($result);
+        } else {
+            $result = (string)$result;
         }
 
         return $result;

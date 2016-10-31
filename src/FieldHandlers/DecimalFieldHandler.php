@@ -24,6 +24,8 @@ class DecimalFieldHandler extends BaseFieldHandler
 
         if (!empty($result) && is_numeric($result)) {
             $result = number_format($result, $precision);
+        } else {
+            $result = (string)$result;
         }
 
         return $result;

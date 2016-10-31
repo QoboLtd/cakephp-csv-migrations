@@ -125,7 +125,8 @@ if (empty($options['title'])) {
                                 $options['entity']->$field['name'],
                                 $renderOptions
                             );
-                            echo !empty($value) ? $value : '&nbsp;';
+                            echo $value;
+                            echo empty($value) ? '&nbsp;' : '';
                         ?>
                         </div>
                     <?php endif; ?>

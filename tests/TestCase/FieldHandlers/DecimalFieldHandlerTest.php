@@ -23,16 +23,16 @@ class DecimalFieldHandlerTest extends PHPUnit_Framework_TestCase
     {
         return [
             [true, '1.00', 'Boolean true'],
-            [false, '', 'Boolean false'],
+            [false, '0', 'Boolean false'],
             [0, '0', 'Integer zero'],
             [1, '1.00', 'Positive integer'],
             [-1, '-1.00', 'Negative integer'],
             [1.50, '1.50', 'Positive float'],
             [-1.50, '-1.50', 'Negative float'],
-            ['', '', 'Empty string'],
-            ['foobar', '', 'String'],
+            ['', '0', 'Empty string'],
+            ['foobar', '0', 'String'],
             ['foobar15', '15', 'String with number'],
-            ['2017-07-05', '2017-07-05', 'Date'],
+            ['2017-07-05', '2,017.00', 'Date'],
         ];
     }
 

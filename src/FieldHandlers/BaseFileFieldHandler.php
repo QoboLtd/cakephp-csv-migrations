@@ -61,7 +61,22 @@ class BaseFileFieldHandler extends RelatedFieldHandler
     /**
      * Thumbnail html markup
      */
-    const THUMBNAIL_HTML = '<div class="thumbnail"><img src="%s" /></div>';
+    const THUMBNAIL_HTML = '<div class="thumbnail">%s</div>';
+
+    /**
+     * File html markup
+     */
+    const FILE_HTML = '<a href="%s">%s</a>';
+
+    /**
+     * Icon extension
+     */
+    const ICON_EXTENSION = 'png';
+
+    /**
+     * Icon size
+     */
+    const ICON_SIZE = '48';
 
     /**
      * {@inheritDoc}
@@ -177,7 +192,7 @@ class BaseFileFieldHandler extends RelatedFieldHandler
             }
         }
 
-        $result = $this->_thumbnailsHtml($entities);
+        $result = $this->_thumbnailsHtml($entities, $fileUploadsUtils);
 
         return $result;
     }
@@ -207,19 +222,38 @@ class BaseFileFieldHandler extends RelatedFieldHandler
     /**
      * Method that generates and returns thumbnails html markup.
      *
-     * @param  \Cake\ORM\ResultSet $entities File Entities
+     * @param  \Cake\ORM\ResultSet             $entities         File Entities
+     * @param  \CsvMigrations\FileUploadsUtils $fileUploadsUtils fileUploadsUtils class object
      * @return string
      */
-    protected function _thumbnailsHtml($entities)
+    protected function _thumbnailsHtml($entities, FileUploadsUtils $fileUploadsUtils)
     {
         $result = null;
         $colWidth = static::GRID_COUNT / static::THUMBNAIL_LIMIT;
         $count = 0;
         $rows = [];
 
+        $imgExtensions = $fileUploadsUtils->getImgExtensions();
+
         foreach ($entities as $k => $entity) {
             if ($k >= static::THUMBNAIL_LIMIT) {
                 break;
+            }
+
+            $url = $entity->path;
+            // if not an image file fetch appropriate file icon
+            if (!in_array(strtolower($entity->extension), $imgExtensions)) {
+                $url = $this->_getFileIconUrl($entity->extension);
+            }
+
+            $thumbnail = sprintf(
+                static::THUMBNAIL_HTML,
+                $this->cakeView->Html->image($url, ['title' => $entity->filename])
+            );
+
+            // if not an image file wrap the thumbnail in the file's anchor tag
+            if (!in_array(strtolower($entity->extension), $imgExtensions)) {
+                $thumbnail = sprintf(static::FILE_HTML, $entity->path, $thumbnail);
             }
 
             $result .= sprintf(
@@ -228,12 +262,33 @@ class BaseFileFieldHandler extends RelatedFieldHandler
                 $colWidth,
                 $colWidth,
                 $colWidth,
-                sprintf(static::THUMBNAIL_HTML, $entity->path)
+                $thumbnail
             );
         }
 
         $result = sprintf(static::GRID_ROW_HTML, $result);
 
         return $result;
+    }
+
+    /**
+     * Get appropriate file icon url by file extension.
+     *
+     * @param  string $extension File extension
+     * @return string
+     */
+    protected function _getFileIconUrl($extension)
+    {
+        $file = strtolower($extension);
+        $webroot = dirname(__FILE__) . DS . '..' . DS . '..' . DS . 'webroot' . DS;
+        $filesDir = $webroot . 'img' . DS . 'icons' . DS . 'files' . DS . '48px' . DS;
+
+        if (!file_exists($filesDir . $file . '.' . static::ICON_EXTENSION)) {
+            $file = '_blank';
+        }
+
+        return $this->cakeView->Url->image(
+            'CsvMigrations.icons/files/' . static::ICON_SIZE. 'px/' . $file . '.' . static::ICON_EXTENSION
+        );
     }
 }

@@ -288,7 +288,7 @@ class BaseFileFieldHandler extends RelatedFieldHandler
         }
 
         return $this->cakeView->Url->image(
-            'CsvMigrations.icons/files/' . static::ICON_SIZE. 'px/' . $file . '.' . static::ICON_EXTENSION
+            'CsvMigrations.icons/files/' . static::ICON_SIZE . 'px/' . $file . '.' . static::ICON_EXTENSION
         );
     }
 }

@@ -243,7 +243,7 @@ class FileUploadsUtils
         );
 
         if ($this->_fileStorageAssociation->save($fileStorEnt)) {
-            $this->_createThumbnails($fileStorEnt);
+            $this->createThumbnails($fileStorEnt);
 
             return $fileStorEnt;
         }
@@ -334,7 +334,7 @@ class FileUploadsUtils
      * @param  \Cake\ORM\Entity $entity File Entity
      * @return void
      */
-    protected function _createThumbnails(Entity $entity)
+    public function createThumbnails(Entity $entity)
     {
         $this->_handleThumbnails($entity, 'ImageVersion.createVersion');
     }

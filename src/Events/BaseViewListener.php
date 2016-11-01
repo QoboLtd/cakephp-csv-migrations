@@ -47,9 +47,7 @@ abstract class BaseViewListener implements EventListenerInterface
      *
      * @var array
      */
-    protected $_fileAssociations = [
-        ['Documents', 'Files', 'Burzum/FileStorage.FileStorage']
-    ];
+    protected $_fileAssociations = ['Documents'];
 
     /**
      * Wrapper method that checks if Table instance has method 'findByLookupFields'
@@ -336,50 +334,17 @@ abstract class BaseViewListener implements EventListenerInterface
                 continue;
             }
 
-            foreach ($nestedAssociations as $levels) {
-                if (current($levels) !== $association->className()) {
+            foreach ($nestedAssociations as $nestedAssociation) {
+                if ($nestedAssociation !== $association->className()) {
                     continue;
                 }
 
-                if (!next($levels)) {
-                    continue;
-                }
-
-                $result[$association->name()] = $this->_containNestedAssociations(
-                    $association->target()->associations(),
-                    array_slice($levels, key($levels))
-                );
+                $result[$association->name()] = [
+                    'DocumentIdFiles' => [
+                        'FileIdFileStorageFileStorage' => []
+                    ]
+                ];
             }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Method that retrieve's Table association nested associations
-     * names to be passed to the ORM Query.
-     *
-     * @param  Cake\ORM\AssociationCollection $associations Table associations
-     * @param  array                          $levels       Nested associations
-     * @return array
-     */
-    protected function _containNestedAssociations(AssociationCollection $associations, array $levels)
-    {
-        $result = [];
-        foreach ($associations as $association) {
-            if (current($levels) !== $association->className()) {
-                continue;
-            }
-            $result[$association->name()] = [];
-
-            if (!next($levels)) {
-                continue;
-            }
-
-            $result[$association->name()] = $this->_containNestedAssociations(
-                $association->target()->associations(),
-                array_slice($levels, key($levels))
-            );
         }
 
         return $result;

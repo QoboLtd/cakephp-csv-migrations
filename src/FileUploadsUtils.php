@@ -97,6 +97,16 @@ class FileUploadsUtils
     }
 
     /**
+     * Getter method for supported image extensions.
+     *
+     * @return array
+     */
+    public function getImgExtensions()
+    {
+        return $this->_imgExtensions;
+    }
+
+    /**
      * Get instance of Files association.
      *
      * @return void

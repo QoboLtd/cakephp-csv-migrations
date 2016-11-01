@@ -352,7 +352,7 @@ class FileUploadsUtils
      */
     protected function _handleThumbnails(Entity $entity, $eventName)
     {
-        if (!in_array($entity->extension, $this->_imgExtensions)) {
+        if (!in_array(strtolower($entity->extension), $this->_imgExtensions)) {
             return;
         }
 

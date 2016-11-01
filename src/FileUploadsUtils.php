@@ -97,6 +97,16 @@ class FileUploadsUtils
     }
 
     /**
+     * Getter method for supported image extensions.
+     *
+     * @return array
+     */
+    public function getImgExtensions()
+    {
+        return $this->_imgExtensions;
+    }
+
+    /**
      * Get instance of Files association.
      *
      * @return void
@@ -233,7 +243,7 @@ class FileUploadsUtils
         );
 
         if ($this->_fileStorageAssociation->save($fileStorEnt)) {
-            $this->_createThumbnails($fileStorEnt);
+            $this->createThumbnails($fileStorEnt);
 
             return $fileStorEnt;
         }
@@ -324,7 +334,7 @@ class FileUploadsUtils
      * @param  \Cake\ORM\Entity $entity File Entity
      * @return void
      */
-    protected function _createThumbnails(Entity $entity)
+    public function createThumbnails(Entity $entity)
     {
         $this->_handleThumbnails($entity, 'ImageVersion.createVersion');
     }
@@ -352,7 +362,7 @@ class FileUploadsUtils
      */
     protected function _handleThumbnails(Entity $entity, $eventName)
     {
-        if (!in_array($entity->extension, $this->_imgExtensions)) {
+        if (!in_array(strtolower($entity->extension), $this->_imgExtensions)) {
             return;
         }
 

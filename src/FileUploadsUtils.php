@@ -190,6 +190,10 @@ class FileUploadsUtils
             'conditions' => [$this->_documentForeignKey => $data]
         ])->toArray();
 
+        if (empty($ids)) {
+            return [];
+        }
+
         $query = $this->_fileStorageAssociation->find('all', [
             'conditions' => [$this->_fileStorageAssociation->primaryKey() . ' IN' => array_values($ids)]
         ]);

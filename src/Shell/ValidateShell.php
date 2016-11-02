@@ -101,11 +101,23 @@ class ValidateShell extends Shell
      * Print the status of a particular check
      *
      * @param array $errors Array of errors to report
+     * @param array $warnings Array of warnings to report
      * @return void
      */
-    protected function _printCheckStatus(array $errors = [])
+    protected function _printCheckStatus(array $errors = [], array $warnings = [])
     {
         $this->out('');
+
+        // Print out warnings first, if any
+        if (!empty($warnings)) {
+            $this->out('Warnings:');
+            foreach ($warnings as $warning) {
+                $this->out('<warning> - ' . $warning . '</warning>');
+            }
+            $this->out('');
+        }
+
+        // Print success or list of errors, if any
         if (empty($errors)) {
             $this->out('<success>All OK</success>');
         } else {
@@ -301,6 +313,7 @@ class ValidateShell extends Shell
     protected function _checkViewsPresence(array $modules = [])
     {
         $errors = [];
+        $warnings = [];
 
         $views = Configure::read('CsvMigrations.actions');
 
@@ -328,6 +341,8 @@ class ValidateShell extends Shell
                         $path = $path ? '[' . $path . ']' : '';
                         $moduleErrors[] = $module . " module [$view] view file problem: " . $e->getMessage();
                     }
+                } else {
+                    $warnings[] = $module . " module [$view] view file is missing";
                 }
             }
             // Warn if the module is missing standard views
@@ -340,7 +355,7 @@ class ValidateShell extends Shell
             $this->out($result);
             $errors = array_merge($errors, $moduleErrors);
         }
-        $this->_printCheckStatus($errors);
+        $this->_printCheckStatus($errors, $warnings);
 
         return count($errors);
     }
@@ -467,6 +482,7 @@ class ValidateShell extends Shell
     protected function _checkMigrationFields(array $modules = [])
     {
         $errors = [];
+        $warnings = [];
 
         $this->out('Checking migration fields:', 2);
         foreach ($modules as $module => $path) {
@@ -523,6 +539,14 @@ class ValidateShell extends Shell
                                         if (preg_match('/^\w+$/', $limit) && !$this->_isValidModule($limit, array_keys($modules))) {
                                             $moduleErrors[] = $module . " migration relates to unknown module '$limit' in '" . $field['name'] . "' field";
                                         }
+                                        // Documents module can be used as `files(Documents)` for a container of the uploaded files,
+                                        // or as `related(Documents)` as a regular module relationship.  It's often easy to overlook
+                                        // which one was desired.  Failing on either one is incorrect, as both are valid.  A
+                                        // warning is needed instead for the `related(Documents)` case instead.
+                                        // The only known legitimate case is in the Files, which is join table between Documents and FileStorage.
+                                        if (('Documents' == $limit) && ('Files' != $module)) {
+                                            $warnings[] = $module . " migration uses 'related' type for 'Documents' in '" . $field['name'] . "'. Maybe wanted 'files(Documents)'?";
+                                        }
                                         break;
                                     case 'list':
                                     case 'money':
@@ -554,7 +578,7 @@ class ValidateShell extends Shell
             $this->out($result);
             $errors = array_merge($errors, $moduleErrors);
         }
-        $this->_printCheckStatus($errors);
+        $this->_printCheckStatus($errors, $warnings);
 
         return count($errors);
     }

@@ -336,22 +336,22 @@ class FileUploadsUtils
      * Method used for creating image file thumbnails.
      *
      * @param  \Cake\ORM\Entity $entity File Entity
-     * @return void
+     * @return bool
      */
     public function createThumbnails(Entity $entity)
     {
-        $this->_handleThumbnails($entity, 'ImageVersion.createVersion');
+        return $this->_handleThumbnails($entity, 'ImageVersion.createVersion');
     }
 
     /**
      * Method used for removing image file thumbnails.
      *
      * @param  \Cake\ORM\Entity $entity File Entity
-     * @return void
+     * @return bool
      */
     protected function _removeThumbnails(Entity $entity)
     {
-        $this->_handleThumbnails($entity, 'ImageVersion.removeVersion');
+        return $this->_handleThumbnails($entity, 'ImageVersion.removeVersion');
     }
 
     /**
@@ -362,16 +362,17 @@ class FileUploadsUtils
      *
      * @param  \Cake\ORM\Entity $entity    File Entity
      * @param  string           $eventName Event name
-     * @return void
+     * @return bool
      */
     protected function _handleThumbnails(Entity $entity, $eventName)
     {
         if (!in_array(strtolower($entity->extension), $this->_imgExtensions)) {
-            return;
+            return false;
         }
 
         $operations = Configure::read('FileStorage.imageSizes.' . static::TABLE_FILE_STORAGE);
         $storageTable = TableRegistry::get('Burzum/FileStorage.ImageStorage');
+        $result = true;
         foreach ($operations as $version => $operation) {
             $payload = [
                 'record' => $entity,
@@ -384,7 +385,13 @@ class FileUploadsUtils
 
             $event = new Event($eventName, $storageTable, $payload);
             EventManager::instance()->dispatch($event);
+
+            if ('error' === $event->result[$version]['status']) {
+                $result = false;
+            }
         }
+
+        return $result;
     }
 
     /**

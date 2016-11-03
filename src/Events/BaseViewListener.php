@@ -170,6 +170,24 @@ abstract class BaseViewListener implements EventListenerInterface
             }
         }
 
+        $virtualFields = $event->subject()->{$event->subject()->name}->getVirtualFields();
+
+        if (empty($virtualFields)) {
+            return $result;
+        }
+
+        // handle virtual fields
+        foreach ($fields as $k => $field) {
+            if (!isset($virtualFields[$field])) {
+                continue;
+            }
+            // remove virtual field
+            unset($result[$k]);
+
+            // add db fields
+            $result = array_merge($result, $virtualFields[$field]);
+        }
+
         return $result;
     }
 

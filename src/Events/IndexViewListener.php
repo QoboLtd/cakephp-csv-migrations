@@ -146,7 +146,10 @@ class IndexViewListener extends BaseViewListener
             return;
         }
 
+        $virtualFields = $event->subject()->{$event->subject()->name}->getVirtualFields();
+
         $sortCol = $event->subject()->request->query('order.0.column') ?: 0;
+
         $sortDir = $event->subject()->request->query('order.0.dir') ?: 'asc';
         if (!in_array($sortDir, ['asc', 'desc'])) {
             $sortDir = 'asc';
@@ -157,11 +160,30 @@ class IndexViewListener extends BaseViewListener
             return;
         }
 
+        // skip if sort column is not found in the action fields
         if (!isset($fields[$sortCol])) {
             return;
         }
 
-        $query->order([$event->subject()->name . '.' . $fields[$sortCol] => $sortDir]);
+        $sortCol = $fields[$sortCol];
+
+        $sortCols = [];
+        // handle virtual field
+        if (!empty($virtualFields) && isset($virtualFields[$sortCol])) {
+            $sortCols = $virtualFields[$sortCol];
+        } else {
+            $sortCols = (array)$sortCol;
+        }
+
+        // prefix table name
+        foreach ($sortCols as &$v) {
+            $v = $event->subject()->name . '.' . $v;
+        }
+
+        // add sort direction to all columns
+        $conditions = array_fill_keys($sortCols, $sortDir);
+
+        $query->order($conditions);
     }
 
     /**
@@ -234,14 +256,15 @@ class IndexViewListener extends BaseViewListener
         $fields[] = static::MENU_PROPERTY_NAME;
 
         foreach ($entities as $entity) {
+            $savedEntity = $entity->toArray();
             // remove non-action fields property
             foreach (array_diff($entity->visibleProperties(), $fields) as $field) {
                 $entity->unsetProperty($field);
             }
 
-            // set fields with numberic index
+            // set fields with numeric index
             foreach ($fields as $k => $v) {
-                $entity->{$k} = $entity->{$v};
+                $entity->{$k} = $savedEntity[$v];
                 $entity->unsetProperty($v);
             }
         }

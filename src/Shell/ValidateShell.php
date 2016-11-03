@@ -480,6 +480,22 @@ class ValidateShell extends Shell
                         }
                     }
                 }
+                // [virtualFields] section
+                if (!empty($config['virtualFields'])) {
+                    foreach ($config['virtualFields'] as $virtualField => $realFields) {
+                        $realFieldsList = explode(',', $realFields);
+                        if (empty($realFieldsList)) {
+                            $moduleErrors[] = $module . " config [virtualFields] section does not define real fields for '$virtualField' virtual field";
+                            continue;
+                        }
+                        foreach ($realFieldsList as $realField) {
+                            if (!$this->_isRealModuleField($module, $realField)) {
+                                $moduleErrors[] = $module . " config [virtualFields] section uses a non-real field in '$virtualField' virtual field";
+                            }
+                        }
+                    }
+                }
+
                 // [manyToMany] section
                 if (!empty($config['manyToMany'])) {
                     // 'module' key is required and must contain valid modules

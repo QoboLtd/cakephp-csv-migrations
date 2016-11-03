@@ -59,6 +59,11 @@ class BaseFileFieldHandler extends RelatedFieldHandler
     ';
 
     /**
+     * Default thumbnail file
+     */
+    const NO_THUMBNAIL_FILE = 'no-thumbnail.jpg';
+
+    /**
      * Thumbnail html markup
      */
     const THUMBNAIL_HTML = '<div class="thumbnail">%s</div>';
@@ -182,11 +187,15 @@ class BaseFileFieldHandler extends RelatedFieldHandler
                 $version = $hashes['file_storage'][$options['imageSize']];
 
                 // create thumbnails if they don't exist
-                $this->_createThumbnail($entity, $version, $fileUploadsUtils);
+                $exists = $this->_checkThumbnail($entity, $version, $fileUploadsUtils);
 
-                // image version path
-                $path = dirname($entity->path) . '/' . basename($entity->path, $entity->extension);
-                $path .= $version . '.' . $entity->extension;
+                if ($exists) {
+                    // image version path
+                    $path = dirname($entity->path) . '/' . basename($entity->path, $entity->extension);
+                    $path .= $version . '.' . $entity->extension;
+                } else {
+                    $path = $this->cakeView->Url->image('CsvMigrations.thumbnails/' . static::NO_THUMBNAIL_FILE);
+                }
 
                 $entity->path = $path;
             }
@@ -204,19 +213,24 @@ class BaseFileFieldHandler extends RelatedFieldHandler
      * @param  \Cake\ORM\Entity $entity  Entity
      * @param  string           $version Image version
      * @param  \CsvMigrations\FileUploadsUtils $fileUploadsUtils fileUploadsUtils class object
-     * @return void
+     * @return bool
      */
-    protected function _createThumbnail(Entity $entity, $version, FileUploadsUtils $fileUploadsUtils)
+    protected function _checkThumbnail(Entity $entity, $version, FileUploadsUtils $fileUploadsUtils)
     {
+        if (4096000 < $entity->filesize) {
+            return false;
+        }
         // image version directory path
         $dir = realpath(WWW_ROOT . trim($entity->path, DS));
         $dir = dirname($dir) . DS . basename($dir, $entity->extension);
         $dir .= $version . '.' . $entity->extension;
 
-        // create image version (thumbnail) if not found
-        if (!file_exists($dir)) {
-            $fileUploadsUtils->createThumbnails($entity);
+        if (file_exists($dir)) {
+            return true;
         }
+
+        // create image version (thumbnail) if not found
+        return $fileUploadsUtils->createThumbnails($entity);
     }
 
     /**

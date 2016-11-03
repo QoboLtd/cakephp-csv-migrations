@@ -176,6 +176,7 @@ class ValidateShell extends Shell
 
         return $result;
     }
+
     /**
      * Check if the given field is valid for given module
      *
@@ -190,6 +191,29 @@ class ValidateShell extends Shell
     {
         $result = false;
 
+        if ($this->_isRealModuleField($module, $field) || $this->_isVirtualModuleField($module, $field)) {
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Check if the field is defined in the module migration
+     *
+     * If the migration file does not exist or is not
+     * parseable, it is assumed the field is real.  Presence
+     * and validity of the migration file is checked
+     * elsewhere.
+     *
+     * @param string $module Module to check in
+     * @param string $field Field to check
+     * @return bool True if field is real, false otherwise
+     */
+    protected function _isRealModuleField($module, $field)
+    {
+        $result = false;
+
         $moduleFields = [];
         try {
             $pathFinder = new MigrationPathFinder;
@@ -201,18 +225,61 @@ class ValidateShell extends Shell
         }
 
         // If we couldn't get the migration, we cannot verify if the
-        // field is valid or not.  To avoid unnecessary fails, we
-        // assume that it's valid.
+        // field is real or not.  To avoid unnecessary fails, we
+        // assume that it's real.
         if (empty($moduleFields)) {
-            $result = true;
-
-            return $result;
+            return true;
         }
 
         foreach ($moduleFields as $moduleField) {
             if ($field == $moduleField['name']) {
-                $result = true;
-                break;
+                return true;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Check if the field is defined in the module's virtual fields
+     *
+     * The validity of the virtual field definition is checked
+     * elsewhere.  Here we only verify that the field exists in
+     * the `[virtualFields]` section definition.
+     *
+     * @param string $module Module to check in
+     * @param string $field Field to check
+     * @return bool True if field is real, false otherwise
+     */
+    protected function _isVirtualModuleField($module, $field)
+    {
+        $result = false;
+
+        $config = [];
+        try {
+            $pathFinder = new ConfigPathFinder;
+            $path = $pathFinder->find($module);
+            $parser = new Parser;
+            $config = $parser->parseFromPath($path);
+        } catch (\Exception $e) {
+            return $result;
+        }
+
+        if (empty($config)) {
+            return $result;
+        }
+
+        if (empty($config['virtualFields'])) {
+            return $result;
+        }
+
+        if (!is_array($config['virtualFields'])) {
+            return $result;
+        }
+
+        foreach ($config['virtualFields'] as $virtualField => $realFields) {
+            if ($virtualField == $field) {
+                return true;
             }
         }
 
@@ -413,6 +480,22 @@ class ValidateShell extends Shell
                         }
                     }
                 }
+                // [virtualFields] section
+                if (!empty($config['virtualFields'])) {
+                    foreach ($config['virtualFields'] as $virtualField => $realFields) {
+                        $realFieldsList = explode(',', $realFields);
+                        if (empty($realFieldsList)) {
+                            $moduleErrors[] = $module . " config [virtualFields] section does not define real fields for '$virtualField' virtual field";
+                            continue;
+                        }
+                        foreach ($realFieldsList as $realField) {
+                            if (!$this->_isRealModuleField($module, $realField)) {
+                                $moduleErrors[] = $module . " config [virtualFields] section uses a non-real field in '$virtualField' virtual field";
+                            }
+                        }
+                    }
+                }
+
                 // [manyToMany] section
                 if (!empty($config['manyToMany'])) {
                     // 'module' key is required and must contain valid modules

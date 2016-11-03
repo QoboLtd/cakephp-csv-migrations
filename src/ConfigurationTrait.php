@@ -37,6 +37,13 @@ trait ConfigurationTrait
     protected $_typeaheadFields;
 
     /**
+     * Virtual fields
+     *
+     * @var array
+     */
+    protected $_virtualFields = [];
+
+    /**
      * Module alias
      *
      * @var string
@@ -89,6 +96,11 @@ trait ConfigurationTrait
         // set searchable flag from configuration file
         if (isset($this->_config['table']['searchable'])) {
             $this->isSearchable($this->_config['table']['searchable']);
+        }
+
+        // set virtual field(s)
+        if (isset($this->_config['virtualFields'])) {
+            $this->setVirtualFields($this->_config['virtualFields']);
         }
     }
 
@@ -154,5 +166,34 @@ trait ConfigurationTrait
         }
 
         return $this->_moduleAlias;
+    }
+
+    /**
+     * Virtual fields setter method.
+     *
+     * Sets Table's virtual fields as an associated array with the
+     * virtual field name as the key and the db fields name as value.
+     *
+     * @return void
+     */
+    public function setVirtualFields(array $fields = [])
+    {
+        if (empty($fields)) {
+            return;
+        }
+
+        foreach ($fields as $v => $k) {
+            $this->_virtualFields[$v] = explode(',', $k);
+        }
+    }
+
+    /**
+     * Virtual fields getter method.
+     *
+     * @return array
+     */
+    public function getVirtualFields()
+    {
+        return $this->_virtualFields;
     }
 }

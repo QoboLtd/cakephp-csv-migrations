@@ -1,14 +1,14 @@
 <?php
 namespace CsvMigrations\Controller;
 
-use CsvMigrations\Controller\AppController;
+use App\Controller\AppController as BaseController;
 
 /**
  * Dblists Controller
  *
  * @property \CsvMigrations\Model\Table\DblistsTable $Dblists
  */
-class DblistsController extends AppController
+class DblistsController extends BaseController
 {
 
     /**

@@ -1,14 +1,14 @@
 <?php
 namespace CsvMigrations\Controller;
 
-use CsvMigrations\Controller\AppController;
+use App\Controller\AppController as BaseController;
 
 /**
  * DblistItems Controller
  *
  * @property \CsvMigrations\Model\Table\DblistItemsTable $DblistItems
  */
-class DblistItemsController extends AppController
+class DblistItemsController extends BaseController
 {
     /**
      * Index method

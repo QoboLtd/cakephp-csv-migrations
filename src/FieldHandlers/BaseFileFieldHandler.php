@@ -207,8 +207,7 @@ class BaseFileFieldHandler extends RelatedFieldHandler
     }
 
     /**
-     * Method that checks if specified image version exists,
-     * and if not, creates it.
+     * Method that checks if specified image version exists.
      *
      * @param  \Cake\ORM\Entity $entity  Entity
      * @param  string           $version Image version
@@ -217,20 +216,12 @@ class BaseFileFieldHandler extends RelatedFieldHandler
      */
     protected function _checkThumbnail(Entity $entity, $version, FileUploadsUtils $fileUploadsUtils)
     {
-        if (4096000 < $entity->filesize) {
-            return false;
-        }
         // image version directory path
         $dir = realpath(WWW_ROOT . trim($entity->path, DS));
         $dir = dirname($dir) . DS . basename($dir, $entity->extension);
         $dir .= $version . '.' . $entity->extension;
 
-        if (file_exists($dir)) {
-            return true;
-        }
-
-        // create image version (thumbnail) if not found
-        return $fileUploadsUtils->createThumbnails($entity);
+        return file_exists($dir);
     }
 
     /**

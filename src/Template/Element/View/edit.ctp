@@ -104,7 +104,7 @@ $formOptions['type'] = 'file';
                                     $input = $fhf->renderInput(
                                         $tableName,
                                         $field['name'],
-                                        $options['entity']->$field['name'],
+                                        $options['entity']->{$field['name']},
                                         $renderOptions
                                     );
 

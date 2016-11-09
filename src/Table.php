@@ -1,6 +1,9 @@
 <?php
 namespace CsvMigrations;
 
+use Cake\Event\Event;
+use Cake\I18n\Time;
+use Cake\Mailer\Email;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table as BaseTable;
@@ -10,6 +13,10 @@ use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldTrait;
 use CsvMigrations\ListTrait;
 use CsvMigrations\MigrationTrait;
+use \Eluceo\iCal\Component\Calendar;
+use \Eluceo\iCal\Component\Event as vEvent;
+use \Eluceo\iCal\Property\Event\Organizer as vOrganizer;
+use \Eluceo\iCal\Property\Event\Attendees as vAttendees;
 
 /**
  * Accounts Model
@@ -48,6 +55,120 @@ class Table extends BaseTable
         $this->_setAssociations($config);
     }
 
+    public function beforeSave($event, $entity, $options = [])
+    {
+        $config = $this->getConfig();
+
+        if (!empty($config['table']['allow_reminders'])) {
+            $assignedEntities = $this->getAssignedAssociations($entity, ['tables' => $config['table']['allow_reminders']]);
+
+            if (!empty($assignedEntities)) {
+                $attendees = array_map(function($item) {
+                    if (isset($item['email'])) {
+                        return $item['email'];
+                    }
+                }, $assignedEntities);
+
+                $attendees = array_filter($attendees);
+
+                $this->_sendCalendarReminder($entity, ['attendees' => $attendees]);
+            }
+        }
+    }
+
+    protected function _sendCalendarReminder($entity, $options = [])
+    {
+        $sent = false;
+
+        if (!empty($options['attendees'])) {
+
+            $to = implode(',' , $options['attendees']);
+
+            $subject = sprintf("%s - %s", $this->alias(),"Reminder");
+
+            $headers = "\r\nMIME-version: 1.0\r\nContent-Type: text/calendar; method=REQUEST; charset=\"iso-8859-1\"";
+            $headers .= "\r\nContent-Transfer-Encoding: 7bit\r\nX-Mailer: Microsoft Office Outlook 12.0";
+
+            $vCalendar = new Calendar('//EN//');
+            $vEvent = new vEvent();
+            $vOrganizer = new vOrganizer($to, ['MAILTO' => $to]);
+
+            foreach ($options['attendees'] as $email) {
+                $vAttendees = new vAttendees();
+
+                $vAttendees->add('MAILTO:'.$email,[
+                    'ROLE' => 'REQ-PARTICIPANT',
+                    'PARTSTAT'=>'NEEDS-ACTION',
+                    'RSVP'=>'TRUE',
+                ]);
+            }
+
+            //@NOTE: its '02:30' string object,
+            $duration_parts = date_parse($entity->duration);
+            $duration_minutes = $duration_parts['hour'] * 60 + $duration_parts['minute'];
+
+            $end_date = new Time($entity->start_date->format('Y-m-d H:i:s'));
+            $end_date->modify("+ {$duration_minutes} minutes");
+
+            $vEvent->setDtStart(new \DateTime($entity->start_date->format('Y-m-d H:i:s')))
+                ->setDtEnd(new \DateTime($end_date->format('Y-m-d H:i:s')))
+                ->setNoTime(false)
+                ->setStatus('CONFIRMED')
+                ->setAttendees($vAttendees)
+                ->setOrganizer($vOrganizer)
+                ->setSummary($entity->subject);
+
+            $vCalendar->addComponent($vEvent);
+
+            $email = new Email('default');
+
+            $sent = $email->to($to)
+                ->setHeaders([$headers])
+                ->subject($subject)
+                ->attachments(['event.ics' =>[
+                    'contentDisposition' => true,
+                    'mimetype' => 'text/calendar',
+                    'data' => $vCalendar->render()
+                ]])
+                ->send();
+
+        }
+
+        return $sent;
+    }
+
+
+    public function getAssignedAssociations($entity, $options = [])
+    {
+        $entities = [];
+
+        $tables = empty($options['tables']) ? [] : explode(',', $options['tables']);
+        $associations = [];
+
+        if (!empty($tables)) {
+            foreach ($this->associations() as $association) {
+                if (in_array(Inflector::humanize($association->target()->table()), $tables) ) {
+                    array_push($associations, $association);
+                }
+            }
+        } else {
+            $associations = $this->associations();
+        }
+
+        foreach ($associations as $association) {
+            $query = $association->target()->find('all', [
+                'conditions' => [$association->primaryKey() => $entity->{$association->foreignKey()} ]
+            ]);
+            $result = $query->first();
+
+            if ($result) {
+                $entities[] = $result;
+            }
+        }
+
+        return $entities;
+    }
+
     /**
      * Get searchable fields
      *
@@ -59,6 +180,22 @@ class Table extends BaseTable
         foreach ($this->getFieldsDefinitions($this->alias()) as $field) {
             if (!$field[static::PARAM_NON_SEARCHABLE]) {
                 $result[] = $field['name'];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * getReminderTypeFields
+     * @return array $result containing reminder fieldnames
+     */
+    public function getReminderFields()
+    {
+        $result = [];
+        foreach ($this->getFieldsDefinitions($this->alias()) as $field) {
+            if ($field['type'] == 'reminder') {
+                $result[] = $field;
             }
         }
 
@@ -165,7 +302,7 @@ class Table extends BaseTable
      * @param  \Cake\ORM\Entity $entity Entity instance
      * @return \Cake\ORM\Entity
      */
-    public function setAssociatedByLookupFields(Entity $entity)
+    public function setAssociatedByLookupFields(Entity $entity, $options = [])
     {
         foreach ($this->associations() as $association) {
             $lookupFields = $association->target()->lookupFields();

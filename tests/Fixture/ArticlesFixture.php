@@ -24,14 +24,14 @@ class ArticlesFixture extends TestFixture
 
     public $records = [
         [
-            'id' => 'd8c3ba90-c418-4e58-8cb6-b65c9095a2dc',
+            'id' => '00000000-0000-0000-0000-000000000001',
             'name' => 'Foo',
             'trashed' => null,
             'created' => '2016-07-01 10:39:23',
             'modified' => '2016-07-01 10:41:31'
         ],
         [
-            'id' => 'de90e976-a5bb-11e6-80f5-76304dec7eb7',
+            'id' => '00000000-0000-0000-0000-000000000002',
             'name' => 'Bar',
             'trashed' => null,
             'created' => '2016-07-02 10:39:23',

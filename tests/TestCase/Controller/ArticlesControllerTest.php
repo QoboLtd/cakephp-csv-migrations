@@ -148,4 +148,39 @@ class ArticlesControllerTest extends IntegrationTestCase
 
         $this->assertEquals($data['name'], $entity->name);
     }
+
+    public function testDeleteUnauthenticatedFails()
+    {
+        // No session data set.
+        $this->delete('/articles/delete/00000000-0000-0000-0000-000000000001');
+
+        $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
+    }
+
+    public function testDeleteGetRequest()
+    {
+        $this->session([
+            'Auth.User.id' => '00000000-0000-0000-0000-000000000001'
+        ]);
+
+        $this->get('/articles/delete/00000000-0000-0000-0000-000000000001');
+        $this->assertResponseError();
+    }
+
+    public function testDeleteData()
+    {
+        $this->session([
+            'Auth.User.id' => '00000000-0000-0000-0000-000000000001'
+        ]);
+
+        $id = '00000000-0000-0000-0000-000000000001';
+
+        $this->delete('/articles/delete/' . $id);
+        $this->assertResponseSuccess();
+
+        // try to fetch deleted record
+        $table = TableRegistry::get('Articles');
+        $query = $table->find()->where(['id' => $id]);
+        $this->assertEquals(0, $query->count());
+    }
 }

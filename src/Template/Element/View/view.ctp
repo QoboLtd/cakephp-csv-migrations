@@ -122,7 +122,7 @@ if (empty($options['title'])) {
                             $value = $fhf->renderValue(
                                 $tableName,
                                 $field['name'],
-                                $options['entity']->$field['name'],
+                                $options['entity']->{$field['name']},
                                 $renderOptions
                             );
                             echo $value;

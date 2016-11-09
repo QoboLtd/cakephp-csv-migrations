@@ -8,6 +8,14 @@ class ArticlesControllerTest extends IntegrationTestCase
 {
     public $fixtures = ['plugin.CsvMigrations.articles'];
 
+    public function testIndexUnauthenticatedFails()
+    {
+        // No session data set.
+        $this->get('/articles');
+
+        $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
+    }
+
     public function testIndex()
     {
         $this->session([
@@ -22,6 +30,14 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertResponseContains('Actions');
     }
 
+    public function testViewUnauthenticatedFails()
+    {
+        // No session data set.
+        $this->get('/articles/view/d8c3ba90-c418-4e58-8cb6-b65c9095a2dc');
+
+        $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
+    }
+
     public function testView()
     {
         $this->session([
@@ -33,6 +49,14 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertResponseContains('Created:');
         $this->assertResponseContains('Modified:');
         $this->assertResponseContains('Foo');
+    }
+
+    public function testAddUnauthenticatedFails()
+    {
+        // No session data set.
+        $this->get('/articles/add');
+
+        $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
     }
 
     public function testAdd()
@@ -52,6 +76,14 @@ class ArticlesControllerTest extends IntegrationTestCase
         // input element(s) and attributes
         $this->assertResponseContains('Name');
         $this->assertResponseContains('name="Articles[name]"');
+    }
+
+    public function testEditUnauthenticatedFails()
+    {
+        // No session data set.
+        $this->get('/articles/edit');
+
+        $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
     }
 
     public function testEdit()

@@ -78,6 +78,26 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertResponseContains('name="Articles[name]"');
     }
 
+    public function testAddPostData()
+    {
+        $this->session([
+            'Auth.User.id' => '00000000-0000-0000-0000-000000000001'
+        ]);
+
+        $data = [
+            'name' => 'Some Unique Name'
+        ];
+
+        $this->post('/articles/add', $data);
+        $this->assertResponseSuccess();
+
+        // fetch new record
+        $table = TableRegistry::get('Articles');
+        $query = $table->find()->where(['name' => $data['name']]);
+
+        $this->assertEquals(1, $query->count());
+    }
+
     public function testEditUnauthenticatedFails()
     {
         // No session data set.
@@ -104,5 +124,28 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertResponseContains('Name');
         $this->assertResponseContains('name="Articles[name]"');
         $this->assertResponseContains('value="Foo"');
+    }
+
+    public function testEditPostData()
+    {
+        $this->session([
+            'Auth.User.id' => '00000000-0000-0000-0000-000000000001'
+        ]);
+
+        $id = '00000000-0000-0000-0000-000000000001';
+
+        $data = [
+            'id' => $id,
+            'name' => 'Some Unique Name'
+        ];
+
+        $this->post('/articles/edit/' . $id, $data);
+        $this->assertResponseSuccess();
+
+        // fetch modified record
+        $table = TableRegistry::get('Articles');
+        $entity = $table->get($data['id']);
+
+        $this->assertEquals($data['name'], $entity->name);
     }
 }

@@ -73,13 +73,6 @@ class AppController extends Controller
         'checkAuthIn' => 'Controller.initialize'
     ];
 
-    /**
-     * API non-csrf actions
-     *
-     * @var array
-     */
-    protected $_nonCsrfActions = ['token', 'add', 'edit', 'panels', 'delete', 'delete_file'];
-
     protected $_fileUploadsUtils;
 
     /**
@@ -90,8 +83,6 @@ class AppController extends Controller
         parent::initialize();
 
         $this->_fileUploadsUtils = new FileUploadsUtils($this->{$this->name});
-
-        $this->loadComponent('Csrf');
 
         $this->_authentication();
 
@@ -412,12 +403,6 @@ class AppController extends Controller
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-
-        if (in_array($this->request->action, $this->_nonCsrfActions)) {
-            // disable CSRF Component for API authentication action
-            // @link http://book.cakephp.org/3.0/en/controllers/components/csrf.html#disabling-the-csrf-component-for-specific-actions
-            $this->eventManager()->off($this->Csrf);
-        }
 
         $this->response->cors($this->request)
             ->allowOrigin(['*'])

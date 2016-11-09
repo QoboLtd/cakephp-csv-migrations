@@ -15,8 +15,8 @@ use CsvMigrations\ListTrait;
 use CsvMigrations\MigrationTrait;
 use \Eluceo\iCal\Component\Calendar;
 use \Eluceo\iCal\Component\Event as vEvent;
-use \Eluceo\iCal\Property\Event\Organizer as vOrganizer;
 use \Eluceo\iCal\Property\Event\Attendees as vAttendees;
+use \Eluceo\iCal\Property\Event\Organizer as vOrganizer;
 
 /**
  * Accounts Model
@@ -55,6 +55,13 @@ class Table extends BaseTable
         $this->_setAssociations($config);
     }
 
+    /**
+     * beforeSave
+     * @param Cake\Event\Event $event sent by model
+     * @param EntityInterface $entit sent by modely
+     * @param ArrayObject $option extra options
+     * @return void
+     */
     public function beforeSave($event, $entity, $options = [])
     {
         $config = $this->getConfig();
@@ -63,7 +70,7 @@ class Table extends BaseTable
             $assignedEntities = $this->getAssignedAssociations($entity, ['tables' => $config['table']['allow_reminders']]);
 
             if (!empty($assignedEntities)) {
-                $attendees = array_map(function($item) {
+                $attendees = array_map(function ($item) {
                     if (isset($item['email'])) {
                         return $item['email'];
                     }
@@ -76,15 +83,21 @@ class Table extends BaseTable
         }
     }
 
+    /**
+     * _sendCalendarReminder
+     * Sending vCal notification on the Reminder FieldHandlers
+     * @param EntityInterface $entity of the record
+     * @param ArrayObject $options extra setup
+     * @return mixed $sent
+     */
     protected function _sendCalendarReminder($entity, $options = [])
     {
         $sent = false;
 
         if (!empty($options['attendees'])) {
+            $to = implode(',', $options['attendees']);
 
-            $to = implode(',' , $options['attendees']);
-
-            $subject = sprintf("%s - %s", $this->alias(),"Reminder");
+            $subject = sprintf("%s - %s", $this->alias(), "Reminder");
 
             $headers = "\r\nMIME-version: 1.0\r\nContent-Type: text/calendar; method=REQUEST; charset=\"iso-8859-1\"";
             $headers .= "\r\nContent-Transfer-Encoding: 7bit\r\nX-Mailer: Microsoft Office Outlook 12.0";
@@ -96,22 +109,22 @@ class Table extends BaseTable
             foreach ($options['attendees'] as $email) {
                 $vAttendees = new vAttendees();
 
-                $vAttendees->add('MAILTO:'.$email,[
+                $vAttendees->add("MAILTO:$email", [
                     'ROLE' => 'REQ-PARTICIPANT',
-                    'PARTSTAT'=>'NEEDS-ACTION',
-                    'RSVP'=>'TRUE',
+                    'PARTSTAT' => 'NEEDS-ACTION',
+                    'RSVP' => 'TRUE',
                 ]);
             }
 
             //@NOTE: its '02:30' string object,
-            $duration_parts = date_parse($entity->duration);
-            $duration_minutes = $duration_parts['hour'] * 60 + $duration_parts['minute'];
+            $durationParts = date_parse($entity->duration);
+            $durationMinutes = $durationParts['hour'] * 60 + $durationParts['minute'];
 
-            $end_date = new Time($entity->start_date->format('Y-m-d H:i:s'));
-            $end_date->modify("+ {$duration_minutes} minutes");
+            $endDate = new Time($entity->start_date->format('Y-m-d H:i:s'));
+            $endDate->modify("+ {$durationMinutes} minutes");
 
             $vEvent->setDtStart(new \DateTime($entity->start_date->format('Y-m-d H:i:s')))
-                ->setDtEnd(new \DateTime($end_date->format('Y-m-d H:i:s')))
+                ->setDtEnd(new \DateTime($endDate->format('Y-m-d H:i:s')))
                 ->setNoTime(false)
                 ->setStatus('CONFIRMED')
                 ->setAttendees($vAttendees)
@@ -125,19 +138,24 @@ class Table extends BaseTable
             $sent = $email->to($to)
                 ->setHeaders([$headers])
                 ->subject($subject)
-                ->attachments(['event.ics' =>[
+                ->attachments(['event.ics' => [
                     'contentDisposition' => true,
                     'mimetype' => 'text/calendar',
                     'data' => $vCalendar->render()
                 ]])
                 ->send();
-
         }
 
         return $sent;
     }
 
-
+    /**
+     * getAssignedAssociations
+     * gets all Entities associated with the record
+     * @param EntityInterface $entity of the record
+     * @param ArrayObject $options extra options
+     * @return array $entities
+     */
     public function getAssignedAssociations($entity, $options = [])
     {
         $entities = [];
@@ -147,7 +165,7 @@ class Table extends BaseTable
 
         if (!empty($tables)) {
             foreach ($this->associations() as $association) {
-                if (in_array(Inflector::humanize($association->target()->table()), $tables) ) {
+                if (in_array(Inflector::humanize($association->target()->table()), $tables)) {
                     array_push($associations, $association);
                 }
             }

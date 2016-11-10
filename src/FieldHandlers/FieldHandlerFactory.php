@@ -40,6 +40,18 @@ class FieldHandlerFactory
     protected $_tableInstances = [];
 
     /**
+     * CsvMigrations View instance.
+     *
+     * @var \CsvMigrations\View\AppView
+     */
+    public $cakeView = null;
+
+    public function __construct($cakeView = null)
+    {
+        $this->cakeView = $cakeView;
+    }
+
+    /**
      * Method responsible for rendering field's input.
      *
      * @param  mixed  $table   name or instance of the Table
@@ -190,7 +202,7 @@ class FieldHandlerFactory
 
         $handlerName = $this->_getHandlerByFieldType($fieldType, true);
         if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
-            return new $handlerName;
+            return new $handlerName($this->cakeView);
         }
 
         // Field hanlder does not exist, throw exception if necessary
@@ -201,7 +213,7 @@ class FieldHandlerFactory
         // Use default field handler
         $handlerName = __NAMESPACE__ . '\\' . static::DEFAULT_HANDLER_CLASS . static::HANDLER_SUFFIX;
         if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
-            return new $handlerName;
+            return new $handlerName($this->cakeView);
         }
 
         // Neither the handler, nor the default handler can be used

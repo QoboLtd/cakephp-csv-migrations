@@ -4,7 +4,7 @@ use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\CsvMigrationsUtils;
 
-$fhf = new FieldHandlerFactory();
+$fhf = new FieldHandlerFactory($this);
 
 $defaultOptions = [
     'title' => null,

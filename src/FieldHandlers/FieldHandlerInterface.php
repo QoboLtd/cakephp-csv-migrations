@@ -5,6 +5,8 @@ use CsvMigrations\FieldHandlers\CsvField;
 
 interface FieldHandlerInterface
 {
+    public function __construct($cakeView = null);
+
     /**
      * Method responsible for rendering field's input.
      *

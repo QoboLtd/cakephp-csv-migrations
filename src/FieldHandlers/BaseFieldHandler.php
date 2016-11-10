@@ -41,10 +41,13 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * Constructor
      */
-    public function __construct()
+    public function __construct($cakeView = null)
     {
-        // load AppView
-        $this->cakeView = new AppView();
+        if ($cakeView) {
+            $this->cakeView = $cakeView;
+        } else {
+            $this->cakeView = new AppView();
+        }
     }
 
     /**

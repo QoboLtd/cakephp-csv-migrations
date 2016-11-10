@@ -75,7 +75,6 @@ class CsvViewComponent extends Component
         $this->_setTableInstance($this->_controllerInstance->request->params);
 
         if (in_array($this->request->params['action'], $this->_assocActions)) {
-
             $ev = new Event('CsvMigrations.View.View.Tabs', $this, [[
                 'controllerInstance' => $event->subject(),
                 'tableInstance' => $this->_tableInstance,

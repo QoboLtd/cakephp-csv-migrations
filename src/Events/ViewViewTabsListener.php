@@ -16,10 +16,10 @@ class ViewViewTabsListener implements EventListenerInterface
 {
     use MigrationTrait;
 
-	const ASSOC_FIELDS_ACTION = 'index';
+    const ASSOC_FIELDS_ACTION = 'index';
 
-	protected $_tableInstance;
-	protected $_controllerInstance;
+    protected $_tableInstance;
+    protected $_controllerInstance;
     protected $_assocTypes;
 
     /**
@@ -45,9 +45,9 @@ class ViewViewTabsListener implements EventListenerInterface
         $this->_controllerInstance = $instances['controllerInstance'];
         $this->_tableInstance = $instances['tableInstance'];
         $this->_assocTypes = $instances['assocTypes'];
-		$hiddenAssociations = [];
-		$csvAssociationLabels = [];
-	  	$csvAssociatedRecords = [];
+        $hiddenAssociations = [];
+        $csvAssociationLabels = [];
+        $csvAssociatedRecords = [];
 
         if (method_exists($this->_tableInstance, 'getConfig')) {
             $tableConfig = $this->_tableInstance->getConfig();
@@ -92,7 +92,7 @@ class ViewViewTabsListener implements EventListenerInterface
     }
 
 
-   	/**
+    /**
      * Method that retrieves many to many associated records
      *
      * @param  \Cake\ORM\Association $association Association object
@@ -144,7 +144,7 @@ class ViewViewTabsListener implements EventListenerInterface
         return $result;
     }
 
-	/**
+    /**
      * Method that retrieves many to one associated records.
      *
      * @param  \Cake\ORM\Association $association Association object
@@ -191,7 +191,7 @@ class ViewViewTabsListener implements EventListenerInterface
         return $result;
     }
 
-	/**
+    /**
      * Method that retrieves one to many associated records
      *
      * @param  \Cake\ORM\Association $association Association object
@@ -242,14 +242,20 @@ class ViewViewTabsListener implements EventListenerInterface
         return $result;
     }
 
-   	protected function _getAssociationCsvFields(Association $association, $action)
+    /**
+     * Get association CSV fields
+     * @param Cake\ORM\Associations $association ORM association
+     * @param object $action action passed
+     * @return array
+     */
+    protected function _getAssociationCsvFields(Association $association, $action)
     {
         list($plugin, $controller) = pluginSplit($association->className());
 
         return $this->_getCsvFields($controller, $action);
     }
 
-	 /**
+    /**
      * Method that retrieves table csv fields, by specified action.
      *
      * @param  string $tableName Table name
@@ -283,7 +289,7 @@ class ViewViewTabsListener implements EventListenerInterface
         return $result;
     }
 
-	 /**
+    /**
      * Method that gets fields from a csv file
      *
      * @param  string $path   csv file path
@@ -299,5 +305,4 @@ class ViewViewTabsListener implements EventListenerInterface
 
         return $result;
     }
-
 }

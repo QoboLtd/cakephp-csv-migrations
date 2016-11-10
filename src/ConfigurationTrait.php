@@ -183,13 +183,13 @@ trait ConfigurationTrait
 
     /**
      * Return association labels if any present
-     * @param array $fields
+     * @param array $fields received from CSV
      * @return array
      */
     public function associationLabels($fields = null)
     {
         if ($fields !== null) {
-            foreach($fields as $field) {
+            foreach ($fields as $field) {
                 list($associationName, $associationLabel) = explode(',', $field);
                 $this->_associationLabels[$associationName] = $associationLabel;
             }
@@ -201,7 +201,7 @@ trait ConfigurationTrait
     /**
      * Return the list of hidden Associations for the config
      * file
-     * @param string|null $fields
+     * @param string|null $fields received
      * @return array
      */
     public function hiddenAssociations($fields = null)
@@ -209,6 +209,7 @@ trait ConfigurationTrait
         if ($fields !== null) {
             $this->_hiddenAssociations = explode(',', $fields);
         }
+
         return $this->_hiddenAssociations;
     }
 
@@ -233,12 +234,12 @@ trait ConfigurationTrait
 
 
     /**
-    * CSV Table might have a parent
-    * that helps us redirect things on working
-    * with modal forms.
-    * @param string $field
-    * @return string
-    */
+     * CSV Table might have a parent
+     * that helps us redirect things on working
+     * with modal forms.
+     * @param string $field received
+     * @return string
+     */
     public function parentField($field = null)
     {
         if ($field !== null) {
@@ -253,7 +254,7 @@ trait ConfigurationTrait
      *
      * Sets Table's virtual fields as an associated array with the
      * virtual field name as the key and the db fields name as value.
-     *
+     * @param array|null $fields passed to method from CSV
      * @return void
      */
     public function setVirtualFields(array $fields = [])

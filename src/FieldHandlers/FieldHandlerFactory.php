@@ -46,6 +46,11 @@ class FieldHandlerFactory
      */
     public $cakeView = null;
 
+    /**
+     * Constructor method.
+     *
+     * @param mixed $cakeView View object or null
+     */
     public function __construct($cakeView = null)
     {
         $this->cakeView = $cakeView;

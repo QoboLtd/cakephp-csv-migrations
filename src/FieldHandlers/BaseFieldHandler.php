@@ -39,7 +39,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     ];
 
     /**
-     * Constructor
+     * {@inheritDoc}
      */
     public function __construct($cakeView = null)
     {
@@ -51,13 +51,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     }
 
     /**
-     * Method responsible for rendering field's input.
-     *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string          field input
+     * {@inheritDoc}
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
@@ -75,13 +69,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     }
 
     /**
-     * Method that renders default type field's value.
-     *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string
+     * {@inheritDoc}
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
@@ -91,10 +79,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     }
 
     /**
-     * Method responsible for converting csv field instance to database field instance.
-     *
-     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @return array list of DbField instances
+     * {@inheritDoc}
      */
     public function fieldToDb(CsvField $csvField)
     {

@@ -30,6 +30,13 @@ trait ConfigurationTrait
     protected $_lookupFields;
 
     /**
+     * Each table might have a parent
+     * @var string
+     */
+    protected $_parentField;
+
+
+    /**
      * Typeahead fields used for searching in related fields
      *
      * @var array
@@ -42,6 +49,19 @@ trait ConfigurationTrait
      * @var array
      */
     protected $_virtualFields = [];
+
+    /**
+     * Hidden associations
+     * @var array
+     */
+    protected $_hiddenAssociations = [];
+
+
+    /**
+     * Association Labels
+     * @var array
+     */
+    protected $_associationLabels = [];
 
     /**
      * Module alias
@@ -98,6 +118,18 @@ trait ConfigurationTrait
             $this->isSearchable($this->_config['table']['searchable']);
         }
 
+        if (isset($this->_config['associations']['hide_associations'])) {
+            $this->hiddenAssociations($this->_config['associations']['hide_associations']);
+        }
+
+        if (isset($this->_config['associations']['association_labels'])) {
+            $this->associationLabels($this->_config['associations']['association_labels']);
+        }
+
+        if (isset($this->_config['parent']['module'])) {
+            $this->parentField($this->_config['parent']['module']);
+        }
+
         // set virtual field(s)
         if (isset($this->_config['virtualFields'])) {
             $this->setVirtualFields($this->_config['virtualFields']);
@@ -150,6 +182,37 @@ trait ConfigurationTrait
     }
 
     /**
+     * Return association labels if any present
+     * @param array $fields
+     * @return array
+     */
+    public function associationLabels($fields = null)
+    {
+        if ($fields !== null) {
+            foreach($fields as $field) {
+                list($associationName, $associationLabel) = explode(',', $field);
+                $this->_associationLabels[$associationName] = $associationLabel;
+            }
+        }
+
+        return $this->_associationLabels;
+    }
+
+    /**
+     * Return the list of hidden Associations for the config
+     * file
+     * @param string|null $fields
+     * @return array
+     */
+    public function hiddenAssociations($fields = null)
+    {
+        if ($fields !== null) {
+            $this->_hiddenAssociations = explode(',', $fields);
+        }
+        return $this->_hiddenAssociations;
+    }
+
+    /**
      * Returns the module alias or sets a new one
      *
      * @param  string|null $alias sets a new name to be used as module alias
@@ -166,6 +229,23 @@ trait ConfigurationTrait
         }
 
         return $this->_moduleAlias;
+    }
+
+
+    /**
+    * CSV Table might have a parent
+    * that helps us redirect things on working
+    * with modal forms.
+    * @param string $field
+    * @return string
+    */
+    public function parentField($field = null)
+    {
+        if ($field !== null) {
+            $this->_parentField = $field;
+        }
+
+        return $this->_parentField;
     }
 
     /**

@@ -9,6 +9,7 @@ use CsvMigrations\Events\IndexViewListener;
 use CsvMigrations\Events\ViewMenuListener;
 use CsvMigrations\Events\ViewViewListener;
 use CsvMigrations\Events\ReportListener;
+use CsvMigrations\Events\ViewViewTabsListener;
 
 Configure::write('CsvMigrations.actions', ['index', 'view', 'add', 'edit']);
 Configure::write('CsvMigrations.migrations.path', CONFIG . 'CsvMigrations' . DS . 'migrations' . DS);
@@ -34,6 +35,7 @@ EventManager::instance()->on(new IndexViewListener());
 EventManager::instance()->on(new ViewMenuListener());
 EventManager::instance()->on(new ViewViewListener());
 EventManager::instance()->on(new ReportListener());
+EventManager::instance()->on(new ViewViewTabsListener());
 
 //Load upload plugin configuration
 include 'file_storage.php';

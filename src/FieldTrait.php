@@ -1,36 +1,35 @@
 <?php
 namespace CsvMigrations;
 
+use Cake\ORM\Query;
+
 trait FieldTrait
 {
     /**
-     * Method that returns table's unique constrained fields.
+     * Method that adds lookup fields with the id value to the Where clause in ORM Query
      *
-     * @param Table $table Table
-     * @return array unique fields
+     * @param  \Cake\ORM\Query $query Query instance
+     * @param  string          $id    Record id
+     * @return \Cake\ORM\Query
      */
-    public function getUniqueFields(Table $table = null)
+    public function findByLookupFields(Query $query, $id)
     {
-        if (is_null($table)) {
-            $table = $this;
+        $lookupFields = $this->lookupFields();
+
+        if (empty($lookupFields)) {
+            return $query;
         }
 
-        $schema = $table->schema();
-
-        $result = [];
-        foreach ($schema->constraints() as $name) {
-            $constraint = $schema->constraint($name);
-            if ('unique' !== $constraint['type']) {
-                continue;
+        $tableName = $this->alias();
+        // check for record by table's lookup fields
+        foreach ($lookupFields as $lookupField) {
+            // prepend table name to avoid CakePHP ORM's ambiguous column errors
+            if (false === strpos($lookupField, '.')) {
+                $lookupField = $tableName . '.' . $lookupField;
             }
-
-            foreach ($constraint['columns'] as $column) {
-                if (!in_array($column, $result)) {
-                    array_push($result, $column);
-                }
-            }
+            $query->orWhere([$lookupField => $id]);
         }
 
-        return $result;
+        return $query;
     }
 }

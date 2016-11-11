@@ -36,18 +36,26 @@ class ConfigurationTraitTest extends PHPUnit_Framework_TestCase
 
     public function testAssociationLabels()
     {
+        $data = [
+            'associationLabels' => [
+                'Foo' => 'Bar'
+            ]
+        ];
+
         $this->assertSame(
-            $this->mock->associationLabels(['Foo,Foo Bar', 'Bar,Baz']),
-            ['Foo' => 'Foo Bar', 'Bar' => 'Baz'],
+            $this->mock->associationLabels($data['associationLabels']),
+            ['Foo' => 'Bar'],
             "Association Labels are parsed incorrectly"
         );
     }
 
     public function testAssociationLabelsSpecialSymbols()
     {
+        $data = ['associationLabels' => [ 'EntityIdTable' => "Super Uper ()"]];
+
         $this->assertSame(
-            $this->mock->associationLabels(["Foo,Foo Bar()"]),
-            ['Foo' => 'Foo Bar()'],
+            $this->mock->associationLabels($data['associationLabels']),
+            ['EntityIdTable' => 'Super Uper ()'],
             "Special symbols cannot be parsed properly"
         );
     }

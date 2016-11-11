@@ -98,10 +98,11 @@ class FooTableTest extends TestCase
                 ],
                 'associations' => [
                     'hide_associations' => 'TestTable',
-                    'association_labels' => [
-                        'FieldIdTable,Table',
-                        'AnotherIdTableTwo,Pretty Table'
-                    ]
+                ],
+
+                'associationLabels' => [
+                    'FieldIdTable' => 'Table',
+                    'AnotherIdTableTwo' => 'Pretty Table'
                 ]
             ]
         );

@@ -92,7 +92,6 @@ trait ConfigurationTrait
         $path = $pathFinder->find(Inflector::camelize($tableName));
         $parser = new Parser();
         $this->_config = $parser->parseFromPath($path);
-
         // display field from configuration file
         if (isset($this->_config['table']['display_field']) && method_exists($this, 'displayField')) {
             $this->displayField($this->_config['table']['display_field']);
@@ -122,8 +121,8 @@ trait ConfigurationTrait
             $this->hiddenAssociations($this->_config['associations']['hide_associations']);
         }
 
-        if (isset($this->_config['associations']['association_labels'])) {
-            $this->associationLabels($this->_config['associations']['association_labels']);
+        if (isset($this->_config['associationLabels'])) {
+            $this->associationLabels($this->_config['associationLabels']);
         }
 
         if (isset($this->_config['parent']['module'])) {
@@ -186,12 +185,11 @@ trait ConfigurationTrait
      * @param array $fields received from CSV
      * @return array
      */
-    public function associationLabels($fields = null)
+    public function associationLabels($fields = [])
     {
-        if ($fields !== null) {
-            foreach ($fields as $field) {
-                list($associationName, $associationLabel) = explode(',', $field);
-                $this->_associationLabels[$associationName] = $associationLabel;
+        if (!empty($fields)) {
+            foreach ($fields as $name => $label) {
+                $this->_associationLabels[$name] = $label;
             }
         }
 

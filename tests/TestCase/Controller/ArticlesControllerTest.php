@@ -6,7 +6,10 @@ use Cake\TestSuite\IntegrationTestCase;
 
 class ArticlesControllerTest extends IntegrationTestCase
 {
-    public $fixtures = ['plugin.CsvMigrations.articles'];
+    public $fixtures = [
+        'plugin.CsvMigrations.articles',
+        'plugin.CsvMigrations.users'
+    ];
 
     public function testIndexUnauthenticatedFails()
     {
@@ -92,8 +95,7 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertResponseSuccess();
 
         // fetch new record
-        $table = TableRegistry::get('Articles');
-        $query = $table->find()->where(['name' => $data['name']]);
+        $query = TableRegistry::get('Articles')->find()->where(['name' => $data['name']]);
 
         $this->assertEquals(1, $query->count());
     }
@@ -135,7 +137,6 @@ class ArticlesControllerTest extends IntegrationTestCase
         $id = '00000000-0000-0000-0000-000000000001';
 
         $data = [
-            'id' => $id,
             'name' => 'Some Unique Name'
         ];
 
@@ -143,8 +144,28 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertResponseSuccess();
 
         // fetch modified record
-        $table = TableRegistry::get('Articles');
-        $entity = $table->get($data['id']);
+        $entity = TableRegistry::get('Articles')->get($id);
+
+        $this->assertEquals($data['name'], $entity->name);
+    }
+
+    public function testEditPutData()
+    {
+        $this->session([
+            'Auth.User.id' => '00000000-0000-0000-0000-000000000001'
+        ]);
+
+        $id = '00000000-0000-0000-0000-000000000001';
+
+        $data = [
+            'name' => 'Some Unique Name'
+        ];
+
+        $this->put('/articles/edit/' . $id, $data);
+        $this->assertResponseSuccess();
+
+        // fetch modified record
+        $entity = TableRegistry::get('Articles')->get($id);
 
         $this->assertEquals($data['name'], $entity->name);
     }
@@ -179,8 +200,23 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertResponseSuccess();
 
         // try to fetch deleted record
-        $table = TableRegistry::get('Articles');
-        $query = $table->find()->where(['id' => $id]);
+        $query = TableRegistry::get('Articles')->find()->where(['id' => $id]);
+        $this->assertEquals(0, $query->count());
+    }
+
+    public function testDeletePostData()
+    {
+        $this->session([
+            'Auth.User.id' => '00000000-0000-0000-0000-000000000001'
+        ]);
+
+        $id = '00000000-0000-0000-0000-000000000001';
+
+        $this->post('/articles/delete/' . $id);
+        $this->assertResponseSuccess();
+
+        // try to fetch deleted record
+        $query = TableRegistry::get('Articles')->find()->where(['id' => $id]);
         $this->assertEquals(0, $query->count());
     }
 }

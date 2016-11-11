@@ -6,6 +6,13 @@ use CsvMigrations\FieldHandlers\CsvField;
 interface FieldHandlerInterface
 {
     /**
+     * Constructor method.
+     *
+     * @param mixed $cakeView View object or null
+     */
+    public function __construct($cakeView = null);
+
+    /**
      * Method responsible for rendering field's input.
      *
      * @param  mixed  $table   name or instance of the Table
@@ -31,7 +38,7 @@ interface FieldHandlerInterface
      * Method responsible for converting csv field instance to database field instance.
      *
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @return \CsvMigrations\FieldHandlers\DbField            DbField instance
+     * @return array                                           DbField instances
      */
     public function fieldToDb(CsvField $csvField);
 }

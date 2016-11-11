@@ -3,7 +3,8 @@ use Cake\Event\Event;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
-$fhf = new FieldHandlerFactory();
+$fhf = new FieldHandlerFactory($this);
+
 $panels = [];
 if (!empty($csvAssociatedRecords['oneToMany'])) {
     foreach ($csvAssociatedRecords['oneToMany'] as $tabName => $assocData) {

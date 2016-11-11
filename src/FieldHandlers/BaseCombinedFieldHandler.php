@@ -25,9 +25,9 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
     /**
      * Constructor
      */
-    public function __construct()
+    public function __construct($cakeView = null)
     {
-        parent::__construct();
+        parent::__construct($cakeView);
 
         $this->_setCombinedFields();
     }

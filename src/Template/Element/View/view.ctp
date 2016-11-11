@@ -5,7 +5,7 @@ use Cake\ORM\TableRegistry;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
-$fhf = new FieldHandlerFactory();
+$fhf = new FieldHandlerFactory($this);
 
 $defaultOptions = [
     'title' => null,

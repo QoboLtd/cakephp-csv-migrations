@@ -53,7 +53,9 @@ class ViewViewTabsListener implements EventListenerInterface
             $tableConfig = $this->_tableInstance->getConfig();
 
             $hiddenAssociations = $this->_tableInstance->hiddenAssociations();
-            $csvAssociationLabels = $this->_tableInstance->associationLabels($tableConfig['associationLabels']);
+            if (!empty($tableConfig['associationLabels'])) {
+                $csvAssociationLabels = $this->_tableInstance->associationLabels($tableConfig['associationLabels']);
+            }
         }
 
         foreach ($this->_tableInstance->associations() as $association) {

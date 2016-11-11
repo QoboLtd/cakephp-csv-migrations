@@ -30,6 +30,25 @@ trait ConfigurationTrait
     protected $_lookupFields;
 
     /**
+     * Each table might have a parent
+     * @var string
+     */
+    protected $_parentModuleField;
+
+    /**
+     * relation field that identifies parent_id field
+     * @var string
+     */
+    protected $_parentRelationField;
+
+    /**
+     * redirect flag whether it should be self|parent
+     * to identify where to redirect
+     * @var string
+     */
+    protected $_parentRedirectField;
+
+    /**
      * Typeahead fields used for searching in related fields
      *
      * @var array
@@ -42,6 +61,19 @@ trait ConfigurationTrait
      * @var array
      */
     protected $_virtualFields = [];
+
+    /**
+     * Hidden associations
+     * @var array
+     */
+    protected $_hiddenAssociations = [];
+
+
+    /**
+     * Association Labels
+     * @var array
+     */
+    protected $_associationLabels = [];
 
     /**
      * Module alias
@@ -72,7 +104,6 @@ trait ConfigurationTrait
         $path = $pathFinder->find(Inflector::camelize($tableName));
         $parser = new Parser();
         $this->_config = $parser->parseFromPath($path);
-
         // display field from configuration file
         if (isset($this->_config['table']['display_field']) && method_exists($this, 'displayField')) {
             $this->displayField($this->_config['table']['display_field']);
@@ -96,6 +127,18 @@ trait ConfigurationTrait
         // set searchable flag from configuration file
         if (isset($this->_config['table']['searchable'])) {
             $this->isSearchable($this->_config['table']['searchable']);
+        }
+
+        if (isset($this->_config['associations']['hide_associations'])) {
+            $this->hiddenAssociations($this->_config['associations']['hide_associations']);
+        }
+
+        if (isset($this->_config['associationLabels'])) {
+            $this->associationLabels($this->_config['associationLabels']);
+        }
+
+        if (isset($this->_config['parent'])) {
+            $this->parentSection($this->_config['parent']);
         }
 
         // set virtual field(s)
@@ -135,6 +178,53 @@ trait ConfigurationTrait
     }
 
     /**
+     * parse 'parent' section variables
+     * @TODO: Currently we use only scalars for parent vars
+     * It should be expanded to support arrays if any appear.
+     * @param array $section containing 'parent' block from ini
+     * @return void
+     */
+    public function parentSection($section = [])
+    {
+        if (!empty($section)) {
+            foreach ($section as $fieldName => $fieldValues) {
+                $field = Inflector::camelize($fieldName);
+                $property = sprintf('_parent%sField', $field);
+                if (property_exists($this, $property)) {
+                    $this->{$property} = $fieldValues;
+                }
+            }
+        }
+    }
+
+    /**
+     * getParentRelationField
+     * @return string
+     */
+    public function getParentModuleField()
+    {
+        return $this->_parentModuleField;
+    }
+
+    /**
+     * getParentRedirectField
+     * @return string
+     */
+    public function getParentRedirectField()
+    {
+        return $this->_parentRedirectField;
+    }
+
+    /**
+     * getParentRelationField
+     * @return string
+     */
+    public function getParentRelationField()
+    {
+        return $this->_parentRelationField;
+    }
+
+    /**
      * Returns the typeahead fields or sets a new one
      *
      * @param string|null $fields sets typeahead fields
@@ -147,6 +237,37 @@ trait ConfigurationTrait
         }
 
         return $this->_typeaheadFields;
+    }
+
+    /**
+     * Return association labels if any present
+     * @param array $fields received from CSV
+     * @return array
+     */
+    public function associationLabels($fields = [])
+    {
+        if (!empty($fields)) {
+            foreach ($fields as $name => $label) {
+                $this->_associationLabels[$name] = $label;
+            }
+        }
+
+        return $this->_associationLabels;
+    }
+
+    /**
+     * Return the list of hidden Associations for the config
+     * file
+     * @param string|null $fields received
+     * @return array
+     */
+    public function hiddenAssociations($fields = null)
+    {
+        if ($fields !== null) {
+            $this->_hiddenAssociations = explode(',', $fields);
+        }
+
+        return $this->_hiddenAssociations;
     }
 
     /**
@@ -173,7 +294,7 @@ trait ConfigurationTrait
      *
      * Sets Table's virtual fields as an associated array with the
      * virtual field name as the key and the db fields name as value.
-     *
+     * @param array|null $fields passed to method from CSV
      * @return void
      */
     public function setVirtualFields(array $fields = [])

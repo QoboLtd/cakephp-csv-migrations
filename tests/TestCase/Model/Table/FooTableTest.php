@@ -84,7 +84,25 @@ class FooTableTest extends TestCase
                 'table' => [
                     'alias' => 'Foobar',
                     'searchable' => true,
-                    'display_field' => 'name'
+                    'display_field' => 'name',
+                    'typeahead_fields' => 'name,foobar',
+                    'lookup_fields' => 'foo,bar,baz',
+                ],
+                'virtualFields' => [
+                    'name' => 'full_name',
+                ],
+                'parent' => [
+                    'module' => 'TestModule',
+                    'redirect' => 'self',
+
+                ],
+                'associations' => [
+                    'hide_associations' => 'TestTable',
+                ],
+
+                'associationLabels' => [
+                    'FieldIdTable' => 'Table',
+                    'AnotherIdTableTwo' => 'Pretty Table'
                 ]
             ]
         );

@@ -47,7 +47,6 @@ class ArticlesControllerTest extends IntegrationTestCase
 
     public function testIndex()
     {
-
         $this->configRequest([
             'headers' => [
                 'Accept' => 'application/json',

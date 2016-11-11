@@ -33,8 +33,20 @@ trait ConfigurationTrait
      * Each table might have a parent
      * @var string
      */
-    protected $_parentField;
+    protected $_parentModuleField;
 
+    /**
+     * relation field that identifies parent_id field
+     * @var string
+     */
+    protected $_parentRelationField;
+
+    /**
+     * redirect flag whether it should be self|parent
+     * to identify where to redirect
+     * @var string
+     */
+    protected $_parentRedirectField;
 
     /**
      * Typeahead fields used for searching in related fields
@@ -125,8 +137,8 @@ trait ConfigurationTrait
             $this->associationLabels($this->_config['associationLabels']);
         }
 
-        if (isset($this->_config['parent']['module'])) {
-            $this->parentField($this->_config['parent']['module']);
+        if (isset($this->_config['parent'])) {
+            $this->parentSection($this->_config['parent']);
         }
 
         // set virtual field(s)
@@ -163,6 +175,53 @@ trait ConfigurationTrait
         }
 
         return $this->_lookupFields;
+    }
+
+    /**
+     * parse 'parent' section variables
+     * @TODO: Currently we use only scalars for parent vars
+     * It should be expanded to support arrays if any appear.
+     * @param array $section containing 'parent' block from ini
+     * @return void
+     */
+    public function parentSection($section = [])
+    {
+        if (!empty($section)) {
+            foreach ($section as $fieldName => $fieldValues) {
+                $field = Inflector::camelize($fieldName);
+                $property = sprintf('_parent%sField', $field);
+                if (property_exists($this, $property)) {
+                    $this->{$property} = $fieldValues;
+                }
+            }
+        }
+    }
+
+    /**
+     * getParentRelationField
+     * @return string
+     */
+    public function getParentModuleField()
+    {
+        return $this->_parentModuleField;
+    }
+
+    /**
+     * getParentRedirectField
+     * @return string
+     */
+    public function getParentRedirectField()
+    {
+        return $this->_parentRedirectField;
+    }
+
+    /**
+     * getParentRelationField
+     * @return string
+     */
+    public function getParentRelationField()
+    {
+        return $this->_parentRelationField;
     }
 
     /**
@@ -228,23 +287,6 @@ trait ConfigurationTrait
         }
 
         return $this->_moduleAlias;
-    }
-
-
-    /**
-     * CSV Table might have a parent
-     * that helps us redirect things on working
-     * with modal forms.
-     * @param string $field received
-     * @return string
-     */
-    public function parentField($field = null)
-    {
-        if ($field !== null) {
-            $this->_parentField = $field;
-        }
-
-        return $this->_parentField;
     }
 
     /**

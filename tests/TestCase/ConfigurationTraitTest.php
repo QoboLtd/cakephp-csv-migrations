@@ -49,6 +49,24 @@ class ConfigurationTraitTest extends PHPUnit_Framework_TestCase
         );
     }
 
+
+    public function testParentSection()
+    {
+        $data = [
+            'parent' => [
+                'module' => 'Companies',
+                'relation' => 'company_id',
+                'redirect' => 'self'
+            ]
+        ];
+
+        $this->mock->parentSection($data['parent']);
+
+        $this->assertEquals('Companies', $this->mock->getParentModuleField());
+        $this->assertEquals('company_id', $this->mock->getParentRelationField());
+        $this->assertEquals('self', $this->mock->getParentRedirectField());
+    }
+
     public function testAssociationLabelsSpecialSymbols()
     {
         $data = ['associationLabels' => [ 'EntityIdTable' => "Super Uper ()"]];
@@ -57,15 +75,6 @@ class ConfigurationTraitTest extends PHPUnit_Framework_TestCase
             $this->mock->associationLabels($data['associationLabels']),
             ['EntityIdTable' => 'Super Uper ()'],
             "Special symbols cannot be parsed properly"
-        );
-    }
-
-    public function testParentField()
-    {
-        $this->assertSame(
-            $this->mock->parentField('Bar'),
-            'Bar',
-            "Parent field is not passed properly into setter"
         );
     }
 

@@ -19,6 +19,7 @@ class UsersFixture extends TestFixture
     public $fields = [
         'id' => ['type' => 'uuid', 'length' => null, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null],
         'name' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'fixed' => null],
+        'active' => ['type' => 'boolean', 'length' => null, 'null' => false, 'default' => true, 'comment' => '', 'precision' => null],
         'primary_key' => ['type' => 'uuid', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
@@ -39,10 +40,12 @@ class UsersFixture extends TestFixture
         [
             'id' => '00000000-0000-0000-0000-000000000001',
             'name' => 'user1',
+            'active' => 1,
         ],
         [
             'id' => '00000000-0000-0000-0000-000000000002',
             'name' => 'user2',
+            'active' => 1,
         ],
     ];
 }

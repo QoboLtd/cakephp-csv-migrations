@@ -3,6 +3,7 @@
 
 use Cake\Core\Configure;
 use Cake\Filesystem\Folder;
+use Cake\Utility\Security;
 
 $pluginName = 'CsvMigrations';
 if (empty($pluginName)) {
@@ -57,6 +58,7 @@ Configure::write('App', [
     ]
 ]);
 Configure::write('debug', true);
+Security::salt('C14#E9YY0t*QZ2M9Ia4D6swLJ8507Kai47C14#E9YY0t*QZ2M9Ia4D6swLJ8507Kai47');
 
 $TMP = new Folder(TMP);
 $TMP->create(TMP . 'cache/models', 0777);

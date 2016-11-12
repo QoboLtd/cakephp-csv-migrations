@@ -278,6 +278,16 @@ class AppController extends Controller
     }
 
     /**
+     * Delete CRUD action events handling logic.
+     *
+     * @return \Cake\Network\Response
+     */
+    public function delete()
+    {
+        return $this->Crud->execute();
+    }
+
+    /**
      * Lookup CRUD action events handling logic.
      *
      * @return \Cake\Network\Response

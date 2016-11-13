@@ -480,6 +480,29 @@ class ValidateShell extends Shell
                         }
                     }
                 }
+
+                // [parent] section
+                if (!empty($config['parent'])) {
+                    if (empty($config['parent']['module'])) {
+                        $moduleErrors[] = $module . " config [parent] section is missing 'module' key";
+                    }
+                    if (!empty($config['parent']['module'])) {
+                        if (!$this->_isValidModule($config['parent']['module'], array_keys($modules))) {
+                            $moduleErrors[] = $module . " config [parent] section references unknown module '" . $config['parent']['module'] . "' in 'module' key";
+                        }
+                    }
+                    if (!empty($config['parent']['relation'])) {
+                        if (!$this->_isRealModuleField($config['parent']['relation'], $module)) {
+                            $moduleErrors[] = $module . " config [parent] section references non-real field '" . $config['parent']['relation'] . "' in 'relation' key";
+                        }
+                    }
+                    if (!empty($config['parent']['redirect'])) {
+                        if (!in_array($config['parent']['redirect'], ['self', 'parent'])) {
+                            $moduleErrors[] = $module . " config [parent] section references unknown redirect type '" . $config['parent']['redirect'] . "' in 'redirect key";
+                        }
+                    }
+                }
+
                 // [virtualFields] section
                 if (!empty($config['virtualFields'])) {
                     foreach ($config['virtualFields'] as $virtualField => $realFields) {

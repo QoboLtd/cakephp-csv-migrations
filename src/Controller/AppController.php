@@ -80,6 +80,10 @@ class AppController extends BaseController
     {
         $entity = $this->{$this->name}->newEntity();
         if ($this->request->is('post')) {
+            if ($this->request->data('btn_operation') == 'cancel') {
+                return $this->redirect(['action' => 'index']);
+            }
+
             $entity = $this->{$this->name}->patchEntity($entity, $this->request->data);
             if ($this->{$this->name}->save($entity)) {
                 // handle file uploads if found in the request data
@@ -112,6 +116,9 @@ class AppController extends BaseController
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
+            if ($this->request->data('btn_operation') == 'cancel') {
+                return $this->redirect(['action' => 'view', $id]);
+            }
             /*
             enable accessibility to associated entity's primary key to avoid associated entity getting flagged as new
              */

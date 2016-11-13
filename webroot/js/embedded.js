@@ -49,6 +49,17 @@ var embedded = embedded || {};
         var modalId = $(form).data('modal_id');
         var url = $(form).attr('action');
 
+        var embedded = $(form).data('embedded');
+
+        $.each($(form).serializeArray(), function(i, field) {
+            if (0 === field.name.indexOf(embedded)) {
+                var name = field.name.replace(embedded, '');
+                name = name.replace('[', '');
+                name = name.replace(']', '');
+                data.append( name, field.value );
+            }
+        });
+
         $.each(that.files, function(key, value)
         {
             data.append('file[]', value);

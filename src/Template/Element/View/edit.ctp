@@ -132,7 +132,12 @@ $formOptions['type'] = 'file';
                 }
             ?>
         </fieldset>
-        <?= $this->Form->button(__('Submit'), ['class' => 'btn btn-primary']) ?>
+        <?= $this->Form->button(__('Submit'), ['name' => 'btn_operation', 'value' => 'submit', 'class' => 'btn btn-primary']) ?>
+
+        <?php
+        if (empty($this->request->query['embedded'])) { ?>
+            <?= $this->Form->button(__('Cancel'), ['name' => 'btn_operation', 'value' => 'cancel', 'class' => 'btn btn-warning']) ?>
+        <?php } ?>
         <?= $this->Form->end() ?>
         <?php
         /*

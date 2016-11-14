@@ -11,7 +11,7 @@ var view_index = view_index || {};
     /**
      * Initialize method.
      *
-     * @return {void}
+     * @return {undefined}
      */
     ViewIndex.prototype.init = function(options) {
         this.api_url = options.hasOwnProperty('api_url') ? options.api_url : null;
@@ -21,13 +21,19 @@ var view_index = view_index || {};
         this.menus = options.hasOwnProperty('menus') ? options.menus : false;
         this.format = options.hasOwnProperty('format') ? options.format : {};
 
-        this.datatable();
+        var table = this.datatable();
+        this._handleDeleteLinks(table);
     };
 
+    /**
+     * Initialize table using datatables.
+     *
+     * @return {object} Datatables Table object
+     */
     ViewIndex.prototype.datatable = function() {
         var that = this;
 
-        $(this.table_id).DataTable({
+        var table = $(this.table_id).DataTable({
             searching: false,
             processing: true,
             serverSide: true,
@@ -55,6 +61,38 @@ var view_index = view_index || {};
 
                     return JSON.stringify(d);
                 }
+            }
+        });
+
+        return table;
+    };
+
+    /**
+     * Method that handles delete links.
+     *
+     * @param  {type} table Datatables Table object
+     * @return {undefined}
+     */
+    ViewIndex.prototype._handleDeleteLinks = function(table) {
+        var that = this;
+
+        $(this.table_id + ' tbody').on('click', '[data-type="ajax-delete-record"]', function(e) {
+            e.preventDefault();
+
+            if (confirm($(this).data('confirm-msg'))) {
+                $.ajax({
+                    url: $(this).attr('href'),
+                    method: 'DELETE',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    headers: {
+                        'Authorization': 'Bearer ' + that.api_token
+                    },
+                    success: function(data) {
+                        // refresh datatable on successful deletion
+                        table.ajax.reload();
+                    }
+                });
             }
         });
     };

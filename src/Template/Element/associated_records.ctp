@@ -164,22 +164,7 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                                         $renderOptions
                                     );
 
-                                    if ($assocData['display_field'] === $assocField) {
-                                        list($assocPlugin, $assocModel) = pluginSplit($assocData['class_name']);
-                                        // Not doing any escaping as it messes up display of
-                                        // things like email fields with the mailto: link.
-                                        echo $this->Html->link(
-                                            $value, [
-                                                'plugin' => $assocPlugin,
-                                                'controller' => $assocModel,
-                                                'action' => 'view',
-                                                $record->$assocData['primary_key']
-                                            ],
-                                            ['escape' => false]
-                                        );
-                                    } else {
-                                        echo !empty($value) ? $value : '&nbsp;';
-                                    }
+                                    echo !empty($value) ? $value : '&nbsp;';
                                 ?>
                                 </td>
                             <?php endforeach; ?>
@@ -189,8 +174,12 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                                     'request' => $this->request,
                                     'options' => [
                                         'entity' => $entity,
-                                        'assoc_entity' => $record,
-                                        'assoc_name' => $assocData['assoc_name']
+                                        'associated' => [
+                                            'entity' => $record,
+                                            'name' => $assocData['assoc_name'],
+                                            'className' => $assocData['class_name'],
+                                            'displayField' => $assocData['display_field']
+                                        ]
                                     ]
                                 ]);
                                 $this->eventManager()->dispatch($event);

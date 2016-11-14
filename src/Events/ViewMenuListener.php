@@ -337,6 +337,8 @@ class ViewMenuListener implements EventListenerInterface
      */
     public function getAssociatedMenuActions(Event $event, Request $request, array $options)
     {
+        list($assocPlugin, $assocController) = pluginSplit($options['associated']['className']);
+
         $appView = $event->subject();
         if (!$appView instanceof View) {
             $appView = new AppView();
@@ -347,16 +349,62 @@ class ViewMenuListener implements EventListenerInterface
             $controllerName = $request->plugin . '.' . $controllerName;
         }
 
+        $urlView = [
+            'prefix' => false,
+            'plugin' => $assocPlugin,
+            'controller' => $assocController,
+            'action' => 'view',
+            $options['associated']['entity']->id
+        ];
+        $btnView = $appView->Html->link(
+            '',
+            $urlView,
+            ['title' => __('View'), 'class' => 'btn btn-default glyphicon glyphicon-eye-open']
+        );
+
+        $urlEdit = [
+            'prefix' => false,
+            'plugin' => $assocPlugin,
+            'controller' => $assocController,
+            'action' => 'edit',
+            $options['associated']['entity']->id
+        ];
+        $btnEdit = ' ' . $appView->Html->link(
+            '',
+            $urlEdit,
+            ['title' => __('Edit'), 'class' => 'btn btn-default glyphicon glyphicon-pencil']
+        );
+
+        $urlDel = [
+            'prefix' => false,
+            'plugin' => $assocPlugin,
+            'controller' => $assocController,
+            'action' => 'delete',
+            $options['associated']['entity']->id
+        ];
+
+        $btnDel = ' ' . $appView->Form->postLink(
+            '',
+            $urlDel,
+            [
+                'confirm' => __(
+                    'Are you sure you want to delete {0}?',
+                    $options['associated']['entity']->{$options['associated']['displayField']}
+                ),
+                'title' => __('Delete'),
+                'class' => 'btn btn-default glyphicon glyphicon-trash'
+            ]
+        );
+
         $urlUnlink = [
             'plugin' => $request->plugin,
             'controller' => $request->controller,
             'action' => 'unlink',
             $options['entity']->id,
-            $options['assoc_name'],
-            $options['assoc_entity']->id
+            $options['associated']['name'],
+            $options['associated']['entity']->id
         ];
-
-        $btnUnlink = $appView->Form->postLink(
+        $btnUnlink = ' ' . $appView->Form->postLink(
             '',
             $urlUnlink,
             ['title' => __('Unlink'), 'class' => 'btn btn-default fa fa-chain-broken']
@@ -364,9 +412,20 @@ class ViewMenuListener implements EventListenerInterface
 
         $menu = [
             [
+                'label' => $btnView,
+                'url' => $urlView
+            ],
+            [
+                'label' => $btnEdit,
+                'url' => $urlEdit
+            ],
+            [
+                'label' => $btnDel,
+                'url' => $urlDel
+            ],
+            [
                 'label' => $btnUnlink,
-                'url' => $urlUnlink,
-                'capabilities' => 'fromUrl'
+                'url' => $urlUnlink
             ]
         ];
 

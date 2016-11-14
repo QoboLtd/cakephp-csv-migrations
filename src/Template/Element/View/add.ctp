@@ -157,7 +157,7 @@ $formOptions['type'] = 'file';
 
             if (empty($this->request->query['embedded'])) {
                 echo "&nbsp;";
-                echo $this->Form->button(__('Cancel'), ['name' => 'btn_operation', 'value' => 'cancel', 'class' => 'btn btn-warning']);
+                echo $this->Form->button(__('Cancel'), ['name' => 'btn_operation', 'value' => 'cancel', 'class' => 'btn']);
             }
 
             echo $this->Form->end();

@@ -134,19 +134,24 @@ class ViewMenuListener implements EventListenerInterface
         );
 
         $urlDel = [
-            'prefix' => false,
+            'prefix' => 'api',
             'plugin' => $request->plugin,
             'controller' => $request->controller,
             'action' => 'delete',
+            '_ext' => 'json',
             $options->id
         ];
-        $btnDel = ' ' . $appView->Form->postLink(
+        $btnDel = ' ' . $appView->Html->link(
             '',
             $urlDel,
             [
-                'confirm' => __('Are you sure you want to delete {0}?', $options->{$displayField}),
                 'title' => __('Delete'),
-                'class' => 'btn btn-default glyphicon glyphicon-trash'
+                'class' => 'btn btn-default glyphicon glyphicon-trash delete-record',
+                'data-type' => 'ajax-delete-record',
+                'data-confirm-msg' => __(
+                    'Are you sure you want to delete {0}?',
+                    !empty($options->{$displayField}) ? $options->{$displayField} : 'this record'
+                )
             ]
         );
 

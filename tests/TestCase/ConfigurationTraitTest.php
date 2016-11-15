@@ -28,4 +28,106 @@ class ConfigurationTraitTest extends PHPUnit_Framework_TestCase
         $this->assertSame($this->mock->moduleAlias('foo'), 'foo');
         $this->assertSame($this->mock->moduleAlias(), 'foo');
     }
+
+    public function testHiddenAssociations()
+    {
+        $this->assertSame($this->mock->hiddenAssociations('Foo,Bar'), ['Foo', 'Bar']);
+    }
+
+    public function testAssociationLabels()
+    {
+        $data = [
+            'associationLabels' => [
+                'Foo' => 'Bar'
+            ]
+        ];
+
+        $this->assertSame(
+            $this->mock->associationLabels($data['associationLabels']),
+            ['Foo' => 'Bar'],
+            "Association Labels are parsed incorrectly"
+        );
+    }
+
+
+    public function testParentSection()
+    {
+        $data = [
+            'parent' => [
+                'module' => 'Companies',
+                'relation' => 'company_id',
+                'redirect' => 'self'
+            ]
+        ];
+
+        $this->mock->parentSection($data['parent']);
+
+        $this->assertEquals('Companies', $this->mock->getParentModuleField());
+        $this->assertEquals('company_id', $this->mock->getParentRelationField());
+        $this->assertEquals('self', $this->mock->getParentRedirectField());
+    }
+
+    public function testAssociationLabelsSpecialSymbols()
+    {
+        $data = ['associationLabels' => [ 'EntityIdTable' => "Super Uper ()"]];
+
+        $this->assertSame(
+            $this->mock->associationLabels($data['associationLabels']),
+            ['EntityIdTable' => 'Super Uper ()'],
+            "Special symbols cannot be parsed properly"
+        );
+    }
+
+    public function testLookupFields()
+    {
+        $this->assertSame(
+            $this->mock->lookupFields(),
+            null,
+            "Default lookupField is not set yet"
+        );
+
+        $this->assertSame(
+            $this->mock->lookupFields('foo,bar'),
+            ['foo', 'bar'],
+            "Incorrect setting of lookUp fields"
+        );
+    }
+
+    public function testVirtualFields()
+    {
+        $this->assertEquals(
+            $this->mock->setVirtualFields(),
+            null,
+            "Incorrect default value"
+        );
+
+        $data = [
+            'virtualFields' => [
+                'name' => 'company_name,first_name,last_name'
+            ]
+        ];
+
+        $this->mock->setVirtualFields($data['virtualFields']);
+
+        $this->assertSame(
+            $this->mock->getVirtualFields(),
+            ['name' => ['company_name', 'first_name', 'last_name']],
+            'Incorrect Virtual Fields setting'
+        );
+    }
+
+    public function testTypeaheadFields()
+    {
+        $this->assertSame(
+            $this->mock->typeaheadFields(),
+            null,
+            "Incorrect default value"
+        );
+
+        $this->assertSame(
+            $this->mock->typeaheadFields('first_name,last_name'),
+            ['first_name', 'last_name'],
+            "Incorrect values passed"
+        );
+    }
 }

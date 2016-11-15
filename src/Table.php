@@ -268,34 +268,6 @@ class Table extends BaseTable
     }
 
     /**
-     * Method that adds lookup fields with the id value to the Where clause in ORM Query
-     *
-     * @param  \Cake\ORM\Query $query Query instance
-     * @param  string          $id    Record id
-     * @return \Cake\ORM\Query
-     */
-    public function findByLookupFields(Query $query, $id)
-    {
-        $lookupFields = $this->lookupFields();
-
-        if (empty($lookupFields)) {
-            return $query;
-        }
-
-        $tableName = $this->alias();
-        // check for record by table's lookup fields
-        foreach ($lookupFields as $lookupField) {
-            // prepend table name to avoid CakePHP ORM's ambiguous column errors
-            if (false === strpos($lookupField, '.')) {
-                $lookupField = $tableName . '.' . $lookupField;
-            }
-            $query->orWhere([$lookupField => $id]);
-        }
-
-        return $query;
-    }
-
-    /**
      * Method that checks Entity's association fields (foreign keys) values and query's the database to find
      * the associated record. If the record is not found, it query's the database again to find it by its
      * display field. If found it replaces the associated field's value with the records id.

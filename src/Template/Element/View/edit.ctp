@@ -3,7 +3,7 @@ use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\CsvMigrationsUtils;
 
-$fhf = new FieldHandlerFactory();
+$fhf = new FieldHandlerFactory($this);
 
 $defaultOptions = [
     'title' => null,
@@ -132,7 +132,12 @@ $formOptions['type'] = 'file';
                 }
             ?>
         </fieldset>
-        <?= $this->Form->button(__('Submit'), ['class' => 'btn btn-primary']) ?>
+        <?= $this->Form->button(__('Submit'), ['name' => 'btn_operation', 'value' => 'submit', 'class' => 'btn btn-primary']) ?>
+
+        <?php
+        if (empty($this->request->query['embedded'])) { ?>
+            <?= $this->Form->button(__('Cancel'), ['name' => 'btn_operation', 'value' => 'cancel', 'class' => 'btn']) ?>
+        <?php } ?>
         <?= $this->Form->end() ?>
         <?php
         /*

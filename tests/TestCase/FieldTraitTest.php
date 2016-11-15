@@ -36,11 +36,4 @@ class FieldTraitTest extends TestCase
         $this->FooTable = TableRegistry::get('Foo', $config);
         $this->mock = $this->getMockForTrait(FieldTrait::class);
     }
-
-    public function testGetUniqueFields()
-    {
-        $uniqueFields = $this->mock->getUniqueFields($this->FooTable);
-        sort($uniqueFields);
-        $this->assertEquals(['id', 'name'], $uniqueFields);
-    }
 }

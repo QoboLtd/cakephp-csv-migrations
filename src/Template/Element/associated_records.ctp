@@ -3,7 +3,7 @@ use Cake\Event\Event;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
-$fhf = new FieldHandlerFactory();
+$fhf = new FieldHandlerFactory($this);
 
 $panels = [];
 if (!empty($csvAssociatedRecords['oneToMany'])) {
@@ -15,7 +15,6 @@ if (!empty($csvAssociatedRecords['oneToMany'])) {
         }
     }
 }
-
 /*
 list of embedded fields to generate modals from
  */
@@ -30,7 +29,6 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
     }
 }
 ?>
-
 <?php if (!empty($panels)) : ?>
 <div class="row associated_records">
     <div class="col-xs-12">
@@ -43,13 +41,18 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
             <li role="presentation" class="<?= $active; ?>">
                 <a href="#<?= $tabName; ?>" aria-controls="<?= $tabName; ?>" role="tab" data-toggle="tab">
                     <?php
-                        $tableName = Inflector::humanize($assocData['table_name']);
-                        $fieldName = trim(str_replace($tableName, '', Inflector::humanize(Inflector::tableize($tabName))));
-                        if (!empty($fieldName)) {
-                            $fieldName = ' <small>(' . $fieldName . ')</small>';
+                        //prettifying the tabs names
+                        if (!empty($csvAssociationLabels) && in_array($tabName, array_keys($csvAssociationLabels))) {
+                            echo $csvAssociationLabels[$tabName];
+                        } else {
+                            $tableName = Inflector::humanize($assocData['table_name']);
+                            $fieldName = trim(str_replace($tableName, '', Inflector::humanize(Inflector::tableize($tabName))));
+                            if (!empty($fieldName)) {
+                                $fieldName = '<small>(' . $fieldName . ')</small>';
+                            }
+                            echo $tableName . $fieldName;
                         }
                     ?>
-                    <?= $tableName . $fieldName ?>
                 </a>
             </li>
 <?php
@@ -61,7 +64,7 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
 <?php
     $active = 'active';
     foreach ($panels as $assocName => $assocData) {
-    ?>
+?>
             <div role="tabpanel" class="tab-pane <?= $active; ?>" id="<?= $assocName; ?>">
             <?php
             /*
@@ -161,22 +164,7 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                                         $renderOptions
                                     );
 
-                                    if ($assocData['display_field'] === $assocField) {
-                                        list($assocPlugin, $assocModel) = pluginSplit($assocData['class_name']);
-                                        // Not doing any escaping as it messes up display of
-                                        // things like email fields with the mailto: link.
-                                        echo $this->Html->link(
-                                            $value, [
-                                                'plugin' => $assocPlugin,
-                                                'controller' => $assocModel,
-                                                'action' => 'view',
-                                                $record->$assocData['primary_key']
-                                            ],
-                                            ['escape' => false]
-                                        );
-                                    } else {
-                                        echo !empty($value) ? $value : '&nbsp;';
-                                    }
+                                    echo !empty($value) ? $value : '&nbsp;';
                                 ?>
                                 </td>
                             <?php endforeach; ?>
@@ -186,8 +174,12 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                                     'request' => $this->request,
                                     'options' => [
                                         'entity' => $entity,
-                                        'assoc_entity' => $record,
-                                        'assoc_name' => $assocData['assoc_name']
+                                        'associated' => [
+                                            'entity' => $record,
+                                            'name' => $assocData['assoc_name'],
+                                            'className' => $assocData['class_name'],
+                                            'displayField' => $assocData['display_field']
+                                        ]
                                     ]
                                 ]);
                                 $this->eventManager()->dispatch($event);

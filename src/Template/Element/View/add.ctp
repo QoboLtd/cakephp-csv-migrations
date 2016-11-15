@@ -4,7 +4,7 @@ use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\CsvMigrationsUtils;
 
-$fhf = new FieldHandlerFactory();
+$fhf = new FieldHandlerFactory($this);
 
 $defaultOptions = [
     'title' => null,
@@ -154,6 +154,12 @@ $formOptions['type'] = 'file';
          */
         if (!$this->request->param('pass.conversion')) {
             echo $this->Form->button(__('Submit'), ['class' => 'btn btn-primary']);
+
+            if (empty($this->request->query['embedded'])) {
+                echo "&nbsp;";
+                echo $this->Form->button(__('Cancel'), ['name' => 'btn_operation', 'value' => 'cancel', 'class' => 'btn']);
+            }
+
             echo $this->Form->end();
         }
     ?>

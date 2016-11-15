@@ -1,9 +1,10 @@
 <?php
 namespace CsvMigrations;
 
+use ArrayObject;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
-use Cake\I18n\Time;
-use Cake\Mailer\Email;
+use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table as BaseTable;
@@ -13,10 +14,6 @@ use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldTrait;
 use CsvMigrations\ListTrait;
 use CsvMigrations\MigrationTrait;
-use \Eluceo\iCal\Component\Calendar;
-use \Eluceo\iCal\Component\Event as vEvent;
-use \Eluceo\iCal\Property\Event\Attendees as vAttendees;
-use \Eluceo\iCal\Property\Event\Organizer as vOrganizer;
 
 /**
  * Accounts Model
@@ -56,135 +53,21 @@ class Table extends BaseTable
     }
 
     /**
-     * beforeSave
-     * @param Cake\Event\Event $event sent by model
-     * @param EntityInterface $entit sent by modely
-     * @param ArrayObject $option extra options
+     * afterSave hook
+     * @param Cake\Event $event from the parent afterSave
+     * @param EntityInterface $entity from the parent afterSave
+     * @param ArrayObject $options from the parent afterSave
      * @return void
      */
-    public function beforeSave($event, $entity, $options = [])
+    public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options)
     {
-        $config = $this->getConfig();
+        $ev = new Event(
+            'CsvMigrations.Model.afterSave',
+            $this,
+            ['entity' => $entity, 'options' => $options]
+        );
 
-        if (!empty($config['table']['allow_reminders'])) {
-            $assignedEntities = $this->getAssignedAssociations($entity, ['tables' => $config['table']['allow_reminders']]);
-
-            if (!empty($assignedEntities)) {
-                $attendees = array_map(function ($item) {
-                    if (isset($item['email'])) {
-                        return $item['email'];
-                    }
-                }, $assignedEntities);
-
-                $attendees = array_filter($attendees);
-
-                $this->_sendCalendarReminder($entity, ['attendees' => $attendees]);
-            }
-        }
-    }
-
-    /**
-     * _sendCalendarReminder
-     * Sending vCal notification on the Reminder FieldHandlers
-     * @param EntityInterface $entity of the record
-     * @param ArrayObject $options extra setup
-     * @return mixed $sent
-     */
-    protected function _sendCalendarReminder($entity, $options = [])
-    {
-        $sent = false;
-
-        if (!empty($options['attendees'])) {
-            $to = implode(',', $options['attendees']);
-
-            $subject = sprintf("%s - %s", $this->alias(), "Reminder");
-
-            $headers = "\r\nMIME-version: 1.0\r\nContent-Type: text/calendar; method=REQUEST; charset=\"iso-8859-1\"";
-            $headers .= "\r\nContent-Transfer-Encoding: 7bit\r\nX-Mailer: Microsoft Office Outlook 12.0";
-
-            $vCalendar = new Calendar('//EN//');
-            $vEvent = new vEvent();
-            $vOrganizer = new vOrganizer($to, ['MAILTO' => $to]);
-
-            foreach ($options['attendees'] as $email) {
-                $vAttendees = new vAttendees();
-
-                $vAttendees->add("MAILTO:$email", [
-                    'ROLE' => 'REQ-PARTICIPANT',
-                    'PARTSTAT' => 'NEEDS-ACTION',
-                    'RSVP' => 'TRUE',
-                ]);
-            }
-
-            //@NOTE: its '02:30' string object,
-            $durationParts = date_parse($entity->duration);
-            $durationMinutes = $durationParts['hour'] * 60 + $durationParts['minute'];
-
-            $endDate = new Time($entity->start_date->format('Y-m-d H:i:s'));
-            $endDate->modify("+ {$durationMinutes} minutes");
-
-            $vEvent->setDtStart(new \DateTime($entity->start_date->format('Y-m-d H:i:s')))
-                ->setDtEnd(new \DateTime($endDate->format('Y-m-d H:i:s')))
-                ->setNoTime(false)
-                ->setStatus('CONFIRMED')
-                ->setAttendees($vAttendees)
-                ->setOrganizer($vOrganizer)
-                ->setSummary($entity->subject);
-
-            $vCalendar->addComponent($vEvent);
-
-            $email = new Email('default');
-
-            $sent = $email->to($to)
-                ->setHeaders([$headers])
-                ->subject($subject)
-                ->attachments(['event.ics' => [
-                    'contentDisposition' => true,
-                    'mimetype' => 'text/calendar',
-                    'data' => $vCalendar->render()
-                ]])
-                ->send();
-        }
-
-        return $sent;
-    }
-
-    /**
-     * getAssignedAssociations
-     * gets all Entities associated with the record
-     * @param EntityInterface $entity of the record
-     * @param ArrayObject $options extra options
-     * @return array $entities
-     */
-    public function getAssignedAssociations($entity, $options = [])
-    {
-        $entities = [];
-
-        $tables = empty($options['tables']) ? [] : explode(',', $options['tables']);
-        $associations = [];
-
-        if (!empty($tables)) {
-            foreach ($this->associations() as $association) {
-                if (in_array(Inflector::humanize($association->target()->table()), $tables)) {
-                    array_push($associations, $association);
-                }
-            }
-        } else {
-            $associations = $this->associations();
-        }
-
-        foreach ($associations as $association) {
-            $query = $association->target()->find('all', [
-                'conditions' => [$association->primaryKey() => $entity->{$association->foreignKey()} ]
-            ]);
-            $result = $query->first();
-
-            if ($result) {
-                $entities[] = $result;
-            }
-        }
-
-        return $entities;
+        EventManager::instance()->dispatch($ev);
     }
 
     /**

@@ -49,6 +49,22 @@ class ConfigurationTraitTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testTableSection()
+    {
+        $data = [
+            'table' => [
+                'allow_reminders' => 'Users,foo,bar'
+            ]
+        ];
+
+        $this->mock->tableSection($data['table']);
+        $this->assertTrue(is_array($this->mock->getTableAllowRemindersField()), "Allow Reminders should be an array");
+        $this->assertEquals(
+            ['Users', 'foo', 'bar'],
+            $this->mock->getTableAllowRemindersField(),
+            "Incorrect data returned for allow_reminders"
+        );
+    }
 
     public function testParentSection()
     {

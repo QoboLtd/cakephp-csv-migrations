@@ -49,6 +49,12 @@ trait ConfigurationTrait
     protected $_parentRedirectField;
 
     /**
+     * allow_reminders array
+     * @var array
+     */
+    protected $_tableAllowRemindersField = [];
+
+    /**
      * Typeahead fields used for searching in related fields
      *
      * @var array
@@ -124,6 +130,10 @@ trait ConfigurationTrait
             $this->moduleAlias($this->_config['table']['alias']);
         }
 
+        if (isset($this->_config['table']['allow_reminders'])) {
+            $this->tableSection($this->_config['table']);
+        }
+
         // set searchable flag from configuration file
         if (isset($this->_config['table']['searchable'])) {
             $this->isSearchable($this->_config['table']['searchable']);
@@ -195,6 +205,41 @@ trait ConfigurationTrait
                 }
             }
         }
+    }
+
+    /**
+     * tableSection parser for the protected variables
+     *
+     * @TODO: currently parses only allow_reminders,
+     * not to break existing properties of 'table' section
+     *
+     * @return void
+     */
+    public function tableSection($tableSection = [])
+    {
+        if (!empty($tableSection)) {
+            foreach ($tableSection as $fieldName => $fieldValues) {
+                if ($fieldName == 'allow_reminders') {
+                    $field = Inflector::camelize($fieldName);
+                    $property = sprintf('_table%sField', $field);
+
+                    if (property_exists($this, $property)) {
+                        if (is_array($this->{$property})) {
+                            $this->{$property} = explode(',', $fieldValues);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * getTableAllowRemindersField
+     * @return array
+     */
+    public function getTableAllowRemindersField()
+    {
+        return $this->_tableAllowRemindersField;
     }
 
     /**

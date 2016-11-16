@@ -170,7 +170,7 @@ class FooTableTest extends TestCase
     public function reminderProvider()
     {
         return [
-            ['reminder_date']
+            [['name' => 'reminder_date', 'type' => 'reminder','required' => null, 'non-searchable' => null, 'unique' => null]]
         ];
     }
 

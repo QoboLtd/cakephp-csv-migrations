@@ -123,6 +123,13 @@ class MigrationTraitTest extends PHPUnit_Framework_TestCase
                         'non-searchable' => '',
                         'unique' => false
                     ],
+                    'reminder_date' => [
+                        'name' => 'reminder_date',
+                        'type' => 'reminder',
+                        'required' => '',
+                        'non-searchable' => '',
+                        'unique' => false
+                    ],
                     'created' => [
                         'name' => 'created',
                         'type' => 'datetime',

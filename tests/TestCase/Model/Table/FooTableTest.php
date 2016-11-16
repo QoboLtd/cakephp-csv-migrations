@@ -144,6 +144,16 @@ class FooTableTest extends TestCase
         $this->assertSame($this->FooTable->getSearchableFieldProperties($fields), $expected);
     }
 
+    /**
+     * @dataProvider reminderProvider
+     */
+    public function testGetReminderFields($expected)
+    {
+        $fields = $this->FooTable->getReminderFields();
+        $this->assertSame($expected, $fields, "reminderFields are not matching reminderProvider");
+    }
+
+
     public function testGetSearchableFieldPropertiesEmptyFields()
     {
         $this->assertSame($this->FooTable->getSearchableFieldProperties([]), []);
@@ -155,6 +165,13 @@ class FooTableTest extends TestCase
     public function testGetFieldsDefinitions($name, $expected)
     {
         $this->assertEquals($expected, $this->FooTable->getFieldsDefinitions($name));
+    }
+
+    public function reminderProvider()
+    {
+        return [
+            ['reminder_date']
+        ];
     }
 
     public function moduleAliasProvider()
@@ -179,6 +196,7 @@ class FooTableTest extends TestCase
                     'country',
                     'cost',
                     'birthdate',
+                    'reminder_date',
                     'created',
                     'modified',
                     'garden_area',
@@ -250,6 +268,9 @@ class FooTableTest extends TestCase
                     ],
                     'birthdate' => [
                         'type' => 'date'
+                    ],
+                    'reminder_date' => [
+                        'type' => 'reminder',
                     ],
                     'created' => [
                         'type' => 'datetime'
@@ -349,6 +370,13 @@ class FooTableTest extends TestCase
                         'required' => '',
                         'non-searchable' => '',
                         'unique' => false
+                    ],
+                    'reminder_date' => [
+                        'name' => 'reminder_date',
+                        'type' => 'reminder',
+                        'required' => null,
+                        'non-searchable' => null,
+                        'unique' => null,
                     ],
                     'created' => [
                         'name' => 'created',

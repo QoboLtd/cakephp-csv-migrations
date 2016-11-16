@@ -18,7 +18,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "*",
-        "cakephp/cakephp-codesniffer": "dev-master"
+        "cakephp/cakephp-codesniffer": "dev-master",
+        "eluceo/ical": "^0.11.0"
     },
     "replace": {
         "qobo/cakephp-csv-views": "1.0.0 - 1.0.5"

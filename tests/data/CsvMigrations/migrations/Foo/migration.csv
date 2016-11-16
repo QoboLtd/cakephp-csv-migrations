@@ -9,6 +9,7 @@ city,list(cities)
 country,list(countries)
 cost,money(currencies)
 birthdate,date
+reminder_date,reminder
 created,datetime
 modified,datetime
 garden_area,metric(units_area)

@@ -144,13 +144,11 @@ class FooTableTest extends TestCase
         $this->assertSame($this->FooTable->getSearchableFieldProperties($fields), $expected);
     }
 
-    /**
-     * @dataProvider reminderProvider
-     */
-    public function testGetReminderFields($expected)
+    public function testGetReminderFields()
     {
         $fields = $this->FooTable->getReminderFields();
-        $this->assertSame($expected, $fields, "reminderFields are not matching reminderProvider");
+        $this->assertTrue(is_array($fields), "reminderFields is not an array");
+        $this->assertEquals('reminder_date', $fields[0]['name'], "Field reminder is incorrectly matched");
     }
 
 
@@ -165,13 +163,6 @@ class FooTableTest extends TestCase
     public function testGetFieldsDefinitions($name, $expected)
     {
         $this->assertEquals($expected, $this->FooTable->getFieldsDefinitions($name));
-    }
-
-    public function reminderProvider()
-    {
-        return [
-            [['name' => 'reminder_date', 'type' => 'reminder','required' => null, 'non-searchable' => null, 'unique' => null]]
-        ];
     }
 
     public function moduleAliasProvider()

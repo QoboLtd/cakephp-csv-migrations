@@ -224,9 +224,11 @@ trait ConfigurationTrait
                     $property = sprintf('_table%sField', $field);
 
                     if (property_exists($this, $property)) {
-                        if (is_array($this->{$property})) {
-                            $this->{$property} = explode(',', $fieldValues);
+                        if (!is_array($this->{$property})) {
+                            continue;
                         }
+
+                        $this->{$property} = explode(',', $fieldValues);
                     }
                 }
             }

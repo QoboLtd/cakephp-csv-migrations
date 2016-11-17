@@ -41,16 +41,28 @@ class ModelAfterSaveListener implements EventListenerInterface
         $dtz = new \DateTimeZone($timezone);
 
         $table = $event->subject();
-        $subject = sprintf("Reminder for %s", $table->alias());
-
-        if (!$entity->isNew()) {
-            $subject = sprintf("Reminder for %s was modified", $table->alias());
-        }
 
         //get attendees for the event
         if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
             $config = $table->getConfig();
             $remindersTo = $table->getTableAllowRemindersField();
+        }
+
+        /*
+         * Figure out the subject of the email
+         *
+         * This should happen AFTER the `$table->getConfig()` call,  just
+         * in case the display field of the table is changed from the
+         * configuration.
+         *
+         * Use singular of the table name and the value of the entity's display field.
+         * For example: "Call: Payment remind" or "Lead: Qobo Ltd".
+         */
+        $eventSubject = $entity->{ $table->displayField() } ?: 'reminder';
+        $emailSubject = Inflector::singularize($table->alias()) . ": " . $eventSubject;
+        // If the record is being updated, prefix the above subject with "(Updated) ".
+        if (!$entity->isNew()) {
+            $emailSubject = '(Updated) ' . $emailSubject;
         }
 
         if (empty($remindersTo)) {
@@ -74,6 +86,7 @@ class ModelAfterSaveListener implements EventListenerInterface
             $vEvent = $this->_getCalendarEvent($entity, [
                 'dtz' => $dtz,
                 'organizer' => $email,
+                'subject' => $eventSubject,
                 'attendees' => $vAttendees
             ]);
 
@@ -86,7 +99,7 @@ class ModelAfterSaveListener implements EventListenerInterface
 
             $emailer->to($email)
                 ->setHeaders([$headers])
-                ->subject($subject)
+                ->subject($emailSubject)
                 ->attachments(['event.ics' => [
                     'contentDisposition' => true,
                     'mimetype' => 'text/calendar',
@@ -190,7 +203,7 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         $vEvent->setOrganizer($vOrganizer);
         $vEvent->setUseTimezone(true);
-        $vEvent->setSummary($entity->subject);
+        $vEvent->setSummary($options['subject']);
 
         $dates = $this->_getEventTime($entity, $options['dtz']);
         $vEvent->setDtStart($dates['start']);

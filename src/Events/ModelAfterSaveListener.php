@@ -48,6 +48,25 @@ class ModelAfterSaveListener implements EventListenerInterface
             $remindersTo = $table->getTableAllowRemindersField();
         }
 
+        // Figure out which field is a reminder one
+        $reminderField = $table->getReminderFields();
+        if (empty($reminderField) || !is_array($reminderField)) {
+            return $sent;
+        }
+        $reminderField = $reminderField[0];
+        if (!is_array($reminderField) || empty($reminderField['name'])) {
+            return $sent;
+        }
+        $reminderField = $reminderField['name'];
+        // Skip sending email if reminder field is empty
+        if (empty($entity->$reminderField)) {
+            return $sent;
+        }
+
+        if (empty($remindersTo)) {
+            return $sent;
+        }
+
         /*
          * Figure out the subject of the email
          *
@@ -65,9 +84,6 @@ class ModelAfterSaveListener implements EventListenerInterface
             $emailSubject = '(Updated) ' . $emailSubject;
         }
 
-        if (empty($remindersTo)) {
-            return $sent;
-        }
 
         $emails = $this->_getAttendees($table, $entity, $remindersTo);
 
@@ -87,7 +103,8 @@ class ModelAfterSaveListener implements EventListenerInterface
                 'dtz' => $dtz,
                 'organizer' => $email,
                 'subject' => $eventSubject,
-                'attendees' => $vAttendees
+                'attendees' => $vAttendees,
+                'field' => $reminderField,
             ]);
 
             $vEvent->setAttendees($vAttendees);
@@ -205,7 +222,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         $vEvent->setUseTimezone(true);
         $vEvent->setSummary($options['subject']);
 
-        $dates = $this->_getEventTime($entity, $options['dtz']);
+        $dates = $this->_getEventTime($entity, $options);
         $vEvent->setDtStart($dates['start']);
         $vEvent->setDtEnd($dates['end']);
 
@@ -219,24 +236,27 @@ class ModelAfterSaveListener implements EventListenerInterface
      * We either use duration or any of the end fields
      * that might be used in the system.
      *
+     * @todo Check that entity fields are objects, before calling format() on them
      * @param Cake\Entity $entity passed
-     * @param DateTimeZone $dtz datetimezone object
+     * @param array $options Options
      * @return array
      */
-    protected function _getEventTime($entity, $dtz)
+    protected function _getEventTime($entity, $options)
     {
         $start = $end = null;
         $due = null;
         $durationMinutes = 0;
+        $dtz = $options['dtz'];
+        $field = $options['field'];
 
-        $start = new \DateTime($entity->start_date->format('Y-m-d H:i:s'), $dtz);
+        $start = new \DateTime($entity->$field->format('Y-m-d H:i:s'), $dtz);
 
         // calculate the duration of an event
         if (!empty($entity->duration)) {
             $durationParts = date_parse($entity->duration);
             $durationMinutes = $durationParts['hour'] * 60 + $durationParts['minute'];
 
-            $end = new Time($entity->start_date->format('Y-m-d H:i:s'));
+            $end = new Time($entity->$field->format('Y-m-d H:i:s'));
             $end->modify("+ {$durationMinutes} minutes");
         } else {
             //if no duration is present use end_date
@@ -250,6 +270,12 @@ class ModelAfterSaveListener implements EventListenerInterface
             if (!empty($due)) {
                 $end = new \DateTime($due->format('Y-m-d H:i:s'), $dtz);
             }
+        }
+
+        // If all else fails, assume 1 hour duration
+        if (empty($end)) {
+            $end = new Time($entity->$field->format('Y-m-d H:i:s'));
+            $end->modify("+ 60 minutes");
         }
 
         return compact('start', 'end');

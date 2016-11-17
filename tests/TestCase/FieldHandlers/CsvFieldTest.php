@@ -212,6 +212,7 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
             ['country', 'list', 'countries', '', '', false],
             ['cost', 'money', 'currencies', '', '', false],
             ['birthdate', 'date', '', '', '', false],
+            ['reminder_date', 'reminder', '', '', '', false],
             ['created', 'datetime', '', '', '', false],
             ['modified', 'datetime', '', '', '', false]
         ];

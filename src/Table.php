@@ -1,6 +1,10 @@
 <?php
 namespace CsvMigrations;
 
+use ArrayObject;
+use Cake\Datasource\EntityInterface;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table as BaseTable;
@@ -49,6 +53,24 @@ class Table extends BaseTable
     }
 
     /**
+     * afterSave hook
+     * @param Cake\Event $event from the parent afterSave
+     * @param EntityInterface $entity from the parent afterSave
+     * @param ArrayObject $options from the parent afterSave
+     * @return void
+     */
+    public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options)
+    {
+        $ev = new Event(
+            'CsvMigrations.Model.afterSave',
+            $this,
+            ['entity' => $entity, 'options' => $options]
+        );
+
+        EventManager::instance()->dispatch($ev);
+    }
+
+    /**
      * Get searchable fields
      *
      * @return array field names
@@ -59,6 +81,22 @@ class Table extends BaseTable
         foreach ($this->getFieldsDefinitions($this->alias()) as $field) {
             if (!$field[static::PARAM_NON_SEARCHABLE]) {
                 $result[] = $field['name'];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * getReminderTypeFields
+     * @return array $result containing reminder fieldnames
+     */
+    public function getReminderFields()
+    {
+        $result = [];
+        foreach ($this->getFieldsDefinitions($this->alias()) as $field) {
+            if ($field['type'] == 'reminder') {
+                $result[] = $field;
             }
         }
 
@@ -137,7 +175,7 @@ class Table extends BaseTable
      * @param  \Cake\ORM\Entity $entity Entity instance
      * @return \Cake\ORM\Entity
      */
-    public function setAssociatedByLookupFields(Entity $entity)
+    public function setAssociatedByLookupFields(Entity $entity, $options = [])
     {
         foreach ($this->associations() as $association) {
             $lookupFields = $association->target()->lookupFields();

@@ -144,6 +144,14 @@ class FooTableTest extends TestCase
         $this->assertSame($this->FooTable->getSearchableFieldProperties($fields), $expected);
     }
 
+    public function testGetReminderFields()
+    {
+        $fields = $this->FooTable->getReminderFields();
+        $this->assertTrue(is_array($fields), "reminderFields is not an array");
+        $this->assertEquals('reminder_date', $fields[0]['name'], "Field reminder is incorrectly matched");
+    }
+
+
     public function testGetSearchableFieldPropertiesEmptyFields()
     {
         $this->assertSame($this->FooTable->getSearchableFieldProperties([]), []);
@@ -179,6 +187,7 @@ class FooTableTest extends TestCase
                     'country',
                     'cost',
                     'birthdate',
+                    'reminder_date',
                     'created',
                     'modified',
                     'garden_area',
@@ -250,6 +259,9 @@ class FooTableTest extends TestCase
                     ],
                     'birthdate' => [
                         'type' => 'date'
+                    ],
+                    'reminder_date' => [
+                        'type' => 'reminder',
                     ],
                     'created' => [
                         'type' => 'datetime'
@@ -349,6 +361,13 @@ class FooTableTest extends TestCase
                         'required' => '',
                         'non-searchable' => '',
                         'unique' => false
+                    ],
+                    'reminder_date' => [
+                        'name' => 'reminder_date',
+                        'type' => 'reminder',
+                        'required' => null,
+                        'non-searchable' => null,
+                        'unique' => null,
                     ],
                     'created' => [
                         'name' => 'created',

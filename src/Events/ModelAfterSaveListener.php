@@ -26,7 +26,6 @@ class ModelAfterSaveListener implements EventListenerInterface
      * sendCalendarReminder method
      * Notification about the reminder is sent only
      * when the record belonds to anyone.
-     *
      * @param Cake\Event $event from the afterSave
      * @param Cake\Datasource\EntityInterface $entity from the afterSave
      * @return array|bool $sent on whether the email was sent
@@ -94,9 +93,6 @@ class ModelAfterSaveListener implements EventListenerInterface
         foreach ($emails as $email) {
             $vCalendar = new \Eluceo\iCal\Component\Calendar('//EN//');
 
-            $vTimezone = $this->_getTimezone($timezone, $dtz);
-            $vCalendar->setTimezone($vTimezone);
-
             $vAttendees = $this->_getEventAttendees($emails);
 
             $vEvent = $this->_getCalendarEvent($entity, [
@@ -105,6 +101,7 @@ class ModelAfterSaveListener implements EventListenerInterface
                 'subject' => $eventSubject,
                 'attendees' => $vAttendees,
                 'field' => $reminderField,
+                'timezone' => $timezone,
             ]);
 
             $vEvent->setAttendees($vAttendees);
@@ -219,7 +216,6 @@ class ModelAfterSaveListener implements EventListenerInterface
         $vOrganizer = new \Eluceo\iCal\Property\Event\Organizer($options['organizer'], ['MAILTO' => $options['organizer']]);
 
         $vEvent->setOrganizer($vOrganizer);
-        $vEvent->setUseTimezone(true);
         $vEvent->setSummary($options['subject']);
 
         $dates = $this->_getEventTime($entity, $options);
@@ -256,7 +252,7 @@ class ModelAfterSaveListener implements EventListenerInterface
             $durationParts = date_parse($entity->duration);
             $durationMinutes = $durationParts['hour'] * 60 + $durationParts['minute'];
 
-            $end = new Time($entity->$field->format('Y-m-d H:i:s'));
+            $end = new \DateTime($entity->$field->format('Y-m-d H:i:s'));
             $end->modify("+ {$durationMinutes} minutes");
         } else {
             //if no duration is present use end_date
@@ -274,76 +270,27 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         // If all else fails, assume 1 hour duration
         if (empty($end)) {
-            $end = new Time($entity->$field->format('Y-m-d H:i:s'));
+            $end = new \DateTime($entity->$field->format('Y-m-d H:i:s'));
             $end->modify("+ 60 minutes");
         }
 
+        // falling back to UTC in case custom timezone is used for an app.
+        if (!empty($options['timezone']) && $options['timezone'] !== 'UTC') {
+            $epoch = time();
+            $tz = new \DateTimeZone($options['timezone']);
+            $transitions = $tz->getTransitions($epoch, $epoch);
+
+            $offset = $transitions[0]['offset'];
+
+            if (!empty($start)) {
+                $start->modify("-$offset seconds");
+            }
+
+            if (!empty($end)) {
+                $end->modify("-$offset seconds");
+            }
+        }
+
         return compact('start', 'end');
-    }
-
-
-    /**
-     * _getTimezone
-     * returning vTimezone object with defined rules
-     * @param string $tz of DateTime timezone
-     * @param \DateTimeZone $dtz passed
-     * @return \Eluceo\iCal\Component\Timezone $vTimezone returned
-     */
-    protected function _getTimezone($tz, $dtz)
-    {
-        $vTimezone = new \Eluceo\iCal\Component\Timezone($tz);
-
-        $vTimezoneRuleDst = $this->_setDaylightSavingRule($dtz);
-        $vTimezoneRuleStd = $this->_setStandardTimeRule($dtz);
-
-        $vTimezone->addComponent($vTimezoneRuleDst);
-        $vTimezone->addComponent($vTimezoneRuleStd);
-
-        return $vTimezone;
-    }
-
-    /**
-     * Setting DST switch rule
-     * @param \DateTimeZone $dtz passed
-     * @return \Eluceo\iCal\Component\TimezoneRule $vTimezoneRuleDst
-     */
-    protected function _setDaylightSavingRule($dtz)
-    {
-        $vTimezoneRuleDst = new \Eluceo\iCal\Component\TimezoneRule(\Eluceo\iCal\Component\TimezoneRule::TYPE_DAYLIGHT);
-        $vTimezoneRuleDst->setTzName('CEST');
-        $vTimezoneRuleDst->setDtStart(new \DateTime('1981-03-27 02:00:00', $dtz));
-        $vTimezoneRuleDst->setTzOffsetFrom('+0100');
-        $vTimezoneRuleDst->setTzOffsetTo('+0200');
-        $dstRecurrenceRule = new \Eluceo\iCal\Property\Event\RecurrenceRule();
-        $dstRecurrenceRule->setFreq(\Eluceo\iCal\Property\Event\RecurrenceRule::FREQ_YEARLY);
-        $dstRecurrenceRule->setByMonth(3);
-        $dstRecurrenceRule->setByDay('-1SU');
-
-        $vTimezoneRuleDst->setRecurrenceRule($dstRecurrenceRule);
-
-        return $vTimezoneRuleDst;
-    }
-
-    /**
-     * _setStandardTimeRule method
-     * Setting Standard time switching
-     * @param \DateTimeZone $dtz passed from the app
-     * @return \Eluceo\iCal\Component\TimezoneRule $vTimezoneRuleStd
-     */
-    protected function _setStandardTimeRule($dtz)
-    {
-        $vTimezoneRuleStd = new \Eluceo\iCal\Component\TimezoneRule(\Eluceo\iCal\Component\TimezoneRule::TYPE_STANDARD);
-        $vTimezoneRuleStd->setTzName('CET');
-        $vTimezoneRuleStd->setDtStart(new \DateTime('1996-10-30 03:00:00', $dtz));
-        $vTimezoneRuleStd->setTzOffsetFrom('+0200');
-        $vTimezoneRuleStd->setTzOffsetTo('+0100');
-        $stdRecurrenceRule = new \Eluceo\iCal\Property\Event\RecurrenceRule();
-        $stdRecurrenceRule->setFreq(\Eluceo\iCal\Property\Event\RecurrenceRule::FREQ_YEARLY);
-        $stdRecurrenceRule->setByMonth(10);
-        $stdRecurrenceRule->setByDay('-1SU');
-
-        $vTimezoneRuleStd->setRecurrenceRule($stdRecurrenceRule);
-
-        return $vTimezoneRuleStd;
     }
 }

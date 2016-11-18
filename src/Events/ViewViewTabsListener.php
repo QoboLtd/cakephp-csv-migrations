@@ -5,6 +5,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\ORM\Association;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\MigrationTrait;
 use CsvMigrations\Panel;
@@ -29,8 +30,73 @@ class ViewViewTabsListener implements EventListenerInterface
     public function implementedEvents()
     {
         return [
-            'CsvMigrations.View.View.Tabs' => 'getViewTabs'
+            'CsvMigrations.View.View.Tabs' => 'getViewTabs',
+            'CsvMigrations.View.View.TabsList' => 'getTabsList',
+            'CsvMigrations.View.View.TabContent' => 'getTabContent',
         ];
+    }
+
+
+    public function getTabContent(Event $event, $request, $entity, $options)
+    {
+        $params = $request->params;
+        $table = $params['controller'];
+        if (!is_null($params['plugin'])) {
+            $table = $params['plugin'] . '.' . $table;
+        }
+
+        $this->_tableInstance = TableRegistry::get($table);
+
+        $config = $this->_tableInstance->getConfig();
+        return $config;
+    }
+
+
+    public function getTabsList(Event $event, $request, $entity, $options)
+    {
+        $tabs = [];
+        $params = $request->params;
+        $table = $params['controller'];
+        if (!is_null($params['plugin'])) {
+            $table = $params['plugin'] . '.' . $table;
+        }
+
+        $this->_tableInstance = TableRegistry::get($table);
+
+        $config = $this->_tableInstance->getConfig();
+        $hiddenAssociations = $this->_tableInstance->hiddenAssociations();
+
+        if (!empty($config['associationLabels'])) {
+            $labels = $this->_tableInstance->associationLabels($config['associationLabels']);
+        }
+
+        foreach ($this->_tableInstance->associations() as $association) {
+            if (in_array($association->name(), $hiddenAssociations)) {
+                continue;
+            }
+            list($namespace, $class) = namespaceSplit(get_class($association));
+
+            $tab = [
+                'label' => $association->alias(),
+                'alias' => $association->alias(),
+                'table' => $association->table(),
+                'containerId' => Inflector::underscore($association->alias()),
+                'associationName' => $association->name(),
+                'associationType' => $association->type(),
+                'associationObject' => $class,
+                'targetClass' => $association->className(),
+            ];
+
+            if (in_array($association->alias(), array_keys($labels))) {
+                $tab['label'] = $labels[$association->alias()];
+            }
+
+            if (!empty($tab['targetClass'])) {
+                array_push($tabs, $tab);
+            }
+        }
+
+        return compact('tabs');
     }
 
     /**

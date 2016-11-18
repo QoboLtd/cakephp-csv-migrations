@@ -188,6 +188,63 @@ if (empty($options['title'])) {
         <?php endif; ?>
     </div>
 </div>
+
+<?php if (empty($this->request->query['embedded'])) : ?>
+<div class="row associated_records">
+    <div class="col-xs-12">
+    New Tabs:
+    <hr/>
+    <?php
+        $event = new Event('CsvMigrations.View.View.TabsList', $this, [
+            'request' => $this->request,
+            'entity' => $options['entity'],
+            'options' => []
+        ]);
+
+        $this->eventManager()->dispatch($event);
+        $tabs = $event->result['tabs'];
+
+        debug($tabs);
+
+        if (!empty($tabs)) { ?>
+            <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
+            <?php foreach ($tabs as $k => $tab) :?>
+                <li role="presentation" class="<?= ($k == 0) ? 'active' : ''?>">
+                    <a href="#<?= $tab['containerId']?>" role="tab" data-toggle="tab"><?= $tab['label']?></a>
+                </li>
+            <?php endforeach; ?>
+            </ul>
+
+            <div class="tab-content">
+                <?php foreach($tabs as $k => $tab) :?>
+                    <div role="tabpanel" class="tab-pane <?= ($k == 0) ? 'active' : ''?>" id="<?= $tab['containerId']?>">
+                        <?php
+                            $tabContentEvent = new Event('CsvMigrations.View.View.TabContent', $this, [
+                                'request' => $this->request,
+                                'entity' => $entity,
+                                'options' => [
+                                        'tab' => $tab
+                                    ]
+                            ]);
+
+                            $this->eventManager()->dispatch($tabContentEvent);
+                            $content = $tabContentEvent->result;
+                        ?>
+
+                        <?php if ($tab['associationType'] == 'manyToMany') : ?>
+
+						<?php else : ?>
+                            b
+
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div> <!-- .tab-content -->
+        <?php } ?>
+    </div>
+</div> <!-- associated records -->
+<?php endif ;?>
+
 <?php if (empty($this->request->query['embedded'])) : ?>
     <?= $this->element('CsvMigrations.associated_records'); ?>
 <?php endif; ?>

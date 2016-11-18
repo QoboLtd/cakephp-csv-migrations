@@ -37,21 +37,6 @@ class ViewViewTabsListener implements EventListenerInterface
     }
 
 
-    public function getTabContent(Event $event, $request, $entity, $options)
-    {
-        $params = $request->params;
-        $table = $params['controller'];
-        if (!is_null($params['plugin'])) {
-            $table = $params['plugin'] . '.' . $table;
-        }
-
-        $this->_tableInstance = TableRegistry::get($table);
-
-        $config = $this->_tableInstance->getConfig();
-        return $config;
-    }
-
-
     public function getTabsList(Event $event, $request, $entity, $options)
     {
         $tabs = [];
@@ -98,6 +83,40 @@ class ViewViewTabsListener implements EventListenerInterface
 
         return compact('tabs');
     }
+
+
+    public function getTabContent(Event $event, $request, $entity, $options)
+    {
+        $content = [];
+        $params = $request->params;
+        $table = $params['controller'];
+
+        if (!is_null($params['plugin'])) {
+            $table = $params['plugin'] . '.' . $table;
+        }
+
+        $this->_tableInstance = TableRegistry::get($table);
+
+        $associationsMap = [
+            'manyToMany' => '_manyToManyAssociatedRecords',
+            'oneToMany' => '_oneToManyAssociatedRecords',
+            'manyToOne' => '_manyToOneAssociatedRecords',
+        ];
+
+        foreach ($this->_tableInstance->associations() as $association) {
+            if ($options['tab']['associationName'] == $association->name()) {
+                $type = $association->type();
+
+                if (method_exists($this, $associationsMap[$type]) && is_callable([$this, $associationsMap[$type]])) {
+                    $content = $this->{$associationsMap[$type]}($association);
+                }
+            }
+        }
+
+        return $content;
+    }
+
+
 
     /**
      * getViewViewTabs method

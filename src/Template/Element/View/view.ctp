@@ -204,8 +204,6 @@ if (empty($options['title'])) {
         $this->eventManager()->dispatch($event);
         $tabs = $event->result['tabs'];
 
-        debug($tabs);
-
         if (!empty($tabs)) { ?>
             <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
             <?php foreach ($tabs as $k => $tab) :?>
@@ -232,10 +230,69 @@ if (empty($options['title'])) {
                         ?>
 
                         <?php if ($tab['associationType'] == 'manyToMany') : ?>
+							<div class="row">
+							<div class="typeahead-container col-md-4 col-md-offset-8">
+							<?php
+								$formOptions = [
+									'url' => [
+										'plugin' => $this->request->plugin,
+										'controller' => $this->request->controller,
+										'action' => 'edit',
+										$this->request->pass[0]
+									]
+								];
 
-						<?php else : ?>
-                            b
+								echo $this->Form->create(null, $formOptions);
+								/*
+								non-embedded field
+								 */
+								$tableName = $this->request->controller;
+								if (!is_null($this->request->plugin)) {
+									$tableName = $this->request->plugin . '.' . $tableName;
+								}
 
+								$handlerOptions = [];
+								/*
+								set associated table name to be used on input field's name
+								 */
+								$handlerOptions['associated_table_name'] = $content['table_name'];
+								/*
+								set embedded modal flag
+								 */
+								$handlerOptions['embModal'] = true;
+								/*
+								set field type to 'has_many' and default parameters
+								 */
+								$handlerOptions['fieldDefinitions']['type'] = 'has_many(' . $content['class_name'] . ')';
+								$handlerOptions['fieldDefinitions']['required'] = true;
+								$handlerOptions['fieldDefinitions']['non-searchable'] = true;
+								$handlerOptions['fieldDefinitions']['unique'] = false;
+
+								/*
+								display typeahead field for associated module(s)
+								 */
+								echo $fhf->renderInput(
+									$tableName,
+									$content['foreign_key'],
+									null,
+									$handlerOptions
+								);
+
+								/*
+								set existing related records as hidden fields
+								 */
+								foreach ($content['records'] as $record) {
+									echo $this->Form->hidden($content['table_name'] . '._ids[]', [
+										'value' => $record->{$content['primary_key']}
+									]);
+								}
+
+								echo $this->Form->end();
+							?>
+							</div>
+						</div>
+                        <?php else : ?>
+                            <?php //debug($content);?>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>

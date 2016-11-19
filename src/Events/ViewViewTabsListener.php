@@ -40,6 +40,7 @@ class ViewViewTabsListener implements EventListenerInterface
     public function getTabsList(Event $event, $request, $entity, $options)
     {
         $tabs = [];
+		$labels = [];
         $params = $request->params;
         $table = $params['controller'];
         if (!is_null($params['plugin'])) {
@@ -72,8 +73,15 @@ class ViewViewTabsListener implements EventListenerInterface
                 'targetClass' => $association->className(),
             ];
 
+
             if (in_array($association->alias(), array_keys($labels))) {
                 $tab['label'] = $labels[$association->alias()];
+            } else {
+                $tab['label'] = Inflector::humanize($association->table());
+                $fieldName = str_replace($tab['label'], '', Inflector::humanize(Inflector::tableize($association->alias())));
+                if (!empty($fieldName)) {
+                    $tab['label'] .= sprintf(" (%s)", $fieldName);
+                }
             }
 
             if (!empty($tab['targetClass'])) {
@@ -107,9 +115,9 @@ class ViewViewTabsListener implements EventListenerInterface
             if ($options['tab']['associationName'] == $association->name()) {
                 $type = $association->type();
 
-                if (method_exists($this, $associationsMap[$type]) && is_callable([$this, $associationsMap[$type]])) {
+				if (in_array($type, array_keys($associationsMap))) {
                     $content = $this->{$associationsMap[$type]}($association);
-                }
+				}
             }
         }
 

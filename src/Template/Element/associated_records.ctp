@@ -210,7 +210,10 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
 /*
 Fetch embedded module(s) using CakePHP's requestAction() method
  */
+
+//debug($embFields);
 if (!empty($embFields)) :
+    /*
     foreach ($embFields as $embField) :
         $embFieldName = substr($embField, strrpos($embField, '.') + 1);
         list($embPlugin, $embController) = pluginSplit(
@@ -244,7 +247,8 @@ if (!empty($embFields)) :
             </div>
         </div>
     </div>
-    <?php endforeach; ?>
+    <?php endforeach;
+    */?>
 <?php
 /**
  * @todo  Load when needed.

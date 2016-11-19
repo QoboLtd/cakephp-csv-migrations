@@ -45,7 +45,13 @@ if (!empty($this->request->query['embedded'])) {
     }
     $formOptions['data-display_field'] = TableRegistry::get($embControllerName)->displayField();
     $formOptions['class'] = 'embeddedForm';
-    $formOptions['data-modal_id'] = $this->request->query['foreign_key'] . '_modal';
+
+    if (!empty($this->request->query['modal_id'])) {
+        $formOptions['data-modal_id'] = $this->request->query['modal_id'];
+    } else {
+        $formOptions['data-modal_id'] = $this->request->query['foreign_key'] . '_modal';
+    }
+
     $formOptions['data-field_id'] = $this->request->query['foreign_key'] . '_label';
     $parts = explode('.', $this->request->query['embedded']);
     $first = array_shift($parts);

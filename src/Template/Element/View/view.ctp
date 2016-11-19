@@ -243,11 +243,15 @@ if (empty($options['title'])) {
             </div> <!-- .tab-content -->
         <?php } ?>
     </div>
+    <?php
+        //loading common setup for typeahead/panel/etc libs for tabs
+        echo $this->element('CsvMigrations.common_js_libs');
+    ?>
 </div> <!-- associated records -->
 <?php endif ;?>
 
 <?php if (empty($this->request->query['embedded'])) : ?>
-    <?= $this->element('CsvMigrations.associated_records'); ?>
+    <?php // echo $this->element('CsvMigrations.associated_records'); ?>
 <?php endif; ?>
 
 <?php

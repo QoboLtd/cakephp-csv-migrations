@@ -164,5 +164,5 @@ if($data['tab']['associationType'] == 'manyToMany') : ?>
 <?php endif; ?>
 <?php
     // loading panels/embedded/typeahead JS modules
-    echo $this->element('CsvMigrations.common_js_libs');
+   //echo $this->element('CsvMigrations.common_js_libs');
 ?>

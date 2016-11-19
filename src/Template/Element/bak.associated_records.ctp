@@ -3,33 +3,26 @@ use Cake\Event\Event;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
-$fhf = new FieldHandlerFactory($this);
+$fhf = new FieldHandlerFactory();
 
 $panels = [];
-if (!empty($csvAssociatedRecords['oneToMany'])) {
-    foreach ($csvAssociatedRecords['oneToMany'] as $tabName => $assocData) {
-        if (0 === $assocData['records']->count()) {
-            unset($csvAssociatedRecords['oneToMany'][$tabName]);
-        } else {
-            $panels[$tabName] = $csvAssociatedRecords['oneToMany'][$tabName];
+
+// used for modal forms to draf "plus" icon
+$embFields = [];
+
+foreach(['oneToMany', 'manyToMany'] as $relation) {
+    if (!empty($csvAssociatedRecords[$relation])) {
+
+        foreach ($csvAssociatedRecords[$relation] as $tabName => $assocData) {
+            if( $relation === 'oneToMany') {
+                $embFields[] = $assocData['class_name'] . '.' . $assocData['foreign_key'];
+                $panels[$tabName] = $csvAssociatedRecords[$relation][$tabName];
+            }
         }
     }
 }
-/*
-list of embedded fields to generate modals from
- */
-$embFields = [];
-if (!empty($csvAssociatedRecords['manyToMany'])) {
-    foreach ($csvAssociatedRecords['manyToMany'] as $tabName => $assocData) {
-        /*
-        add to embedded fields
-         */
-        $embFields[] = $assocData['class_name'] . '.' . $assocData['foreign_key'];
-        $panels[$tabName] = $csvAssociatedRecords['manyToMany'][$tabName];
-    }
-}
-?>
-<?php if (!empty($panels)) : ?>
+pr($embFields);
+if (!empty($panels)) : ?>
 <div class="row associated_records">
     <div class="col-xs-12">
         <hr />
@@ -93,7 +86,7 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                     if (!is_null($this->request->plugin)) {
                         $tableName = $this->request->plugin . '.' . $tableName;
                     }
-
+                    pr($tableName);
                     $handlerOptions = [];
                     /*
                     set associated table name to be used on input field's name
@@ -134,9 +127,24 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                 ?>
                 </div>
             </div>
-            <?php endif; ?>
+            <?php
+                endif;
 
-            <?php if (!empty($assocData['records'])) : ?>
+                // @NOTE: based on different associations,
+                // we might deal with arrays and ResultSet objects
+
+                $emptyRecords = false;
+
+                if (is_array($assocData['records'])) {
+                    $emptyRecords = empty($assocData['records']) ? true : false;
+                }
+
+                if ($assocData['records'] instanceof \Cake\ORM\ResultSet) {
+                    $emptyRecords = (0 === $assocData['records']->count()) ? true : false;
+                }
+
+                if (!$emptyRecords) :
+            ?>
                 <div class=" table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -164,7 +172,22 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                                         $renderOptions
                                     );
 
-                                    echo !empty($value) ? $value : '&nbsp;';
+                                    if ($assocData['display_field'] === $assocField) {
+                                        list($assocPlugin, $assocModel) = pluginSplit($assocData['class_name']);
+                                        // Not doing any escaping as it messes up display of
+                                        // things like email fields with the mailto: link.
+                                        echo $this->Html->link(
+                                            $value, [
+                                                'plugin' => $assocPlugin,
+                                                'controller' => $assocModel,
+                                                'action' => 'view',
+                                                $record->$assocData['primary_key']
+                                            ],
+                                            ['escape' => false]
+                                        );
+                                    } else {
+                                        echo !empty($value) ? $value : '&nbsp;';
+                                    }
                                 ?>
                                 </td>
                             <?php endforeach; ?>
@@ -174,12 +197,8 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
                                     'request' => $this->request,
                                     'options' => [
                                         'entity' => $entity,
-                                        'associated' => [
-                                            'entity' => $record,
-                                            'name' => $assocData['assoc_name'],
-                                            'className' => $assocData['class_name'],
-                                            'displayField' => $assocData['display_field']
-                                        ]
+                                        'assoc_entity' => $record,
+                                        'assoc_name' => $assocData['assoc_name']
                                     ]
                                 ]);
                                 $this->eventManager()->dispatch($event);
@@ -210,10 +229,7 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
 /*
 Fetch embedded module(s) using CakePHP's requestAction() method
  */
-
-//debug($embFields);
 if (!empty($embFields)) :
-    /*
     foreach ($embFields as $embField) :
         $embFieldName = substr($embField, strrpos($embField, '.') + 1);
         list($embPlugin, $embController) = pluginSplit(
@@ -247,15 +263,14 @@ if (!empty($embFields)) :
             </div>
         </div>
     </div>
-    <?php endforeach;
-    */?>
+    <?php endforeach; ?>
 <?php
 /**
  * @todo  Load when needed.
  * - When there is file input
  * - load these files only if foreign/related field exists
  */
-//echo $this->element('CsvMigrations.common_js_libs');
+echo $this->element('CsvMigrations.common_js_libs');
 ?>
 <?php endif; ?>
 

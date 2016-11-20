@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\View\Cell;
 
+use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
 use Cake\View\Cell;
 
@@ -30,11 +31,15 @@ class TabContentCell extends Cell
         // thus we abstract to length of records
         if ($data['content']['records'] instanceof ResultSet) {
             $data['content']['length'] = $data['content']['records']->count();
-
             //@TODO: make sure casting toArray() won't break existing functionality
             $data['content']['records'] = $data['content']['records']->toArray();
 
-        } elseif (is_array($data['content']['records'])) {
+        //NOTE: in case of ManyToOne we have Cake\ORM\Entity instead of ResultSet
+        } elseif ($data['content']['records'] instanceof Entity) {
+            $tmp[] = $data['content']['records'];
+            $data['content']['records'] = $tmp;
+            $data['content']['length'] = count($data['content']['records']);
+        } elseif (is_array($data['content'])) {
             $data['content']['length'] = count($data['content']['records']);
         }
 

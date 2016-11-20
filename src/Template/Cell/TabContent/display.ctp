@@ -117,7 +117,6 @@ if($data['tab']['associationType'] == 'manyToMany') : ?>
     </div> <!-- modal-dialog -->
 </div> <!-- modal window -->
 <?php endif; ?>
-
 <?php if ($content['length']) : ?>
 <div class="table-responsive">
     <table class="table table-hover">

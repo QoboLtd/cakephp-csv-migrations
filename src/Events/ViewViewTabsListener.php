@@ -36,11 +36,20 @@ class ViewViewTabsListener implements EventListenerInterface
         ];
     }
 
-
+    /**
+     * getTabsList method
+     * Return the list of associations for the Entity
+     * as the tabs
+     * @param Cake\Event $event passed
+     * @param Cake\Request $request from the view
+     * @param Cake\ORM\Entity $entity passed
+     * @param array $options extra setup
+     * @return array $tabs list with its labels and classes
+     */
     public function getTabsList(Event $event, $request, $entity, $options)
     {
         $tabs = [];
-		$labels = [];
+        $labels = [];
         $params = $request->params;
         $table = $params['controller'];
         if (!is_null($params['plugin'])) {
@@ -60,6 +69,7 @@ class ViewViewTabsListener implements EventListenerInterface
             if (in_array($association->name(), $hiddenAssociations)) {
                 continue;
             }
+
             list($namespace, $class) = namespaceSplit(get_class($association));
 
             $tab = [
@@ -92,7 +102,14 @@ class ViewViewTabsListener implements EventListenerInterface
         return compact('tabs');
     }
 
-
+    /**
+     * getTabContent method
+     * @param Cake\Event $event passed from AppView
+     * @param Cake\Request $request from the view
+     * @param Cake\ORM\Entity $entity of the record
+     * @param array $options for extra setup
+     * @return array $content returned
+     */
     public function getTabContent(Event $event, $request, $entity, $options)
     {
         $content = [];
@@ -115,9 +132,9 @@ class ViewViewTabsListener implements EventListenerInterface
             if ($options['tab']['associationName'] == $association->name()) {
                 $type = $association->type();
 
-				if (in_array($type, array_keys($associationsMap))) {
+                if (in_array($type, array_keys($associationsMap))) {
                     $content = $this->{$associationsMap[$type]}($association);
-				}
+                }
             }
         }
 
@@ -278,10 +295,42 @@ class ViewViewTabsListener implements EventListenerInterface
         if (!empty($records[0][$assocPrimaryKey]) &&
             $association->exists([$assocPrimaryKey => $records[0][$assocPrimaryKey]])
         ) {
-            $result = $association->get($records[0][$assocPrimaryKey])->{$displayField};
+            //$result = $association->get($records[0][$assocPrimaryKey])->{$displayField};
+            $records = $association->get($records[0][$assocPrimaryKey]);
         } else {
-            $result = null;
+            $records = null;
         }
+
+        try {
+            $csvFields = $this->_getAssociationCsvFields($association, static::ASSOC_FIELDS_ACTION);
+        } catch (\Exception $e) {
+            $csvFields = [];
+        }
+
+        // get associated index View csv fields
+        $fields = array_unique(
+            array_merge(
+                [$association->displayField()],
+                $csvFields
+            )
+        );
+
+        // store association name
+        $result['assoc_name'] = $association->name();
+        // store associated table name
+        $result['table_name'] = $association->table();
+        // store associated table class name
+        $result['class_name'] = $association->className();
+        // store associated table display field
+        $result['display_field'] = $association->displayField();
+        // store associated table primary key
+        $result['primary_key'] = $association->primaryKey();
+        // store associated table foreign key
+        $result['foreign_key'] = Inflector::singularize($assocTableName) . '_' . $association->primaryKey();
+        // store associated table fields
+        $result['fields'] = $fields;
+        // store associated table records
+        $result['records'] = $records;
 
         return $result;
     }
@@ -346,8 +395,9 @@ class ViewViewTabsListener implements EventListenerInterface
     protected function _getAssociationCsvFields(Association $association, $action)
     {
         list($plugin, $controller) = pluginSplit($association->className());
+        $fields = $this->_getCsvFields($controller, $action);
 
-        return $this->_getCsvFields($controller, $action);
+        return $fields;
     }
 
     /**

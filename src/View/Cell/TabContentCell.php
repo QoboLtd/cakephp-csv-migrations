@@ -4,13 +4,11 @@ namespace CsvMigrations\View\Cell;
 use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
 use Cake\View\Cell;
-
 /**
  * TabContent cell
  */
 class TabContentCell extends Cell
 {
-
     /**
      * List of valid options that can be passed into this
      * cell's constructor.

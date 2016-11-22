@@ -192,7 +192,6 @@ if (empty($options['title'])) {
 <?php if (empty($this->request->query['embedded'])) : ?>
 <div class="row associated_records">
     <div class="col-xs-12">
-    New Tabs:
     <hr/>
     <?php
         $event = new Event('CsvMigrations.View.View.TabsList', $this, [
@@ -217,9 +216,27 @@ if (empty($options['title'])) {
                 <?php foreach($tabs as $k => $tab) :?>
                     <div role="tabpanel" class="tab-pane <?= ($k == 0) ? 'active' : ''?>" id="<?= $tab['containerId']?>">
                         <?php
+                            /* getting before content data if any required */
+                            $beforeTabContentEvent = new Event('CsvMigrations.View.View.TabContent.beforeContent', $this, [
+                                'data' => [],
+                            ]);
+                            $this->eventManager()->dispatch($beforeTabContentEvent);
+                            $beforeTab = $beforeTabContentEvent->result;
+
+                            if (!empty($beforeTab)) {
+                                echo $this->cell('CsvMigrations.TabContent', [
+                                    'request' => $this->request,
+                                    'content' => $beforeTab,
+                                    'tab' => $tab,
+                                    'options' => [
+                                        'order' => 'beforeContent',
+                                    ]
+                                ]);
+                            }
+
                             $tabContentEvent = new Event('CsvMigrations.View.View.TabContent', $this, [
                                 'request' => $this->request,
-                                'entity' => $entity,
+                                'entity' => $options['entity'],
                                 'options' => [
                                         'tab' => $tab
                                     ]
@@ -228,15 +245,34 @@ if (empty($options['title'])) {
                             $this->eventManager()->dispatch($tabContentEvent);
                             $content = $tabContentEvent->result;
 
-                            $contentCell = $this->cell('CsvMigrations.TabContent', [
-                                [
-                                    'request' => $this->request,
-                                    'content' => $content,
-                                    'tab' => $tab,
-                                ]
-                            ]);
+                            if (!empty($content)) {
+                                echo $this->cell('CsvMigrations.TabContent', [
+                                    [
+                                        'request' => $this->request,
+                                        'content' => $content,
+                                        'tab' => $tab,
+                                        'options' => [],
+                                    ]
+                                ]);
+                            }
 
-                            echo $contentCell;
+                            /* getting after content data if any */
+                            $afterTabContentEvent = new Event('CsvMigrations.View.View.TabContent.afterContent', $this, [
+                                'data' => [],
+                            ]);
+                            $this->eventManager()->dispatch($afterTabContentEvent);
+                            $afterContent = $afterTabContentEvent->result;
+
+                            if (!empty($afterContent)) {
+                                 echo $this->cell('CsvMigrations.TabContent', [
+                                    'request' => $this->request,
+                                    'content' => $beforeTab,
+                                    'tab' => $tab,
+                                    'options' => [
+                                        'order' => 'afterContent',
+                                    ]
+                                ]);
+                            }
                         ?>
                     </div>
                 <?php endforeach; ?>

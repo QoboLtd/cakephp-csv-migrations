@@ -380,7 +380,7 @@ class ViewMenuListener implements EventListenerInterface
             'plugin' => $assocPlugin,
             'controller' => $assocController,
             'action' => 'delete',
-            $options['associated']['entity']->id
+            $options['associated']['entity']->id,
         ];
 
         $btnDel = ' ' . $appView->Form->postLink(
@@ -396,20 +396,6 @@ class ViewMenuListener implements EventListenerInterface
             ]
         );
 
-        $urlUnlink = [
-            'plugin' => $request->plugin,
-            'controller' => $request->controller,
-            'action' => 'unlink',
-            $options['entity']->id,
-            $options['associated']['name'],
-            $options['associated']['entity']->id
-        ];
-        $btnUnlink = ' ' . $appView->Form->postLink(
-            '',
-            $urlUnlink,
-            ['title' => __('Unlink'), 'class' => 'btn btn-default fa fa-chain-broken']
-        );
-
         $menu = [
             [
                 'label' => $btnView,
@@ -423,11 +409,26 @@ class ViewMenuListener implements EventListenerInterface
                 'label' => $btnDel,
                 'url' => $urlDel
             ],
-            [
-                'label' => $btnUnlink,
-                'url' => $urlUnlink
-            ]
         ];
+
+
+        if (isset($options['associated']['type']) && in_array($options['associated']['type'], ['manyToMany'])) {
+            $urlUnlink = [
+                'plugin' => $request->plugin,
+                'controller' => $request->controller,
+                'action' => 'unlink',
+                $options['entity']->id,
+                $options['associated']['name'],
+                $options['associated']['entity']->id
+            ];
+            $btnUnlink = ' ' . $appView->Form->postLink(
+                '',
+                $urlUnlink,
+                ['title' => __('Unlink'), 'class' => 'btn btn-default fa fa-chain-broken']
+            );
+
+            $menu[] = ['label' => $btnUnlink, 'url' => $urlUnlink];
+        }
 
         if ($appView->elementExists(static::MENU_ELEMENT)) {
             $result = $appView->element(static::MENU_ELEMENT, ['menu' => $menu, 'renderAs' => 'provided']);

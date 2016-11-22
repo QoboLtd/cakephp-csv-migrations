@@ -6,7 +6,6 @@ use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 $fhf = new FieldHandlerFactory($this);
 
 $content = $data['content'];
-
 /*
 Loading Linking Element (typeahead, link, plus components)
 only for many-to-many relationship, as for others
@@ -149,7 +148,26 @@ if($data['tab']['associationType'] == 'manyToMany') : ?>
                 </td>
                 <?php endforeach; ?>
                 <td class="actions">
-
+                <?php
+                    // get action buttons if any allowed
+                    $event = new Event('View.Associated.Menu.Actions', $this, [
+                        'request' => $this->request,
+                        'options' => [
+                            'entity' => $record,
+                            'associated' => [
+                                'entity' => $record,
+                                'name' => $content['assoc_name'],
+                                'className' => $content['class_name'],
+                                'displayField' => $content['display_field'],
+                                'type' => $data['tab']['associationType'],
+                            ]
+                        ]
+                    ]);
+                    $this->eventManager()->dispatch($event);
+                    if (!empty($event->result)) {
+                        echo $event->result;
+                    }
+                ?>
                 </td>
             </tr>
             <?php endforeach; ?>
@@ -160,8 +178,4 @@ if($data['tab']['associationType'] == 'manyToMany') : ?>
     <div class="well">
         <div class="row text-center"><?= __('No records found') ?></div>
     </div>
-<?php endif; ?>
-<?php
-    // loading panels/embedded/typeahead JS modules
-   //echo $this->element('CsvMigrations.common_js_libs');
-?>
+<?php endif; /* if content.length */ ?>

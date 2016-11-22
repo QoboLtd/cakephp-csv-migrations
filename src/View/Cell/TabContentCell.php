@@ -4,6 +4,7 @@ namespace CsvMigrations\View\Cell;
 use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
 use Cake\View\Cell;
+
 /**
  * TabContent cell
  */
@@ -25,6 +26,10 @@ class TabContentCell extends Cell
      */
     public function display(array $data)
     {
+        // @TODO: trigger template change for the
+        // before/after Content events.
+        $this->template = 'display';
+
         // we might work with ResultSet of Array of records,
         // thus we abstract to length of records
         if ($data['content']['records'] instanceof ResultSet) {

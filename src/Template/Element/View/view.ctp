@@ -286,10 +286,6 @@ if (empty($options['title'])) {
 </div> <!-- associated records -->
 <?php endif ;?>
 
-<?php if (empty($this->request->query['embedded'])) : ?>
-    <?php // echo $this->element('CsvMigrations.associated_records'); ?>
-<?php endif; ?>
-
 <?php
     // Event dispatcher for bottom section
     $event = new Event('View.View.Body.Bottom', $this, ['request' => $this->request, 'options' => $options]);

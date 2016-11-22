@@ -173,7 +173,6 @@ class AppController extends BaseController
                                 ->where([$associationKey => $id]);
                         $query->execute();
                     }
-
                 } else {
                     $assocName = $association->name();
                     $associationKey = $association->primaryKey();

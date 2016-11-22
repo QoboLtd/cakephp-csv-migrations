@@ -213,7 +213,6 @@ Fetch embedded module(s) using CakePHP's requestAction() method
 
 //debug($embFields);
 if (!empty($embFields)) :
-    /*
     foreach ($embFields as $embField) :
         $embFieldName = substr($embField, strrpos($embField, '.') + 1);
         list($embPlugin, $embController) = pluginSplit(
@@ -247,15 +246,14 @@ if (!empty($embFields)) :
             </div>
         </div>
     </div>
-    <?php endforeach;
-    */?>
+    <?php endforeach; ?>
 <?php
 /**
  * @todo  Load when needed.
  * - When there is file input
  * - load these files only if foreign/related field exists
  */
-//echo $this->element('CsvMigrations.common_js_libs');
+echo $this->element('CsvMigrations.common_js_libs');
 ?>
 <?php endif; ?>
 

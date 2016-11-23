@@ -80,7 +80,6 @@ class HasManyFieldHandler extends RelatedFieldHandler
             $dataTarget = sprintf("#%s_modal", (empty($options['emDataTarget']) ? $field : $options['emDataTarget']));
 
             $input .= '<button type="button" class="btn btn-default" data-toggle="modal" data-target="' . $dataTarget . '">';
-
             $input .= '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>';
             $input .= '</button>';
             $input .= '</div>';

@@ -12,7 +12,7 @@ Loading Linking Element (typeahead, link, plus components)
 only for many-to-many relationship, as for others
 we don't do the linkage - they would have hidden ID by default
 */
-if($data['tab']['associationType'] == 'manyToMany') : ?>
+if (in_array($data['tab']['associationType'], ['manyToMany','oneToMany'])) : ?>
 
 <div class="row">
     <div class="typeahead-container col-md-4 col-md-offset-8">
@@ -58,6 +58,7 @@ if($data['tab']['associationType'] == 'manyToMany') : ?>
          */
         $handlerOptions['embModal'] = true;
         $handlerOptions['emDataTarget'] = $emDataTarget;
+        $handlerOptions['emAssociationType'] = $data['tab']['associationType'];
         /*
         set field type to 'has_many' and default parameters
          */

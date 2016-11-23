@@ -12,6 +12,13 @@ use RuntimeException;
 trait MigrationTrait
 {
     /**
+     * Field definitions for current csv module.
+     *
+     * @var array
+     */
+    protected $_fieldDefinitions = [];
+
+    /**
      * Associated fields identifiers
      *
      * @var array
@@ -26,7 +33,9 @@ trait MigrationTrait
      */
     public function getFieldsDefinitions($moduleName = null)
     {
-        $result = [];
+        if (!empty($this->_fieldDefinitions)) {
+            return $this->_fieldDefinitions;
+        }
 
         if (is_null($moduleName)) {
             if (is_callable([$this, 'alias'])) {
@@ -44,10 +53,10 @@ trait MigrationTrait
         // now.
         if (is_readable($path)) {
             $parser = new MigrationParser();
-            $result = $parser->wrapFromPath($path);
+            $this->_fieldDefinitions = $parser->wrapFromPath($path);
         }
 
-        return $result;
+        return $this->_fieldDefinitions;
     }
 
     /**

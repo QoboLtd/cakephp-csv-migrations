@@ -1,4 +1,5 @@
 <?php
+use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Utility\Inflector;
 use Cake\ORM\TableRegistry;
@@ -203,6 +204,9 @@ if (empty($options['title'])) {
         $this->eventManager()->dispatch($event);
         $tabs = $event->result['tabs'];
 
+        echo $this->Html->css('CsvMigrations.datatables.min', ['block' => 'cssBottom']);
+        echo $this->Html->script('CsvMigrations.datatables.min', ['block' => 'scriptBottom']);
+
         if (!empty($tabs)) { ?>
             <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
             <?php foreach ($tabs as $k => $tab) :?>
@@ -254,6 +258,14 @@ if (empty($options['title'])) {
                                         'options' => [],
                                     ]
                                 ]);
+
+                                echo $this->Html->scriptBlock(
+                                    '$(\'.' . $tab['containerId']. '\').DataTable({
+                                        "paging":false,
+                                        "searching": false
+                                    });',
+                                    ['block' => 'scriptBottom']
+                                );
                             }
 
                             /* getting after content data if any */

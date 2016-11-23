@@ -1,4 +1,5 @@
 <?php
+use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
@@ -118,7 +119,7 @@ if($data['tab']['associationType'] == 'manyToMany') : ?>
 <?php endif; ?>
 <?php if ($content['length']) : ?>
 <div class="table-responsive">
-    <table class="table table-hover">
+    <table class="table table-hover <?= $data['tab']['containerId']?>">
         <thead>
             <tr>
                 <?php foreach ($content['fields'] as $field) :?>

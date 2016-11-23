@@ -164,7 +164,10 @@ class FieldHandlerFactory
     protected function _getExtraOptions($tableInstance, $field, array $options = [])
     {
         // get fields definitions
-        $fieldsDefinitions = $tableInstance->getFieldsDefinitions($tableInstance->alias());
+        // if the field is csv-based
+        if (is_callable([$tableInstance, 'getFieldsDefinitions']) && method_exists($tableInstance, 'getFieldsDefinitions')) {
+            $fieldsDefinitions = $tableInstance->getFieldsDefinitions($tableInstance->alias());
+        }
 
         /*
          * @todo make this better, probably define defaults (scenario virtual fields)

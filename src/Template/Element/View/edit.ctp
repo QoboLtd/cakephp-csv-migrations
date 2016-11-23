@@ -39,7 +39,13 @@ $formOptions = [
 ];
 if (!empty($this->request->query['embedded'])) {
     $formOptions['class'] = 'embeddedForm';
-    $formOptions['data-modal_id'] = $this->request->query['foreign_key'] . '_modal';
+
+	if (!empty($this->request->query['modal_id'])) {
+        $formOptions['data-modal_id'] = $this->request->query['modal_id'];
+    } else {
+        $formOptions['data-modal_id'] = $this->request->query['foreign_key'] . '_modal';
+    }
+
     $formOptions['data-field_name'] = $this->request->query['foreign_key'] . '_label';
     $parts = explode('.', $this->request->query['embedded']);
     $first = array_shift($parts);

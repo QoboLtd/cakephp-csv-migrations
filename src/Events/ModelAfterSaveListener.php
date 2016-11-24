@@ -30,7 +30,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      * @param Cake\Datasource\EntityInterface $entity from the afterSave
      * @return array|bool $sent on whether the email was sent
      */
-    public function sendCalendarReminder(Event $event, EntityInterface $entity, $options = [])
+    public function sendCalendarReminder(Event $event, EntityInterface $entity)
     {
         $sent = false;
         $attendees = [];

@@ -1,7 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use Cake\ORM\TableRgistry;
+use Cake\ORM\TableRegistry;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;

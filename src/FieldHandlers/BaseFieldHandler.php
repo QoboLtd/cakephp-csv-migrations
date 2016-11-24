@@ -71,6 +71,24 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * {@inheritDoc}
      */
+    public function renderSearchInput($table, $field, array $options = [])
+    {
+        $fieldType = $options['fieldDefinitions']->getType();
+
+        if (in_array($fieldType, array_keys($this->_fieldTypes))) {
+            $fieldType = $this->_fieldTypes[$fieldType];
+        }
+
+        return $this->cakeView->Form->input('{{name}}', [
+            'value' => '{{value}}',
+            'type' => $fieldType,
+            'label' => false
+        ]);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function renderValue($table, $field, $data, array $options = [])
     {
         $result = $data;

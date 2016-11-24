@@ -75,6 +75,22 @@ class FieldHandlerFactory
     }
 
     /**
+     * Method responsible for rendering field's search input.
+     *
+     * @param  mixed  $table   name or instance of the Table
+     * @param  string $field   field name
+     * @return string          field input
+     */
+    public function renderSearchInput($table, $field)
+    {
+        $table = $this->_getTableInstance($table);
+        $options = $this->_getExtraOptions($table, $field);
+        $handler = $this->_getHandler($options['fieldDefinitions']->getType());
+
+        return $handler->renderSearchInput($table, $field, $options);
+    }
+
+    /**
      * Method that renders specified field's value based on the field's type.
      *
      * @param  mixed  $table   name or instance of the Table

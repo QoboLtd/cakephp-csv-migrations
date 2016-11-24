@@ -207,6 +207,14 @@ class BaseFileFieldHandler extends RelatedFieldHandler
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function renderSearchInput($table, $field, array $options = [])
+    {
+        return false;
+    }
+
+    /**
      * Method that checks if specified image version exists.
      *
      * @param  \Cake\ORM\Entity $entity  Entity

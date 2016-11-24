@@ -24,6 +24,16 @@ interface FieldHandlerInterface
     public function renderInput($table, $field, $data = '', array $options = []);
 
     /**
+     * Method responsible for rendering field's search input.
+     *
+     * @param mixed $table Name or instance of the Table
+     * @param string $field Field name
+     * @param array $options Field options
+     * @return string
+     */
+    public function renderSearchInput($table, $field, array $options = []);
+
+    /**
      * Method responsible for rendering field's value.
      *
      * @param  mixed  $table   name or instance of the Table

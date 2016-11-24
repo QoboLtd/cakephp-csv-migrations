@@ -90,6 +90,24 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
     /**
      * {@inheritDoc}
      */
+    public function renderSearchInput($table, $field, array $options = [])
+    {
+        $result = [];
+        foreach ($this->_fields as $suffix => $fieldOptions) {
+            $options['fieldDefinitions']->setType($fieldOptions['handler']::DB_FIELD_TYPE);
+            $fieldName = $field . '_' . $suffix;
+            $handler = new $fieldOptions['handler'];
+            $result[] = $handler->renderSearchInput($table, $fieldName, $options);
+        }
+
+        $result = implode('&nbsp;', $result);
+
+        return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function fieldToDb(CsvField $csvField)
     {
         $dbFields = [];

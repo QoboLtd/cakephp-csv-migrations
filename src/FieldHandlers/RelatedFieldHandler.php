@@ -155,6 +155,42 @@ class RelatedFieldHandler extends BaseFieldHandler
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function renderSearchInput($table, $field, array $options = [])
+    {
+        $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), null);
+
+        $fieldName = $this->_getFieldName($table, $field, $options);
+
+        $input = '';
+        $input .= '<div class="input-group">';
+        $input .= '<span class="input-group-addon" title="Auto-complete"><strong>&hellip;</strong></span>';
+
+        $input .= $this->cakeView->Form->input($field, [
+            'label' => false,
+            'name' => false,
+            'id' => $field . static::LABEL_FIELD_SUFFIX,
+            'type' => 'text',
+            'data-type' => 'typeahead',
+            'escape' => false,
+            'data-id' => $this->_domId($fieldName),
+            'autocomplete' => 'off',
+            'data-url' => $this->cakeView->Url->build([
+                'prefix' => 'api',
+                'plugin' => $relatedProperties['plugin'],
+                'controller' => $relatedProperties['controller'],
+                'action' => 'lookup.json'
+            ])
+        ]);
+        $input .= '</div>';
+
+        $input .= $this->cakeView->Form->input('{{name}}', ['type' => 'hidden', '{{value}}']);
+
+        return $input;
+    }
+
+    /**
      * Method responsible for converting csv field instance to database field instance.
      *
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance

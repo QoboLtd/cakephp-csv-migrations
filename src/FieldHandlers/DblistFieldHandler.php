@@ -63,6 +63,14 @@ class DblistFieldHandler extends BaseFieldHandler
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function renderSearchInput($table, $field, array $options = [])
+    {
+        return false;
+    }
+
+    /**
      * Method responsible for converting csv field instance to database field instance.
      *
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance

@@ -84,4 +84,31 @@ class TimeFieldHandler extends BaseFieldHandler
 
         return $result;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function renderSearchInput($table, $field, array $options = [])
+    {
+        if (!isset($options['element']) && $this->cakeView->elementExists('QoboAdminPanel.datepicker')) {
+            $options['element'] = 'QoboAdminPanel.datepicker';
+        }
+
+        if (isset($options['element'])) {
+            return $this->cakeView->element($options['element'], [
+                'options' => [
+                    'fieldName' => '{{name}}',
+                    'value' => '{{value}}',
+                    'type' => static::INPUT_FIELD_TYPE,
+                    'label' => false,
+                ]
+            ]);
+        } else {
+            return $this->cakeView->Form->input('', [
+                'value' => '{{value}}',
+                'type' => static::DB_FIELD_TYPE,
+                'label' => false
+            ]);
+        }
+    }
 }

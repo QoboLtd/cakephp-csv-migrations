@@ -31,6 +31,30 @@ class Table extends BaseTable
      */
     const PARAM_NON_SEARCHABLE = 'non-searchable';
 
+    /* @var array $_currentUser to store user session */
+    protected $_currentUser;
+
+    /**
+     * setCurrentUser method
+     * @param array $user from Cake\Controller\Component\AuthComponent
+     * @return array $_currentUser
+     */
+    public function setCurrentUser($user)
+    {
+        $this->_currentUser = $user;
+
+        return $this->_currentUser;
+    }
+
+    /**
+     * getCurrentUser method
+     * @return array $_currentUser property
+     */
+    public function getCurrentUser()
+    {
+        return $this->_currentUser;
+    }
+
     /**
      * Initialize method
      *

@@ -34,6 +34,7 @@ class ModelAfterSaveListener implements EventListenerInterface
     {
         $sent = false;
         $attendees = [];
+        $currentUser = null;
 
         //get applications's timezone
         $timezone = Time::now()->format('e');
@@ -69,7 +70,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         /*
          * Figure out the subject of the email
          *
-         * This should happen AFTER the `$table->getConfig()` call,  just
+         * This should happen AFTER the `$table->getConfig()` call,
          * in case the display field of the table is changed from the
          * configuration.
          *
@@ -78,16 +79,25 @@ class ModelAfterSaveListener implements EventListenerInterface
          */
         $eventSubject = $entity->{ $table->displayField() } ?: 'reminder';
         $emailSubject = Inflector::singularize($table->alias()) . ": " . $eventSubject;
+        $emailContent = Inflector::singularize($table->alias()) . " information was ";
         // If the record is being updated, prefix the above subject with "(Updated) ".
         if (!$entity->isNew()) {
             $emailSubject = '(Updated) ' . $emailSubject;
+            $emailContent .= "updated";
+        } else {
+            $emailContent .= "created";
         }
-
 
         $emails = $this->_getAttendees($table, $entity, $remindersTo);
 
         if (empty($emails)) {
             return $sent;
+        }
+
+
+        if (method_exists($table, 'getCurrentUser') && is_callable([$table, 'getCurrentUser'])) {
+            $currentUser = $table->getCurrentUser();
+            $emailContent .= " by " . $currentUser['email'];
         }
 
         foreach ($emails as $email) {
@@ -119,7 +129,7 @@ class ModelAfterSaveListener implements EventListenerInterface
                     'mimetype' => 'text/calendar',
                     'data' => $vCalendar->render()
                 ]]);
-            $sent = $emailer->send();
+            $sent = $emailer->send($emailContent);
         }
 
         return $sent;
@@ -218,10 +228,18 @@ class ModelAfterSaveListener implements EventListenerInterface
         $vEvent->setOrganizer($vOrganizer);
         $vEvent->setSummary($options['subject']);
 
+        if ($entity->description) {
+            $vEvent->setDescription($entity->description);
+        }
+
         $dates = $this->_getEventTime($entity, $options);
         $vEvent->setDtStart($dates['start']);
         $vEvent->setDtEnd($dates['end']);
 
+
+        if ($entity->location) {
+            $vEvent->setLocation($entity->location, "Location:");
+        }
 
         return $vEvent;
     }

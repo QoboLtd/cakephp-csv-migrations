@@ -54,6 +54,14 @@ interface FieldHandlerInterface
     public function getSearchOperators($table, $type);
 
     /**
+     * Method that returns search field label.
+     *
+     * @param string $field Field name
+     * @return string
+     */
+    public function getSearchLabel($field);
+
+    /**
      * Method responsible for converting csv field instance to database field instance.
      *
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance

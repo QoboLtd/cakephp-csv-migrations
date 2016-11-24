@@ -2,6 +2,7 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
@@ -176,6 +177,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         }
 
         return $this->_searchOperators[$type];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSearchLabel($field)
+    {
+        return Inflector::humanize($field);
     }
 
     /**

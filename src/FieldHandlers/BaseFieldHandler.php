@@ -16,9 +16,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     const DB_FIELD_TYPE = 'string';
 
     /**
-     * CsvMigrations View instance.
+     * View instance.
      *
-     * @var \CsvMigrations\View\AppView
+     * @var \Cake\View\View
      */
     public $cakeView;
 

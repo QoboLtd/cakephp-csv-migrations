@@ -40,9 +40,9 @@ class FieldHandlerFactory
     protected $_tableInstances = [];
 
     /**
-     * CsvMigrations View instance.
+     * View instance.
      *
-     * @var \CsvMigrations\View\AppView
+     * @var \Cake\View\View
      */
     public $cakeView = null;
 

@@ -91,6 +91,23 @@ class FieldHandlerFactory
     }
 
     /**
+     * Method that returns field search operators based on field type.
+     *
+     * @param mixed $table Name or instance of the Table
+     * @param string $field Field name
+     * @return array
+     */
+    public function getSearchOperators($table, $field)
+    {
+        $table = $this->_getTableInstance($table);
+        $options = $this->_getExtraOptions($table, $field);
+        $type = $options['fieldDefinitions']->getType();
+        $handler = $this->_getHandler($type);
+
+        return $handler->getSearchOperators($table, $type);
+    }
+
+    /**
      * Method that renders specified field's value based on the field's type.
      *
      * @param  mixed  $table   name or instance of the Table

@@ -39,6 +39,59 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     ];
 
     /**
+     * Per type search operators.
+     *
+     * @var array
+     */
+    protected $_searchOperators = [
+        'uuid' => ['is' => 'Is'],
+        'related' => ['is' => 'Is'],
+        'boolean' => ['is' => 'Is', 'is_not' => 'Is not'],
+        'list' => ['is' => 'Is', 'is_not' => 'Is not'],
+        'string' => [
+            'contains' => 'Contains',
+            'not_contains' => 'Does not contain',
+            'starts_with' => 'Starts with',
+            'ends_with' => 'Ends with'
+        ],
+        'text' => [
+            'contains' => 'Contains',
+            'not_contains' => 'Does not contain',
+            'starts_with' => 'Starts with',
+            'ends_with' => 'Ends with'
+        ],
+        'textarea' => [
+            'contains' => 'Contains',
+            'not_contains' => 'Does not contain',
+            'starts_with' => 'Starts with',
+            'ends_with' => 'Ends with'
+        ],
+        'email' => [
+            'contains' => 'Contains',
+            'not_contains' => 'Does not contain',
+            'starts_with' => 'Starts with',
+            'ends_with' => 'Ends with'
+        ],
+        'phone' => [
+            'contains' => 'Contains',
+            'not_contains' => 'Does not contain',
+            'starts_with' => 'Starts with',
+            'ends_with' => 'Ends with'
+        ],
+        'url' => [
+            'contains' => 'Contains',
+            'not_contains' => 'Does not contain',
+            'starts_with' => 'Starts with',
+            'ends_with' => 'Ends with'
+        ],
+        'integer' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'greater', 'less' => 'less'],
+        'decimal' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'greater', 'less' => 'less'],
+        'datetime' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'from', 'less' => 'to'],
+        'date' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'from', 'less' => 'to'],
+        'time' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'from', 'less' => 'to']
+    ];
+
+    /**
      * {@inheritDoc}
      */
     public function __construct($cakeView = null)
@@ -111,6 +164,18 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         );
 
         return $dbFields;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSearchOperators($table, $type)
+    {
+        if (empty($this->_searchOperators[$type])) {
+            return [];
+        }
+
+        return $this->_searchOperators[$type];
     }
 
     /**

@@ -45,6 +45,15 @@ interface FieldHandlerInterface
     public function renderValue($table, $field, $data, array $options = []);
 
     /**
+     * Method that returns field search operators based on field type.
+     *
+     * @param mixed $table Name or instance of the Table
+     * @param string $type Field type
+     * @return array
+     */
+    public function getSearchOperators($table, $type);
+
+    /**
      * Method responsible for converting csv field instance to database field instance.
      *
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance

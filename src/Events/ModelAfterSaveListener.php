@@ -119,6 +119,7 @@ class ModelAfterSaveListener implements EventListenerInterface
                     'mimetype' => 'text/calendar',
                     'data' => $vCalendar->render()
                 ]]);
+
             $sent = $emailer->send();
         }
 
@@ -218,10 +219,18 @@ class ModelAfterSaveListener implements EventListenerInterface
         $vEvent->setOrganizer($vOrganizer);
         $vEvent->setSummary($options['subject']);
 
+        if ($entity->description) {
+            $vEvent->setDescription($entity->description);
+        }
+
         $dates = $this->_getEventTime($entity, $options);
         $vEvent->setDtStart($dates['start']);
         $vEvent->setDtEnd($dates['end']);
 
+
+        if ($entity->location) {
+            $vEvent->setLocation($entity->location, "Location:");
+        }
 
         return $vEvent;
     }

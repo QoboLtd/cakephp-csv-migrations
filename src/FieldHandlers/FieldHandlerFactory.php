@@ -118,10 +118,9 @@ class FieldHandlerFactory
     {
         $table = $this->_getTableInstance($table);
         $options = $this->_getExtraOptions($table, $field);
-        $type = $options['fieldDefinitions']->getType();
-        $handler = $this->_getHandler($type);
+        $handler = $this->_getHandler($options['fieldDefinitions']->getType());
 
-        return $handler->getSearchLabel($type);
+        return $handler->getSearchLabel($options['fieldDefinitions']->getName());
     }
 
     /**

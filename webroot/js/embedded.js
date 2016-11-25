@@ -180,7 +180,7 @@ var embedded = embedded || {};
      * @return {void}
      */
     Embedded.prototype._setRelatedField = function(url, id, form) {
-        that = this;
+        var that = this;
         url = url.replace('/add', '/view/' + id + '.json');
         $.ajax({
             url: url,

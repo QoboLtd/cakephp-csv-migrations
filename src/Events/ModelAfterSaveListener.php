@@ -8,6 +8,7 @@ use Cake\Event\EventListenerInterface;
 use Cake\I18n\Time;
 use Cake\Mailer\Email;
 use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 class ModelAfterSaveListener implements EventListenerInterface
 {
@@ -77,7 +78,11 @@ class ModelAfterSaveListener implements EventListenerInterface
          * Use singular of the table name and the value of the entity's display field.
          * For example: "Call: Payment remind" or "Lead: Qobo Ltd".
          */
-        $eventSubject = $entity->{ $table->displayField() } ?: 'reminder';
+        $fhf = new FieldHandlerFactory();
+
+        $emailSubjectValue = $fhf->renderValue($table, $table->displayField(), $entity->{$table->displayField()}, [ 'renderAs' => 'plain']);
+
+        $eventSubject = $emailSubjectValue ?: 'reminder';
         $emailSubject = Inflector::singularize($table->alias()) . ": " . $eventSubject;
         $emailContent = Inflector::singularize($table->alias()) . " information was ";
         // If the record is being updated, prefix the above subject with "(Updated) ".
@@ -108,7 +113,7 @@ class ModelAfterSaveListener implements EventListenerInterface
             $vEvent = $this->_getCalendarEvent($entity, [
                 'dtz' => $dtz,
                 'organizer' => $email,
-                'subject' => $eventSubject,
+                'subject' => $emailSubject,
                 'attendees' => $vAttendees,
                 'field' => $reminderField,
                 'timezone' => $timezone,

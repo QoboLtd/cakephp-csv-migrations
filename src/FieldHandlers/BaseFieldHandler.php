@@ -68,6 +68,12 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             'starts_with' => 'Starts with',
             'ends_with' => 'Ends with'
         ],
+        'blob' => [
+            'contains' => 'Contains',
+            'not_contains' => 'Does not contain',
+            'starts_with' => 'Starts with',
+            'ends_with' => 'Ends with'
+        ],
         'email' => [
             'contains' => 'Contains',
             'not_contains' => 'Does not contain',

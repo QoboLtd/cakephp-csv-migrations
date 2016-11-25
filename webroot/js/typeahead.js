@@ -16,7 +16,7 @@ var typeahead = typeahead || {};
      * @return {void}
      */
     Typeahead.prototype.init = function() {
-        that = this;
+        var that = this;
         typeahead_id = '[data-type="typeahead"]';
 
         // loop through typeahead inputs
@@ -56,7 +56,7 @@ var typeahead = typeahead || {};
      * {@link plugin: http://plugins.upbootstrap.com/bootstrap-ajax-typeahead/}
      */
     Typeahead.prototype._enable = function(input, hidden_input) {
-        that = this;
+        var that = this;
 
         // enable typeahead
         $(input).typeahead({

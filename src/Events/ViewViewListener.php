@@ -43,6 +43,9 @@ class ViewViewListener extends BaseViewListener
         $this->_includeFiles($entity, $event);
 
         $this->_prettifyEntity($entity, $event);
+
+        $displayField = $event->subject()->{$event->subject()->name}->displayField();
+        $entity->{$displayField} = $entity->get($displayField);
     }
 
     /**

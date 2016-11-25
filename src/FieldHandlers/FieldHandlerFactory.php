@@ -108,23 +108,6 @@ class FieldHandlerFactory
     }
 
     /**
-     * Method that returns field sql operators based on field type.
-     *
-     * @param mixed $table Name or instance of the Table
-     * @param string $field field name
-     * @return array
-     */
-    public function getSqlOperators($table, $field)
-    {
-        $table = $this->_getTableInstance($table);
-        $options = $this->_getExtraOptions($table, $field);
-        $type = $options['fieldDefinitions']->getType();
-        $handler = $this->_getHandler($type);
-
-        return $handler->getSqlOperators($table, $field, $type);
-    }
-
-    /**
      * Method that returns search field label.
      *
      * @param mixed $table Name or instance of the Table

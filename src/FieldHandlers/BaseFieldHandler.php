@@ -276,23 +276,20 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function getSearchOperators($table, $field, $type)
     {
-        if (empty($this->_searchOperators[$type])) {
-            return [];
+        $result = [];
+        if (empty($this->_searchOperators[$type]) || empty($this->_sqlOperators[$type])) {
+            return $result;
         }
 
-        return $this->_searchOperators[$type];
-    }
+        foreach ($this->_searchOperators[$type] as $value => $label) {
+            if (empty($this->_sqlOperators[$type][$value])) {
+                continue;
+            }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getSqlOperators($table, $field, $searchOperator)
-    {
-        if (empty($this->_sqlOperators[$searchOperator])) {
-            return [];
+            $result[$value] = array_merge(['label' => $label], $this->_sqlOperators[$type][$value]);
         }
 
-        return $this->_sqlOperators[$searchOperator];
+        return $result;
     }
 
     /**

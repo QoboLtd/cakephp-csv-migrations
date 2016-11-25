@@ -146,26 +146,6 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function getSqlOperators($table, $field, $type)
-    {
-        $result = [];
-        foreach ($this->_fields as $suffix => $options) {
-            $fieldName = $field . '_' . $suffix;
-            $handler = new $options['handler'];
-
-            $result[$fieldName] = $handler->getSqlOperators(
-                $table,
-                $fieldName,
-                $this->_getFieldTypeByFieldHandler($handler)
-            );
-        }
-
-        return $result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getSearchLabel($field)
     {
         $result = [];

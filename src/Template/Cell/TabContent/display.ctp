@@ -12,41 +12,50 @@ Loading Linking Element (typeahead, link, plus components)
 only for many-to-many relationship, as for others
 we don't do the linkage - they would have hidden ID by default
 */
-if (in_array($data['tab']['associationType'], ['manyToMany','oneToMany'])) : ?>
+$emField = $content['class_name'] . '.' . $content['foreign_key'];
+$emFieldName = substr($emField, strrpos($emField, '.') + 1);
 
+$emDataTarget = Inflector::underscore(str_replace('.', '_', $emField));
+$emModal = sprintf("%s_modal", $emDataTarget);
+
+list($emPlugin, $emController) = pluginSplit(substr($emField, 0, strrpos($emField, '.')));
+
+$tableName = $this->request->controller;
+if (!is_null($this->request->plugin)) {
+    $tableName = $this->request->plugin . '.' . $tableName;
+}
+/*
+if (in_array($data['tab']['associationType'], ['oneToMany'])) {
+    $formOptions = [
+        'url' => [
+            'plugin' => $data['request']->plugin,
+            'controller' => $emController,
+            'action' => 'add',
+            'query' => [
+                'foreign_key' => $emFieldName,
+                'foreign_value' => $this->request->pass[0]
+            ]
+        ]
+    ];
+
+    $tableName = $emController;
+}
+*/
+if (in_array($data['tab']['associationType'], ['manyToMany'])) {
+    $formOptions = [
+        'url' => [
+            'plugin' => $this->request->plugin,
+            'controller' => $this->request->controller,
+            'action' => 'edit',
+            $this->request->pass[0]
+        ]
+    ];
+} ?>
+<?php if (in_array($data['tab']['associationType'], ['oneToMany', 'manyToMany'])) : ?>
 <div class="row">
     <div class="typeahead-container col-md-4 col-md-offset-8">
     <?php
-        // since we provide modals only for ManyToMany
-        // we'll keep this code snippet for modal windows here.
-        // @TODO: it should be globally available for any relation
-        // if the user has a right to add related record
-        // (no matter what kind of relation it is).
-        $emField = $content['class_name'] . '.' . $content['foreign_key'];
-        $emFieldName = substr($emField, strrpos($emField, '.') + 1);
-
-        $emDataTarget = Inflector::underscore(str_replace('.', '_', $emField));
-        $emModal = sprintf("%s_modal", $emDataTarget);
-
-        list($emPlugin, $emController) = pluginSplit(substr($emField, 0, strrpos($emField, '.')));
-
-        $formOptions = [
-            'url' => [
-                'plugin' => $this->request->plugin,
-                'controller' => $this->request->controller,
-                'action' => 'edit',
-                $this->request->pass[0]
-            ]
-        ];
-
         echo $this->Form->create(null, $formOptions);
-        /*
-        non-embedded field
-         */
-        $tableName = $this->request->controller;
-        if (!is_null($this->request->plugin)) {
-            $tableName = $this->request->plugin . '.' . $tableName;
-        }
 
         $handlerOptions = [];
         /*

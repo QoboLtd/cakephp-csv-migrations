@@ -170,7 +170,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * {@inheritDoc}
      */
-    public function getSearchOperators($table, $type)
+    public function getSearchOperators($table, $field, $type)
     {
         if (empty($this->_searchOperators[$type])) {
             return [];

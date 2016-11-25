@@ -1,6 +1,8 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\Core\App;
+use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\ListFieldHandler;
 
 abstract class BaseCombinedFieldHandler extends ListFieldHandler
@@ -23,7 +25,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
     protected $_fields = [];
 
     /**
-     * Constructor
+     * {@inheritDoc}
      */
     public function __construct($cakeView = null)
     {
@@ -97,10 +99,8 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
             $options['fieldDefinitions']->setType($fieldOptions['handler']::DB_FIELD_TYPE);
             $fieldName = $field . '_' . $suffix;
             $handler = new $fieldOptions['handler'];
-            $result[] = $handler->renderSearchInput($table, $fieldName, $options);
+            $result[$fieldName] = $handler->renderSearchInput($table, $fieldName, $options);
         }
-
-        $result = implode('&nbsp;', $result);
 
         return $result;
     }
@@ -123,5 +123,39 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
         }
 
         return $dbFields;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSearchOperators($table, $field, $type)
+    {
+        $result = [];
+        foreach ($this->_fields as $suffix => $options) {
+            $fieldName = $field . '_' . $suffix;
+            $handler = new $options['handler'];
+            // get field type by field handler class name
+            list(, $type) = pluginSplit(App::shortName(get_class($handler), 'FieldHandlers', 'FieldHandler'));
+            $type = Inflector::underscore($type);
+
+            $result[$fieldName] = $handler->getSearchOperators($table, $fieldName, $type);
+        }
+
+        return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSearchLabel($field)
+    {
+        $result = [];
+        foreach ($this->_fields as $suffix => $options) {
+            $fieldName = $field . '_' . $suffix;
+
+            $result[$fieldName] = parent::getSearchLabel($fieldName);
+        }
+
+        return $result;
     }
 }

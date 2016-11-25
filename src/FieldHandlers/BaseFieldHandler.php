@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\Core\App;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
@@ -88,8 +89,105 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         'integer' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'greater', 'less' => 'less'],
         'decimal' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'greater', 'less' => 'less'],
         'datetime' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'from', 'less' => 'to'],
+        'reminder' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'from', 'less' => 'to'],
         'date' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'from', 'less' => 'to'],
         'time' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'from', 'less' => 'to']
+    ];
+
+    /**
+     * Per type sql operators.
+     *
+     * @var array
+     */
+    protected $_sqlOperators = [
+        'uuid' => ['operator' => 'IN'],
+        'related' => ['operator' => 'IN'],
+        'boolean' => [
+            'is' => ['operator' => 'IS'],
+            'is_not' => ['operator' => 'IS NOT']
+        ],
+        'list' => [
+            'is' => ['operator' => 'IN'],
+            'is_not' => ['operator' => 'NOT IN']
+        ],
+        'string' => [
+            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
+            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
+            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
+            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
+        ],
+        'text' => [
+            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
+            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
+            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
+            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
+        ],
+        'textarea' => [
+            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
+            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
+            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
+            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
+        ],
+        'blob' => [
+            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
+            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
+            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
+            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
+        ],
+        'email' => [
+            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
+            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
+            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
+            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
+        ],
+        'phone' => [
+            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
+            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
+            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
+            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
+        ],
+        'url' => [
+            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
+            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
+            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
+            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
+        ],
+        'integer' => [
+            'is' => ['operator' => 'IN'],
+            'is_not' => ['operator' => 'NOT IN'],
+            'greater' => ['operator' => '>'],
+            'less' => ['operator' => '<']
+        ],
+        'decimal' => [
+            'is' => ['operator' => 'IN'],
+            'is_not' => ['operator' => 'NOT IN'],
+            'greater' => ['operator' => '>'],
+            'less' => ['operator' => '<']
+        ],
+        'datetime' => [
+            'is' => ['operator' => 'IN'],
+            'is_not' => ['operator' => 'NOT IN'],
+            'greater' => ['operator' => '>'],
+            'less' => ['operator' => '<']
+        ],
+        'reminder' => [
+            'is' => ['operator' => 'IN'],
+            'is_not' => ['operator' => 'NOT IN'],
+            'greater' => ['operator' => '>'],
+            'less' => ['operator' => '<']
+        ],
+        'date' => [
+            'is' => ['operator' => 'IN'],
+            'is_not' => ['operator' => 'NOT IN'],
+            'greater' => ['operator' => '>'],
+            'less' => ['operator' => '<']
+        ],
+        'time' => [
+            'is' => ['operator' => 'IN'],
+            'is_not' => ['operator' => 'NOT IN'],
+            'greater' => ['operator' => '>'],
+            'less' => ['operator' => '<']
+        ]
     ];
 
     /**
@@ -182,9 +280,34 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * {@inheritDoc}
      */
+    public function getSqlOperators($table, $field, $searchOperator)
+    {
+        if (empty($this->_sqlOperators[$searchOperator])) {
+            return [];
+        }
+
+        return $this->_sqlOperators[$searchOperator];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getSearchLabel($field)
     {
         return Inflector::humanize($field);
+    }
+
+    /**
+     * Get field type by field handler class name.
+     *
+     * @param object $handler Field handler instance
+     * @return string
+     */
+    protected function _getFieldTypeByFieldHandler($handler)
+    {
+        list(, $type) = pluginSplit(App::shortName(get_class($handler), 'FieldHandlers', 'FieldHandler'));
+
+        return Inflector::underscore($type);
     }
 
     /**

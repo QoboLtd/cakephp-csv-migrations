@@ -55,6 +55,16 @@ interface FieldHandlerInterface
     public function getSearchOperators($table, $field, $type);
 
     /**
+     * Method that returns field sql operators based on field type.
+     *
+     * @param mixed $table Name or instance of the Table
+     * @param string $field Field name
+     * @param string $type Field type
+     * @return array
+     */
+    public function getSqlOperators($table, $field, $type);
+
+    /**
      * Method that returns search field label.
      *
      * @param string $field Field name

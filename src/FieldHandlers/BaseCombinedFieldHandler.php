@@ -1,8 +1,6 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use Cake\Core\App;
-use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\ListFieldHandler;
 
 abstract class BaseCombinedFieldHandler extends ListFieldHandler
@@ -134,11 +132,32 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
         foreach ($this->_fields as $suffix => $options) {
             $fieldName = $field . '_' . $suffix;
             $handler = new $options['handler'];
-            // get field type by field handler class name
-            list(, $type) = pluginSplit(App::shortName(get_class($handler), 'FieldHandlers', 'FieldHandler'));
-            $type = Inflector::underscore($type);
 
-            $result[$fieldName] = $handler->getSearchOperators($table, $fieldName, $type);
+            $result[$fieldName] = $handler->getSearchOperators(
+                $table,
+                $fieldName,
+                $this->_getFieldTypeByFieldHandler($handler)
+            );
+        }
+
+        return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSqlOperators($table, $field, $type)
+    {
+        $result = [];
+        foreach ($this->_fields as $suffix => $options) {
+            $fieldName = $field . '_' . $suffix;
+            $handler = new $options['handler'];
+
+            $result[$fieldName] = $handler->getSqlOperators(
+                $table,
+                $fieldName,
+                $this->_getFieldTypeByFieldHandler($handler)
+            );
         }
 
         return $result;

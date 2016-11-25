@@ -24,59 +24,42 @@ $tableName = $this->request->controller;
 if (!is_null($this->request->plugin)) {
     $tableName = $this->request->plugin . '.' . $tableName;
 }
-/*
-if (in_array($data['tab']['associationType'], ['oneToMany'])) {
-    $formOptions = [
-        'url' => [
-            'plugin' => $data['request']->plugin,
-            'controller' => $emController,
-            'action' => 'add',
-            'query' => [
-                'foreign_key' => $emFieldName,
-                'foreign_value' => $this->request->pass[0]
-            ]
-        ]
-    ];
 
-    $tableName = $emController;
-}
-*/
-if (in_array($data['tab']['associationType'], ['manyToMany'])) {
-    $formOptions = [
-        'url' => [
-            'plugin' => $this->request->plugin,
-            'controller' => $this->request->controller,
-            'action' => 'edit',
-            $this->request->pass[0]
-        ]
-    ];
-} ?>
-<?php if (in_array($data['tab']['associationType'], ['oneToMany', 'manyToMany'])) : ?>
+$formOptions = [
+    'url' => [
+        'plugin' => $this->request->plugin,
+        'controller' => $this->request->controller,
+        'action' => 'edit',
+        $this->request->pass[0]
+    ]
+];
+
+$handlerOptions = [];
+/*
+set associated table name to be used on input field's name
+ */
+$handlerOptions['associated_table_name'] = $content['table_name'];
+/*
+set embedded modal flag
+ */
+$handlerOptions['embModal'] = true;
+$handlerOptions['emDataTarget'] = $emDataTarget;
+$handlerOptions['emAssociationType'] = $data['tab']['associationType'];
+/*
+set field type to 'has_many' and default parameters
+ */
+$handlerOptions['fieldDefinitions']['type'] = 'has_many(' . $content['class_name'] . ')';
+$handlerOptions['fieldDefinitions']['required'] = true;
+$handlerOptions['fieldDefinitions']['non-searchable'] = true;
+$handlerOptions['fieldDefinitions']['unique'] = false;
+
+?>
+<?php if (in_array($data['tab']['associationType'], ['manyToMany'])) : ?>
 <div class="row">
     <div class="typeahead-container col-md-4 col-md-offset-8">
     <?php
         echo $this->Form->create(null, $formOptions);
-
-        $handlerOptions = [];
-        /*
-        set associated table name to be used on input field's name
-         */
-        $handlerOptions['associated_table_name'] = $content['table_name'];
-        /*
-        set embedded modal flag
-         */
-        $handlerOptions['embModal'] = true;
-        $handlerOptions['emDataTarget'] = $emDataTarget;
-        $handlerOptions['emAssociationType'] = $data['tab']['associationType'];
-        /*
-        set field type to 'has_many' and default parameters
-         */
-        $handlerOptions['fieldDefinitions']['type'] = 'has_many(' . $content['class_name'] . ')';
-        $handlerOptions['fieldDefinitions']['required'] = true;
-        $handlerOptions['fieldDefinitions']['non-searchable'] = true;
-        $handlerOptions['fieldDefinitions']['unique'] = false;
-
-        /*
+           /*
         display typeahead field for associated module(s)
          */
         echo $fhf->renderInput(

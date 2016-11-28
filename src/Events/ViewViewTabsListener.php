@@ -47,7 +47,7 @@ class ViewViewTabsListener implements EventListenerInterface
      */
     public function getBeforeTabContent(Event $event, array $data)
     {
-        return null;
+        return $data;
     }
 
     /**

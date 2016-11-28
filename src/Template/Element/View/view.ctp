@@ -222,18 +222,20 @@ if (empty($options['title'])) {
                         <?php
                             /* getting before content data if any required */
                             $beforeTabContentEvent = new Event('CsvMigrations.View.View.TabContent.beforeContent', $this, [
-                                'data' => [],
+                                'data' => [
+                                    'options' => $tab,
+                                    'request' => $this->request,
+                                ],
                             ]);
                             $this->eventManager()->dispatch($beforeTabContentEvent);
                             $beforeTab = $beforeTabContentEvent->result;
 
                             if (!empty($beforeTab)) {
                                 echo $this->cell('CsvMigrations.TabContent', [
-                                    'request' => $this->request,
-                                    'content' => $beforeTab,
-                                    'tab' => $tab,
-                                    'options' => [
-                                        'order' => 'beforeContent',
+                                    [
+                                        'request' => $this->request,
+                                        'content' => $beforeTab,
+                                        'tab' => $tab,
                                     ]
                                 ]);
                             }

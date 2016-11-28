@@ -71,12 +71,10 @@ class TabContentCell extends Cell
             if ($data['content']['records'] instanceof ResultSet) {
                 $data['content']['length'] = $data['content']['records']->count();
                 $data['content']['records'] = $data['content']['records']->toArray();
-
             } elseif ($data['content']['records'] instanceof Entity) {
                 $tmp[] = $data['content']['records'];
                 $data['content']['records'] = $tmp;
                 $data['content']['length'] = count($data['content']['records']);
-
             } elseif (is_array($data['content'])) {
                 $data['content']['length'] = count($data['content']['records']);
             }

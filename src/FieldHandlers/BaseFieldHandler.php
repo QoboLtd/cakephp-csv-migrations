@@ -38,6 +38,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         'url' => 'url',
         'email' => 'email',
         'phone' => 'tel',
+        'boolean' => 'checkbox'
     ];
 
     /**

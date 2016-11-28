@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\Core\Configure;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
@@ -168,6 +169,7 @@ class RelatedFieldHandler extends BaseFieldHandler
 
         $fieldName = $this->_getFieldName($table, $field, $options);
 
+        $hiddenInputId = $this->_domId($fieldName) . '-{{id}}';
         $content = sprintf(static::HTML_SEARCH_INPUT, $this->cakeView->Form->input($field, [
             'label' => false,
             'name' => false,
@@ -175,7 +177,7 @@ class RelatedFieldHandler extends BaseFieldHandler
             'type' => 'text',
             'data-type' => 'typeahead',
             'escape' => false,
-            'data-id' => $this->_domId($fieldName),
+            'data-id' => $hiddenInputId,
             'autocomplete' => 'off',
             'data-url' => $this->cakeView->Url->build([
                 'prefix' => 'api',
@@ -185,10 +187,36 @@ class RelatedFieldHandler extends BaseFieldHandler
             ])
         ]));
 
-        $content .= $this->cakeView->Form->input('{{name}}', ['type' => 'hidden', '{{value}}']);
+        $content .= $this->cakeView->Form->input('{{name}}', [
+            'type' => 'hidden',
+            'id' => $hiddenInputId,
+            'value' => '{{value}}'
+        ]);
 
         return [
-            'content' => $content
+            'content' => $content,
+            'post' => [
+                [
+                    'type' => 'script',
+                    'content' => 'CsvMigrations.bootstrap-typeahead.min',
+                    'block' => 'scriptBottom'
+                ],
+                [
+                    'type' => 'scriptBlock',
+                    'content' => 'typeahead_options = ' . json_encode(
+                        array_merge(
+                            Configure::read('CsvMigrations.typeahead'),
+                            Configure::read('CsvMigrations.api')
+                        )
+                    ) . ';',
+                    'block' => 'scriptBottom'
+                ],
+                [
+                    'type' => 'script',
+                    'content' => 'CsvMigrations.typeahead',
+                    'block' => 'scriptBottom'
+                ]
+            ]
         ];
     }
 

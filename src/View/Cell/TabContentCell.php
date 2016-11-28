@@ -1,9 +1,9 @@
 <?php
 namespace CsvMigrations\View\Cell;
 
-use Cake\Utility\Inflector;
 use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
+use Cake\Utility\Inflector;
 use Cake\View\Cell;
 
 /**
@@ -26,6 +26,16 @@ class TabContentCell extends Cell
     protected $_displayTemplates = ['display', 'generalPanelTable'];
 
 
+    /**
+     * _getDisplayTemplate
+     * Cells operate in different ctp files.
+     * Currently, for simplicity reasons, we define
+     * the list of templates (ctp files) that we use
+     * so display() becomes a basic wrapper for TabContent.
+     * @param array $data passed from the event
+     *
+     * @return string $result containing template.
+     */
     protected function _getDisplayTemplate(array $data)
     {
         $result = 'display';

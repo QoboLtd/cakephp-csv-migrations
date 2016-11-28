@@ -237,11 +237,15 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $fieldType = $this->_fieldTypes[$fieldType];
         }
 
-        return $this->cakeView->Form->input('{{name}}', [
+        $content = $this->cakeView->Form->input('{{name}}', [
             'value' => '{{value}}',
             'type' => $fieldType,
             'label' => false
         ]);
+
+        return [
+            'content' => $content
+        ];
     }
 
     /**

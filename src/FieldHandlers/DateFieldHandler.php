@@ -95,7 +95,7 @@ class DateFieldHandler extends BaseFieldHandler
         }
 
         if (isset($options['element'])) {
-            return $this->cakeView->element($options['element'], [
+            $content = $this->cakeView->element($options['element'], [
                 'options' => [
                     'fieldName' => '{{name}}',
                     'value' => '{{value}}',
@@ -104,11 +104,15 @@ class DateFieldHandler extends BaseFieldHandler
                 ]
             ]);
         } else {
-            return $this->cakeView->Form->input('{{name}}', [
+            $content = $this->cakeView->Form->input('{{name}}', [
                 'value' => '{{value}}',
                 'type' => static::DB_FIELD_TYPE,
                 'label' => false
             ]);
         }
+
+        return [
+            'content' => $content
+        ];
     }
 }

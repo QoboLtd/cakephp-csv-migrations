@@ -67,7 +67,7 @@ class DecimalFieldHandler extends BaseFieldHandler
             $fieldType = $this->_fieldTypes[$fieldType];
         }
 
-        return $this->cakeView->Form->input('', [
+        $content = $this->cakeView->Form->input('', [
             'name' => '{{name}}',
             'value' => '{{value}}',
             'type' => $fieldType,
@@ -75,6 +75,10 @@ class DecimalFieldHandler extends BaseFieldHandler
             'max' => $this->_getNumberMax($table, $field),
             'label' => false
         ]);
+
+        return [
+            'content' => $content
+        ];
     }
 
     /**

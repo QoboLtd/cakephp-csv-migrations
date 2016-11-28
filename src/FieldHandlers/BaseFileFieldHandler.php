@@ -211,7 +211,7 @@ class BaseFileFieldHandler extends RelatedFieldHandler
      */
     public function renderSearchInput($table, $field, array $options = [])
     {
-        return false;
+        return [];
     }
 
     /**

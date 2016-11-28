@@ -29,7 +29,7 @@ interface FieldHandlerInterface
      * @param mixed $table Name or instance of the Table
      * @param string $field Field name
      * @param array $options Field options
-     * @return string
+     * @return array
      */
     public function renderSearchInput($table, $field, array $options = []);
 

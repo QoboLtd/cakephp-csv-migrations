@@ -67,7 +67,7 @@ class DblistFieldHandler extends BaseFieldHandler
      */
     public function renderSearchInput($table, $field, array $options = [])
     {
-        return false;
+        return [];
     }
 
     /**

@@ -87,7 +87,7 @@ class ListFieldHandler extends BaseFieldHandler
      */
     public function renderSearchInput($table, $field, array $options = [])
     {
-        return $this->cakeView->Form->select(
+        $content = $this->cakeView->Form->select(
             '{{name}}',
             $this->_getSelectOptions($options['fieldDefinitions']->getLimit()),
             [
@@ -95,6 +95,10 @@ class ListFieldHandler extends BaseFieldHandler
                 'label' => false
             ]
         );
+
+        return [
+            'content' => $content
+        ];
     }
 
     /**

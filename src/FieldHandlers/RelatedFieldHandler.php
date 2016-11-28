@@ -32,6 +32,11 @@ class RelatedFieldHandler extends BaseFieldHandler
      */
     const RENDER_PLAIN_VALUE = 'plain';
 
+    const HTML_SEARCH_INPUT = '
+        <div class="input-group">
+            <span class="input-group-addon" title="Auto-complete"><strong>&hellip;</strong></span>%s
+        </div>';
+
     /**
      * Method responsible for rendering field's input.
      *
@@ -163,11 +168,7 @@ class RelatedFieldHandler extends BaseFieldHandler
 
         $fieldName = $this->_getFieldName($table, $field, $options);
 
-        $input = '';
-        $input .= '<div class="input-group">';
-        $input .= '<span class="input-group-addon" title="Auto-complete"><strong>&hellip;</strong></span>';
-
-        $input .= $this->cakeView->Form->input($field, [
+        $content = sprintf(static::HTML_SEARCH_INPUT, $this->cakeView->Form->input($field, [
             'label' => false,
             'name' => false,
             'id' => $field . static::LABEL_FIELD_SUFFIX,
@@ -182,12 +183,13 @@ class RelatedFieldHandler extends BaseFieldHandler
                 'controller' => $relatedProperties['controller'],
                 'action' => 'lookup.json'
             ])
-        ]);
-        $input .= '</div>';
+        ]));
 
-        $input .= $this->cakeView->Form->input('{{name}}', ['type' => 'hidden', '{{value}}']);
+        $content .= $this->cakeView->Form->input('{{name}}', ['type' => 'hidden', '{{value}}']);
 
-        return $input;
+        return [
+            'content' => $content
+        ];
     }
 
     /**

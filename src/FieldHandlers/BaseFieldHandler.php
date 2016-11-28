@@ -47,8 +47,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * @var array
      */
     protected $_searchOperators = [
-        'uuid' => ['is' => 'Is'],
-        'related' => ['is' => 'Is'],
+        'uuid' => ['is' => 'Is', 'is_not' => 'Is not'],
+        'related' => ['is' => 'Is', 'is_not' => 'Is not'],
         'boolean' => ['is' => 'Is', 'is_not' => 'Is not'],
         'list' => ['is' => 'Is', 'is_not' => 'Is not'],
         'string' => [
@@ -107,8 +107,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * @var array
      */
     protected $_sqlOperators = [
-        'uuid' => ['operator' => 'IN'],
-        'related' => ['operator' => 'IN'],
+        'uuid' => [
+            'is' => ['operator' => 'IN'],
+            'is_not' => ['operator' => 'NOT IN']
+        ],
+        'related' => [
+            'is' => ['operator' => 'IN'],
+            'is_not' => ['operator' => 'NOT IN']
+        ],
         'boolean' => [
             'is' => ['operator' => 'IS'],
             'is_not' => ['operator' => 'IS NOT']

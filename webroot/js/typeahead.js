@@ -9,29 +9,82 @@ var typeahead = typeahead || {};
         this.min_length = options.hasOwnProperty('min_length') ? options.min_length : 1;
         this.timeout = options.hasOwnProperty('timeout') ? options.timeout : 300;
         this.api_token = options.hasOwnProperty('token') ? options.token : null;
+        this.typeahead_id = '[data-type="typeahead"]';
+
+        var that = this;
+        // loop through typeahead inputs
+        $(this.typeahead_id).each(function() {
+            that.init(this);
+        });
+
+        // call observe method
+        this._observe();
     }
 
     /**
      * Initialize method.
      * @return {void}
      */
-    Typeahead.prototype.init = function() {
+    Typeahead.prototype.init = function(element) {
         var that = this;
-        typeahead_id = '[data-type="typeahead"]';
 
-        // loop through typeahead inputs
-        $(typeahead_id).each(function() {
-            hidden_input = $('#' + $(this).data('id'));
-
-            // enable typeahead functionality
-            that._enable(this, hidden_input);
-        });
+        // enable typeahead functionality
+        this._enable(element, $('#' + $(element).data('id')));
 
         // clear inputs on double click
-        $(typeahead_id).dblclick(function() {
-            hidden_input = $('#' + $(this).data('id'));
-            that._clearInputs(this, hidden_input);
+        $(element).on('dblclick', function() {
+            that._clearInputs(this, $('#' + $(this).data('id')));
         });
+    };
+
+    /**
+     * Observe for typeahead inputs added to the DOM client side.
+     *
+     * @return {void}
+     */
+    Typeahead.prototype._observe = function() {
+        var that = this;
+
+        MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+        // observe for client side appended typeaheads
+        var observer = new MutationObserver(function(mutations, observer) {
+            // look through all mutations that just occured
+            for (var i = 0; i < mutations.length; ++i) {
+                // look through all added nodes of this mutation
+                for (var j = 0; j < mutations[i].addedNodes.length; ++j) {
+                    // look for typeahead elements
+                    var typeahead = that._getTypeahead(mutations[i].addedNodes[j]);
+                    if ($.isEmptyObject(typeahead)) {
+                        continue;
+                    }
+
+                    that.init(typeahead);
+                }
+            }
+        });
+
+        // define what element should be observed by the observer
+        // and what types of mutations trigger the callback
+        observer.observe(document, {
+            childList: true,
+            subtree: true
+        });
+    };
+
+    /**
+     * Find out if added node is a typeahead element
+     * and return it if it is, otherwise return empty object.
+     *
+     * @param  {object} node Added DOM node
+     * @return {object}
+     */
+    Typeahead.prototype._getTypeahead = function(node) {
+        var result = {};
+        $(node).find(this.typeahead_id).each(function() {
+            result = this;
+        });
+
+        return result;
     };
 
     /**

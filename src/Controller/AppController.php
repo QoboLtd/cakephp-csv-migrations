@@ -36,6 +36,13 @@ class AppController extends BaseController
         pass module alias to the View
          */
         $table = $this->loadModel();
+
+        if ($this->Auth->user()) {
+            if (method_exists($table, 'setCurrentUser')) {
+                $table->setCurrentUser($this->Auth->user());
+            }
+        }
+
         if (method_exists($table, 'moduleAlias')) {
             $alias = $table->moduleAlias();
         } else {

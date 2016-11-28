@@ -23,7 +23,7 @@ class TabContentCell extends Cell
      * List of accessible displayTemplates for TabContent
      * @var array
      */
-    protected $_displayTemplates = ['display', 'generalPanelTable'];
+    protected $_displayTemplates = ['display', 'panelTable'];
 
 
     /**
@@ -54,30 +54,29 @@ class TabContentCell extends Cell
     /**
      * Default display method.
      *
+     * Works as the wrapper for all the displayTemplate
+     * options. Data passed might contain ResultSets and arrays.
+     * In order to abstract from it, we cast it all into arrays,
+     * and add 'length' property of the content, to do fast check
+     * if content is empty or not.
+     *
+     * @param array $data passed into the cell.
      * @return void
      */
     public function display(array $data)
     {
         $this->template = $this->_getDisplayTemplate($data['content']);
 
-        // @NOTE: if there's no order identifier,
-        // we assume it's the main TabContent, and do all required
-        // data manipulations.
-        // if order variable is present, we assume that the data is
-        // prepared for being sent into the view.
         if (empty($data['content']['options']) && !isset($data['content']['options']['order'])) {
-            // we might work with ResultSet of Array of records,
-            // thus we abstract to length of records
             if ($data['content']['records'] instanceof ResultSet) {
                 $data['content']['length'] = $data['content']['records']->count();
-                //@TODO: make sure casting toArray() won't break existing functionality
                 $data['content']['records'] = $data['content']['records']->toArray();
 
-            //NOTE: in case of ManyToOne we have Cake\ORM\Entity instead of ResultSet
             } elseif ($data['content']['records'] instanceof Entity) {
                 $tmp[] = $data['content']['records'];
                 $data['content']['records'] = $tmp;
                 $data['content']['length'] = count($data['content']['records']);
+
             } elseif (is_array($data['content'])) {
                 $data['content']['length'] = count($data['content']['records']);
             }

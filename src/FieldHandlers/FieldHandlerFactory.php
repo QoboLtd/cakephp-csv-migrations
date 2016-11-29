@@ -40,9 +40,9 @@ class FieldHandlerFactory
     protected $_tableInstances = [];
 
     /**
-     * CsvMigrations View instance.
+     * View instance.
      *
-     * @var \CsvMigrations\View\AppView
+     * @var \Cake\View\View
      */
     public $cakeView = null;
 
@@ -72,6 +72,55 @@ class FieldHandlerFactory
         $handler = $this->_getHandler($options['fieldDefinitions']->getType());
 
         return $handler->renderInput($table, $field, $data, $options);
+    }
+
+    /**
+     * Method responsible for rendering field's search input.
+     *
+     * @param  mixed  $table   name or instance of the Table
+     * @param  string $field   field name
+     * @return string          field input
+     */
+    public function renderSearchInput($table, $field)
+    {
+        $table = $this->_getTableInstance($table);
+        $options = $this->_getExtraOptions($table, $field);
+        $handler = $this->_getHandler($options['fieldDefinitions']->getType());
+
+        return $handler->renderSearchInput($table, $field, $options);
+    }
+
+    /**
+     * Method that returns field search operators based on field type.
+     *
+     * @param mixed $table Name or instance of the Table
+     * @param string $field Field name
+     * @return array
+     */
+    public function getSearchOperators($table, $field)
+    {
+        $table = $this->_getTableInstance($table);
+        $options = $this->_getExtraOptions($table, $field);
+        $type = $options['fieldDefinitions']->getType();
+        $handler = $this->_getHandler($type);
+
+        return $handler->getSearchOperators($table, $field, $type);
+    }
+
+    /**
+     * Method that returns search field label.
+     *
+     * @param mixed $table Name or instance of the Table
+     * @param string $field Field name
+     * @return string
+     */
+    public function getSearchLabel($table, $field)
+    {
+        $table = $this->_getTableInstance($table);
+        $options = $this->_getExtraOptions($table, $field);
+        $handler = $this->_getHandler($options['fieldDefinitions']->getType());
+
+        return $handler->getSearchLabel($options['fieldDefinitions']->getName());
     }
 
     /**

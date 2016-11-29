@@ -59,6 +59,31 @@ class DecimalFieldHandler extends BaseFieldHandler
     /**
      * {@inheritDoc}
      */
+    public function renderSearchInput($table, $field, array $options = [])
+    {
+        $fieldType = $options['fieldDefinitions']->getType();
+
+        if (in_array($fieldType, array_keys($this->_fieldTypes))) {
+            $fieldType = $this->_fieldTypes[$fieldType];
+        }
+
+        $content = $this->cakeView->Form->input('', [
+            'name' => '{{name}}',
+            'value' => '{{value}}',
+            'type' => $fieldType,
+            'step' => 'any',
+            'max' => $this->_getNumberMax($table, $field),
+            'label' => false
+        ]);
+
+        return [
+            'content' => $content
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function fieldToDb(CsvField $csvField)
     {
         $dbFields[] = new DbField(

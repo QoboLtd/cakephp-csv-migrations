@@ -93,4 +93,12 @@ class HasManyFieldHandler extends RelatedFieldHandler
 
         return $input;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function renderSearchInput($table, $field, array $options = [])
+    {
+        return false;
+    }
 }

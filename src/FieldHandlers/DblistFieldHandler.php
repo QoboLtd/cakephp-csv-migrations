@@ -11,6 +11,16 @@ class DblistFieldHandler extends BaseFieldHandler
     const DB_FIELD_TYPE = 'string';
 
     /**
+     * Input default options
+     *
+     * @var array
+     */
+    protected $_defaultOptions = [
+        'class' => 'form-control',
+        'label' => true
+    ];
+
+    /**
      * Method responsible for rendering field's input.
      *
      * @param  mixed  $table   name or instance of the Table
@@ -31,10 +41,10 @@ class DblistFieldHandler extends BaseFieldHandler
         $list = $csvObj->getListName();
         $field = $this->_getFieldName($table, $field, $options);
         $options = [
-            'class' => 'form-control',
             'value' => $data,
             'required' => $csvObj->getRequired(),
         ];
+        $options += $this->_defaultOptions;
         $result = $this->cakeView->cell('CsvMigrations.Dblist::' . __FUNCTION__, [$field, $list, $options])->render(__FUNCTION__);
 
         return $result;
@@ -60,6 +70,25 @@ class DblistFieldHandler extends BaseFieldHandler
         $list = $csvObj->getListName();
 
         return $this->cakeView->cell('CsvMigrations.Dblist::' . __FUNCTION__, [$data, $list])->render(__FUNCTION__);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function renderSearchInput($table, $field, array $options = [])
+    {
+        $content = $this->cakeView->cell(
+            'CsvMigrations.Dblist::renderInput',
+            [
+                '{{name}}',
+                $options['fieldDefinitions']->getListName(),
+                ['label' => false] + $this->_defaultOptions
+            ]
+        )->render('renderInput');
+
+        return [
+            'content' => $content
+        ];
     }
 
     /**

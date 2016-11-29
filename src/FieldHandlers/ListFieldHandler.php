@@ -83,6 +83,24 @@ class ListFieldHandler extends BaseFieldHandler
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function renderSearchInput($table, $field, array $options = [])
+    {
+        $content = $this->cakeView->Form->select(
+            '{{name}}',
+            $this->_getSelectOptions($options['fieldDefinitions']->getLimit()),
+            [
+                'label' => false
+            ]
+        );
+
+        return [
+            'content' => $content
+        ];
+    }
+
+    /**
      * Method responsible for converting csv field instance to database field instance.
      *
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance

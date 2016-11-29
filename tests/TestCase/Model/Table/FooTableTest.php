@@ -127,34 +127,11 @@ class FooTableTest extends TestCase
         $this->assertSame('Foo', $this->FooTable->moduleAlias(null));
     }
 
-    /**
-     * @dataProvider searchableFieldsProvider
-     */
-    public function testGetSearchableFields($expected)
-    {
-        $this->assertSame($this->FooTable->getSearchableFields(), $expected);
-    }
-
-    /**
-     * @dataProvider searchableFieldPropertiesProvider
-     */
-    public function testGetSearchableFieldProperties($expected)
-    {
-        $fields = $this->FooTable->getSearchableFields();
-        $this->assertSame($this->FooTable->getSearchableFieldProperties($fields), $expected);
-    }
-
     public function testGetReminderFields()
     {
         $fields = $this->FooTable->getReminderFields();
         $this->assertTrue(is_array($fields), "reminderFields is not an array");
         $this->assertEquals('reminder_date', $fields[0]['name'], "Field reminder is incorrectly matched");
-    }
-
-
-    public function testGetSearchableFieldPropertiesEmptyFields()
-    {
-        $this->assertSame($this->FooTable->getSearchableFieldProperties([]), []);
     }
 
     /**
@@ -170,119 +147,6 @@ class FooTableTest extends TestCase
         return [
             [null, 'Foobar'],
             ['Foo', 'Foo']
-        ];
-    }
-
-    public function searchableFieldsProvider()
-    {
-        return [
-            [
-                [
-                    'id',
-                    'name',
-                    'status',
-                    'type',
-                    'gender',
-                    'city',
-                    'country',
-                    'cost',
-                    'birthdate',
-                    'reminder_date',
-                    'created',
-                    'modified',
-                    'garden_area',
-                    'is_primary',
-                    'start_time',
-                    'balance'
-                ]
-            ]
-        ];
-    }
-
-    public function searchableFieldPropertiesProvider()
-    {
-        return [
-            [
-                [
-                    'id' => [
-                        'type' => 'uuid'
-                    ],
-                    'name' => [
-                        'type' => 'string'
-                    ],
-                    'status' => [
-                        'type' => 'list',
-                        'fieldOptions' => [
-                            'active' => 'Active',
-                            'inactive' => 'Inactive'
-                        ]
-                    ],
-                    'type' => [
-                        'type' => 'list',
-                        'fieldOptions' => [
-                            'bronze' => 'Bronze',
-                            'bronze.new' => ' - New',
-                            'bronze.used' => ' - Used',
-                            'silver' => 'Silver',
-                            'silver.new' => ' - New',
-                            'silver.used' => ' - Used',
-                            'gold' => 'Gold',
-                            'gold.new' => ' - New',
-                            'gold.used' => ' - Used'
-                        ]
-                    ],
-                    'gender' => [
-                        'type' => 'list',
-                        'fieldOptions' => [
-                            'm' => 'Male',
-                            'f' => 'Female'
-                        ]
-                    ],
-                    'city' => [
-                        'type' => 'list',
-                        'fieldOptions' => [
-                            'limassol' => 'Limassol',
-                            'new_york' => 'New York',
-                            'london' => 'London'
-                        ]
-                    ],
-                    'country' => [
-                        'type' => 'list',
-                        'fieldOptions' => [
-                            'cy' => 'Cyprus',
-                            'usa' => 'USA',
-                            'uk' => 'United Kingdom'
-                        ]
-                    ],
-                    'cost' => [
-                        'type' => 'money'
-                    ],
-                    'birthdate' => [
-                        'type' => 'date'
-                    ],
-                    'reminder_date' => [
-                        'type' => 'reminder',
-                    ],
-                    'created' => [
-                        'type' => 'datetime'
-                    ],
-                    'modified' => [
-                        'type' => 'datetime'
-                    ],
-                    'garden_area' => [
-                        'type' => 'metric'
-                    ],
-                    'is_primary' => [
-                        'type' => 'boolean'
-                    ],
-                    'start_time' => [
-                        'type' => 'time'
-                    ],
-                    'balance' => [
-                        'type' => 'decimal'
-                    ]
-                ]
-            ]
         ];
     }
 

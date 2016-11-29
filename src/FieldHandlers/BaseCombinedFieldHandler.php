@@ -23,7 +23,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
     protected $_fields = [];
 
     /**
-     * Constructor
+     * {@inheritDoc}
      */
     public function __construct($cakeView = null)
     {
@@ -90,6 +90,22 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
     /**
      * {@inheritDoc}
      */
+    public function renderSearchInput($table, $field, array $options = [])
+    {
+        $result = [];
+        foreach ($this->_fields as $suffix => $fieldOptions) {
+            $options['fieldDefinitions']->setType($fieldOptions['handler']::DB_FIELD_TYPE);
+            $fieldName = $field . '_' . $suffix;
+            $handler = new $fieldOptions['handler'];
+            $result[$fieldName] = $handler->renderSearchInput($table, $fieldName, $options);
+        }
+
+        return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function fieldToDb(CsvField $csvField)
     {
         $dbFields = [];
@@ -105,5 +121,40 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
         }
 
         return $dbFields;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSearchOperators($table, $field, $type)
+    {
+        $result = [];
+        foreach ($this->_fields as $suffix => $options) {
+            $fieldName = $field . '_' . $suffix;
+            $handler = new $options['handler'];
+
+            $result[$fieldName] = $handler->getSearchOperators(
+                $table,
+                $fieldName,
+                $this->_getFieldTypeByFieldHandler($handler)
+            );
+        }
+
+        return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSearchLabel($field)
+    {
+        $result = [];
+        foreach ($this->_fields as $suffix => $options) {
+            $fieldName = $field . '_' . $suffix;
+
+            $result[$fieldName] = parent::getSearchLabel($fieldName);
+        }
+
+        return $result;
     }
 }

@@ -24,6 +24,16 @@ interface FieldHandlerInterface
     public function renderInput($table, $field, $data = '', array $options = []);
 
     /**
+     * Method responsible for rendering field's search input.
+     *
+     * @param mixed $table Name or instance of the Table
+     * @param string $field Field name
+     * @param array $options Field options
+     * @return array
+     */
+    public function renderSearchInput($table, $field, array $options = []);
+
+    /**
      * Method responsible for rendering field's value.
      *
      * @param  mixed  $table   name or instance of the Table
@@ -33,6 +43,24 @@ interface FieldHandlerInterface
      * @return string          field value
      */
     public function renderValue($table, $field, $data, array $options = []);
+
+    /**
+     * Method that returns field search operators based on field type.
+     *
+     * @param mixed $table Name or instance of the Table
+     * @param string $field field name
+     * @param string $type Field type
+     * @return array
+     */
+    public function getSearchOperators($table, $field, $type);
+
+    /**
+     * Method that returns search field label.
+     *
+     * @param string $field Field name
+     * @return string
+     */
+    public function getSearchLabel($field);
 
     /**
      * Method responsible for converting csv field instance to database field instance.

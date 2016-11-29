@@ -133,8 +133,8 @@ class BaseFileFieldHandler extends RelatedFieldHandler
         $url = $this->cakeView->Url->build([
             'plugin' => $filePlugin,
             'controller' => $fileController,
-            'action' => !is_null($data) ? static::ACTION_EDIT : static::ACTION_ADD,
-            !is_null($data) ? $data : null
+            'action' => !empty($data) ? static::ACTION_EDIT : static::ACTION_ADD,
+            !empty($data) ? $data : null
         ]);
 
         $embeddedAssocName = Inflector::underscore(Inflector::singularize($embeddedAssocName));
@@ -204,6 +204,14 @@ class BaseFileFieldHandler extends RelatedFieldHandler
         $result = $this->_thumbnailsHtml($entities, $fileUploadsUtils);
 
         return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function renderSearchInput($table, $field, array $options = [])
+    {
+        return [];
     }
 
     /**

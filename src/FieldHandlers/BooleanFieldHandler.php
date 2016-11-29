@@ -48,4 +48,25 @@ class BooleanFieldHandler extends BaseFieldHandler
 
         return $result;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function renderSearchInput($table, $field, array $options = [])
+    {
+        $fieldType = $options['fieldDefinitions']->getType();
+
+        if (in_array($fieldType, array_keys($this->_fieldTypes))) {
+            $fieldType = $this->_fieldTypes[$fieldType];
+        }
+
+        $content = $this->cakeView->Form->input('{{name}}', [
+            'type' => $fieldType,
+            'label' => ''
+        ]);
+
+        return [
+            'content' => $content
+        ];
+    }
 }

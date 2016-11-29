@@ -210,6 +210,8 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
 /*
 Fetch embedded module(s) using CakePHP's requestAction() method
  */
+
+//debug($embFields);
 if (!empty($embFields)) :
     foreach ($embFields as $embField) :
         $embFieldName = substr($embField, strrpos($embField, '.') + 1);

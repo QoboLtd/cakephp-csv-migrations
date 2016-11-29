@@ -71,7 +71,15 @@ class HasManyFieldHandler extends RelatedFieldHandler
                 __('<span class="fa fa-link" aria-hidden="true"></span>'),
                 ['class' => 'btn btn-primary', 'title' => __('Link record')]
             );
-            $input .= '<button type="button" class="btn btn-default" data-toggle="modal" data-target="#' . $field . '_modal">';
+
+            /*
+                @NOTE:
+                we might have custom data-target for the modal window,
+                thus we make ID out of field/emDataTarget
+            */
+            $dataTarget = sprintf("#%s_modal", (empty($options['emDataTarget']) ? $field : $options['emDataTarget']));
+
+            $input .= '<button type="button" class="btn btn-default" data-toggle="modal" data-target="' . $dataTarget . '">';
             $input .= '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>';
             $input .= '</button>';
             $input .= '</div>';

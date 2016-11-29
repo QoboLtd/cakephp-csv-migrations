@@ -1,4 +1,5 @@
 <?php
+use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Utility\Inflector;
 use Cake\ORM\TableRegistry;
@@ -188,9 +189,98 @@ if (empty($options['title'])) {
         <?php endif; ?>
     </div>
 </div>
+
 <?php if (empty($this->request->query['embedded'])) : ?>
-    <?= $this->element('CsvMigrations.associated_records'); ?>
-<?php endif; ?>
+<div class="row associated_records">
+    <div class="col-xs-12">
+    <hr/>
+    <?php
+        $event = new Event('CsvMigrations.View.View.TabsList', $this, [
+            'request' => $this->request,
+            'entity' => $options['entity'],
+            'options' => []
+        ]);
+
+        $this->eventManager()->dispatch($event);
+        $tabs = $event->result['tabs'];
+
+        echo $this->Html->css('CsvMigrations.datatables.min', ['block' => 'cssBottom']);
+        echo $this->Html->script('CsvMigrations.datatables.min', ['block' => 'scriptBottom']);
+
+        if (!empty($tabs)) { ?>
+            <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
+            <?php foreach ($tabs as $k => $tab) :?>
+                <li role="presentation" class="<?= ($k == 0) ? 'active' : ''?>">
+                    <a href="#<?= $tab['containerId']?>" role="tab" data-toggle="tab"><?= $tab['label']?></a>
+                </li>
+            <?php endforeach; ?>
+            </ul>
+
+            <div class="tab-content">
+                <?php foreach($tabs as $k => $tab) :?>
+                    <div role="tabpanel" class="tab-pane <?= ($k == 0) ? 'active' : ''?>" id="<?= $tab['containerId']?>">
+                        <?php
+                            $beforeTabContentEvent = new Event('CsvMigrations.View.View.TabContent.beforeContent', $this, [
+                                'data' => [
+                                    'options' => $tab,
+                                    'request' => $this->request,
+                                ],
+                            ]);
+
+                            $this->eventManager()->dispatch($beforeTabContentEvent);
+                            $beforeTab = $beforeTabContentEvent->result;
+
+                            if (!empty($beforeTab)) {
+                                echo $this->cell('CsvMigrations.TabContent', [
+                                    [
+                                        'request' => $this->request,
+                                        'content' => $beforeTab,
+                                        'tab' => $tab,
+                                    ]
+                                ]);
+                            }
+
+                            $tabContentEvent = new Event('CsvMigrations.View.View.TabContent', $this, [
+                                'request' => $this->request,
+                                'entity' => $options['entity'],
+                                'options' => [
+                                        'tab' => $tab
+                                    ]
+                            ]);
+
+                            $this->eventManager()->dispatch($tabContentEvent);
+                            $content = $tabContentEvent->result;
+
+                            if (!empty($content)) {
+                                echo $this->cell('CsvMigrations.TabContent', [
+                                    [
+                                        'request' => $this->request,
+                                        'content' => $content,
+                                        'tab' => $tab,
+                                        'options' => [],
+                                    ]
+                                ]);
+
+                                echo $this->Html->scriptBlock(
+                                    '$(\'.' . $tab['containerId']. '\').DataTable({
+                                        "paging":false,
+                                        "searching": false
+                                    });',
+                                    ['block' => 'scriptBottom']
+                                );
+                            }
+                        ?>
+                    </div>
+                <?php endforeach; ?>
+            </div> <!-- .tab-content -->
+        <?php } ?>
+    </div>
+    <?php
+        //loading common setup for typeahead/panel/etc libs for tabs
+        echo $this->element('CsvMigrations.common_js_libs');
+    ?>
+</div> <!-- associated records -->
+<?php endif ;?>
 
 <?php
     // Event dispatcher for bottom section

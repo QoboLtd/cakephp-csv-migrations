@@ -2,6 +2,7 @@
 namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
+use Cake\ORM\TableRegistry;
 use CsvMigrations\FileUploadsUtils;
 
 class AppController extends BaseController
@@ -159,6 +160,7 @@ class AppController extends BaseController
     {
         $this->request->allowMethod(['post', 'delete']);
         $entity = $this->{$this->name}->get($id);
+
         if ($this->{$this->name}->delete($entity)) {
             $this->Flash->success(__('The record has been deleted.'));
         } else {

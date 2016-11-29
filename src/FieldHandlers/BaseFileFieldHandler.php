@@ -103,7 +103,7 @@ class BaseFileFieldHandler extends RelatedFieldHandler
             'id' => $field . static::LABEL_FIELD_SUFFIX,
             'type' => 'text',
             'disabled' => true,
-            'value' => $relatedProperties['dispFieldVal'],
+            'value' => (!empty($relatedProperties['entity'])) ? $relatedProperties['dispFieldVal'] : '',
             'escape' => false,
             'data-id' => $this->_domId($fieldName),
             'required' => (bool)$options['fieldDefinitions']->getRequired()
@@ -118,7 +118,14 @@ class BaseFileFieldHandler extends RelatedFieldHandler
         $input['html'] .= '</div>';
         $input['html'] .= '</div>';
 
-        $input['html'] .= $this->cakeView->Form->input($fieldName, ['type' => 'hidden', 'value' => $data]);
+        // @NOTE: trashed records will return null entity,
+        // we must pay attention for embedded forms passing $data.
+        // Trashed entity should generate /documents/add URL, not edit.
+        if (empty($relatedProperties['entity'])) {
+            $data = null;
+        }
+
+        $input['html'] .= $this->cakeView->Form->input($fieldName, ['type' => 'hidden', 'value' => (!is_null($data) ? $data : '')]);
 
         $embeddedAssocName = null;
         foreach ($table->associations() as $association) {

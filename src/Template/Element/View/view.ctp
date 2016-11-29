@@ -220,13 +220,13 @@ if (empty($options['title'])) {
                 <?php foreach($tabs as $k => $tab) :?>
                     <div role="tabpanel" class="tab-pane <?= ($k == 0) ? 'active' : ''?>" id="<?= $tab['containerId']?>">
                         <?php
-                            /* getting before content data if any required */
                             $beforeTabContentEvent = new Event('CsvMigrations.View.View.TabContent.beforeContent', $this, [
                                 'data' => [
                                     'options' => $tab,
                                     'request' => $this->request,
                                 ],
                             ]);
+
                             $this->eventManager()->dispatch($beforeTabContentEvent);
                             $beforeTab = $beforeTabContentEvent->result;
 
@@ -268,24 +268,6 @@ if (empty($options['title'])) {
                                     });',
                                     ['block' => 'scriptBottom']
                                 );
-                            }
-
-                            /* getting after content data if any */
-                            $afterTabContentEvent = new Event('CsvMigrations.View.View.TabContent.afterContent', $this, [
-                                'data' => [],
-                            ]);
-                            $this->eventManager()->dispatch($afterTabContentEvent);
-                            $afterContent = $afterTabContentEvent->result;
-
-                            if (!empty($afterContent)) {
-                                 echo $this->cell('CsvMigrations.TabContent', [
-                                    'request' => $this->request,
-                                    'content' => $beforeTab,
-                                    'tab' => $tab,
-                                    'options' => [
-                                        'order' => 'afterContent',
-                                    ]
-                                ]);
                             }
                         ?>
                     </div>

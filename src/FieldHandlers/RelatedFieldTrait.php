@@ -20,10 +20,11 @@ trait RelatedFieldTrait
      * Get related model's parent model properties.
      *
      * @param  array $relatedProperties related model properties
-     * @return mixed
+     * @return mixed $result containing parent properties
      */
     protected function _getRelatedParentProperties($relatedProperties)
     {
+        $result = [];
         $parentTable = TableRegistry::get($relatedProperties['config']['parent']['module']);
         $modelName = $relatedProperties['controller'];
 
@@ -37,10 +38,16 @@ trait RelatedFieldTrait
         $foreignKey = $this->_getForeignKey($parentTable, $modelName);
 
         if (empty($relatedProperties['entity']) || empty($relatedProperties['entity']->{$foreignKey})) {
-            return [];
+            return $result;
         }
 
-        return $this->_getRelatedProperties($parentTable, $relatedProperties['entity']->{$foreignKey});
+        $related = $this->_getRelatedProperties($parentTable, $relatedProperties['entity']->{$foreignKey});
+
+        if (!empty($related['entity'])) {
+            $result = $related;
+        }
+
+        return $result;
     }
 
     /**
@@ -68,9 +75,14 @@ trait RelatedFieldTrait
         // get associated entity record
         $result['entity'] = $this->_getAssociatedRecord($table, $data);
         // get related table's displayField value
-        $result['dispFieldVal'] = !empty($result['entity']->{$table->displayField()})
-            ? $result['entity']->{$table->displayField()}
-            : null;
+        if (!empty($result['entity'])) {
+            $result['dispFieldVal'] = !empty($result['entity']->{$table->displayField()})
+                ? $result['entity']->{$table->displayField()}
+                : null;
+        } else {
+            $result['dispFieldVal'] = null;
+        }
+
         // get plugin and controller names
         list($result['plugin'], $result['controller']) = pluginSplit($tableName);
 
@@ -98,6 +110,7 @@ trait RelatedFieldTrait
 
     /**
      * Retrieve and return associated record Entity, by primary key value.
+     * If the record has been trashed - query will return NULL.
      *
      * @param  \Cake\ORM\Table $table Table instance
      * @param  string          $value Primary key value

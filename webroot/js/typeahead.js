@@ -3,6 +3,7 @@ var typeahead = typeahead || {};
 (function($) {
     /**
      * Typeahead Logic.
+     *
      * @param {object} options configuration options
      */
     function Typeahead(options) {
@@ -23,17 +24,60 @@ var typeahead = typeahead || {};
 
     /**
      * Initialize method.
+     *
      * @return {void}
      */
     Typeahead.prototype.init = function(element) {
         var that = this;
+        var hidden_input = $('#' + $(element).data('id'));
 
+        // set typeahead display field if is empty and the hidden input value is set
+        if (hidden_input.val() && !$(element).val()) {
+            this._setDisplayValue(hidden_input.val(), element);
+        }
         // enable typeahead functionality
-        this._enable(element, $('#' + $(element).data('id')));
+        this._enable(element, hidden_input);
 
         // clear inputs on double click
         $(element).on('dblclick', function() {
-            that._clearInputs(this, $('#' + $(this).data('id')));
+            that._clearInputs(this, hidden_input);
+        });
+    };
+
+    /**
+     * Set and set typeahead field label value, based on table's display field.
+     *
+     * @param {string} id    Record id
+     * @param {object} input Typeahead input
+     * @return {void}
+     */
+    Typeahead.prototype._setDisplayValue = function(id, input) {
+        var that = this;
+        var url = $(input).data('url').replace('/lookup', '/view/' + id);
+        $.ajax({
+            url: url,
+            type: 'get',
+            dataType: 'json',
+            contentType: 'application/json',
+            headers: {
+                'Authorization': 'Bearer ' + that.api_token
+            },
+            success: function(data) {
+                if (!data.success) {
+                    return;
+                }
+
+                // set typeahead display value
+                $(input).val(data.data[$(input).data('display-field')]);
+
+                // set typeahead as read-only
+                $(input).prop('readonly', true);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+            }
         });
     };
 
@@ -89,6 +133,7 @@ var typeahead = typeahead || {};
 
     /**
      * Method used for clearing typeahead inputs.
+     *
      * @param  {object} input        typeahead input
      * @param  {object} hidden_input hidden input, value holder
      * @return {void}
@@ -102,7 +147,8 @@ var typeahead = typeahead || {};
     };
 
     /**
-     * Method that enables typeahead functionality on specified input
+     * Method that enables typeahead functionality on specified input.
+     *
      * @param  {object} input        typeahead input
      * @param  {object} hidden_input hidden input, value holder
      * @return {void}
@@ -152,6 +198,7 @@ var typeahead = typeahead || {};
 
     /**
      * Method responsible for handling behavior on typeahead option selection.
+     *
      * @param  {object} input        typeahead input
      * @param  {object} hidden_input hidden input, value holder
      * @param  {object} data         ajax call returned data
@@ -163,7 +210,5 @@ var typeahead = typeahead || {};
     };
 
     typeahead = new Typeahead(typeahead_options);
-
-    typeahead.init();
 
 })(jQuery);

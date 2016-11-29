@@ -43,4 +43,20 @@ class TextFieldHandler extends BaseFieldHandler
 
         return $result;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function renderSearchInput($table, $field, array $options = [])
+    {
+        $content = $this->cakeView->Form->input('{{name}}', [
+            'value' => '{{value}}',
+            'type' => 'text',
+            'label' => false
+        ]);
+
+        return [
+            'content' => $content
+        ];
+    }
 }

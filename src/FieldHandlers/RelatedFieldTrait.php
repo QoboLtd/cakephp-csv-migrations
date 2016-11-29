@@ -71,18 +71,18 @@ trait RelatedFieldTrait
         if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
             $result['config'] = $table->getConfig();
         }
-
+        // display field
+        $result['displayField'] = $table->displayField();
         // get associated entity record
         $result['entity'] = $this->_getAssociatedRecord($table, $data);
         // get related table's displayField value
         if (!empty($result['entity'])) {
-            $result['dispFieldVal'] = !empty($result['entity']->{$table->displayField()})
+            $result['dispFieldVal'] = !empty($result['entity']->{$result['displayField']})
                 ? $result['entity']->{$table->displayField()}
                 : null;
         } else {
             $result['dispFieldVal'] = null;
         }
-
         // get plugin and controller names
         list($result['plugin'], $result['controller']) = pluginSplit($tableName);
 

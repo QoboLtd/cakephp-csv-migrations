@@ -31,6 +31,30 @@ class Table extends BaseTable
      */
     const PARAM_NON_SEARCHABLE = 'non-searchable';
 
+    /* @var array $_currentUser to store user session */
+    protected $_currentUser;
+
+    /**
+     * setCurrentUser method
+     * @param array $user from Cake\Controller\Component\AuthComponent
+     * @return array $_currentUser
+     */
+    public function setCurrentUser($user)
+    {
+        $this->_currentUser = $user;
+
+        return $this->_currentUser;
+    }
+
+    /**
+     * getCurrentUser method
+     * @return array $_currentUser property
+     */
+    public function getCurrentUser()
+    {
+        return $this->_currentUser;
+    }
+
     /**
      * Initialize method
      *
@@ -71,23 +95,6 @@ class Table extends BaseTable
     }
 
     /**
-     * Get searchable fields
-     *
-     * @return array field names
-     */
-    public function getSearchableFields()
-    {
-        $result = [];
-        foreach ($this->getFieldsDefinitions($this->alias()) as $field) {
-            if (!$field[static::PARAM_NON_SEARCHABLE]) {
-                $result[] = $field['name'];
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * getReminderTypeFields
      * @return array $result containing reminder fieldnames
      */
@@ -97,35 +104,6 @@ class Table extends BaseTable
         foreach ($this->getFieldsDefinitions($this->alias()) as $field) {
             if ($field['type'] == 'reminder') {
                 $result[] = $field;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Returns searchable fields properties.
-     *
-     * @param  array $fields searchable fields
-     * @return array
-     */
-    public function getSearchableFieldProperties(array $fields)
-    {
-        $result = [];
-
-        if (empty($fields)) {
-            return $result;
-        }
-        foreach ($this->getFieldsDefinitions($this->alias()) as $field => $definitions) {
-            if (in_array($field, $fields)) {
-                $csvField = new CsvField($definitions);
-                $type = $csvField->getType();
-                $result[$field] = [
-                    'type' => $type
-                ];
-                if ('list' === $type) {
-                    $result[$field]['fieldOptions'] = $this->_getSelectOptions($csvField->getLimit());
-                }
             }
         }
 

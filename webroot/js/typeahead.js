@@ -3,39 +3,137 @@ var typeahead = typeahead || {};
 (function($) {
     /**
      * Typeahead Logic.
+     *
      * @param {object} options configuration options
      */
     function Typeahead(options) {
         this.min_length = options.hasOwnProperty('min_length') ? options.min_length : 1;
         this.timeout = options.hasOwnProperty('timeout') ? options.timeout : 300;
         this.api_token = options.hasOwnProperty('token') ? options.token : null;
+        this.typeahead_id = '[data-type="typeahead"]';
+
+        var that = this;
+        // loop through typeahead inputs
+        $(this.typeahead_id).each(function() {
+            that.init(this);
+        });
+
+        // call observe method
+        this._observe();
     }
 
     /**
      * Initialize method.
+     *
      * @return {void}
      */
-    Typeahead.prototype.init = function() {
+    Typeahead.prototype.init = function(element) {
         var that = this;
-        typeahead_id = '[data-type="typeahead"]';
+        var hidden_input = $('#' + $(element).data('id'));
 
-        // loop through typeahead inputs
-        $(typeahead_id).each(function() {
-            hidden_input = $('#' + $(this).data('id'));
-
-            // enable typeahead functionality
-            that._enable(this, hidden_input);
-        });
+        // set typeahead display field if is empty and the hidden input value is set
+        if (hidden_input.val() && !$(element).val()) {
+            this._setDisplayValue(hidden_input.val(), element);
+        }
+        // enable typeahead functionality
+        this._enable(element, hidden_input);
 
         // clear inputs on double click
-        $(typeahead_id).dblclick(function() {
-            hidden_input = $('#' + $(this).data('id'));
+        $(element).on('dblclick', function() {
             that._clearInputs(this, hidden_input);
         });
     };
 
     /**
+     * Set and set typeahead field label value, based on table's display field.
+     *
+     * @param {string} id    Record id
+     * @param {object} input Typeahead input
+     * @return {void}
+     */
+    Typeahead.prototype._setDisplayValue = function(id, input) {
+        var that = this;
+        var url = $(input).data('url').replace('/lookup', '/view/' + id);
+        $.ajax({
+            url: url,
+            type: 'get',
+            dataType: 'json',
+            contentType: 'application/json',
+            headers: {
+                'Authorization': 'Bearer ' + that.api_token
+            },
+            success: function(data) {
+                if (!data.success) {
+                    return;
+                }
+
+                // set typeahead display value
+                $(input).val(data.data[$(input).data('display-field')]);
+
+                // set typeahead as read-only
+                $(input).prop('readonly', true);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+            }
+        });
+    };
+
+    /**
+     * Observe for typeahead inputs added to the DOM client side.
+     *
+     * @return {void}
+     */
+    Typeahead.prototype._observe = function() {
+        var that = this;
+
+        MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+        // observe for client side appended typeaheads
+        var observer = new MutationObserver(function(mutations, observer) {
+            // look through all mutations that just occured
+            for (var i = 0; i < mutations.length; ++i) {
+                // look through all added nodes of this mutation
+                for (var j = 0; j < mutations[i].addedNodes.length; ++j) {
+                    // look for typeahead elements
+                    var typeahead = that._getTypeahead(mutations[i].addedNodes[j]);
+                    if ($.isEmptyObject(typeahead)) {
+                        continue;
+                    }
+
+                    that.init(typeahead);
+                }
+            }
+        });
+
+        // define what element should be observed by the observer
+        // and what types of mutations trigger the callback
+        observer.observe(document, {
+            childList: true,
+            subtree: true
+        });
+    };
+
+    /**
+     * Find out if added node is a typeahead element
+     * and return it if it is, otherwise return empty object.
+     *
+     * @param  {object} node Added DOM node
+     * @return {object}
+     */
+    Typeahead.prototype._getTypeahead = function(node) {
+        var result = {};
+        $(node).find(this.typeahead_id).each(function() {
+            result = this;
+        });
+
+        return result;
+    };
+
+    /**
      * Method used for clearing typeahead inputs.
+     *
      * @param  {object} input        typeahead input
      * @param  {object} hidden_input hidden input, value holder
      * @return {void}
@@ -49,7 +147,8 @@ var typeahead = typeahead || {};
     };
 
     /**
-     * Method that enables typeahead functionality on specified input
+     * Method that enables typeahead functionality on specified input.
+     *
      * @param  {object} input        typeahead input
      * @param  {object} hidden_input hidden input, value holder
      * @return {void}
@@ -99,6 +198,7 @@ var typeahead = typeahead || {};
 
     /**
      * Method responsible for handling behavior on typeahead option selection.
+     *
      * @param  {object} input        typeahead input
      * @param  {object} hidden_input hidden input, value holder
      * @param  {object} data         ajax call returned data
@@ -110,7 +210,5 @@ var typeahead = typeahead || {};
     };
 
     typeahead = new Typeahead(typeahead_options);
-
-    typeahead.init();
 
 })(jQuery);

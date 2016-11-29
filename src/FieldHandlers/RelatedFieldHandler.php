@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\Core\Configure;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
@@ -31,6 +32,11 @@ class RelatedFieldHandler extends BaseFieldHandler
      * Flag for rendering value without url
      */
     const RENDER_PLAIN_VALUE = 'plain';
+
+    const HTML_SEARCH_INPUT = '
+        <div class="input-group">
+            <span class="input-group-addon" title="Auto-complete"><strong>&hellip;</strong></span>%s
+        </div>';
 
     /**
      * Method responsible for rendering field's input.
@@ -69,6 +75,7 @@ class RelatedFieldHandler extends BaseFieldHandler
             'id' => $field . static::LABEL_FIELD_SUFFIX,
             'type' => 'text',
             'data-type' => 'typeahead',
+            'data-display-field' => $relatedProperties['displayField'],
             'readonly' => (bool)$data,
             'value' => $relatedProperties['dispFieldVal'],
             'escape' => false,
@@ -152,6 +159,67 @@ class RelatedFieldHandler extends BaseFieldHandler
         }
 
         return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function renderSearchInput($table, $field, array $options = [])
+    {
+        $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), null);
+
+        $fieldName = $this->_getFieldName($table, $field, $options);
+
+        $hiddenInputId = $this->_domId($fieldName) . '-{{id}}';
+        $content = sprintf(static::HTML_SEARCH_INPUT, $this->cakeView->Form->input($field, [
+            'label' => false,
+            'name' => false,
+            'id' => $field . static::LABEL_FIELD_SUFFIX,
+            'type' => 'text',
+            'data-type' => 'typeahead',
+            'data-display-field' => $relatedProperties['displayField'],
+            'escape' => false,
+            'data-id' => $hiddenInputId,
+            'autocomplete' => 'off',
+            'data-url' => $this->cakeView->Url->build([
+                'prefix' => 'api',
+                'plugin' => $relatedProperties['plugin'],
+                'controller' => $relatedProperties['controller'],
+                'action' => 'lookup.json'
+            ])
+        ]));
+
+        $content .= $this->cakeView->Form->input('{{name}}', [
+            'type' => 'hidden',
+            'id' => $hiddenInputId,
+            'value' => '{{value}}'
+        ]);
+
+        return [
+            'content' => $content,
+            'post' => [
+                [
+                    'type' => 'script',
+                    'content' => 'CsvMigrations.bootstrap-typeahead.min',
+                    'block' => 'scriptBottom'
+                ],
+                [
+                    'type' => 'scriptBlock',
+                    'content' => 'typeahead_options = ' . json_encode(
+                        array_merge(
+                            Configure::read('CsvMigrations.typeahead'),
+                            Configure::read('CsvMigrations.api')
+                        )
+                    ) . ';',
+                    'block' => 'scriptBottom'
+                ],
+                [
+                    'type' => 'script',
+                    'content' => 'CsvMigrations.typeahead',
+                    'block' => 'scriptBottom'
+                ]
+            ]
+        ];
     }
 
     /**

@@ -91,7 +91,6 @@ class ListFieldHandler extends BaseFieldHandler
             '{{name}}',
             $this->_getSelectOptions($options['fieldDefinitions']->getLimit()),
             [
-                'value' => '{{value}}',
                 'label' => false
             ]
         );

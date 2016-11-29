@@ -154,45 +154,7 @@ class AppController extends BaseController
         $this->request->allowMethod(['post', 'delete']);
         $entity = $this->{$this->name}->get($id);
 
-
         if ($this->{$this->name}->delete($entity)) {
-            $conditions = [];
-            $associationKey = null;
-
-            foreach ($this->{$this->name}->associations() as $association) {
-                if (!in_array($association->type(), ['manyToMany'])) {
-                    $relation = $this->{$this->name}->{$association->name()};
-                    $associationKey = $association->foreignKey();
-
-                    $query = $relation->find('all')
-                        ->where([ $association->foreignKey() => $id]);
-
-                    if ($query->count() > 0) {
-                        $query->update()
-                                ->set([$associationKey => null])
-                                ->where([$associationKey => $id]);
-                        $query->execute();
-                    }
-                } else {
-                    $assocName = $association->name();
-                    $associationKey = $association->primaryKey();
-                    $relation = $this->{$this->name};
-
-                    $query = $relation->find('all', [
-                        'conditions' => [$association->primaryKey() => $id],
-                        'contain' => [
-                            $assocName
-                        ]
-                    ]);
-                    if ($query->count() > 0) {
-                        $query->update()
-                                ->set([$associationKey => null])
-                                ->where([$associationKey => $id]);
-                        $query->execute();
-                    }
-                }
-            }
-
             $this->Flash->success(__('The record has been deleted.'));
         } else {
             $this->Flash->error(__('The record could not be deleted. Please, try again.'));

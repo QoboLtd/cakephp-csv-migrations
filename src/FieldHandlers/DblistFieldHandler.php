@@ -67,7 +67,22 @@ class DblistFieldHandler extends BaseFieldHandler
      */
     public function renderSearchInput($table, $field, array $options = [])
     {
-        return [];
+        $content = $this->cakeView->cell(
+            'CsvMigrations.Dblist::renderInput',
+            [
+                '{{name}}',
+                $options['fieldDefinitions']->getListName(),
+                [
+                    'class' => 'form-control',
+                    'label' => false,
+                    'required' => $options['fieldDefinitions']->getRequired(),
+                ]
+            ]
+        )->render('renderInput');
+
+        return [
+            'content' => $content
+        ];
     }
 
     /**

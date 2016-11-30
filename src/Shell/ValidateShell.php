@@ -500,6 +500,17 @@ class ValidateShell extends Shell
                         if (!in_array($config['parent']['redirect'], ['self', 'parent'])) {
                             $moduleErrors[] = $module . " config [parent] section references unknown redirect type '" . $config['parent']['redirect'] . "' in 'redirect key";
                         }
+
+                        //if redirect = parent, we force the user to mention the relation and module
+                        if (in_array($config['parent']['redirect'], ['parent'])) {
+                            if (empty($config['parent']['module'])) {
+                                $moduleErrors[] = $module . " config [parent] requires 'module' value when redirect = parent.";
+                            }
+
+                            if (empty($config['parent']['relation'])) {
+                                $moduleErrors[] = $module . " config [parent] requires 'relation' when redirect = parent.";
+                            }
+                        }
                     }
                 }
 

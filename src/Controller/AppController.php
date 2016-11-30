@@ -100,7 +100,13 @@ class AppController extends BaseController
                 }
                 $this->Flash->success(__('The record has been saved.'));
 
-                return $this->redirect(['action' => 'view', $entity->{$this->{$this->name}->primaryKey()}]);
+                $redirectUrl = $this->{$this->name}->getParentRedirectUrl($this->{$this->name}, $entity);
+
+                if (empty($redirectUrl)) {
+                    return $this->redirect(['action' => 'view', $entity->{$this->{$this->name}->primaryKey()}]);
+                } else {
+                    return $this->redirect($redirectUrl);
+                }
             } else {
                 $this->Flash->error(__('The record could not be saved. Please, try again.'));
             }
@@ -139,7 +145,13 @@ class AppController extends BaseController
                 }
                 $this->Flash->success(__('The record has been saved.'));
 
-                return $this->redirect(['action' => 'view', $id]);
+                $redirectUrl = $this->{$this->name}->getParentRedirectUrl($this->{$this->name}, $entity);
+
+                if (empty($redirectUrl)) {
+                    return $this->redirect(['action' => 'view', $entity->{$this->{$this->name}->primaryKey()}]);
+                } else {
+                    return $this->redirect($redirectUrl);
+                }
             } else {
                 $this->Flash->error(__('The record could not be saved. Please, try again.'));
             }

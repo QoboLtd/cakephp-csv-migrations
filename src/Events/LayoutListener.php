@@ -20,7 +20,8 @@ class LayoutListener implements EventListenerInterface
     }
 
     /**
-     * getAllReports method
+     * getMyHead method
+     *
      * In case we're operating with dynamic CSV tables,
      * we want to overwrite the page title to be used as moduleAlias().
      *

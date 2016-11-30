@@ -6,6 +6,7 @@ use Cake\Event\EventManager;
 use CsvMigrations\Events\AddViewListener;
 use CsvMigrations\Events\EditViewListener;
 use CsvMigrations\Events\IndexViewListener;
+use CsvMigrations\Events\LayoutListener;
 use CsvMigrations\Events\ViewMenuListener;
 use CsvMigrations\Events\ViewViewListener;
 use CsvMigrations\Events\ReportListener;
@@ -33,6 +34,7 @@ Configure::write('CsvMigrations.api', [
 EventManager::instance()->on(new AddViewListener());
 EventManager::instance()->on(new EditViewListener());
 EventManager::instance()->on(new IndexViewListener());
+EventManager::instance()->on(new LayoutListener());
 EventManager::instance()->on(new ViewMenuListener());
 EventManager::instance()->on(new ViewViewListener());
 EventManager::instance()->on(new ReportListener());

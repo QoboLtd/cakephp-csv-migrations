@@ -95,6 +95,49 @@ class Table extends BaseTable
     }
 
     /**
+     * getParentRedirectUrl method
+     * Uses [parent] section of tables config.ini to define
+     * where to redirect after the entity was added/edited.
+     * @param Cake\ORM\Table $table of the entity table
+     * @param Cake\ORM\Entity $entity of the actual table.
+     *
+     * @return array $result containing Cake-standard array for redirect.
+     */
+    public function getParentRedirectUrl($table, $entity = [])
+    {
+        $result = [];
+
+        if (!method_exists($table, 'getConfig') && !is_callable([$table, 'getConfig'])) {
+            return $result;
+        }
+
+        $config = $table->getConfig();
+        $table->parentSection($config['parent']);
+
+        $module = $table->getParentModuleField();
+        $redirect = $table->getParentRedirectField();
+        $relation = $table->getParentRelationField();
+
+        if (empty($redirect)) {
+            return $result;
+        }
+
+        if ($redirect == 'parent') {
+            $result = [
+                'controller' => $module,
+                'action' => 'view',
+                $entity->{$relation}
+            ];
+        }
+
+        if ($redirect == 'self') {
+            $result = ['action' => 'view', $entity->id];
+        }
+
+        return $result;
+    }
+
+    /**
      * getReminderTypeFields
      * @return array $result containing reminder fieldnames
      */

@@ -23,7 +23,7 @@ class TabContentCell extends Cell
      * List of accessible displayTemplates for TabContent
      * @var array
      */
-    protected $_displayTemplates = ['display', 'panelTable'];
+    protected $_displayTemplates = ['display', 'panel'];
 
 
     /**
@@ -65,9 +65,11 @@ class TabContentCell extends Cell
      */
     public function display(array $data)
     {
-        $this->template = $this->_getDisplayTemplate($data['content']);
+        if (isset($data['content'])) {
+            $this->template = $this->_getDisplayTemplate($data['content']);
+        }
 
-        if (empty($data['content']['options']) && !isset($data['content']['options']['order'])) {
+        if (isset($data['content']['records'])) {
             if ($data['content']['records'] instanceof ResultSet) {
                 $data['content']['length'] = $data['content']['records']->count();
                 $data['content']['records'] = $data['content']['records']->toArray();
@@ -75,7 +77,7 @@ class TabContentCell extends Cell
                 $tmp[] = $data['content']['records'];
                 $data['content']['records'] = $tmp;
                 $data['content']['length'] = count($data['content']['records']);
-            } elseif (is_array($data['content'])) {
+            } elseif (is_array($data['content']['records'])) {
                 $data['content']['length'] = count($data['content']['records']);
             }
         }

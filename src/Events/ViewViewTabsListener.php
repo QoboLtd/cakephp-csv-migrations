@@ -31,9 +31,8 @@ class ViewViewTabsListener implements EventListenerInterface
     {
         return [
             'CsvMigrations.View.View.Tabs' => 'getViewTabs',
-
             'CsvMigrations.View.View.TabsList' => 'getTabsList',
-            'CsvMigrations.View.View.TabContent.beforeContent' => 'getBeforeTabContent',
+            //'CsvMigrations.View.View.TabContent.beforeContent' => 'getBeforeTabContent',
             'CsvMigrations.View.View.TabContent' => 'getTabContent',
             'CsvMigrations.View.View.TabContent.afterContent' => 'getAfterTabContent',
         ];
@@ -45,9 +44,21 @@ class ViewViewTabsListener implements EventListenerInterface
      * @param array $data - containing tab content
      * @return void
      */
-    public function getBeforeTabContent(Event $event, array $data)
+    public function getBeforeTabContent(Event $event, $request, $entity, $options)
     {
-        return $data;
+        $result = [
+          'title' => __('beforeTab Title'),
+          'content' => [
+            'records' => [],
+            'length' => 0,
+          ],
+          'options' => [
+            'displayTemplate' => 'panel_table',
+            'order' => 'beforeTabContent',
+            ],
+        ];
+
+        return $result;
     }
 
     /**

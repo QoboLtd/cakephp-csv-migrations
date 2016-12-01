@@ -12,52 +12,53 @@ Loading Linking Element (typeahead, link, plus components)
 only for many-to-many relationship, as for others
 we don't do the linkage - they would have hidden ID by default
 */
-$emField = $content['class_name'] . '.' . $content['foreign_key'];
-$emFieldName = substr($emField, strrpos($emField, '.') + 1);
-
-$emDataTarget = Inflector::underscore(str_replace('.', '_', $emField));
-$emModal = sprintf("%s_modal", $emDataTarget);
-
-list($emPlugin, $emController) = pluginSplit(substr($emField, 0, strrpos($emField, '.')));
-
-$tableName = $this->request->controller;
-if (!is_null($this->request->plugin)) {
-    $tableName = $this->request->plugin . '.' . $tableName;
-}
-
-$formOptions = [
-    'url' => [
-        'plugin' => $this->request->plugin,
-        'controller' => $this->request->controller,
-        'action' => 'edit',
-        $this->request->pass[0]
-    ]
-];
-
-$handlerOptions = [];
-/*
-set associated table name to be used on input field's name
- */
-$handlerOptions['associated_table_name'] = $content['table_name'];
-/*
-set embedded modal flag
- */
-$handlerOptions['embModal'] = true;
-$handlerOptions['emDataTarget'] = $emDataTarget;
-$handlerOptions['emAssociationType'] = $data['tab']['associationType'];
-/*
-set field type to 'has_many' and default parameters
- */
-$handlerOptions['fieldDefinitions']['type'] = 'has_many(' . $content['class_name'] . ')';
-$handlerOptions['fieldDefinitions']['required'] = true;
-$handlerOptions['fieldDefinitions']['non-searchable'] = true;
-$handlerOptions['fieldDefinitions']['unique'] = false;
-
 ?>
 <?php if (in_array($data['tab']['associationType'], ['manyToMany'])) : ?>
 <div class="row">
     <div class="typeahead-container col-md-4 col-md-offset-8">
     <?php
+        $emField = $content['class_name'] . '.' . $content['foreign_key'];
+        $emFieldName = substr($emField, strrpos($emField, '.') + 1);
+
+        $emDataTarget = Inflector::underscore(str_replace('.', '_', $emField));
+        $emModal = sprintf("%s_modal", $emDataTarget);
+
+        list($emPlugin, $emController) = pluginSplit(substr($emField, 0, strrpos($emField, '.')));
+
+        $tableName = $this->request->controller;
+        if (!is_null($this->request->plugin)) {
+            $tableName = $this->request->plugin . '.' . $tableName;
+        }
+
+        $formOptions = [
+            'url' => [
+                'plugin' => $this->request->plugin,
+                'controller' => $this->request->controller,
+                'action' => 'edit',
+                $this->request->pass[0]
+            ]
+        ];
+
+        $handlerOptions = [];
+        /*
+        set associated table name to be used on input field's name
+         */
+        $handlerOptions['associated_table_name'] = $content['table_name'];
+        /*
+        set embedded modal flag
+         */
+        $handlerOptions['embModal'] = true;
+        $handlerOptions['emDataTarget'] = $emDataTarget;
+        $handlerOptions['emAssociationType'] = $data['tab']['associationType'];
+        /*
+        set field type to 'has_many' and default parameters
+         */
+        $handlerOptions['fieldDefinitions']['type'] = 'has_many(' . $content['class_name'] . ')';
+        $handlerOptions['fieldDefinitions']['required'] = true;
+        $handlerOptions['fieldDefinitions']['non-searchable'] = true;
+        $handlerOptions['fieldDefinitions']['unique'] = false;
+
+
         echo $this->Form->create(null, $formOptions);
            /*
         display typeahead field for associated module(s)
@@ -110,6 +111,10 @@ $handlerOptions['fieldDefinitions']['unique'] = false;
     </div> <!-- modal-dialog -->
 </div> <!-- modal window -->
 <?php endif; ?>
+<?php
+    //@NOTE: if no records were found Query returns null, so we're fixing the count!
+    $content['length'] = (!is_null($content['records'])) ?: 0;
+?>
 <?php if ($content['length']) : ?>
 <div class="table-responsive">
     <table class="table table-hover <?= $data['tab']['containerId']?>">

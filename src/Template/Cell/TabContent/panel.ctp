@@ -1,16 +1,16 @@
 <?php
-$title = (!empty($data['content']['title'])) ? $data['content']['title'] : '';
+$title = (!empty($data['title'])) ? $data['title'] : '';
 
-if (!empty($data['content']['data'])) :
+if (!empty($data['content']['records'])) :
 ?>
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title"><?= $title ?></h3>
     </div>
     <div class="panel-body">
-        <?php if (!empty($data['content']['data'])) : ?>
+        <?php if (!empty($data['content']['records'])) : ?>
         <table class="table table-hover">
-            <?php foreach ($data['content']['data'] as $row) :?>
+            <?php foreach ($data['content']['records'] as $row) :?>
                 <tr>
                     <?php foreach ($row as $k => $cell) : ?>
                         <td><?= $cell ?> </td>

@@ -221,21 +221,23 @@ if (empty($options['title'])) {
                     <div role="tabpanel" class="tab-pane <?= ($k == 0) ? 'active' : ''?>" id="<?= $tab['containerId']?>">
                         <?php
                             $beforeTabContentEvent = new Event('CsvMigrations.View.View.TabContent.beforeContent', $this, [
-                                'data' => [
-                                    'options' => $tab,
-                                    'request' => $this->request,
-                                ],
+                                'request' => $this->request,
+                                'entity'  => $options['entity'],
+                                'options' => [
+                                        'tab' => $tab
+                                    ]
                             ]);
 
                             $this->eventManager()->dispatch($beforeTabContentEvent);
                             $beforeTab = $beforeTabContentEvent->result;
 
-                            if (!empty($beforeTab)) {
+                            if (isset($beforeTab['content']['length']) && count($beforeTab['content']['length']) > 0) {
                                 echo $this->cell('CsvMigrations.TabContent', [
                                     [
                                         'request' => $this->request,
-                                        'content' => $beforeTab,
+                                        'content' => $beforeTab['content'],
                                         'tab' => $tab,
+                                        'options' => ['order' => 'beforeContent'],
                                     ]
                                 ]);
                             }
@@ -257,7 +259,7 @@ if (empty($options['title'])) {
                                         'request' => $this->request,
                                         'content' => $content,
                                         'tab' => $tab,
-                                        'options' => [],
+                                        'options' => ['order' => 'tabContent'],
                                     ]
                                 ]);
 

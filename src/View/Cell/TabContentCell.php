@@ -65,7 +65,9 @@ class TabContentCell extends Cell
      */
     public function display(array $data)
     {
-        $this->template = $this->_getDisplayTemplate($data['content']);
+        if (isset($data['content'])) {
+            $this->template = $this->_getDisplayTemplate($data['content']);
+        }
 
         if ($data['content']['records'] instanceof ResultSet) {
             $data['content']['length'] = $data['content']['records']->count();

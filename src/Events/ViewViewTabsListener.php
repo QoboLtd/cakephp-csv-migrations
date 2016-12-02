@@ -119,6 +119,11 @@ class ViewViewTabsListener implements EventListenerInterface
                 'targetClass' => $association->className(),
             ];
 
+            // no need to show BelongsTo tabs.
+            // The relationship is shown via the field in the main view.
+            if (in_array($tab['associationObject'], ['BelongsTo'])) {
+                continue;
+            }
 
             if (in_array($association->alias(), array_keys($labels))) {
                 $tab['label'] = $labels[$association->alias()];

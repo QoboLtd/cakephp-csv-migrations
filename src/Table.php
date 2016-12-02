@@ -112,26 +112,27 @@ class Table extends BaseTable
         }
 
         $config = $table->getConfig();
-        $table->parentSection($config['parent']);
+        if (isset($config['parent'])) {
+            $table->parentSection($config['parent']);
+            $module = $table->getParentModuleField();
+            $redirect = $table->getParentRedirectField();
+            $relation = $table->getParentRelationField();
 
-        $module = $table->getParentModuleField();
-        $redirect = $table->getParentRedirectField();
-        $relation = $table->getParentRelationField();
+            if (empty($redirect)) {
+                return $result;
+            }
 
-        if (empty($redirect)) {
-            return $result;
-        }
+            if ($redirect == 'parent') {
+                $result = [
+                    'controller' => $module,
+                    'action' => 'view',
+                    $entity->{$relation}
+                ];
+            }
 
-        if ($redirect == 'parent') {
-            $result = [
-                'controller' => $module,
-                'action' => 'view',
-                $entity->{$relation}
-            ];
-        }
-
-        if ($redirect == 'self') {
-            $result = ['action' => 'view', $entity->id];
+            if ($redirect == 'self') {
+                $result = ['action' => 'view', $entity->id];
+            }
         }
 
         return $result;

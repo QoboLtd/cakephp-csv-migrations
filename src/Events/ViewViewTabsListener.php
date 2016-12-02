@@ -101,15 +101,18 @@ class ViewViewTabsListener implements EventListenerInterface
             $labels = $this->_tableInstance->associationLabels($config['associationLabels']);
         }
 
+        $tabLabels = $this->_getTabLabels($this->_tableInstance, $config);
+
         foreach ($this->_tableInstance->associations() as $association) {
             if (in_array($association->name(), $hiddenAssociations)) {
                 continue;
             }
 
+
             list($namespace, $class) = namespaceSplit(get_class($association));
 
             $tab = [
-                'label' => $association->alias(),
+                'label' => $tabLabels[$association->alias()],
                 'alias' => $association->alias(),
                 'table' => $association->table(),
                 'containerId' => Inflector::underscore($association->alias()),
@@ -119,20 +122,8 @@ class ViewViewTabsListener implements EventListenerInterface
                 'targetClass' => $association->className(),
             ];
 
-            // no need to show BelongsTo tabs.
-            // The relationship is shown via the field in the main view.
             if (in_array($tab['associationObject'], ['BelongsTo'])) {
                 continue;
-            }
-
-            if (in_array($association->alias(), array_keys($labels))) {
-                $tab['label'] = $labels[$association->alias()];
-            } else {
-                $tab['label'] = Inflector::humanize($association->table());
-                $fieldName = str_replace($tab['label'], '', Inflector::humanize(Inflector::tableize($association->alias())));
-                if (!empty($fieldName)) {
-                    $tab['label'] .= sprintf(" (%s)", $fieldName);
-                }
             }
 
             if (!empty($tab['targetClass'])) {
@@ -141,6 +132,60 @@ class ViewViewTabsListener implements EventListenerInterface
         }
 
         return compact('tabs');
+    }
+
+    /**
+     * _getTabLabels
+     *
+     * Re-arrange tabs naming based on the config.ini and fieldNames
+     * to avoid repetitive namings
+     * @param Cake\ORM\TableRegistry $tableInstance passed
+     * @param array $config of the config.ini
+     *
+     * @return array $labels with key/value storage of alias/name
+     */
+    protected function _getTabLabels($tableInstance, $config = [])
+    {
+        $labels = [];
+        $associationLabels = [];
+
+        if (!empty($config['associationLabels'])) {
+            $associationLabels = $tableInstance->associationLabels($config['associationLabels']);
+        }
+
+        foreach ($tableInstance->associations() as $association) {
+            // If label exists in config.ini, use it.
+            if (in_array($association->alias(), array_keys($associationLabels))) {
+                continue;
+            }
+
+            $labels[$association->alias()] = Inflector::humanize($association->table());
+
+            $assocTableInstance = TableRegistry::get($association->table());
+
+            if (method_exists($assocTableInstance, 'moduleAlias')) {
+                $labels[$association->alias()] = Inflector::humanize($assocTableInstance->moduleAlias());
+            } else {
+                $labels[$association->alias()] = Inflector::humanize($association->table());
+            }
+        }
+
+        $labelCounts = array_count_values(array_values($labels));
+
+        foreach ($labels as $labelAssoc => $label) {
+            if ($labelCounts[$label] <= 1) {
+                continue;
+            }
+
+            $fieldName = str_replace($labelAssoc, '', Inflector::humanize(Inflector::tableize($labelAssoc)));
+            $fieldName = trim(str_replace($label, '', $fieldName));
+
+            if (!empty($fieldName)) {
+                $labels[$labelAssoc] .= sprintf(" (%s)", $fieldName);
+            }
+        }
+
+        return $labels;
     }
 
     /**

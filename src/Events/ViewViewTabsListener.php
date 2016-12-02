@@ -265,7 +265,6 @@ class ViewViewTabsListener implements EventListenerInterface
             ]
         ]);
         $records = $query->first()->{$assocTableName};
-        //$records = $records->{$assocTableName};
         // store association name
         $result['assoc_name'] = $assocName;
         // store associated table name

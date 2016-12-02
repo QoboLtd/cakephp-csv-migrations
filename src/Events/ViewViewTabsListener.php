@@ -156,6 +156,7 @@ class ViewViewTabsListener implements EventListenerInterface
         foreach ($tableInstance->associations() as $association) {
             // If label exists in config.ini, use it.
             if (in_array($association->alias(), array_keys($associationLabels))) {
+                $labels[$association->alias()] = $associationLabels[$association->alias()];
                 continue;
             }
 

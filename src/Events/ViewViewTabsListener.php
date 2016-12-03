@@ -4,6 +4,7 @@ namespace CsvMigrations\Events;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\Network\Request;
 use Cake\ORM\Association;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
@@ -20,7 +21,6 @@ class ViewViewTabsListener implements EventListenerInterface
     const ASSOC_FIELDS_ACTION = 'index';
 
     protected $_tableInstance;
-    protected $_controllerInstance;
     protected $_assocTypes;
 
     /**
@@ -30,7 +30,6 @@ class ViewViewTabsListener implements EventListenerInterface
     public function implementedEvents()
     {
         return [
-            'CsvMigrations.View.View.Tabs' => 'getViewTabs',
             'CsvMigrations.View.View.TabsList' => 'getTabsList',
             //'CsvMigrations.View.View.TabContent.beforeContent' => 'getBeforeTabContent',
             'CsvMigrations.View.View.TabContent' => 'getTabContent',
@@ -44,7 +43,7 @@ class ViewViewTabsListener implements EventListenerInterface
      * @param array $data - containing tab content
      * @return void
      */
-    public function getBeforeTabContent(Event $event, $request, $entity, $options)
+    public function getBeforeTabContent(Event $event, Request $request, $entity, $options)
     {
         $result = [
           'title' => __('beforeTab Title'),
@@ -220,7 +219,10 @@ class ViewViewTabsListener implements EventListenerInterface
                 $type = $association->type();
 
                 if (in_array($type, array_keys($associationsMap))) {
-                    $content = $this->{$associationsMap[$type]}($association);
+                    $content = $this->{$associationsMap[$type]}($association, $request);
+                    if (!empty($content['records'])) {
+                        break;
+                    }
                 }
             }
         }
@@ -231,74 +233,14 @@ class ViewViewTabsListener implements EventListenerInterface
 
 
     /**
-     * getViewViewTabs method
-     *
-     * @param Cake\Event\Event $event used for getting reports
-     * @param ArrayObject $options for params
-     * @return array $data with all .ini reports
-     */
-    public function getViewTabs(Event $event, array $instances)
-    {
-        $this->_controllerInstance = $instances['controllerInstance'];
-        $this->_tableInstance = $instances['tableInstance'];
-        $this->_assocTypes = $instances['assocTypes'];
-        $hiddenAssociations = [];
-        $csvAssociationLabels = [];
-        $csvAssociatedRecords = [];
-
-        if (method_exists($this->_tableInstance, 'getConfig')) {
-            $tableConfig = $this->_tableInstance->getConfig();
-
-            $hiddenAssociations = $this->_tableInstance->hiddenAssociations();
-            if (!empty($tableConfig['associationLabels'])) {
-                $csvAssociationLabels = $this->_tableInstance->associationLabels($tableConfig['associationLabels']);
-            }
-        }
-
-        foreach ($this->_tableInstance->associations() as $association) {
-            if (in_array($association->name(), $hiddenAssociations)) {
-                continue;
-            }
-
-            $assocType = $association->type();
-            if (in_array($assocType, $this->_assocTypes)) {
-                // get associated records
-                switch ($assocType) {
-                    case 'manyToOne':
-                        $associatedRecords = $this->_manyToOneAssociatedRecords($association);
-                        if (!empty($associatedRecords)) {
-                            $csvAssociatedRecords[$assocType][$association->foreignKey()] = $associatedRecords;
-                        }
-                        break;
-
-                    case 'oneToMany':
-                        $associatedRecords = $this->_oneToManyAssociatedRecords($association);
-                        if (!empty($associatedRecords)) {
-                            $csvAssociatedRecords[$assocType][$association->name()] = $associatedRecords;
-                        }
-                        break;
-
-                    case 'manyToMany':
-                        $csvAssociatedRecords[$assocType][$association->name()] = $this->_manyToManyAssociatedRecords(
-                            $association
-                        );
-                        break;
-                }
-            }
-        }
-
-        return compact('csvAssociatedRecords', 'csvAssociationLabels');
-    }
-
-
-    /**
      * Method that retrieves many to many associated records
      *
      * @param  \Cake\ORM\Association $association Association object
-     * @return array                              associated records
+     * @param \Cake\Network\Request $request current request
+     * @return array associated records
      * @todo  find better way to fetch associated data, without including current table's data
      */
-    protected function _manyToManyAssociatedRecords(Association $association)
+    protected function _manyToManyAssociatedRecords(Association $association, Request $request)
     {
         $result = [];
         $assocName = $association->name();
@@ -317,7 +259,7 @@ class ViewViewTabsListener implements EventListenerInterface
             )
         );
         $query = $this->_tableInstance->find('all', [
-            'conditions' => [$this->_tableInstance->primaryKey() => $this->_controllerInstance->request->params['pass'][0]],
+            'conditions' => [$this->_tableInstance->primaryKey() => $request->params['pass'][0]],
             'contain' => [
                 $assocName
             ]
@@ -347,9 +289,10 @@ class ViewViewTabsListener implements EventListenerInterface
      * Method that retrieves many to one associated records.
      *
      * @param  \Cake\ORM\Association $association Association object
-     * @return array                              associated records
+     * @param \Cake\Network\Request $request passed
+     * @return array associated records
      */
-    protected function _manyToOneAssociatedRecords(Association $association)
+    protected function _manyToOneAssociatedRecords(Association $association, Request $request)
     {
         $result = [];
         $tableName = $this->_tableInstance->table();
@@ -357,7 +300,7 @@ class ViewViewTabsListener implements EventListenerInterface
         $assocTableName = $association->table();
         $assocPrimaryKey = $association->primaryKey();
         $assocForeignKey = $association->foreignKey();
-        $recordId = $this->_controllerInstance->request->params['pass'][0];
+        $recordId = $request->params['pass'][0];
         $displayField = $association->displayField();
 
         /*
@@ -426,15 +369,16 @@ class ViewViewTabsListener implements EventListenerInterface
      * Method that retrieves one to many associated records
      *
      * @param  \Cake\ORM\Association $association Association object
-     * @return array                              associated records
+     * @param \Cake\Network\Request $request passed
+     * @return array associated records
      */
-    protected function _oneToManyAssociatedRecords(Association $association)
+    protected function _oneToManyAssociatedRecords(Association $association, Request $request)
     {
         $result = [];
         $assocName = $association->name();
         $assocTableName = $association->table();
         $assocForeignKey = $association->foreignKey();
-        $recordId = $this->_controllerInstance->request->params['pass'][0];
+        $recordId = $request->params['pass'][0];
 
         $csvFields = $this->_getAssociationCsvFields($association, static::ASSOC_FIELDS_ACTION);
         if (empty($csvFields)) {

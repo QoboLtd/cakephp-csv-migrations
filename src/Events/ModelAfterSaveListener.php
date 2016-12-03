@@ -143,8 +143,8 @@ class ModelAfterSaveListener implements EventListenerInterface
     /**
      * getAssignedAssociations
      * gets all Entities associated with the record
-     * @param EntityInterface $entity of the record
-     * @param ArrayObject $options extra options
+     * @param EntityInterface $table of the record
+     * @param ArrayObject $entity extra options
      * @return array $entities
      */
     public function getAssignedAssociations($table, $entity, $options = [])

@@ -74,20 +74,6 @@ class CsvViewComponent extends Component
         $this->_controllerInstance = $event->subject();
         $this->_setTableInstance($this->_controllerInstance->request->params);
 
-        if (in_array($this->request->params['action'], $this->_assocActions)) {
-            $ev = new Event('CsvMigrations.View.View.Tabs', $this, [[
-                'controllerInstance' => $event->subject(),
-                'tableInstance' => $this->_tableInstance,
-                'assocTypes' => $this->_assocTypes
-            ]]);
-
-            EventManager::instance()->dispatch($ev);
-            $this->_controllerInstance->set('csvAssociatedRecords', $ev->result['csvAssociatedRecords']);
-            $this->_controllerInstance->set('csvAssociationLabels', $ev->result['csvAssociationLabels']);
-
-            $this->_controllerInstance->set('_serialize', ['csvAssociatedRecords']);
-        }
-
         // skip passing table fields if action is not supported by the plugin
         if (in_array($this->request->action, Configure::readOrFail('CsvMigrations.actions'))) {
             $this->_setTableFields();

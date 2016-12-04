@@ -418,12 +418,38 @@ class AppController extends Controller
             ->allowOrigin(['*'])
             ->allowMethods(['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
             ->allowHeaders(['X-CSRF-Token', 'Origin', 'X-Requested-With', 'Content-Type', 'Accept'])
-            ->maxAge(300)
+            ->maxAge($this->_getSessionTimeout())
             ->build();
 
         // if request method is OPTIONS just return the response with appropriate headers.
         if ('OPTIONS' === $this->request->method()) {
             return $this->response;
         }
+    }
+
+    /**
+     * Get session timeout in seconds
+     *
+     * @return int Session lifetime in seconds
+     */
+    protected function _getSessionTimeout()
+    {
+        // Read from Session.timeout configuration
+        $result = Configure::read('Session.timeout');
+        if ($result) {
+            $result = $result * 60; // Convert minutes to seconds
+        }
+
+        // Read from PHP configuration
+        if (!$result) {
+            $result = ini_get('session.gc_maxlifetime');
+        }
+
+        // Fallback on default
+        if (!$result) {
+            $result = 1800; // 30 minutes
+        }
+
+        return $result;
     }
 }

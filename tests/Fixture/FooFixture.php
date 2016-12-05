@@ -13,7 +13,7 @@ class FooFixture extends TestFixture
     public $fields = [
         'id' => ['type' => 'uuid'],
         'description' => ['type' => 'text', 'null' => true],
-        'name' => ['type' => 'string', 'length' => 255, 'null' => false],
+        'name' => ['type' => 'string', 'length' => 100, 'null' => false],
         'status' => ['type' => 'string', 'length' => 255, 'null' => false],
         'type' => ['type' => 'string', 'length' => 255, 'null' => false],
         'gender' => ['type' => 'string', 'length' => 255, 'null' => true],

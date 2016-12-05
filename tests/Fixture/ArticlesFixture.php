@@ -12,7 +12,7 @@ class ArticlesFixture extends TestFixture
 
     public $fields = [
         'id' => ['type' => 'uuid'],
-        'name' => ['type' => 'string', 'length' => 255, 'null' => false],
+        'name' => ['type' => 'string', 'length' => 100, 'null' => false],
         'created' => ['type' => 'datetime', 'null' => true],
         'modified' => ['type' => 'datetime', 'null' => true],
         'trashed' => ['type' => 'datetime', 'null' => true],

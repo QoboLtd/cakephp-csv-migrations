@@ -95,8 +95,8 @@ class AppController extends BaseController
             $entity = $this->{$this->name}->patchEntity($entity, $this->request->data);
             if ($this->{$this->name}->save($entity)) {
                 // handle file uploads if found in the request data
-                if (isset($this->request->data[$this->name]['file'])) {
-                    $this->_fileUploadsUtils->save($entity, $this->request->data[$this->name]['file']);
+                if (isset($this->request->data[$this->name]['uploads'])) {
+                    $this->_fileUploadsUtils->save($entity, $this->request->data[$this->name]['uploads']);
                 }
                 $this->Flash->success(__('The record has been saved.'));
 

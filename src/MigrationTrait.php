@@ -23,7 +23,7 @@ trait MigrationTrait
      *
      * @var array
      */
-    private $__assocIdentifiers = ['related', 'files'];
+    private $__assocIdentifiers = ['related'];
 
     /**
      * Method that retrieves fields from csv file and returns them in associate array format.
@@ -103,6 +103,24 @@ trait MigrationTrait
         $csvData = $this->_csvData(true);
         $csvObjData = $this->_csvDataToCsvObj($csvData);
         $csvFilteredData = $this->_csvDataFilter($csvObjData, $this->__assocIdentifiers);
+
+        //setting up files associations for FileStorage relation
+        foreach ($csvObjData as $csvModule => $fields) {
+            foreach ($fields as $csvObjField) {
+                if ($csvObjField->getType() == 'files') {
+                    $fieldName = $csvObjField->getName();
+                    $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $fieldName);
+                    $this->hasMany($assocName, [
+                        'className' => 'Burzum/FileStorage.FileStorage',
+                        'foreignKey' => 'foreign_key',
+                        'conditions' => [
+                            'model' => $this->table(),
+                            'model_field' => $fieldName,
+                        ]
+                    ]);
+                }
+            }
+        }
 
         foreach ($csvFilteredData as $csvModule => $fields) {
             foreach ($fields as $csvObjField) {

@@ -12,11 +12,6 @@ use Cake\ORM\Table as UploadTable;
 class FileUploadsUtils
 {
     /**
-     * Files database table name
-     */
-    const TABLE_FILES = 'files';
-
-    /**
      * File-Storage database table name
      */
     const TABLE_FILE_STORAGE = 'file_storage';
@@ -38,32 +33,11 @@ class FileUploadsUtils
     protected $_table;
 
     /**
-     * Instance of a Files Association class
-     *
-     * @var \Cake\ORM\Association
-     */
-    protected $_fileAssociation;
-
-    /**
      * Instance of File-Storage Association class
      *
      * @var \Cake\ORM\Association
      */
     protected $_fileStorageAssociation;
-
-    /**
-     * Document foreign key for many-to-many association with Files
-     *
-     * @var string
-     */
-    protected $_documentForeignKey;
-
-    /**
-     * File foreign key for many-to-many association with Documents
-     *
-     * @var string
-     */
-    protected $_fileForeignKey;
 
     /**
      * File-Storage table foreign key
@@ -88,10 +62,6 @@ class FileUploadsUtils
     {
         $this->_table = $table;
 
-        $this->_getFileAssociationInstance();
-        $this->_getDocumentForeignKey();
-        $this->_getFileForeignKey();
-
         $this->_getFileStorageAssociationInstance();
         $this->_fileStorageForeignKey = 'foreign_key';
     }
@@ -107,70 +77,14 @@ class FileUploadsUtils
     }
 
     /**
-     * Get instance of Files association.
-     *
-     * @return void
-     */
-    protected function _getFileAssociationInstance()
-    {
-        foreach ($this->_table->associations() as $association) {
-            // @todo temporary performance fix
-            if (ucfirst(static::TABLE_FILES) === $association->className()) {
-                $this->_fileAssociation = $association;
-                break;
-            }
-        }
-    }
-
-    /**
-     * Get Document foreign key in many-to-many association with Files.
-     *
-     * @return void
-     */
-    protected function _getDocumentForeignKey()
-    {
-        if (!is_null($this->_fileAssociation)) {
-            $this->_documentForeignKey = $this->_fileAssociation->foreignKey();
-        }
-    }
-
-    /**
-     * Get File foreign key in many-to-one association with FileStorage.
-     *
-     * @return void
-     */
-    protected function _getFileForeignKey()
-    {
-        if (is_null($this->_fileAssociation)) {
-            return;
-        }
-
-        foreach ($this->_fileAssociation->associations() as $association) {
-            if (static::TABLE_FILE_STORAGE !== $association->target()->table()) {
-                continue;
-            }
-
-            if (static::ASSOCIATION_MANY_TO_ONE_ID !== $association->type()) {
-                continue;
-            }
-
-            $this->_fileForeignKey = $association->foreignKey();
-        }
-    }
-
-    /**
      * Get instance of FileStorage association.
      *
      * @return void
      */
     protected function _getFileStorageAssociationInstance()
     {
-        if (is_null($this->_fileAssociation)) {
-            return;
-        }
-
-        foreach ($this->_fileAssociation->associations() as $association) {
-            if ($this->_fileForeignKey === $association->foreignKey()) {
+        foreach ($this->_table->associations() as $association) {
+            if ($association->className() == self::TABLE_FILE_STORAGE) {
                 $this->_fileStorageAssociation = $association;
                 break;
             }
@@ -185,17 +99,8 @@ class FileUploadsUtils
      */
     public function getFiles($data)
     {
-        $ids = $this->_fileAssociation->find('list', [
-            'valueField' => $this->_fileForeignKey,
-            'conditions' => [$this->_documentForeignKey => $data]
-        ])->toArray();
-
-        if (empty($ids)) {
-            return [];
-        }
-
         $query = $this->_fileStorageAssociation->find('all', [
-            'conditions' => [$this->_fileStorageAssociation->primaryKey() . ' IN' => array_values($ids)]
+            'conditions' => [$this->_fileStorageForeignKey => $data]
         ]);
 
         return $query->all();

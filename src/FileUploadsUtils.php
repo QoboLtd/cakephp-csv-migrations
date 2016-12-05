@@ -130,9 +130,6 @@ class FileUploadsUtils
             }
 
             $fsEntity = $this->_storeFileStorage($entity, ['file' => $file]);
-            if ($fsEntity) {
-                $result = $this->_storeFile($entity, $fsEntity, $file);
-            }
         }
 
         return $result;
@@ -147,10 +144,15 @@ class FileUploadsUtils
      */
     protected function _storeFileStorage($docEntity, $fileData)
     {
+        $modelField = $this->_fileStorageAssociation->conditions()['model_field'];
+
         $fileStorEnt = $this->_fileStorageAssociation->newEntity($fileData);
         $fileStorEnt = $this->_fileStorageAssociation->patchEntity(
-            $fileStorEnt,
-            [$this->_fileStorageForeignKey => $docEntity->get('id')]
+            $fileStorEnt, [
+                $this->_fileStorageForeignKey => $docEntity->get('id'),
+                'model' => $this->_table->table(),
+                'model_field' => $modelField,
+            ]
         );
 
         if ($this->_fileStorageAssociation->save($fileStorEnt)) {
@@ -204,12 +206,8 @@ class FileUploadsUtils
      */
     protected function _deleteFileAssociationRecord($id)
     {
-        if (is_null($this->_fileAssociation)) {
-            return false;
-        }
-
-        $query = $this->_fileAssociation->find('all', [
-            'conditions' => [$this->_fileForeignKey => $id]
+        $query = $this->_fileStorageAssociation->find('all', [
+            'conditions' => [$this->_fileStorageForeignKey => $id]
         ]);
         $entity = $query->first();
 
@@ -217,26 +215,7 @@ class FileUploadsUtils
             return false;
         }
 
-        return $this->_fileAssociation->delete($entity);
-    }
-
-    /**
-     * Method that fetches and deletes file Entity.
-     *
-     * @param  string $id file id
-     * @return bool
-     */
-    protected function _deleteFileRecord($id)
-    {
-        $entity = $this->_fileStorageAssociation->get($id);
-
-        $result = $this->_fileStorageAssociation->delete($entity);
-
-        if ($result) {
-            $this->_removeThumbnails($entity);
-        }
-
-        return $result;
+        return $this->_fileStorageAssociation->delete($entity);
     }
 
     /**
@@ -278,6 +257,11 @@ class FileUploadsUtils
         }
 
         $operations = Configure::read('FileStorage.imageSizes.' . static::TABLE_FILE_STORAGE);
+
+        if (empty($options)) {
+            $operations = Configure::write('FileStorage.imageSizes.' . $entity->model, Configure::read('ThumbnailVersions'));
+        }
+
         $storageTable = TableRegistry::get('Burzum/FileStorage.ImageStorage');
         $result = true;
         foreach ($operations as $version => $operation) {

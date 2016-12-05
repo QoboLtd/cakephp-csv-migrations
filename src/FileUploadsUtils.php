@@ -14,6 +14,8 @@ class FileUploadsUtils
     /**
      * File-Storage database table name
      */
+    const FILES_STORAGE_NAME = 'Burzum/FileStorage.FileStorage';
+
     const TABLE_FILE_STORAGE = 'file_storage';
 
     /**
@@ -84,7 +86,7 @@ class FileUploadsUtils
     protected function _getFileStorageAssociationInstance()
     {
         foreach ($this->_table->associations() as $association) {
-            if ($association->className() == self::TABLE_FILE_STORAGE) {
+            if ($association->className() == self::FILES_STORAGE_NAME) {
                 $this->_fileStorageAssociation = $association;
                 break;
             }

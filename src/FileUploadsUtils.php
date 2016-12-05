@@ -147,13 +147,11 @@ class FileUploadsUtils
         $modelField = $this->_fileStorageAssociation->conditions()['model_field'];
 
         $fileStorEnt = $this->_fileStorageAssociation->newEntity($fileData);
-        $fileStorEnt = $this->_fileStorageAssociation->patchEntity(
-            $fileStorEnt, [
-                $this->_fileStorageForeignKey => $docEntity->get('id'),
-                'model' => $this->_table->table(),
-                'model_field' => $modelField,
-            ]
-        );
+        $fileStorEnt = $this->_fileStorageAssociation->patchEntity($fileStorEnt, [
+            $this->_fileStorageForeignKey => $docEntity->get('id'),
+            'model' => $this->_table->table(),
+            'model_field' => $modelField,
+        ]);
 
         if ($this->_fileStorageAssociation->save($fileStorEnt)) {
             $this->createThumbnails($fileStorEnt);

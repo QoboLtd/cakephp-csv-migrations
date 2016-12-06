@@ -69,11 +69,6 @@ class BaseFileFieldHandler extends RelatedFieldHandler
     const THUMBNAIL_HTML = '<div class="thumbnail">%s</div>';
 
     /**
-     * File html markup
-     */
-    const FILE_HTML = '<a href="%s">%s</a>';
-
-    /**
      * Icon extension
      */
     const ICON_EXTENSION = 'png';
@@ -273,7 +268,9 @@ class BaseFileFieldHandler extends RelatedFieldHandler
 
             // if not an image file wrap the thumbnail in the file's anchor tag
             if (!in_array(strtolower($entity->extension), $imgExtensions)) {
-                $thumbnail = sprintf(static::FILE_HTML, $entity->path, $thumbnail);
+                // wrapping file with Html link
+                // that can be opened in new tab/window.
+                $thumbnail = $this->cakeView->Html->link($thumbnail, $entity->path, ['escape' => false, 'target' => '_blank']);
             }
 
             $result .= sprintf(

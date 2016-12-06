@@ -183,7 +183,7 @@ trait ConfigurationTrait
         return $this->_searchable;
     }
 
-     /**
+    /**
      * Returns the module icon or sets a new one
      *
      * @param string|null $icon sets the icon
@@ -192,7 +192,7 @@ trait ConfigurationTrait
     public function icon($icon = null)
     {
         if ($icon !== null) {
-            $this->_icon = (string) $icon;
+            $this->_icon = (string)$icon;
         }
 
         // Default icon if none is set

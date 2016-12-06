@@ -23,6 +23,19 @@ class ConfigurationTraitTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->mock->isSearchable('foobar'));
     }
 
+    public function testIcon()
+    {
+        // Default icon
+        $expected = \Cake\Core\Configure::read('CsvMigration.default_icon');
+        $this->assertEquals($expected, $this->mock->icon());
+
+        // Setting icon
+        $expected = 'foobar';
+        $this->assertEquals($expected, $this->mock->icon($expected));
+        // Getting icon
+        $this->assertEquals($expected, $this->mock->icon());
+    }
+
     public function testModuleAlias()
     {
         $this->assertSame($this->mock->moduleAlias('foo'), 'foo');

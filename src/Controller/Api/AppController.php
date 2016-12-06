@@ -288,6 +288,52 @@ class AppController extends Controller
     }
 
     /**
+     * upload function shared among API controllers
+     *
+     * @return array $response encoded in JSON object
+     */
+    public function upload()
+    {
+        $this->autoRender = false;
+
+        $conditions = [];
+        $fileStorageAssociation = null;
+        $saved = null;
+        $response = [];
+
+        foreach ($this->{$this->name}->associations() as $association) {
+            if ($association->className() == 'Burzum/FileStorage.FileStorage') {
+                $fileStorageAssociation = $association;
+                $conditions = $fileStorageAssociation->conditions();
+                break;
+            }
+        }
+
+        if (!empty($fileStorageAssociation)) {
+            foreach ($this->request->data() as $model => $files) {
+                if (strtolower($model) != $conditions['model']) {
+                    continue;
+                }
+
+                foreach ($files as $modelField => $fileInfo) {
+                    if ($modelField == $conditions['model_field']) {
+                        $saved = $this->_fileUploadsUtils->ajaxSave($this->{$this->name}, $fileInfo, ['ajax' => true]);
+                    }
+                }
+            }
+        }
+
+        if ($saved) {
+            $response['id'] = $saved;
+        } else {
+            $this->response->statusCode(400);
+            $response['errors'] = "Couldn't save the File";
+        }
+
+        echo json_encode($response);
+    }
+
+    /**
      * Lookup CRUD action events handling logic.
      *
      * @return \Cake\Network\Response

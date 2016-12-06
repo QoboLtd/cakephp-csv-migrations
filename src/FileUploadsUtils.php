@@ -109,13 +109,18 @@ class FileUploadsUtils
     }
 
     /**
-     * File save method.
+     * ajaxSave method
      *
-     * @param  \Cake\ORM\Entity $entity Associated Entity
-     * @param  array            $files  Uploaded files
-     * @return bool
+     * Actual save() clone, but with optional entity, as we
+     * don't have it saved yet, and saving files first.
+     *
+     * @param Cake\ORM\Entity $entity of the parent record
+     * @param array $files passed via file upload input field
+     * @param array $options specifying if its AJAX call or not
+     *
+     * @return mixed $result boolean or file_storage ID.
      */
-    public function save(Entity $entity, array $files = [])
+    public function ajaxSave($entity, array $files = [], $options = [])
     {
         $result = false;
 
@@ -129,7 +134,37 @@ class FileUploadsUtils
                 continue;
             }
 
-            $fsEntity = $this->_storeFileStorage($entity, ['file' => $file]);
+            $result = $this->_storeFileStorage($entity, ['file' => $file], $options);
+            if ($result) {
+                $result = $result->get('id');
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * File save method.
+     *
+     * @param  \Cake\ORM\Entity $entity Associated Entity
+     * @param  array            $files  Uploaded files
+     * @return bool
+     */
+    public function save(Entity $entity, array $files = [], $options = [])
+    {
+        $result = false;
+
+        if (empty($files)) {
+            return $result;
+        }
+
+        foreach ($files as $file) {
+            // file not stored and not uploaded.
+            if ($this->_isInValidUpload($file['error'])) {
+                continue;
+            }
+
+            $result = $this->_storeFileStorage($entity, ['file' => $file], $options);
         }
 
         return $result;
@@ -142,41 +177,34 @@ class FileUploadsUtils
      * @param  array $fileData File data
      * @return object|bool Fresh created entity or false on unsuccesful attempts.
      */
-    protected function _storeFileStorage($docEntity, $fileData)
+    protected function _storeFileStorage($docEntity, $fileData, $options = [])
     {
         $modelField = $this->_fileStorageAssociation->conditions()['model_field'];
 
         $fileStorEnt = $this->_fileStorageAssociation->newEntity($fileData);
-        $fileStorEnt = $this->_fileStorageAssociation->patchEntity($fileStorEnt, [
-            $this->_fileStorageForeignKey => $docEntity->get('id'),
-            'model' => $this->_table->table(),
-            'model_field' => $modelField,
-        ]);
+
+        if (!empty($options['ajax'])) {
+            //AJAX upload doesn't know anything about the entity
+            //it relates to, as it's not saved yet
+            $patchData = [
+                'model' => $this->_table->table(),
+                'model_field' => $modelField,
+            ];
+        } else {
+            $patchData = [
+                $this->_fileStorageForeignKey => $docEntity->get('id'),
+                'model' => $this->_table->table(),
+                'model_field' => $modelField,
+            ];
+        }
+
+        $fileStorEnt = $this->_fileStorageAssociation->patchEntity($fileStorEnt, $patchData);
 
         if ($this->_fileStorageAssociation->save($fileStorEnt)) {
-            $this->createThumbnails($fileStorEnt);
-
             return $fileStorEnt;
         }
 
         return false;
-    }
-
-    /**
-     * Store file entity.
-     *
-     * @param  object $docEntity Document entity
-     * @param  object $fileStorEnt FileStorage entity
-     * @return object|bool
-     */
-    protected function _storeFile($docEntity, $fileStorEnt)
-    {
-        $entity = $this->_fileAssociation->newEntity([
-            $this->_documentForeignKey => $docEntity->get('id'),
-            $this->_fileForeignKey => $fileStorEnt->get('id'),
-        ]);
-
-        return $this->_fileAssociation->save($entity);
     }
 
     /**

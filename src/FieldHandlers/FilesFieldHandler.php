@@ -14,7 +14,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
      * Defines the layout of the wrapper
      * Expects the label and the actual field.
      */
-    const WRAPPER = '<div class="form-group">%s%s</div>';
+    const WRAPPER = '<div class="form-group">%s%s%s</div>';
 
     /**
      * {@inheritDoc}
@@ -51,7 +51,14 @@ class FilesFieldHandler extends BaseFileFieldHandler
         );
         $label = $this->cakeView->Form->label($field);
 
-        return sprintf(self::WRAPPER, $label, $uploadField);
+        $hiddenIds = $this->cakeView->Form->hidden(
+            $this->_getFieldName($table, $field, $options) . '_ids][',
+            [
+                'value' => ''
+            ]
+        );
+
+        return sprintf(self::WRAPPER, $label, $uploadField, $hiddenIds);
     }
 
     /**
@@ -64,6 +71,9 @@ class FilesFieldHandler extends BaseFileFieldHandler
      */
     protected function _renderInputWithData($table, $field, $options)
     {
+        $files = [];
+        $hiddenIds = '';
+
         $fileUploadsUtils = new FileUploadsUtils($table);
         $entity = Hash::get($options, 'entity');
 
@@ -73,13 +83,21 @@ class FilesFieldHandler extends BaseFileFieldHandler
             return $this->_renderInputWithoutData($table, $field, $options);
         }
 
-        $files = [];
         foreach ($entities as $file) {
             $files[] = [
                 'id' => $file->id,
                 'path' => $file->path
             ];
+
+            $hiddenIds .= $this->cakeView->Form->hidden(
+                $this->_getFieldName($table, $field, $options) . '_ids][',
+                [
+                    'value' => $file->id
+                ]
+            );
         }
+
+        $label = $this->cakeView->Form->label($field);
 
         $uploadField = $this->cakeView->Form->file(
             $this->_getFieldName($table, $field, $options) . '[]',
@@ -89,9 +107,8 @@ class FilesFieldHandler extends BaseFileFieldHandler
                 'data-files' => json_encode($files),
             ]
         );
-        $label = $this->cakeView->Form->label($field);
 
-        return sprintf(self::WRAPPER, $label, $uploadField);
+        return sprintf(self::WRAPPER, $label, $uploadField, $hiddenIds);
     }
 
     /**

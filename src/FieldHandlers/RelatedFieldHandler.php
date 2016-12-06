@@ -51,6 +51,28 @@ class RelatedFieldHandler extends BaseFieldHandler
     {
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
+        // Related module icon
+        $icon = Configure::read('CsvMigrations.default_icon');
+        if (!empty($relatedProperties['config']['table']['icon'])) {
+            $icon = $relatedProperties['config']['table']['icon'];
+        }
+
+        // Help
+        $help = '';
+        $typeaheadFields = '';
+        if (!empty($relatedProperties['config']['table']['typeahead_fields'])) {
+            $typeaheadFields = explode(',', $relatedProperties['config']['table']['typeahead_fields']);
+            if (empty(!$typeaheadFields)) {
+                $typeaheadFields = implode(', or ', array_map(function ($value) {
+                    return Inflector::humanize($value);
+                }, $typeaheadFields));
+            }
+        }
+        if (empty($typeaheadFields)) {
+            $typeaheadFields = Inflector::humanize($relatedProperties['displayField']);
+        }
+        $help = $typeaheadFields;
+
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
             $relatedParentProperties = $this->_getRelatedParentProperties($relatedProperties);
             if (!empty($relatedParentProperties['dispFieldVal'])) {
@@ -67,13 +89,15 @@ class RelatedFieldHandler extends BaseFieldHandler
         $input .= '<div class="form-group' . ((bool)$options['fieldDefinitions']->getRequired() ? ' required' : '') . '">';
         $input .= $this->cakeView->Form->label($field);
         $input .= '<div class="input-group">';
-        $input .= '<span class="input-group-addon" title="Auto-complete"><strong>&hellip;</strong></span>';
+        $input .= '<span class="input-group-addon" title="' . $relatedProperties['controller'] . '"><span class="fa fa-' . $icon . '"></span></span>';
 
         $input .= $this->cakeView->Form->input($field, [
             'label' => false,
             'name' => false,
             'id' => $field . static::LABEL_FIELD_SUFFIX,
             'type' => 'text',
+            'placeholder' => $help,
+            'title' => $help,
             'data-type' => 'typeahead',
             'data-display-field' => $relatedProperties['displayField'],
             'readonly' => (bool)$data,

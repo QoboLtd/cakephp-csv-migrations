@@ -152,40 +152,83 @@ class ViewViewTabsListener implements EventListenerInterface
             $associationLabels = $tableInstance->associationLabels($config['associationLabels']);
         }
 
+        $labelCounts = [];
+        // Gather labels for all associations
         foreach ($tableInstance->associations() as $association) {
-            // If label exists in config.ini, use it.
-            if (in_array($association->alias(), array_keys($associationLabels))) {
-                $labels[$association->alias()] = $associationLabels[$association->alias()];
-                continue;
-            }
-
-            $labels[$association->alias()] = Inflector::humanize($association->table());
-
             $assocTableInstance = TableRegistry::get($association->table());
 
-            if (method_exists($assocTableInstance, 'moduleAlias')) {
-                $labels[$association->alias()] = Inflector::humanize($assocTableInstance->moduleAlias());
-            } else {
-                $labels[$association->alias()] = Inflector::humanize($association->table());
+            $icon = $this->_getTableIcon($assocTableInstance);
+            $assocAlias = $association->alias();
+
+            // Initialize association label array with the icon
+            if (empty($labels[$assocAlias])) {
+                $labels[$assocAlias] = ['icon' => $icon];
             }
+
+            if (in_array($assocAlias, array_keys($associationLabels))) {
+                // If label exists in config.ini, use it.
+                $labels[$assocAlias]['label'] = $associationLabels[$assocAlias];
+            } else {
+                // Otherwise use table alias or name as label
+                $labels[$assocAlias]['label'] = Inflector::humanize($association->table());
+                if (method_exists($assocTableInstance, 'moduleAlias')) {
+                    $labels[$assocAlias]['label'] = Inflector::humanize($assocTableInstance->moduleAlias());
+                }
+            }
+
+            // Initialize counter for current label, if needed
+            if (empty($labelCounts[$labels[$assocAlias]['label']])) {
+                $labelCounts[$labels[$assocAlias]['label']] = 0;
+            }
+            // Bump up label counter
+            $labelCounts[$labels[$assocAlias]['label']]++;
         }
 
-        $labelCounts = array_count_values(array_values($labels));
+        // Not that we have all the labels, check if we have any duplicate labels
+        // and append the association field name to those that are not unique.
+        // Also, while we are at it, construct the actual label string from the
+        // icon, label, and field name.
+        foreach ($labels as $assocAlias => $label) {
+            $labels[$assocAlias] = $label['icon'] . $label['label'];
 
-        foreach ($labels as $labelAssoc => $label) {
-            if ($labelCounts[$label] <= 1) {
+            if ($labelCounts[$label['label']] <= 1) {
+                // If the label is unique, we have nothing else to do
                 continue;
             }
 
-            $fieldName = str_replace($labelAssoc, '', Inflector::humanize(Inflector::tableize($labelAssoc)));
-            $fieldName = trim(str_replace($label, '', $fieldName));
+            // Get the association field and clean it up, removing the association name
+            // from the field.  So, for 'primaryContactIdLeads', we'll do the following:
+            // * Tableize: primary_contact_id_leads
+            // * Humanize: Primary Contact Id Leads
+            // * Remove association table: Primary Contact Id
+            $fieldName = Inflector::humanize(Inflector::tableize($assocAlias));
+            $fieldName = str_replace($assocAlias, '', Inflector::humanize(Inflector::tableize($assocAlias)));
+            $fieldName = trim(str_replace($label['label'], '', $fieldName));
 
+            // Field can be empty in case of, for example, many-to-many relationships.
             if (!empty($fieldName)) {
-                $labels[$labelAssoc] .= sprintf(" (%s)", $fieldName);
+                $labels[$assocAlias] .= sprintf(" (%s)", $fieldName);
             }
         }
 
         return $labels;
+    }
+
+    /**
+     * Get module icon for a given table
+     *
+     * @param Table $tableInstance Instance of a table for which to get the icon
+     * @return string HTML string with the module icon
+     */
+    protected function _getTableIcon($tableInstance)
+    {
+        $result = 'cube';
+        if (method_exists($tableInstance, 'icon')) {
+            $result = $tableInstance->icon();
+        }
+        $result = '<span class="fa fa-' . $result . '"></span> ';
+
+        return $result;
     }
 
     /**

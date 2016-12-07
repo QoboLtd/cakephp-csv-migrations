@@ -9,6 +9,13 @@ use CsvMigrations\PathFinder\ConfigPathFinder;
 trait ConfigurationTrait
 {
     /**
+     * Default icon
+     *
+     * When all else fails, use this icon.
+     */
+    public $defaultIcon = 'cube';
+
+    /**
      * Table/module configuration
      *
      * @var array
@@ -95,6 +102,16 @@ trait ConfigurationTrait
     protected $_moduleAlias;
 
     /**
+     * Notifications config
+     *
+     * @var array
+     */
+    protected $_notifications = [
+        'enable' => false,
+        'ignored_fields' => []
+    ];
+
+    /**
      * Method that returns table configuration.
      *
      * @return array
@@ -162,6 +179,10 @@ trait ConfigurationTrait
             $this->parentSection($this->_config['parent']);
         }
 
+        if (isset($this->_config['notifications'])) {
+            $this->notifications($this->_config['notifications']);
+        }
+
         // set virtual field(s)
         if (isset($this->_config['virtualFields'])) {
             $this->setVirtualFields($this->_config['virtualFields']);
@@ -197,7 +218,13 @@ trait ConfigurationTrait
 
         // Default icon if none is set
         if (empty($this->_icon)) {
-            $this->_icon = Configure::read('CsvMigrations.default_icon');
+            $this->_icon = (string)Configure::read('CsvMigrations.default_icon');
+        }
+
+        // To avoid unncessary checks in the views for the missing
+        // icon, we should ALWAYS return something.
+        if (empty($this->_icon)) {
+            $this->_icon = $this->defaultIcon;
         }
 
         return $this->_icon;
@@ -331,6 +358,40 @@ trait ConfigurationTrait
         }
 
         return $this->_associationLabels;
+    }
+
+    /**
+     * Returns notifications config or sets a new one.
+     *
+     * @param array $notifications sets notifications config
+     * @return array
+     */
+    public function notifications($notifications = [])
+    {
+        if (!empty($notifications)) {
+            foreach ($this->_notifications as $k => $v) {
+                if (empty($notifications[$k])) {
+                    continue;
+                }
+
+                $type = gettype($v);
+
+                $v = $notifications[$k];
+                switch ($type) {
+                    case 'boolean':
+                        $v = (bool)$v;
+                        break;
+
+                    case 'array':
+                        $v = is_string($v) ? explode(',', $v) : $v;
+                        break;
+                }
+
+                $this->_notifications[$k] = $v;
+            }
+        }
+
+        return $this->_notifications;
     }
 
     /**

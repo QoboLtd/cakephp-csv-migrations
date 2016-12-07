@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\View\Helper\IdGeneratorTrait;
@@ -24,13 +25,47 @@ class HasManyFieldHandler extends RelatedFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        // get plugin and controller names
-        list($relatedPlugin, $relatedController) = pluginSplit($options['fieldDefinitions']->getLimit());
+        $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
+        $relatedPlugin = $relatedProperties['plugin'];
+        $relatedController = $relatedProperties['controller'];
+
         // remove vendor from plugin name
         if (!is_null($relatedPlugin)) {
             $pos = strpos($relatedPlugin, '/');
             if ($pos !== false) {
                 $relatedPlugin = substr($relatedPlugin, $pos + 1);
+            }
+        }
+
+        // Related module icon
+        $icon = Configure::read('CsvMigrations.default_icon');
+        if (!empty($relatedProperties['config']['table']['icon'])) {
+            $icon = $relatedProperties['config']['table']['icon'];
+        }
+
+        // Help
+        $help = '';
+        $typeaheadFields = '';
+        if (!empty($relatedProperties['config']['table']['typeahead_fields'])) {
+            $typeaheadFields = explode(',', $relatedProperties['config']['table']['typeahead_fields']);
+            if (empty(!$typeaheadFields)) {
+                $typeaheadFields = implode(', or ', array_map(function ($value) {
+                    return Inflector::humanize($value);
+                }, $typeaheadFields));
+            }
+        }
+        if (empty($typeaheadFields)) {
+            $typeaheadFields = Inflector::humanize($relatedProperties['displayField']);
+        }
+        $help = $typeaheadFields;
+
+        if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
+            $relatedParentProperties = $this->_getRelatedParentProperties($relatedProperties);
+            if (!empty($relatedParentProperties['dispFieldVal'])) {
+                $relatedProperties['dispFieldVal'] = implode(' ' . $this->_separator . ' ', [
+                    $relatedParentProperties['dispFieldVal'],
+                    $relatedProperties['dispFieldVal']
+                ]);
             }
         }
 
@@ -44,6 +79,7 @@ class HasManyFieldHandler extends RelatedFieldHandler
 
         if (!empty($options['embModal'])) {
             $input .= '<div class="input-group">';
+            $input .= '<span class="input-group-addon" title="' . $relatedProperties['controller'] . '"><span class="fa fa-' . $icon . '"></span></span>';
         }
 
         $input .= $this->cakeView->Form->input($field, [
@@ -51,6 +87,8 @@ class HasManyFieldHandler extends RelatedFieldHandler
             'name' => $field . '_label',
             'id' => $field . '_label',
             'type' => 'text',
+            'placeholder' => $help,
+            'title' => $help,
             'data-type' => 'typeahead',
             'readonly' => (bool)$data,
             'value' => null,

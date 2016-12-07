@@ -110,14 +110,16 @@ trait MigrationTrait
                 if ($csvObjField->getType() == 'files') {
                     $fieldName = $csvObjField->getName();
                     $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $fieldName);
-                    $this->hasMany($assocName, [
-                        'className' => 'Burzum/FileStorage.FileStorage',
-                        'foreignKey' => 'foreign_key',
-                        'conditions' => [
-                            'model' => $this->table(),
-                            'model_field' => $fieldName,
-                        ]
-                    ]);
+                    if ($csvModule == $config['table']) {
+                        $this->hasMany($assocName, [
+                            'className' => 'Burzum/FileStorage.FileStorage',
+                            'foreignKey' => 'foreign_key',
+                            'conditions' => [
+                                'model' => $this->table(),
+                                'model_field' => $fieldName,
+                            ]
+                        ]);
+                    }
                 }
             }
         }

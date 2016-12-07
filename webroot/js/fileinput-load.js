@@ -15,6 +15,7 @@ $(document).ready(function () {
         field.on('change', function (e) {
             //Trigger the updateFiles Event and pass all the collected uploads
             $(document).trigger('updateFiles', [e.target.files, $(this).attr('name')]);
+            console.log('change files');
         });
     };
 
@@ -142,15 +143,12 @@ $(document).ready(function () {
             console.log(files);
         });
         */
-        inputField.fileinput(options).on('filebatchpreupload', function(event, data, id, index) {
-            console.log('filebatchpreupload');
-            console.log(event);
-            console.log(data);
-        }).on('fileuploaded', function(event, data, id, index){
+        inputField.fileinput(options).on('fileuploaded', function(event, data, id, index){
             console.log('fileuploaded');
-            console.log(event);
-            console.log(data);
-        });;
+            console.log(data.response);
+            console.log(id);
+            console.log(index);
+        });
     };
 
     /**

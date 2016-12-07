@@ -153,20 +153,27 @@ class ViewViewTabsListener implements EventListenerInterface
         }
 
         foreach ($tableInstance->associations() as $association) {
+            $assocTableInstance = TableRegistry::get($association->table());
+
+            $icon = 'cube';
+            if (method_exists($assocTableInstance, 'icon')) {
+                $icon = $assocTableInstance->icon();
+            }
+            $icon = '<span class="fa fa-' . $icon . '"></span> ';
+
             // If label exists in config.ini, use it.
             if (in_array($association->alias(), array_keys($associationLabels))) {
-                $labels[$association->alias()] = $associationLabels[$association->alias()];
+                $labels[$association->alias()] = $icon . $associationLabels[$association->alias()];
                 continue;
             }
 
-            $labels[$association->alias()] = Inflector::humanize($association->table());
+            $labels[$association->alias()] = $icon . Inflector::humanize($association->table());
 
-            $assocTableInstance = TableRegistry::get($association->table());
 
             if (method_exists($assocTableInstance, 'moduleAlias')) {
-                $labels[$association->alias()] = Inflector::humanize($assocTableInstance->moduleAlias());
+                $labels[$association->alias()] = $icon . Inflector::humanize($assocTableInstance->moduleAlias());
             } else {
-                $labels[$association->alias()] = Inflector::humanize($association->table());
+                $labels[$association->alias()] = $icon . Inflector::humanize($association->table());
             }
         }
 

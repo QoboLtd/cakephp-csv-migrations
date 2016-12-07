@@ -23,6 +23,25 @@ class ConfigurationTraitTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->mock->isSearchable('foobar'));
     }
 
+    public function testNotifications()
+    {
+        $expected = [
+            'enable' => true,
+            'ignored_fields' => ['foo', 'bar']
+        ];
+
+        $expectedAsString = [
+            'enable' => true,
+            'ignored_fields' => 'foo,bar'
+        ];
+
+        $this->assertEquals($expected, $this->mock->notifications($expected));
+        $this->assertEquals($expected, $this->mock->notifications());
+
+        $this->assertEquals($expected, $this->mock->notifications($expectedAsString));
+        $this->assertEquals($expected, $this->mock->notifications());
+    }
+
     public function testIconDefault()
     {
         // Default icon

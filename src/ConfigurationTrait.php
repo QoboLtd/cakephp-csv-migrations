@@ -102,6 +102,16 @@ trait ConfigurationTrait
     protected $_moduleAlias;
 
     /**
+     * Notifications config
+     *
+     * @var array
+     */
+    protected $_notifications = [
+        'enable' => false,
+        'ignored_fields' => []
+    ];
+
+    /**
      * Method that returns table configuration.
      *
      * @return array
@@ -167,6 +177,10 @@ trait ConfigurationTrait
 
         if (isset($this->_config['parent'])) {
             $this->parentSection($this->_config['parent']);
+        }
+
+        if (isset($this->_config['notifications'])) {
+            $this->notifications($this->_config['notifications']);
         }
 
         // set virtual field(s)
@@ -344,6 +358,40 @@ trait ConfigurationTrait
         }
 
         return $this->_associationLabels;
+    }
+
+    /**
+     * Returns notifications config or sets a new one.
+     *
+     * @param array $notifications sets notifications config
+     * @return array
+     */
+    public function notifications($notifications = [])
+    {
+        if (!empty($notifications)) {
+            foreach ($this->_notifications as $k => $v) {
+                if (empty($notifications[$k])) {
+                    continue;
+                }
+
+                $type = gettype($v);
+
+                $v = $notifications[$k];
+                switch ($type) {
+                    case 'boolean':
+                        $v = (bool)$v;
+                        break;
+
+                    case 'array':
+                        $v = is_string($v) ? explode(',', $v) : $v;
+                        break;
+                }
+
+                $this->_notifications[$k] = $v;
+            }
+        }
+
+        return $this->_notifications;
     }
 
     /**

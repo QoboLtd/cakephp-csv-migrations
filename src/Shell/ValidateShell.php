@@ -551,6 +551,20 @@ class ValidateShell extends Shell
                         }
                     }
                 }
+
+                // [notifications] section
+                if (!empty($config['notifications'])) {
+                    // 'ignored_fields' key is optional, but must contain valid fields if specified
+                    if (!empty($config['notifications']['ignored_fields'])) {
+                        $ignoredFields = explode(',', trim($config['notifications']['ignored_fields']));
+                        foreach ($ignoredFields as $ignoredField) {
+                            if (!$this->_isValidModuleField($module, $ignoredField)) {
+                                $moduleErrors[] = $module . " config [notifications] section references unknown field '" . $ignoredField . "' in 'typeahead_fields' key";
+                            }
+                        }
+                    }
+                }
+
                 // [conversion] section
                 if (!empty($config['conversion'])) {
                     // 'module' key is required and must contain valid modules

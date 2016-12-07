@@ -436,6 +436,7 @@ class ValidateShell extends Shell
     protected function _checkConfigOptions(array $modules = [])
     {
         $errors = [];
+        $warnings = [];
 
         $this->out('Checking configuration options:', 2);
         foreach ($modules as $module => $path) {
@@ -460,6 +461,13 @@ class ValidateShell extends Shell
                         if (!$this->_isValidModuleField($module, $config['table']['display_field'])) {
                             $moduleErrors[] = $module . " config [table] section references unknown field '" . $config['table']['display_field'] . "' in 'display_field' key";
                         }
+                    }
+                    else {
+                        $warnings[] = $module . " config [table] section does not specify 'display_field' key";
+                    }
+                    // 'icon' key is optional, but strongly suggested
+                    if (empty($config['table']['icon'])) {
+                        $warnings[] = $module . " config [table] section does not specify 'icon' key";
                     }
                     // 'typeahead_fields' key is optional, but must contain valid fields if specified
                     if (!empty($config['table']['typeahead_fields'])) {
@@ -585,7 +593,7 @@ class ValidateShell extends Shell
             $this->out($result);
             $errors = array_merge($errors, $moduleErrors);
         }
-        $this->_printCheckStatus($errors);
+        $this->_printCheckStatus($errors, $warnings);
 
         return count($errors);
     }

@@ -9,6 +9,13 @@ use CsvMigrations\PathFinder\ConfigPathFinder;
 trait ConfigurationTrait
 {
     /**
+     * Default icon
+     *
+     * When all else fails, use this icon.
+     */
+    public $defaultIcon = 'cube';
+
+    /**
      * Table/module configuration
      *
      * @var array
@@ -211,7 +218,13 @@ trait ConfigurationTrait
 
         // Default icon if none is set
         if (empty($this->_icon)) {
-            $this->_icon = Configure::read('CsvMigrations.default_icon');
+            $this->_icon = (string)Configure::read('CsvMigrations.default_icon');
+        }
+
+        // To avoid unncessary checks in the views for the missing
+        // icon, we should ALWAYS return something.
+        if (empty($this->_icon)) {
+            $this->_icon = $this->defaultIcon;
         }
 
         return $this->_icon;

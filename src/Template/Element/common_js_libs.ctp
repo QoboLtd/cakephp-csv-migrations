@@ -36,7 +36,7 @@ if (!empty($fileInputOptions)) {
         ['block' => 'scriptBottom']
     );
 }
-
+echo $this->Html->script('CsvMigrations.es6-shim.min', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.typeahead', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.embedded', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.panels', ['block' => 'scriptBottom']);

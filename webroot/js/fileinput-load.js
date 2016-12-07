@@ -15,7 +15,6 @@ $(document).ready(function () {
         field.on('change', function (e) {
             //Trigger the updateFiles Event and pass all the collected uploads
             $(document).trigger('updateFiles', [e.target.files, $(this).attr('name')]);
-            console.log('change files');
         });
     };
 
@@ -110,8 +109,7 @@ $(document).ready(function () {
     // @NOTE: initialPreviewConfig - is a global varible
     FileInput.prototype.initialPreviewConfig = function (files) {
         var config = {};
-        this.options.initialPreviewConfig = new Array;
-        console.log('foo - initialPreviewConfig');
+        this.options.initialPreviewConfig = [];
         for (var i in files) {
             var file = files[i];
             var ipcOptions = $.extend({}, config, {key: i, url: fileInputOptions.initialPreviewConfig.url + file.id});
@@ -146,8 +144,17 @@ $(document).ready(function () {
         inputField.fileinput(options).on('fileuploaded', function(event, data, id, index){
             console.log('fileuploaded');
             console.log(data.response);
-            console.log(id);
-            console.log(index);
+
+            if (data.response.id !== undefined) {
+                if (data.response.id.length) {
+                    var fieldNameParts = $(this).attr('name').match(/^(\w+)\[(\w+)\]/);
+
+                    if (fieldNameParts.length) {
+                        var elementId = `${fieldNameParts[1].toLowerCase()}_${fieldNameParts[2].toLowerCase()}_ids`;
+                        console.log('elementId: ' + elementId);
+                    }
+                }
+            }
         });
     };
 
@@ -157,6 +164,9 @@ $(document).ready(function () {
      * @param  jQueryObject inputField to build the library on
      */
     FileInput.prototype.createFromExisting = function (files, inputField) {
+        console.log('createFromExisting');
+        console.log(inputField);
+        console.log('---');
         var that = this;
         var existing = {
             initialPreview: this.options.initialPreview,

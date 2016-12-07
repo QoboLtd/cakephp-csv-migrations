@@ -461,8 +461,7 @@ class ValidateShell extends Shell
                         if (!$this->_isValidModuleField($module, $config['table']['display_field'])) {
                             $moduleErrors[] = $module . " config [table] section references unknown field '" . $config['table']['display_field'] . "' in 'display_field' key";
                         }
-                    }
-                    else {
+                    } else {
                         $warnings[] = $module . " config [table] section does not specify 'display_field' key";
                     }
                     // 'icon' key is optional, but strongly suggested

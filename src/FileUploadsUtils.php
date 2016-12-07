@@ -208,6 +208,59 @@ class FileUploadsUtils
     }
 
     /**
+     * linkFilesToEntity method
+     *
+     * Using AJAX upload, we're dealing with created entity,
+     * and stored FileStorage files, upon saving the entity,
+     * the items should be linked with 'foreign_key' field.
+     *
+     * @param Cake\ORM\Entity $entity of the record
+     * @param Cake\ORM\Table $tableInstance of the entity
+     * @param array $data of this->request->data containing ids.
+     * @return mixed $result of saved/updated file entities.
+     */
+    public function linkFilesToEntity($entity, $tableInstance, $data = [])
+    {
+        $result = [];
+        $uploadFields = [];
+
+        if (!method_exists($tableInstance, 'getFieldsDefinitions')) {
+            return $result;
+        }
+
+        foreach ($tableInstance->getFieldsDefinitions() as $field => $fieldInfo) {
+            if ($fieldInfo['type'] == 'files') {
+                array_push($uploadFields, $fieldInfo);
+            }
+        }
+
+        if (empty($uploadFields)) {
+            return $result;
+        }
+
+        foreach ($uploadFields as $field) {
+            $savedIdsField = $field['name'] . '_ids';
+
+            if (isset($data[$tableInstance->alias()][$savedIdsField])) {
+                $savedIds = $data[$tableInstance->alias()][$savedIdsField];
+                $savedIds = array_values(array_filter($savedIds));
+
+                if (empty($savedIds)) {
+                    continue;
+                }
+
+                foreach ($savedIds as $fileId) {
+                    $record = $this->_fileStorageAssociation->get($fileId);
+                    $record->foreign_key = $entity->id;
+                    $result[] = $this->_fileStorageAssociation->save($record);
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * File delete method.
      *
      * @param  string $id Associated Entity id

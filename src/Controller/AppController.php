@@ -94,10 +94,8 @@ class AppController extends BaseController
 
             $entity = $this->{$this->name}->patchEntity($entity, $this->request->data);
             if ($this->{$this->name}->save($entity)) {
-                // handle file uploads if found in the request data
-                if (isset($this->request->data[$this->name]['uploads'])) {
-                    $this->_fileUploadsUtils->save($entity, $this->request->data[$this->name]['uploads']);
-                }
+                $linked = $this->_fileUploadsUtils->linkFilesToEntity($entity, $this->{$this->name}, $this->request->data);
+
                 $this->Flash->success(__('The record has been saved.'));
 
                 $redirectUrl = $this->{$this->name}->getParentRedirectUrl($this->{$this->name}, $entity);
@@ -140,9 +138,8 @@ class AppController extends BaseController
             $entity = $this->{$this->name}->patchEntity($entity, $this->request->data, $patchOptions);
             if ($this->{$this->name}->save($entity)) {
                 // handle file uploads if found in the request data
-                if (isset($this->request->data[$this->name]['file'])) {
-                    $this->_fileUploadsUtils->save($entity, $this->request->data[$this->name]['file']);
-                }
+                $linked = $this->_fileUploadsUtils->linkFilesToEntity($entity, $this->{$this->name}, $this->request->data);
+
                 $this->Flash->success(__('The record has been saved.'));
 
                 $redirectUrl = $this->{$this->name}->getParentRedirectUrl($this->{$this->name}, $entity);

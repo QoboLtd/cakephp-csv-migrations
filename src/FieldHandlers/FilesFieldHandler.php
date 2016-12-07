@@ -54,7 +54,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
         $hiddenIds = $this->cakeView->Form->hidden(
             $this->_getFieldName($table, $field, $options) . '_ids][',
             [
-                'class' => Inflector::underscore(str_replace('.', '_',$this->_getFieldName($table, $field, $options) . '_ids')),
+                'class' => Inflector::underscore(str_replace('.', '_', $this->_getFieldName($table, $field, $options) . '_ids')),
                 'value' => ''
             ]
         );
@@ -93,7 +93,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
             $hiddenIds .= $this->cakeView->Form->hidden(
                 $this->_getFieldName($table, $field, $options) . '_ids][',
                 [
-                    'class' => Inflector::underscore(str_replace('.', '_',$this->_getFieldName($table, $field, $options) . '_ids')),
+                    'class' => Inflector::underscore(str_replace('.', '_', $this->_getFieldName($table, $field, $options) . '_ids')),
                     'value' => $file->id
                 ]
             );

@@ -28,12 +28,12 @@ class ConfigurationTraitTest extends PHPUnit_Framework_TestCase
         // Default icon
         $expected = \Cake\Core\Configure::read('CsvMigrations.default_icon');
 
-        // Only test default values if they are configured, to avoid
-        // failures in integration tests.
         if (empty($expected)) {
-            $this->markTestSkipped("CsvMigrations.default_icon is not configured");
+            $expected = $this->mock->defaultIcon;
         }
-        $this->assertEquals($expected, $this->mock->icon(), "Default icon does not return CsvMigrations.default_icon");
+
+        $this->assertFalse(empty($expected), "Failed to find the fallback for the default icon");
+        $this->assertEquals($expected, $this->mock->icon());
     }
 
     public function testIcon()

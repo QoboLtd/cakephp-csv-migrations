@@ -106,6 +106,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
             [
                 'multiple' => true,
                 'data-document-id' => $entity->get('id'),
+                //passed to generate previews
                 'data-files' => json_encode($files),
             ]
         );

@@ -270,10 +270,6 @@ class FileUploadsUtils
     {
         $result = $this->_deleteFileAssociationRecord($id);
 
-        if ($result) {
-            $result = $this->_deleteFileRecord($id);
-        }
-
         return $result;
     }
 

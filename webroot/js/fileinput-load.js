@@ -96,22 +96,23 @@ $(document).ready(function () {
 
   FileInput.prototype.initialPreviewConfig = function (files) {
     var that = this;
-    var config =  {};
     this.options.initialPreviewConfig = [];
 
     if (files) {
-      files.forEach( function(file, index) {
-        //assembling an object of options
-        var options = $.extend(config, {
-          key: index,
+      files.forEach( function(file) {
+        var options = {
+          key: file.id,
           url: fileInputOptions.initialPreviewConfig.url + file.id
-        });
+        };
 
         that.options.initialPreviewConfig.push(options);
       });
     }
   };
 
+  /**
+   * setting url for the preview content
+   */
   FileInput.prototype.initialPreview = function (files) {
     var that = this;
     this.options.initialPreview = [];
@@ -123,44 +124,94 @@ $(document).ready(function () {
     }
   };
 
+  FileInput.prototype.getHiddenField = function(inputField) {
+    var result = false;
+    var fieldNameParts = $(inputField).attr('name').match(/^(\w+)\[(\w+)\]/);
+
+    if (fieldNameParts.length) {
+      result = `.${fieldNameParts[1].toLowerCase()}_${fieldNameParts[2].toLowerCase()}_ids`;
+    }
+
+    return result;
+  };
+
+
   /**
    * Creates new instance of fileinput.
    *
    * @param  jQueryObject inputField to build the library on
    */
   FileInput.prototype.createNew = function (inputField) {
+    var that = this;
     var options = $.extend({}, this.defaults());
 
     inputField.fileinput(options).on("filebatchselected", function(event){
-      //@NOTE: updateFiles is used in embedded.js
       $(document).trigger('updateFiles', [event.target.files, $(this).attr('name')]);
     });
 
     inputField.fileinput(options).on('fileuploaded', function(event, data){
       if (data.response.id !== undefined) {
         if (data.response.id.length) {
-          var fieldNameParts = $(this).attr('name').match(/^(\w+)\[(\w+)\]/);
-          var found = false;
-
-          if (fieldNameParts.length) {
-            var elementId = `.${fieldNameParts[1].toLowerCase()}_${fieldNameParts[2].toLowerCase()}_ids`;
-            var hiddenElements = $.find(elementId);
-            var firstElement = $(hiddenElements).first();
-
-            hiddenElements.forEach( function(input) {
-              if ($(input).val() === data.response.id) {
-                found = true;
-              }
-            });
-
-            if (!found) {
-              var clonedHiddenInput = $(firstElement).clone().val(data.response.id);
-              $(clonedHiddenInput).appendTo($(elementId).parent());
-            }
-          }
+          that.addHiddenFileId($(this), data.response.id);
         }
       }
+    }).on('filedeleted', function(event, key){
+      that.removeHiddenFileId($(this), key);
     });
+  };
+
+  FileInput.prototype.addHiddenFileId = function(inputField, id) {
+    var added = false;
+    var found = false;
+
+    var elementId = this.getHiddenField($(inputField));
+    var hiddenFields = $.find(elementId);
+
+    hiddenFields.forEach( function(element) {
+      if ($(element).val() == id) {
+        found = true;
+      }
+    });
+
+    if (!found) {
+      var clonedField = $(hiddenFields).first().clone().val(id);
+      if (clonedField) {
+        //appending new input element next to the others.
+        $(clonedField).appendTo( $(hiddenFields).first().parent() );
+
+        added = true;
+      }
+    }
+
+    return added;
+  };
+
+  /**
+   * removeHiddenFileId
+   *
+   * Removing input type='hidden' with corresponding file-storage id of the file
+   * @param {Object} inputField of the actual file input element
+   * @param {String} id UUID of the corresponding image file
+   * @return {Boolean} removed if the input element was found and removed from DOM
+   */
+  FileInput.prototype.removeHiddenFileId = function(inputField, id) {
+    var removed = false;
+    var elementId = this.getHiddenField($(inputField));
+    var hiddenFields = $.find(elementId);
+
+    hiddenFields.forEach( function(element) {
+      if ($(element).val() == id) {
+        if (hiddenFields.length > 1) {
+          $(element).remove();
+        } else {
+          $(element).val(null);
+        }
+
+        removed = true;
+      }
+    });
+
+    return removed;
   };
 
   /**
@@ -189,7 +240,15 @@ $(document).ready(function () {
     };
 
     var options = $.extend({}, this.defaults(), existing);
-    inputField.fileinput(options);
+    inputField.fileinput(options).on('fileuploaded', function(event, data) {
+      if (data.response.id !== undefined) {
+        if (data.response.id.length) {
+          that.addHiddenFileId($(this), data.response.id);
+        }
+      }
+    }).on('filedeleted', function(event, key){
+      that.removeHiddenFileId($(this), key);
+    });
   };
 
   /* initializing the plugin */

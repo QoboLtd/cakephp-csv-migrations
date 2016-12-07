@@ -9,7 +9,7 @@ Configure::write('CsvMigrations.BootstrapFileInput', [
     'defaults' => [
         'showUpload' => true,
         'showRemove' => false,
-        'showUploadedThumbs' => false,
+        'showUploadedThumbs' => true,
         'uploadAsync' => true,
         'dropZoneEnabled' => false,
         'showUploadedThumbs' => false,
@@ -23,6 +23,6 @@ Configure::write('CsvMigrations.BootstrapFileInput', [
         'uploadUrl' => "/api/%s/upload"
     ],
     'initialPreviewConfig' => [
-        'url' => "/api/%s/delete/"
+        'url' => "/api/file-storages/delete/"
     ]
 ]);

@@ -23,6 +23,12 @@ trait ConfigurationTrait
     protected $_searchable = false;
 
     /**
+     * Module icon
+     *
+     * @var string
+     */
+    protected $_icon;
+    /**
      * Lookup fields used for fetching record(s) through the API
      *
      * @var array
@@ -115,6 +121,11 @@ trait ConfigurationTrait
             $this->displayField($this->_config['table']['display_field']);
         }
 
+        // module icon from configuration file
+        if (isset($this->_config['table']['icon'])) {
+            $this->icon($this->_config['table']['icon']);
+        }
+
         // lookup field(s) from configuration file
         if (isset($this->_config['table']['lookup_fields'])) {
             $this->lookupFields($this->_config['table']['lookup_fields']);
@@ -170,6 +181,26 @@ trait ConfigurationTrait
         }
 
         return $this->_searchable;
+    }
+
+    /**
+     * Returns the module icon or sets a new one
+     *
+     * @param string|null $icon sets the icon
+     * @return string
+     */
+    public function icon($icon = null)
+    {
+        if ($icon !== null) {
+            $this->_icon = (string)$icon;
+        }
+
+        // Default icon if none is set
+        if (empty($this->_icon)) {
+            $this->_icon = Configure::read('CsvMigrations.default_icon');
+        }
+
+        return $this->_icon;
     }
 
     /**

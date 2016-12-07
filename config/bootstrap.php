@@ -19,6 +19,7 @@ Configure::write('CsvMigrations.views.path', CONFIG . 'CsvMigrations' . DS . 'vi
 Configure::write('CsvMigrations.lists.path', CONFIG . 'CsvMigrations' . DS . 'lists' . DS);
 Configure::write('CsvMigrations.migrations.filename', 'migration');
 Configure::write('CsvMigrations.reports.filename', 'reports');
+Configure::write('CsvMigrations.default_icon', 'cube');
 Configure::write('CsvMigrations.typeahead.min_length', 1);
 Configure::write('CsvMigrations.typeahead.timeout', 300);
 Configure::write('CsvMigrations.acl', [

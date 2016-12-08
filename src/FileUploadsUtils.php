@@ -108,6 +108,7 @@ class FileUploadsUtils
                 'foreign_key' => $data,
             ]
         ]);
+
         return $query->all();
     }
 
@@ -118,6 +119,7 @@ class FileUploadsUtils
      * don't have it saved yet, and saving files first.
      *
      * @param Cake\ORM\Entity $entity of the parent record
+     * @param string $field name of the association
      * @param array $files passed via file upload input field
      * @param array $options specifying if its AJAX call or not
      *
@@ -151,6 +153,7 @@ class FileUploadsUtils
      *
      * @param  \Cake\ORM\Entity $entity Associated Entity
      * @param  array            $files  Uploaded files
+     * @param  array            $options for ajax call if any
      * @return bool
      */
     public function save(Entity $entity, array $files = [], $options = [])
@@ -177,12 +180,13 @@ class FileUploadsUtils
      * Store to FileStorage table.
      *
      * @param  object $docEntity Document entity
+     * @param  string $field of the association
      * @param  array $fileData File data
+     * @param  array $options for extra setup
      * @return object|bool Fresh created entity or false on unsuccesful attempts.
      */
     protected function _storeFileStorage($docEntity, $field, $fileData, $options = [])
     {
-
         $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field);
         $fileStorEnt = $this->_table->{$assocName}->newEntity($fileData);
 
@@ -232,7 +236,7 @@ class FileUploadsUtils
         }
 
         foreach ($tableInstance->getFieldsDefinitions() as $field => $fieldInfo) {
-            if (in_array($fieldInfo['type'], ['files','images'])) {
+            if (in_array($fieldInfo['type'], ['files', 'images'])) {
                 array_push($uploadFields, $fieldInfo);
             }
         }
@@ -242,11 +246,9 @@ class FileUploadsUtils
         }
 
         foreach ($uploadFields as $field) {
-
             $savedIdsField = $field['name'] . '_ids';
 
             if (isset($data[$tableInstance->alias()][$savedIdsField])) {
-
                 $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field['name']);
 
                 $savedIds = $data[$tableInstance->alias()][$savedIdsField];

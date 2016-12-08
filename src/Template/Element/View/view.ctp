@@ -237,7 +237,7 @@ if (empty($options['title'])) {
                                         'request' => $this->request,
                                         'content' => $beforeTab['content'],
                                         'tab' => $tab,
-                                        'options' => ['order' => 'beforeContent'],
+                                        'options' => ['order' => 'beforeContent','title' => $beforeTab['title']],
                                     ]
                                 ]);
                             }

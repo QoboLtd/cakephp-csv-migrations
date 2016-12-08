@@ -44,3 +44,5 @@ EventManager::instance()->on(new ModelAfterSaveListener());
 
 //Load upload plugin configuration
 include 'file_storage.php';
+// Load bootstrap-fileinput configuration
+include 'file_upload.php';

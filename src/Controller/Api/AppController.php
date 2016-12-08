@@ -8,6 +8,7 @@ use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Crud\Controller\ControllerTrait;
+use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 use CsvMigrations\FileUploadsUtils;
 use CsvMigrations\Panel;
@@ -285,6 +286,38 @@ class AppController extends Controller
     public function delete()
     {
         return $this->Crud->execute();
+    }
+
+    /**
+     * upload function shared among API controllers
+     *
+     * @return array $response encoded in JSON object
+     */
+    public function upload()
+    {
+        $this->autoRender = false;
+
+        $conditions = [];
+        $fileStorageAssociation = null;
+        $saved = null;
+        $response = [];
+
+        foreach ($this->request->data() as $model => $files) {
+            if (is_array($files)) {
+                foreach ($files as $modelField => $fileInfo) {
+                    $saved = $this->_fileUploadsUtils->ajaxSave($this->{$this->name}, $modelField, $fileInfo, ['ajax' => true]);
+                }
+            }
+        }
+
+        if ($saved) {
+            $response['id'] = $saved;
+        } else {
+            $this->response->statusCode(400);
+            $response['errors'] = "Couldn't save the File";
+        }
+
+        echo json_encode($response);
     }
 
     /**

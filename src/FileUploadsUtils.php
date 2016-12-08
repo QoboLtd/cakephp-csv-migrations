@@ -8,17 +8,15 @@ use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\ORM\Table as UploadTable;
+use CsvMigrations\CsvMigrationsUtils;
 
 class FileUploadsUtils
 {
     /**
-     * Files database table name
-     */
-    const TABLE_FILES = 'files';
-
-    /**
      * File-Storage database table name
      */
+    const FILES_STORAGE_NAME = 'Burzum/FileStorage.FileStorage';
+
     const TABLE_FILE_STORAGE = 'file_storage';
 
     /**
@@ -38,32 +36,11 @@ class FileUploadsUtils
     protected $_table;
 
     /**
-     * Instance of a Files Association class
-     *
-     * @var \Cake\ORM\Association
-     */
-    protected $_fileAssociation;
-
-    /**
      * Instance of File-Storage Association class
      *
      * @var \Cake\ORM\Association
      */
     protected $_fileStorageAssociation;
-
-    /**
-     * Document foreign key for many-to-many association with Files
-     *
-     * @var string
-     */
-    protected $_documentForeignKey;
-
-    /**
-     * File foreign key for many-to-many association with Documents
-     *
-     * @var string
-     */
-    protected $_fileForeignKey;
 
     /**
      * File-Storage table foreign key
@@ -88,10 +65,6 @@ class FileUploadsUtils
     {
         $this->_table = $table;
 
-        $this->_getFileAssociationInstance();
-        $this->_getDocumentForeignKey();
-        $this->_getFileForeignKey();
-
         $this->_getFileStorageAssociationInstance();
         $this->_fileStorageForeignKey = 'foreign_key';
     }
@@ -107,70 +80,14 @@ class FileUploadsUtils
     }
 
     /**
-     * Get instance of Files association.
-     *
-     * @return void
-     */
-    protected function _getFileAssociationInstance()
-    {
-        foreach ($this->_table->associations() as $association) {
-            // @todo temporary performance fix
-            if (ucfirst(static::TABLE_FILES) === $association->className()) {
-                $this->_fileAssociation = $association;
-                break;
-            }
-        }
-    }
-
-    /**
-     * Get Document foreign key in many-to-many association with Files.
-     *
-     * @return void
-     */
-    protected function _getDocumentForeignKey()
-    {
-        if (!is_null($this->_fileAssociation)) {
-            $this->_documentForeignKey = $this->_fileAssociation->foreignKey();
-        }
-    }
-
-    /**
-     * Get File foreign key in many-to-one association with FileStorage.
-     *
-     * @return void
-     */
-    protected function _getFileForeignKey()
-    {
-        if (is_null($this->_fileAssociation)) {
-            return;
-        }
-
-        foreach ($this->_fileAssociation->associations() as $association) {
-            if (static::TABLE_FILE_STORAGE !== $association->target()->table()) {
-                continue;
-            }
-
-            if (static::ASSOCIATION_MANY_TO_ONE_ID !== $association->type()) {
-                continue;
-            }
-
-            $this->_fileForeignKey = $association->foreignKey();
-        }
-    }
-
-    /**
      * Get instance of FileStorage association.
      *
      * @return void
      */
     protected function _getFileStorageAssociationInstance()
     {
-        if (is_null($this->_fileAssociation)) {
-            return;
-        }
-
-        foreach ($this->_fileAssociation->associations() as $association) {
-            if ($this->_fileForeignKey === $association->foreignKey()) {
+        foreach ($this->_table->associations() as $association) {
+            if ($association->className() == self::FILES_STORAGE_NAME) {
                 $this->_fileStorageAssociation = $association;
                 break;
             }
@@ -183,32 +100,32 @@ class FileUploadsUtils
      * @param  string              $data  Record id
      * @return \Cake\ORM\ResultSet
      */
-    public function getFiles($data)
+    public function getFiles($table, $field, $data)
     {
-        $ids = $this->_fileAssociation->find('list', [
-            'valueField' => $this->_fileForeignKey,
-            'conditions' => [$this->_documentForeignKey => $data]
-        ])->toArray();
-
-        if (empty($ids)) {
-            return [];
-        }
-
-        $query = $this->_fileStorageAssociation->find('all', [
-            'conditions' => [$this->_fileStorageAssociation->primaryKey() . ' IN' => array_values($ids)]
+        $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field);
+        $query = $this->_table->{$assocName}->find('all', [
+            'conditions' => [
+                'foreign_key' => $data,
+            ]
         ]);
 
         return $query->all();
     }
 
     /**
-     * File save method.
+     * ajaxSave method
      *
-     * @param  \Cake\ORM\Entity $entity Associated Entity
-     * @param  array            $files  Uploaded files
-     * @return bool
+     * Actual save() clone, but with optional entity, as we
+     * don't have it saved yet, and saving files first.
+     *
+     * @param Cake\ORM\Entity $entity of the parent record
+     * @param string $field name of the association
+     * @param array $files passed via file upload input field
+     * @param array $options specifying if its AJAX call or not
+     *
+     * @return mixed $result boolean or file_storage ID.
      */
-    public function save(Entity $entity, array $files = [])
+    public function ajaxSave($entity, $field, array $files = [], $options = [])
     {
         $result = false;
 
@@ -222,10 +139,38 @@ class FileUploadsUtils
                 continue;
             }
 
-            $fsEntity = $this->_storeFileStorage($entity, ['file' => $file]);
-            if ($fsEntity) {
-                $result = $this->_storeFile($entity, $fsEntity, $file);
+            $result = $this->_storeFileStorage($entity, $field, ['file' => $file], $options);
+            if ($result) {
+                $result = $result->get('id');
             }
+        }
+
+        return $result;
+    }
+
+    /**
+     * File save method.
+     *
+     * @param  \Cake\ORM\Entity $entity Associated Entity
+     * @param  array            $files  Uploaded files
+     * @param  array            $options for ajax call if any
+     * @return bool
+     */
+    public function save(Entity $entity, array $files = [], $options = [])
+    {
+        $result = false;
+
+        if (empty($files)) {
+            return $result;
+        }
+
+        foreach ($files as $file) {
+            // file not stored and not uploaded.
+            if ($this->_isInValidUpload($file['error'])) {
+                continue;
+            }
+
+            $result = $this->_storeFileStorage($entity, ['file' => $file], $options);
         }
 
         return $result;
@@ -235,20 +180,34 @@ class FileUploadsUtils
      * Store to FileStorage table.
      *
      * @param  object $docEntity Document entity
+     * @param  string $field of the association
      * @param  array $fileData File data
+     * @param  array $options for extra setup
      * @return object|bool Fresh created entity or false on unsuccesful attempts.
      */
-    protected function _storeFileStorage($docEntity, $fileData)
+    protected function _storeFileStorage($docEntity, $field, $fileData, $options = [])
     {
-        $fileStorEnt = $this->_fileStorageAssociation->newEntity($fileData);
-        $fileStorEnt = $this->_fileStorageAssociation->patchEntity(
-            $fileStorEnt,
-            [$this->_fileStorageForeignKey => $docEntity->get('id')]
-        );
+        $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field);
+        $fileStorEnt = $this->_table->{$assocName}->newEntity($fileData);
 
-        if ($this->_fileStorageAssociation->save($fileStorEnt)) {
-            $this->createThumbnails($fileStorEnt);
+        if (!empty($options['ajax'])) {
+            //AJAX upload doesn't know anything about the entity
+            //it relates to, as it's not saved yet
+            $patchData = [
+                'model' => $this->_table->table(),
+                'model_field' => $field,
+            ];
+        } else {
+            $patchData = [
+                $this->_fileStorageForeignKey => $docEntity->get('id'),
+                'model' => $this->_table->table(),
+                'model_field' => $field,
+            ];
+        }
 
+        $fileStorEnt = $this->_table->{$assocName}->patchEntity($fileStorEnt, $patchData);
+
+        if ($this->_table->{$assocName}->save($fileStorEnt)) {
             return $fileStorEnt;
         }
 
@@ -256,20 +215,58 @@ class FileUploadsUtils
     }
 
     /**
-     * Store file entity.
+     * linkFilesToEntity method
      *
-     * @param  object $docEntity Document entity
-     * @param  object $fileStorEnt FileStorage entity
-     * @return object|bool
+     * Using AJAX upload, we're dealing with created entity,
+     * and stored FileStorage files, upon saving the entity,
+     * the items should be linked with 'foreign_key' field.
+     *
+     * @param Cake\ORM\Entity $entity of the record
+     * @param Cake\ORM\Table $tableInstance of the entity
+     * @param array $data of this->request->data containing ids.
+     * @return mixed $result of saved/updated file entities.
      */
-    protected function _storeFile($docEntity, $fileStorEnt)
+    public function linkFilesToEntity($entity, $tableInstance, $data = [])
     {
-        $entity = $this->_fileAssociation->newEntity([
-            $this->_documentForeignKey => $docEntity->get('id'),
-            $this->_fileForeignKey => $fileStorEnt->get('id'),
-        ]);
+        $result = [];
+        $uploadFields = [];
 
-        return $this->_fileAssociation->save($entity);
+        if (!method_exists($tableInstance, 'getFieldsDefinitions')) {
+            return $result;
+        }
+
+        foreach ($tableInstance->getFieldsDefinitions() as $field => $fieldInfo) {
+            if (in_array($fieldInfo['type'], ['files', 'images'])) {
+                array_push($uploadFields, $fieldInfo);
+            }
+        }
+
+        if (empty($uploadFields)) {
+            return $result;
+        }
+
+        foreach ($uploadFields as $field) {
+            $savedIdsField = $field['name'] . '_ids';
+
+            if (isset($data[$tableInstance->alias()][$savedIdsField])) {
+                $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field['name']);
+
+                $savedIds = $data[$tableInstance->alias()][$savedIdsField];
+                $savedIds = array_values(array_filter($savedIds));
+
+                if (empty($savedIds)) {
+                    continue;
+                }
+
+                foreach ($savedIds as $fileId) {
+                    $record = $this->_table->{$assocName}->get($fileId);
+                    $record->foreign_key = $entity->id;
+                    $result[] = $this->_table->{$assocName}->save($record);
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -282,10 +279,6 @@ class FileUploadsUtils
     {
         $result = $this->_deleteFileAssociationRecord($id);
 
-        if ($result) {
-            $result = $this->_deleteFileRecord($id);
-        }
-
         return $result;
     }
 
@@ -297,12 +290,8 @@ class FileUploadsUtils
      */
     protected function _deleteFileAssociationRecord($id)
     {
-        if (is_null($this->_fileAssociation)) {
-            return false;
-        }
-
-        $query = $this->_fileAssociation->find('all', [
-            'conditions' => [$this->_fileForeignKey => $id]
+        $query = $this->_fileStorageAssociation->find('all', [
+            'conditions' => [$this->_fileStorageForeignKey => $id]
         ]);
         $entity = $query->first();
 
@@ -310,26 +299,7 @@ class FileUploadsUtils
             return false;
         }
 
-        return $this->_fileAssociation->delete($entity);
-    }
-
-    /**
-     * Method that fetches and deletes file Entity.
-     *
-     * @param  string $id file id
-     * @return bool
-     */
-    protected function _deleteFileRecord($id)
-    {
-        $entity = $this->_fileStorageAssociation->get($id);
-
-        $result = $this->_fileStorageAssociation->delete($entity);
-
-        if ($result) {
-            $this->_removeThumbnails($entity);
-        }
-
-        return $result;
+        return $this->_fileStorageAssociation->delete($entity);
     }
 
     /**
@@ -371,6 +341,11 @@ class FileUploadsUtils
         }
 
         $operations = Configure::read('FileStorage.imageSizes.' . static::TABLE_FILE_STORAGE);
+
+        if (empty($operations)) {
+            $operations = Configure::write('FileStorage.imageSizes.' . $entity->model, Configure::read('ThumbnailVersions'));
+        }
+
         $storageTable = TableRegistry::get('Burzum/FileStorage.ImageStorage');
         $result = true;
         foreach ($operations as $version => $operation) {

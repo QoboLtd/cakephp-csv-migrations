@@ -1,5 +1,5 @@
 <?php
-$title = (!empty($data['title'])) ? $data['title'] : '';
+$title = (!empty($data['options']['title'])) ? $data['options']['title'] : '';
 
 if (!empty($data['content']['records'])) :
 ?>

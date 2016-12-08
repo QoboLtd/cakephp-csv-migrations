@@ -160,10 +160,8 @@ class BaseFileFieldHandler extends RelatedFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $defaultOptions = ['imageSize' => getenv('DEFAULT_IMAGE_SIZE')];
-        $options = array_merge($defaultOptions, $options);
-        $fileUploadsUtils = new FileUploadsUtils($table);
         $result = null;
+        $fileUploadsUtils = new FileUploadsUtils($table);
 
         if (empty($data)) {
             return $result;
@@ -173,34 +171,6 @@ class BaseFileFieldHandler extends RelatedFieldHandler
 
         if (empty($entities)) {
             return $result;
-        }
-
-        // get file storage image hashes
-        $hashes = Configure::read('FileStorage.imageHashes');
-        // get img supported extensions
-        $imgExtensions = $fileUploadsUtils->getImgExtensions();
-        if (isset($hashes['file_storage'][$options['imageSize']])) {
-            foreach ($entities as $entity) {
-                // skip unsupported files
-                if (!in_array(strtolower($entity->extension), $imgExtensions)) {
-                    continue;
-                }
-
-                $version = $hashes['file_storage'][$options['imageSize']];
-
-                // create thumbnails if they don't exist
-                $exists = $this->_checkThumbnail($entity, $version, $fileUploadsUtils);
-
-                if ($exists) {
-                    // image version path
-                    $path = dirname($entity->path) . '/' . basename($entity->path, $entity->extension);
-                    $path .= $version . '.' . $entity->extension;
-                } else {
-                    $path = $this->cakeView->Url->image('CsvMigrations.thumbnails/' . static::NO_THUMBNAIL_FILE);
-                }
-
-                $entity->path = $path;
-            }
         }
 
         $result = $this->_thumbnailsHtml($entities, $fileUploadsUtils);
@@ -248,30 +218,20 @@ class BaseFileFieldHandler extends RelatedFieldHandler
         $count = 0;
         $rows = [];
 
-        $imgExtensions = $fileUploadsUtils->getImgExtensions();
-
         foreach ($entities as $k => $entity) {
             if ($k >= static::THUMBNAIL_LIMIT) {
                 break;
             }
 
             $url = $entity->path;
-            // if not an image file fetch appropriate file icon
-            if (!in_array(strtolower($entity->extension), $imgExtensions)) {
-                $url = $this->_getFileIconUrl($entity->extension);
-            }
+            $thumbnailUrl = $this->_getFileIconUrl($entity->extension);
 
             $thumbnail = sprintf(
                 static::THUMBNAIL_HTML,
-                $this->cakeView->Html->image($url, ['title' => $entity->filename])
+                $this->cakeView->Html->image($thumbnailUrl, ['title' => $entity->filename])
             );
 
-            // if not an image file wrap the thumbnail in the file's anchor tag
-            if (!in_array(strtolower($entity->extension), $imgExtensions)) {
-                // wrapping file with Html link
-                // that can be opened in new tab/window.
-                $thumbnail = $this->cakeView->Html->link($thumbnail, $entity->path, ['escape' => false, 'target' => '_blank']);
-            }
+            $thumbnail = $this->cakeView->Html->link($thumbnail, $entity->path, ['escape' => false, 'target' => '_blank']);
 
             $result .= sprintf(
                 static::GRID_COL_HTML,

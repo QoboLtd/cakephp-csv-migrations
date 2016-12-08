@@ -342,7 +342,7 @@ class FileUploadsUtils
 
         $operations = Configure::read('FileStorage.imageSizes.' . static::TABLE_FILE_STORAGE);
 
-        if (empty($options)) {
+        if (empty($operations)) {
             $operations = Configure::write('FileStorage.imageSizes.' . $entity->model, Configure::read('ThumbnailVersions'));
         }
 

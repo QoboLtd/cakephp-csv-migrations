@@ -12,6 +12,7 @@ use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 use CsvMigrations\FileUploadsUtils;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
+use CsvMigrations\CsvMigrationsUtils;
 use ReflectionMethod;
 
 class AppController extends Controller
@@ -301,24 +302,10 @@ class AppController extends Controller
         $saved = null;
         $response = [];
 
-        foreach ($this->{$this->name}->associations() as $association) {
-            if ($association->className() == 'Burzum/FileStorage.FileStorage') {
-                $fileStorageAssociation = $association;
-                $conditions = $fileStorageAssociation->conditions();
-                break;
-            }
-        }
-
-        if (!empty($fileStorageAssociation)) {
-            foreach ($this->request->data() as $model => $files) {
-                if (strtolower($model) != $conditions['model']) {
-                    continue;
-                }
-
+        foreach ($this->request->data() as $model => $files) {
+            if (is_array($files)) {
                 foreach ($files as $modelField => $fileInfo) {
-                    if ($modelField == $conditions['model_field']) {
-                        $saved = $this->_fileUploadsUtils->ajaxSave($this->{$this->name}, $fileInfo, ['ajax' => true]);
-                    }
+                    $saved = $this->_fileUploadsUtils->ajaxSave($this->{$this->name}, $modelField, $fileInfo, ['ajax' => true]);
                 }
             }
         }

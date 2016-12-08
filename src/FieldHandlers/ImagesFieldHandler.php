@@ -7,7 +7,7 @@ use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\BaseFileFieldHandler;
 use CsvMigrations\FileUploadsUtils;
 
-class FilesFieldHandler extends BaseFileFieldHandler
+class ImagesFieldHandler extends BaseFileFieldHandler
 {
 
     /**

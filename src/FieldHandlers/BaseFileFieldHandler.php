@@ -167,7 +167,7 @@ class BaseFileFieldHandler extends RelatedFieldHandler
             return $result;
         }
 
-        $entities = $fileUploadsUtils->getFiles($data);
+        $entities = $fileUploadsUtils->getFiles($table, $field, $data);
 
         if (empty($entities)) {
             return $result;

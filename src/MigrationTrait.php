@@ -107,7 +107,7 @@ trait MigrationTrait
         //setting up files associations for FileStorage relation
         foreach ($csvObjData as $csvModule => $fields) {
             foreach ($fields as $csvObjField) {
-                if ($csvObjField->getType() == 'files') {
+                if (in_array($csvObjField->getType(), ['files', 'images'])) {
                     $fieldName = $csvObjField->getName();
                     $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $fieldName);
                     if ($csvModule == $config['table']) {

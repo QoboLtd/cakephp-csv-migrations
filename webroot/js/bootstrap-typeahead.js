@@ -381,38 +381,38 @@
         },
         move: function (e) {
             if (!this.shown) {
-                return
+                return;
+            }
 
-                switch (e.keyCode) {
-                    case 9: // tab
-                    case 13: // enter
-                    case 27: // escape
-                        e.preventDefault();
-                        break
+            switch (e.keyCode) {
+                case 9: // tab
+                case 13: // enter
+                case 27: // escape
+                    e.preventDefault();
+                    break
 
-                    case 38: // up arrow
-                        e.preventDefault()
-                        this.prev()
-                        break
+                case 38: // up arrow
+                    e.preventDefault()
+                    this.prev()
+                    break
 
-                    case 40: // down arrow
-                        e.preventDefault()
-                        this.next()
-                        break
-                }
+                case 40: // down arrow
+                    e.preventDefault()
+                    this.next()
+                    break
             }
 
             e.stopPropagation();
         },
         keydown: function (e) {
-            this.suppressKeyPressRepeat = ~$.inArray(e.keyCode, [40, 38, 9, 13, 27])
-            this.move(e)
+            this.suppressKeyPressRepeat = ~$.inArray(e.keyCode, [40, 38, 9, 13, 27]);
+            this.move(e);
         },
         keypress: function (e) {
             if (this.suppressKeyPressRepeat) {
-                return
-                this.move(e)
+                return;
             }
+            this.move(e);
         },
         keyup: function (e) {
             switch (e.keyCode) {
@@ -426,22 +426,23 @@
                 case 9: // tab
                 case 13: // enter
                     if (!this.shown) {
+                      return;
                     }
                     this.select()
                     break
 
                 case 27: // escape
                     if (!this.shown) {
+                      return;
                     }
-                    this.hide()
+                    this.hide();
                     break
 
                 default:
                     if (this.ajax) {
-                        this.ajaxLookup()
-                        else {
-                            this.lookup()
-                        }
+                        this.ajaxLookup();
+                    } else {
+                        this.lookup();
                     }
             }
 

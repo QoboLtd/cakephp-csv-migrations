@@ -65,9 +65,9 @@ if (empty($options['title'])) {
                         'options' => $options
                     ]);
                     $this->eventManager()->dispatch($event);
-                    if (!empty($event->result)) {
-                        echo $event->result;
-                    }
+                if (!empty($event->result)) {
+                    echo $event->result;
+                }
                 ?>
                 </div>
             </div>
@@ -78,9 +78,9 @@ if (empty($options['title'])) {
             $embeddedFields = [];
             $embeddedDirty = false;
             foreach ($options['fields'] as $panelName => $panelFields) :
-             if (!empty($this->request->query['embedded'])) {
-                $panelName = Inflector::singularize(Inflector::humanize($this->request->controller)) . ' : ' . $panelName;
-             }
+                if (!empty($this->request->query['embedded'])) {
+                      $panelName = Inflector::singularize(Inflector::humanize($this->request->controller)) . ' : ' . $panelName;
+                }
 
         ?>
         <div class="panel panel-default">
@@ -113,9 +113,9 @@ if (empty($options['title'])) {
                         <div class="col-xs-8 col-md-4">
                         <?php
                             $tableName = $field['model'];
-                            if (!is_null($field['plugin'])) {
-                                $tableName = $field['plugin'] . '.' . $tableName;
-                            }
+                        if (!is_null($field['plugin'])) {
+                            $tableName = $field['plugin'] . '.' . $tableName;
+                        }
                             $renderOptions = [
                                 'entity' => $options['entity'],
                                 'imageSize' => 'small'
@@ -130,8 +130,8 @@ if (empty($options['title'])) {
                             echo empty($value) ? '&nbsp;' : '';
                         ?>
                         </div>
-                    <?php endif; ?>
-                    <?php elseif ('' !== trim($field['name'])) :
+                    <?php                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 endif; ?>
+                    <?php                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         elseif ('' !== trim($field['name'])) :
                         $embeddedFields[] = $field['name'];
                         $embeddedDirty = false;
                     ?>
@@ -140,7 +140,7 @@ if (empty($options['title'])) {
                         <div class="col-xs-8 col-md-4">&nbsp;</div>
                     <?php endif; ?>
                     <div class="clearfix visible-xs visible-sm"></div>
-                <?php endforeach; ?>
+                <?php                                                                                                                                                                                                                                                                                                                                                                                                                                 endforeach; ?>
                 </div>
             <?php endforeach; ?>
             </div>
@@ -185,8 +185,8 @@ if (empty($options['title'])) {
             }
             $embeddedFields = [];
             ?>
-            <?php endforeach; ?>
-        <?php endif; ?>
+            <?php                                                                                                                                                                                                                                                                                                                         endforeach; ?>
+        <?php                                                                                                                                                                                                                 endif; ?>
     </div>
 </div>
 
@@ -207,7 +207,7 @@ if (empty($options['title'])) {
         echo $this->Html->css('CsvMigrations.datatables.min', ['block' => 'cssBottom']);
         echo $this->Html->script('CsvMigrations.datatables.min', ['block' => 'scriptBottom']);
 
-        if (!empty($tabs)) { ?>
+    if (!empty($tabs)) { ?>
             <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
             <?php foreach ($tabs as $k => $tab) :?>
                 <li role="presentation" class="<?= ($k == 0) ? 'active' : ''?>">
@@ -217,7 +217,7 @@ if (empty($options['title'])) {
             </ul>
 
             <div class="tab-content">
-                <?php foreach($tabs as $k => $tab) :?>
+                <?php foreach ($tabs as $k => $tab) :?>
                     <div role="tabpanel" class="tab-pane <?= ($k == 0) ? 'active' : ''?>" id="<?= $tab['containerId']?>">
                         <?php
                             $beforeTabContentEvent = new Event('CsvMigrations.View.View.TabContent.beforeContent', $this, [
@@ -231,16 +231,16 @@ if (empty($options['title'])) {
                             $this->eventManager()->dispatch($beforeTabContentEvent);
                             $beforeTab = $beforeTabContentEvent->result;
 
-                            if (isset($beforeTab['content']['length']) && count($beforeTab['content']['length']) > 0) {
-                                echo $this->cell('CsvMigrations.TabContent', [
-                                    [
-                                        'request' => $this->request,
-                                        'content' => $beforeTab['content'],
-                                        'tab' => $tab,
-                                        'options' => ['order' => 'beforeContent','title' => $beforeTab['title']],
-                                    ]
-                                ]);
-                            }
+                        if (isset($beforeTab['content']['length']) && count($beforeTab['content']['length']) > 0) {
+                            echo $this->cell('CsvMigrations.TabContent', [
+                            [
+                                'request' => $this->request,
+                                'content' => $beforeTab['content'],
+                                'tab' => $tab,
+                                'options' => ['order' => 'beforeContent', 'title' => $beforeTab['title']],
+                            ]
+                            ]);
+                        }
 
                             $tabContentEvent = new Event('CsvMigrations.View.View.TabContent', $this, [
                                 'request' => $this->request,
@@ -253,36 +253,36 @@ if (empty($options['title'])) {
                             $this->eventManager()->dispatch($tabContentEvent);
                             $content = $tabContentEvent->result;
 
-                            if (!empty($content)) {
-                                echo $this->cell('CsvMigrations.TabContent', [
-                                    [
-                                        'request' => $this->request,
-                                        'content' => $content,
-                                        'tab' => $tab,
-                                        'options' => ['order' => 'tabContent'],
-                                    ]
-                                ]);
+                        if (!empty($content)) {
+                            echo $this->cell('CsvMigrations.TabContent', [
+                            [
+                                'request' => $this->request,
+                                'content' => $content,
+                                'tab' => $tab,
+                                'options' => ['order' => 'tabContent'],
+                            ]
+                            ]);
 
-                                echo $this->Html->scriptBlock(
-                                    '$(\'.' . $tab['containerId']. '\').DataTable({
+                            echo $this->Html->scriptBlock(
+                                '$(\'.' . $tab['containerId']. '\').DataTable({
                                         "paging":false,
                                         "searching": false
                                     });',
-                                    ['block' => 'scriptBottom']
-                                );
-                            }
+                                ['block' => 'scriptBottom']
+                            );
+                        }
                         ?>
                     </div>
                 <?php endforeach; ?>
             </div> <!-- .tab-content -->
-        <?php } ?>
+        <?php                                                                                                             } ?>
     </div>
     <?php
         //loading common setup for typeahead/panel/etc libs for tabs
         echo $this->element('CsvMigrations.common_js_libs');
     ?>
 </div> <!-- associated records -->
-<?php endif ;?>
+<?php endif;?>
 
 <?php
     // Event dispatcher for bottom section

@@ -1,19 +1,20 @@
 var view_index = view_index || {};
 
-(function($) {
+(function ($) {
     /**
      * View Index Logic.
      *
      * @param {object} options
      */
-    function ViewIndex() {}
+    function ViewIndex()
+    {}
 
     /**
      * Initialize method.
      *
      * @return {undefined}
      */
-    ViewIndex.prototype.init = function(options) {
+    ViewIndex.prototype.init = function (options) {
         this.api_url = options.hasOwnProperty('api_url') ? options.api_url : null;
         this.api_ext = options.hasOwnProperty('api_ext') ? options.api_ext : null;
         this.api_token = options.hasOwnProperty('api_token') ? options.api_token : null;
@@ -30,7 +31,7 @@ var view_index = view_index || {};
      *
      * @return {object} Datatables Table object
      */
-    ViewIndex.prototype.datatable = function() {
+    ViewIndex.prototype.datatable = function () {
         var that = this;
 
         var table = $(this.table_id).DataTable({
@@ -42,7 +43,7 @@ var view_index = view_index || {};
                 headers: {
                     'Authorization': 'Bearer ' + that.api_token
                 },
-                data: function(d) {
+                data: function (d) {
                     if (that.menus) {
                         d.menus = that.menus;
                     }
@@ -54,7 +55,7 @@ var view_index = view_index || {};
 
                     return d;
                 },
-                dataFilter: function(d) {
+                dataFilter: function (d) {
                     d = jQuery.parseJSON(d);
                     d.recordsTotal = d.pagination.count;
                     d.recordsFiltered = d.pagination.count;
@@ -73,10 +74,10 @@ var view_index = view_index || {};
      * @param  {type} table Datatables Table object
      * @return {undefined}
      */
-    ViewIndex.prototype._handleDeleteLinks = function(table) {
+    ViewIndex.prototype._handleDeleteLinks = function (table) {
         var that = this;
 
-        $(this.table_id + ' tbody').on('click', '[data-type="ajax-delete-record"]', function(e) {
+        $(this.table_id + ' tbody').on('click', '[data-type="ajax-delete-record"]', function (e) {
             e.preventDefault();
 
             if (confirm($(this).data('confirm-msg'))) {
@@ -88,7 +89,7 @@ var view_index = view_index || {};
                     headers: {
                         'Authorization': 'Bearer ' + that.api_token
                     },
-                    success: function(data) {
+                    success: function (data) {
                         // refresh datatable on successful deletion
                         table.ajax.reload();
                     }

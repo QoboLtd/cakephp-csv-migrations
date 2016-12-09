@@ -26,9 +26,9 @@ we don't do the linkage - they would have hidden ID by default
         list($emPlugin, $emController) = pluginSplit(substr($emField, 0, strrpos($emField, '.')));
 
         $tableName = $this->request->controller;
-        if (!is_null($this->request->plugin)) {
-            $tableName = $this->request->plugin . '.' . $tableName;
-        }
+    if (!is_null($this->request->plugin)) {
+        $tableName = $this->request->plugin . '.' . $tableName;
+    }
 
         $formOptions = [
             'url' => [
@@ -73,11 +73,11 @@ we don't do the linkage - they would have hidden ID by default
         /*
         set existing related records as hidden fields
          */
-        foreach ($content['records'] as $record) {
-            echo $this->Form->hidden($content['table_name'] . '._ids[]', [
-                'value' => $record[$content['primary_key']]
-            ]);
-        }
+    foreach ($content['records'] as $record) {
+        echo $this->Form->hidden($content['table_name'] . '._ids[]', [
+        'value' => $record[$content['primary_key']]
+        ]);
+    }
 
         echo $this->Form->end();
     ?>
@@ -163,9 +163,9 @@ we don't do the linkage - they would have hidden ID by default
                         ]
                     ]);
                     $this->eventManager()->dispatch($event);
-                    if (!empty($event->result)) {
-                        echo $event->result;
-                    }
+                if (!empty($event->result)) {
+                    echo $event->result;
+                }
                 ?>
                 </td>
             </tr>

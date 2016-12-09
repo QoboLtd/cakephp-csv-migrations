@@ -26,7 +26,7 @@ echo $this->element(
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($dblists as $dblist): ?>
+        <?php foreach ($dblists as $dblist) : ?>
         <tr>
             <td><?= h($dblist->name) ?></td>
             <td><?= h($dblist->created) ?></td>

@@ -426,14 +426,14 @@
                 case 9: // tab
                 case 13: // enter
                     if (!this.shown) {
-                      return;
+                        return;
                     }
                     this.select()
                     break
 
                 case 27: // escape
                     if (!this.shown) {
-                      return;
+                        return;
                     }
                     this.hide();
                     break

@@ -92,7 +92,20 @@ class AppController extends BaseController
             }
 
             $entity = $model->patchEntity($entity, $this->request->data);
-            if ($model->save($entity)) {
+
+            $saved = null;
+            $reason = 'Please try again later.';
+            // TODO: Log the error.
+            try {
+                $saved = $model->save($entity);
+            } catch (\PDOException $e) {
+                if (!empty($e->errorInfo[2])) {
+                    $reason = $e->errorInfo[2];
+                }
+            } catch (\Exception $e) {
+            }
+
+            if ($saved) {
                 $linked = $this->_fileUploadsUtils->linkFilesToEntity($entity, $model, $this->request->data);
 
                 $this->Flash->success(__('The record has been saved.'));
@@ -104,7 +117,7 @@ class AppController extends BaseController
                     return $this->redirect($redirectUrl);
                 }
             } else {
-                $this->Flash->error(__('The record could not be saved. Please, try again.'));
+                $this->Flash->error(__('The record could not be saved. ' . $reason));
             }
         }
 
@@ -134,7 +147,20 @@ class AppController extends BaseController
             // enable accessibility to associated entity's primary key to avoid associated entity getting flagged as new
             $patchOptions = $model->enablePrimaryKeyAccess();
             $entity = $model->patchEntity($entity, $this->request->data, $patchOptions);
-            if ($model->save($entity)) {
+
+            $saved = null;
+            $reason = 'Please try again later.';
+            // TODO: Log the error.
+            try {
+                $saved = $model->save($entity);
+            } catch (\PDOException $e) {
+                if (!empty($e->errorInfo[2])) {
+                    $reason = $e->errorInfo[2];
+                }
+            } catch (\Exception $e) {
+            }
+
+            if ($saved) {
                 // handle file uploads if found in the request data
                 $linked = $this->_fileUploadsUtils->linkFilesToEntity($entity, $model, $this->request->data);
 
@@ -147,7 +173,7 @@ class AppController extends BaseController
                     return $this->redirect($redirectUrl);
                 }
             } else {
-                $this->Flash->error(__('The record could not be saved. Please, try again.'));
+                $this->Flash->error(__('The record could not be saved. ' . $reason));
             }
         }
         $this->set(compact('entity'));

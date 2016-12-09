@@ -52,6 +52,7 @@ if (!empty($this->request->query['embedded'])) {
     $formOptions['data-embedded'] = $first . (!empty($parts) ? '[' . implode('][', $parts) . ']' : '');
     $formOptions['url']['prefix'] = 'api';
 }
+
 /**
  * @todo Need to handle this for the forms without upload field.
  * @var array
@@ -60,7 +61,15 @@ $formOptions['type'] = 'file';
 ?>
 <div class="row">
     <div class="col-xs-12">
-        <?= $this->Form->create($options['entity'], $formOptions); ?>
+    <?php
+        /**
+         * Conversion logic
+         * @todo probably this has to be moved to another plugin
+         */
+        if (!$this->request->param('pass.conversion')) {
+            echo $this->Form->create($options['entity'], $formOptions);
+        }
+    ?>
         <fieldset>
             <legend><?= $options['title'] ?></legend>
             <?php
@@ -138,18 +147,26 @@ $formOptions['type'] = 'file';
                 }
             ?>
         </fieldset>
-        <?= $this->Form->button(__('Submit'), ['name' => 'btn_operation', 'value' => 'submit', 'class' => 'btn btn-primary']) ?>
+    <?php
+        /**
+         * Conversion logic
+         * @todo probably this has to be moved to another plugin
+         */
+        if (!$this->request->param('pass.conversion')) {
+            echo $this->Form->button(__('Submit'), ['name' => 'btn_operation', 'value' => 'submit', 'class' => 'btn btn-primary']);
 
-        <?php
-        if (empty($this->request->query['embedded'])) { ?>
-            <?= $this->Form->button(__('Cancel'), ['name' => 'btn_operation', 'value' => 'cancel', 'class' => 'btn']) ?>
-        <?php } ?>
-        <?= $this->Form->end() ?>
+            if (empty($this->request->query['embedded'])) {
+                echo $this->Form->button(__('Cancel'), ['name' => 'btn_operation', 'value' => 'cancel', 'class' => 'btn']);
+            }
+
+            echo $this->Form->end();
+        }
+    ?>
         <?php
         /*
         Fetch embedded module(s) using CakePHP's requestAction() method
          */
-        if (!empty($embeddedFields)) :
+        if (!empty($embeddedFields) && !$this->request->param('pass.conversion')) :
             foreach ($embeddedFields as $embeddedField) :
                 $embeddedFieldName = substr($embeddedField['name'], strrpos($embeddedField['name'], '.') + 1);
                 list($embeddedPlugin, $embeddedController) = pluginSplit(

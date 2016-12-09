@@ -30,4 +30,6 @@
     <file>./src/</file>
     <file>./tests/</file>
     <file>./webroot/</file>
+    <!-- Files and directories to ignore -->
+    <arg name="ignore" value="src/Template/Bake/csv_migration.ctp" />
 </ruleset>

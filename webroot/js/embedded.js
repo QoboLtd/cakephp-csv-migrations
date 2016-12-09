@@ -1,11 +1,12 @@
 var embedded = embedded || {};
 
-(function($) {
+(function ($) {
     /**
      * Embedded Logic.
      * @param {object} options configuration options
      */
-    function Embedded(options) {
+    function Embedded(options)
+    {
         this.files = null;
         this.uploadFieldName = null;
         this.formId = options.hasOwnProperty('formId') ? options.formId : '.embeddedForm';
@@ -18,15 +19,15 @@ var embedded = embedded || {};
      *
      * @return {void}
      */
-    Embedded.prototype.init = function() {
+    Embedded.prototype.init = function () {
         var that = this;
 
-        $(that.formId).submit(function(e) {
+        $(that.formId).submit(function (e) {
             e.preventDefault();
             if (that.files && that.uploadFieldName) {
                 that.uploadFiles(this);
             } else {
-               that._submitForm(this);
+                that._submitForm(this);
             }
         });
     };
@@ -35,15 +36,15 @@ var embedded = embedded || {};
      * Attach events needed for the embedded form.
      * @return void
      */
-    Embedded.prototype.attachEvents = function() {
+    Embedded.prototype.attachEvents = function () {
         var that = this;
-        $(document).on('updateFiles', function(event, files, fieldName) {
+        $(document).on('updateFiles', function (event, files, fieldName) {
             that.files = files;
             that.uploadFieldName = fieldName;
         });
     };
 
-    Embedded.prototype.uploadFiles = function(form) {
+    Embedded.prototype.uploadFiles = function (form) {
         var that = this;
         var data = new FormData();
         var modalId = $(form).data('modal_id');
@@ -51,17 +52,16 @@ var embedded = embedded || {};
 
         var embedded = $(form).data('embedded');
 
-        $.each($(form).serializeArray(), function(i, field) {
+        $.each($(form).serializeArray(), function (i, field) {
             if (0 === field.name.indexOf(embedded)) {
                 var name = field.name.replace(embedded, '');
                 name = name.replace('[', '');
                 name = name.replace(']', '');
-                data.append( name, field.value );
+                data.append(name, field.value);
             }
         });
 
-        $.each(that.files, function(key, value)
-        {
+        $.each(that.files, function (key, value) {
             data.append('file[]', value);
         });
 
@@ -80,10 +80,8 @@ var embedded = embedded || {};
             headers: {
                 'Authorization': 'Bearer ' + that.api_token
             },
-            success: function(data, textStatus, jqXHR)
-            {
-                if(typeof data.error === 'undefined')
-                {
+            success: function (data, textStatus, jqXHR) {
+                if (typeof data.error === 'undefined') {
                     /*
                     set related field display-field and value
                      */
@@ -98,15 +96,12 @@ var embedded = embedded || {};
                     hide modal
                      */
                     $('#' + modalId).modal('hide');
-                }
-                else
-                {
+                } else {
                     // Handle errors here
                     console.log('ERRORS: ' + data.error);
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown)
-            {
+            error: function (jqXHR, textStatus, errorThrown) {
                 // Handle errors here
                 console.log('ERRORS: ' + textStatus);
                 // STOP LOADING SPINNER
@@ -121,14 +116,14 @@ var embedded = embedded || {};
      * @return {void}
      * @todo display form errors
      */
-    Embedded.prototype._submitForm = function(form) {
+    Embedded.prototype._submitForm = function (form) {
         var that = this;
 
         var url = $(form).attr('action');
         var embedded = $(form).data('embedded');
         var modalId = $(form).data('modal_id');
         var data = {};
-        $.each($(form).serializeArray(), function(i, field) {
+        $.each($(form).serializeArray(), function (i, field) {
             if (0 === field.name.indexOf(embedded)) {
                 var name = field.name.replace(embedded, '');
                 name = name.replace('[', '');
@@ -147,7 +142,7 @@ var embedded = embedded || {};
             headers: {
                 'Authorization': 'Bearer ' + that.api_token
             },
-            success: function(data, textStatus, jqXHR) {
+            success: function (data, textStatus, jqXHR) {
                 /*
                 set related field display-field and value
                  */
@@ -163,7 +158,7 @@ var embedded = embedded || {};
                  */
                 $('#' + modalId).modal('hide');
             },
-            error: function(jqXHR, textStatus, errorThrown) {
+            error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);
                 console.log(textStatus);
                 console.log(errorThrown);
@@ -179,7 +174,7 @@ var embedded = embedded || {};
      * @param {object} form Form element
      * @return {void}
      */
-    Embedded.prototype._setRelatedField = function(url, id, form) {
+    Embedded.prototype._setRelatedField = function (url, id, form) {
         var that = this;
         url = url.replace('/add', '/view/' + id + '.json');
         $.ajax({
@@ -190,7 +185,7 @@ var embedded = embedded || {};
             headers: {
                 'Authorization': 'Bearer ' + that.api_token
             },
-            success: function(data, textStatus, jqXHR) {
+            success: function (data, textStatus, jqXHR) {
                 /*
                 get typeahead label field
                  */
@@ -213,7 +208,7 @@ var embedded = embedded || {};
                  */
                 $('#' + $labelField.data('id')).val(id);
             },
-            error: function(jqXHR, textStatus, errorThrown) {
+            error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);
                 console.log(textStatus);
                 console.log(errorThrown);
@@ -227,7 +222,7 @@ var embedded = embedded || {};
      * @param  {object} form Form element
      * @return {void}
      */
-    Embedded.prototype._resetForm = function(form) {
+    Embedded.prototype._resetForm = function (form) {
         $(form).find('input:text, input:password, input:file, select, textarea').val('');
         $(form).find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
     };

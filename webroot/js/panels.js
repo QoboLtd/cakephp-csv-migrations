@@ -1,7 +1,7 @@
-(function($) {
+(function ($) {
     'use strict'
 
-    var Panel = function(form) {
+    var Panel = function (form) {
         this.form = form;
         this.url = $(form).data('panels-url');
         if (!this.form || !this.url) {
@@ -22,15 +22,16 @@
      *
      * @return {Boolean} True if there is/are panel(s).
      */
-    Panel.prototype.isEligible = function() {
+    Panel.prototype.isEligible = function () {
         var $form = this.form;
+
         return $form.has('.panel').length ? true : false;
     };
 
-    Panel.prototype.buildData = function() {
+    Panel.prototype.buildData = function () {
         var $form = this.form;
         var data = {};
-        $form.find(':input').each(function() {
+        $form.find(':input').each(function () {
             var name = $(this).attr('name');
             var value = $(this).val();
             if (typeof name !== 'undefined' && typeof value !== 'undefined' ) {
@@ -41,16 +42,16 @@
         return data;
     };
 
-    Panel.prototype.hidePanels = function(panels) {
+    Panel.prototype.hidePanels = function (panels) {
         var $form = this.form;
         if (typeof panels === 'undefined' || !panels instanceof Array) {
             return false;
         }
 
-        panels.forEach(function(cur){
+        panels.forEach(function (cur) {
             var current = cur;
             var $panel = $form.find('.panel');
-            $panel.each(function() {
+            $panel.each(function () {
                 var title = $(this).find('.panel-title').text();
                 if (current === title) {
                     if (!$(this).hasClass('hidden')) {
@@ -62,20 +63,20 @@
         });
     };
 
-    Panel.prototype.resetPanels = function() {
+    Panel.prototype.resetPanels = function () {
         $('.panel.hidden').find(':input').attr('disabled', false);
         $('.panel').removeClass('hidden');
     };
 
-    Panel.prototype.observe = function() {
+    Panel.prototype.observe = function () {
         var $form = this.form;
         var that = this;
-        $form.find(':input').change(function() {
+        $form.find(':input').change(function () {
             that.evaluateWithServer();
         });
     };
 
-    Panel.prototype.evaluateWithServer = function() {
+    Panel.prototype.evaluateWithServer = function () {
         var $form = this.form;
         var token = api_options.token;
         var that = this;
@@ -87,9 +88,8 @@
             headers: {
                 'Authorization': 'Bearer ' + token
             },
-            success: function(data)
-            {
-                if(data.success) {
+            success: function (data) {
+                if (data.success) {
                     that.resetPanels();
                     that.hidePanels(data.data['fail']);
                 }

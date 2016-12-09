@@ -1,12 +1,13 @@
 var typeahead = typeahead || {};
 
-(function($) {
+(function ($) {
     /**
      * Typeahead Logic.
      *
      * @param {object} options configuration options
      */
-    function Typeahead(options) {
+    function Typeahead(options)
+    {
         this.min_length = options.hasOwnProperty('min_length') ? options.min_length : 1;
         this.timeout = options.hasOwnProperty('timeout') ? options.timeout : 300;
         this.api_token = options.hasOwnProperty('token') ? options.token : null;
@@ -14,7 +15,7 @@ var typeahead = typeahead || {};
 
         var that = this;
         // loop through typeahead inputs
-        $(this.typeahead_id).each(function() {
+        $(this.typeahead_id).each(function () {
             that.init(this);
         });
 
@@ -27,7 +28,7 @@ var typeahead = typeahead || {};
      *
      * @return {void}
      */
-    Typeahead.prototype.init = function(element) {
+    Typeahead.prototype.init = function (element) {
         var that = this;
         var hidden_input = $('#' + $(element).data('id'));
 
@@ -39,7 +40,7 @@ var typeahead = typeahead || {};
         this._enable(element, hidden_input);
 
         // clear inputs on double click
-        $(element).on('dblclick', function() {
+        $(element).on('dblclick', function () {
             that._clearInputs(this, hidden_input);
         });
     };
@@ -51,7 +52,7 @@ var typeahead = typeahead || {};
      * @param {object} input Typeahead input
      * @return {void}
      */
-    Typeahead.prototype._setDisplayValue = function(id, input) {
+    Typeahead.prototype._setDisplayValue = function (id, input) {
         var that = this;
         var url = $(input).data('url').replace('/lookup', '/view/' + id);
         $.ajax({
@@ -62,7 +63,7 @@ var typeahead = typeahead || {};
             headers: {
                 'Authorization': 'Bearer ' + that.api_token
             },
-            success: function(data) {
+            success: function (data) {
                 if (!data.success) {
                     return;
                 }
@@ -73,7 +74,7 @@ var typeahead = typeahead || {};
                 // set typeahead as read-only
                 $(input).prop('readonly', true);
             },
-            error: function(jqXHR, textStatus, errorThrown) {
+            error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);
                 console.log(textStatus);
                 console.log(errorThrown);
@@ -86,16 +87,18 @@ var typeahead = typeahead || {};
      *
      * @return {void}
      */
-    Typeahead.prototype._observe = function() {
+    Typeahead.prototype._observe = function () {
         var that = this;
 
         MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
         // observe for client side appended typeaheads
-        var observer = new MutationObserver(function(mutations, observer) {
+        var observer = new MutationObserver(function (mutations, observer) {
             // look through all mutations that just occured
-            for (var i = 0; i < mutations.length; ++i) {
+            mutationsLength = mutations.length;
+            for (var i = 0; i < mutationsLength; ++i) {
                 // look through all added nodes of this mutation
-                for (var j = 0; j < mutations[i].addedNodes.length; ++j) {
+                mutationNodesLength = mutations[1].addedNodes.length;
+                for (var j = 0; j < mutationNodesLength; ++j) {
                     // look for typeahead elements
                     var typeahead = that._getTypeahead(mutations[i].addedNodes[j]);
                     if ($.isEmptyObject(typeahead)) {
@@ -122,9 +125,9 @@ var typeahead = typeahead || {};
      * @param  {object} node Added DOM node
      * @return {object}
      */
-    Typeahead.prototype._getTypeahead = function(node) {
+    Typeahead.prototype._getTypeahead = function (node) {
         var result = {};
-        $(node).find(this.typeahead_id).each(function() {
+        $(node).find(this.typeahead_id).each(function () {
             result = this;
         });
 
@@ -138,7 +141,7 @@ var typeahead = typeahead || {};
      * @param  {object} hidden_input hidden input, value holder
      * @return {void}
      */
-    Typeahead.prototype._clearInputs = function(input, hidden_input) {
+    Typeahead.prototype._clearInputs = function (input, hidden_input) {
         if ($(input).is('[readonly]')) {
             $(input).prop('readonly', false);
             $(input).val('');
@@ -154,7 +157,7 @@ var typeahead = typeahead || {};
      * @return {void}
      * {@link plugin: http://plugins.upbootstrap.com/bootstrap-ajax-typeahead/}
      */
-    Typeahead.prototype._enable = function(input, hidden_input) {
+    Typeahead.prototype._enable = function (input, hidden_input) {
         var that = this;
 
         // enable typeahead
@@ -170,13 +173,13 @@ var typeahead = typeahead || {};
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + that.api_token
                 },
-                preProcess: function(data) {
+                preProcess: function (data) {
                     if (data.success === false) {
                         // Hide the list, there was some error
                         return false;
                     }
                     result = [];
-                    $.each(data.data, function(k, v) {
+                    $.each(data.data, function (k, v) {
                         result.push({
                             id: k,
                             name: v
@@ -186,7 +189,7 @@ var typeahead = typeahead || {};
                     return result;
                 }
             },
-            onSelect: function(data) {
+            onSelect: function (data) {
                 that._onSelect(input, hidden_input, data);
             },
             // No need to run matcher as ajax results are already filtered
@@ -204,7 +207,7 @@ var typeahead = typeahead || {};
      * @param  {object} data         ajax call returned data
      * @return {void}
      */
-    Typeahead.prototype._onSelect = function(input, hidden_input, data) {
+    Typeahead.prototype._onSelect = function (input, hidden_input, data) {
         $(hidden_input).val(data.value);
         $(input).prop('readonly', true);
     };

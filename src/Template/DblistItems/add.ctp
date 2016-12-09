@@ -39,7 +39,7 @@ $this->assign('panel-title', __d('CsvMigrations', 'Details'));
             </div>
         </div>
         </fieldset>
-        <?= $this->Form->hidden('dblist_id',['value' => $list['id']]); ?>
+        <?= $this->Form->hidden('dblist_id', ['value' => $list['id']]); ?>
         <?= $this->Form->button(__d('CsvMigrations', "Submit"), ['class' => 'btn btn-primary']); ?>
         <?= $this->Form->end() ?>
     </div>

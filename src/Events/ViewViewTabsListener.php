@@ -40,8 +40,10 @@ class ViewViewTabsListener implements EventListenerInterface
     /**
      * getBeforeTabContent
      * @param Cake\Event $event passed
-     * @param array $data - containing tab content
-     * @return void
+     * @param Cake\Network\Request $request - containing tab content
+     * @param Cake\ORM\Entity $entity Entity
+     * @param array $options Options
+     * @return array
      */
     public function getBeforeTabContent(Event $event, Request $request, $entity, $options)
     {
@@ -64,7 +66,7 @@ class ViewViewTabsListener implements EventListenerInterface
      * getAfterTabContent
      * @param Cake\Event $event passed
      * @param array $data containing tab content
-     * @return void
+     * @return null
      */
     public function getAfterTabContent(Event $event, array $data)
     {

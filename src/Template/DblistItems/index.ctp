@@ -33,7 +33,7 @@ echo $this->element(
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($tree as $entity): ?>
+        <?php foreach ($tree as $entity) : ?>
         <tr class="<?= !($entity->get('active')) ? 'warning' : ''; ?>">
             <td><?= $entity->get('spacer')?> (<?= $entity->get('value') ?>)</td>
             <td class="actions">

@@ -35,172 +35,174 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
         <hr />
         <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
 <?php
-    $active = 'active';
-    foreach ($panels as $tabName => $assocData) :
+$active = 'active';
+foreach ($panels as $tabName => $assocData) :
 ?>
-            <li role="presentation" class="<?= $active; ?>">
-                <a href="#<?= $tabName; ?>" aria-controls="<?= $tabName; ?>" role="tab" data-toggle="tab">
-                    <?php
-                        //prettifying the tabs names
-                        if (!empty($csvAssociationLabels) && in_array($tabName, array_keys($csvAssociationLabels))) {
-                            echo $csvAssociationLabels[$tabName];
-                        } else {
-                            $tableName = Inflector::humanize($assocData['table_name']);
-                            $fieldName = trim(str_replace($tableName, '', Inflector::humanize(Inflector::tableize($tabName))));
-                            if (!empty($fieldName)) {
-                                $fieldName = '<small>(' . $fieldName . ')</small>';
-                            }
-                            echo $tableName . $fieldName;
-                        }
-                    ?>
-                </a>
-            </li>
+        <li role="presentation" class="<?= $active; ?>">
+            <a href="#<?= $tabName; ?>" aria-controls="<?= $tabName; ?>" role="tab" data-toggle="tab">
+            <?php
+            //prettifying the tabs names
+            if (!empty($csvAssociationLabels) && in_array($tabName, array_keys($csvAssociationLabels))) {
+                echo $csvAssociationLabels[$tabName];
+            } else {
+                $tableName = Inflector::humanize($assocData['table_name']);
+                $fieldName = trim(str_replace($tableName, '', Inflector::humanize(Inflector::tableize($tabName))));
+                if (!empty($fieldName)) {
+                    $fieldName = '<small>(' . $fieldName . ')</small>';
+                }
+                echo $tableName . $fieldName;
+            }
+            ?>
+            </a>
+        </li>
 <?php
-    $active = '';
-    endforeach;
+$active = '';
+endforeach;
 ?>
         </ul>
         <div class="tab-content">
 <?php
-    $active = 'active';
-    foreach ($panels as $assocName => $assocData) {
+$active = 'active';
+foreach ($panels as $assocName => $assocData) {
 ?>
-            <div role="tabpanel" class="tab-pane <?= $active; ?>" id="<?= $assocName; ?>">
-            <?php
-            /*
-            display typeahead field for adding/linking associated records,
-            filtered from embeddedFields array.
-             */
-            $embField = $assocData['class_name'] . '.' . $assocData['foreign_key'];
-            if (in_array($embField, $embFields)) : ?>
-            <div class="row">
-                <div class="typeahead-container col-md-4 col-md-offset-8">
-                <?php
-                    $formOptions = [
-                        'url' => [
-                            'plugin' => $this->request->plugin,
-                            'controller' => $this->request->controller,
-                            'action' => 'edit',
-                            $this->request->pass[0]
+    <div role="tabpanel" class="tab-pane <?= $active; ?>" id="<?= $assocName; ?>">
+    <?php
+    /*
+    display typeahead field for adding/linking associated records,
+    filtered from embeddedFields array.
+     */
+    $embField = $assocData['class_name'] . '.' . $assocData['foreign_key'];
+    if (in_array($embField, $embFields)) : ?>
+    <div class="row">
+        <div class="typeahead-container col-md-4 col-md-offset-8">
+        <?php
+        $formOptions = [
+            'url' => [
+                'plugin' => $this->request->plugin,
+                'controller' => $this->request->controller,
+                'action' => 'edit',
+                $this->request->pass[0]
+            ]
+        ];
+
+        echo $this->Form->create(null, $formOptions);
+        /*
+        non-embedded field
+         */
+        $tableName = $this->request->controller;
+        if (!is_null($this->request->plugin)) {
+            $tableName = $this->request->plugin . '.' . $tableName;
+        }
+
+        $handlerOptions = [];
+        /*
+        set associated table name to be used on input field's name
+         */
+        $handlerOptions['associated_table_name'] = $assocData['table_name'];
+        /*
+        set embedded modal flag
+         */
+        $handlerOptions['embModal'] = true;
+        /*
+        set field type to 'has_many' and default parameters
+         */
+        $handlerOptions['fieldDefinitions']['type'] = 'has_many(' . $assocData['class_name'] . ')';
+        $handlerOptions['fieldDefinitions']['required'] = true;
+        $handlerOptions['fieldDefinitions']['non-searchable'] = true;
+        $handlerOptions['fieldDefinitions']['unique'] = false;
+
+        /*
+        display typeahead field for associated module(s)
+         */
+        echo $fhf->renderInput(
+            $tableName,
+            $assocData['foreign_key'],
+            null,
+            $handlerOptions
+        );
+
+        /*
+        set existing related records as hidden fields
+         */
+        foreach ($assocData['records'] as $record) {
+            echo $this->Form->hidden($assocData['table_name'] . '._ids[]', [
+                'value' => $record->{$assocData['primary_key']}
+            ]);
+        }
+
+        echo $this->Form->end();
+        ?>
+        </div>
+    </div>
+    <?php
+    endif;
+?>
+
+    <?php if (!empty($assocData['records'])) : ?>
+        <div class=" table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                    <?php foreach ($assocData['fields'] as $assocField) : ?>
+                        <th><?= Inflector::humanize($assocField); ?></th>
+                    <?php endforeach; ?>
+                        <th class="actions"><?= __('Actions'); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($assocData['records'] as $record) : ?>
+                    <tr>
+                    <?php foreach ($assocData['fields'] as $assocField) : ?>
+                        <td>
+                        <?php
+                            $renderOptions = [
+                                'entity' => $record,
+                                'renderAs' => 'plain'
+                            ];
+                            $value = $fhf->renderValue(
+                                $assocData['class_name'],
+                                $assocField,
+                                $record->$assocField,
+                                $renderOptions
+                            );
+
+                            echo !empty($value) ? $value : '&nbsp;';
+                        ?>
+                        </td>
+                    <?php endforeach; ?>
+                    <td class="actions">
+                    <?php
+                    $event = new Event('View.Associated.Menu.Actions', $this, [
+                        'request' => $this->request,
+                        'options' => [
+                            'entity' => $entity,
+                            'associated' => [
+                                'entity' => $record,
+                                'name' => $assocData['assoc_name'],
+                                'className' => $assocData['class_name'],
+                                'displayField' => $assocData['display_field']
+                            ]
                         ]
-                    ];
-
-                    echo $this->Form->create(null, $formOptions);
-                    /*
-                    non-embedded field
-                     */
-                    $tableName = $this->request->controller;
-                    if (!is_null($this->request->plugin)) {
-                        $tableName = $this->request->plugin . '.' . $tableName;
+                    ]);
+                    $this->eventManager()->dispatch($event);
+                    if (!empty($event->result)) {
+                        echo $event->result;
                     }
-
-                    $handlerOptions = [];
-                    /*
-                    set associated table name to be used on input field's name
-                     */
-                    $handlerOptions['associated_table_name'] = $assocData['table_name'];
-                    /*
-                    set embedded modal flag
-                     */
-                    $handlerOptions['embModal'] = true;
-                    /*
-                    set field type to 'has_many' and default parameters
-                     */
-                    $handlerOptions['fieldDefinitions']['type'] = 'has_many(' . $assocData['class_name'] . ')';
-                    $handlerOptions['fieldDefinitions']['required'] = true;
-                    $handlerOptions['fieldDefinitions']['non-searchable'] = true;
-                    $handlerOptions['fieldDefinitions']['unique'] = false;
-
-                    /*
-                    display typeahead field for associated module(s)
-                     */
-                    echo $fhf->renderInput(
-                        $tableName,
-                        $assocData['foreign_key'],
-                        null,
-                        $handlerOptions
-                    );
-
-                    /*
-                    set existing related records as hidden fields
-                     */
-                    foreach ($assocData['records'] as $record) {
-                        echo $this->Form->hidden($assocData['table_name'] . '._ids[]', [
-                            'value' => $record->{$assocData['primary_key']}
-                        ]);
-                    }
-
-                    echo $this->Form->end();
-                ?>
-                </div>
-            </div>
-            <?php endif; ?>
-
-            <?php if (!empty($assocData['records'])) : ?>
-                <div class=" table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                            <?php foreach ($assocData['fields'] as $assocField) : ?>
-                                <th><?= Inflector::humanize($assocField); ?></th>
-                            <?php endforeach; ?>
-                                <th class="actions"><?= __('Actions'); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach ($assocData['records'] as $record) : ?>
-                            <tr>
-                            <?php foreach ($assocData['fields'] as $assocField) : ?>
-                                <td>
-                                <?php
-                                    $renderOptions = [
-                                        'entity' => $record,
-                                        'renderAs' => 'plain'
-                                    ];
-                                    $value = $fhf->renderValue(
-                                        $assocData['class_name'],
-                                        $assocField,
-                                        $record->$assocField,
-                                        $renderOptions
-                                    );
-
-                                    echo !empty($value) ? $value : '&nbsp;';
-                                ?>
-                                </td>
-                            <?php endforeach; ?>
-                            <td class="actions">
-                            <?php
-                                $event = new Event('View.Associated.Menu.Actions', $this, [
-                                    'request' => $this->request,
-                                    'options' => [
-                                        'entity' => $entity,
-                                        'associated' => [
-                                            'entity' => $record,
-                                            'name' => $assocData['assoc_name'],
-                                            'className' => $assocData['class_name'],
-                                            'displayField' => $assocData['display_field']
-                                        ]
-                                    ]
-                                ]);
-                                $this->eventManager()->dispatch($event);
-                                if (!empty($event->result)) {
-                                    echo $event->result;
-                                }
-                            ?>
-                            </td>
-                            </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            <?php else : ?>
-                <div class="well">
-                    <?= __('No records found.'); ?>
-                </div>
-            <?php endif; ?>
-            </div>
-        <?php $active = '';
-    }
+                    ?>
+                    </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php else : ?>
+        <div class="well">
+            <?= __('No records found.'); ?>
+        </div>
+    <?php endif; ?>
+    </div>
+    <?php $active = '';
+}
 ?>
         </div>
     </div>
@@ -246,7 +248,9 @@ if (!empty($embFields)) :
             </div>
         </div>
     </div>
-    <?php endforeach; ?>
+    <?php
+    endforeach;
+?>
 <?php
 /**
  * @todo  Load when needed.

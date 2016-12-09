@@ -194,7 +194,8 @@ class Table extends BaseTable
      *    'owner' => '77dd9203-3f21-4571-8843-0264ae1cfa48',
      * }
      *
-     * @param  \Cake\ORM\Entity $entity Entity instance
+     * @param \Cake\ORM\Entity $entity Entity instance
+     * @param array $options Options
      * @return \Cake\ORM\Entity
      */
     public function setAssociatedByLookupFields(Entity $entity, $options = [])

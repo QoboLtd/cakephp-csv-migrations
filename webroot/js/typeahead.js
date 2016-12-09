@@ -94,9 +94,11 @@ var typeahead = typeahead || {};
         // observe for client side appended typeaheads
         var observer = new MutationObserver(function (mutations, observer) {
             // look through all mutations that just occured
-            for (var i = 0; i < mutations.length; ++i) {
+            mutationsLength = mutations.length;
+            for (var i = 0; i < mutationsLength; ++i) {
                 // look through all added nodes of this mutation
-                for (var j = 0; j < mutations[i].addedNodes.length; ++j) {
+                mutationNodesLength = mutations[1].addedNodes.length;
+                for (var j = 0; j < mutationNodesLength; ++j) {
                     // look for typeahead elements
                     var typeahead = that._getTypeahead(mutations[i].addedNodes[j]);
                     if ($.isEmptyObject(typeahead)) {

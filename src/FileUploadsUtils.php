@@ -97,7 +97,9 @@ class FileUploadsUtils
     /**
      * Get files by foreign key record.
      *
-     * @param  string              $table  Record id
+     * @param  string $table  Table
+     * @param  string $field  Field
+     * @param  mixed $data  Data
      * @return \Cake\ORM\ResultSet
      */
     public function getFiles($table, $field, $data)

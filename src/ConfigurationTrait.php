@@ -271,6 +271,7 @@ trait ConfigurationTrait
      * @TODO: currently parses only allow_reminders,
      * not to break existing properties of 'table' section
      *
+     * @param array $tableSection Section to parse
      * @return void
      */
     public function tableSection($tableSection = [])

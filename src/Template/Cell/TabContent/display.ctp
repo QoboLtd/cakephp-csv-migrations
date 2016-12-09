@@ -102,7 +102,7 @@ we don't do the linkage - they would have hidden ID by default
                     'query' => [
                         'embedded' => $this->request->controller,
                         'foreign_key' => $emFieldName,
-                        'modal_id'    => $emModal,
+                        'modal_id' => $emModal,
                     ]
                 ]);
             ?>

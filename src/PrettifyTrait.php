@@ -21,7 +21,7 @@ trait PrettifyTrait
      * @param  Cake\ORM\Entity       $entity    Entity instance
      * @param  Cake\ORM\Table|string $table     Table instance
      * @param  array                 $fields    Fields to prettify
-     * @return Cake\ORM\Entity
+     * @return void
      */
     protected function _prettify(Entity $entity, $table, array $fields = [])
     {

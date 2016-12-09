@@ -1,8 +1,8 @@
 <?php
 use Cake\Core\Configure;
 use Cake\Event\Event;
-use Cake\Utility\Inflector;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Inflector;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
@@ -130,17 +130,26 @@ if (empty($options['title'])) {
                             echo empty($value) ? '&nbsp;' : '';
                         ?>
                         </div>
-                    <?php                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 endif; ?>
-                    <?php                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         elseif ('' !== trim($field['name'])) :
-                        $embeddedFields[] = $field['name'];
-                        $embeddedDirty = false;
+                    <?php
+                        endif;
+?>
+<?php
+                    elseif ('' !== trim($field['name'])) :
+                            $embeddedFields[] = $field['name'];
+                            $embeddedDirty = false;
                     ?>
-                    <?php else : ?>
+                    <?php
+                    else :
+?>
                         <div class="col-xs-4 col-md-2 text-right">&nbsp;</div>
                         <div class="col-xs-8 col-md-4">&nbsp;</div>
-                    <?php endif; ?>
+                    <?php
+                    endif;
+?>
                     <div class="clearfix visible-xs visible-sm"></div>
-                <?php                                                                                                                                                                                                                                                                                                                                                                                                                                 endforeach; ?>
+                <?php
+                endforeach;
+?>
                 </div>
             <?php endforeach; ?>
             </div>
@@ -184,9 +193,9 @@ if (empty($options['title'])) {
                 }
             }
             $embeddedFields = [];
-            ?>
-            <?php                                                                                                                                                                                                                                                                                                                         endforeach; ?>
-        <?php                                                                                                                                                                                                                 endif; ?>
+            endforeach;
+        endif;
+?>
     </div>
 </div>
 
@@ -220,16 +229,16 @@ if (empty($options['title'])) {
                 <?php foreach ($tabs as $k => $tab) :?>
                     <div role="tabpanel" class="tab-pane <?= ($k == 0) ? 'active' : ''?>" id="<?= $tab['containerId']?>">
                         <?php
-                            $beforeTabContentEvent = new Event('CsvMigrations.View.View.TabContent.beforeContent', $this, [
-                                'request' => $this->request,
-                                'entity'  => $options['entity'],
-                                'options' => [
-                                        'tab' => $tab
-                                    ]
-                            ]);
+                        $beforeTabContentEvent = new Event('CsvMigrations.View.View.TabContent.beforeContent', $this, [
+                            'request' => $this->request,
+                            'entity' => $options['entity'],
+                            'options' => [
+                                    'tab' => $tab
+                                ]
+                        ]);
 
-                            $this->eventManager()->dispatch($beforeTabContentEvent);
-                            $beforeTab = $beforeTabContentEvent->result;
+                        $this->eventManager()->dispatch($beforeTabContentEvent);
+                        $beforeTab = $beforeTabContentEvent->result;
 
                         if (isset($beforeTab['content']['length']) && count($beforeTab['content']['length']) > 0) {
                             echo $this->cell('CsvMigrations.TabContent', [
@@ -242,16 +251,16 @@ if (empty($options['title'])) {
                             ]);
                         }
 
-                            $tabContentEvent = new Event('CsvMigrations.View.View.TabContent', $this, [
-                                'request' => $this->request,
-                                'entity' => $options['entity'],
-                                'options' => [
-                                        'tab' => $tab
-                                    ]
-                            ]);
+                        $tabContentEvent = new Event('CsvMigrations.View.View.TabContent', $this, [
+                            'request' => $this->request,
+                            'entity' => $options['entity'],
+                            'options' => [
+                                    'tab' => $tab
+                                ]
+                        ]);
 
-                            $this->eventManager()->dispatch($tabContentEvent);
-                            $content = $tabContentEvent->result;
+                        $this->eventManager()->dispatch($tabContentEvent);
+                        $content = $tabContentEvent->result;
 
                         if (!empty($content)) {
                             echo $this->cell('CsvMigrations.TabContent', [
@@ -264,7 +273,7 @@ if (empty($options['title'])) {
                             ]);
 
                             echo $this->Html->scriptBlock(
-                                '$(\'.' . $tab['containerId']. '\').DataTable({
+                                '$(\'.' . $tab['containerId'] . '\').DataTable({
                                         "paging":false,
                                         "searching": false
                                     });',
@@ -275,7 +284,9 @@ if (empty($options['title'])) {
                     </div>
                 <?php endforeach; ?>
             </div> <!-- .tab-content -->
-        <?php                                                                                                             } ?>
+        <?php
+    }
+?>
     </div>
     <?php
         //loading common setup for typeahead/panel/etc libs for tabs

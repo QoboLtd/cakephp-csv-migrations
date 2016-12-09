@@ -1,7 +1,7 @@
 <?php
 use Cake\Utility\Inflector;
-use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\CsvMigrationsUtils;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 $fhf = new FieldHandlerFactory($this);
 
@@ -212,9 +212,10 @@ $formOptions['type'] = 'file';
                     </div>
                 </div>
             </div>
-            <?php                                                                                                                                                                                                                                                                                                                         endforeach; ?>
-        <?php                                                                                                                                                                                                                 endif; ?>
-        <?php
+            <?php
+            endforeach;
+        endif;
+
         // print embedded forms
         if (!empty($embeddedForms)) {
             foreach ($embeddedForms as $embeddedForm) {

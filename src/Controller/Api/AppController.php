@@ -291,7 +291,7 @@ class AppController extends Controller
     /**
      * upload function shared among API controllers
      *
-     * @return array $response encoded in JSON object
+     * @return void
      */
     public function upload()
     {

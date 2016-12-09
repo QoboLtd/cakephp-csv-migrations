@@ -1,6 +1,6 @@
 <?php
-use Cake\Utility\Inflector;
 use Cake\Event\Event;
+use Cake\Utility\Inflector;
 
 $defaultOptions = [
     'add' => [

@@ -97,7 +97,7 @@ var typeahead = typeahead || {};
             mutationsLength = mutations.length;
             for (var i = 0; i < mutationsLength; ++i) {
                 // look through all added nodes of this mutation
-                mutationNodesLength = mutations[1].addedNodes.length;
+                mutationNodesLength = mutations[i].addedNodes.length;
                 for (var j = 0; j < mutationNodesLength; ++j) {
                     // look for typeahead elements
                     var typeahead = that._getTypeahead(mutations[i].addedNodes[j]);

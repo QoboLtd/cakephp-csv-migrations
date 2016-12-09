@@ -33,9 +33,7 @@ class AppController extends BaseController
     {
         parent::beforeFilter($event);
 
-        /*
-        pass module alias to the View
-         */
+        // pass module alias to the View
         $table = $this->loadModel();
 
         if ($this->Auth->user()) {
@@ -86,22 +84,22 @@ class AppController extends BaseController
      */
     public function add()
     {
-        $entity = $this->{$this->name}->newEntity();
+        $model = $this->{$this->name};
+        $entity = $model->newEntity();
         if ($this->request->is('post')) {
             if ($this->request->data('btn_operation') == 'cancel') {
                 return $this->redirect(['action' => 'index']);
             }
 
-            $entity = $this->{$this->name}->patchEntity($entity, $this->request->data);
-            if ($this->{$this->name}->save($entity)) {
-                $linked = $this->_fileUploadsUtils->linkFilesToEntity($entity, $this->{$this->name}, $this->request->data);
+            $entity = $model->patchEntity($entity, $this->request->data);
+            if ($model->save($entity)) {
+                $linked = $this->_fileUploadsUtils->linkFilesToEntity($entity, $model, $this->request->data);
 
                 $this->Flash->success(__('The record has been saved.'));
 
-                $redirectUrl = $this->{$this->name}->getParentRedirectUrl($this->{$this->name}, $entity);
-
+                $redirectUrl = $model->getParentRedirectUrl($model, $entity);
                 if (empty($redirectUrl)) {
-                    return $this->redirect(['action' => 'view', $entity->{$this->{$this->name}->primaryKey()}]);
+                    return $this->redirect(['action' => 'view', $entity->{$model->primaryKey()}]);
                 } else {
                     return $this->redirect($redirectUrl);
                 }
@@ -124,28 +122,27 @@ class AppController extends BaseController
      */
     public function edit($id = null)
     {
-        $entity = $this->{$this->name}->get($id, [
+        $model = $this->{$this->name};
+        $entity = $model->get($id, [
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             if ($this->request->data('btn_operation') == 'cancel') {
                 return $this->redirect(['action' => 'view', $id]);
             }
-            /*
-            enable accessibility to associated entity's primary key to avoid associated entity getting flagged as new
-             */
-            $patchOptions = $this->{$this->name}->enablePrimaryKeyAccess();
-            $entity = $this->{$this->name}->patchEntity($entity, $this->request->data, $patchOptions);
-            if ($this->{$this->name}->save($entity)) {
+
+            // enable accessibility to associated entity's primary key to avoid associated entity getting flagged as new
+            $patchOptions = $model->enablePrimaryKeyAccess();
+            $entity = $model->patchEntity($entity, $this->request->data, $patchOptions);
+            if ($model->save($entity)) {
                 // handle file uploads if found in the request data
-                $linked = $this->_fileUploadsUtils->linkFilesToEntity($entity, $this->{$this->name}, $this->request->data);
+                $linked = $this->_fileUploadsUtils->linkFilesToEntity($entity, $model, $this->request->data);
 
                 $this->Flash->success(__('The record has been saved.'));
 
-                $redirectUrl = $this->{$this->name}->getParentRedirectUrl($this->{$this->name}, $entity);
-
+                $redirectUrl = $model->getParentRedirectUrl($model, $entity);
                 if (empty($redirectUrl)) {
-                    return $this->redirect(['action' => 'view', $entity->{$this->{$this->name}->primaryKey()}]);
+                    return $this->redirect(['action' => 'view', $entity->{$model->primaryKey()}]);
                 } else {
                     return $this->redirect($redirectUrl);
                 }
@@ -168,9 +165,10 @@ class AppController extends BaseController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $entity = $this->{$this->name}->get($id);
+        $model = $this->{$this->name};
+        $entity = $model->get($id);
 
-        if ($this->{$this->name}->delete($entity)) {
+        if ($model->delete($entity)) {
             $this->Flash->success(__('The record has been deleted.'));
         } else {
             $this->Flash->error(__('The record could not be deleted. Please, try again.'));
@@ -191,12 +189,12 @@ class AppController extends BaseController
     public function unlink($id, $assocName, $assocId)
     {
         $this->request->allowMethod(['post']);
-        $entity = $this->{$this->name}->get($id);
-        $assocEntity = $this->{$this->name}->{$assocName}->get($assocId);
-        /*
-        unlink associated record
-         */
-        $this->{$this->name}->{$assocName}->unlink($entity, [$assocEntity]);
+        $model = $this->{$this->name};
+        $entity = $model->get($id);
+        $assocEntity = $model->{$assocName}->get($assocId);
+
+        // unlink associated record
+        $model->{$assocName}->unlink($entity, [$assocEntity]);
 
         $this->Flash->success(__('The record has been unlinked.'));
 

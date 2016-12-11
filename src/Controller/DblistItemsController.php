@@ -52,7 +52,7 @@ class DblistItemsController extends BaseController
         $tree = $this->DblistItems
             ->find('treeList', ['spacer' => '&nbsp;&nbsp;&nbsp;&nbsp;'])
             ->where(['dblist_id' => $listId]);
-        $this->set(compact('dblistItem', 'tree', 'dblistItems', 'list'));
+        $this->set(compact('dblistItem', 'tree', 'list'));
     }
 
     /**

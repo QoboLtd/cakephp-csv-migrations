@@ -61,6 +61,8 @@ class DblistFieldHandler extends BaseFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
+        $result = '';
+
         //CsvField object is mandatory
         if (!isset($options['fieldDefinitions']) ||
             !($options['fieldDefinitions'] instanceof CsvField)) {

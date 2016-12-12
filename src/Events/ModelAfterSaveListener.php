@@ -43,10 +43,15 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         $table = $event->subject();
 
-        //get attendees for the event
+        //get attendees Table for the event
         if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
             $config = $table->getConfig();
             $remindersTo = $table->getTableAllowRemindersField();
+        }
+
+        // skip if attendees Table is not defined
+        if (empty($remindersTo)) {
+            return $sent;
         }
 
         // Figure out which field is a reminder one
@@ -61,10 +66,6 @@ class ModelAfterSaveListener implements EventListenerInterface
         $reminderField = $reminderField['name'];
         // Skip sending email if reminder field is empty
         if (empty($entity->$reminderField)) {
-            return $sent;
-        }
-
-        if (empty($remindersTo)) {
             return $sent;
         }
 

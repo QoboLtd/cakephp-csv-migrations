@@ -130,8 +130,10 @@ class ModelAfterSaveListener implements EventListenerInterface
             $currentUser = $table->getCurrentUser();
             $emailContent .= " by " . $currentUser['email'];
         }
-        // append changelog
-        $emailContent .= "\n\n" . $this->_getChangelog($entity);
+        // append changelog if entity is not new
+        if (!$entity->isNew()) {
+            $emailContent .= "\n\n" . $this->_getChangelog($entity);
+        }
 
         foreach ($emails as $email) {
             $vCalendar = new \Eluceo\iCal\Component\Calendar('//EN//');
@@ -309,12 +311,13 @@ class ModelAfterSaveListener implements EventListenerInterface
     {
         $result = '';
 
-        // get entity's modified fields
+        // plain changelog if entity is new
         if ($entity->isNew()) {
-            $fields = $entity->extractOriginal($entity->visibleProperties());
-        } else {
-            $fields = $entity->extractOriginalChanged($entity->visibleProperties());
+            return $result;
         }
+
+        // get entity's modified fields
+        $fields = $entity->extractOriginalChanged($entity->visibleProperties());
 
         if (empty($fields)) {
             return $result;

@@ -7,11 +7,24 @@ use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\I18n\Time;
 use Cake\Mailer\Email;
+use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 class ModelAfterSaveListener implements EventListenerInterface
 {
+    /**
+     * Changelog template
+     */
+    const CHANGELOG = '* %s: changed from "%s" to "%s".' . "\n";
+
+    /**
+     * Ingored modified fields
+     *
+     * @var array
+     */
+    protected $_ignoredFields = ['created', 'modified'];
+
     /**
      * Implemented Events
      * @return array
@@ -42,10 +55,15 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         $table = $event->subject();
 
-        //get attendees for the event
+        //get attendees Table for the event
         if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
             $config = $table->getConfig();
             $remindersTo = $table->getTableAllowRemindersField();
+        }
+
+        // skip if attendees Table is not defined
+        if (empty($remindersTo)) {
+            return $sent;
         }
 
         // Figure out which field is a reminder one
@@ -63,7 +81,15 @@ class ModelAfterSaveListener implements EventListenerInterface
             return $sent;
         }
 
-        if (empty($remindersTo)) {
+        $attendeesFields = $this->_getAttendeesFields($table, ['tables' => $remindersTo]);
+        // skip if no attendees fields found
+        if (empty($attendeesFields)) {
+            return $sent;
+        }
+
+        // skip if none of the required fields was modified
+        $requiredFields = array_merge((array)$reminderField, $attendeesFields);
+        if (!$this->_requiredFieldsModified($entity, $requiredFields)) {
             return $sent;
         }
 
@@ -92,7 +118,7 @@ class ModelAfterSaveListener implements EventListenerInterface
             $emailContent .= "created";
         }
 
-        $emails = $this->_getAttendees($table, $entity, $remindersTo);
+        $emails = $this->_getAttendees($table, $entity, $attendeesFields);
 
         if (empty($emails)) {
             return $sent;
@@ -102,6 +128,10 @@ class ModelAfterSaveListener implements EventListenerInterface
         if (method_exists($table, 'getCurrentUser') && is_callable([$table, 'getCurrentUser'])) {
             $currentUser = $table->getCurrentUser();
             $emailContent .= " by " . $currentUser['email'];
+        }
+        // append changelog if entity is not new
+        if (!$entity->isNew()) {
+            $emailContent .= "\n\n" . $this->_getChangelog($entity);
         }
 
         foreach ($emails as $email) {
@@ -140,33 +170,86 @@ class ModelAfterSaveListener implements EventListenerInterface
     }
 
     /**
-     * getAssignedAssociations
+     * Retrieve attendees fields from current Table's associations.
      *
-     * gets all Entities associated with the record
-     *
-     * @param EntityInterface $table of the record
-     * @param ArrayObject $entity extra options
+     * @param \Cake\ORM\Table $table Table instance
      * @param array $options Options
-     * @return array $entities
+     * @return array
      */
-    public function getAssignedAssociations($table, $entity, $options = [])
+    protected function _getAttendeesFields(Table $table, $options = [])
     {
-        $entities = [];
+        $result = [];
+
         $associations = [];
-
-        $tables = empty($options['tables']) ? [] : $options['tables'];
-
-        if (!empty($tables)) {
+        if (!empty($options['tables'])) {
             foreach ($table->associations() as $association) {
-                if (in_array(Inflector::humanize($association->target()->table()), $tables)) {
-                    array_push($associations, $association);
+                if (!in_array(Inflector::humanize($association->target()->table()), $options['tables'])) {
+                    continue;
                 }
+
+                $associations[] = $association;
             }
         } else {
             $associations = $table->associations();
         }
 
+        if (empty($associations)) {
+            return $result;
+        }
+
         foreach ($associations as $association) {
+            $result[] = $association->foreignKey();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Checks if required fields have been modified. Returns true
+     * if any of the fields has been modified, otherwise false.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity Entity instance
+     * @param array $requiredFields Required fields list
+     * @return bool
+     */
+    protected function _requiredFieldsModified(EntityInterface $entity, array $requiredFields)
+    {
+        $result = false;
+
+        if (empty($requiredFields)) {
+            return $result;
+        }
+
+        // check if any of the required fields was modified and set modified flag to true
+        foreach ($requiredFields as $field) {
+            if (!$entity->dirty($field)) {
+                continue;
+            }
+            $result = true;
+            break;
+        }
+
+        return $result;
+    }
+
+    /**
+     * getAssignedAssociations
+     *
+     * gets all Entities associated with the record
+     *
+     * @param \Cake\ORM\Table $table of the record
+     * @param \Cake\Datasource\EntityInterface $entity extra options
+     * @param array $fields Attendees fields
+     * @return array $entities
+     */
+    public function getAssignedAssociations(Table $table, EntityInterface $entity, array $fields)
+    {
+        $entities = [];
+
+        foreach ($table->associations() as $association) {
+            if (!in_array($association->foreignKey(), $fields)) {
+                continue;
+            }
             $query = $association->target()->find('all', [
                 'conditions' => [$association->primaryKey() => $entity->{$association->foreignKey()} ]
             ]);
@@ -183,13 +266,13 @@ class ModelAfterSaveListener implements EventListenerInterface
      * _getAttendees
      * @param Cake\ORM\Table $table passed
      * @param Cake\Entity $entity of the record
-     * @param array $remindersTo listing related tables
+     * @param array $fields Attendees fields
      * @return array
      */
-    protected function _getAttendees($table, $entity, $remindersTo)
+    protected function _getAttendees($table, $entity, $fields)
     {
         $attendees = [];
-        $assignedEntities = $this->getAssignedAssociations($table, $entity, ['tables' => $remindersTo]);
+        $assignedEntities = $this->getAssignedAssociations($table, $entity, $fields);
 
         if (!empty($assignedEntities)) {
             $attendees = array_map(function ($item) {
@@ -200,6 +283,52 @@ class ModelAfterSaveListener implements EventListenerInterface
         }
 
         return $attendees;
+    }
+
+    /**
+     * Creates changelog report in string format.
+     *
+     * Example:
+     *
+     * Subject: changed from 'Foo' to 'Bar'.
+     * Content: changed from 'Hello world' to 'Hi there'.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity Entity instance
+     * @return string
+     */
+    protected function _getChangelog(EntityInterface $entity)
+    {
+        $result = '';
+
+        // plain changelog if entity is new
+        if ($entity->isNew()) {
+            return $result;
+        }
+
+        // get entity's modified fields
+        $fields = $entity->extractOriginalChanged($entity->visibleProperties());
+
+        if (empty($fields)) {
+            return $result;
+        }
+
+        // remove ignored fields
+        foreach ($this->_ignoredFields as $field) {
+            if (!array_key_exists($field, $fields)) {
+                continue;
+            }
+            unset($fields[$field]);
+        }
+
+        if (empty($fields)) {
+            return $result;
+        }
+
+        foreach ($fields as $k => $v) {
+            $result .= sprintf(static::CHANGELOG, Inflector::humanize($k), $v, $entity->{$k});
+        }
+
+        return $result;
     }
 
     /**

@@ -83,6 +83,10 @@ class ModelAfterSaveListener implements EventListenerInterface
         }
 
         $attendeesFields = $this->_getAttendeesFields($table, ['tables' => $remindersTo]);
+        // skip if no attendees fields found
+        if (empty($attendeesFields)) {
+            return $sent;
+        }
 
         // skip if none of the required fields was modified
         $requiredFields = array_merge((array)$reminderField, $attendeesFields);

@@ -33,7 +33,6 @@ $(document).ready(function () {
         },
         maxFileCount: 30,
         maxFileSize: 2000,
-        uploadUrl: '/api/file-storages/upload'
     };
 
     FileInput.prototype.staticHtml = {
@@ -96,18 +95,37 @@ $(document).ready(function () {
 
     FileInput.prototype.initialPreviewConfig = function (files) {
         var that = this;
-        this.options.initialPreviewConfig = [];
+        var filesOptions = [];
+
+        this.options.initialPreviewConfig = {};
 
         if (files) {
             files.forEach(function (file) {
-                var options = {
-                    key: file.id,
-                    url: fileInputOptions.initialPreviewConfig.url + file.id
-                };
-
-                that.options.initialPreviewConfig.push(options);
+                if (file !== undefined) {
+                    var options = {
+                        key: file.id,
+                        url: '/api/file-storages/delete/' + file.id
+                    };
+                    filesOptions.push(options);
+                }
             });
         }
+
+        that.options.initialPreviewConfig = filesOptions;
+
+        return filesOptions;
+    };
+
+    FileInput.prototype.addDeleteUrls = function (ids) {
+        var opts = [];
+
+        if (ids.length) {
+            ids.forEach(function (id) {
+                opts.push({key: id, url: '/api/file-storages/delete/' + id});
+            });
+        }
+
+        return opts;
     };
 
   /**
@@ -129,7 +147,7 @@ $(document).ready(function () {
         var fieldNameParts = $(inputField).attr('name').match(/^(\w+)\[(\w+)\]/);
 
         if (fieldNameParts.length) {
-            result = `.${fieldNameParts[1].toLowerCase()}_${fieldNameParts[2].toLowerCase()}_ids`;
+            result = '.' + fieldNameParts[1] + '_' + fieldNameParts[2] + '_ids';
         }
 
         return result;
@@ -142,8 +160,28 @@ $(document).ready(function () {
    * @param  jQueryObject inputField to build the library on
    */
     FileInput.prototype.createNew = function (inputField) {
+        var ids = [];
+        var paths = [];
         var that = this;
-        var options = $.extend({}, this.defaults());
+
+        var existing = {
+            overwriteInitial: false,
+            initialPreviewAsData: true,
+            ajaxDeleteSettings: {
+                type: 'delete',
+                dataType: 'json',
+                contentType: 'application/json',
+                headers: {
+                    'Authorization': 'Bearer ' + that.api_token
+                },
+            }
+        };
+
+        var options = $.extend({}, this.defaults(), existing);
+
+        if ($(inputField).attr('data-upload-url')) {
+            options.uploadUrl = $(inputField).attr('data-upload-url');
+        }
 
         inputField.fileinput(options).on("filebatchselected", function (event) {
             $(document).trigger('updateFiles', [event.target.files, $(this).attr('name')]);
@@ -152,11 +190,18 @@ $(document).ready(function () {
         inputField.fileinput(options).on('fileuploaded', function (event, data) {
             if (data.response.id !== undefined) {
                 if (data.response.id.length) {
-                    that.addHiddenFileId($(this), data.response.id);
+                    ids.push(data.response.id);
+                    paths.push(data.response.path);
+                    that.addHiddenFileId(this, data.response.id);
                 }
             }
         }).on('filedeleted', function (event, key) {
-            that.removeHiddenFileId($(this), key);
+            that.removeHiddenFileId(this, key);
+        }).on('filebatchuploadcomplete', function (event) {
+            var opts = that.addDeleteUrls(ids);
+            options.initialPreviewConfig = opts;
+            options.initialPreview = paths;
+            that.refreshFileInput(this, options);
         });
     };
 
@@ -164,9 +209,8 @@ $(document).ready(function () {
         var added = false;
         var found = false;
 
-        var elementId = this.getHiddenField($(inputField));
+        var elementId = this.getHiddenField(inputField);
         var hiddenFields = $.find(elementId);
-
         hiddenFields.forEach(function (element) {
             if ($(element).val() == id) {
                 found = true;
@@ -220,6 +264,8 @@ $(document).ready(function () {
    * @param  jQueryObject inputField to build the library on
    */
     FileInput.prototype.createFromExisting = function (inputField, files) {
+        var ids = [];
+        var paths = [];
         var that = this;
 
         // Keep existing images on adding new images,
@@ -239,19 +285,34 @@ $(document).ready(function () {
             }
         };
 
-        var options = $.extend({}, this.defaults(), existing);
+        var defaultOptions = this.defaults();
+
+        if ($(inputField).attr('data-upload-url')) {
+            defaultOptions.uploadUrl = $(inputField).attr('data-upload-url');
+        }
+
+        var options = $.extend({}, defaultOptions, existing);
+
         inputField.fileinput(options).on('fileuploaded', function (event, data) {
             if (data.response.id !== undefined) {
                 if (data.response.id.length) {
-                    that.addHiddenFileId($(this), data.response.id);
+                    that.addHiddenFileId(this, data.response.id);
                 }
             }
         }).on('filedeleted', function (event, key) {
-            that.removeHiddenFileId($(this), key);
+            that.removeHiddenFileId(this, key);
+        }).on('filebatchuploadcomplete', function (event) {
+            var opts = that.addDeleteUrls(ids);
+            options.initialPreviewConfig = opts;
+            options.initialPreview = paths;
+            that.refreshFileInput(this, options);
         });
     };
 
-  /* initializing the plugin */
+    FileInput.prototype.refreshFileInput = function (inputField, options) {
+        $(inputField).fileinput('refresh', options);
+    };
+
     $("input[type=file]").each(function () {
         var files = $(this).data('files');
         var name = $(this).attr('name');

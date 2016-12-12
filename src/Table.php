@@ -201,7 +201,10 @@ class Table extends BaseTable
     public function setAssociatedByLookupFields(Entity $entity, $options = [])
     {
         foreach ($this->associations() as $association) {
-            $lookupFields = $association->target()->lookupFields();
+            $lookupFields = [];
+            if (method_exists($association->target(), 'lookupFields')) {
+                $lookupFields = $association->target()->lookupFields();
+            }
 
             if (empty($lookupFields)) {
                 continue;

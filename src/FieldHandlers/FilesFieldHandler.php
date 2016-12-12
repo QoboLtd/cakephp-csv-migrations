@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
@@ -47,14 +48,18 @@ class FilesFieldHandler extends BaseFileFieldHandler
     {
         $uploadField = $this->cakeView->Form->file(
             $this->_getFieldName($table, $field, $options) . '[]',
-            ['multiple' => true]
+            [
+                'multiple' => true,
+                'data-upload-url' => sprintf("/api/%s/upload", Inflector::dasherize($table->table())),
+            ]
         );
+
         $label = $this->cakeView->Form->label($field);
 
         $hiddenIds = $this->cakeView->Form->hidden(
             $this->_getFieldName($table, $field, $options) . '_ids][',
             [
-                'class' => Inflector::underscore(str_replace('.', '_', $this->_getFieldName($table, $field, $options) . '_ids')),
+                'class' => str_replace('.', '_', $this->_getFieldName($table, $field, $options) . '_ids'),
                 'value' => ''
             ]
         );
@@ -80,6 +85,14 @@ class FilesFieldHandler extends BaseFileFieldHandler
 
         $entities = $fileUploadsUtils->getFiles($table, $field, $entity->get('id'));
 
+        if ($entities instanceof \Cake\ORM\ResultSet) {
+            if (!$entities->count()) {
+                return $this->_renderInputWithoutData($table, $field, $options);
+            }
+        }
+
+        // @TODO: check if we return null anywhere, apart of ResultSet.
+        // IF NOT: remove this block
         if (is_null($entities)) {
             return $this->_renderInputWithoutData($table, $field, $options);
         }
@@ -93,7 +106,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
             $hiddenIds .= $this->cakeView->Form->hidden(
                 $this->_getFieldName($table, $field, $options) . '_ids][',
                 [
-                    'class' => Inflector::underscore(str_replace('.', '_', $this->_getFieldName($table, $field, $options) . '_ids')),
+                    'class' => str_replace('.', '_', $this->_getFieldName($table, $field, $options) . '_ids'),
                     'value' => $file->id
                 ]
             );
@@ -106,6 +119,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
             [
                 'multiple' => true,
                 'data-document-id' => $entity->get('id'),
+                'data-upload-url' => sprintf("/api/%s/upload", Inflector::dasherize($table->table())),
                 //passed to generate previews
                 'data-files' => json_encode($files),
             ]

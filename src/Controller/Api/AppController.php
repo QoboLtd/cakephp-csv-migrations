@@ -228,9 +228,8 @@ class AppController extends Controller
 
         $this->Crud->on('afterSave', function (Event $event) {
             // handle file uploads if found in the request data
-            if (isset($this->request->data['file'])) {
-                $this->_fileUploadsUtils->save($event->subject()->entity, $this->request->data['file']);
-            }
+            $linked = $this->_fileUploadsUtils->linkFilesToEntity($event->subject()->entity, $this->{$this->name}, $this->request->data);
+
             $ev = new Event('CsvMigrations.Add.afterSave', $this, [
                 'entity' => $event->subject()->entity
             ]);
@@ -270,9 +269,7 @@ class AppController extends Controller
 
         $this->Crud->on('afterSave', function (Event $event) {
             // handle file uploads if found in the request data
-            if (isset($this->request->data['file'])) {
-                $this->_fileUploadsUtils->save($event->subject()->entity, $this->request->data['file']);
-            }
+            $linked = $this->_fileUploadsUtils->linkFilesToEntity($event->subject()->entity, $this->{$this->name}, $this->request->data);
         });
 
         return $this->Crud->execute();
@@ -309,7 +306,7 @@ class AppController extends Controller
         }
 
         if ($saved) {
-            $response['id'] = $saved;
+            $response = $saved;
         } else {
             $this->response->statusCode(400);
             $response['errors'] = "Couldn't save the File";

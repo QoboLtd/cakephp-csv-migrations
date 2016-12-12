@@ -143,7 +143,10 @@ class FileUploadsUtils
 
             $result = $this->_storeFileStorage($entity, $field, ['file' => $file], $options);
             if ($result) {
-                $result = $result->get('id');
+                $result = [
+                    'id' => $result->get('id'),
+                    'path' => $result->get('path')
+                ];
             }
         }
 
@@ -228,7 +231,7 @@ class FileUploadsUtils
      * @param array $data of this->request->data containing ids.
      * @return mixed $result of saved/updated file entities.
      */
-    public function linkFilesToEntity($entity, $tableInstance, $data = [])
+    public function linkFilesToEntity($entity, $tableInstance, $data = [], $options = [])
     {
         $result = [];
         $uploadFields = [];
@@ -248,23 +251,29 @@ class FileUploadsUtils
         }
 
         foreach ($uploadFields as $field) {
+            $savedIds = [];
             $savedIdsField = $field['name'] . '_ids';
 
+            // @NOTE: in case of AJAX/API calls we don't have data[Table][field]
+            // notation, only data[field].
             if (isset($data[$tableInstance->alias()][$savedIdsField])) {
-                $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field['name']);
-
                 $savedIds = $data[$tableInstance->alias()][$savedIdsField];
-                $savedIds = array_values(array_filter($savedIds));
+            } else {
+                $savedIds = $data[$savedIdsField];
+            }
 
-                if (empty($savedIds)) {
-                    continue;
-                }
+            if (empty($savedIds)) {
+                continue;
+            }
 
-                foreach ($savedIds as $fileId) {
-                    $record = $this->_table->{$assocName}->get($fileId);
-                    $record->foreign_key = $entity->id;
-                    $result[] = $this->_table->{$assocName}->save($record);
-                }
+            $savedIds = array_values(array_filter($savedIds));
+            $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field['name']);
+
+            foreach ($savedIds as $fileId) {
+                $record = $this->_table->{$assocName}->get($fileId);
+                $record->foreign_key = $entity->id;
+
+                $result[] = $this->_table->{$assocName}->save($record);
             }
         }
 

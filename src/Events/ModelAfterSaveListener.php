@@ -16,7 +16,7 @@ class ModelAfterSaveListener implements EventListenerInterface
     /**
      * Changelog template
      */
-    const CHANGELOG = '* %s: changed from "%s" to "%s".';
+    const CHANGELOG = '* %s: changed from "%s" to "%s".' . "\n";
 
     /**
      * Ingored modified fields
@@ -326,7 +326,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         }
 
         foreach ($fields as $k => $v) {
-            $result .= sprintf(static::CHANGELOG, Inflector::humanize($k), $v, $entity->{$k}) . "\n";
+            $result .= sprintf(static::CHANGELOG, Inflector::humanize($k), $v, $entity->{$k});
         }
 
         return $result;

@@ -69,6 +69,8 @@ class ModelAfterSaveListener implements EventListenerInterface
             return $sent;
         }
 
+        $attendeesFields = $this->_getAttendeesFields($table, ['tables' => $remindersTo]);
+
         /*
          * Figure out the subject of the email
          *
@@ -139,6 +141,41 @@ class ModelAfterSaveListener implements EventListenerInterface
         }
 
         return $sent;
+    }
+
+    /**
+     * Retrieve attendees fields from current Table's associations.
+     *
+     * @param \Cake\ORM\Table $table Table instance
+     * @param array $options Options
+     * @return array
+     */
+    protected function _getAttendeesFields(Table $table, $options = [])
+    {
+        $result = [];
+
+        $associations = [];
+        if (!empty($options['tables'])) {
+            foreach ($table->associations() as $association) {
+                if (!in_array(Inflector::humanize($association->target()->table()), $options['tables'])) {
+                    continue;
+                }
+
+                $associations[] = $association;
+            }
+        } else {
+            $associations = $table->associations();
+        }
+
+        if (empty($associations)) {
+            return $result;
+        }
+
+        foreach ($associations as $association) {
+            $result[] = $association->foreignKey();
+        }
+
+        return $result;
     }
 
     /**

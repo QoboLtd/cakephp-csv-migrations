@@ -7,6 +7,7 @@ use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\I18n\Time;
 use Cake\Mailer\Email;
+use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
@@ -70,6 +71,12 @@ class ModelAfterSaveListener implements EventListenerInterface
         }
 
         $attendeesFields = $this->_getAttendeesFields($table, ['tables' => $remindersTo]);
+
+        // skip if none of the required fields was modified
+        $requiredFields = array_merge((array)$reminderField, $attendeesFields);
+        if (!$this->_requiredFieldsModified($entity, $requiredFields)) {
+            return $sent;
+        }
 
         /*
          * Figure out the subject of the email
@@ -173,6 +180,34 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         foreach ($associations as $association) {
             $result[] = $association->foreignKey();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Checks if required fields have been modified. Returns true
+     * if any of the fields has been modified, otherwise false.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity Entity instance
+     * @param array $requiredFields Required fields list
+     * @return bool
+     */
+    protected function _requiredFieldsModified(EntityInterface $entity, array $requiredFields)
+    {
+        $result = false;
+
+        if (empty($requiredFields)) {
+            return $result;
+        }
+
+        // check if any of the required fields was modified and set modified flag to true
+        foreach ($requiredFields as $field) {
+            if (!$entity->dirty($field)) {
+                continue;
+            }
+            $result = true;
+            break;
         }
 
         return $result;

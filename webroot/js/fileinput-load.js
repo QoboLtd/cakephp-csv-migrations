@@ -112,6 +112,7 @@ $(document).ready(function () {
         }
 
         that.options.initialPreviewConfig = filesOptions;
+
         return filesOptions;
     };
 
@@ -119,8 +120,8 @@ $(document).ready(function () {
         var opts = [];
 
         if (ids.length) {
-            ids.forEach( function (id) {
-                opts.push({ key: id, url: '/api/file-storages/delete/' + id});
+            ids.forEach(function (id) {
+                opts.push({key: id, url: '/api/file-storages/delete/' + id});
             });
         }
 
@@ -306,10 +307,9 @@ $(document).ready(function () {
             options.initialPreview = paths;
             that.refreshFileInput(this, options);
         });
-
     };
 
-    FileInput.prototype.refreshFileInput = function(inputField, options) {
+    FileInput.prototype.refreshFileInput = function (inputField, options) {
         $(inputField).fileinput('refresh', options);
     };
 

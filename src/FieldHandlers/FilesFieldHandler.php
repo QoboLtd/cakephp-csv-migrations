@@ -46,7 +46,6 @@ class FilesFieldHandler extends BaseFileFieldHandler
      */
     protected function _renderInputWithoutData($table, $field, $options)
     {
-        debug('a');
         $uploadField = $this->cakeView->Form->file(
             $this->_getFieldName($table, $field, $options) . '[]',
             [

@@ -309,7 +309,7 @@ class AppController extends Controller
         }
 
         if ($saved) {
-            $response['id'] = $saved;
+            $response = $saved;
         } else {
             $this->response->statusCode(400);
             $response['errors'] = "Couldn't save the File";

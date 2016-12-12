@@ -12,7 +12,6 @@ Configure::write('CsvMigrations.BootstrapFileInput', [
         'showUploadedThumbs' => true,
         'uploadAsync' => true,
         'dropZoneEnabled' => false,
-        'showUploadedThumbs' => false,
         'fileActionSettings' => [
             'showUpload' => false,
             'showZoom' => false,

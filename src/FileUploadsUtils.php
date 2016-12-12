@@ -143,7 +143,10 @@ class FileUploadsUtils
 
             $result = $this->_storeFileStorage($entity, $field, ['file' => $file], $options);
             if ($result) {
-                $result = $result->get('id');
+                $result = [
+                    'id' => $result->get('id'),
+                    'path' => $result->get('path')
+                ];
             }
         }
 

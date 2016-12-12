@@ -33,7 +33,6 @@ $(document).ready(function () {
         },
         maxFileCount: 30,
         maxFileSize: 2000,
-        //uploadUrl: '/api/file-storages/upload'
     };
 
     FileInput.prototype.staticHtml = {
@@ -96,18 +95,36 @@ $(document).ready(function () {
 
     FileInput.prototype.initialPreviewConfig = function (files) {
         var that = this;
-        this.options.initialPreviewConfig = [];
+        var filesOptions = [];
+
+        this.options.initialPreviewConfig = {};
 
         if (files) {
             files.forEach(function (file) {
-                var options = {
-                    key: file.id,
-                    url: fileInputOptions.initialPreviewConfig.url + file.id
-                };
-
-                that.options.initialPreviewConfig.push(options);
+                if (file !== undefined) {
+                    var options = {
+                        key: file.id,
+                        url: '/api/file-storages/delete/' + file.id
+                    };
+                    filesOptions.push(options);
+                }
             });
         }
+
+        that.options.initialPreviewConfig = filesOptions;
+        return filesOptions;
+    };
+
+    FileInput.prototype.addDeleteUrls = function (ids) {
+        var opts = [];
+
+        if (ids.length) {
+            ids.forEach( function (id) {
+                opts.push({ key: id, url: '/api/file-storages/delete/' + id});
+            });
+        }
+
+        return opts;
     };
 
   /**
@@ -142,8 +159,24 @@ $(document).ready(function () {
    * @param  jQueryObject inputField to build the library on
    */
     FileInput.prototype.createNew = function (inputField) {
+        var ids = [];
+        var paths = [];
         var that = this;
-        var options = $.extend({}, this.defaults());
+
+        var existing = {
+            overwriteInitial: false,
+            initialPreviewAsData: true,
+            ajaxDeleteSettings: {
+                type: 'delete',
+                dataType: 'json',
+                contentType: 'application/json',
+                headers: {
+                    'Authorization': 'Bearer ' + that.api_token
+                },
+            }
+        };
+
+        var options = $.extend({}, this.defaults(), existing);
 
         if ($(inputField).attr('data-upload-url')) {
             options.uploadUrl = $(inputField).attr('data-upload-url');
@@ -156,11 +189,18 @@ $(document).ready(function () {
         inputField.fileinput(options).on('fileuploaded', function (event, data) {
             if (data.response.id !== undefined) {
                 if (data.response.id.length) {
+                    ids.push(data.response.id);
+                    paths.push(data.response.path);
                     that.addHiddenFileId(this, data.response.id);
                 }
             }
         }).on('filedeleted', function (event, key) {
-            that.removeHiddenFileId($(this), key);
+            that.removeHiddenFileId(this, key);
+        }).on('filebatchuploadcomplete', function (event) {
+            var opts = that.addDeleteUrls(ids);
+            options.initialPreviewConfig = opts;
+            options.initialPreview = paths;
+            that.refreshFileInput(this, options);
         });
     };
 
@@ -223,6 +263,8 @@ $(document).ready(function () {
    * @param  jQueryObject inputField to build the library on
    */
     FileInput.prototype.createFromExisting = function (inputField, files) {
+        var ids = [];
+        var paths = [];
         var that = this;
 
         // Keep existing images on adding new images,
@@ -257,8 +299,18 @@ $(document).ready(function () {
                 }
             }
         }).on('filedeleted', function (event, key) {
-            that.removeHiddenFileId($(this), key);
+            that.removeHiddenFileId(this, key);
+        }).on('filebatchuploadcomplete', function (event) {
+            var opts = that.addDeleteUrls(ids);
+            options.initialPreviewConfig = opts;
+            options.initialPreview = paths;
+            that.refreshFileInput(this, options);
         });
+
+    };
+
+    FileInput.prototype.refreshFileInput = function(inputField, options) {
+        $(inputField).fileinput('refresh', options);
     };
 
     $("input[type=file]").each(function () {

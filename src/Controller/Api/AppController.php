@@ -297,8 +297,6 @@ class AppController extends Controller
     {
         $this->autoRender = false;
 
-        $conditions = [];
-        $fileStorageAssociation = null;
         $saved = null;
         $response = [];
 

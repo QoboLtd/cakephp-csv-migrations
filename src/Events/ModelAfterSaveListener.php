@@ -34,7 +34,6 @@ class ModelAfterSaveListener implements EventListenerInterface
     public function sendCalendarReminder(Event $event, EntityInterface $entity)
     {
         $sent = false;
-        $attendees = [];
         $currentUser = null;
 
         //get applications's timezone

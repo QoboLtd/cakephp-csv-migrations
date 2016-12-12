@@ -215,15 +215,12 @@ class BaseFileFieldHandler extends RelatedFieldHandler
     {
         $result = null;
         $colWidth = static::GRID_COUNT / static::THUMBNAIL_LIMIT;
-        $count = 0;
-        $rows = [];
 
         foreach ($entities as $k => $entity) {
             if ($k >= static::THUMBNAIL_LIMIT) {
                 break;
             }
 
-            $url = $entity->path;
             $thumbnailUrl = $this->_getFileIconUrl($entity->extension);
 
             $thumbnail = sprintf(

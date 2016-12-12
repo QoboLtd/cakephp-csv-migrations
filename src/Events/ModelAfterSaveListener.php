@@ -119,7 +119,7 @@ class ModelAfterSaveListener implements EventListenerInterface
             $emailContent .= "created";
         }
 
-        $emails = $this->_getAttendees($table, $entity, $remindersTo);
+        $emails = $this->_getAttendees($table, $entity, $attendeesFields);
 
         if (empty($emails)) {
             return $sent;
@@ -238,29 +238,19 @@ class ModelAfterSaveListener implements EventListenerInterface
      *
      * gets all Entities associated with the record
      *
-     * @param EntityInterface $table of the record
-     * @param ArrayObject $entity extra options
-     * @param array $options Options
+     * @param \Cake\ORM\Table $table of the record
+     * @param \Cake\Datasource\EntityInterface $entity extra options
+     * @param array $fields Attendees fields
      * @return array $entities
      */
-    public function getAssignedAssociations($table, $entity, $options = [])
+    public function getAssignedAssociations(Table $table, EntityInterface $entity, array $fields)
     {
         $entities = [];
-        $associations = [];
 
-        $tables = empty($options['tables']) ? [] : $options['tables'];
-
-        if (!empty($tables)) {
-            foreach ($table->associations() as $association) {
-                if (in_array(Inflector::humanize($association->target()->table()), $tables)) {
-                    array_push($associations, $association);
-                }
+        foreach ($table->associations() as $association) {
+            if (!in_array($association->foreignKey(), $fields)) {
+                continue;
             }
-        } else {
-            $associations = $table->associations();
-        }
-
-        foreach ($associations as $association) {
             $query = $association->target()->find('all', [
                 'conditions' => [$association->primaryKey() => $entity->{$association->foreignKey()} ]
             ]);
@@ -277,13 +267,13 @@ class ModelAfterSaveListener implements EventListenerInterface
      * _getAttendees
      * @param Cake\ORM\Table $table passed
      * @param Cake\Entity $entity of the record
-     * @param array $remindersTo listing related tables
+     * @param array $fields Attendees fields
      * @return array
      */
-    protected function _getAttendees($table, $entity, $remindersTo)
+    protected function _getAttendees($table, $entity, $fields)
     {
         $attendees = [];
-        $assignedEntities = $this->getAssignedAssociations($table, $entity, ['tables' => $remindersTo]);
+        $assignedEntities = $this->getAssignedAssociations($table, $entity, $fields);
 
         if (!empty($assignedEntities)) {
             $attendees = array_map(function ($item) {

@@ -33,7 +33,7 @@ $(document).ready(function () {
         },
         maxFileCount: 30,
         maxFileSize: 2000,
-        uploadUrl: '/api/file-storages/upload'
+        //uploadUrl: '/api/file-storages/upload'
     };
 
     FileInput.prototype.staticHtml = {
@@ -129,7 +129,7 @@ $(document).ready(function () {
         var fieldNameParts = $(inputField).attr('name').match(/^(\w+)\[(\w+)\]/);
 
         if (fieldNameParts.length) {
-            result = `.${fieldNameParts[1].toLowerCase()}_${fieldNameParts[2].toLowerCase()}_ids`;
+            result = '.' + fieldNameParts[1] + '_' + fieldNameParts[2] + '_ids';
         }
 
         return result;
@@ -145,6 +145,10 @@ $(document).ready(function () {
         var that = this;
         var options = $.extend({}, this.defaults());
 
+        if ($(inputField).attr('data-upload-url')) {
+            options.uploadUrl = $(inputField).attr('data-upload-url');
+        }
+
         inputField.fileinput(options).on("filebatchselected", function (event) {
             $(document).trigger('updateFiles', [event.target.files, $(this).attr('name')]);
         });
@@ -152,7 +156,7 @@ $(document).ready(function () {
         inputField.fileinput(options).on('fileuploaded', function (event, data) {
             if (data.response.id !== undefined) {
                 if (data.response.id.length) {
-                    that.addHiddenFileId($(this), data.response.id);
+                    that.addHiddenFileId(this, data.response.id);
                 }
             }
         }).on('filedeleted', function (event, key) {
@@ -164,9 +168,8 @@ $(document).ready(function () {
         var added = false;
         var found = false;
 
-        var elementId = this.getHiddenField($(inputField));
+        var elementId = this.getHiddenField(inputField);
         var hiddenFields = $.find(elementId);
-
         hiddenFields.forEach(function (element) {
             if ($(element).val() == id) {
                 found = true;
@@ -239,11 +242,18 @@ $(document).ready(function () {
             }
         };
 
-        var options = $.extend({}, this.defaults(), existing);
+        var defaultOptions = this.defaults();
+
+        if ($(inputField).attr('data-upload-url')) {
+            defaultOptions.uploadUrl = $(inputField).attr('data-upload-url');
+        }
+
+        var options = $.extend({}, defaultOptions, existing);
+
         inputField.fileinput(options).on('fileuploaded', function (event, data) {
             if (data.response.id !== undefined) {
                 if (data.response.id.length) {
-                    that.addHiddenFileId($(this), data.response.id);
+                    that.addHiddenFileId(this, data.response.id);
                 }
             }
         }).on('filedeleted', function (event, key) {
@@ -251,7 +261,6 @@ $(document).ready(function () {
         });
     };
 
-  /* initializing the plugin */
     $("input[type=file]").each(function () {
         var files = $(this).data('files');
         var name = $(this).attr('name');

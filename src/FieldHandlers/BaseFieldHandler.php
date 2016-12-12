@@ -339,9 +339,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected function _getFieldName($table, $field, array $options = [])
     {
+        ///*
         if (isset($options['embedded'])) {
             return $options['embedded'] . '.' . $field;
         }
+        //*/
 
         if (empty($table)) {
             return $field;

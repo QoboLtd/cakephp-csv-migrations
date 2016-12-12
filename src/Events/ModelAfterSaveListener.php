@@ -14,6 +14,18 @@ use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 class ModelAfterSaveListener implements EventListenerInterface
 {
     /**
+     * Changelog template
+     */
+    const CHANGELOG = '* %s: changed from \'%s\' to \'%s\'.';
+
+    /**
+     * Ingored modified fields
+     *
+     * @var array
+     */
+    protected $_ignoredFields = ['created', 'modified'];
+
+    /**
      * Implemented Events
      * @return array
      */
@@ -114,6 +126,8 @@ class ModelAfterSaveListener implements EventListenerInterface
             $currentUser = $table->getCurrentUser();
             $emailContent .= " by " . $currentUser['email'];
         }
+        // append changelog
+        $emailContent .= "\n\n" . $this->_getChangelog($entity);
 
         foreach ($emails as $email) {
             $vCalendar = new \Eluceo\iCal\Component\Calendar('//EN//');
@@ -274,6 +288,51 @@ class ModelAfterSaveListener implements EventListenerInterface
         }
 
         return $attendees;
+    }
+
+    /**
+     * Creates changelog report in string format.
+     *
+     * Example:
+     *
+     * Subject: changed from 'Foo' to 'Bar'.
+     * Content: changed from 'Hello world' to 'Hi there'.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity Entity instance
+     * @return string
+     */
+    protected function _getChangelog(EntityInterface $entity)
+    {
+        $result = '';
+
+        // get entity's modified fields
+        if ($entity->isNew()) {
+            $fields = $entity->extractOriginal($entity->visibleProperties());
+        } else {
+            $fields = $entity->extractOriginalChanged($entity->visibleProperties());
+        }
+
+        if (empty($fields)) {
+            return $result;
+        }
+
+        // remove ignored fields
+        foreach ($this->_ignoredFields as $field) {
+            if (!array_key_exists($field, $fields)) {
+                continue;
+            }
+            unset($fields[$field]);
+        }
+
+        if (empty($fields)) {
+            return $result;
+        }
+
+        foreach ($fields as $k => $v) {
+            $result .= sprintf(static::CHANGELOG, Inflector::humanize($k), $v, $entity->{$k}) . "\n";
+        }
+
+        return $result;
     }
 
     /**

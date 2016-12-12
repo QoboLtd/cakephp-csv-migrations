@@ -16,7 +16,7 @@ class ModelAfterSaveListener implements EventListenerInterface
     /**
      * Changelog template
      */
-    const CHANGELOG = '* %s: changed from \'%s\' to \'%s\'.';
+    const CHANGELOG = '* %s: changed from "%s" to "%s".';
 
     /**
      * Ingored modified fields

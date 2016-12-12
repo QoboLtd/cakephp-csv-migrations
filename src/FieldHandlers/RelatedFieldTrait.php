@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use BadMethodCallException;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
@@ -118,10 +119,16 @@ trait RelatedFieldTrait
      */
     protected function _getAssociatedRecord(Table $table, $value)
     {
-        $query = $table->find('all', [
+        $options = [
             'conditions' => [$table->primaryKey() => $value],
             'limit' => 1
-        ]);
+        ];
+        // try to fetch with trashed if finder method exists, otherwise fallback to find all
+        try {
+            $query = $table->find('withTrashed', $options);
+        } catch (BadMethodCallException $e) {
+            $query = $table->find('all', $options);
+        }
 
         return $query->first();
     }

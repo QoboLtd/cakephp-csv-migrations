@@ -1,5 +1,6 @@
 <?php
 use Cake\Core\Configure;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
@@ -179,17 +180,21 @@ if (empty($options['title'])) {
                 $embeddedAssocName = Inflector::underscore(Inflector::singularize($embeddedAssocName));
 
                 if (!empty($options['entity']->$embeddedFieldName)) {
-                    echo $this->requestAction(
-                        [
-                            'plugin' => $embeddedPlugin,
-                            'controller' => $embeddedController,
-                            'action' => $this->request->action
-                        ],
-                        [
-                            'query' => ['embedded' => $this->request->controller . '.' . $embeddedAssocName],
-                            'pass' => [$options['entity']->$embeddedFieldName]
-                        ]
-                    );
+                    try {
+                        echo $this->requestAction(
+                            [
+                                'plugin' => $embeddedPlugin,
+                                'controller' => $embeddedController,
+                                'action' => $this->request->action
+                            ],
+                            [
+                                'query' => ['embedded' => $this->request->controller . '.' . $embeddedAssocName],
+                                'pass' => [$options['entity']->$embeddedFieldName]
+                            ]
+                        );
+                    } catch (RecordNotFoundException $e) {
+                        // just don't display anything if embedded record was not found
+                    }
                 }
             }
             $embeddedFields = [];

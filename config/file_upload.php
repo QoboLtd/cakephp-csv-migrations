@@ -19,7 +19,6 @@ Configure::write('CsvMigrations.BootstrapFileInput', [
         'maxFileCount' => 30,
         'fileSizeGetter' => true,
         'maxFileSize' => 2000,
-        //'uploadUrl' => "/api/%s/upload"
     ],
     'initialPreviewConfig' => [
         'url' => "/api/file-storages/delete/"

@@ -129,12 +129,68 @@ class FilesFieldHandler extends BaseFileFieldHandler
     }
 
     /**
+     * Method that generates and returns file icons markup.
+     *
+     * @param ResultSet $entities File Entities
+     * @param FileUploadsUtils $fileUploadsUtils fileUploadsUtils class object
+     *
+     * @return string
+     */
+    protected function _filesHtml($entities, FileUploadsUtils $fileUploadsUtils)
+    {
+        $result = null;
+        $colWidth = static::GRID_COUNT / static::THUMBNAIL_LIMIT;
+        $thumbnailUrl = 'CsvMigrations.thumbnails/' . static::NO_THUMBNAIL_FILE;
+
+        foreach ($entities as $k => $entity) {
+            if ($k >= static::THUMBNAIL_LIMIT) {
+                break;
+            }
+
+            $thumbnailUrl = $this->_getFileIconUrl($entity->extension);
+            $thumbnail = sprintf(
+                static::THUMBNAIL_HTML,
+                $this->cakeView->Html->image($thumbnailUrl, ['title' => $entity->filename])
+            );
+
+            $thumbnail = $this->cakeView->Html->link($thumbnail, $entity->path, ['escape' => false, 'target' => '_blank']);
+
+            $result .= sprintf(
+                static::GRID_COL_HTML,
+                $colWidth,
+                $colWidth,
+                $colWidth,
+                $colWidth,
+                $thumbnail
+            );
+        }
+
+        $result = sprintf(static::GRID_ROW_HTML, $result);
+
+        return $result;
+    }
+
+
+    /**
      * {@inheritDoc}
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
+        $result = null;
+
         $data = $options['entity']['id'];
 
-        return parent::renderValue($table, $field, $data, $options);
+        if (empty($data)) {
+            return $result;
+        }
+
+        $fileUploadsUtils = new FileUploadsUtils($table);
+        $entities = $fileUploadsUtils->getFiles($table, $field, $data);
+
+        if (!empty($entities)) {
+            $result = $this->_filesHtml($entities, $fileUploadsUtils);
+        }
+
+        return $result;
     }
 }

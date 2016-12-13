@@ -192,8 +192,23 @@ class FileUploadsUtils
      */
     protected function _storeFileStorage($docEntity, $field, $fileData, $options = [])
     {
+        $fieldsDefinitions = [];
+        $fieldOption = [];
         $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field);
         $fileStorEnt = $this->_table->{$assocName}->newEntity($fileData);
+
+        if (method_exists($this->_table, 'getFieldsDefinitions') && is_callable([$this->_table, 'getFieldsDefinitions'])) {
+            $fieldsDefinitions = $this->_table->getFieldsDefinitions();
+        }
+
+        if (!empty($fieldsDefinitions)) {
+            foreach ($fieldsDefinitions as $tableField => $definition) {
+                if ($tableField == $field) {
+                    $fieldOption = $definition;
+                    break;
+                }
+            }
+        }
 
         if (!empty($options['ajax'])) {
             //AJAX upload doesn't know anything about the entity
@@ -213,6 +228,10 @@ class FileUploadsUtils
         $fileStorEnt = $this->_table->{$assocName}->patchEntity($fileStorEnt, $patchData);
 
         if ($this->_table->{$assocName}->save($fileStorEnt)) {
+            if (!empty($fieldOption) && $fieldOption['type'] == 'images') {
+                $this->createThumbnails($fileStorEnt);
+            }
+
             return $fileStorEnt;
         }
 
@@ -351,10 +370,13 @@ class FileUploadsUtils
             return false;
         }
 
-        $operations = Configure::read('FileStorage.imageSizes.' . static::TABLE_FILE_STORAGE);
+        $operations = Configure::read('FileStorage.imageSizes.' . $entity->model);
 
+        // @NOTE: if we don't have a predefined setup for the field
+        // image versions, we add it dynamically with default thumbnail versions.
         if (empty($operations)) {
-            $operations = Configure::write('FileStorage.imageSizes.' . $entity->model, Configure::read('ThumbnailVersions'));
+            Configure::write('FileStorage.imageSizes.' . $entity->model, Configure::read('ThumbnailVersions'));
+            $operations = Configure::read('FileStorage.imageSizes.' . $entity->model);
         }
 
         $storageTable = TableRegistry::get('Burzum/FileStorage.ImageStorage');

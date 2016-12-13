@@ -18,6 +18,86 @@ class ImagesFieldHandler extends BaseFileFieldHandler
     const WRAPPER = '<div class="form-group">%s%s%s</div>';
 
     /**
+     * Method that checks if specified image version exists.
+     *
+     * @param  Entity $entity  Entity
+     * @param  string           $version Image version
+     * @param  \CsvMigrations\FileUploadsUtils $fileUploadsUtils fileUploadsUtils class object
+     * @return bool
+     */
+    protected function _checkThumbnail($entity, $version, FileUploadsUtils $fileUploadsUtils)
+    {
+        // image version directory path
+        $dir = realpath(WWW_ROOT . trim($entity->path, DS));
+        $dir = dirname($dir) . DS . basename($dir, $entity->extension);
+        $dir .= $version . '.' . $entity->extension;
+
+        return file_exists($dir);
+    }
+
+    /**
+     * Method that generates and returns thumbnails html markup.
+     *
+     * @param ResultSet $entities File Entities
+     * @param FileUploadsUtils $fileUploadsUtils fileUploadsUtils class object
+     * @param array $options for default thumbs versions and other setttings
+     *
+     * @return string
+     */
+    protected function _thumbnailsHtml($entities, FileUploadsUtils $fileUploadsUtils, $options = [])
+    {
+        $result = null;
+        $colWidth = static::GRID_COUNT / static::THUMBNAIL_LIMIT;
+        $thumbnailUrl = 'CsvMigrations.thumbnails/' . static::NO_THUMBNAIL_FILE;
+
+        $hashes = Configure::read('FileStorage.imageHashes.file_storage');
+        $extensions = $fileUploadsUtils->getImgExtensions();
+
+        foreach ($entities as $k => $entity) {
+            if ($k >= static::THUMBNAIL_LIMIT) {
+                break;
+            }
+
+            if (in_array($entity->extension, $extensions)) {
+                $thumbnailUrl = $entity->path;
+
+                if (isset($hashes[$options['imageSize']])) {
+                    $version = $hashes[$options['imageSize']];
+
+                    $exists = $this->_checkThumbnail($entity, $version, $fileUploadsUtils);
+
+                    if ($exists) {
+                        $path = dirname($entity->path) . '/' . basename($entity->path, $entity->extension);
+                        $path .= $version . '.' . $entity->extension;
+                        $thumbnailUrl = $path;
+                    }
+                }
+            }
+
+            $thumbnail = sprintf(
+                static::THUMBNAIL_HTML,
+                $this->cakeView->Html->image($thumbnailUrl, ['title' => $entity->filename])
+            );
+
+            $thumbnail = $this->cakeView->Html->link($thumbnail, $entity->path, ['escape' => false, 'target' => '_blank']);
+
+            $result .= sprintf(
+                static::GRID_COL_HTML,
+                $colWidth,
+                $colWidth,
+                $colWidth,
+                $colWidth,
+                $thumbnail
+            );
+        }
+
+        $result = sprintf(static::GRID_ROW_HTML, $result);
+
+        return $result;
+    }
+
+
+    /**
      * {@inheritDoc}
      * @todo To avoid confusion: data param is not used because
      * it has no value. We do not store anything in the file field on DB.
@@ -133,8 +213,17 @@ class ImagesFieldHandler extends BaseFileFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $data = $options['entity']['id'];
+        $defaultOptions = ['imageSize' => getenv('DEFAULT_IMAGE_SIZE')];
 
-        return parent::renderValue($table, $field, $data, $options);
+        $data = $options['entity']['id'];
+        $fileUploadsUtils = new FileUploadsUtils($table);
+
+        $entities = $fileUploadsUtils->getFiles($table, $field, $data);
+
+        if (!empty($entities)) {
+            $result = $this->_thumbnailsHtml($entities, $fileUploadsUtils, $defaultOptions);
+        }
+
+        return $result;
     }
 }

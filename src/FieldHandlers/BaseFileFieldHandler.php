@@ -158,24 +158,6 @@ class BaseFileFieldHandler extends RelatedFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderValue($table, $field, $data, array $options = [])
-    {
-        $result = null;
-
-        if (empty($data)) {
-            return $result;
-        }
-
-        if (empty($entities)) {
-            return $result;
-        }
-
-        return $result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function renderSearchInput($table, $field, array $options = [])
     {
         return [];

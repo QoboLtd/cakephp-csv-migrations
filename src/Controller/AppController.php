@@ -86,6 +86,11 @@ class AppController extends BaseController
     {
         $model = $this->{$this->name};
         $entity = $model->newEntity();
+
+        if (!empty($this->request->params['data'])) {
+            $this->request->data = $this->request->params['data'];
+        }
+
         if ($this->request->is('post')) {
             if ($this->request->data('btn_operation') == 'cancel') {
                 return $this->redirect(['action' => 'index']);

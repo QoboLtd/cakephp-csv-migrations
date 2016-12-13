@@ -112,6 +112,13 @@ class ViewViewTabsListener implements EventListenerInterface
 
             list($namespace, $class) = namespaceSplit(get_class($association));
 
+            // We hide from associations file_storage,
+            // as it's rendered within field handlers.
+            // No need for separate tab, except Documents module.
+            if ('Burzum/FileStorage.FileStorage' == $association->className() && 'Documents' != $this->_tableInstance->alias()) {
+                continue;
+            }
+
             $tab = [
                 'label' => $tabLabels[$association->alias()],
                 'alias' => $association->alias(),

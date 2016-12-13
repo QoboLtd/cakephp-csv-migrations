@@ -213,9 +213,15 @@ class ImagesFieldHandler extends BaseFileFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
+        $result = null;
         $defaultOptions = ['imageSize' => getenv('DEFAULT_IMAGE_SIZE')];
 
         $data = $options['entity']['id'];
+
+        if (empty($table)) {
+            return $result;
+        }
+
         $fileUploadsUtils = new FileUploadsUtils($table);
 
         $entities = $fileUploadsUtils->getFiles($table, $field, $data);

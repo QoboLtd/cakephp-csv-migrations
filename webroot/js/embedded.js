@@ -186,27 +186,11 @@ var embedded = embedded || {};
                 'Authorization': 'Bearer ' + that.api_token
             },
             success: function (data, textStatus, jqXHR) {
-                /*
-                get typeahead label field
-                 */
-                $labelField = $('#' + $(form).data('field_id'));
-
-                displayField = $(form).data('display_field');
-
-                /*
-                set typeahead value
-                 */
-                $labelField.val(data.data[displayField]);
-
-                /*
-                set typeahead as read-only
-                 */
-                $labelField.prop('readonly', true);
-
-                /*
-                set typeahead hidden foreign_key value
-                 */
-                $('#' + $labelField.data('id')).val(id);
+                // get select2 field
+                var label = data.data[$(form).data('display_field')];
+                var field = $('#' + $(form).data('field_id'));
+                var option = $('<option selected>' + label + '</option>').val(id);
+                field.append(option).trigger('change');
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);

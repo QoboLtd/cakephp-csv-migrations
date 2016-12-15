@@ -15,7 +15,7 @@ we don't do the linkage - they would have hidden ID by default
 ?>
 <?php if (in_array($data['tab']['associationType'], ['manyToMany'])) : ?>
 <div class="row">
-    <div class="typeahead-container col-md-6 col-md-offset-6">
+    <div class="typeahead-container col-xs-12">
     <?php
         $emField = $content['class_name'] . '.' . $content['foreign_key'];
         $emFieldName = substr($emField, strrpos($emField, '.') + 1);

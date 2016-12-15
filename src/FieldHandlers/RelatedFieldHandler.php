@@ -69,12 +69,6 @@ class RelatedFieldHandler extends BaseFieldHandler
     {
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
-        // Related module icon
-        $icon = Configure::read('CsvMigrations.default_icon');
-        if (!empty($relatedProperties['config']['table']['icon'])) {
-            $icon = $relatedProperties['config']['table']['icon'];
-        }
-
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
             $relatedParentProperties = $this->_getRelatedParentProperties($relatedProperties);
             if (!empty($relatedParentProperties['dispFieldVal'])) {
@@ -117,7 +111,7 @@ class RelatedFieldHandler extends BaseFieldHandler
         $input = sprintf(
             static::HTML_INPUT,
             $relatedProperties['controller'],
-            $icon,
+            $this->_getInputIcon($relatedProperties),
             $input
         );
 
@@ -195,16 +189,10 @@ class RelatedFieldHandler extends BaseFieldHandler
     {
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), null);
 
-        // Related module icon
-        $icon = Configure::read('CsvMigrations.default_icon');
-        if (!empty($relatedProperties['config']['table']['icon'])) {
-            $icon = $relatedProperties['config']['table']['icon'];
-        }
-
         $content = sprintf(
             static::HTML_INPUT,
             $relatedProperties['controller'],
-            $icon,
+            $this->_getInputIcon($relatedProperties),
             $this->cakeView->Form->input($field, [
                 'label' => false,
                 'options' => ['{{value}}' => ''],
@@ -307,5 +295,21 @@ class RelatedFieldHandler extends BaseFieldHandler
         }
 
         return $result;
+    }
+
+    /**
+     * Method that returns input field associated icon.
+     *
+     * @param array $properties Input properties
+     * @return string
+     */
+    protected function _getInputIcon($properties)
+    {
+        // return default icon if none is defined
+        if (empty($properties['config']['table']['icon'])) {
+            return Configure::read('CsvMigrations.default_icon');
+        }
+
+        return $properties['config']['table']['icon'];
     }
 }

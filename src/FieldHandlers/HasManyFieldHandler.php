@@ -47,16 +47,6 @@ class HasManyFieldHandler extends RelatedFieldHandler
     public function renderInput($table, $field, $data = '', array $options = [])
     {
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
-        $relatedPlugin = $relatedProperties['plugin'];
-        $relatedController = $relatedProperties['controller'];
-
-        // remove vendor from plugin name
-        if (!is_null($relatedPlugin)) {
-            $pos = strpos($relatedPlugin, '/');
-            if ($pos !== false) {
-                $relatedPlugin = substr($relatedPlugin, $pos + 1);
-            }
-        }
 
         // Related module icon
         $icon = Configure::read('CsvMigrations.default_icon');
@@ -85,17 +75,18 @@ class HasManyFieldHandler extends RelatedFieldHandler
             'title' => $this->_getInputHelp($relatedProperties),
             'data-type' => 'select2',
             'data-display-field' => $relatedProperties['displayField'],
-            'value' => $relatedProperties['dispFieldVal'],
+            'escape' => false,
             'data-id' => $this->_domId($fieldName),
             'autocomplete' => 'off',
-            'multiple' => 'multiple',
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'data-url' => $this->cakeView->Url->build([
                 'prefix' => 'api',
                 'plugin' => $relatedProperties['plugin'],
                 'controller' => $relatedProperties['controller'],
                 'action' => 'lookup.json'
-            ])
+            ]),
+            'multiple' => 'multiple',
+            'value' => $relatedProperties['dispFieldVal']
         ]);
 
         // append embedded modal button

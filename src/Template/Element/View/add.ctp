@@ -52,7 +52,7 @@ if (!empty($this->request->query['embedded'])) {
         $formOptions['data-modal_id'] = $this->request->query['foreign_key'] . '_modal';
     }
 
-    $formOptions['data-field_id'] = $this->request->query['foreign_key'] . '_label';
+    $formOptions['data-field_id'] = $this->request->query['foreign_key'];
     $parts = explode('.', $this->request->query['embedded']);
     $first = array_shift($parts);
     $formOptions['data-embedded'] = $first . (!empty($parts) ? '[' . implode('][', $parts) . ']' : '');

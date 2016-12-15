@@ -33,9 +33,27 @@ class RelatedFieldHandler extends BaseFieldHandler
      */
     const RENDER_PLAIN_VALUE = 'plain';
 
-    const HTML_SEARCH_INPUT = '
+    /**
+     * Html input wrapper markup
+     */
+    const HTML_INPUT_WRAPPER = '<div class="form-group%s">%s%s</div>';
+
+    /**
+     * Html input markup
+     */
+    const HTML_INPUT = '
         <div class="input-group">
-            <span class="input-group-addon" title="Auto-complete"><strong>&hellip;</strong></span>%s
+            <span class="input-group-addon" title="%s"><span class="fa fa-%s"></span></span>%s
+        </div>';
+
+    /**
+     * Html embedded button markup
+     */
+    const HTML_EMBEDDED_BTN = '
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#%s_modal">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </button>
         </div>';
 
     /**
@@ -51,28 +69,6 @@ class RelatedFieldHandler extends BaseFieldHandler
     {
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
-        // Related module icon
-        $icon = Configure::read('CsvMigrations.default_icon');
-        if (!empty($relatedProperties['config']['table']['icon'])) {
-            $icon = $relatedProperties['config']['table']['icon'];
-        }
-
-        // Help
-        $help = '';
-        $typeaheadFields = '';
-        if (!empty($relatedProperties['config']['table']['typeahead_fields'])) {
-            $typeaheadFields = explode(',', $relatedProperties['config']['table']['typeahead_fields']);
-            if (empty(!$typeaheadFields)) {
-                $typeaheadFields = implode(', or ', array_map(function ($value) {
-                    return Inflector::humanize($value);
-                }, $typeaheadFields));
-            }
-        }
-        if (empty($typeaheadFields)) {
-            $typeaheadFields = Inflector::humanize($relatedProperties['displayField']);
-        }
-        $help = $typeaheadFields;
-
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
             $relatedParentProperties = $this->_getRelatedParentProperties($relatedProperties);
             if (!empty($relatedParentProperties['dispFieldVal'])) {
@@ -85,23 +81,15 @@ class RelatedFieldHandler extends BaseFieldHandler
 
         $fieldName = $this->_getFieldName($table, $field, $options);
 
-        $input = '';
-        $input .= '<div class="form-group' . ((bool)$options['fieldDefinitions']->getRequired() ? ' required' : '') . '">';
-        $input .= $this->cakeView->Form->label($field);
-        $input .= '<div class="input-group">';
-        $input .= '<span class="input-group-addon" title="' . $relatedProperties['controller'] . '"><span class="fa fa-' . $icon . '"></span></span>';
-
-        $input .= $this->cakeView->Form->input($field, [
+        // create select input
+        $input = $this->cakeView->Form->input($fieldName, [
+            'options' => [$data => $relatedProperties['dispFieldVal']],
             'label' => false,
-            'name' => false,
-            'id' => $field . static::LABEL_FIELD_SUFFIX,
-            'type' => 'text',
-            'placeholder' => $help,
-            'title' => $help,
-            'data-type' => 'typeahead',
+            'id' => $field,
+            'type' => 'select',
+            'title' => $this->_getInputHelp($relatedProperties),
+            'data-type' => 'select2',
             'data-display-field' => $relatedProperties['displayField'],
-            'readonly' => (bool)$data,
-            'value' => $relatedProperties['dispFieldVal'],
             'escape' => false,
             'data-id' => $this->_domId($fieldName),
             'autocomplete' => 'off',
@@ -114,17 +102,26 @@ class RelatedFieldHandler extends BaseFieldHandler
             ])
         ]);
 
+        // append embedded modal button
         if (!empty($options['embModal'])) {
-            $input .= '<div class="input-group-btn">';
-            $input .= '<button type="button" class="btn btn-default" data-toggle="modal" data-target="#' . $field . '_modal">';
-            $input .= '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>';
-            $input .= '</button>';
-            $input .= '</div>';
+            $input .= sprintf(static::HTML_EMBEDDED_BTN, $field);
         }
-        $input .= '</div>';
-        $input .= '</div>';
 
-        $input .= $this->cakeView->Form->input($fieldName, ['type' => 'hidden', 'value' => $data]);
+        // create input html
+        $input = sprintf(
+            static::HTML_INPUT,
+            $relatedProperties['controller'],
+            $this->_getInputIcon($relatedProperties),
+            $input
+        );
+
+        // wrap input html
+        $input = sprintf(
+            static::HTML_INPUT_WRAPPER,
+            (bool)$options['fieldDefinitions']->getRequired() ? ' required' : '',
+            $this->cakeView->Form->label($field),
+            $input
+        );
 
         return $input;
     }
@@ -192,56 +189,63 @@ class RelatedFieldHandler extends BaseFieldHandler
     {
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), null);
 
-        $fieldName = $this->_getFieldName($table, $field, $options);
-
-        $hiddenInputId = $this->_domId($fieldName) . '-{{id}}';
-        $content = sprintf(static::HTML_SEARCH_INPUT, $this->cakeView->Form->input($field, [
-            'label' => false,
-            'name' => false,
-            'id' => $field . static::LABEL_FIELD_SUFFIX,
-            'type' => 'text',
-            'data-type' => 'typeahead',
-            'data-display-field' => $relatedProperties['displayField'],
-            'escape' => false,
-            'data-id' => $hiddenInputId,
-            'autocomplete' => 'off',
-            'data-url' => $this->cakeView->Url->build([
-                'prefix' => 'api',
-                'plugin' => $relatedProperties['plugin'],
-                'controller' => $relatedProperties['controller'],
-                'action' => 'lookup.json'
+        $content = sprintf(
+            static::HTML_INPUT,
+            $relatedProperties['controller'],
+            $this->_getInputIcon($relatedProperties),
+            $this->cakeView->Form->input($field, [
+                'label' => false,
+                'options' => ['{{value}}' => ''],
+                'name' => '{{name}}',
+                'id' => $field,
+                'type' => 'select',
+                'title' => $this->_getInputHelp($relatedProperties),
+                'data-type' => 'select2',
+                'data-display-field' => $relatedProperties['displayField'],
+                'escape' => false,
+                'autocomplete' => 'off',
+                'data-url' => $this->cakeView->Url->build([
+                    'prefix' => 'api',
+                    'plugin' => $relatedProperties['plugin'],
+                    'controller' => $relatedProperties['controller'],
+                    'action' => 'lookup.json'
+                ])
             ])
-        ]));
-
-        $content .= $this->cakeView->Form->input('{{name}}', [
-            'type' => 'hidden',
-            'id' => $hiddenInputId,
-            'value' => '{{value}}'
-        ]);
+        );
 
         return [
             'content' => $content,
             'post' => [
                 [
                     'type' => 'script',
-                    'content' => 'CsvMigrations.bootstrap-typeahead.min',
-                    'block' => 'scriptBottom'
-                ],
-                [
-                    'type' => 'scriptBlock',
-                    'content' => 'typeahead_options = ' . json_encode(
-                        array_merge(
-                            Configure::read('CsvMigrations.typeahead'),
-                            Configure::read('CsvMigrations.api')
-                        )
-                    ) . ';',
+                    'content' => 'CsvMigrations.select2.full.min',
                     'block' => 'scriptBottom'
                 ],
                 [
                     'type' => 'script',
-                    'content' => 'CsvMigrations.typeahead',
+                    'content' => 'CsvMigrations.select2',
                     'block' => 'scriptBottom'
-                ]
+                ],
+                [
+                    'type' => 'scriptBlock',
+                    'content' => 'csv_migrations_select2.setup(' . json_encode(
+                        array_merge(
+                            Configure::read('CsvMigrations.select2'),
+                            Configure::read('CsvMigrations.api')
+                        )
+                    ) . ');',
+                    'block' => 'scriptBottom'
+                ],
+                [
+                    'type' => 'css',
+                    'content' => 'CsvMigrations.select2.min',
+                    'block' => 'cssBottom'
+                ],
+                [
+                    'type' => 'css',
+                    'content' => 'CsvMigrations.select2-bootstrap.min',
+                    'block' => 'cssBottom'
+                ],
             ]
         ];
     }
@@ -264,5 +268,48 @@ class RelatedFieldHandler extends BaseFieldHandler
         );
 
         return $dbFields;
+    }
+
+    /**
+     * Method that generates input help string.
+     * Can be used as a value for placeholder or title attributes.
+     *
+     * @param array $properties Input properties
+     * @return string
+     */
+    protected function _getInputHelp($properties)
+    {
+        $result = '';
+        // use typeahead fields
+        if (!empty($properties['config']['table']['typeahead_fields'])) {
+            $result = explode(',', $properties['config']['table']['typeahead_fields']);
+            if (!empty($result)) {
+                $result = implode(', or ', array_map(function ($value) {
+                    return Inflector::humanize($value);
+                }, $result));
+            }
+        }
+        // if typeahead fields were not defined, use display field
+        if (empty($result)) {
+            $result = Inflector::humanize($properties['displayField']);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Method that returns input field associated icon.
+     *
+     * @param array $properties Input properties
+     * @return string
+     */
+    protected function _getInputIcon($properties)
+    {
+        // return default icon if none is defined
+        if (empty($properties['config']['table']['icon'])) {
+            return Configure::read('CsvMigrations.default_icon');
+        }
+
+        return $properties['config']['table']['icon'];
     }
 }

@@ -14,6 +14,21 @@ echo $this->Html->scriptBlock(
     ) . ';',
     ['block' => 'scriptBottom']
 );
+
+echo $this->Html->css('CsvMigrations.select2.min', ['block' => 'cssBottom']);
+echo $this->Html->css('CsvMigrations.select2-bootstrap.min', ['block' => 'cssBottom']);
+echo $this->Html->script('CsvMigrations.select2.full.min', ['block' => 'scriptBottom']);
+echo $this->Html->script('CsvMigrations.select2', ['block' => 'scriptBottom']);
+echo $this->Html->scriptBlock(
+    'csv_migrations_select2.setup(' . json_encode(
+        array_merge(
+            Configure::read('CsvMigrations.select2'),
+            Configure::read('CsvMigrations.api')
+        )
+    ) . ');',
+    ['block' => 'scriptBottom']
+);
+
 echo $this->Html->scriptBlock(
     'api_options = ' . json_encode(Configure::read('CsvMigrations.api')) . ';',
     ['block' => 'scriptBottom']

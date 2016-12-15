@@ -15,7 +15,7 @@ we don't do the linkage - they would have hidden ID by default
 ?>
 <?php if (in_array($data['tab']['associationType'], ['manyToMany'])) : ?>
 <div class="row">
-    <div class="typeahead-container col-md-6 col-md-offset-6">
+    <div class="typeahead-container col-xs-12">
     <?php
         $emField = $content['class_name'] . '.' . $content['foreign_key'];
         $emFieldName = substr($emField, strrpos($emField, '.') + 1);
@@ -44,10 +44,6 @@ we don't do the linkage - they would have hidden ID by default
         set associated table name to be used on input field's name
          */
         $handlerOptions['associated_table_name'] = $content['table_name'];
-        /*
-        set embedded modal flag
-         */
-        $handlerOptions['embModal'] = true;
         $handlerOptions['emDataTarget'] = $emDataTarget;
         $handlerOptions['emAssociationType'] = $data['tab']['associationType'];
         /*
@@ -152,7 +148,7 @@ we don't do the linkage - they would have hidden ID by default
                     $event = new Event('View.Associated.Menu.Actions', $this, [
                         'request' => $this->request,
                         'options' => [
-                            'entity' => $record,
+                            'entity' => $data['entity'],
                             'associated' => [
                                 'entity' => $record,
                                 'name' => $content['assoc_name'],

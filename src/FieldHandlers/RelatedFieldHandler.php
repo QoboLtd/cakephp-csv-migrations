@@ -33,9 +33,27 @@ class RelatedFieldHandler extends BaseFieldHandler
      */
     const RENDER_PLAIN_VALUE = 'plain';
 
-    const HTML_SEARCH_INPUT = '
+    /**
+     * Html input wrapper markup
+     */
+    const HTML_INPUT_WRAPPER = '<div class="form-group%s">%s%s</div>';
+
+    /**
+     * Html input markup
+     */
+    const HTML_INPUT = '
         <div class="input-group">
             <span class="input-group-addon" title="%s"><span class="fa fa-%s"></span></span>%s
+        </div>';
+
+    /**
+     * Html embedded button markup
+     */
+    const HTML_EMBEDDED_BTN = '
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#%s_modal">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </button>
         </div>';
 
     /**
@@ -69,17 +87,9 @@ class RelatedFieldHandler extends BaseFieldHandler
 
         $fieldName = $this->_getFieldName($table, $field, $options);
 
-        $input = '';
-        $input .= '<div class="form-group' . ((bool)$options['fieldDefinitions']->getRequired() ? ' required' : '') . '">';
-        $input .= $this->cakeView->Form->label($field);
-        $input .= '<div class="input-group">';
-        $input .= '<span class="input-group-addon" title="' . $relatedProperties['controller'] . '"><span class="fa fa-' . $icon . '"></span></span>';
-
-        $selectOptions = [
-            $data => $relatedProperties['dispFieldVal']
-        ];
-        $input .= $this->cakeView->Form->input($fieldName, [
-            'options' => $selectOptions,
+        // create select input
+        $input = $this->cakeView->Form->input($fieldName, [
+            'options' => [$data => $relatedProperties['dispFieldVal']],
             'label' => false,
             'id' => $field,
             'type' => 'select',
@@ -98,15 +108,26 @@ class RelatedFieldHandler extends BaseFieldHandler
             ])
         ]);
 
+        // append embedded modal button
         if (!empty($options['embModal'])) {
-            $input .= '<div class="input-group-btn">';
-            $input .= '<button type="button" class="btn btn-default" data-toggle="modal" data-target="#' . $field . '_modal">';
-            $input .= '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>';
-            $input .= '</button>';
-            $input .= '</div>';
+            $input .= sprintf(static::HTML_EMBEDDED_BTN, $field);
         }
-        $input .= '</div>';
-        $input .= '</div>';
+
+        // create input html
+        $input = sprintf(
+            static::HTML_INPUT,
+            $relatedProperties['controller'],
+            $icon,
+            $input
+        );
+
+        // wrap input html
+        $input = sprintf(
+            static::HTML_INPUT_WRAPPER,
+            (bool)$options['fieldDefinitions']->getRequired() ? ' required' : '',
+            $this->cakeView->Form->label($field),
+            $input
+        );
 
         return $input;
     }
@@ -181,7 +202,7 @@ class RelatedFieldHandler extends BaseFieldHandler
         }
 
         $content = sprintf(
-            static::HTML_SEARCH_INPUT,
+            static::HTML_INPUT,
             $relatedProperties['controller'],
             $icon,
             $this->cakeView->Form->input($field, [

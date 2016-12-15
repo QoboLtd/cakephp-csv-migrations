@@ -15,6 +15,27 @@ class HasManyFieldHandler extends RelatedFieldHandler
     const LINK_ACTION = 'view';
 
     /**
+     * Html input markup
+     */
+    const HTML_INPUT = '
+        <div class="input-group">
+            <span class="input-group-addon" title="%s"><span class="fa fa-%s"></span></span>%s
+        </div>';
+
+    /**
+     * Html embedded button markup
+     */
+    const HTML_EMBEDDED_BTN = '
+        <div class="input-group-btn">
+            <button class="btn btn-primary" title="Link record" type="submit">
+                <span class="fa fa-link" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#%s_modal">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </button>
+        </div>';
+
+    /**
      * Method responsible for rendering field's input.
      *
      * @param  mixed  $table   name or instance of the Table
@@ -55,22 +76,9 @@ class HasManyFieldHandler extends RelatedFieldHandler
 
         $fieldName = $this->_getFieldName($table, $field, $options);
 
-        $input = '';
-
-        if (empty($options['embModal'])) {
-            $input .= $this->cakeView->Form->label($field);
-        }
-
-        if (!empty($options['embModal'])) {
-            $input .= '<div class="input-group">';
-            $input .= '<span class="input-group-addon" title="' . $relatedProperties['controller'] . '"><span class="fa fa-' . $icon . '"></span></span>';
-        }
-
-        $selectOptions = [
-            $data => $relatedProperties['dispFieldVal']
-        ];
-        $input .= $this->cakeView->Form->input($options['associated_table_name'] . '._ids', [
-            'options' => $selectOptions,
+        // create select input
+        $input = $this->cakeView->Form->input($options['associated_table_name'] . '._ids', [
+            'options' => [$data => $relatedProperties['dispFieldVal']],
             'label' => false,
             'id' => $field,
             'type' => 'select',
@@ -90,26 +98,19 @@ class HasManyFieldHandler extends RelatedFieldHandler
             ])
         ]);
 
-        if (!empty($options['embModal'])) {
-            $input .= '<div class="input-group-btn">';
-            $input .= $this->cakeView->Form->button(
-                __('<span class="fa fa-link" aria-hidden="true"></span>'),
-                ['class' => 'btn btn-primary', 'title' => __('Link record')]
-            );
+        // append embedded modal button
+        $input .= sprintf(
+            static::HTML_EMBEDDED_BTN,
+            empty($options['emDataTarget']) ? $field : $options['emDataTarget']
+        );
 
-            /*
-                @NOTE:
-                we might have custom data-target for the modal window,
-                thus we make ID out of field/emDataTarget
-            */
-            $dataTarget = sprintf("#%s_modal", (empty($options['emDataTarget']) ? $field : $options['emDataTarget']));
-
-            $input .= '<button type="button" class="btn btn-default" data-toggle="modal" data-target="' . $dataTarget . '">';
-            $input .= '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>';
-            $input .= '</button>';
-            $input .= '</div>';
-            $input .= '</div>';
-        }
+        // create input html
+        $input = sprintf(
+            static::HTML_INPUT,
+            $relatedProperties['controller'],
+            $icon,
+            $input
+        );
 
         return $input;
     }

@@ -141,6 +141,7 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
                         });
                     });
                     params.page = params.page || 1;
+
                     return {
                         results: result,
                         pagination: {
@@ -156,6 +157,7 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
                     if (0 === that.min_length) {
                         return;
                     }
+
                     return data.text;
                 }
 

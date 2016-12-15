@@ -111,6 +111,7 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
         // enable select2
         $(input).select2({
             theme: 'bootstrap',
+            width: '100%',
             placeholder: placeholder,
             minimumInputLength: that.min_length,
             ajax: {

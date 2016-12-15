@@ -20,8 +20,6 @@ Configure::write('CsvMigrations.lists.path', CONFIG . 'CsvMigrations' . DS . 'li
 Configure::write('CsvMigrations.migrations.filename', 'migration');
 Configure::write('CsvMigrations.reports.filename', 'reports');
 Configure::write('CsvMigrations.default_icon', 'cube');
-Configure::write('CsvMigrations.typeahead.min_length', 1);
-Configure::write('CsvMigrations.typeahead.timeout', 300);
 Configure::write('CsvMigrations.select2', [
     'min_length' => 0,
     'timeout' => 300,

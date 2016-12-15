@@ -3,18 +3,6 @@ use Cake\Core\Configure;
 use Cake\Utility\Inflector;
 
 //@TODO: merge the stuff in one scriptBlock, not dozens;
-
-echo $this->Html->script('CsvMigrations.bootstrap-typeahead.min.js', ['block' => 'scriptBottom']);
-echo $this->Html->scriptBlock(
-    'typeahead_options = ' . json_encode(
-        array_merge(
-            Configure::read('CsvMigrations.typeahead'),
-            Configure::read('CsvMigrations.api')
-        )
-    ) . ';',
-    ['block' => 'scriptBottom']
-);
-
 echo $this->Html->css('CsvMigrations.select2.min', ['block' => 'cssBottom']);
 echo $this->Html->css('CsvMigrations.select2-bootstrap.min', ['block' => 'cssBottom']);
 echo $this->Html->script('CsvMigrations.select2.full.min', ['block' => 'scriptBottom']);
@@ -40,7 +28,6 @@ echo $this->Html->scriptBlock(
     'fileInputOptions = ' . json_encode($fileInputOptions) . ';',
     ['block' => 'scriptBottom']
 );
-echo $this->Html->script('CsvMigrations.typeahead', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.embedded', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.panels', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.canvas-to-blob.min', ['block' => 'scriptBottom']);

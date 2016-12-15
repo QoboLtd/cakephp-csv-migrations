@@ -1,13 +1,20 @@
-var select2 = select2 || {};
+var csv_migrations_select2 = csv_migrations_select2 || {};
 
 (function ($) {
     /**
      * Select2 Logic.
-     *
-     * @param {object} options configuration options
      */
-    function Select2(options)
+    function Select2()
     {
+        //
+    }
+
+    /**
+     * Setup method.
+     *
+     * @return {undefined}
+     */
+    Select2.prototype.setup = function (options) {
         this.min_length = options.hasOwnProperty('min_length') ? options.min_length : 1;
         this.timeout = options.hasOwnProperty('timeout') ? options.timeout : 300;
         this.api_token = options.hasOwnProperty('token') ? options.token : null;
@@ -22,7 +29,7 @@ var select2 = select2 || {};
 
         // call observe method
         this._observe();
-    }
+    };
 
     /**
      * Initialize method.
@@ -196,6 +203,6 @@ var select2 = select2 || {};
         });
     };
 
-    select2 = new Select2(select2_options);
+    csv_migrations_select2 = new Select2();
 
 })(jQuery);

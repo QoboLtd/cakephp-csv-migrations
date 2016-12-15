@@ -44,10 +44,6 @@ we don't do the linkage - they would have hidden ID by default
         set associated table name to be used on input field's name
          */
         $handlerOptions['associated_table_name'] = $content['table_name'];
-        /*
-        set embedded modal flag
-         */
-        $handlerOptions['embModal'] = true;
         $handlerOptions['emDataTarget'] = $emDataTarget;
         $handlerOptions['emAssociationType'] = $data['tab']['associationType'];
         /*

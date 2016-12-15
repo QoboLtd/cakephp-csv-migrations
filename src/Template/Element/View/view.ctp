@@ -252,6 +252,7 @@ if (empty($options['title'])) {
                                 'content' => $beforeTab['content'],
                                 'tab' => $tab,
                                 'options' => ['order' => 'beforeContent', 'title' => $beforeTab['title']],
+                                'entity' => $options['entity'],
                             ]
                             ]);
                         }
@@ -274,6 +275,7 @@ if (empty($options['title'])) {
                                 'content' => $content,
                                 'tab' => $tab,
                                 'options' => ['order' => 'tabContent'],
+                                'entity' => $options['entity'],
                             ]
                             ]);
 

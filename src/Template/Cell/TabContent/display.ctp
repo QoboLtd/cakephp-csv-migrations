@@ -152,7 +152,7 @@ we don't do the linkage - they would have hidden ID by default
                     $event = new Event('View.Associated.Menu.Actions', $this, [
                         'request' => $this->request,
                         'options' => [
-                            'entity' => $record,
+                            'entity' => $data['entity'],
                             'associated' => [
                                 'entity' => $record,
                                 'name' => $content['assoc_name'],

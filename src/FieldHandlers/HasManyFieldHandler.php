@@ -126,6 +126,7 @@ class HasManyFieldHandler extends RelatedFieldHandler
             $input .= '</div>';
             $input .= '</div>';
         }
+
         return $input;
     }
 

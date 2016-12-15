@@ -82,23 +82,26 @@ class HasManyFieldHandler extends RelatedFieldHandler
             $input .= '<span class="input-group-addon" title="' . $relatedProperties['controller'] . '"><span class="fa fa-' . $icon . '"></span></span>';
         }
 
-        $input .= $this->cakeView->Form->input($field, [
+        $selectOptions = [
+            $data => $relatedProperties['dispFieldVal']
+        ];
+        $input .= $this->cakeView->Form->input($options['associated_table_name'] . '._ids', [
+            'options' => $selectOptions,
             'label' => false,
-            'name' => $field . '_label',
-            'id' => $field . '_label',
-            'type' => 'text',
-            'placeholder' => $help,
+            'id' => $field,
+            'type' => 'select',
             'title' => $help,
-            'data-type' => 'typeahead',
-            'readonly' => (bool)$data,
-            'value' => null,
+            'data-type' => 'select2',
+            'data-display-field' => $relatedProperties['displayField'],
+            'value' => $relatedProperties['dispFieldVal'],
             'data-id' => $this->_domId($fieldName),
             'autocomplete' => 'off',
+            'multiple' => 'multiple',
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'data-url' => $this->cakeView->Url->build([
                 'prefix' => 'api',
-                'plugin' => $relatedPlugin,
-                'controller' => $relatedController,
+                'plugin' => $relatedProperties['plugin'],
+                'controller' => $relatedProperties['controller'],
                 'action' => 'lookup.json'
             ])
         ]);
@@ -123,12 +126,6 @@ class HasManyFieldHandler extends RelatedFieldHandler
             $input .= '</div>';
             $input .= '</div>';
         }
-
-        $input .= $this->cakeView->Form->input(
-            $options['associated_table_name'] . '._ids[]',
-            ['type' => 'hidden', 'value' => $data, 'id' => $this->_domId($fieldName)]
-        );
-
         return $input;
     }
 

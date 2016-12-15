@@ -35,7 +35,7 @@ class RelatedFieldHandler extends BaseFieldHandler
 
     const HTML_SEARCH_INPUT = '
         <div class="input-group">
-            <span class="input-group-addon" title="Auto-complete"><strong>&hellip;</strong></span>%s
+            <span class="input-group-addon" title="%s"><span class="fa fa-%s"></span></span>%s
         </div>';
 
     /**
@@ -91,17 +91,17 @@ class RelatedFieldHandler extends BaseFieldHandler
         $input .= '<div class="input-group">';
         $input .= '<span class="input-group-addon" title="' . $relatedProperties['controller'] . '"><span class="fa fa-' . $icon . '"></span></span>';
 
-        $input .= $this->cakeView->Form->input($field, [
+        $selectOptions = [
+            $data => $relatedProperties['dispFieldVal']
+        ];
+        $input .= $this->cakeView->Form->input($fieldName, [
+            'options' => $selectOptions,
             'label' => false,
-            'name' => false,
-            'id' => $field . static::LABEL_FIELD_SUFFIX,
-            'type' => 'text',
-            'placeholder' => $help,
+            'id' => $field,
+            'type' => 'select',
             'title' => $help,
-            'data-type' => 'typeahead',
+            'data-type' => 'select2',
             'data-display-field' => $relatedProperties['displayField'],
-            'readonly' => (bool)$data,
-            'value' => $relatedProperties['dispFieldVal'],
             'escape' => false,
             'data-id' => $this->_domId($fieldName),
             'autocomplete' => 'off',
@@ -123,8 +123,6 @@ class RelatedFieldHandler extends BaseFieldHandler
         }
         $input .= '</div>';
         $input .= '</div>';
-
-        $input .= $this->cakeView->Form->input($fieldName, ['type' => 'hidden', 'value' => $data]);
 
         return $input;
     }
@@ -192,56 +190,85 @@ class RelatedFieldHandler extends BaseFieldHandler
     {
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), null);
 
-        $fieldName = $this->_getFieldName($table, $field, $options);
+        // Related module icon
+        $icon = Configure::read('CsvMigrations.default_icon');
+        if (!empty($relatedProperties['config']['table']['icon'])) {
+            $icon = $relatedProperties['config']['table']['icon'];
+        }
 
-        $hiddenInputId = $this->_domId($fieldName) . '-{{id}}';
-        $content = sprintf(static::HTML_SEARCH_INPUT, $this->cakeView->Form->input($field, [
-            'label' => false,
-            'name' => false,
-            'id' => $field . static::LABEL_FIELD_SUFFIX,
-            'type' => 'text',
-            'data-type' => 'typeahead',
-            'data-display-field' => $relatedProperties['displayField'],
-            'escape' => false,
-            'data-id' => $hiddenInputId,
-            'autocomplete' => 'off',
-            'data-url' => $this->cakeView->Url->build([
-                'prefix' => 'api',
-                'plugin' => $relatedProperties['plugin'],
-                'controller' => $relatedProperties['controller'],
-                'action' => 'lookup.json'
+        // Help
+        $help = '';
+        $typeaheadFields = '';
+        if (!empty($relatedProperties['config']['table']['typeahead_fields'])) {
+            $typeaheadFields = explode(',', $relatedProperties['config']['table']['typeahead_fields']);
+            if (empty(!$typeaheadFields)) {
+                $typeaheadFields = implode(', or ', array_map(function ($value) {
+                    return Inflector::humanize($value);
+                }, $typeaheadFields));
+            }
+        }
+        if (empty($typeaheadFields)) {
+            $typeaheadFields = Inflector::humanize($relatedProperties['displayField']);
+        }
+        $help = $typeaheadFields;
+
+        $content = sprintf(
+            static::HTML_SEARCH_INPUT,
+            $relatedProperties['controller'],
+            $icon,
+            $this->cakeView->Form->input($field, [
+                'label' => false,
+                'options' => ['{{value}}' => ''],
+                'name' => '{{name}}',
+                'id' => $field,
+                'type' => 'select',
+                'title' => $help,
+                'data-type' => 'select2',
+                'data-display-field' => $relatedProperties['displayField'],
+                'escape' => false,
+                'autocomplete' => 'off',
+                'data-url' => $this->cakeView->Url->build([
+                    'prefix' => 'api',
+                    'plugin' => $relatedProperties['plugin'],
+                    'controller' => $relatedProperties['controller'],
+                    'action' => 'lookup.json'
+                ])
             ])
-        ]));
-
-        $content .= $this->cakeView->Form->input('{{name}}', [
-            'type' => 'hidden',
-            'id' => $hiddenInputId,
-            'value' => '{{value}}'
-        ]);
+        );
 
         return [
             'content' => $content,
             'post' => [
                 [
                     'type' => 'script',
-                    'content' => 'CsvMigrations.bootstrap-typeahead.min',
-                    'block' => 'scriptBottom'
-                ],
-                [
-                    'type' => 'scriptBlock',
-                    'content' => 'typeahead_options = ' . json_encode(
-                        array_merge(
-                            Configure::read('CsvMigrations.typeahead'),
-                            Configure::read('CsvMigrations.api')
-                        )
-                    ) . ';',
+                    'content' => 'CsvMigrations.select2.full.min',
                     'block' => 'scriptBottom'
                 ],
                 [
                     'type' => 'script',
-                    'content' => 'CsvMigrations.typeahead',
+                    'content' => 'CsvMigrations.select2',
                     'block' => 'scriptBottom'
-                ]
+                ],
+                [
+                    'type' => 'scriptBlock',
+                    'content' => 'csv_migrations_select2.setup(' . json_encode(
+                        array_merge(
+                            Configure::read('CsvMigrations.select2'),
+                            Configure::read('CsvMigrations.api')
+                        )
+                    ) . ');',
+                    'block' => 'scriptBottom'
+                ],
+                [
+                    'type' => 'css',
+                    'content' => 'CsvMigrations.select2.min',
+                    'block' => 'cssBottom'
+                ],
+                [
+                    'type' => 'css',
+                    'content' => 'CsvMigrations.select2-bootstrap.min',
+                    'block' => 'cssBottom'
+                ],
             ]
         ];
     }

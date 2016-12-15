@@ -43,22 +43,6 @@ class HasManyFieldHandler extends RelatedFieldHandler
             $icon = $relatedProperties['config']['table']['icon'];
         }
 
-        // Help
-        $help = '';
-        $typeaheadFields = '';
-        if (!empty($relatedProperties['config']['table']['typeahead_fields'])) {
-            $typeaheadFields = explode(',', $relatedProperties['config']['table']['typeahead_fields']);
-            if (empty(!$typeaheadFields)) {
-                $typeaheadFields = implode(', or ', array_map(function ($value) {
-                    return Inflector::humanize($value);
-                }, $typeaheadFields));
-            }
-        }
-        if (empty($typeaheadFields)) {
-            $typeaheadFields = Inflector::humanize($relatedProperties['displayField']);
-        }
-        $help = $typeaheadFields;
-
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
             $relatedParentProperties = $this->_getRelatedParentProperties($relatedProperties);
             if (!empty($relatedParentProperties['dispFieldVal'])) {
@@ -90,7 +74,7 @@ class HasManyFieldHandler extends RelatedFieldHandler
             'label' => false,
             'id' => $field,
             'type' => 'select',
-            'title' => $help,
+            'title' => $this->_getInputHelp($relatedProperties),
             'data-type' => 'select2',
             'data-display-field' => $relatedProperties['displayField'],
             'value' => $relatedProperties['dispFieldVal'],

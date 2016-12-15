@@ -57,22 +57,6 @@ class RelatedFieldHandler extends BaseFieldHandler
             $icon = $relatedProperties['config']['table']['icon'];
         }
 
-        // Help
-        $help = '';
-        $typeaheadFields = '';
-        if (!empty($relatedProperties['config']['table']['typeahead_fields'])) {
-            $typeaheadFields = explode(',', $relatedProperties['config']['table']['typeahead_fields']);
-            if (empty(!$typeaheadFields)) {
-                $typeaheadFields = implode(', or ', array_map(function ($value) {
-                    return Inflector::humanize($value);
-                }, $typeaheadFields));
-            }
-        }
-        if (empty($typeaheadFields)) {
-            $typeaheadFields = Inflector::humanize($relatedProperties['displayField']);
-        }
-        $help = $typeaheadFields;
-
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
             $relatedParentProperties = $this->_getRelatedParentProperties($relatedProperties);
             if (!empty($relatedParentProperties['dispFieldVal'])) {
@@ -99,7 +83,7 @@ class RelatedFieldHandler extends BaseFieldHandler
             'label' => false,
             'id' => $field,
             'type' => 'select',
-            'title' => $help,
+            'title' => $this->_getInputHelp($relatedProperties),
             'data-type' => 'select2',
             'data-display-field' => $relatedProperties['displayField'],
             'escape' => false,
@@ -196,22 +180,6 @@ class RelatedFieldHandler extends BaseFieldHandler
             $icon = $relatedProperties['config']['table']['icon'];
         }
 
-        // Help
-        $help = '';
-        $typeaheadFields = '';
-        if (!empty($relatedProperties['config']['table']['typeahead_fields'])) {
-            $typeaheadFields = explode(',', $relatedProperties['config']['table']['typeahead_fields']);
-            if (empty(!$typeaheadFields)) {
-                $typeaheadFields = implode(', or ', array_map(function ($value) {
-                    return Inflector::humanize($value);
-                }, $typeaheadFields));
-            }
-        }
-        if (empty($typeaheadFields)) {
-            $typeaheadFields = Inflector::humanize($relatedProperties['displayField']);
-        }
-        $help = $typeaheadFields;
-
         $content = sprintf(
             static::HTML_SEARCH_INPUT,
             $relatedProperties['controller'],
@@ -222,7 +190,7 @@ class RelatedFieldHandler extends BaseFieldHandler
                 'name' => '{{name}}',
                 'id' => $field,
                 'type' => 'select',
-                'title' => $help,
+                'title' => $this->_getInputHelp($relatedProperties),
                 'data-type' => 'select2',
                 'data-display-field' => $relatedProperties['displayField'],
                 'escape' => false,
@@ -291,5 +259,32 @@ class RelatedFieldHandler extends BaseFieldHandler
         );
 
         return $dbFields;
+    }
+
+    /**
+     * Method that generates input help string.
+     * Can be used as a value for placeholder or title attributes.
+     *
+     * @param array $properties Input properties
+     * @return string
+     */
+    protected function _getInputHelp($properties)
+    {
+        $result = '';
+        // use typeahead fields
+        if (!empty($properties['config']['table']['typeahead_fields'])) {
+            $result = explode(',', $properties['config']['table']['typeahead_fields']);
+            if (!empty($result)) {
+                $result = implode(', or ', array_map(function ($value) {
+                    return Inflector::humanize($value);
+                }, $result));
+            }
+        }
+        // if typeahead fields were not defined, use display field
+        if (empty($result)) {
+            $result = Inflector::humanize($properties['displayField']);
+        }
+
+        return $result;
     }
 }

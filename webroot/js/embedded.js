@@ -66,7 +66,6 @@ var embedded = embedded || {};
                 // we push multiple values.
                 // Example: file_ids[] - we push all the values in.
                 if (name.match(/\[(\d+)?\]$/)) {
-
                     name = name.replace('[', '');
                     name = name.replace(']', '');
 

@@ -24,11 +24,7 @@ var embedded = embedded || {};
 
         $(that.formId).submit(function (e) {
             e.preventDefault();
-            if (that.files && that.uploadFieldName) {
-                that.uploadFiles(this);
-            } else {
-                that._submitForm(this);
-            }
+            that._submitForm(this);
         });
     };
 
@@ -41,71 +37,6 @@ var embedded = embedded || {};
         $(document).on('updateFiles', function (event, files, fieldName) {
             that.files = files;
             that.uploadFieldName = fieldName;
-        });
-    };
-
-    Embedded.prototype.uploadFiles = function (form) {
-        var that = this;
-        var data = new FormData();
-        var modalId = $(form).data('modal_id');
-        var url = $(form).attr('action');
-
-        var embedded = $(form).data('embedded');
-
-        $.each($(form).serializeArray(), function (i, field) {
-            if (0 === field.name.indexOf(embedded)) {
-                var name = field.name.replace(embedded, '');
-                name = name.replace('[', '');
-                name = name.replace(']', '');
-                data.append(name, field.value);
-            }
-        });
-
-        $.each(that.files, function (key, value) {
-            data.append('file[]', value);
-        });
-
-        if (that.uploadFieldName) {
-            data.append('fieldName', that.uploadFieldName);
-        }
-
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: data,
-            cache: false,
-            dataType: 'json',
-            processData: false, // Don't process the files
-            contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-            headers: {
-                'Authorization': 'Bearer ' + that.api_token
-            },
-            success: function (data, textStatus, jqXHR) {
-                if (typeof data.error === 'undefined') {
-                    /*
-                    set related field display-field and value
-                     */
-                    that._setRelatedField(url, data.data.id, form);
-
-                    /*
-                    clear embedded form
-                     */
-                    that._resetForm(form);
-
-                    /*
-                    hide modal
-                     */
-                    $('#' + modalId).modal('hide');
-                } else {
-                    // Handle errors here
-                    console.log('ERRORS: ' + data.error);
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                // Handle errors here
-                console.log('ERRORS: ' + textStatus);
-                // STOP LOADING SPINNER
-            }
         });
     };
 
@@ -123,14 +54,34 @@ var embedded = embedded || {};
         var embedded = $(form).data('embedded');
         var modalId = $(form).data('modal_id');
         var data = {};
+
         $.each($(form).serializeArray(), function (i, field) {
             if (0 === field.name.indexOf(embedded)) {
                 var name = field.name.replace(embedded, '');
+
                 name = name.replace('[', '');
                 name = name.replace(']', '');
-                data[name] = field.value;
+
+                // @NOTE: if the field name is an array,
+                // we push multiple values.
+                // Example: file_ids[] - we push all the values in.
+                if (name.match(/\[(\d+)?\]$/)) {
+                    name = name.replace('[', '');
+                    name = name.replace(']', '');
+
+                    if (data[name] === undefined) {
+                        data[name] = [];
+                    } else {
+                        if (!data[name].includes(field.value)) {
+                            data[name].push(field.value);
+                        }
+                    }
+                } else {
+                    data[name] = field.value;
+                }
             }
         });
+
         data = JSON.stringify(data);
 
         $.ajax({

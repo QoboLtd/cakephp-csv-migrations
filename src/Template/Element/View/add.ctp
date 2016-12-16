@@ -185,11 +185,6 @@ $formOptions['type'] = 'file';
                     $embeddedPlugin . $embeddedController,
                     $embeddedFieldName
                 );
-
-                /*
-                @note this only works for belongsTo for now.
-                 */
-                $embeddedAssocName = Inflector::underscore(Inflector::singularize($embeddedAssocName));
             ?>
             <!-- Modal -->
             <div id="<?= $embeddedFieldName ?>_modal" class="modal fade" tabindex="-1" role="dialog">

@@ -34,3 +34,12 @@ echo $this->Html->script('CsvMigrations.canvas-to-blob.min', ['block' => 'script
 echo $this->Html->script('CsvMigrations.fileinput.min', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.fileinput-load', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.jquery.dynamicSelect', ['block' => 'scriptBottom']);
+
+// load field assets
+if (!empty($assets['post'])) {
+    foreach ($assets['post'] as $asset) {
+        echo $this->Html->{$asset['type']}($asset['content'], [
+            'block' => !empty($asset['block']) ? $asset['block'] : true
+        ]);
+    }
+}

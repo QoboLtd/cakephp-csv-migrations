@@ -39,7 +39,12 @@ $active = 'active';
 foreach ($panels as $tabName => $assocData) :
 ?>
         <li role="presentation" class="<?= $active; ?>">
-            <a href="#<?= $tabName; ?>" aria-controls="<?= $tabName; ?>" role="tab" data-toggle="tab">
+            <a
+                href="#<?= $tabName; ?>"
+                aria-controls="<?= $tabName; ?>"
+                role="tab"
+                data-toggle="tab"
+            >
             <?php
             //prettifying the tabs names
             if (!empty($csvAssociationLabels) && in_array($tabName, array_keys($csvAssociationLabels))) {
@@ -65,7 +70,11 @@ endforeach;
 $active = 'active';
 foreach ($panels as $assocName => $assocData) {
 ?>
-    <div role="tabpanel" class="tab-pane <?= $active; ?>" id="<?= $assocName; ?>">
+    <div
+        role="tabpanel"
+        class="tab-pane <?= $active; ?>"
+        id="<?= $assocName; ?>"
+    >
     <?php
     /*
     display typeahead field for adding/linking associated records,

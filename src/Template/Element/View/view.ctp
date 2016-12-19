@@ -66,9 +66,7 @@ if (empty($options['title'])) {
                         'options' => $options
                     ]);
                     $this->eventManager()->dispatch($event);
-                if (!empty($event->result)) {
                     echo $event->result;
-                }
                 ?>
                 </div>
             </div>
@@ -220,8 +218,8 @@ if (empty($options['title'])) {
 
         echo $this->Html->css('CsvMigrations.datatables.min', ['block' => 'cssBottom']);
         echo $this->Html->script('CsvMigrations.datatables.min', ['block' => 'scriptBottom']);
-
-    if (!empty($tabs)) { ?>
+    ?>
+        <?php if (!empty($tabs)) : ?>
             <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
             <?php foreach ($tabs as $k => $tab) :?>
                 <li role="presentation" class="<?= ($k == 0) ? 'active' : ''?>">
@@ -291,9 +289,7 @@ if (empty($options['title'])) {
                     </div>
                 <?php endforeach; ?>
             </div> <!-- .tab-content -->
-        <?php
-    }
-?>
+        <?php endif; ?>
     </div>
     <?php
         //loading common setup for typeahead/panel/etc libs for tabs

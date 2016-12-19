@@ -159,9 +159,7 @@ we don't do the linkage - they would have hidden ID by default
                         ]
                     ]);
                     $this->eventManager()->dispatch($event);
-                if (!empty($event->result)) {
                     echo $event->result;
-                }
                 ?>
                 </td>
             </tr>

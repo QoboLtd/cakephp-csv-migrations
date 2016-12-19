@@ -11,19 +11,24 @@ trait ListTrait
     /**
      * Method that retrieves select input options by list name.
      *
-     * @param  string $listName list name
-     * @return array            list options
+     * @param string $listName list name
+     * @param string $spacer The string to use for prefixing the values according to
+     * their depth in the tree
+     * @param bool $flatten flat list flag
+     * @return array list options
      */
-    protected function _getSelectOptions($listName)
+    protected function _getSelectOptions($listName, $spacer = ' - ', $flatten = true)
     {
         $result = $this->__getListFieldOptions($listName);
         $result = $this->__filterOptions($result);
 
-        /*
-        nested list options
-         */
+        if (!$flatten) {
+            return $result;
+        }
+
+        // flatten list options
         $collection = new Collection($result);
-        $result = $collection->listNested()->printer('name', 'id', ' - ')->toArray();
+        $result = $collection->listNested()->printer('name', 'id', $spacer)->toArray();
 
         return $result;
     }

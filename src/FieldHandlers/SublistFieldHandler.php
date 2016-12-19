@@ -21,10 +21,12 @@ class SublistFieldHandler extends ListFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit(), null, true);
+        $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit(), null, false);
         $optionValues = $this->_getSelectOptions($options['fieldDefinitions']->getLimit(), '');
+        $structure = $this->_dynamicSelectStructure($fieldOptions);
 
         $levels = 0;
+        // get nesting level based on dot notation
         foreach ($optionValues as $k => $v) {
             $count = substr_count($k, '.');
             if ($count <= $levels) {
@@ -77,7 +79,7 @@ class SublistFieldHandler extends ListFieldHandler
             'post' => [
                 'type' => 'scriptBlock',
                 'content' => '$(document).dynamicSelect({
-                    structure: ' . json_encode($fieldOptions) . ',
+                    structure: ' . json_encode($structure) . ',
                     optionValues: ' . json_encode(array_flip($optionValues)) . ',
                     selectors: ' . json_encode($selectors) . ',
                     hideNext: true,
@@ -94,5 +96,22 @@ class SublistFieldHandler extends ListFieldHandler
     public function renderSearchInput($table, $field, array $options = [])
     {
         return false;
+    }
+
+    /**
+     * Converts list options to supported dynamiSelect lib structure (see link).
+     *
+     * @param array $options List options
+     * @return array
+     * @link https://github.com/sorites/dynamic-select
+     */
+    protected function _dynamicSelectStructure($options)
+    {
+        $result = [];
+        foreach ($options as $k => $v) {
+            $result[$v['name']] = !empty($v['children']) ? $this->_dynamicSelectStructure($v['children']) : [];
+        }
+
+        return $result;
     }
 }

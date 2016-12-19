@@ -16,20 +16,21 @@
  * Licensed under the MIT license
  */
 
-;(function ( $, window, document, undefined ) {
+(function ( $, window, document, undefined ) {
 
     // Create the defaults once
     var pluginName = 'dynamicSelect',
         defaults = {
             noSelectValue : "",
             optionValues : {}
-        };
+    };
 
     // The actual plugin constructor
-    function Plugin( element, options ) {
+    function Plugin( element, options )
+    {
         this.element = element;
 
-        this.options = $.extend( {}, defaults, options) ;
+        this.options = $.extend({}, defaults, options);
 
         this._defaults = defaults;
         this._name = pluginName;
@@ -53,29 +54,30 @@
 
     Plugin.prototype = {
 
-        init: function() {
+        init: function () {
 
             this.populateSelect({true: this.structure}, -1, true);
             this.disableNextSelects(-1);
 
-            for (var i = 0; i < this.selectors.length - 1; i++) {
+            var selectors_length = this.selectors.length;
+            for (var i = 0; i < selectors_length - 1; i++) {
                 var selector = this.selectors[i];
-                $(this.context).on("change", selector, {"level": i, "plugin": this}, function(event) {
+                $(this.context).on("change", selector, {"level": i, "plugin": this}, function (event) {
                     var val = $("option:selected", $(this)).text();
                     var level = event.data.level;
                     var plugin = event.data.plugin;
                     var substructure = plugin.calculateSubstructure(level);
                     plugin.populateSelect(substructure, level, val);
                     plugin.disableNextSelects(level);
-               });
+                });
             }
         },
 
-        getOptionValue: function( key ) {
+        getOptionValue: function ( key ) {
             return (key in this.existingOptionValues) ? this.existingOptionValues[key] : key;
         },
 
-        populateSelect: function( substructure, level, optionValue ) {
+        populateSelect: function ( substructure, level, optionValue ) {
             if (optionValue === this.captions[level]) {
                 return false;
             }
@@ -84,6 +86,7 @@
             var optionsObject = substructure[optionValue];
             if (typeof optionsObject === "undefined") {
                 this.disableNextSelects(level - 1);
+
                 return false;
             }
 
@@ -92,10 +95,11 @@
             // skip rendering next select-box if there are no options for it
             if (0 === optionsToPopulate.length) {
                 this.disableNextSelects(level - 1);
+
                 return false;
             }
 
-            var options = "<option class='dynamic-select-option' value=" + this.defaultSelectValue(level + 1) +">" + this.captions[level+1] + "</option>";
+            var options = "<option class='dynamic-select-option' value=" + this.defaultSelectValue(level + 1) + ">" + this.captions[level + 1] + "</option>";
             for (var key in optionsToPopulate) {
                 var optionText = optionsToPopulate[key];
                 optionValue = this.getOptionValue(optionText);
@@ -111,7 +115,7 @@
             }
         },
 
-        calculateSubstructure: function( level ) {
+        calculateSubstructure: function ( level ) {
             if (level === 0) {
                 return this.structure;
             } else {
@@ -126,8 +130,9 @@
             }
         },
 
-        disableNextSelects: function( level ) {
-            for (var i = level + 2; i <= this.selectors.length; i++) {
+        disableNextSelects: function ( level ) {
+            var selectors_length = this.selectors.length;
+            for (var i = level + 2; i <= selectors_length; i++) {
                 var selector = this.selectors[i];
 
                 $(selector, this.context).prop("disabled", "disabled")
@@ -139,7 +144,7 @@
             }
         },
 
-        defaultSelectValue: function( level ) {
+        defaultSelectValue: function ( level ) {
             var result = this.noSelectValue;
             // use previous select-box value as current select-box default value
             if (this.previousDefaultValue) {
@@ -149,43 +154,47 @@
             return result;
         },
 
-        createKeysMethodIfNecessary: function() {
+        createKeysMethodIfNecessary: function () {
             if (typeof Object.keys !== "function") {
-                (function() {
+                (function () {
                     Object.keys = Object_keys;
-                    function Object_keys(obj) {
+                    function Object_keys(obj)
+                    {
                         var keys = [], name;
                         for (name in obj) {
                             if (obj.hasOwnProperty(name)) {
                                 keys.push(name);
                             }
                         }
+
                         return keys;
                     }
                 })();
             }
         },
 
-        createSelectorsIfNecessary: function() {
+        createSelectorsIfNecessary: function () {
             if (typeof this.selectors === "undefined") {
                 var numOfSelects = $("select", this.context).length;
                 var selectors = new Array(numOfSelects);
                 for (var i = 0; i < numOfSelects; i++) {
                     selectors[i] = "select:eq(" + i + ")";
                 }
+
                 return selectors;
             } else {
                 return this.selectors;
             }
         },
 
-        createCaptionsIfNecessary: function() {
+        createCaptionsIfNecessary: function () {
             if (typeof this.captions === "undefined") {
                 var numOfSelects = this.selectors.length;
                 var captions = new Array(numOfSelects);
                 for (var i = 0; i < numOfSelects; i++) {
                     captions[i] = "&nbsp;";
                 }
+
                 return captions;
             } else {
                 return this.captions;
@@ -198,8 +207,7 @@
     $.fn[pluginName] = function ( options ) {
         return this.each(function () {
             if (!$.data(this, 'plugin_' + pluginName)) {
-                $.data(this, 'plugin_' + pluginName,
-                new Plugin( this, options ));
+                $.data(this, 'plugin_' + pluginName, new Plugin(this, options));
             }
         });
     };

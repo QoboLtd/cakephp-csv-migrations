@@ -33,3 +33,4 @@ echo $this->Html->script('CsvMigrations.panels', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.canvas-to-blob.min', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.fileinput.min', ['block' => 'scriptBottom']);
 echo $this->Html->script('CsvMigrations.fileinput-load', ['block' => 'scriptBottom']);
+echo $this->Html->script('CsvMigrations.jquery.dynamicSelect', ['block' => 'scriptBottom']);

@@ -66,9 +66,7 @@ if (empty($options['title'])) {
                         'options' => $options
                     ]);
                     $this->eventManager()->dispatch($event);
-                    if (!empty($event->result)) {
-                        echo $event->result;
-                    }
+                    echo $event->result;
                 ?>
                 </div>
             </div>

@@ -105,7 +105,9 @@ $formOptions['type'] = 'file';
                                     continue;
                                 }
 
-                                $handlerOptions = [];
+                                $handlerOptions = [
+                                    'entity' => (object)$this->request->data
+                                ];
 
                                 if ($embeddedDirty) {
                                     $embeddedFields[] = $field;

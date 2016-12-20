@@ -338,7 +338,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         $result = $data;
 
         if ($data instanceof Entity) {
-            $result = $data->foo;
+            $result = $data->$field;
 
             return $result;
         }

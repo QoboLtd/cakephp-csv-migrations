@@ -54,14 +54,14 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
             $options['label'] = null;
             $fieldName = $field . '_' . $suffix;
 
-            $data = $this->_getFieldValueFromData($fieldName, $data);
-            if (empty($data) && !empty($options['entity'])) {
-                $data = $this->_getFieldValueFromData($fieldName, $options['entity']);
+            $fieldData = $this->_getFieldValueFromData($fieldName, $data);
+            if (empty($fieldData) && !empty($options['entity'])) {
+                $fieldData = $this->_getFieldValueFromData($fieldName, $options['entity']);
             }
 
             $handler = new $preOptions['handler'];
 
-            $inputs[] = sprintf(static::INPUT_HTML, $handler->renderInput($table, $fieldName, $data, $options));
+            $inputs[] = sprintf(static::INPUT_HTML, $handler->renderInput($table, $fieldName, $fieldData, $options));
         }
 
         return sprintf(static::WRAPPER_HTML, $label, implode('', $inputs));
@@ -75,12 +75,12 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
         $result = [];
         foreach ($this->_fields as $suffix => $fieldOptions) {
             $fieldName = $field . '_' . $suffix;
-            $data = $this->_getFieldValueFromData($fieldName, $data);
-            if (empty($data) && !empty($options['entity'])) {
-                $data = $this->_getFieldValueFromData($fieldName, $options['entity']);
+            $fieldData = $this->_getFieldValueFromData($fieldName, $data);
+            if (empty($fieldData) && !empty($options['entity'])) {
+                $fieldData = $this->_getFieldValueFromData($fieldName, $options['entity']);
             }
             $handler = new $fieldOptions['handler'];
-            $result[] = $handler->renderValue($table, $fieldName, $data, $options);
+            $result[] = $handler->renderValue($table, $fieldName, $fieldData, $options);
         }
 
         $result = implode('&nbsp;', $result);

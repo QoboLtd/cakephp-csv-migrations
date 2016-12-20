@@ -27,11 +27,14 @@ class FileFieldHandler extends BaseFileFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        $entity = Hash::get($options, 'entity');
-        if (empty($entity)) {
+        $data = $this->_getFieldValueFromData($field, $data);
+        if (empty($data) && !empty($options['entity'])) {
+            $data = $this->_getFieldValueFromData('id', $options['entity']);
+        }
+        if (empty($data)) {
             $result = $this->_renderInputWithoutData($table, $field, $options);
         } else {
-            $result = $this->_renderInputWithData($table, $field, $options);
+            $result = $this->_renderInputWithData($table, $field, $data, $options);
         }
 
         return $result;
@@ -62,14 +65,13 @@ class FileFieldHandler extends BaseFileFieldHandler
      * @param  Table $table Table
      * @param  string $field Field
      * @param  array $options Options
+     * @param  mixed $data Data
      * @return string HTML input field with data attribute.
      */
-    protected function _renderInputWithData($table, $field, $options)
+    protected function _renderInputWithData($table, $field, $data, $options)
     {
         $fileUploadsUtils = new FileUploadsUtils($table);
-        $entity = Hash::get($options, 'entity');
-
-        $entities = $fileUploadsUtils->getFiles($entity->get('id'));
+        $entities = $fileUploadsUtils->getFiles($data);
 
         if (is_null($entities)) {
             return $this->_renderInputWithoutData($table, $field, $options);
@@ -87,7 +89,7 @@ class FileFieldHandler extends BaseFileFieldHandler
             $this->_getFieldName($table, $field, $options) . '[]',
             [
                 'multiple' => true,
-                'data-document-id' => $entity->get('id'),
+                'data-document-id' => $data,
                 'data-files' => json_encode($files),
             ]
         );
@@ -101,7 +103,10 @@ class FileFieldHandler extends BaseFileFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $data = $options['entity']['id'];
+        $data = $this->_getFieldValueFromData($field, $data);
+        if (empty($data) && !empty($options['entity'])) {
+            $data = $this->_getFieldValueFromData('id', $options['entity']);
+        }
 
         return parent::renderValue($table, $field, $data, $options);
     }

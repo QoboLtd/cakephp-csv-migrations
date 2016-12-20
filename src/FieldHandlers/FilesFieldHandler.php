@@ -26,11 +26,14 @@ class FilesFieldHandler extends BaseFileFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        $entity = Hash::get($options, 'entity');
-        if (empty($entity)) {
+        $data = $this->_getFieldValueFromData($field, $data);
+        if (empty($data) && !empty($options['entity'])) {
+            $data = $this->_getFieldValueFromData('id', $options['entity']);
+        }
+        if (empty($data)) {
             $result = $this->_renderInputWithoutData($table, $field, $options);
         } else {
-            $result = $this->_renderInputWithData($table, $field, $options);
+            $result = $this->_renderInputWithData($table, $field, $data, $options);
         }
 
         return $result;
@@ -75,9 +78,10 @@ class FilesFieldHandler extends BaseFileFieldHandler
      * @param  Table $table Table
      * @param  string $field Field
      * @param  array $options Options
+     * @param  mixed $data Data
      * @return string HTML input field with data attribute.
      */
-    protected function _renderInputWithData($table, $field, $options)
+    protected function _renderInputWithData($table, $field, $data, $options)
     {
         $files = [];
         $hiddenIds = '';
@@ -86,9 +90,8 @@ class FilesFieldHandler extends BaseFileFieldHandler
 
 
         $fileUploadsUtils = new FileUploadsUtils($table);
-        $entity = Hash::get($options, 'entity');
 
-        $entities = $fileUploadsUtils->getFiles($table, $field, $entity->get('id'));
+        $entities = $fileUploadsUtils->getFiles($table, $field, $data);
 
         if ($entities instanceof \Cake\ORM\ResultSet) {
             if (!$entities->count()) {
@@ -123,7 +126,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
             $fieldName . '[]',
             [
                 'multiple' => true,
-                'data-document-id' => $entity->get('id'),
+                'data-document-id' => $data,
                 'data-upload-url' => sprintf("/api/%s/upload", Inflector::dasherize($table->table())),
                 //passed to generate previews
                 'data-files' => json_encode($files),
@@ -183,7 +186,10 @@ class FilesFieldHandler extends BaseFileFieldHandler
     {
         $result = null;
 
-        $data = $options['entity']['id'];
+        $data = $this->_getFieldValueFromData($field, $data);
+        if (empty($data) && !empty($options['entity'])) {
+            $data = $this->_getFieldValueFromData('id', $options['entity']);
+        }
 
         if (empty($data)) {
             return $result;

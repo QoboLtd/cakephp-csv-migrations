@@ -9,6 +9,8 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Crud\Controller\ControllerTrait;
 use CsvMigrations\CsvMigrationsUtils;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\FieldHandlers\RelatedFieldHandler;
 use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 use CsvMigrations\FileUploadsUtils;
 use CsvMigrations\Panel;
@@ -353,13 +355,22 @@ class AppController extends Controller
         });
 
         $this->Crud->on('afterLookup', function (Event $event) {
-            $tableConfig = [];
-            if (method_exists($this->{$this->name}, 'getConfig') && is_callable([$this->{$this->name}, 'getConfig'])) {
-                $tableConfig = $this->{$this->name}->getConfig();
-            }
-
-            if (!empty($tableConfig['parent']['module'])) {
-                $event->subject()->entities = $this->_prependParentModule($event->subject()->entities);
+            // Properly populate display values for the found entries.
+            // This will recurse into related modules and get display
+            // values as deep as needed.
+            $entities = $event->subject()->entities;
+            $event->subject()->entities = [];
+            foreach ($entities as $key => $entity) {
+                $fhf = new FieldHandlerFactory();
+                // We need plain display value. It'll be properly wrapped
+                // in styling only at the top level.
+                $entity = $fhf->renderValue(
+                    $this->{$this->name},
+                    $this->{$this->name}->displayField(),
+                    $entity,
+                    ['renderAs' => RelatedFieldHandler::RENDER_PLAIN_VALUE]
+                );
+                $event->subject()->entities[$key] = $entity;
             }
         });
 

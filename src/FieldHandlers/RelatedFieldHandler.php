@@ -67,6 +67,7 @@ class RelatedFieldHandler extends BaseFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
+        $data = $this->_getFieldValueFromData($field, $data);
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
@@ -138,6 +139,7 @@ class RelatedFieldHandler extends BaseFieldHandler
     public function renderValue($table, $field, $data, array $options = [])
     {
         $result = null;
+        $data = $this->_getFieldValueFromData($field, $data);
 
         if (empty($data)) {
             return $result;

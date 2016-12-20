@@ -29,6 +29,7 @@ class BlobFieldHandler extends BaseFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
+        $data = $this->_getFieldValueFromData($field, $data);
         if (is_resource($data)) {
             $data = stream_get_contents($data);
         }
@@ -49,6 +50,7 @@ class BlobFieldHandler extends BaseFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
+        $data = $this->_getFieldValueFromData($field, $data);
         $result = $data;
         if (is_resource($data)) {
             $result = stream_get_contents($data);

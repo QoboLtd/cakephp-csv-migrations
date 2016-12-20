@@ -32,6 +32,7 @@ class DblistFieldHandler extends BaseFieldHandler
     public function renderInput($table, $field, $data = '', array $options = [])
     {
         $result = '';
+        $data = $this->_getFieldValueFromData($field, $data);
         //CsvField object is mandatory
         if (!isset($options['fieldDefinitions']) ||
             !($options['fieldDefinitions'] instanceof CsvField)) {
@@ -62,6 +63,7 @@ class DblistFieldHandler extends BaseFieldHandler
     public function renderValue($table, $field, $data, array $options = [])
     {
         $result = '';
+        $data = $this->_getFieldValueFromData($field, $data);
 
         //CsvField object is mandatory
         if (!isset($options['fieldDefinitions']) ||

@@ -31,6 +31,7 @@ class ListFieldHandler extends BaseFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
+        $data = $this->_getFieldValueFromData($field, $data);
         $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
 
         $input = $this->_fieldToLabel($field, $options);
@@ -56,6 +57,7 @@ class ListFieldHandler extends BaseFieldHandler
     public function renderValue($table, $field, $data, array $options = [])
     {
         $result = '';
+        $data = $this->_getFieldValueFromData($field, $data);
 
         if (empty($data)) {
             return $result;

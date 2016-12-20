@@ -16,6 +16,7 @@ class DecimalFieldHandler extends BaseFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
+        $data = $this->_getFieldValueFromData($field, $data);
         $result = (float)filter_var($data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
         $args = $this->_getDbColumnArgs($table, $field);
@@ -36,6 +37,7 @@ class DecimalFieldHandler extends BaseFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
+        $data = $this->_getFieldValueFromData($field, $data);
         $fieldType = $options['fieldDefinitions']->getType();
 
         if (in_array($fieldType, array_keys($this->_fieldTypes))) {

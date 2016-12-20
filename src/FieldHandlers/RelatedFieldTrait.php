@@ -7,6 +7,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\View\Helper\IdGeneratorTrait;
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\RelatedFieldHandler;
 
 trait RelatedFieldTrait
 {
@@ -78,9 +79,15 @@ trait RelatedFieldTrait
         $result['entity'] = $this->_getAssociatedRecord($table, $data);
         // get related table's displayField value
         if (!empty($result['entity'])) {
-            $result['dispFieldVal'] = !empty($result['entity']->{$result['displayField']})
-                ? $result['entity']->{$table->displayField()}
-                : null;
+            // Pass the value through related field handler
+            // to properly display the user-friendly label.
+            $fhf = new FieldHandlerFactory($this->cakeView);
+            $result['dispFieldVal'] = $fhf->renderValue(
+                $table,
+                $table->displayField(),
+                $result['entity']->{$table->displayField()},
+                ['renderAs' => RelatedFieldHandler::RENDER_PLAIN_VALUE]
+            );
         } else {
             $result['dispFieldVal'] = null;
         }

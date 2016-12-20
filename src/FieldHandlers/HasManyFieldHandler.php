@@ -46,6 +46,7 @@ class HasManyFieldHandler extends RelatedFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
+        $data = $this->_getFieldValueFromData($field, $data);
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {

@@ -21,6 +21,7 @@ class SublistFieldHandler extends ListFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
+        $data = $this->_getFieldValueFromData($field, $data);
         $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit(), null, false);
         $optionValues = $this->_getSelectOptions($options['fieldDefinitions']->getLimit(), '');
         $structure = $this->_dynamicSelectStructure($fieldOptions);

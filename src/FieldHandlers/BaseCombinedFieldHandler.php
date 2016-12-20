@@ -54,9 +54,9 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
             $options['label'] = null;
             $fieldName = $field . '_' . $suffix;
 
-            $data = '';
-            if (isset($options['entity'])) {
-                $data = $options['entity']->{$fieldName};
+            $data = $this->_getFieldValueFromData($fieldName, $data);
+            if (empty($data) && !empty($options['entity'])) {
+               $data = $this->_getFieldValueFromData($fieldName, $options['entity']);
             }
 
             $handler = new $preOptions['handler'];
@@ -75,8 +75,9 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
         $result = [];
         foreach ($this->_fields as $suffix => $fieldOptions) {
             $fieldName = $field . '_' . $suffix;
-            if (isset($options['entity'])) {
-                $data = $options['entity']->{$fieldName};
+            $data = $this->_getFieldValueFromData($fieldName, $data);
+            if (empty($data) && !empty($options['entity'])) {
+               $data = $this->_getFieldValueFromData($fieldName, $options['entity']);
             }
             $handler = new $fieldOptions['handler'];
             $result[] = $handler->renderValue($table, $fieldName, $data, $options);

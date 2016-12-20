@@ -83,6 +83,7 @@ class BaseFileFieldHandler extends RelatedFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
+        $data = $this->_getFieldValueFromData($field, $data);
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
         $fieldName = $this->_getFieldName($table, $field, $options);

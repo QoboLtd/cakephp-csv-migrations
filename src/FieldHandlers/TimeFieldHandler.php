@@ -32,6 +32,7 @@ class TimeFieldHandler extends BaseFieldHandler
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
+        $data = $this->_getFieldValueFromData($field, $data);
         if ($data instanceof Time) {
             $data = $data->i18nFormat(static::TIME_FORMAT);
         }
@@ -76,6 +77,7 @@ class TimeFieldHandler extends BaseFieldHandler
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
+        $data = $this->_getFieldValueFromData($field, $data);
         if (is_object($data)) {
             $result = $data->i18nFormat(static::TIME_FORMAT);
         } else {

@@ -2,6 +2,8 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\Core\App;
+use Cake\Network\Request;
+use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
@@ -225,6 +227,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
+        $data = $this->_getFieldValueFromData($field, $data);
         $fieldType = $options['fieldDefinitions']->getType();
 
         if (in_array($fieldType, array_keys($this->_fieldTypes))) {
@@ -265,7 +268,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $result = $data;
+        $result = $this->_getFieldValueFromData($field, $data);
 
         return $result;
     }
@@ -314,6 +317,39 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public function getSearchLabel($field)
     {
         return Inflector::humanize($field);
+    }
+
+    /**
+     * Get field value from given data
+     *
+     * Extract field value from the variable, based on the type
+     * of the variable.  Support types are:
+     *
+     * * Entity, use Entity property with the field name
+     * * Request, use Request->data() with the key of the field name
+     * * Otherwise assume the variable is the data already
+     *
+     * @param string $field Field name
+     * @param Entity|Request|mixed $var Variable to extract value from
+     * @return mixed
+     */
+    protected function _getFieldValueFromData($field, $data)
+    {
+        $result = $data;
+
+        if ($data instanceof Entity) {
+            $result = $data->foo;
+
+            return $result;
+        }
+
+        if ($data instanceof Request) {
+            $result = isset($data->data[$field]) ? $data->data[$field] : null;
+
+            return $result;
+        }
+
+        return $result;
     }
 
     /**

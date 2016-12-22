@@ -15,10 +15,6 @@ if (empty($options)) {
     $options = [];
 }
 $options = array_merge($defaultOptions, $options);
-// fields assets array
-$assets = [
-    'post'
-];
 
 // Get title from the entity
 if (empty($options['title'])) {
@@ -142,9 +138,6 @@ $formOptions['type'] = 'file';
                                     if (isset($input['embeddedForm'])) {
                                         $embeddedForms[] = $input['embeddedForm'];
                                     }
-                                    if (isset($input['post'])) {
-                                        $assets['post'][] = $input['post'];
-                                    }
                                 }
                                 echo '</div>';
                                 $embeddedDirty = false;
@@ -241,6 +234,4 @@ $formOptions['type'] = 'file';
  * - When there is file input
  * - load these files only if foreign/related field exists
  */
-echo $this->element('CsvMigrations.common_js_libs', [
-    'assets' => $assets
-]);
+echo $this->element('CsvMigrations.common_js_libs');

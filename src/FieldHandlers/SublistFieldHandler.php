@@ -36,59 +36,50 @@ class SublistFieldHandler extends ListFieldHandler
             $levels = $count;
         }
 
-        $inputOptions = [
+        // get selectors
+        $selectors = [];
+        for ($i = 0; $i <= $levels; $i++) {
+            $selectors[] = '[data-target="' . 'dynamic-select-' . $field . '_' . $i . '"]';
+        }
+
+        // default input options
+        $defaultOptions = [
             'type' => 'select',
             'required' => (bool)$options['fieldDefinitions']->getRequired()
         ];
 
-        $html = '';
-        $selectors = [];
+        // edit mode
+        if (!empty($data)) {
+            $data = explode('.', $data);
+            $count = count($data);
+        }
+
+        // get inputs
+        $inputs = [];
         for ($i = 0; $i <= $levels; $i++) {
-            $inputOptions['data-type'] = 'dynamic-select-' . $field . '_' . $i;
-            $selectors[] = '[data-type="' . $inputOptions['data-type'] . '"]';
-            $html .= $this->cakeView->Form->input(
+            $inputOptions = $defaultOptions;
+            $inputOptions['data-target'] = 'dynamic-select-' . $field . '_' . $i;
+            if (0 === $i) {
+                $inputOptions['data-type'] = 'dynamic-select';
+                $inputOptions['data-structure'] = json_encode($structure);
+                $inputOptions['data-option-values'] = json_encode(array_flip($optionValues));
+                $inputOptions['data-selectors'] = json_encode($selectors);
+                $inputOptions['data-hide-next'] = true;
+                $inputOptions['data-previous-default-value'] = true;
+            } else {
+                $inputOptions['label'] = false;
+            }
+            // edit mode
+            if (!empty($data) && ($i + 1) <= $count) {
+                $inputOptions['data-value'] = implode('.', array_slice($data, 0, $i + 1));
+            }
+            $inputs[] = $this->cakeView->Form->input(
                 $this->_getFieldName($table, $field, $options),
-                0 === $i ? $inputOptions : array_merge(['label' => false], $inputOptions)
+                $inputOptions
             );
         }
 
-        // edit mode
-        $defaultOptions = '';
-        if (!empty($data)) {
-            $parts = explode('.', $data);
-            $count = count($parts);
-            for ($i = 0; $i <= $levels; $i++) {
-                $length = $i + 1;
-                // stop when current level exceeds data parts
-                // example: level 3 and data is 'foo.bar' (parts is ['foo', 'bar'])
-                if ($length > $count) {
-                    break;
-                }
-                $defaultOptions .= sprintf(
-                    static::JS_SELECTORS,
-                    // selector id
-                    $selectors[$i],
-                    // target value based on current level
-                    // example: level 1 and data is 'foo.bar', then current value will be 'foo'
-                    implode('.', array_slice($parts, 0, $length))
-                );
-            }
-        }
-
-        return [
-            'html' => $html,
-            'post' => [
-                'type' => 'scriptBlock',
-                'content' => '$(document).dynamicSelect({
-                    structure: ' . json_encode($structure) . ',
-                    optionValues: ' . json_encode(array_flip($optionValues)) . ',
-                    selectors: ' . json_encode($selectors) . ',
-                    hideNext: true,
-                    previousDefaultValue: true
-                });' . $defaultOptions,
-                'block' => 'scriptBottom'
-            ]
-        ];
+        return implode('', $inputs);
     }
 
     /**

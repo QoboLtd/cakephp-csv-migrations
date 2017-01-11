@@ -330,7 +330,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * * Otherwise assume the variable is the data already
      *
      * @param string $field Field name
-     * @param Entity|Request|mixed $var Variable to extract value from
+     * @param Entity|Request|mixed $data Variable to extract value from
      * @return mixed
      */
     protected function _getFieldValueFromData($field, $data)

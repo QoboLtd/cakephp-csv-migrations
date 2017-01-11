@@ -9,7 +9,6 @@ use CsvMigrations\Events\IndexViewListener;
 use CsvMigrations\Events\LayoutListener;
 use CsvMigrations\Events\ModelAfterSaveListener;
 use CsvMigrations\Events\ReportListener;
-use CsvMigrations\Events\ViewMenuListener;
 use CsvMigrations\Events\ViewViewListener;
 use CsvMigrations\Events\ViewViewTabsListener;
 
@@ -40,7 +39,6 @@ EventManager::instance()->on(new AddViewListener());
 EventManager::instance()->on(new EditViewListener());
 EventManager::instance()->on(new IndexViewListener());
 EventManager::instance()->on(new LayoutListener());
-EventManager::instance()->on(new ViewMenuListener());
 EventManager::instance()->on(new ViewViewListener());
 EventManager::instance()->on(new ReportListener());
 EventManager::instance()->on(new ViewViewTabsListener());

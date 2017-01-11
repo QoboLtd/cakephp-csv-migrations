@@ -30,7 +30,7 @@ if (!empty($csvAssociatedRecords['manyToMany'])) {
 }
 ?>
 <?php if (!empty($panels)) : ?>
-<div class="row associated_records">
+<div class="row associated-records">
     <div class="col-xs-12">
         <hr />
         <ul id="relatedTabs" class="nav nav-tabs" role="tablist">

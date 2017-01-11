@@ -2,13 +2,19 @@
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Utility\Inflector;
-?>
 
-<?php
 // Setup Index View js logic
-echo $this->Html->css('CsvMigrations.datatables.min', ['block' => 'cssBottom']);
-echo $this->Html->script('CsvMigrations.datatables.min', ['block' => 'scriptBottom']);
-echo $this->Html->script('CsvMigrations.view-index', ['block' => 'scriptBottom']);
+echo $this->Html->css('AdminLTE./plugins/datatables/dataTables.bootstrap', ['block' => 'css']);
+echo $this->Html->script(
+    [
+        'AdminLTE./plugins/datatables/jquery.dataTables.min',
+        'AdminLTE./plugins/datatables/dataTables.bootstrap.min',
+        'CsvMigrations.view-index'
+    ],
+    [
+        'block' => 'scriptBotton'
+    ]
+);
 echo $this->Html->scriptBlock(
     'view_index.init({
         table_id: \'.table-datatable\',
@@ -23,11 +29,9 @@ echo $this->Html->scriptBlock(
         menus: true,
         format: \'datatables\'
     });',
-    ['block' => 'scriptBottom']
+    ['block' => 'scriptBotton']
 );
-?>
 
-<?php
 $defaultOptions = [
     'title' => null,
     'fields' => [],
@@ -42,31 +46,15 @@ if (empty($options['title'])) {
     $options['title'] = Inflector::humanize(Inflector::underscore($moduleAlias));
 }
 ?>
-
-<div class="row">
-    <div class="col-xs-6">
-        <h3><strong><?= $options['title'] ?></strong></h3>
-    </div>
-    <div class="col-xs-6">
-        <div class="h3 text-right">
-            <?php
-                $event = new Event('View.Index.Menu.Top', $this, [
-                    'request' => $this->request,
-                    'options' => $options
-                ]);
-                $this->eventManager()->dispatch($event);
-                if (!empty($event->result)) {
-                    echo $event->result;
-                }
-            ?>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-xs-12">
-        <div class="table-responsive">
-            <table class="table table-hover table-datatable">
+<section class="content-header">
+    <h1><?= $options['title'] ?>
+        <small><?= $this->element('CsvMigrations.Menu/index_top', ['user' => $user]) ?></small>
+    </h1>
+</section>
+<section class="content">
+    <div class="box">
+        <div class="box-body table-responsive">
+            <table class="table table-hover table-condensed table-vertical-align table-datatable">
                 <thead>
                     <tr>
                     <?php foreach ($options['fields'] as $field) : ?>
@@ -78,4 +66,4 @@ if (empty($options['title'])) {
             </table>
         </div>
     </div>
-</div>
+</section>

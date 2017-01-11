@@ -90,22 +90,20 @@ if (empty($options['title'])) {
             <div class="box-body">
             <?php foreach ($panelFields as $subFields) : ?>
                 <div class="row">
-                <?php
-                foreach ($subFields as $field) :
-                    if ('' !== trim($field['name']) && !$embeddedDirty) :
+                <?php foreach ($subFields as $field) : ?>
+                    <?php if ('' !== trim($field['name']) && !$embeddedDirty) : ?>
+                        <?php
                         // embedded field
                         if ('EMBEDDED' === $field['name']) {
                             $embeddedDirty = true;
                         }
-
-                        // non-embedded field
-                        if (!$embeddedDirty) :
-                ?>
-                        <div class="col-xs-4 col-md-2 text-right">
-                            <strong><?= Inflector::humanize($field['name']) ?>:</strong>
-                        </div>
-                        <div class="col-xs-8 col-md-4">
-                        <?php
+                        ?>
+                        <?php if (!$embeddedDirty) : // non-embedded field ?>
+                            <div class="col-xs-4 col-md-2 text-right">
+                                <strong><?= Inflector::humanize($field['name']) ?>:</strong>
+                            </div>
+                            <div class="col-xs-8 col-md-4">
+                            <?php
                             $tableName = $field['model'];
                             if (!is_null($field['plugin'])) {
                                 $tableName = $field['plugin'] . '.' . $tableName;
@@ -123,27 +121,19 @@ if (empty($options['title'])) {
                             echo $value;
                             echo empty($value) ? '&nbsp;' : '';
                             ?>
-                        </div>
-                    <?php
-                        endif;
-?>
-<?php
-                    elseif ('' !== trim($field['name'])) :
+                            </div>
+                        <?php endif; ?>
+                        <?php elseif ('' !== trim($field['name'])) : ?>
+                            <?php
                             $embeddedFields[] = $field['name'];
                             $embeddedDirty = false;
-                    ?>
-                    <?php
-                    else :
-?>
-                        <div class="col-xs-4 col-md-2 text-right">&nbsp;</div>
-                        <div class="col-xs-8 col-md-4">&nbsp;</div>
-                    <?php
-                    endif;
-?>
+                            ?>
+                        <?php else : ?>
+                            <div class="col-xs-4 col-md-2 text-right">&nbsp;</div>
+                            <div class="col-xs-8 col-md-4">&nbsp;</div>
+                    <?php endif; ?>
                     <div class="clearfix visible-xs visible-sm"></div>
-                <?php
-                endforeach;
-?>
+                <?php endforeach; ?>
                 </div>
             <?php endforeach; ?>
             </div>

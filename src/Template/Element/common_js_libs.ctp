@@ -3,10 +3,24 @@ use Cake\Core\Configure;
 use Cake\Utility\Inflector;
 
 //@TODO: merge the stuff in one scriptBlock, not dozens;
-echo $this->Html->css('CsvMigrations.select2.min', ['block' => 'cssBottom']);
-echo $this->Html->css('CsvMigrations.select2-bootstrap.min', ['block' => 'cssBottom']);
-echo $this->Html->script('CsvMigrations.select2.full.min', ['block' => 'scriptBottom']);
-echo $this->Html->script('CsvMigrations.select2', ['block' => 'scriptBottom']);
+echo $this->Html->css(
+    [
+        'AdminLTE./plugins/select2/select2.min',
+        'CsvMigrations.select2-bootstrap.min'
+    ],
+    [
+        'block' => 'css'
+    ]
+);
+echo $this->Html->script(
+    [
+        'AdminLTE./plugins/select2/select2.full.min',
+        'CsvMigrations.select2'
+    ],
+    [
+        'block' => 'scriptBotton'
+    ]
+);
 echo $this->Html->scriptBlock(
     'csv_migrations_select2.setup(' . json_encode(
         array_merge(
@@ -14,24 +28,32 @@ echo $this->Html->scriptBlock(
             Configure::read('CsvMigrations.api')
         )
     ) . ');',
-    ['block' => 'scriptBottom']
+    ['block' => 'scriptBotton']
 );
 
 echo $this->Html->scriptBlock(
     'api_options = ' . json_encode(Configure::read('CsvMigrations.api')) . ';',
-    ['block' => 'scriptBottom']
+    ['block' => 'scriptBotton']
 );
 
 
 $fileInputOptions = Configure::read('CsvMigrations.BootstrapFileInput');
 echo $this->Html->scriptBlock(
     'fileInputOptions = ' . json_encode($fileInputOptions) . ';',
-    ['block' => 'scriptBottom']
+    ['block' => 'scriptBotton']
 );
-echo $this->Html->script('CsvMigrations.embedded', ['block' => 'scriptBottom']);
-echo $this->Html->script('CsvMigrations.panels', ['block' => 'scriptBottom']);
-echo $this->Html->script('CsvMigrations.canvas-to-blob.min', ['block' => 'scriptBottom']);
-echo $this->Html->script('CsvMigrations.fileinput.min', ['block' => 'scriptBottom']);
-echo $this->Html->script('CsvMigrations.fileinput-load', ['block' => 'scriptBottom']);
-echo $this->Html->script('CsvMigrations.jquery.dynamicSelect', ['block' => 'scriptBottom']);
-echo $this->Html->script('CsvMigrations.jquery.dynamicSelectInit', ['block' => 'scriptBottom']);
+
+echo $this->Html->script(
+    [
+        'CsvMigrations.embedded',
+        'CsvMigrations.panels',
+        'CsvMigrations.canvas-to-blob.min',
+        'CsvMigrations.fileinput.min',
+        'CsvMigrations.fileinput-load',
+        'CsvMigrations.jquery.dynamicSelect',
+        'CsvMigrations.jquery.dynamicSelectInit'
+    ],
+    [
+        'block' => 'scriptBotton'
+    ]
+);

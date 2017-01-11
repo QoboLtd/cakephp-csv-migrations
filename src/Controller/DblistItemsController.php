@@ -41,11 +41,11 @@ class DblistItemsController extends BaseController
         if ($this->request->is('post')) {
             $dblistItem = $this->DblistItems->patchEntity($dblistItem, $this->request->data);
             if ($this->DblistItems->save($dblistItem)) {
-                $this->Flash->success(__d('CsvMigrations', 'The dblist item has been saved.'));
+                $this->Flash->success(__d('CsvMigrations', 'The Database list item has been saved.'));
 
                 return $this->redirect(['action' => 'index', $listId]);
             } else {
-                $this->Flash->error(__d('CsvMigrations', 'The dblist item could not be saved. Please, try again.'));
+                $this->Flash->error(__d('CsvMigrations', 'The Database list item could not be saved. Please, try again.'));
             }
         }
         $list = $this->DblistItems->Dblists->get($listId);
@@ -68,11 +68,11 @@ class DblistItemsController extends BaseController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $dblistItem = $this->DblistItems->patchEntity($dblistItem, $this->request->data);
             if ($this->DblistItems->save($dblistItem)) {
-                $this->Flash->success(__('The dblist item has been saved.'));
+                $this->Flash->success(__('The Database list item has been saved.'));
 
                 return $this->redirect(['action' => 'index', $dblistItem->get('dblist_id')]);
             } else {
-                $this->Flash->error(__('The dblist item could not be saved. Please, try again.'));
+                $this->Flash->error(__('The Database list item could not be saved. Please, try again.'));
             }
         }
         $list = $this->DblistItems->Dblists->get($dblistItem->get('dblist_id'));
@@ -95,9 +95,9 @@ class DblistItemsController extends BaseController
         $this->request->allowMethod(['post', 'delete']);
         $dblistItem = $this->DblistItems->get($id);
         if ($this->DblistItems->delete($dblistItem)) {
-            $this->Flash->success(__('The dblist item has been deleted.'));
+            $this->Flash->success(__('The Database list item has been deleted.'));
         } else {
-            $this->Flash->error(__('The dblist item could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The Database list item could not be deleted. Please, try again.'));
         }
 
         return $this->redirect($this->referer());

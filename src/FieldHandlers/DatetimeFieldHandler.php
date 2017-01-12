@@ -43,10 +43,6 @@ class DatetimeFieldHandler extends BaseFieldHandler
         }
         $fieldName = $this->_getFieldName($table, $field, $options);
 
-        if (!isset($options['element']) && $this->cakeView->elementExists('QoboAdminPanel.datepicker')) {
-            $options['element'] = 'QoboAdminPanel.datepicker';
-        }
-
         if (isset($options['element'])) {
             return $this->cakeView->element($options['element'], [
                 'options' => [
@@ -59,7 +55,9 @@ class DatetimeFieldHandler extends BaseFieldHandler
             ]);
         } else {
             return $this->cakeView->Form->input($fieldName, [
-                'type' => 'datetime',
+                'type' => 'text',
+                'data-provide' => 'daterangepicker',
+                'autocomplete' => 'off',
                 'required' => $required,
                 'value' => $data
             ]);

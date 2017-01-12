@@ -22,6 +22,11 @@ class DateFieldHandler extends BaseFieldHandler
     const DATE_FORMAT = 'yyyy-MM-dd';
 
     /**
+     * Javascript date format
+     */
+    const JS_DATE_FORMAT = 'yyyy-mm-dd';
+
+    /**
      * Method responsible for rendering field's input.
      *
      * @param  mixed  $table   name or instance of the Table
@@ -43,10 +48,6 @@ class DateFieldHandler extends BaseFieldHandler
         }
         $fieldName = $this->_getFieldName($table, $field, $options);
 
-        if (!isset($options['element']) && $this->cakeView->elementExists('QoboAdminPanel.datepicker')) {
-            $options['element'] = 'QoboAdminPanel.datepicker';
-        }
-
         if (isset($options['element'])) {
             return $this->cakeView->element($options['element'], [
                 'options' => [
@@ -59,7 +60,11 @@ class DateFieldHandler extends BaseFieldHandler
             ]);
         } else {
             return $this->cakeView->Form->input($fieldName, [
-                'type' => 'date',
+                'type' => 'text',
+                'data-provide' => 'datepicker',
+                'autocomplete' => 'off',
+                'data-date-format' => static::JS_DATE_FORMAT,
+                'data-date-autoclose' => true,
                 'required' => $required,
                 'value' => $data
             ]);

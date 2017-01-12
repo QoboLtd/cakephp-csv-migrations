@@ -120,7 +120,7 @@ class RelatedFieldHandler extends BaseFieldHandler
         $input = sprintf(
             static::HTML_INPUT_WRAPPER,
             (bool)$options['fieldDefinitions']->getRequired() ? ' required' : '',
-            $this->cakeView->Form->label($field),
+            $this->cakeView->Form->label($field, null, ['class' => 'control-label']),
             $input
         );
 

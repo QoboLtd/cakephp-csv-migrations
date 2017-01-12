@@ -25,7 +25,7 @@
     Panel.prototype.isEligible = function () {
         var $form = this.form;
 
-        return $form.has('.panel').length ? true : false;
+        return $form.has('[data-provide="dynamic-panel"]').length ? true : false;
     };
 
     Panel.prototype.buildData = function () {
@@ -50,9 +50,9 @@
 
         panels.forEach(function (cur) {
             var current = cur;
-            var $panel = $form.find('.panel');
+            var $panel = $form.find('[data-provide="dynamic-panel"]');
             $panel.each(function () {
-                var title = $(this).find('.panel-title').text();
+                var title = $(this).find('[data-title="dynamic-panel-title"]').text();
                 if (current === title) {
                     if (!$(this).hasClass('hidden')) {
                         $(this).addClass('hidden');
@@ -64,8 +64,8 @@
     };
 
     Panel.prototype.resetPanels = function () {
-        $('.panel.hidden').find(':input').attr('disabled', false);
-        $('.panel').removeClass('hidden');
+        $('[data-provide="dynamic-panel"].hidden').find(':input').attr('disabled', false);
+        $('[data-provide="dynamic-panel"]').removeClass('hidden');
     };
 
     Panel.prototype.observe = function () {

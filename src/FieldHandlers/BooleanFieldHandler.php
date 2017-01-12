@@ -11,11 +11,6 @@ class BooleanFieldHandler extends BaseFieldHandler
     const DB_FIELD_TYPE = 'boolean';
 
     /**
-     * Input field type
-     */
-    const INPUT_FIELD_TYPE = 'checkbox';
-
-    /**
      * Method responsible for rendering field's input.
      *
      * @param  mixed  $table   name or instance of the Table
@@ -28,11 +23,14 @@ class BooleanFieldHandler extends BaseFieldHandler
     {
         $data = $this->_getFieldValueFromData($field, $data);
 
-        return $this->cakeView->Form->input($this->_getFieldName($table, $field, $options), [
-            'type' => static::INPUT_FIELD_TYPE,
+        $label = $this->cakeView->Form->label($this->_getFieldName($table, $field, $options));
+        $input = $this->cakeView->Form->checkbox($this->_getFieldName($table, $field, $options), [
+            'class' => 'square',
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'checked' => $data
         ]);
+
+        return $input . ' ' . $label;
     }
 
     /**

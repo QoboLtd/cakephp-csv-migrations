@@ -97,10 +97,6 @@ class DateFieldHandler extends BaseFieldHandler
      */
     public function renderSearchInput($table, $field, array $options = [])
     {
-        if (!isset($options['element']) && $this->cakeView->elementExists('QoboAdminPanel.datepicker')) {
-            $options['element'] = 'QoboAdminPanel.datepicker';
-        }
-
         if (isset($options['element'])) {
             $content = $this->cakeView->element($options['element'], [
                 'options' => [
@@ -113,13 +109,29 @@ class DateFieldHandler extends BaseFieldHandler
         } else {
             $content = $this->cakeView->Form->input('{{name}}', [
                 'value' => '{{value}}',
-                'type' => static::DB_FIELD_TYPE,
+                'type' => 'text',
+                'data-provide' => 'datepicker',
+                'autocomplete' => 'off',
+                'data-date-format' => static::JS_DATE_FORMAT,
+                'data-date-autoclose' => true,
                 'label' => false
             ]);
         }
 
         return [
-            'content' => $content
+            'content' => $content,
+            'post' => [
+                [
+                    'type' => 'script',
+                    'content' => 'AdminLTE./plugins/datepicker/bootstrap-datepicker',
+                    'block' => 'scriptBotton'
+                ],
+                [
+                    'type' => 'css',
+                    'content' => 'AdminLTE./plugins/datepicker/datepicker3',
+                    'block' => 'css'
+                ]
+            ]
         ];
     }
 }

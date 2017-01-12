@@ -220,13 +220,11 @@ class RelatedFieldHandler extends BaseFieldHandler
             'post' => [
                 [
                     'type' => 'script',
-                    'content' => 'CsvMigrations.select2.full.min',
-                    'block' => 'scriptBottom'
-                ],
-                [
-                    'type' => 'script',
-                    'content' => 'CsvMigrations.select2',
-                    'block' => 'scriptBottom'
+                    'content' => [
+                        'AdminLTE./plugins/select2/select2.full.min',
+                        'CsvMigrations.select2'
+                    ],
+                    'block' => 'scriptBotton'
                 ],
                 [
                     'type' => 'scriptBlock',
@@ -236,18 +234,16 @@ class RelatedFieldHandler extends BaseFieldHandler
                             Configure::read('CsvMigrations.api')
                         )
                     ) . ');',
-                    'block' => 'scriptBottom'
+                    'block' => 'scriptBotton'
                 ],
                 [
                     'type' => 'css',
-                    'content' => 'CsvMigrations.select2.min',
-                    'block' => 'cssBottom'
-                ],
-                [
-                    'type' => 'css',
-                    'content' => 'CsvMigrations.select2-bootstrap.min',
-                    'block' => 'cssBottom'
-                ],
+                    'content' => [
+                        'AdminLTE./plugins/select2/select2.min',
+                        'CsvMigrations.select2-bootstrap.min'
+                    ],
+                    'block' => 'css'
+                ]
             ]
         ];
     }

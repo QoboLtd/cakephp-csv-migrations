@@ -90,10 +90,6 @@ class TimeFieldHandler extends BaseFieldHandler
      */
     public function renderSearchInput($table, $field, array $options = [])
     {
-        if (!isset($options['element']) && $this->cakeView->elementExists('QoboAdminPanel.datepicker')) {
-            $options['element'] = 'QoboAdminPanel.datepicker';
-        }
-
         if (isset($options['element'])) {
             $content = $this->cakeView->element($options['element'], [
                 'options' => [
@@ -105,14 +101,38 @@ class TimeFieldHandler extends BaseFieldHandler
             ]);
         } else {
             $content = $this->cakeView->Form->input('', [
+                'name' => '{{name}}',
                 'value' => '{{value}}',
-                'type' => static::DB_FIELD_TYPE,
+                'type' => 'text',
+                'data-provide' => 'timepicker',
+                'autocomplete' => 'off',
                 'label' => false
             ]);
         }
 
         return [
-            'content' => $content
+            'content' => $content,
+            'post' => [
+                [
+                    'type' => 'script',
+                    'content' => 'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
+                    'block' => 'scriptBotton'
+                ],
+                [
+                    'type' => 'scriptBlock',
+                    'content' => '$(\'[data-provide="timepicker"]\').timepicker({
+                        template: false,
+                        showMeridian: false,
+                        minuteStep: 5
+                    });',
+                    'block' => 'scriptBotton'
+                ],
+                [
+                    'type' => 'css',
+                    'content' => 'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
+                    'block' => 'css'
+                ]
+            ]
         ];
     }
 }

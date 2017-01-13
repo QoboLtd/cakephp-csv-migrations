@@ -44,6 +44,7 @@ echo $this->Html->script(
         'CsvMigrations.icheck.init',
         'AdminLTE./plugins/daterangepicker/moment.min',
         'AdminLTE./plugins/daterangepicker/daterangepicker',
+        'CsvMigrations.datetimepicker.init',
         'AdminLTE./plugins/datepicker/bootstrap-datepicker',
         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
         'CsvMigrations.timepicker.init',
@@ -62,19 +63,5 @@ echo $this->Html->scriptBlock(
             Configure::read('CsvMigrations.api')
         )
     ) . ');',
-    ['block' => 'scriptBotton']
-);
-
-// date range picker (used for datetime pickers)
-echo $this->Html->scriptBlock(
-    '$(\'[data-provide="daterangepicker"]\').daterangepicker({
-        singleDatePicker: true,
-        showDropdowns: true,
-        timePicker: true,
-        drops: "up",
-        timePicker12Hour: false,
-        timePickerIncrement: 5,
-        format: "YYYY-MM-DD HH:mm"
-    });',
     ['block' => 'scriptBotton']
 );

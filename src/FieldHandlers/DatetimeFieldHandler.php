@@ -130,21 +130,9 @@ class DatetimeFieldHandler extends BaseFieldHandler
                     'content' => [
                         'CsvMigrations.dom-observer',
                         'AdminLTE./plugins/daterangepicker/moment.min',
-                        'AdminLTE./plugins/daterangepicker/daterangepicker'
+                        'AdminLTE./plugins/daterangepicker/daterangepicker',
+                        'CsvMigrations.datetimepicker.init'
                     ],
-                    'block' => 'scriptBotton'
-                ],
-                [
-                    'type' => 'scriptBlock',
-                    'content' => '$(\'[data-provide="daterangepicker"]\').daterangepicker({
-                        singleDatePicker: true,
-                        showDropdowns: true,
-                        timePicker: true,
-                        drops: "up",
-                        timePicker12Hour: false,
-                        timePickerIncrement: 5,
-                        format: "YYYY-MM-DD HH:mm"
-                    });',
                     'block' => 'scriptBotton'
                 ],
                 [

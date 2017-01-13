@@ -93,7 +93,6 @@ echo $this->Html->scriptBlock(
 // time picker
 echo $this->Html->scriptBlock(
     '$(\'[data-provide="timepicker"]\').timepicker({
-        template: false,
         showMeridian: false,
         minuteStep: 5
     });',

@@ -52,7 +52,7 @@ class RelatedFieldHandler extends BaseFieldHandler
     const HTML_EMBEDDED_BTN = '
         <div class="input-group-btn">
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#%s_modal">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                <i class="fa fa-plus" aria-hidden="true"></i>
             </button>
         </div>';
 

@@ -28,10 +28,10 @@ class HasManyFieldHandler extends RelatedFieldHandler
     const HTML_EMBEDDED_BTN = '
         <div class="input-group-btn">
             <button class="btn btn-primary" title="Link record" type="submit">
-                <span class="fa fa-link" aria-hidden="true"></span>
+                <i class="fa fa-link" aria-hidden="true"></i>
             </button>
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#%s_modal">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                <i class="fa fa-plus" aria-hidden="true"></i>
             </button>
         </div>';
 

@@ -61,7 +61,10 @@ class DatetimeFieldHandler extends BaseFieldHandler
                 'required' => $required,
                 'value' => $data,
                 'templates' => [
-                    'input' => sprintf($this->_templates['input'], 'calendar')
+                    'input' => vsprintf($this->_templates['input'], [
+                        '',
+                        'calendar'
+                    ])
                 ]
             ]);
         }
@@ -111,7 +114,10 @@ class DatetimeFieldHandler extends BaseFieldHandler
                 'autocomplete' => 'off',
                 'label' => false,
                 'templates' => [
-                    'input' => sprintf($this->_templates['input'], 'calendar')
+                    'input' => vsprintf($this->_templates['input'], [
+                        '',
+                        'calendar'
+                    ])
                 ]
             ]);
         }

@@ -62,7 +62,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * @var input
      */
     protected $_templates = [
-        'input' => '<div class="input-group">
+        'input' => '<div class="input-group %s">
             <div class="input-group-addon">
                 <i class="fa fa-%s"></i>
             </div>
@@ -263,7 +263,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         $templates = [];
         if (array_key_exists($fieldType, $this->_fieldIcons)) {
-            $templates['input'] = sprintf($this->_templates['input'], $this->_fieldIcons[$fieldType]);
+            $templates['input'] = vsprintf($this->_templates['input'], [
+                '',
+                $this->_fieldIcons[$fieldType]
+            ]);
         }
 
         return $this->cakeView->Form->input($this->_getFieldName($table, $field, $options), [
@@ -287,7 +290,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         $templates = [];
         if (array_key_exists($fieldType, $this->_fieldIcons)) {
-            $templates['input'] = sprintf($this->_templates['input'], $this->_fieldIcons[$fieldType]);
+            $templates['input'] = vsprintf($this->_templates['input'], [
+                '',
+                $this->_fieldIcons[$fieldType]
+            ]);
         }
 
         $content = $this->cakeView->Form->input('{{name}}', [

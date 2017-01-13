@@ -54,7 +54,10 @@ class DecimalFieldHandler extends BaseFieldHandler
             'max' => $this->_getNumberMax($table, $field),
             'label' => false,
             'templates' => [
-                'input' => sprintf($this->_templates['input'], 'calculator')
+                'input' => vsprintf($this->_templates['input'], [
+                    '',
+                    'calculator'
+                ])
             ]
         ]);
 
@@ -80,7 +83,10 @@ class DecimalFieldHandler extends BaseFieldHandler
             'max' => $this->_getNumberMax($table, $field),
             'label' => false,
             'templates' => [
-                'input' => sprintf($this->_templates['input'], 'calculator')
+                'input' => vsprintf($this->_templates['input'], [
+                    '',
+                    'calculator'
+                ])
             ]
         ]);
 

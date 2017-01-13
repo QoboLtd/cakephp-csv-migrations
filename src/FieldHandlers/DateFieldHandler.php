@@ -68,7 +68,10 @@ class DateFieldHandler extends BaseFieldHandler
                 'required' => $required,
                 'value' => $data,
                 'templates' => [
-                    'input' => sprintf($this->_templates['input'], 'calendar')
+                    'input' => vsprintf($this->_templates['input'], [
+                        '',
+                        'calendar'
+                    ])
                 ]
             ]);
         }
@@ -119,7 +122,10 @@ class DateFieldHandler extends BaseFieldHandler
                 'data-date-autoclose' => true,
                 'label' => false,
                 'templates' => [
-                    'input' => sprintf($this->_templates['input'], 'calendar')
+                    'input' => vsprintf($this->_templates['input'], [
+                        '',
+                        'calendar'
+                    ])
                 ]
             ]);
         }

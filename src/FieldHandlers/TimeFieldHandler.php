@@ -61,7 +61,10 @@ class TimeFieldHandler extends BaseFieldHandler
                 'required' => $required,
                 'value' => $data,
                 'templates' => [
-                    'input' => sprintf($this->_templates['input'], 'clock-o')
+                    'input' => vsprintf($this->_templates['input'], [
+                        'bootstrap-timepicker timepicker',
+                        'clock-o'
+                    ])
                 ]
             ]);
         }
@@ -113,7 +116,10 @@ class TimeFieldHandler extends BaseFieldHandler
                 'autocomplete' => 'off',
                 'label' => false,
                 'templates' => [
-                    'input' => sprintf($this->_templates['input'], 'clock-o')
+                    'input' => vsprintf($this->_templates['input'], [
+                        'bootstrap-timepicker timepicker',
+                        'clock-o'
+                    ])
                 ]
             ]);
         }

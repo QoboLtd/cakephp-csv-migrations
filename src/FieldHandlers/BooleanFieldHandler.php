@@ -23,14 +23,20 @@ class BooleanFieldHandler extends BaseFieldHandler
     {
         $data = $this->_getFieldValueFromData($field, $data);
 
-        $label = $this->cakeView->Form->label($this->_getFieldName($table, $field, $options));
-        $input = $this->cakeView->Form->checkbox($this->_getFieldName($table, $field, $options), [
+        $fieldName = $this->_getFieldName($table, $field, $options);
+        $label = $this->cakeView->Form->label($fieldName);
+        $input = $this->cakeView->Form->input($fieldName, [
+            'type' => 'checkbox',
             'class' => 'square',
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
-            'checked' => $data
+            'checked' => $data,
+            'label' => false,
+            'templates' => [
+                'inputContainer' => '<div class="{{required}}">' . $label . '<div class="clearfix"></div>{{content}}</div>'
+            ]
         ]);
 
-        return $input . ' ' . $label;
+        return $input;
     }
 
     /**

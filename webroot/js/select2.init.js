@@ -27,13 +27,10 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
             that.init(this);
         });
 
-        // call observe method
-        // this._observe();
         // Observe document for added select2(s)
         dom_observer.added(document, function(nodes) {
             $(nodes).each(function () {
                 $(this).find(that.id).each(function () {
-                    console.log('init');
                     that.init(this);
                 });
             });
@@ -53,58 +50,6 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
 
         // enable select2 functionality
         this._enable(element);
-    };
-
-    /**
-     * Observe for select2 inputs added to the DOM client side.
-     *
-     * @return {undefined}
-     */
-    Select2.prototype._observe = function () {
-        var that = this;
-
-        MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
-        // observe for client side appended select2 elements
-        var observer = new MutationObserver(function (mutations, observer) {
-            // look through all mutations that just occured
-            mutationsLength = mutations.length;
-            for (var i = 0; i < mutationsLength; ++i) {
-                // look through all added nodes of this mutation
-                mutationNodesLength = mutations[i].addedNodes.length;
-                for (var j = 0; j < mutationNodesLength; ++j) {
-                    // look for select2 elements
-                    var select2 = that._getSelect2(mutations[i].addedNodes[j]);
-                    if ($.isEmptyObject(select2)) {
-                        continue;
-                    }
-
-                    that.init(select2);
-                }
-            }
-        });
-
-        // define what element should be observed by the observer
-        // and what types of mutations trigger the callback
-        observer.observe(document, {
-            childList: true,
-            subtree: true
-        });
-    };
-
-    /**
-     * Find out if added node is a select2 element
-     * and return it if it is, otherwise return empty object.
-     *
-     * @param  {object} node Added DOM node
-     * @return {object}
-     */
-    Select2.prototype._getSelect2 = function (node) {
-        var result = {};
-        $(node).find(this.id).each(function () {
-            result = this;
-        });
-
-        return result;
     };
 
     /**

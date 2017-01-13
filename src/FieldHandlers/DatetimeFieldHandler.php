@@ -56,7 +56,7 @@ class DatetimeFieldHandler extends BaseFieldHandler
         } else {
             return $this->cakeView->Form->input($fieldName, [
                 'type' => 'text',
-                'data-provide' => 'daterangepicker',
+                'data-provide' => 'datetimepicker',
                 'autocomplete' => 'off',
                 'required' => $required,
                 'value' => $data,
@@ -110,7 +110,7 @@ class DatetimeFieldHandler extends BaseFieldHandler
                 'name' => '{{name}}',
                 'value' => '{{value}}',
                 'type' => 'text',
-                'data-provide' => 'daterangepicker',
+                'data-provide' => 'datetimepicker',
                 'autocomplete' => 'off',
                 'label' => false,
                 'templates' => [

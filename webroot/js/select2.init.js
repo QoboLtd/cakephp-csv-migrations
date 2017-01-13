@@ -28,7 +28,16 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
         });
 
         // call observe method
-        this._observe();
+        // this._observe();
+        // Observe document for added select2(s)
+        dom_observer.added(document, function(nodes) {
+            $(nodes).each(function () {
+                $(this).find(that.id).each(function () {
+                    console.log('init');
+                    that.init(this);
+                });
+            });
+        });
     };
 
     /**

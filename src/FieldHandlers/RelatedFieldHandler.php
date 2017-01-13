@@ -223,7 +223,7 @@ class RelatedFieldHandler extends BaseFieldHandler
                     'content' => [
                         'CsvMigrations.dom-observer',
                         'AdminLTE./plugins/select2/select2.full.min',
-                        'CsvMigrations.select2'
+                        'CsvMigrations.select2.init'
                     ],
                     'block' => 'scriptBotton'
                 ],

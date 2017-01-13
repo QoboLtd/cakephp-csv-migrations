@@ -46,7 +46,7 @@ echo $this->Html->script(
         'AdminLTE./plugins/datepicker/bootstrap-datepicker',
         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
         'AdminLTE./plugins/select2/select2.full.min',
-        'CsvMigrations.select2'
+        'CsvMigrations.select2.init'
     ],
     [
         'block' => 'scriptBotton'

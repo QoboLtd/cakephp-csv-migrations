@@ -128,6 +128,7 @@ class DatetimeFieldHandler extends BaseFieldHandler
                 [
                     'type' => 'script',
                     'content' => [
+                        'CsvMigrations.dom-observer',
                         'AdminLTE./plugins/daterangepicker/moment.min',
                         'AdminLTE./plugins/daterangepicker/daterangepicker'
                     ],

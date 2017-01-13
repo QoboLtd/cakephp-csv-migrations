@@ -31,6 +31,7 @@ echo $this->Html->scriptBlock(
 
 echo $this->Html->script(
     [
+        'CsvMigrations.dom-observer',
         'CsvMigrations.embedded',
         'CsvMigrations.panels',
         'CsvMigrations.canvas-to-blob.min',

@@ -129,7 +129,6 @@ class TimeFieldHandler extends BaseFieldHandler
             'post' => [
                 [
                     'type' => 'script',
-                    'content' => 'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
                     'block' => 'scriptBotton'
                 ],
                 [
@@ -139,6 +138,10 @@ class TimeFieldHandler extends BaseFieldHandler
                         showMeridian: false,
                         minuteStep: 5
                     });',
+                    'content' => [
+                        'CsvMigrations.dom-observer',
+                        'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
+                    ],
                     'block' => 'scriptBotton'
                 ],
                 [

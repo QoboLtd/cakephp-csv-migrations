@@ -129,18 +129,10 @@ class TimeFieldHandler extends BaseFieldHandler
             'post' => [
                 [
                     'type' => 'script',
-                    'block' => 'scriptBotton'
-                ],
-                [
-                    'type' => 'scriptBlock',
-                    'content' => '$(\'[data-provide="timepicker"]\').timepicker({
-                        template: false,
-                        showMeridian: false,
-                        minuteStep: 5
-                    });',
                     'content' => [
                         'CsvMigrations.dom-observer',
                         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
+                        'CsvMigrations.timepicker.init'
                     ],
                     'block' => 'scriptBotton'
                 ],

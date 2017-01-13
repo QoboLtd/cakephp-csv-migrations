@@ -45,6 +45,7 @@ echo $this->Html->script(
         'AdminLTE./plugins/daterangepicker/daterangepicker',
         'AdminLTE./plugins/datepicker/bootstrap-datepicker',
         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
+        'CsvMigrations.timepicker.init',
         'AdminLTE./plugins/select2/select2.full.min',
         'CsvMigrations.select2.init'
     ],
@@ -88,15 +89,6 @@ echo $this->Html->scriptBlock(
     $(\'input[type="checkbox"].square, input[type="radio"].square\').iCheck({
         checkboxClass: \'icheckbox_square\',
         radioClass: \'iradio_square\'
-    });',
-    ['block' => 'scriptBotton']
-);
-
-// time picker
-echo $this->Html->scriptBlock(
-    '$(\'[data-provide="timepicker"]\').timepicker({
-        showMeridian: false,
-        minuteStep: 5
     });',
     ['block' => 'scriptBotton']
 );

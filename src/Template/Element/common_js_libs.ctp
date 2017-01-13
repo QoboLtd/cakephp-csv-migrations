@@ -41,6 +41,7 @@ echo $this->Html->script(
         'CsvMigrations.jquery.dynamicSelectInit',
         'CsvMigrations.jquery.dynamicSelectInit',
         'AdminLTE./plugins/iCheck/icheck.min',
+        'CsvMigrations.icheck.init',
         'AdminLTE./plugins/daterangepicker/moment.min',
         'AdminLTE./plugins/daterangepicker/daterangepicker',
         'AdminLTE./plugins/datepicker/bootstrap-datepicker',
@@ -61,35 +62,6 @@ echo $this->Html->scriptBlock(
             Configure::read('CsvMigrations.api')
         )
     ) . ');',
-    ['block' => 'scriptBotton']
-);
-
-// iCheck for checkbox and radio inputs
-echo $this->Html->scriptBlock(
-    '$(\'input[type="checkbox"].flat, input[type="radio"].flat\').iCheck({
-        checkboxClass: \'icheckbox_flat\',
-        radioClass: \'iradio_flat\'
-    });
-    $(\'input[type="checkbox"].futurico, input[type="radio"].futurico\').iCheck({
-        checkboxClass: \'icheckbox_futurico\',
-        radioClass: \'iradio_futurico\'
-    });
-    $(\'input[type="checkbox"].line, input[type="radio"].line\').iCheck({
-        checkboxClass: \'icheckbox_line\',
-        radioClass: \'iradio_line\'
-    });
-    $(\'input[type="checkbox"].minimal, input[type="radio"].minimal\').iCheck({
-        checkboxClass: \'icheckbox_minimal-blue\',
-        radioClass: \'iradio_minimal-blue\'
-    });
-    $(\'input[type="checkbox"].polaris, input[type="radio"].polaris\').iCheck({
-        checkboxClass: \'icheckbox_polaris\',
-        radioClass: \'iradio_polaris\'
-    });
-    $(\'input[type="checkbox"].square, input[type="radio"].square\').iCheck({
-        checkboxClass: \'icheckbox_square\',
-        radioClass: \'iradio_square\'
-    });',
     ['block' => 'scriptBotton']
 );
 

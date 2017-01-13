@@ -42,7 +42,7 @@ class RelatedFieldHandler extends BaseFieldHandler
      * Html input markup
      */
     const HTML_INPUT = '
-        <div class="input-group">
+        <div class="input-group select2-bootstrap-prepend select2-bootstrap-append">
             <span class="input-group-addon" title="%s"><span class="fa fa-%s"></span></span>%s
         </div>';
 

@@ -44,6 +44,33 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     ];
 
     /**
+     * Field icons by field type.
+     *
+     * @var array
+     */
+    protected $_fieldIcons = [
+        'text' => 'keyboard-o',
+        'email' => 'envelope',
+        'tel' => 'phone',
+        'url' => 'chrome',
+        'number' => 'calculator'
+    ];
+
+    /**
+     * Custom form templates.
+     *
+     * @var input
+     */
+    protected $_templates = [
+        'input' => '<div class="input-group">
+            <div class="input-group-addon">
+                <i class="fa fa-%s"></i>
+            </div>
+            <input type="{{type}}" name="{{name}}"{{attrs}}/>
+        </div>'
+    ];
+
+    /**
      * Per type search operators.
      *
      * @var array

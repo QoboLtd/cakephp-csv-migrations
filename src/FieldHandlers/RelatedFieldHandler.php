@@ -240,7 +240,8 @@ class RelatedFieldHandler extends BaseFieldHandler
                     'type' => 'css',
                     'content' => [
                         'AdminLTE./plugins/select2/select2.min',
-                        'CsvMigrations.select2-bootstrap.min'
+                        'CsvMigrations.select2-bootstrap.min',
+                        'CsvMigrations.style'
                     ],
                     'block' => 'css'
                 ]

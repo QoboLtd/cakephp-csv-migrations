@@ -7,8 +7,6 @@ use Cake\Utility\Inflector;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
-echo $this->Html->css('CsvMigrations.style', ['block' => 'css']);
-
 $fhf = new FieldHandlerFactory($this);
 
 $defaultOptions = [

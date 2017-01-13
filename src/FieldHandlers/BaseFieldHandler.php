@@ -44,6 +44,33 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     ];
 
     /**
+     * Field icons by field type.
+     *
+     * @var array
+     */
+    protected $_fieldIcons = [
+        'text' => 'keyboard-o',
+        'email' => 'envelope',
+        'tel' => 'phone',
+        'url' => 'chrome',
+        'number' => 'calculator'
+    ];
+
+    /**
+     * Custom form input templates.
+     *
+     * @var input
+     */
+    protected $_templates = [
+        'input' => '<div class="input-group %s">
+            <div class="input-group-addon">
+                <i class="fa fa-%s"></i>
+            </div>
+            <input type="{{type}}" name="{{name}}"{{attrs}}/>
+        </div>'
+    ];
+
+    /**
      * Per type search operators.
      *
      * @var array
@@ -234,10 +261,19 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $fieldType = $this->_fieldTypes[$fieldType];
         }
 
+        $templates = [];
+        if (array_key_exists($fieldType, $this->_fieldIcons)) {
+            $templates['input'] = vsprintf($this->_templates['input'], [
+                '',
+                $this->_fieldIcons[$fieldType]
+            ]);
+        }
+
         return $this->cakeView->Form->input($this->_getFieldName($table, $field, $options), [
             'type' => $fieldType,
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
-            'value' => $data
+            'value' => $data,
+            'templates' => $templates
         ]);
     }
 
@@ -252,10 +288,19 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $fieldType = $this->_fieldTypes[$fieldType];
         }
 
+        $templates = [];
+        if (array_key_exists($fieldType, $this->_fieldIcons)) {
+            $templates['input'] = vsprintf($this->_templates['input'], [
+                '',
+                $this->_fieldIcons[$fieldType]
+            ]);
+        }
+
         $content = $this->cakeView->Form->input('{{name}}', [
             'value' => '{{value}}',
             'type' => $fieldType,
-            'label' => false
+            'label' => false,
+            'templates' => $templates
         ]);
 
         return [

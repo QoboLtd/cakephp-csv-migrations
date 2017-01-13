@@ -43,10 +43,6 @@ class DatetimeFieldHandler extends BaseFieldHandler
         }
         $fieldName = $this->_getFieldName($table, $field, $options);
 
-        if (!isset($options['element']) && $this->cakeView->elementExists('QoboAdminPanel.datepicker')) {
-            $options['element'] = 'QoboAdminPanel.datepicker';
-        }
-
         if (isset($options['element'])) {
             return $this->cakeView->element($options['element'], [
                 'options' => [
@@ -59,9 +55,17 @@ class DatetimeFieldHandler extends BaseFieldHandler
             ]);
         } else {
             return $this->cakeView->Form->input($fieldName, [
-                'type' => 'datetime',
+                'type' => 'text',
+                'data-provide' => 'daterangepicker',
+                'autocomplete' => 'off',
                 'required' => $required,
-                'value' => $data
+                'value' => $data,
+                'templates' => [
+                    'input' => vsprintf($this->_templates['input'], [
+                        '',
+                        'calendar'
+                    ])
+                ]
             ]);
         }
     }
@@ -92,10 +96,6 @@ class DatetimeFieldHandler extends BaseFieldHandler
      */
     public function renderSearchInput($table, $field, array $options = [])
     {
-        if (!isset($options['element']) && $this->cakeView->elementExists('QoboAdminPanel.datepicker')) {
-            $options['element'] = 'QoboAdminPanel.datepicker';
-        }
-
         if (isset($options['element'])) {
             $content = $this->cakeView->element($options['element'], [
                 'options' => [
@@ -109,13 +109,49 @@ class DatetimeFieldHandler extends BaseFieldHandler
             $content = $this->cakeView->Form->input('', [
                 'name' => '{{name}}',
                 'value' => '{{value}}',
-                'type' => static::DB_FIELD_TYPE,
-                'label' => false
+                'type' => 'text',
+                'data-provide' => 'daterangepicker',
+                'autocomplete' => 'off',
+                'label' => false,
+                'templates' => [
+                    'input' => vsprintf($this->_templates['input'], [
+                        '',
+                        'calendar'
+                    ])
+                ]
             ]);
         }
 
         return [
-            'content' => $content
+            'content' => $content,
+            'post' => [
+                [
+                    'type' => 'script',
+                    'content' => [
+                        'AdminLTE./plugins/daterangepicker/moment.min',
+                        'AdminLTE./plugins/daterangepicker/daterangepicker'
+                    ],
+                    'block' => 'scriptBotton'
+                ],
+                [
+                    'type' => 'scriptBlock',
+                    'content' => '$(\'[data-provide="daterangepicker"]\').daterangepicker({
+                        singleDatePicker: true,
+                        showDropdowns: true,
+                        timePicker: true,
+                        drops: "up",
+                        timePicker12Hour: false,
+                        timePickerIncrement: 5,
+                        format: "YYYY-MM-DD HH:mm"
+                    });',
+                    'block' => 'scriptBotton'
+                ],
+                [
+                    'type' => 'css',
+                    'content' => 'AdminLTE./plugins/daterangepicker/daterangepicker-bs3',
+                    'block' => 'css'
+                ]
+            ]
         ];
     }
 }

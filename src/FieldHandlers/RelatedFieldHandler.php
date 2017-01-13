@@ -42,7 +42,7 @@ class RelatedFieldHandler extends BaseFieldHandler
      * Html input markup
      */
     const HTML_INPUT = '
-        <div class="input-group">
+        <div class="input-group select2-bootstrap-prepend select2-bootstrap-append">
             <span class="input-group-addon" title="%s"><span class="fa fa-%s"></span></span>%s
         </div>';
 
@@ -52,7 +52,7 @@ class RelatedFieldHandler extends BaseFieldHandler
     const HTML_EMBEDDED_BTN = '
         <div class="input-group-btn">
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#%s_modal">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                <i class="fa fa-plus" aria-hidden="true"></i>
             </button>
         </div>';
 
@@ -220,13 +220,11 @@ class RelatedFieldHandler extends BaseFieldHandler
             'post' => [
                 [
                     'type' => 'script',
-                    'content' => 'CsvMigrations.select2.full.min',
-                    'block' => 'scriptBottom'
-                ],
-                [
-                    'type' => 'script',
-                    'content' => 'CsvMigrations.select2',
-                    'block' => 'scriptBottom'
+                    'content' => [
+                        'AdminLTE./plugins/select2/select2.full.min',
+                        'CsvMigrations.select2'
+                    ],
+                    'block' => 'scriptBotton'
                 ],
                 [
                     'type' => 'scriptBlock',
@@ -236,18 +234,17 @@ class RelatedFieldHandler extends BaseFieldHandler
                             Configure::read('CsvMigrations.api')
                         )
                     ) . ');',
-                    'block' => 'scriptBottom'
+                    'block' => 'scriptBotton'
                 ],
                 [
                     'type' => 'css',
-                    'content' => 'CsvMigrations.select2.min',
-                    'block' => 'cssBottom'
-                ],
-                [
-                    'type' => 'css',
-                    'content' => 'CsvMigrations.select2-bootstrap.min',
-                    'block' => 'cssBottom'
-                ],
+                    'content' => [
+                        'AdminLTE./plugins/select2/select2.min',
+                        'CsvMigrations.select2-bootstrap.min',
+                        'CsvMigrations.style'
+                    ],
+                    'block' => 'css'
+                ]
             ]
         ];
     }

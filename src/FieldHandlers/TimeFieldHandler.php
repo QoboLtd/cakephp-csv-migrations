@@ -44,7 +44,7 @@ class TimeFieldHandler extends BaseFieldHandler
         $fieldName = $this->_getFieldName($table, $field, $options);
 
         if (isset($options['element'])) {
-            return $this->cakeView->element($options['element'], [
+            $result = $this->cakeView->element($options['element'], [
                 'options' => [
                     'fieldName' => $fieldName,
                     'type' => static::INPUT_FIELD_TYPE,
@@ -54,14 +54,19 @@ class TimeFieldHandler extends BaseFieldHandler
                 ]
             ]);
         } else {
-            return $this->cakeView->Form->input($fieldName, [
+            $result = $this->cakeView->Form->input($fieldName, [
                 'type' => 'text',
                 'data-provide' => 'timepicker',
                 'autocomplete' => 'off',
                 'required' => $required,
-                'value' => $data
+                'value' => $data,
+                'templates' => [
+                    'input' => sprintf($this->_templates['input'], 'clock-o')
+                ]
             ]);
         }
+
+        return $result;
     }
 
     /**
@@ -106,7 +111,10 @@ class TimeFieldHandler extends BaseFieldHandler
                 'type' => 'text',
                 'data-provide' => 'timepicker',
                 'autocomplete' => 'off',
-                'label' => false
+                'label' => false,
+                'templates' => [
+                    'input' => sprintf($this->_templates['input'], 'clock-o')
+                ]
             ]);
         }
 

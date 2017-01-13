@@ -66,7 +66,10 @@ class DateFieldHandler extends BaseFieldHandler
                 'data-date-format' => static::JS_DATE_FORMAT,
                 'data-date-autoclose' => true,
                 'required' => $required,
-                'value' => $data
+                'value' => $data,
+                'templates' => [
+                    'input' => sprintf($this->_templates['input'], 'calendar')
+                ]
             ]);
         }
     }
@@ -114,7 +117,10 @@ class DateFieldHandler extends BaseFieldHandler
                 'autocomplete' => 'off',
                 'data-date-format' => static::JS_DATE_FORMAT,
                 'data-date-autoclose' => true,
-                'label' => false
+                'label' => false,
+                'templates' => [
+                    'input' => sprintf($this->_templates['input'], 'calendar')
+                ]
             ]);
         }
 

@@ -59,7 +59,10 @@ class DatetimeFieldHandler extends BaseFieldHandler
                 'data-provide' => 'daterangepicker',
                 'autocomplete' => 'off',
                 'required' => $required,
-                'value' => $data
+                'value' => $data,
+                'templates' => [
+                    'input' => sprintf($this->_templates['input'], 'calendar')
+                ]
             ]);
         }
     }
@@ -106,7 +109,10 @@ class DatetimeFieldHandler extends BaseFieldHandler
                 'type' => 'text',
                 'data-provide' => 'daterangepicker',
                 'autocomplete' => 'off',
-                'label' => false
+                'label' => false,
+                'templates' => [
+                    'input' => sprintf($this->_templates['input'], 'calendar')
+                ]
             ]);
         }
 

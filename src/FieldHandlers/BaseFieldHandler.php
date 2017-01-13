@@ -57,7 +57,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     ];
 
     /**
-     * Custom form templates.
+     * Custom form input templates.
      *
      * @var input
      */
@@ -261,10 +261,16 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $fieldType = $this->_fieldTypes[$fieldType];
         }
 
+        $templates = [];
+        if (array_key_exists($fieldType, $this->_fieldIcons)) {
+            $templates['input'] = sprintf($this->_templates['input'], $this->_fieldIcons[$fieldType]);
+        }
+
         return $this->cakeView->Form->input($this->_getFieldName($table, $field, $options), [
             'type' => $fieldType,
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
-            'value' => $data
+            'value' => $data,
+            'templates' => $templates
         ]);
     }
 
@@ -279,10 +285,16 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $fieldType = $this->_fieldTypes[$fieldType];
         }
 
+        $templates = [];
+        if (array_key_exists($fieldType, $this->_fieldIcons)) {
+            $templates['input'] = sprintf($this->_templates['input'], $this->_fieldIcons[$fieldType]);
+        }
+
         $content = $this->cakeView->Form->input('{{name}}', [
             'value' => '{{value}}',
             'type' => $fieldType,
-            'label' => false
+            'label' => false,
+            'templates' => $templates
         ]);
 
         return [

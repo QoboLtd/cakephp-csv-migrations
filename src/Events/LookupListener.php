@@ -4,13 +4,17 @@ namespace CsvMigrations\Events;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
 use Cake\ORM\Query;
+use Cake\ORM\Table;
 use CsvMigrations\Events\BaseViewListener;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\FieldHandlers\RelatedFieldHandler;
+use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 use RuntimeException;
 
 class LookupListener extends BaseViewListener
 {
+    use RelatedFieldTrait;
+
     /**
      * {@inheritDoc}
      */
@@ -75,9 +79,18 @@ class LookupListener extends BaseViewListener
         // values as deep as needed.
         $fhf = new FieldHandlerFactory();
 
+        $tableConfig = [];
+        if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
+            $tableConfig = $table->getConfig();
+        }
+
         $result = [];
         foreach ($entities as $k => $v) {
-            $result[$k] = $fhf->renderValue(
+            $result[$k] = '';
+            if (!empty($tableConfig['parent']['module'])) {
+                $result[$k] .= $this->_prependParentModule($table, $k);
+            }
+            $result[$k] .= $fhf->renderValue(
                 $table,
                 $table->displayField(),
                 $v,
@@ -86,5 +99,28 @@ class LookupListener extends BaseViewListener
         }
 
         $event->result = $result;
+    }
+
+    /**
+     * Prepend parent module display field value to resultset.
+     *
+     * @param \Cake\ORM\Table $table Table instance
+     * @param string $id uuid
+     * @return array
+     */
+    protected function _prependParentModule(Table $table, $id)
+    {
+        $result = '';
+        $parentProperties = $this->_getRelatedParentProperties(
+            $this->_getRelatedProperties($table->registryAlias(), $id)
+        );
+
+        if (empty($parentProperties['dispFieldVal'])) {
+            return $result;
+        }
+
+        $result = $parentProperties['dispFieldVal'] . ' ' . $this->_separator . ' ';
+
+        return $result;
     }
 }

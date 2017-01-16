@@ -56,7 +56,7 @@ class DatetimeFieldHandler extends BaseFieldHandler
         } else {
             return $this->cakeView->Form->input($fieldName, [
                 'type' => 'text',
-                'data-provide' => 'daterangepicker',
+                'data-provide' => 'datetimepicker',
                 'autocomplete' => 'off',
                 'required' => $required,
                 'value' => $data,
@@ -110,7 +110,7 @@ class DatetimeFieldHandler extends BaseFieldHandler
                 'name' => '{{name}}',
                 'value' => '{{value}}',
                 'type' => 'text',
-                'data-provide' => 'daterangepicker',
+                'data-provide' => 'datetimepicker',
                 'autocomplete' => 'off',
                 'label' => false,
                 'templates' => [
@@ -128,22 +128,11 @@ class DatetimeFieldHandler extends BaseFieldHandler
                 [
                     'type' => 'script',
                     'content' => [
+                        'CsvMigrations.dom-observer',
                         'AdminLTE./plugins/daterangepicker/moment.min',
-                        'AdminLTE./plugins/daterangepicker/daterangepicker'
+                        'AdminLTE./plugins/daterangepicker/daterangepicker',
+                        'CsvMigrations.datetimepicker.init'
                     ],
-                    'block' => 'scriptBotton'
-                ],
-                [
-                    'type' => 'scriptBlock',
-                    'content' => '$(\'[data-provide="daterangepicker"]\').daterangepicker({
-                        singleDatePicker: true,
-                        showDropdowns: true,
-                        timePicker: true,
-                        drops: "up",
-                        timePicker12Hour: false,
-                        timePickerIncrement: 5,
-                        format: "YYYY-MM-DD HH:mm"
-                    });',
                     'block' => 'scriptBotton'
                 ],
                 [

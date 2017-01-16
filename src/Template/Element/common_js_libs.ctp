@@ -31,6 +31,7 @@ echo $this->Html->scriptBlock(
 
 echo $this->Html->script(
     [
+        'CsvMigrations.dom-observer',
         'CsvMigrations.embedded',
         'CsvMigrations.panels',
         'CsvMigrations.canvas-to-blob.min',
@@ -40,12 +41,15 @@ echo $this->Html->script(
         'CsvMigrations.jquery.dynamicSelectInit',
         'CsvMigrations.jquery.dynamicSelectInit',
         'AdminLTE./plugins/iCheck/icheck.min',
+        'CsvMigrations.icheck.init',
         'AdminLTE./plugins/daterangepicker/moment.min',
         'AdminLTE./plugins/daterangepicker/daterangepicker',
+        'CsvMigrations.datetimepicker.init',
         'AdminLTE./plugins/datepicker/bootstrap-datepicker',
         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
+        'CsvMigrations.timepicker.init',
         'AdminLTE./plugins/select2/select2.full.min',
-        'CsvMigrations.select2'
+        'CsvMigrations.select2.init'
     ],
     [
         'block' => 'scriptBotton'
@@ -59,57 +63,5 @@ echo $this->Html->scriptBlock(
             Configure::read('CsvMigrations.api')
         )
     ) . ');',
-    ['block' => 'scriptBotton']
-);
-
-// iCheck for checkbox and radio inputs
-echo $this->Html->scriptBlock(
-    '$(\'input[type="checkbox"].flat, input[type="radio"].flat\').iCheck({
-        checkboxClass: \'icheckbox_flat\',
-        radioClass: \'iradio_flat\'
-    });
-    $(\'input[type="checkbox"].futurico, input[type="radio"].futurico\').iCheck({
-        checkboxClass: \'icheckbox_futurico\',
-        radioClass: \'iradio_futurico\'
-    });
-    $(\'input[type="checkbox"].line, input[type="radio"].line\').iCheck({
-        checkboxClass: \'icheckbox_line\',
-        radioClass: \'iradio_line\'
-    });
-    $(\'input[type="checkbox"].minimal, input[type="radio"].minimal\').iCheck({
-        checkboxClass: \'icheckbox_minimal-blue\',
-        radioClass: \'iradio_minimal-blue\'
-    });
-    $(\'input[type="checkbox"].polaris, input[type="radio"].polaris\').iCheck({
-        checkboxClass: \'icheckbox_polaris\',
-        radioClass: \'iradio_polaris\'
-    });
-    $(\'input[type="checkbox"].square, input[type="radio"].square\').iCheck({
-        checkboxClass: \'icheckbox_square\',
-        radioClass: \'iradio_square\'
-    });',
-    ['block' => 'scriptBotton']
-);
-
-// time picker
-echo $this->Html->scriptBlock(
-    '$(\'[data-provide="timepicker"]\').timepicker({
-        showMeridian: false,
-        minuteStep: 5
-    });',
-    ['block' => 'scriptBotton']
-);
-
-// date range picker (used for datetime pickers)
-echo $this->Html->scriptBlock(
-    '$(\'[data-provide="daterangepicker"]\').daterangepicker({
-        singleDatePicker: true,
-        showDropdowns: true,
-        timePicker: true,
-        drops: "up",
-        timePicker12Hour: false,
-        timePickerIncrement: 5,
-        format: "YYYY-MM-DD HH:mm"
-    });',
     ['block' => 'scriptBotton']
 );

@@ -68,12 +68,29 @@ class BooleanFieldHandler extends BaseFieldHandler
         }
 
         $content = $this->cakeView->Form->input('{{name}}', [
-            'type' => $fieldType,
-            'label' => ''
+            'type' => 'checkbox',
+            'class' => 'square',
+            'label' => false
         ]);
 
         return [
-            'content' => $content
+            'content' => $content,
+            'post' => [
+                [
+                    'type' => 'script',
+                    'content' => [
+                        'CsvMigrations.dom-observer',
+                        'AdminLTE./plugins/iCheck/icheck.min',
+                        'CsvMigrations.icheck.init'
+                    ],
+                    'block' => 'scriptBotton'
+                ],
+                [
+                    'type' => 'css',
+                    'content' => 'AdminLTE./plugins/iCheck/all',
+                    'block' => 'css'
+                ]
+            ]
         ];
     }
 }

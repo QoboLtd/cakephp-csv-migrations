@@ -68,24 +68,23 @@ class LookupListener extends BaseViewListener
             return;
         }
 
-        $controller = $event->subject();
+        $table = $event->subject()->{$event->subject()->name};
 
         // Properly populate display values for the found entries.
         // This will recurse into related modules and get display
         // values as deep as needed.
-        $result = $entities->toArray();
-        foreach ($result as &$entity) {
-            $fhf = new FieldHandlerFactory();
-            // We need plain display value. It'll be properly wrapped
-            // in styling only at the top level.
-            $entity = $fhf->renderValue(
-                $controller->{$controller->name},
-                $controller->{$controller->name}->displayField(),
-                $entity,
+        $fhf = new FieldHandlerFactory();
+
+        $result = [];
+        foreach ($entities as $k => $v) {
+            $result[$k] = $fhf->renderValue(
+                $table,
+                $table->displayField(),
+                $v,
                 ['renderAs' => RelatedFieldHandler::RENDER_PLAIN_VALUE]
             );
         }
 
-        $entities = $result;
+        $event->result = $result;
     }
 }

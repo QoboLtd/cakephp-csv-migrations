@@ -16,7 +16,7 @@ trait RelatedFieldTrait
      *
      * @var string
      */
-    protected $_separator = '&gt;';
+    protected $_separator = '»';
 
     /**
      * Get related model's parent model properties.

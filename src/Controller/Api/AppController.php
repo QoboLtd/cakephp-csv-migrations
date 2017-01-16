@@ -334,6 +334,7 @@ class AppController extends Controller
                 'entities' => $event->subject()->entities
             ]);
             $this->eventManager()->dispatch($ev);
+            $event->subject()->entities = $ev->result;
         });
 
         return $this->Crud->execute();

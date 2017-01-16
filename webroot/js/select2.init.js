@@ -28,7 +28,7 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
         });
 
         // Observe document for added select2(s)
-        dom_observer.added(document, function(nodes) {
+        dom_observer.added(document, function (nodes) {
             $(nodes).each(function () {
                 $(this).find(that.id).each(function () {
                     that.init(this);

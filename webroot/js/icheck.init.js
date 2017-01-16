@@ -10,7 +10,7 @@
         this.init();
 
         // Observe document for added checkbox(es) / radio(s)
-        dom_observer.added(document, function(nodes) {
+        dom_observer.added(document, function (nodes) {
             $(nodes).each(function () {
                 $(this).find('input[type="checkbox"], input[type="radio"]').each(function () {
                     that.init();

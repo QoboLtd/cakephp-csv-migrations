@@ -20,7 +20,7 @@ var dom_observer = dom_observer || {};
         added: function (obj, callback) {
             if (this.MutationObserver) {
                 // define a new observer
-                var obs = new this.MutationObserver(function (mutations, observer){
+                var obs = new this.MutationObserver(function (mutations, observer) {
                     if (mutations[0].addedNodes.length) {
                         callback(mutations[0].addedNodes);
                     }
@@ -43,7 +43,7 @@ var dom_observer = dom_observer || {};
         removed: function (obj, callback) {
             if (this.MutationObserver) {
                 // define a new observer
-                var obs = new this.MutationObserver(function(mutations, observer) {
+                var obs = new this.MutationObserver(function (mutations, observer) {
                     if (mutations[0].removedNodes.length) {
                         callback(mutations[0].removedNodes);
                     }

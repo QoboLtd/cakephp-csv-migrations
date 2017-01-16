@@ -10,7 +10,7 @@
         this.init();
 
         // Observe document for added datetime picker(s)
-        dom_observer.added(document, function(nodes) {
+        dom_observer.added(document, function (nodes) {
             $(nodes).each(function () {
                 $(this).find('[data-provide="datetimepicker"]').each(function () {
                     that.init();

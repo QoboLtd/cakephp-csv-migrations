@@ -10,7 +10,7 @@
         this.init();
 
         // Observe document for added time picker(s)
-        dom_observer.added(document, function(nodes) {
+        dom_observer.added(document, function (nodes) {
             $(nodes).each(function () {
                 $(this).find('[data-provide="timepicker"]').each(function () {
                     that.init();

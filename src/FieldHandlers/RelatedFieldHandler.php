@@ -29,11 +29,6 @@ class RelatedFieldHandler extends BaseFieldHandler
     const LABEL_FIELD_SUFFIX = '_label';
 
     /**
-     * Flag for rendering value without url
-     */
-    const RENDER_PLAIN_VALUE = 'plain';
-
-    /**
      * Html input wrapper markup
      */
     const HTML_INPUT_WRAPPER = '<div class="form-group%s">%s%s</div>';

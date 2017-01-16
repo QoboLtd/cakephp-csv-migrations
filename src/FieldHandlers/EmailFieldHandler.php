@@ -20,6 +20,9 @@ class EmailFieldHandler extends BaseFieldHandler
 
         // Only link to valid emails, to avoid unpredictable behavior
         if (!empty($result) && filter_var($result, FILTER_VALIDATE_EMAIL)) {
+            if (isset($options['renderAs']) && $options['renderAs'] === static::RENDER_PLAIN_VALUE) {
+                return $result;
+            }
             $result = $this->cakeView->Html->link($result, 'mailto:' . $result, ['target' => '_blank']);
         }
 

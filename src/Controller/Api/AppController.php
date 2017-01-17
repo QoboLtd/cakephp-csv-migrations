@@ -3,13 +3,11 @@ namespace CsvMigrations\Controller\Api;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Crud\Controller\ControllerTrait;
 use CsvMigrations\CsvMigrationsUtils;
-use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 use CsvMigrations\FileUploadsUtils;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
@@ -19,7 +17,6 @@ class AppController extends Controller
 {
     use ControllerTrait;
     use PanelUtilTrait;
-    use RelatedFieldTrait;
 
     public $components = [
         'RequestHandler',
@@ -339,32 +336,6 @@ class AppController extends Controller
 
         return $this->Crud->execute();
     }
-
-    /**
-     * Prepend parent module display field value to resultset.
-     *
-     * @param  \Cake\Datasource\ResultSetDecorator $entities Entities
-     * @return array
-     */
-    protected function _prependParentModule(ResultSetDecorator $entities)
-    {
-        $result = $entities->toArray();
-
-        foreach ($result as $id => &$value) {
-            $parentProperties = $this->_getRelatedParentProperties(
-                $this->_getRelatedProperties($this->{$this->name}->registryAlias(), $id)
-            );
-            if (!empty($parentProperties['dispFieldVal'])) {
-                $value = implode(' ' . $this->_separator . ' ', [
-                    $parentProperties['dispFieldVal'],
-                    $value
-                ]);
-            }
-        }
-
-        return $result;
-    }
-
 
     /**
      * Panels to show.

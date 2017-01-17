@@ -55,10 +55,10 @@ if (empty($options['title'])) {
     <div class="col-xs-12">
         <?php if (empty($this->request->query['embedded'])) : ?>
         <div class="row">
-            <div class="col-xs-6">
+            <div class="col-xs-8">
                 <h3><strong><?= $options['title'] ?></strong></h3>
             </div>
-            <div class="col-xs-6">
+            <div class="col-xs-4">
                 <div class="h3 text-right">
                 <?php
                     $event = new Event('View.View.Menu.Top', $this, [

@@ -189,7 +189,7 @@ if (empty($options['title'])) {
 // loading common setup for typeahead/panel/etc libs for tabs
 echo $this->element('CsvMigrations.common_js_libs');
 ?>
-<h2 class="page-header"><i class="fa fa-link"></i> Associated Records</h2>
+<hr />
 <div class="row associated-records">
     <div class="col-xs-12">
     <?php

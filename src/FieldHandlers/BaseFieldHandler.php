@@ -49,19 +49,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     ];
 
     /**
-     * Field icons by field type.
-     *
-     * @var array
-     */
-    protected $_fieldIcons = [
-        'text' => 'keyboard-o',
-        'email' => 'envelope',
-        'tel' => 'phone',
-        'url' => 'chrome',
-        'number' => 'calculator'
-    ];
-
-    /**
      * Custom form input templates.
      *
      * @var input
@@ -266,19 +253,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $fieldType = $this->_fieldTypes[$fieldType];
         }
 
-        $templates = [];
-        if (array_key_exists($fieldType, $this->_fieldIcons)) {
-            $templates['input'] = vsprintf($this->_templates['input'], [
-                '',
-                $this->_fieldIcons[$fieldType]
-            ]);
-        }
-
         return $this->cakeView->Form->input($this->_getFieldName($table, $field, $options), [
             'type' => $fieldType,
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
-            'value' => $data,
-            'templates' => $templates
+            'value' => $data
         ]);
     }
 
@@ -293,19 +271,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $fieldType = $this->_fieldTypes[$fieldType];
         }
 
-        $templates = [];
-        if (array_key_exists($fieldType, $this->_fieldIcons)) {
-            $templates['input'] = vsprintf($this->_templates['input'], [
-                '',
-                $this->_fieldIcons[$fieldType]
-            ]);
-        }
-
         $content = $this->cakeView->Form->input('{{name}}', [
             'value' => '{{value}}',
             'type' => $fieldType,
-            'label' => false,
-            'templates' => $templates
+            'label' => false
         ]);
 
         return [

@@ -355,15 +355,15 @@ class AppController extends Controller
         if (empty($data) || !is_array($data)) {
             return $result;
         }
-        $key = key($data);
-        if (is_array($data[$key])) {
-            $innerKey = key($data[$key]);
-            if (!is_array($data[$key][$innerKey])) {
+
+        if (is_array($data[$this->name])) {
+            $innerKey = key($data[$this->name]);
+            if (!is_array($data[$this->name][$innerKey])) {
                 //Regular form format - [module][inputName]
-                $data = $data[$key];
+                $data = $data[$this->name];
             } else {
                 //Embedded form - [module][dynamicField][inputName]
-                $data = $data[$key][$innerKey];
+                $data = $data[$this->name][$innerKey];
             }
         }
         $evalPanels = $this->getEvalPanels($tableConfig, $data);

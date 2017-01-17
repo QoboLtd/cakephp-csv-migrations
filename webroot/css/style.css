@@ -1,7 +1,7 @@
-.associated_records .tab-content {
-    padding-top: 10px;
+.associated-records .typeahead-container {
+    padding-bottom: 10px;
 }
 
-.associated_records .typeahead-container {
-    padding-bottom: 10px;
+.select2-container--bootstrap .select2-selection--single .select2-selection__rendered {
+    margin: 0;
 }

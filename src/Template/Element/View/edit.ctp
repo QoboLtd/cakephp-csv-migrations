@@ -59,167 +59,160 @@ if (!empty($this->request->query['embedded'])) {
  */
 $formOptions['type'] = 'file';
 ?>
-<div class="row">
-    <div class="col-xs-12">
+<section class="content-header">
+    <h1><?= $options['title'] ?></h1>
+</section>
+<section class="content">
     <?php
-        /**
-         * Conversion logic
-         * @todo probably this has to be moved to another plugin
-         */
+    /**
+     * Conversion logic
+     * @todo probably this has to be moved to another plugin
+     */
     if (!$this->request->param('pass.conversion')) {
         echo $this->Form->create($options['entity'], $formOptions);
     }
     ?>
-        <fieldset>
-            <legend><?= $options['title'] ?></legend>
-            <?php
-            if (!empty($options['fields'])) {
-                $embeddedFields = [];
-                $embeddedForms = [];
-                $embeddedDirty = false;
-                foreach ($options['fields'] as $panelName => $panelFields) {
-                    echo '<div class="panel panel-default">';
-                    echo '<div class="panel-heading">';
-                    echo '<h3 class="panel-title"><strong>' . $panelName . '</strong></h3>';
-                    echo '</div>';
-                    echo '<div class="panel-body">';
-                    foreach ($panelFields as $subFields) {
-                        echo '<div class="row">';
-                        foreach ($subFields as $field) {
-                            if ('' !== trim($field['name'])) {
-                                /*
-                                embedded field
-                                 */
-                                if ('EMBEDDED' === $field['name']) {
-                                    $embeddedDirty = true;
-                                    continue;
-                                }
+    <?php
+    if (!empty($options['fields'])) {
+        $embeddedFields = [];
+        $embeddedForms = [];
+        $embeddedDirty = false;
+        foreach ($options['fields'] as $panelName => $panelFields) {
+            echo '<div class="box box-default" data-provide="dynamic-panel">';
+            echo '<div class="box-header with-border">';
+            echo '<h3 class="box-title" data-title="dynamic-panel-title">' . $panelName . '</h3>';
+            echo '</div>';
+            echo '<div class="box-body">';
+            foreach ($panelFields as $subFields) {
+                echo '<div class="row">';
+                foreach ($subFields as $field) {
+                    if ('' !== trim($field['name'])) {
+                        // embedded field
+                        if ('EMBEDDED' === $field['name']) {
+                            $embeddedDirty = true;
+                            continue;
+                        }
 
-                                $renderOptions = [
-                                    'entity' => $options['entity']
-                                ];
+                        $handlerOptions = [
+                            'entity' => $options['entity']
+                        ];
 
-                                if ($embeddedDirty) {
-                                    $embeddedFields[] = $field;
-                                    $renderOptions['embModal'] = true;
-                                    $field['name'] = substr($field['name'], strrpos($field['name'], '.') + 1);
-                                }
+                        if ($embeddedDirty) {
+                            $embeddedFields[] = $field;
+                            $handlerOptions['embModal'] = true;
+                            $field['name'] = substr($field['name'], strrpos($field['name'], '.') + 1);
+                        }
 
-                                echo '<div class="col-xs-12 col-md-6">';
-                                /*
-                                non-embedded field
-                                 */
-                                $tableName = $field['model'];
-                                if (!is_null($field['plugin'])) {
-                                    $tableName = $field['plugin'] . '.' . $tableName;
-                                }
-                                if (!empty($this->request->query['embedded'])) {
-                                    $renderOptions['embedded'] = $this->request->query['embedded'];
-                                }
-                                $input = $fhf->renderInput(
-                                    $tableName,
-                                    $field['name'],
-                                    $options['entity']->{$field['name']},
-                                    $renderOptions
-                                );
+                        echo '<div class="col-xs-12 col-md-6">';
+                        /*
+                        non-embedded field
+                         */
+                        $tableName = $field['model'];
+                        if (!is_null($field['plugin'])) {
+                            $tableName = $field['plugin'] . '.' . $tableName;
+                        }
+                        if (!empty($this->request->query['embedded'])) {
+                            $handlerOptions['embedded'] = $this->request->query['embedded'];
+                        }
+                        $input = $fhf->renderInput(
+                            $tableName,
+                            $field['name'],
+                            $options['entity']->{$field['name']},
+                            $handlerOptions
+                        );
 
-                                if (is_string($input)) {
-                                    echo $input;
-                                } elseif (is_array($input)) {
-                                    echo $input['html'];
-                                    if (isset($input['embeddedForm'])) {
-                                        $embeddedForms[] = $input['embeddedForm'];
-                                    }
-                                }
-                                echo '</div>';
-                                $embeddedDirty = false;
-                            } else {
-                                echo '<div class="col-xs-12 col-md-6">';
-                                echo '&nbsp;';
-                                echo '</div>';
+                        if (is_string($input)) {
+                            echo $input;
+                        } elseif (is_array($input)) {
+                            echo $input['html'];
+                            if (isset($input['embeddedForm'])) {
+                                $embeddedForms[] = $input['embeddedForm'];
                             }
                         }
                         echo '</div>';
+                        $embeddedDirty = false;
+                    } else {
+                        echo '<div class="col-xs-12 col-md-6">';
+                        echo '&nbsp;';
+                        echo '</div>';
                     }
-                    echo '</div>';
-                    echo '</div>';
                 }
+                echo '</div>';
             }
-            ?>
-        </fieldset>
+            echo '</div>';
+            echo '</div>';
+        }
+    }
+    ?>
     <?php
-        /**
-         * Conversion logic
-         * @todo probably this has to be moved to another plugin
-         */
+    /**
+     * Conversion logic
+     * @todo probably this has to be moved to another plugin
+     */
     if (!$this->request->param('pass.conversion')) {
         echo $this->Form->button(__('Submit'), ['name' => 'btn_operation', 'value' => 'submit', 'class' => 'btn btn-primary']);
 
         if (empty($this->request->query['embedded'])) {
+            echo "&nbsp;";
             echo $this->Form->button(__('Cancel'), ['name' => 'btn_operation', 'value' => 'cancel', 'class' => 'btn']);
         }
 
         echo $this->Form->end();
     }
     ?>
-        <?php
-        /*
-        Fetch embedded module(s) using CakePHP's requestAction() method
-         */
-        if (!empty($embeddedFields) && !$this->request->param('pass.conversion')) :
-            foreach ($embeddedFields as $embeddedField) :
-                $embeddedFieldName = substr($embeddedField['name'], strrpos($embeddedField['name'], '.') + 1);
-                list($embeddedPlugin, $embeddedController) = pluginSplit(
-                    substr($embeddedField['name'], 0, strrpos($embeddedField['name'], '.'))
-                );
+    <?php
+    // Fetch embedded module(s) using CakePHP's requestAction() method, if request is not coming from requestAction()
+    if (!empty($embeddedFields) && !$this->request->param('pass.conversion')) :
+        foreach ($embeddedFields as $embeddedField) :
+            $embeddedFieldName = substr($embeddedField['name'], strrpos($embeddedField['name'], '.') + 1);
+            list($embeddedPlugin, $embeddedController) = pluginSplit(
+                substr($embeddedField['name'], 0, strrpos($embeddedField['name'], '.'))
+            );
 
-                $embeddedAssocName = CsvMigrationsUtils::createAssociationName(
-                    $embeddedPlugin . $embeddedController,
-                    $embeddedFieldName
-                );
-
-                $url = [
-                    'plugin' => $embeddedPlugin,
-                    'controller' => $embeddedController,
-                    'action' => 'add'
-                ];
-            ?>
-            <!-- Modal -->
-            <div id="<?= $embeddedFieldName ?>_modal" class="modal fade" tabindex="-1" role="dialog">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                        <?php echo $this->requestAction(
-                            $url,
-                            [
-                                'query' => [
-                                    'embedded' => $this->request->controller . '.' . $embeddedAssocName,
-                                    'foreign_key' => $embeddedFieldName
-                                ]
+            $embeddedAssocName = CsvMigrationsUtils::createAssociationName(
+                $embeddedPlugin . $embeddedController,
+                $embeddedFieldName
+            );
+        ?>
+        <!-- Modal -->
+        <div id="<?= $embeddedFieldName ?>_modal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                    <?php echo $this->requestAction(
+                        [
+                            'plugin' => $embeddedPlugin,
+                            'controller' => $embeddedController,
+                            'action' => 'add'
+                        ],
+                        [
+                            'query' => [
+                                'embedded' => $this->request->controller . '.' . $embeddedAssocName,
+                                'foreign_key' => $embeddedFieldName
                             ]
-                        ); ?>
-                        </div>
+                        ]
+                    ); ?>
                     </div>
                 </div>
             </div>
-            <?php
-            endforeach;
-        endif;
+        </div>
+        <?php
+        endforeach;
+    endif;
 
-        // print embedded forms
-        if (!empty($embeddedForms)) {
-            foreach ($embeddedForms as $embeddedForm) {
-                echo $embeddedForm;
-            }
+    // print embedded forms
+    if (!empty($embeddedForms)) {
+        foreach ($embeddedForms as $embeddedForm) {
+            echo $embeddedForm;
         }
-        ?>
-    </div>
-</div>
+    }
+    ?>
+</section>
 <?php
 /**
  * @todo  Load when needed.

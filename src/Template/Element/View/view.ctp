@@ -1,7 +1,7 @@
 <?php
-use Cake\Core\Configure;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
+use Cake\Network\Exception\ForbiddenException;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\CsvMigrationsUtils;
@@ -28,14 +28,15 @@ if (empty($options['plugin'])) {
 if (empty($options['controller'])) {
     $options['controller'] = $this->request->controller;
 }
+// Get full controller name, including plugin prefix
+$controllerName = $options['controller'];
+if (!empty($options['plugin'])) {
+    $controllerName = $options['plugin'] . '.' . $controllerName;
+}
+// Get display field
+$displayField = TableRegistry::get($controllerName)->displayField();
 // Get title
 if (empty($options['title'])) {
-    $controllerName = $options['controller'];
-    if (!empty($options['plugin'])) {
-        $controllerName = $options['plugin'] . '.' . $controllerName;
-    }
-    $displayField = TableRegistry::get($controllerName)->displayField();
-
     $options['title'] = $this->Html->link(
         Inflector::humanize(Inflector::underscore($moduleAlias)),
         ['plugin' => $options['plugin'], 'controller' => $options['controller'], 'action' => 'index']
@@ -50,71 +51,61 @@ if (empty($options['title'])) {
     $options['title'] .= $value;
 }
 ?>
-
-<div class="row">
-    <div class="col-xs-12">
-        <?php if (empty($this->request->query['embedded'])) : ?>
-        <div class="row">
-            <div class="col-xs-6">
-                <h3><strong><?= $options['title'] ?></strong></h3>
-            </div>
-            <div class="col-xs-6">
-                <div class="h3 text-right">
-                <?php
-                    $event = new Event('View.View.Menu.Top', $this, [
-                        'request' => $this->request,
-                        'options' => $options
-                    ]);
-                    $this->eventManager()->dispatch($event);
-                    echo $event->result;
-                ?>
-                </div>
-            </div>
-        </div>
-        <?php endif; ?>
+<?php if (empty($this->request->query['embedded'])) : ?>
+<section class="content-header">
+    <h1>
+        <?= $options['title'] ?>
+        <small><?= $this->element('CsvMigrations.Menu/view_top', [
+            'options' => $options,
+            'user' => $user,
+            'displayField' => $displayField
+        ]); ?></small>
+    </h1>
+</section>
+<section class="content">
+<?php endif; ?>
         <?php
         if (!empty($options['fields'])) :
             $embeddedFields = [];
             $embeddedDirty = false;
             foreach ($options['fields'] as $panelName => $panelFields) :
                 if (!empty($this->request->query['embedded'])) {
-                      $panelName = Inflector::singularize(Inflector::humanize($this->request->controller)) . ' : ' . $panelName;
+                    $panelName = Inflector::singularize(
+                        Inflector::humanize($this->request->controller)
+                    ) . ' : ' . $panelName;
                 }
 
         ?>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">
-                    <strong><?= $panelName; ?></strong>
-                </h3>
+        <div class="box box-default">
+            <div class="box-header with-border">
+                <h3 class="box-title"><?= $panelName; ?></h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
             </div>
-            <div class="panel-body">
+            <div class="box-body">
             <?php foreach ($panelFields as $subFields) : ?>
                 <div class="row">
-                <?php
-                foreach ($subFields as $field) :
-                    if ('' !== trim($field['name']) && !$embeddedDirty) :
-                        /*
-                        embedded field
-                         */
+                <?php foreach ($subFields as $field) : ?>
+                    <?php if ('' !== trim($field['name']) && !$embeddedDirty) : ?>
+                        <?php
+                        // embedded field
                         if ('EMBEDDED' === $field['name']) {
                             $embeddedDirty = true;
                         }
-
-                        /*
-                        non-embedded field
-                         */
-                        if (!$embeddedDirty) :
-                ?>
-                        <div class="col-xs-4 col-md-2 text-right">
-                            <strong><?= Inflector::humanize($field['name']) ?>:</strong>
-                        </div>
-                        <div class="col-xs-8 col-md-4">
-                        <?php
+                        ?>
+                        <?php if (!$embeddedDirty) : // non-embedded field ?>
+                            <div class="col-xs-4 col-md-2 text-right">
+                                <strong><?= Inflector::humanize($field['name']) ?>:</strong>
+                            </div>
+                            <div class="col-xs-8 col-md-4">
+                            <?php
                             $tableName = $field['model'];
-                        if (!is_null($field['plugin'])) {
-                            $tableName = $field['plugin'] . '.' . $tableName;
-                        }
+                            if (!is_null($field['plugin'])) {
+                                $tableName = $field['plugin'] . '.' . $tableName;
+                            }
                             $renderOptions = [
                                 'entity' => $options['entity'],
                                 'imageSize' => 'small'
@@ -127,28 +118,20 @@ if (empty($options['title'])) {
                             );
                             echo $value;
                             echo empty($value) ? '&nbsp;' : '';
-                        ?>
-                        </div>
-                    <?php
-                        endif;
-?>
-<?php
-                    elseif ('' !== trim($field['name'])) :
+                            ?>
+                            </div>
+                        <?php endif; ?>
+                        <?php elseif ('' !== trim($field['name'])) : ?>
+                            <?php
                             $embeddedFields[] = $field['name'];
                             $embeddedDirty = false;
-                    ?>
-                    <?php
-                    else :
-?>
-                        <div class="col-xs-4 col-md-2 text-right">&nbsp;</div>
-                        <div class="col-xs-8 col-md-4">&nbsp;</div>
-                    <?php
-                    endif;
-?>
+                            ?>
+                        <?php else : ?>
+                            <div class="col-xs-4 col-md-2 text-right">&nbsp;</div>
+                            <div class="col-xs-8 col-md-4">&nbsp;</div>
+                    <?php endif; ?>
                     <div class="clearfix visible-xs visible-sm"></div>
-                <?php
-                endforeach;
-?>
+                <?php endforeach; ?>
                 </div>
             <?php endforeach; ?>
             </div>
@@ -158,9 +141,7 @@ if (empty($options['title'])) {
                 continue;
             }
 
-            /*
-            Fetch embedded module(s) using CakePHP's requestAction() method
-             */
+            // Fetch embedded module(s) using CakePHP's requestAction() method
             foreach ($embeddedFields as $embeddedField) {
                 $embeddedFieldName = substr($embeddedField, strrpos($embeddedField, '.') + 1);
                 list($embeddedPlugin, $embeddedController) = pluginSplit(
@@ -172,9 +153,7 @@ if (empty($options['title'])) {
                     $embeddedFieldName
                 );
 
-                /*
-                @note this only works for belongsTo for now.
-                 */
+                // @note this only works for belongsTo for now.
                 $embeddedAssocName = Inflector::underscore(Inflector::singularize($embeddedAssocName));
 
                 if (!empty($options['entity']->$embeddedFieldName)) {
@@ -192,6 +171,8 @@ if (empty($options['title'])) {
                         );
                     } catch (RecordNotFoundException $e) {
                         // just don't display anything if embedded record was not found
+                    } catch (ForbiddenException $e) {
+                        // just don't display anything if current user has no access to embedded record
                     }
                 }
             }
@@ -199,13 +180,14 @@ if (empty($options['title'])) {
             endforeach;
         endif;
 ?>
-    </div>
-</div>
-
 <?php if (empty($this->request->query['embedded'])) : ?>
-<div class="row associated_records">
+<?php
+// loading common setup for typeahead/panel/etc libs for tabs
+echo $this->element('CsvMigrations.common_js_libs');
+?>
+<h2 class="page-header"><i class="fa fa-link"></i> Associated Records</h2>
+<div class="row associated-records">
     <div class="col-xs-12">
-    <hr/>
     <?php
         $event = new Event('CsvMigrations.View.View.TabsList', $this, [
             'request' => $this->request,
@@ -216,10 +198,19 @@ if (empty($options['title'])) {
         $this->eventManager()->dispatch($event);
         $tabs = $event->result['tabs'];
 
-        echo $this->Html->css('CsvMigrations.datatables.min', ['block' => 'cssBottom']);
-        echo $this->Html->script('CsvMigrations.datatables.min', ['block' => 'scriptBottom']);
+        echo $this->Html->css('AdminLTE./plugins/datatables/dataTables.bootstrap', ['block' => 'css']);
+        echo $this->Html->script(
+            [
+                'AdminLTE./plugins/datatables/jquery.dataTables.min',
+                'AdminLTE./plugins/datatables/dataTables.bootstrap.min',
+            ],
+            [
+                'block' => 'scriptBotton'
+            ]
+        );
     ?>
         <?php if (!empty($tabs)) : ?>
+        <div class="nav-tabs-custom">
             <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
             <?php foreach ($tabs as $k => $tab) :?>
                 <li role="presentation" class="<?= ($k == 0) ? 'active' : ''?>">
@@ -278,31 +269,28 @@ if (empty($options['title'])) {
                             ]);
 
                             echo $this->Html->scriptBlock(
-                                '$(\'.' . $tab['containerId'] . '\').DataTable({
-                                        "paging":false,
+                                '$(".' . $tab['containerId'] . '").DataTable({
+                                        "paging": true,
                                         "searching": false
                                     });',
-                                ['block' => 'scriptBottom']
+                                ['block' => 'scriptBotton']
                             );
                         }
                         ?>
                     </div>
                 <?php endforeach; ?>
             </div> <!-- .tab-content -->
+        </div> <!-- .nav-tabs-custom -->
         <?php endif; ?>
     </div>
-    <?php
-        //loading common setup for typeahead/panel/etc libs for tabs
-        echo $this->element('CsvMigrations.common_js_libs');
-    ?>
-</div> <!-- associated records -->
+</div> <!-- .associated-records -->
 <?php endif;?>
-
+<?php if (empty($this->request->query['embedded'])) : ?>
+</section>
+<?php endif;?>
 <?php
-    // Event dispatcher for bottom section
-    $event = new Event('View.View.Body.Bottom', $this, ['request' => $this->request, 'options' => $options]);
-    $this->eventManager()->dispatch($event);
-    echo $event->result;
+// Event dispatcher for bottom section
+$event = new Event('View.View.Body.Bottom', $this, ['request' => $this->request, 'options' => $options]);
+$this->eventManager()->dispatch($event);
+echo $event->result;
 ?>
-
-<?= $this->Html->css('CsvMigrations.style', ['block' => 'cssBottom']); ?>

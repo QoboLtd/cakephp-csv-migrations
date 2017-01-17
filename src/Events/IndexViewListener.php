@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\Events;
 
+use App\View\AppView;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\Network\Request;
@@ -222,16 +223,19 @@ class IndexViewListener extends BaseViewListener
             return;
         }
 
-        foreach ($entities as $entity) {
-            // broadcast menu event
-            $ev = new Event('View.Index.Menu.Actions', $event->subject(), [
-                'request' => $event->subject()->request,
-                'options' => $entity
-            ]);
-            EventManager::instance()->dispatch($ev);
+        $appView = new AppView();
+        $plugin = $event->subject()->request->plugin;
+        $controller = $event->subject()->request->controller;
+        $displayField = $event->subject()->{$event->subject()->name}->displayField();
 
-            $entity->{static::MENU_PROPERTY_NAME} = $ev->result;
-        }
+        $appView->element('CsvMigrations.Menu/index_actions', [
+            'plugin' => $event->subject()->request->plugin,
+            'controller' => $event->subject()->request->controller,
+            'displayField' => $displayField,
+            'entities' => $entities,
+            'user' => $event->subject()->Auth->user(),
+            'propertyName' => static::MENU_PROPERTY_NAME
+        ]);
     }
 
     /**

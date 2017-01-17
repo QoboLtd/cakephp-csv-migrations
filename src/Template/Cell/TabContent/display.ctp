@@ -1,6 +1,7 @@
 <?php
 use Cake\Core\Configure;
 use Cake\Event\Event;
+use Cake\Network\Exception\ForbiddenException;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
@@ -14,9 +15,8 @@ we don't do the linkage - they would have hidden ID by default
 */
 ?>
 <?php if (in_array($data['tab']['associationType'], ['manyToMany'])) : ?>
-<div class="row">
-    <div class="typeahead-container col-xs-12">
     <?php
+    try {
         $emField = $content['class_name'] . '.' . $content['foreign_key'];
         $emFieldName = substr($emField, strrpos($emField, '.') + 1);
 
@@ -25,10 +25,29 @@ we don't do the linkage - they would have hidden ID by default
 
         list($emPlugin, $emController) = pluginSplit(substr($emField, 0, strrpos($emField, '.')));
 
-        $tableName = $this->request->controller;
-    if (!is_null($this->request->plugin)) {
-        $tableName = $this->request->plugin . '.' . $tableName;
+        $modalBody = $this->requestAction([
+            'plugin' => $emPlugin,
+            'controller' => $emController,
+            'action' => 'add'
+        ], [
+            'query' => [
+                'embedded' => $this->request->controller,
+                'foreign_key' => $emFieldName,
+                'modal_id' => $emModal,
+            ]
+        ]);
+    } catch (ForbiddenException $e) {
+        // just don't display anything if current user has no access to embedded module
     }
+    ?>
+    <?php if (isset($modalBody)) : ?>
+    <div class="row">
+        <div class="typeahead-container col-xs-12">
+        <?php
+        $tableName = $this->request->controller;
+        if (!is_null($this->request->plugin)) {
+            $tableName = $this->request->plugin . '.' . $tableName;
+        }
 
         $formOptions = [
             'url' => [
@@ -40,15 +59,11 @@ we don't do the linkage - they would have hidden ID by default
         ];
 
         $handlerOptions = [];
-        /*
-        set associated table name to be used on input field's name
-         */
+        // set associated table name to be used on input field's name
         $handlerOptions['associated_table_name'] = $content['table_name'];
         $handlerOptions['emDataTarget'] = $emDataTarget;
         $handlerOptions['emAssociationType'] = $data['tab']['associationType'];
-        /*
-        set field type to 'has_many' and default parameters
-         */
+        // set field type to 'has_many' and default parameters
         $handlerOptions['fieldDefinitions']['type'] = 'has_many(' . $content['class_name'] . ')';
         $handlerOptions['fieldDefinitions']['required'] = true;
         $handlerOptions['fieldDefinitions']['non-searchable'] = true;
@@ -56,9 +71,7 @@ we don't do the linkage - they would have hidden ID by default
 
 
         echo $this->Form->create(null, $formOptions);
-           /*
-        display typeahead field for associated module(s)
-         */
+        // display typeahead field for associated module(s)
         echo $fhf->renderInput(
             $tableName,
             $content['foreign_key'],
@@ -66,46 +79,34 @@ we don't do the linkage - they would have hidden ID by default
             $handlerOptions
         );
 
-        /*
-        set existing related records as hidden fields
-         */
-    foreach ($content['records'] as $record) {
-        echo $this->Form->hidden($content['table_name'] . '._ids[]', [
-        'value' => $record[$content['primary_key']]
-        ]);
-    }
+        // set existing related records as hidden fields
+        foreach ($content['records'] as $record) {
+            echo $this->Form->hidden($content['table_name'] . '._ids[]', [
+            'value' => $record[$content['primary_key']]
+            ]);
+        }
 
         echo $this->Form->end();
-    ?>
+        ?>
+        </div>
     </div>
-</div>
-<div id="<?= $emModal?>" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div> <!-- modal-header -->
+    <div id="<?= $emModal?>" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">&nbsp;</h4>
+                </div> <!-- modal-header -->
 
-            <div class="modal-body">
-            <?php
-                echo $this->requestAction([
-                    'plugin' => $emPlugin,
-                    'controller' => $emController,
-                    'action' => 'add'
-                ], [
-                    'query' => [
-                        'embedded' => $this->request->controller,
-                        'foreign_key' => $emFieldName,
-                        'modal_id' => $emModal,
-                    ]
-                ]);
-            ?>
-            </div>
-        </div> <!-- modal-content -->
-    </div> <!-- modal-dialog -->
-</div> <!-- modal window -->
+                <div class="modal-body">
+                    <?= $modalBody ?>
+                </div>
+            </div> <!-- modal-content -->
+        </div> <!-- modal-dialog -->
+    </div> <!-- modal window -->
+    <?php endif; ?>
 <?php endif; ?>
 <?php
     //@NOTE: if no records were found Query returns null, so we're fixing the count!
@@ -113,10 +114,10 @@ we don't do the linkage - they would have hidden ID by default
 ?>
 <?php if ($content['length']) : ?>
 <div class="table-responsive">
-    <table class="table table-hover <?= $data['tab']['containerId']?>">
+    <table class="table table-hover table-condensed table-vertical-align <?= $data['tab']['containerId']?>">
         <thead>
             <tr>
-                <?php foreach ($content['fields'] as $field) :?>
+                <?php foreach ($content['fields'] as $field) : ?>
                     <th><?= Inflector::humanize($field) ?></th>
                 <?php endforeach; ?>
 
@@ -124,7 +125,7 @@ we don't do the linkage - they would have hidden ID by default
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($content['records'] as $k => $record) :?>
+            <?php foreach ($content['records'] as $k => $record) : ?>
             <tr>
                 <?php foreach ($content['fields'] as $field) : ?>
                 <td>
@@ -145,8 +146,7 @@ we don't do the linkage - they would have hidden ID by default
                 <td class="actions">
                 <?php
                     // get action buttons if any allowed
-                    $event = new Event('View.Associated.Menu.Actions', $this, [
-                        'request' => $this->request,
+                    echo $this->element('CsvMigrations.Menu/associated_actions', [
                         'options' => [
                             'entity' => $data['entity'],
                             'associated' => [
@@ -158,8 +158,6 @@ we don't do the linkage - they would have hidden ID by default
                             ]
                         ]
                     ]);
-                    $this->eventManager()->dispatch($event);
-                    echo $event->result;
                 ?>
                 </td>
             </tr>

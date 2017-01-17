@@ -1,25 +1,19 @@
-<?php
-$this->extend('/Common/panel-wrapper');
-$mainTitle = $this->element(
-    'top-row',
-    ['title' => __d('CsvMigrations', 'Edit database list')]
-);
-$this->assign('top-row', $mainTitle);
-$this->assign('panel-title', __d('CsvMigrations', 'Details'));
-?>
-<div class="row">
-    <div class="col-xs-12">
-        <div class="row">
-            <div class="col-xs-6">
-                <?= $this->Form->create($dblist); ?>
-                <fieldset>
-                    <?php
-                    echo $this->Form->input('name');
-                    ?>
-                </fieldset>
-                <?= $this->Form->button(__d('CsvMigrations', 'Submit'), ['class' => 'btn btn-primary']); ?>
-                <?= $this->Form->end() ?>
+<section class="content-header">
+    <h1><?= __d('CsvMigrations', 'Edit Database List') ?></h1>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="box box-default">
+                <div class="box-body">
+                    <div class="col-xs-12">
+                    <?= $this->Form->create($dblist); ?>
+                        <?= $this->Form->input('name') ?>
+                        <?= $this->Form->button(__d('CsvMigrations', 'Submit'), ['class' => 'btn btn-primary']); ?>
+                    <?= $this->Form->end() ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>

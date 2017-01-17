@@ -48,7 +48,11 @@ if (empty($options['title'])) {
 ?>
 <section class="content-header">
     <h1><?= $options['title'] ?>
-        <small><?= $this->element('CsvMigrations.Menu/index_top', ['user' => $user]) ?></small>
+        <div class="pull-right">
+            <div class="btn-group btn-group-sm" role="group">
+                <?= $this->element('CsvMigrations.Menu/index_top', ['user' => $user]) ?>
+            </div>
+        </div>
     </h1>
 </section>
 <section class="content">

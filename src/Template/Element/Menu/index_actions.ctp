@@ -13,7 +13,7 @@ foreach ($entities as $entity) {
     ];
     $menu[] = [
         'html' => $this->Html->link('<i class="fa fa-eye"></i>', $url, [
-            'title' => __('View'), 'class' => 'btn btn-default btn-sm', 'escape' => false
+            'title' => __('View'), 'class' => 'btn btn-default', 'escape' => false
         ]),
         'url' => $url
     ];
@@ -27,7 +27,7 @@ foreach ($entities as $entity) {
     ];
     $menu[] = [
         'html' => $this->Html->link('<i class="fa fa-pencil"></i>', $url, [
-            'title' => __('Edit'), 'class' => 'btn btn-default btn-sm', 'escape' => false
+            'title' => __('Edit'), 'class' => 'btn btn-default', 'escape' => false
         ]),
         'url' => $url
     ];
@@ -43,7 +43,7 @@ foreach ($entities as $entity) {
     $menu[] = [
         'html' => $this->Html->link('<i class="fa fa-trash"></i>', $url, [
             'title' => __('Delete'),
-            'class' => 'btn btn-default btn-sm',
+            'class' => 'btn btn-default',
             'escape' => false,
             'data-type' => 'ajax-delete-record',
             'data-confirm-msg' => __(
@@ -61,5 +61,6 @@ foreach ($entities as $entity) {
     ]);
     $this->EventManager()->dispatch($event);
 
-    $entity->{$propertyName} = $event->result;
+    $result = '<div class="btn-group btn-group-xs" role="group">' . $event->result . '</div>';
+    $entity->{$propertyName} = $result;
 }

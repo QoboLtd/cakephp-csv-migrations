@@ -113,7 +113,6 @@ we don't do the linkage - they would have hidden ID by default
     $content['length'] = (!is_null($content['records'])) ?: 0;
 ?>
 <?php if ($content['length']) : ?>
-<div class="table-responsive">
     <table class="table table-hover table-condensed table-vertical-align <?= $data['tab']['containerId']?>">
         <thead>
             <tr>
@@ -164,7 +163,6 @@ we don't do the linkage - they would have hidden ID by default
             <?php endforeach; ?>
         </tbody>
     </table> <!-- .table .table-hover -->
-</div> <!-- table-responsive -->
 <?php else : ?>
     <div class="well">
         <div class="row text-center"><?= __('No records found') ?></div>

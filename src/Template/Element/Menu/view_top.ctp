@@ -10,8 +10,8 @@ $url = [
     $options['entity']->id
 ];
 $menu[] = [
-    'html' => $this->Html->link('<i class="fa fa-pencil"></i>', $url, [
-        'title' => __('View'), 'escape' => false
+    'html' => $this->Html->link('<i class="fa fa-pencil"></i> ' . __('Edit'), $url, [
+        'title' => __('Edit'), 'escape' => false, 'class' => 'btn btn-default'
     ]),
     'url' => $url
 ];
@@ -23,10 +23,11 @@ $url = [
     $options['entity']->id
 ];
 $menu[] = [
-    'html' => $this->Form->postLink('<i class="fa fa-trash"></i>', $url, [
+    'html' => $this->Form->postLink('<i class="fa fa-trash"></i> ' . __('Delete'), $url, [
         'confirm' => __('Are you sure you want to delete {0}?', $options['entity']->{$displayField}),
         'title' => __('Delete'),
-        'escape' => false
+        'escape' => false,
+        'class' => 'btn btn-default'
     ]),
     'url' => $url
 ];

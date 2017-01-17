@@ -55,11 +55,15 @@ if (empty($options['title'])) {
 <section class="content-header">
     <h1>
         <?= $options['title'] ?>
-        <small><?= $this->element('CsvMigrations.Menu/view_top', [
-            'options' => $options,
-            'user' => $user,
-            'displayField' => $displayField
-        ]); ?></small>
+        <div class="pull-right">
+            <div class="btn-group btn-group-sm" role="group">
+                <?= $this->element('CsvMigrations.Menu/view_top', [
+                    'options' => $options,
+                    'user' => $user,
+                    'displayField' => $displayField
+                ]); ?>
+            </div>
+        </div>
     </h1>
 </section>
 <section class="content">
@@ -185,7 +189,7 @@ if (empty($options['title'])) {
 // loading common setup for typeahead/panel/etc libs for tabs
 echo $this->element('CsvMigrations.common_js_libs');
 ?>
-<h2 class="page-header"><i class="fa fa-link"></i> Associated Records</h2>
+<hr />
 <div class="row associated-records">
     <div class="col-xs-12">
     <?php

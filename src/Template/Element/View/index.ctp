@@ -53,7 +53,7 @@ if (empty($options['title'])) {
 </section>
 <section class="content">
     <div class="box">
-        <div class="box-body table-responsive">
+        <div class="box-body">
             <table class="table table-hover table-condensed table-vertical-align table-datatable">
                 <thead>
                     <tr>

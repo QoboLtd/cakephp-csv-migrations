@@ -154,6 +154,7 @@ class RelatedFieldHandler extends BaseFieldHandler
             if (empty($properties)) {
                 continue;
             }
+
             if (isset($options['renderAs']) && $options['renderAs'] === static::RENDER_PLAIN_VALUE) {
                 $inputs[] = h($properties['dispFieldVal']);
             } else {

@@ -83,4 +83,4 @@ $event = new Event('CsvMigrations.Associated.actionsMenu.beforeRender', $this, [
 ]);
 $this->eventManager()->dispatch($event);
 
-echo $event->result;
+echo '<div class="btn-group btn-group-xs" role="group">' . $event->result . '</div>';

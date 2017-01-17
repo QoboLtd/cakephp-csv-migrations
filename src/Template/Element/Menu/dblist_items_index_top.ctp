@@ -5,7 +5,11 @@ $menu = [];
 
 $url = ['plugin' => 'CsvMigrations', 'controller' => 'DblistItems', 'action' => 'add', $entity->id];
 $menu[] = [
-    'html' => $this->Html->link('<i class="fa fa-plus"></i>', $url, ['escape' => false]),
+    'html' => $this->Html->link(
+        '<i class="fa fa-plus"></i> ' . __d('CsvMigrations', 'Add'),
+        $url,
+        ['title' => __d('CsvMigrations', 'Add'), 'escape' => false, 'class' => 'btn btn-default']
+    ),
     'url' => $url
 ];
 

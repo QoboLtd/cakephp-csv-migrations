@@ -1,7 +1,11 @@
 <section class="content-header">
     <h1>
         <?= __d('CsvMigrations', 'Database Lists') ?>
-        <small><?= $this->element('CsvMigrations.Menu/dblists_index_top', ['user' => $user]) ?></small>
+        <div class="pull-right">
+            <div class="btn-group btn-group-sm" role="group">
+                <?= $this->element('CsvMigrations.Menu/dblists_index_top', ['user' => $user]) ?>
+            </div>
+        </div>
     </h1>
 </section>
 <section class="content">

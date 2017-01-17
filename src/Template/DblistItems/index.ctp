@@ -1,10 +1,12 @@
 <section class="content-header">
     <h1>
         <?= __d('CsvMigrations', 'Database List Items') ?>
-        <small><?= $list->get('name') ?> <?= $this->element('CsvMigrations.Menu/dblist_items_index_top', [
-            'entity' => $list,
-            'user' => $user
-        ]) ?></small>
+        <small><?= $list->get('name') ?></small>
+        <div class="pull-right">
+            <div class="btn-group btn-group-sm" role="group">
+                <?= $this->element('CsvMigrations.Menu/dblist_items_index_top', ['entity' => $list, 'user' => $user]) ?>
+            </div>
+        </div>
     </h1>
 </section>
 <section class="content">

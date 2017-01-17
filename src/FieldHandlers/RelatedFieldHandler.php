@@ -29,11 +29,6 @@ class RelatedFieldHandler extends BaseFieldHandler
     const LABEL_FIELD_SUFFIX = '_label';
 
     /**
-     * Flag for rendering value without url
-     */
-    const RENDER_PLAIN_VALUE = 'plain';
-
-    /**
      * Html input wrapper markup
      */
     const HTML_INPUT_WRAPPER = '<div class="form-group%s">%s%s</div>';
@@ -120,7 +115,7 @@ class RelatedFieldHandler extends BaseFieldHandler
         $input = sprintf(
             static::HTML_INPUT_WRAPPER,
             (bool)$options['fieldDefinitions']->getRequired() ? ' required' : '',
-            $this->cakeView->Form->label($field),
+            $this->cakeView->Form->label($field, null, ['class' => 'control-label']),
             $input
         );
 
@@ -159,6 +154,7 @@ class RelatedFieldHandler extends BaseFieldHandler
             if (empty($properties)) {
                 continue;
             }
+
             if (isset($options['renderAs']) && $options['renderAs'] === static::RENDER_PLAIN_VALUE) {
                 $inputs[] = h($properties['dispFieldVal']);
             } else {

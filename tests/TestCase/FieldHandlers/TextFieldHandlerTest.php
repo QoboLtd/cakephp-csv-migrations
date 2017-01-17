@@ -43,4 +43,10 @@ class TextFieldHandlerTest extends PHPUnit_Framework_TestCase
         $result = $this->fh->renderValue(null, null, $value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
+
+    public function testRenderValueWithPlainFlag()
+    {
+        $result = $this->fh->renderValue(null, null, 'Hello World!', ['renderAs' => 'plain']);
+        $this->assertEquals('Hello World!', $result);
+    }
 }

@@ -38,7 +38,9 @@ class TextFieldHandler extends BaseFieldHandler
         $result = filter_var($data, FILTER_SANITIZE_STRING);
 
         if (!empty($result)) {
-            $result = $this->cakeView->Text->autoParagraph($result);
+            if (!isset($options['renderAs']) || !$options['renderAs'] === static::RENDER_PLAIN_VALUE) {
+                $result = $this->cakeView->Text->autoParagraph($result);
+            }
         }
 
         return $result;

@@ -78,7 +78,11 @@ class ListFieldHandler extends BaseFieldHandler
                 }
             }
         } else {
-            $result = sprintf(static::VALUE_NOT_FOUND_HTML, $data);
+            if (isset($options['renderAs']) && $options['renderAs'] === static::RENDER_PLAIN_VALUE) {
+                $result = $data;
+            } else {
+                $result = sprintf(static::VALUE_NOT_FOUND_HTML, $data);
+            }
         }
 
         return $result;

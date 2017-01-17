@@ -3,15 +3,11 @@ namespace CsvMigrations\Controller\Api;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Crud\Controller\ControllerTrait;
 use CsvMigrations\CsvMigrationsUtils;
-use CsvMigrations\FieldHandlers\FieldHandlerFactory;
-use CsvMigrations\FieldHandlers\RelatedFieldHandler;
-use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 use CsvMigrations\FileUploadsUtils;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
@@ -21,7 +17,6 @@ class AppController extends Controller
 {
     use ControllerTrait;
     use PanelUtilTrait;
-    use RelatedFieldTrait;
 
     public $components = [
         'RequestHandler',
@@ -325,83 +320,22 @@ class AppController extends Controller
     public function lookup()
     {
         $this->Crud->on('beforeLookup', function (Event $event) {
-            if (!empty($this->request->query['query'])) {
-                $typeaheadFields = [];
-
-                // Get typeahead fields from configuration
-                if (method_exists($this->{$this->name}, 'typeaheadFields') && is_callable([$this->{$this->name}, 'typeaheadFields'])) {
-                    $typeaheadFields = $this->{$this->name}->typeaheadFields();
-                }
-
-                // If there are no typeahead fields configured, use displayFields()
-                if (empty($typeaheadFields)) {
-                    $typeaheadFields[] = $this->{$this->name}->displayField();
-                }
-
-                $conditions = [];
-                if (count($typeaheadFields) > 1) {
-                    $conditions['OR'] = [];
-                    foreach ($typeaheadFields as $field) {
-                        $conditions['OR'][] = [ $field . ' LIKE' => '%' . $this->request->query['query'] . '%'];
-                    }
-                } elseif (count($typeaheadFields) == 1) {
-                        $conditions[] = [ $typeaheadFields[0] . ' LIKE' => '%' . $this->request->query['query'] . '%'];
-                } else {
-                    throw new \RuntimeException("No typeahead or display field configured for " . $this->name);
-                }
-
-                $this->paginate['conditions'] = $conditions;
-            }
+            $ev = new Event('CsvMigrations.beforeLookup', $this, [
+                'query' => $event->subject()->query
+            ]);
+            $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('afterLookup', function (Event $event) {
-            // Properly populate display values for the found entries.
-            // This will recurse into related modules and get display
-            // values as deep as needed.
-            $entities = $event->subject()->entities;
-            $event->subject()->entities = [];
-            foreach ($entities as $key => $entity) {
-                $fhf = new FieldHandlerFactory();
-                // We need plain display value. It'll be properly wrapped
-                // in styling only at the top level.
-                $entity = $fhf->renderValue(
-                    $this->{$this->name},
-                    $this->{$this->name}->displayField(),
-                    $entity,
-                    ['renderAs' => RelatedFieldHandler::RENDER_PLAIN_VALUE]
-                );
-                $event->subject()->entities[$key] = $entity;
-            }
+            $ev = new Event('CsvMigrations.afterLookup', $this, [
+                'entities' => $event->subject()->entities
+            ]);
+            $this->eventManager()->dispatch($ev);
+            $event->subject()->entities = $ev->result;
         });
 
         return $this->Crud->execute();
     }
-
-    /**
-     * Prepend parent module display field value to resultset.
-     *
-     * @param  \Cake\Datasource\ResultSetDecorator $entities Entities
-     * @return array
-     */
-    protected function _prependParentModule(ResultSetDecorator $entities)
-    {
-        $result = $entities->toArray();
-
-        foreach ($result as $id => &$value) {
-            $parentProperties = $this->_getRelatedParentProperties(
-                $this->_getRelatedProperties($this->{$this->name}->registryAlias(), $id)
-            );
-            if (!empty($parentProperties['dispFieldVal'])) {
-                $value = implode(' ' . $this->_separator . ' ', [
-                    $parentProperties['dispFieldVal'],
-                    $value
-                ]);
-            }
-        }
-
-        return $result;
-    }
-
 
     /**
      * Panels to show.

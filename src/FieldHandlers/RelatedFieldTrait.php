@@ -16,7 +16,7 @@ trait RelatedFieldTrait
      *
      * @var string
      */
-    protected $_separator = '&gt;';
+    protected $_separator = '»';
 
     /**
      * Get related model's parent model properties.
@@ -81,7 +81,7 @@ trait RelatedFieldTrait
         if (!empty($result['entity'])) {
             // Pass the value through related field handler
             // to properly display the user-friendly label.
-            $fhf = new FieldHandlerFactory($this->cakeView);
+            $fhf = new FieldHandlerFactory();
             $result['dispFieldVal'] = $fhf->renderValue(
                 $table,
                 $table->displayField(),

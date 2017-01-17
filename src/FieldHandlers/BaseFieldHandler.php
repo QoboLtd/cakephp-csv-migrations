@@ -19,6 +19,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     const DB_FIELD_TYPE = 'string';
 
     /**
+     * Flag for rendering value as is
+     */
+    const RENDER_PLAIN_VALUE = 'plain';
+
+    /**
      * View instance.
      *
      * @var \Cake\View\View

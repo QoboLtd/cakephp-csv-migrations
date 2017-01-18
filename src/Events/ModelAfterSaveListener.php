@@ -135,7 +135,8 @@ class ModelAfterSaveListener implements EventListenerInterface
         }
 
         foreach ($emails as $email) {
-            $vCalendar = new \Eluceo\iCal\Component\Calendar('//EN//');
+            $vCalendar = new \Eluceo\iCal\Component\Calendar('-//Calendar Events//EN//');
+            $vCalendar->setCalendarScale('GREGORIAN');
 
             $vAttendees = $this->_getEventAttendees($emails);
 
@@ -148,6 +149,13 @@ class ModelAfterSaveListener implements EventListenerInterface
                 'timezone' => $timezone,
             ]);
 
+            if (!$entity->isNew()) {
+                $vEvent->setSequence(time());
+            } else {
+                $vEvent->setSequence(0);
+            }
+
+            $vEvent->setUniqueId($entity->id);
             $vEvent->setAttendees($vAttendees);
             $vCalendar->addComponent($vEvent);
 
@@ -360,7 +368,6 @@ class ModelAfterSaveListener implements EventListenerInterface
     {
         $vEvent = new \Eluceo\iCal\Component\Event();
         $vOrganizer = new \Eluceo\iCal\Property\Event\Organizer($options['organizer'], ['MAILTO' => $options['organizer']]);
-
         $vEvent->setOrganizer($vOrganizer);
         $vEvent->setSummary($options['subject']);
 

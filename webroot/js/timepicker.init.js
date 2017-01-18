@@ -30,7 +30,8 @@
             // time picker
             $('[data-provide="timepicker"]').timepicker({
                 showMeridian: false,
-                minuteStep: 5
+                minuteStep: 5,
+                defaultTime: false
             });
         }
     };

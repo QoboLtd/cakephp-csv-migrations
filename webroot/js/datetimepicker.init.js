@@ -32,10 +32,10 @@
                 singleDatePicker: true,
                 showDropdowns: true,
                 timePicker: true,
-                drops: "up",
+                drops: "down",
                 timePicker12Hour: false,
                 timePickerIncrement: 5,
-                format: "YYYY-MM-DD HH:mm"
+                format: "YYYY-MM-DD HH:mm:ss"
             });
         }
     };

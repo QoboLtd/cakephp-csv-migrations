@@ -407,14 +407,18 @@ class ModelAfterSaveListener implements EventListenerInterface
         $dtz = $options['dtz'];
         $field = $options['field'];
 
-        $start = new \DateTime($entity->$field->format('Y-m-d H:i:s'), $dtz);
+        if ($entity->$field instanceof Time) {
+            $start = new \DateTime($entity->$field->format('Y-m-d H:i:s'), $dtz);
+        } else {
+            $start = new \DateTime(date('Y-m-d H:i:s', strtotime($entity->$field)), $dtz);
+        }
 
         // calculate the duration of an event
         if (!empty($entity->duration)) {
             $durationParts = date_parse($entity->duration);
             $durationMinutes = $durationParts['hour'] * 60 + $durationParts['minute'];
 
-            $end = new \DateTime($entity->$field->format('Y-m-d H:i:s'));
+            $end = new \DateTime($start->format('Y-m-d H:i:s'));
             $end->modify("+ {$durationMinutes} minutes");
         } else {
             //if no duration is present use end_date
@@ -432,7 +436,7 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         // If all else fails, assume 1 hour duration
         if (empty($end)) {
-            $end = new \DateTime($entity->$field->format('Y-m-d H:i:s'));
+            $end = new \DateTime($start->format('Y-m-d H:i:s'));
             $end->modify("+ 60 minutes");
         }
 

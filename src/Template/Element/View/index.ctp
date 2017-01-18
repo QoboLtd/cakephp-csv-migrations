@@ -48,12 +48,16 @@ if (empty($options['title'])) {
 ?>
 <section class="content-header">
     <h1><?= $options['title'] ?>
-        <small><?= $this->element('CsvMigrations.Menu/index_top', ['user' => $user]) ?></small>
+        <div class="pull-right">
+            <div class="btn-group btn-group-sm" role="group">
+                <?= $this->element('CsvMigrations.Menu/index_top', ['user' => $user]) ?>
+            </div>
+        </div>
     </h1>
 </section>
 <section class="content">
     <div class="box">
-        <div class="box-body table-responsive">
+        <div class="box-body">
             <table class="table table-hover table-condensed table-vertical-align table-datatable">
                 <thead>
                     <tr>

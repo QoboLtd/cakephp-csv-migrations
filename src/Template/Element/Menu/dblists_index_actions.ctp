@@ -11,7 +11,7 @@ $url = [
 ];
 $menu[] = [
     'html' => $this->Html->link('<i class="fa fa-list-alt"></i>', $url, [
-        'title' => __('View'), 'class' => 'btn btn-default btn-sm', 'escape' => false
+        'title' => __('View'), 'class' => 'btn btn-default', 'escape' => false
     ]),
     'url' => $url
 ];
@@ -24,7 +24,7 @@ $url = [
 ];
 $menu[] = [
     'html' => $this->Html->link('<i class="fa fa-pencil"></i>', $url, [
-        'title' => __('Edit'), 'class' => 'btn btn-default btn-sm', 'escape' => false
+        'title' => __('Edit'), 'class' => 'btn btn-default', 'escape' => false
     ]),
     'url' => $url
 ];
@@ -52,4 +52,4 @@ $event = new Event('CsvMigrations.Dblists.Index.actionsMenu.beforeRender', $this
 ]);
 $this->EventManager()->dispatch($event);
 
-echo $event->result;
+echo '<div class="btn-group btn-group-xs" role="group">' . $event->result . '</div>';

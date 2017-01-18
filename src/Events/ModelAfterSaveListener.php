@@ -155,8 +155,7 @@ class ModelAfterSaveListener implements EventListenerInterface
                 $vEvent->setSequence(0);
             }
 
-
-            $vEvent->setUniqueId($entity->id . '@qobocloud.com');
+            $vEvent->setUniqueId($entity->id);
             $vEvent->setAttendees($vAttendees);
             $vCalendar->addComponent($vEvent);
 

@@ -8,7 +8,7 @@ class MigrationParserTest extends PHPUnit_Framework_TestCase
 {
     public function testParseFromPath()
     {
-        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'CsvMigrations' . DS . 'migrations' . DS . 'Foo' . DS . 'migration.csv';
+        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'Modules' . DS . 'Foo' . DS . 'db' . DS . 'migration.csv';
         $parser = new MigrationParser();
         $result = $parser->parseFromPath($file);
 
@@ -28,7 +28,7 @@ class MigrationParserTest extends PHPUnit_Framework_TestCase
 
     public function testWrapFromPath()
     {
-        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'CsvMigrations' . DS . 'migrations' . DS . 'Foo' . DS . 'migration.csv';
+        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'Modules' . DS . 'Foo' . DS . 'db' . DS . 'migration.csv';
         $parser = new MigrationParser();
         $result = $parser->wrapFromPath($file);
 

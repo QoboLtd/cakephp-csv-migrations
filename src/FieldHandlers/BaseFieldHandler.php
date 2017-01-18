@@ -19,6 +19,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     const DB_FIELD_TYPE = 'string';
 
     /**
+     * Flag for rendering value as is
+     */
+    const RENDER_PLAIN_VALUE = 'plain';
+
+    /**
      * View instance.
      *
      * @var \Cake\View\View
@@ -41,6 +46,20 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         'email' => 'email',
         'phone' => 'tel',
         'boolean' => 'checkbox'
+    ];
+
+    /**
+     * Custom form input templates.
+     *
+     * @var input
+     */
+    protected $_templates = [
+        'input' => '<div class="input-group %s">
+            <div class="input-group-addon">
+                <i class="fa fa-%s"></i>
+            </div>
+            <input type="{{type}}" name="{{name}}"{{attrs}}/>
+        </div>'
     ];
 
     /**
@@ -330,7 +349,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * * Otherwise assume the variable is the data already
      *
      * @param string $field Field name
-     * @param Entity|Request|mixed $var Variable to extract value from
+     * @param Entity|Request|mixed $data Variable to extract value from
      * @return mixed
      */
     protected function _getFieldValueFromData($field, $data)

@@ -43,12 +43,8 @@ class TimeFieldHandler extends BaseFieldHandler
         }
         $fieldName = $this->_getFieldName($table, $field, $options);
 
-        if (!isset($options['element']) && $this->cakeView->elementExists('QoboAdminPanel.datepicker')) {
-            $options['element'] = 'QoboAdminPanel.datepicker';
-        }
-
         if (isset($options['element'])) {
-            return $this->cakeView->element($options['element'], [
+            $result = $this->cakeView->element($options['element'], [
                 'options' => [
                     'fieldName' => $fieldName,
                     'type' => static::INPUT_FIELD_TYPE,
@@ -58,12 +54,22 @@ class TimeFieldHandler extends BaseFieldHandler
                 ]
             ]);
         } else {
-            return $this->cakeView->Form->input($fieldName, [
-                'type' => 'time',
+            $result = $this->cakeView->Form->input($fieldName, [
+                'type' => 'text',
+                'data-provide' => 'timepicker',
+                'autocomplete' => 'off',
                 'required' => $required,
-                'value' => $data
+                'value' => $data,
+                'templates' => [
+                    'input' => vsprintf($this->_templates['input'], [
+                        'bootstrap-timepicker timepicker',
+                        'clock-o'
+                    ])
+                ]
             ]);
         }
+
+        return $result;
     }
 
     /**
@@ -92,10 +98,6 @@ class TimeFieldHandler extends BaseFieldHandler
      */
     public function renderSearchInput($table, $field, array $options = [])
     {
-        if (!isset($options['element']) && $this->cakeView->elementExists('QoboAdminPanel.datepicker')) {
-            $options['element'] = 'QoboAdminPanel.datepicker';
-        }
-
         if (isset($options['element'])) {
             $content = $this->cakeView->element($options['element'], [
                 'options' => [
@@ -107,14 +109,39 @@ class TimeFieldHandler extends BaseFieldHandler
             ]);
         } else {
             $content = $this->cakeView->Form->input('', [
+                'name' => '{{name}}',
                 'value' => '{{value}}',
-                'type' => static::DB_FIELD_TYPE,
-                'label' => false
+                'type' => 'text',
+                'data-provide' => 'timepicker',
+                'autocomplete' => 'off',
+                'label' => false,
+                'templates' => [
+                    'input' => vsprintf($this->_templates['input'], [
+                        'bootstrap-timepicker timepicker',
+                        'clock-o'
+                    ])
+                ]
             ]);
         }
 
         return [
-            'content' => $content
+            'content' => $content,
+            'post' => [
+                [
+                    'type' => 'script',
+                    'content' => [
+                        'CsvMigrations.dom-observer',
+                        'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
+                        'CsvMigrations.timepicker.init'
+                    ],
+                    'block' => 'scriptBotton'
+                ],
+                [
+                    'type' => 'css',
+                    'content' => 'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
+                    'block' => 'css'
+                ]
+            ]
         ];
     }
 }

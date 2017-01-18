@@ -11,11 +11,6 @@ class BooleanFieldHandler extends BaseFieldHandler
     const DB_FIELD_TYPE = 'boolean';
 
     /**
-     * Input field type
-     */
-    const INPUT_FIELD_TYPE = 'checkbox';
-
-    /**
      * Method responsible for rendering field's input.
      *
      * @param  mixed  $table   name or instance of the Table
@@ -28,11 +23,20 @@ class BooleanFieldHandler extends BaseFieldHandler
     {
         $data = $this->_getFieldValueFromData($field, $data);
 
-        return $this->cakeView->Form->input($this->_getFieldName($table, $field, $options), [
-            'type' => static::INPUT_FIELD_TYPE,
+        $fieldName = $this->_getFieldName($table, $field, $options);
+        $label = $this->cakeView->Form->label($fieldName);
+        $input = $this->cakeView->Form->input($fieldName, [
+            'type' => 'checkbox',
+            'class' => 'square',
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
-            'checked' => $data
+            'checked' => $data,
+            'label' => false,
+            'templates' => [
+                'inputContainer' => '<div class="{{required}}">' . $label . '<div class="clearfix"></div>{{content}}</div>'
+            ]
         ]);
+
+        return $input;
     }
 
     /**
@@ -64,12 +68,29 @@ class BooleanFieldHandler extends BaseFieldHandler
         }
 
         $content = $this->cakeView->Form->input('{{name}}', [
-            'type' => $fieldType,
-            'label' => ''
+            'type' => 'checkbox',
+            'class' => 'square',
+            'label' => false
         ]);
 
         return [
-            'content' => $content
+            'content' => $content,
+            'post' => [
+                [
+                    'type' => 'script',
+                    'content' => [
+                        'CsvMigrations.dom-observer',
+                        'AdminLTE./plugins/iCheck/icheck.min',
+                        'CsvMigrations.icheck.init'
+                    ],
+                    'block' => 'scriptBotton'
+                ],
+                [
+                    'type' => 'css',
+                    'content' => 'AdminLTE./plugins/iCheck/all',
+                    'block' => 'css'
+                ]
+            ]
         ];
     }
 }

@@ -5,6 +5,9 @@ use Cake\Utility\Hash;
 use CsvMigrations\FieldHandlers\BaseFileFieldHandler;
 use CsvMigrations\FileUploadsUtils;
 
+/**
+ * @deprecated 10.0.0 Obsolete class since new File Uploads implementation
+ */
 class FileFieldHandler extends BaseFileFieldHandler
 {
     /**

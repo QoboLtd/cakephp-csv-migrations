@@ -15,7 +15,8 @@
         "symfony/expression-language": "^3.1",
         "admad/cakephp-jwt-auth": "^2.0",
         "muffin/trash": "^1.1",
-        "eluceo/ical": "^0.11.0"
+        "eluceo/ical": "^0.11.0",
+        "maiconpinto/cakephp-adminlte-theme": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "*",

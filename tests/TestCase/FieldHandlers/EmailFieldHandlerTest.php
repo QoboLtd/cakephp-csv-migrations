@@ -44,4 +44,10 @@ class EmailFieldHandlerTest extends PHPUnit_Framework_TestCase
         $result = $this->fh->renderValue(null, null, $value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
+
+    public function testRenderValueWithPlainFlag()
+    {
+        $result = $this->fh->renderValue(null, null, 'john.smith@company.com', ['renderAs' => 'plain']);
+        $this->assertEquals('john.smith@company.com', $result);
+    }
 }

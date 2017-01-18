@@ -35,11 +35,11 @@ class DblistsController extends BaseController
         if ($this->request->is('post')) {
             $dblist = $this->Dblists->patchEntity($dblist, $this->request->data);
             if ($this->Dblists->save($dblist)) {
-                $this->Flash->success(__('The dblist has been saved.'));
+                $this->Flash->success(__('The Database list has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The dblist could not be saved. Please, try again.'));
+                $this->Flash->error(__('The Database list could not be saved. Please, try again.'));
             }
         }
         $this->set(compact('dblist'));
@@ -61,11 +61,11 @@ class DblistsController extends BaseController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $dblist = $this->Dblists->patchEntity($dblist, $this->request->data);
             if ($this->Dblists->save($dblist)) {
-                $this->Flash->success(__('The dblist has been saved.'));
+                $this->Flash->success(__('The Database list has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The dblist could not be saved. Please, try again.'));
+                $this->Flash->error(__('The Database list could not be saved. Please, try again.'));
             }
         }
         $this->set(compact('dblist'));
@@ -84,9 +84,9 @@ class DblistsController extends BaseController
         $this->request->allowMethod(['post', 'delete']);
         $dblist = $this->Dblists->get($id);
         if ($this->Dblists->delete($dblist)) {
-            $this->Flash->success(__('The dblist has been deleted.'));
+            $this->Flash->success(__('The Database list has been deleted.'));
         } else {
-            $this->Flash->error(__('The dblist could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The Database list could not be deleted. Please, try again.'));
         }
 
         return $this->redirect(['action' => 'index']);

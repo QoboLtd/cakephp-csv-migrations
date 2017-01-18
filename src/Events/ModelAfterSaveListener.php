@@ -135,7 +135,8 @@ class ModelAfterSaveListener implements EventListenerInterface
         }
 
         foreach ($emails as $email) {
-            $vCalendar = new \Eluceo\iCal\Component\Calendar('//EN//');
+            $vCalendar = new \Eluceo\iCal\Component\Calendar('-//Calendar Events//EN//');
+            $vCalendar->setCalendarScale('GREGORIAN');
 
             $vAttendees = $this->_getEventAttendees($emails);
 
@@ -148,6 +149,13 @@ class ModelAfterSaveListener implements EventListenerInterface
                 'timezone' => $timezone,
             ]);
 
+            if (!$entity->isNew()) {
+                $vEvent->setSequence(time());
+            } else {
+                $vEvent->setSequence(0);
+            }
+
+            $vEvent->setUniqueId($entity->id);
             $vEvent->setAttendees($vAttendees);
             $vCalendar->addComponent($vEvent);
 
@@ -360,7 +368,6 @@ class ModelAfterSaveListener implements EventListenerInterface
     {
         $vEvent = new \Eluceo\iCal\Component\Event();
         $vOrganizer = new \Eluceo\iCal\Property\Event\Organizer($options['organizer'], ['MAILTO' => $options['organizer']]);
-
         $vEvent->setOrganizer($vOrganizer);
         $vEvent->setSummary($options['subject']);
 
@@ -399,14 +406,18 @@ class ModelAfterSaveListener implements EventListenerInterface
         $dtz = $options['dtz'];
         $field = $options['field'];
 
-        $start = new \DateTime($entity->$field->format('Y-m-d H:i:s'), $dtz);
+        if ($entity->$field instanceof Time) {
+            $start = new \DateTime($entity->$field->format('Y-m-d H:i:s'), $dtz);
+        } else {
+            $start = new \DateTime(date('Y-m-d H:i:s', strtotime($entity->$field)), $dtz);
+        }
 
         // calculate the duration of an event
         if (!empty($entity->duration)) {
             $durationParts = date_parse($entity->duration);
             $durationMinutes = $durationParts['hour'] * 60 + $durationParts['minute'];
 
-            $end = new \DateTime($entity->$field->format('Y-m-d H:i:s'));
+            $end = new \DateTime($start->format('Y-m-d H:i:s'));
             $end->modify("+ {$durationMinutes} minutes");
         } else {
             //if no duration is present use end_date
@@ -424,7 +435,7 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         // If all else fails, assume 1 hour duration
         if (empty($end)) {
-            $end = new \DateTime($entity->$field->format('Y-m-d H:i:s'));
+            $end = new \DateTime($start->format('Y-m-d H:i:s'));
             $end->modify("+ 60 minutes");
         }
 

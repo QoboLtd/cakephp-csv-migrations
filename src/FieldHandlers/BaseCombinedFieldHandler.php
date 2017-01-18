@@ -76,6 +76,10 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
         foreach ($this->_fields as $suffix => $fieldOptions) {
             $fieldName = $field . '_' . $suffix;
             $fieldData = $this->_getFieldValueFromData($fieldName, $data);
+            // fieldData will most probably be empty when dealing with combined fields for
+            // example, field 'salary' will have no data since is converted to 'salary_amount'
+            // and 'salary_currency'. In these cases we just re-call _getFeildValueFromData
+            // method and we pass to it the whole entity.
             if (empty($fieldData) && !empty($options['entity'])) {
                 $fieldData = $this->_getFieldValueFromData($fieldName, $options['entity']);
             }

@@ -9,6 +9,7 @@ echo $this->Html->css(
         'AdminLTE./plugins/datepicker/datepicker3',
         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
         'AdminLTE./plugins/select2/select2.min',
+        'CsvMigrations.fileinput.min',
         'CsvMigrations.select2-bootstrap.min',
         'CsvMigrations.style'
     ],

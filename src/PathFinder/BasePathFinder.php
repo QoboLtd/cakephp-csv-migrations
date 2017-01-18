@@ -6,15 +6,15 @@ use Cake\Core\Configure;
 abstract class BasePathFinder implements PathFinderInterface
 {
     protected $requireModule = true;
-    protected $pathConfigKey;
+    protected $pathConfigKey = 'CsvMigrations.modules.path';
+    protected $prefix;
     protected $fileName;
 
     /**
      * Find path
      *
      * Most files will require the $module parameter to
-     * make search more specific.  The only files that
-     * are currently module-independent are list CSVs.
+     * make search more specific.
      *
      * @param string $module Module to look for files in
      * @param string $path     Path to look for
@@ -45,6 +45,11 @@ abstract class BasePathFinder implements PathFinderInterface
         if ($this->requireModule) {
             $result .= $module . DIRECTORY_SEPARATOR;
         }
+
+        if (!empty($this->prefix)) {
+            $path = $this->prefix . DIRECTORY_SEPARATOR . $path;
+        }
+
         $result .= $path;
 
         $this->validatePath($result);

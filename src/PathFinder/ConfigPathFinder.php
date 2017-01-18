@@ -16,6 +16,6 @@ use Cake\Core\Configure;
  */
 class ConfigPathFinder extends BasePathFinder
 {
-    protected $pathConfigKey = 'CsvMigrations.migrations.path';
+    protected $prefix = 'config';
     protected $fileName = 'config.ini';
 }

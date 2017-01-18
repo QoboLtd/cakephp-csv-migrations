@@ -78,7 +78,7 @@ class ValidateShell extends Shell
     {
         $result = [];
 
-        $path = Configure::read('CsvMigrations.migrations.path');
+        $path = Configure::read('CsvMigrations.modules.path');
         if (!is_readable($path)) {
             throw new \RuntimeException("[$path] is not readable");
         }

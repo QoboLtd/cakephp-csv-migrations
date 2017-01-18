@@ -191,6 +191,46 @@ trait MigrationTrait
     }
 
     /**
+     * Get a list of all modules
+     *
+     * @param string $path Path to look for modules at
+     * @return array
+     */
+    protected function _getAllModules($path = null)
+    {
+        $result = [];
+
+        if (empty($path)) {
+            $path = Configure::readOrFail('CsvMigrations.modules.path');
+        }
+
+        if (empty($path)) {
+            return $result;
+        }
+
+        if (!file_exists($path)) {
+            return $result;
+        }
+
+        if (!is_dir($path)) {
+            return $result;
+        }
+
+        $dir = new \DirectoryIterator($path);
+        foreach ($dir as $module) {
+            if ($module->isDot()) {
+                continue;
+            }
+            if (!$module->isDir()) {
+                continue;
+            }
+            $result[] = $module->getFilename();
+        }
+
+        return $result;
+    }
+
+    /**
      * Get all modules data.
      *
      * @return array Modules, fields and fields types.
@@ -198,8 +238,23 @@ trait MigrationTrait
     protected function _csvData()
     {
         $result = [];
-        $path = Configure::readOrFail('CsvMigrations.migrations.path');
-        $csvFiles = $this->_getCsvFiles($path);
+        $path = Configure::readOrFail('CsvMigrations.modules.path');
+        $modules = $this->_getAllModules($path);
+        if (empty($modules)) {
+            return $result;
+        }
+        // TODO : Remove hardcoded names
+        $migrationFilename = 'db' . DIRECTORY_SEPARATOR . 'migration.csv';
+        foreach ($modules as $module) {
+            $moduleMigrationFilename = $path . $module . DIRECTORY_SEPARATOR . $migrationFilename;
+            if (file_exists($moduleMigrationFilename)) {
+                if (!isset($csvFiles[$module])) {
+                    $csvFiles[$module] = [];
+                }
+                $csvFiles[$module][] = $moduleMigrationFilename;
+            }
+        }
+
         /*
         covers case where CsvMigration configuration files reside in a plugin.
          */
@@ -227,33 +282,6 @@ trait MigrationTrait
     }
 
     /**
-     * Method that retrieves csv file path(s) from specified directory recursively.
-     *
-     * @param  string $path directory to search in.
-     * @return array        csv file paths grouped by parent directory.
-     */
-    protected function _getCsvFiles($path)
-    {
-        $result = [];
-        $filename = Configure::read('CsvMigrations.migrations.filename') . '.csv';
-        if (file_exists($path)) {
-            $dir = new \DirectoryIterator($path);
-            foreach ($dir as $it) {
-                if ($it->isDir() && !$it->isDot()) {
-                    $subDir = new \DirectoryIterator($it->getPathname());
-                    foreach ($subDir as $fileInfo) {
-                        if ($fileInfo->isFile() && $filename === $fileInfo->getFilename()) {
-                            $result[$it->getFilename()][] = $fileInfo->getPathname();
-                        }
-                    }
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Used in <model>/report/<slug> method
      * to get reports from the ini file on the dynamic
      * model/table.
@@ -263,20 +291,20 @@ trait MigrationTrait
     {
         $result = $config = [];
 
-        $filename = Configure::read('CsvMigrations.reports.filename');
-        $filename .= '.ini';
-
-        $path = Configure::read('CsvMigrations.migrations.path');
-        $dir = new \DirectoryIterator($path);
-
-        foreach ($dir as $it) {
-            if ($it->isDir() && !$it->isDot()) {
-                $subDir = new \DirectoryIterator($it->getPathname());
-                foreach ($subDir as $fileInfo) {
-                    if ($fileInfo->isFile() && $filename === $fileInfo->getFilename()) {
-                        $result[$it->getFilename()][] = $fileInfo->getPathname();
-                    }
+        $path = Configure::readOrFail('CsvMigrations.modules.path');
+        $modules = $this->_getAllModules($path);
+        if (empty($modules)) {
+            return $result;
+        }
+        // TODO : Remove hardcoded names
+        $reportFilename = 'config' . DIRECTORY_SEPARATOR . 'reports.ini';
+        foreach ($modules as $module) {
+            $moduleReportFilename = $path . $module . DIRECTORY_SEPARATOR . $reportFilename;
+            if (file_exists($moduleReportFilename)) {
+                if (!isset($csvFiles[$module])) {
+                    $result[$module] = [];
                 }
+                $result[$module][] = $moduleReportFilename;
             }
         }
 

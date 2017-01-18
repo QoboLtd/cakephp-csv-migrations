@@ -14,7 +14,7 @@ use Cake\Core\Configure;
  */
 class ViewPathFinder extends BasePathFinder
 {
-    protected $pathConfigKey = 'CsvMigrations.views.path';
+    protected $prefix = 'views';
     protected $extension = '.csv';
 
     /**

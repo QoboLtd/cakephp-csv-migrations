@@ -160,6 +160,10 @@ class ValidateShell extends Shell
     {
         $result = false;
 
+        $module = null;
+        if (strpos($list, '.') !== false) {
+            list($module, $list) = explode('.', $list, 2);
+        }
         $listItems = [];
         try {
             $pathFinder = new ListPathFinder;

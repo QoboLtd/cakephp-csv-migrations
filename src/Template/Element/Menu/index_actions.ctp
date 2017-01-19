@@ -48,7 +48,9 @@ foreach ($entities as $entity) {
             'data-type' => 'ajax-delete-record',
             'data-confirm-msg' => __(
                 'Are you sure you want to delete {0}?',
-                $entity->has($displayField) && !empty($entity->{$displayField}) ? $entity->{$displayField} : 'this record'
+                $entity->has($displayField) && !empty($entity->{$displayField}) ?
+                    strip_tags($entity->{$displayField}) :
+                    'this record'
             )
         ]),
         'url' => $url

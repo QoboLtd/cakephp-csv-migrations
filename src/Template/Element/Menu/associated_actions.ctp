@@ -1,6 +1,9 @@
 <?php
 use Cake\Event\Event;
 use Cake\Utility\Hash;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+
+$fhf = new FieldHandlerFactory($this);
 
 if (empty($user) && !empty($_SESSION)) {
     $user = Hash::get($_SESSION, 'Auth.User');
@@ -50,7 +53,12 @@ $menu[] = [
     'html' => $this->Form->postLink('<i class="fa fa-trash"></i>', $url, [
         'confirm' => __(
             'Are you sure you want to delete {0}?',
-            $options['associated']['entity']->{$options['associated']['displayField']}
+            $fhf->renderValue(
+                $options['associated']['className'],
+                $options['associated']['displayField'],
+                $options['associated']['entity']->{$options['associated']['displayField']},
+                ['renderAs' => 'plain']
+            )
         ),
         'title' => __('Delete'),
         'class' => 'btn btn-default btn-sm',

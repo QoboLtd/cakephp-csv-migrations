@@ -17,7 +17,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
 
     public function testParseFromPath()
     {
-        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'CsvMigrations' . DS . 'migrations' . DS . 'Foo' . DS . 'config.ini';
+        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'Modules' . DS . 'Foo' . DS . 'config' . DS . 'config.ini';
         $parser = new Parser();
         $result = $parser->parseFromPath($file);
 
@@ -31,7 +31,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
 
     public function testParseFromPathTestingArrays()
     {
-        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'CsvMigrations' . DS . 'migrations' . DS . 'Foo' . DS . 'array_in_config.ini';
+        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'Modules' . DS . 'Foo' . DS . 'config' . DS . 'array_in_config.ini';
         $parser = new Parser();
         $result = $parser->parseFromPath($file);
 

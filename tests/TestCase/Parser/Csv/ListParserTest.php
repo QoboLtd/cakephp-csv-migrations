@@ -8,7 +8,7 @@ class ListParserTest extends PHPUnit_Framework_TestCase
 {
     public function testParseFromPath()
     {
-        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'CsvMigrations' . DS . 'lists' . DS . 'genders.csv';
+        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'Modules' . DS . 'Common' . DS . 'lists' . DS . 'genders.csv';
         $parser = new ListParser();
         $result = $parser->parseFromPath($file);
 

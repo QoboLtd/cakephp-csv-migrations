@@ -17,8 +17,7 @@ interface PathFinderInterface
      * Find path
      *
      * Most files will require the $module parameter to
-     * make search more specific.  The only files that
-     * are currently module-independent are list CSVs.
+     * make search more specific.
      *
      * @param string $module   Module to look for files in
      * @param string $path     Path to look for

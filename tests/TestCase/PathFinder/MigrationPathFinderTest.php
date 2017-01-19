@@ -12,8 +12,8 @@ class MigrationPathFinderTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->pf = new MigrationPathFinder();
-        $dir = dirname(dirname(__DIR__)) . DS . 'data' . DS . 'CsvMigrations' . DS . 'migrations' . DS;
-        Configure::write('CsvMigrations.migrations.path', $dir);
+        $dir = dirname(dirname(__DIR__)) . DS . 'data' . DS . 'Modules' . DS;
+        Configure::write('CsvMigrations.modules.path', $dir);
     }
 
     public function testInterface()

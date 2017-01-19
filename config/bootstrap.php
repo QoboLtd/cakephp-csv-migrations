@@ -14,10 +14,7 @@ use CsvMigrations\Events\ViewViewListener;
 use CsvMigrations\Events\ViewViewTabsListener;
 
 Configure::write('CsvMigrations.actions', ['index', 'view', 'add', 'edit']);
-Configure::write('CsvMigrations.migrations.path', CONFIG . 'CsvMigrations' . DS . 'migrations' . DS);
-Configure::write('CsvMigrations.views.path', CONFIG . 'CsvMigrations' . DS . 'views' . DS);
-Configure::write('CsvMigrations.lists.path', CONFIG . 'CsvMigrations' . DS . 'lists' . DS);
-Configure::write('CsvMigrations.migrations.filename', 'migration');
+Configure::write('CsvMigrations.modules.path', CONFIG . 'Modules' . DS);
 Configure::write('CsvMigrations.reports.filename', 'reports');
 Configure::write('CsvMigrations.default_icon', 'cube');
 Configure::write('CsvMigrations.select2', [

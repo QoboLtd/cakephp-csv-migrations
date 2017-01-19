@@ -44,10 +44,14 @@ trait ListTrait
     {
         $result = [];
 
+        $module = null;
+        if (strpos($listName, '.') !== false) {
+            list($module, $listName) = explode('.', $listName, 2);
+        }
         $listData = [];
         try {
             $pathFinder = new ListPathFinder;
-            $path = $pathFinder->find(null, $listName);
+            $path = $pathFinder->find($module, $listName);
             $parser = new ListParser();
             $listData = $parser->parseFromPath($path);
         } catch (\Exception $e) {

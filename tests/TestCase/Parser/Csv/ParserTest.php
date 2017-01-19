@@ -17,7 +17,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
 
     public function testParseFromPath()
     {
-        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'CsvMigrations' . DS . 'migrations' . DS . 'Foo' . DS . 'migration.csv';
+        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'Modules' . DS . 'Foo' . DS . 'db' . DS . 'migration.csv';
         $parser = new Parser();
         $result = $parser->parseFromPath($file);
 
@@ -36,7 +36,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
 
     public function testGetHeadersFromPath()
     {
-        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'CsvMigrations' . DS . 'migrations' . DS . 'Foo' . DS . 'migration.csv';
+        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'Modules' . DS . 'Foo' . DS . 'db' . DS . 'migration.csv';
         $parser = new Parser();
         $result = $parser->getHeadersFromPath($file);
 

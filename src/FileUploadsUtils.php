@@ -248,6 +248,7 @@ class FileUploadsUtils
      * @param Cake\ORM\Entity $entity of the record
      * @param Cake\ORM\Table $tableInstance of the entity
      * @param array $data of this->request->data containing ids.
+     * @param array $options Options
      * @return mixed $result of saved/updated file entities.
      */
     public function linkFilesToEntity($entity, $tableInstance, $data = [], $options = [])

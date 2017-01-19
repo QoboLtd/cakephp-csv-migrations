@@ -8,7 +8,7 @@ class ViewParserTest extends PHPUnit_Framework_TestCase
 {
     public function testParseFromPath()
     {
-        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'CsvMigrations' . DS . 'views' . DS . 'Foo' . DS . 'view.csv';
+        $file = dirname(dirname(dirname(__DIR__))) . DS . 'data' . DS . 'Modules' . DS . 'Foo' . DS . 'views' . DS . 'view.csv';
         $parser = new ViewParser();
         $result = $parser->parseFromPath($file);
 

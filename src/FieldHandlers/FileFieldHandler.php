@@ -67,8 +67,8 @@ class FileFieldHandler extends BaseFileFieldHandler
      *
      * @param  Table $table Table
      * @param  string $field Field
-     * @param  array $options Options
      * @param  mixed $data Data
+     * @param  array $options Options
      * @return string HTML input field with data attribute.
      */
     protected function _renderInputWithData($table, $field, $data, $options)

@@ -14,9 +14,9 @@ use Cake\Core\Configure;
  */
 class ListPathFinder extends BasePathFinder
 {
-    protected $requireModule = false;
-    protected $pathConfigKey = 'CsvMigrations.lists.path';
+    const DEFAULT_MODULE = 'Common';
     protected $extension = '.csv';
+    protected $prefix = 'lists';
 
     /**
      * Find path
@@ -24,8 +24,7 @@ class ListPathFinder extends BasePathFinder
      * Find path to a given liste.  Make sure that $path
      * parameter is required, and, if the value is
      * given without the file extension, attach one to make it
-     * easier to find.  Also, lists are currently NOT under
-     * modules, so the $module parameter is optional.
+     * easier to find.
      *
      * @param string $module Module to look for files in
      * @param string $path     Path to look for
@@ -33,6 +32,10 @@ class ListPathFinder extends BasePathFinder
      */
     public function find($module = null, $path = null)
     {
+        if (empty($module)) {
+            $module = self::DEFAULT_MODULE;
+        }
+
         if (empty($path)) {
             throw new \InvalidArgumentException("Path is not specified");
         }

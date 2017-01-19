@@ -21,6 +21,8 @@ class UpgradeShell extends Shell
 
     /**
      * Shell entry point
+     *
+     * @return void
      */
     public function main()
     {
@@ -61,6 +63,7 @@ class UpgradeShell extends Shell
      * @throws \InvalidArgumentException when $src is empty
      * @throws \RuntimeException when $src does not exist or is not a directory
      * @param string $src Path to source folder
+     * @return void
      */
     protected function validateSource($src)
     {
@@ -83,6 +86,7 @@ class UpgradeShell extends Shell
      * @throws \RuntimeException when the move failed
      * @param string $src Source folder path
      * @param string $dst Destination path
+     * @return void
      */
     protected function moveParentFolder($src, $dst)
     {
@@ -100,6 +104,7 @@ class UpgradeShell extends Shell
      * @throws \RuntimeException when folder creation fails
      * @param string $dst Destination folder path
      * @param string $module Module name
+     * @return void
      */
     protected function createModuleFolders($dst, $module)
     {
@@ -128,6 +133,7 @@ class UpgradeShell extends Shell
      *
      * @throws \RuntimeException if removal fails
      * @param string $dst Path to folder to remove
+     * @return void
      */
     protected function removeFolder($dst)
     {
@@ -144,6 +150,7 @@ class UpgradeShell extends Shell
      * @param string $src Path to source folder
      * @param string $dst Path to destination folder
      * @param array $files Optional list of files to move (all, if empty)
+     * @return void
      */
     protected function moveFiles($src, $dst, array $files = [])
     {
@@ -172,6 +179,7 @@ class UpgradeShell extends Shell
      * Upgrade given path
      *
      * @param string $src Path to folder to upgrade
+     * @return void
      */
     protected function upgrade($src)
     {

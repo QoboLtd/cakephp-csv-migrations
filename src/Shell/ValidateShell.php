@@ -318,6 +318,10 @@ class ValidateShell extends Shell
 
         $this->out('Trying to find and parse the config file:', 2);
         foreach ($modules as $module => $path) {
+            // Common module does not require a config
+            if ($module == 'Common') {
+                continue;
+            }
             $moduleErrors = [];
             $this->out(' - ' . $module . ' ... ', 0);
             try {
@@ -350,6 +354,10 @@ class ValidateShell extends Shell
 
         $this->out('Trying to find and parse the migration file:', 2);
         foreach ($modules as $module => $path) {
+            // Common module does not require a migration
+            if ($module == 'Common') {
+                continue;
+            }
             $moduleErrors = [];
             $this->out(' - ' . $module . ' ... ', 0);
             try {
@@ -386,6 +394,10 @@ class ValidateShell extends Shell
 
         $this->out('Trying to find and parse the view files:', 2);
         foreach ($modules as $module => $path) {
+            // Common module does not require views
+            if ($module == 'Common') {
+                continue;
+            }
             $moduleErrors = [];
             $viewCounter = 0;
             $this->out(' - ' . $module . ' ... ', 0);
@@ -440,6 +452,10 @@ class ValidateShell extends Shell
 
         $this->out('Checking configuration options:', 2);
         foreach ($modules as $module => $path) {
+            // Common module does not require config
+            if ($module == 'Common') {
+                continue;
+            }
             $moduleErrors = [];
             $this->out(' - ' . $module . ' ... ', 0);
             $config = null;
@@ -624,6 +640,10 @@ class ValidateShell extends Shell
 
         $this->out('Checking migration fields:', 2);
         foreach ($modules as $module => $path) {
+            // Common module does not require migration
+            if ($module == 'Common') {
+                continue;
+            }
             $moduleErrors = [];
             $this->out(' - ' . $module . ' ... ', 0);
             $fields = null;
@@ -735,6 +755,10 @@ class ValidateShell extends Shell
 
         $this->out('Checking views fields:', 2);
         foreach ($modules as $module => $path) {
+            // Common module does not require views
+            if ($module == 'Common') {
+                continue;
+            }
             $moduleErrors = [];
             $viewCounter = 0;
             $this->out(' - ' . $module . ' ... ', 0);

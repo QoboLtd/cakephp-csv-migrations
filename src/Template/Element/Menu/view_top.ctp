@@ -1,5 +1,13 @@
 <?php
 use Cake\Event\Event;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+
+$fhf = new FieldHandlerFactory($this);
+
+$tableName = $this->request->controller;
+if (!empty($this->request->plugin)) {
+    $tableName = $this->request->plugin . '.' . $tableName;
+}
 
 $menu = [];
 
@@ -24,7 +32,12 @@ $url = [
 ];
 $menu[] = [
     'html' => $this->Form->postLink('<i class="fa fa-trash"></i> ' . __('Delete'), $url, [
-        'confirm' => __('Are you sure you want to delete {0}?', $options['entity']->{$displayField}),
+        'confirm' => __('Are you sure you want to delete {0}?', $fhf->renderValue(
+            $tableName,
+            $displayField,
+            $options['entity']->{$displayField},
+            ['renderAs' => 'plain']
+        )),
         'title' => __('Delete'),
         'escape' => false,
         'class' => 'btn btn-default'

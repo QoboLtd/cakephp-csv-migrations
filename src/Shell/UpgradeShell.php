@@ -79,29 +79,6 @@ class UpgradeShell extends Shell
     }
 
     /**
-     * Move parent folder
-     *
-     * Move config/CsvMigrations to config/Modules
-     *
-     * @throws \RuntimeException when the move failed
-     * @param string $src Source folder path
-     * @param string $dst Destination path
-     * @return void
-     */
-    protected function moveParentFolder($src, $dst)
-    {
-        if (!file_exists($src)) {
-            return;
-        }
-        // Move the main folder
-        $this->out("Renaming $src to $dst");
-        $result = rename($src, $dst);
-        if (!$result) {
-            throw new \RuntimeException("Failed to rename [$src] to [$dst]");
-        }
-    }
-
-    /**
      * Create module folders
      *
      * @throws \RuntimeException when folder creation fails
@@ -191,6 +168,7 @@ class UpgradeShell extends Shell
     /**
      * Upgrade given path
      *
+     * @throws RuntimeException when failed to create destination folder
      * @param string $src Path to folder to upgrade
      * @return void
      */
@@ -199,58 +177,68 @@ class UpgradeShell extends Shell
         $this->validateSource($src);
 
         $dst = dirname($src) . DIRECTORY_SEPARATOR . 'Modules';
+        if (!file_exists($dst)) {
+            $result = mkdir($dst);
+            if (!$result) {
+                throw new \RuntimeException("Failed to create directory [$dst]");
+            }
+        }
 
-        $this->moveParentFolder($src, $dst);
         $this->createModuleFolders($dst, 'Common');
 
         // Move all lists into Common module
         $this->out("Moving all lists into Common module");
-        $srcDir = $dst . DIRECTORY_SEPARATOR . 'lists';
+        $srcDir = $src . 'lists';
         $dstDir = $dst . DIRECTORY_SEPARATOR . 'Common' . DIRECTORY_SEPARATOR . 'lists';
         $this->moveFiles($srcDir, $dstDir);
         $this->removeFolder($srcDir);
 
         // Move all views files
         $this->out("Moving all views files");
-        $viewsDir = $dst . DIRECTORY_SEPARATOR . 'views';
-        $dir = new \DirectoryIterator($viewsDir);
-        foreach ($dir as $moduleDir) {
-            if ($moduleDir->isDot()) {
-                continue;
-            }
-            $moduleName = $moduleDir->getFilename();
-            $this->createModuleFolders($dst, $moduleName);
+        $viewsDir = $src . 'views';
+        if (file_exists($viewsDir)) {
+            $dir = new \DirectoryIterator($viewsDir);
+            foreach ($dir as $moduleDir) {
+                if ($moduleDir->isDot()) {
+                    continue;
+                }
+                $moduleName = $moduleDir->getFilename();
+                $this->createModuleFolders($dst, $moduleName);
 
-            $srcDir = $viewsDir . DIRECTORY_SEPARATOR . $moduleName;
-            $dstDir = $dst . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . 'views';
-            $this->moveFiles($srcDir, $dstDir);
-            $this->removeFolder($srcDir);
+                $srcDir = $viewsDir . DIRECTORY_SEPARATOR . $moduleName;
+                $dstDir = $dst . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . 'views';
+                $this->moveFiles($srcDir, $dstDir);
+                $this->removeFolder($srcDir);
+            }
+            $this->removeFolder($viewsDir);
         }
-        $this->removeFolder($viewsDir);
 
         // Move all migration files
         $this->out("Moving all migration files");
-        $migrationsDir = $dst . DIRECTORY_SEPARATOR . 'migrations';
-        $dir = new \DirectoryIterator($migrationsDir);
-        foreach ($dir as $moduleDir) {
-            if ($moduleDir->isDot()) {
-                continue;
+        $migrationsDir = $src . DIRECTORY_SEPARATOR . 'migrations';
+        if (file_exists($migrationsDir)) {
+            $dir = new \DirectoryIterator($migrationsDir);
+            foreach ($dir as $moduleDir) {
+                if ($moduleDir->isDot()) {
+                    continue;
+                }
+
+                $moduleName = $moduleDir->getFilename();
+                $this->createModuleFolders($dst, $moduleName);
+
+                // migration.csv goes into db/ folder
+                $srcDir = $migrationsDir . DIRECTORY_SEPARATOR . $moduleName;
+                $dstDir = $dst . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . 'db';
+                $this->moveFiles($srcDir, $dstDir, ['migration.csv']);
+
+                // everything else goes into config/ folder
+                $dstDir = $dst . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . 'config';
+                $this->moveFiles($srcDir, $dstDir);
+
+                $this->removeFolder($srcDir);
             }
-
-            $moduleName = $moduleDir->getFilename();
-            $this->createModuleFolders($dst, $moduleName);
-
-            // migration.csv goes into db/ folder
-            $srcDir = $migrationsDir . DIRECTORY_SEPARATOR . $moduleName;
-            $dstDir = $dst . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . 'db';
-            $this->moveFiles($srcDir, $dstDir, ['migration.csv']);
-
-            // everything else goes into config/ folder
-            $dstDir = $dst . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . 'config';
-            $this->moveFiles($srcDir, $dstDir);
-
-            $this->removeFolder($srcDir);
+            $this->removeFolder($migrationsDir);
         }
-        $this->removeFolder($migrationsDir);
+        $this->removeFolder($src);
     }
 }

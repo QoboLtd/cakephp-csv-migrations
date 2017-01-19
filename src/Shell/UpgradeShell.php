@@ -90,6 +90,9 @@ class UpgradeShell extends Shell
      */
     protected function moveParentFolder($src, $dst)
     {
+        if (!file_exists($src)) {
+            return;
+        }
         // Move the main folder
         $this->out("Renaming $src to $dst");
         $result = rename($src, $dst);
@@ -137,6 +140,9 @@ class UpgradeShell extends Shell
      */
     protected function removeFolder($dst)
     {
+        if (!file_exists($dst)) {
+            return;
+        }
         $result = rmdir($dst);
         if (!$result) {
             throw new \RuntimeException("Failed to remove [$dst]");
@@ -154,6 +160,10 @@ class UpgradeShell extends Shell
      */
     protected function moveFiles($src, $dst, array $files = [])
     {
+        if (!file_exists($src)) {
+            return;
+        }
+
         if (empty($files)) {
             $files = new \DirectoryIterator($src);
         }
@@ -167,6 +177,9 @@ class UpgradeShell extends Shell
                 continue;
             }
             $srcFile = $src . DIRECTORY_SEPARATOR . $file;
+            if (!file_exists($srcFile)) {
+                continue;
+            }
             $dstFile = $dst . DIRECTORY_SEPARATOR . $file;
             $result = rename($srcFile, $dstFile);
             if (!$result) {

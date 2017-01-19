@@ -52,7 +52,8 @@ $url = [
 $menu[] = [
     'html' => $this->Form->postLink('<i class="fa fa-trash"></i>', $url, [
         'confirm' => __(
-            'Are you sure you want to delete {0}?', $fhf->renderValue(
+            'Are you sure you want to delete {0}?',
+            $fhf->renderValue(
                 $options['associated']['className'],
                 $options['associated']['displayField'],
                 $options['associated']['entity']->{$options['associated']['displayField']},

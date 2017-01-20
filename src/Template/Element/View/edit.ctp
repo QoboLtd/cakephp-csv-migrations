@@ -36,7 +36,7 @@ $formOptions = [
         'action' => 'panels'
     ]),
     'name' => Inflector::dasherize($moduleAlias),
-	'type' => 'file',
+    'type' => 'file',
 ];
 
 if (!empty($this->request->query['embedded'])) {

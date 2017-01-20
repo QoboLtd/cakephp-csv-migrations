@@ -38,7 +38,7 @@ echo $this->Html->script(
         'CsvMigrations.canvas-to-blob.min',
         'CsvMigrations.fileinput.min',
         'CsvMigrations.fileinput-load',
-        'CsvMigrations.jquery.dynamicSelect',
+        'CsvMigrations.jquery.dynamicSelect.min',
         'CsvMigrations.jquery.dynamicSelectInit',
         'AdminLTE./plugins/iCheck/icheck.min',
         'CsvMigrations.icheck.init',

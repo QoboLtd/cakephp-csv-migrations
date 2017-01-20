@@ -31,7 +31,7 @@ we don't do the linkage - they would have hidden ID by default
             'action' => 'add'
         ], [
             'query' => [
-                'embedded' => $this->request->controller,
+                'embedded' => $emController,
                 'foreign_key' => $emFieldName,
                 'modal_id' => $emModal,
             ]

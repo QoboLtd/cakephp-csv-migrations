@@ -394,11 +394,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected function _getFieldName($table, $field, array $options = [])
     {
-        //used for linking manyToMany saved entities.
-        if (isset($options['embedded'])) {
-            return $options['embedded'] . '.' . $field;
-        }
-
         if (empty($table)) {
             return $field;
         }

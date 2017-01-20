@@ -248,7 +248,7 @@ class RelatedFieldHandler extends BaseFieldHandler
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return array list of DbField instances
      */
-    public function fieldToDb(CsvField $csvField)
+    public function fieldToDb(CsvField $csvField, $table, $field)
     {
         $dbFields[] = new DbField(
             $csvField->getName(),

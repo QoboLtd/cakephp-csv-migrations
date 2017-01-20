@@ -147,10 +147,10 @@ class FieldHandlerFactory
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return array list of DbField instances
      */
-    public function fieldToDb(CsvField $csvField)
+    public function fieldToDb(CsvField $csvField, $table, $field)
     {
-        $handler = $this->_getHandler($csvField->getType());
-        $fields = $handler->fieldToDb($csvField);
+        $handler = $this->_getHandler($csvField->getType(), $table, $field);
+        $fields = $handler->fieldToDb($csvField, $table, $field);
 
         return $fields;
     }

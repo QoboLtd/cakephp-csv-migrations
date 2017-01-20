@@ -88,7 +88,9 @@ interface FieldHandlerInterface
      * multiple database fields for a single CSV entry.
      *
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @param  mixed  $table Name or instance of the Table
+     * @param  string $field Field name
      * @return array                                           DbField instances
      */
-    public function fieldToDb(CsvField $csvField);
+    public function fieldToDb(CsvField $csvField, $table, $field);
 }

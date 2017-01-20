@@ -86,7 +86,7 @@ class DecimalFieldHandler extends BaseFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function fieldToDb(CsvField $csvField)
+    public function fieldToDb(CsvField $csvField, $table, $field)
     {
         $dbFields[] = new DbField(
             $csvField->getName(),

@@ -3,67 +3,96 @@ namespace CsvMigrations\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\CsvField;
 
+/**
+ * FieldHandlerInterface
+ *
+ * FieldHandlerInterface defines the contract that all
+ * field handler classes have to implement.
+ */
 interface FieldHandlerInterface
 {
     /**
-     * Constructor method.
+     * Constructor
      *
-     * @param mixed $cakeView View object or null
+     * @param object $cakeView Optional instance of the AppView
      */
     public function __construct($cakeView = null);
 
     /**
-     * Method responsible for rendering field's input.
+     * Render field input
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string          field input
+     * This method prepares the form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  mixed  $table   Name or instance of the Table
+     * @param  string $field   Field name
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field input HTML
      */
     public function renderInput($table, $field, $data = '', array $options = []);
 
     /**
-     * Method responsible for rendering field's search input.
+     * Render field search input
      *
-     * @param mixed $table Name or instance of the Table
-     * @param string $field Field name
-     * @param array $options Field options
-     * @return array
+     * This method prepares the search form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param mixed  $table   Name or instance of the Table
+     * @param string $field   Field name
+     * @param array  $options Field options
+     * @return array          Array of field input HTML, pre and post CSS, JS, etc
      */
     public function renderSearchInput($table, $field, array $options = []);
 
     /**
-     * Method responsible for rendering field's value.
+     * Render field value
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string          field value
+     * This method prepares the output of the value for the given
+     * field.  The result can be controlled via the variety of
+     * options.
+     *
+     * @param  mixed  $table   Name or instance of the Table
+     * @param  string $field   Field name
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field value
      */
     public function renderValue($table, $field, $data, array $options = []);
 
     /**
-     * Method that returns field search operators based on field type.
+     * Get search operators
      *
-     * @param mixed $table Name or instance of the Table
+     * This method prepares a list of search operators that
+     * are appropriate for a given field.
+     *
+     * @todo Drop the $type parameter, as field handler should know this already
+     * @param mixed $table  Name or instance of the Table
      * @param string $field field name
-     * @param string $type Field type
-     * @return array
+     * @param string $type  Field type
+     * @return array        List of search operators
      */
     public function getSearchOperators($table, $field, $type);
 
     /**
-     * Method that returns search field label.
+     * Get field label
      *
-     * @param string $field Field name
-     * @return string
+     * @todo Rename method to getLabel()
+     * @param string  $field Field name
+     * @return string        Human-friendly field name
      */
     public function getSearchLabel($field);
 
     /**
-     * Method responsible for converting csv field instance to database field instance.
+     * Convert CsvField to one or more DbField instances
+     *
+     * Simple fields from migrations CSV map one-to-one to
+     * the database fields.  More complex fields can combine
+     * multiple database fields for a single CSV entry.
      *
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return array                                           DbField instances

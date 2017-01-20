@@ -25,9 +25,9 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function __construct($cakeView = null)
+    public function __construct($table, $field, $cakeView = null)
     {
-        parent::__construct($cakeView);
+        parent::__construct($table, $field, $cakeView);
 
         $this->_setCombinedFields();
     }
@@ -44,24 +44,24 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
      *
      * @todo refactor to use base fields as renderValue() does now
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $label = $this->cakeView->Form->label($field);
+        $label = $this->cakeView->Form->label($this->field);
 
         $inputs = [];
         foreach ($this->_fields as $suffix => $preOptions) {
             $options['fieldDefinitions']->setType($preOptions['handler']::DB_FIELD_TYPE);
             $options['label'] = null;
-            $fieldName = $field . '_' . $suffix;
+            $fieldName = $this->field . '_' . $suffix;
 
-            $fieldData = $this->_getFieldValueFromData($fieldName, $data);
+            $fieldData = $this->_getFieldValueFromData($data, $fieldName);
             if (empty($fieldData) && !empty($options['entity'])) {
-                $fieldData = $this->_getFieldValueFromData($fieldName, $options['entity']);
+                $fieldData = $this->_getFieldValueFromData($options['entity'], $fieldName);
             }
 
-            $handler = new $preOptions['handler'];
+            $handler = new $preOptions['handler']($this->table, $fieldName, $this->cakeView);
 
-            $inputs[] = sprintf(static::INPUT_HTML, $handler->renderInput($table, $fieldName, $fieldData, $options));
+            $inputs[] = sprintf(static::INPUT_HTML, $handler->renderInput($fieldData, $options));
         }
 
         return sprintf(static::WRAPPER_HTML, $label, implode('', $inputs));
@@ -70,21 +70,21 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
         $result = [];
         foreach ($this->_fields as $suffix => $fieldOptions) {
-            $fieldName = $field . '_' . $suffix;
-            $fieldData = $this->_getFieldValueFromData($fieldName, $data);
+            $fieldName = $this->field . '_' . $suffix;
+            $fieldData = $this->_getFieldValueFromData($data, $fieldName);
             // fieldData will most probably be empty when dealing with combined fields for
             // example, field 'salary' will have no data since is converted to 'salary_amount'
             // and 'salary_currency'. In these cases we just re-call _getFeildValueFromData
             // method and we pass to it the whole entity.
             if (empty($fieldData) && !empty($options['entity'])) {
-                $fieldData = $this->_getFieldValueFromData($fieldName, $options['entity']);
+                $fieldData = $this->_getFieldValueFromData($options['entity'], $fieldName);
             }
-            $handler = new $fieldOptions['handler'];
-            $result[] = $handler->renderValue($table, $fieldName, $fieldData, $options);
+            $handler = new $fieldOptions['handler']($this->table, $fieldName, $this->cakeView);
+            $result[] = $handler->renderValue($fieldData, $options);
         }
 
         $result = implode('&nbsp;', $result);
@@ -95,14 +95,14 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function renderSearchInput(array $options = [])
     {
         $result = [];
         foreach ($this->_fields as $suffix => $fieldOptions) {
             $options['fieldDefinitions']->setType($fieldOptions['handler']::DB_FIELD_TYPE);
-            $fieldName = $field . '_' . $suffix;
-            $handler = new $fieldOptions['handler'];
-            $result[$fieldName] = $handler->renderSearchInput($table, $fieldName, $options);
+            $fieldName = $this->field . '_' . $suffix;
+            $handler = new $fieldOptions['handler']($this->table, $fieldName, $this->cakeView);
+            $result[$fieldName] = $handler->renderSearchInput($options);
         }
 
         return $result;
@@ -115,9 +115,9 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
     {
         $dbFields = [];
         foreach ($this->_fields as $suffix => $options) {
-            $handler = new $options['handler'];
             $subField = clone $csvField;
             $subField->setName($csvField->getName() . '_' . $suffix);
+            $handler = new $options['handler']($this->table, $subField->getName(), $this->cakeView);
             if (isset($options['limit'])) {
                 $subField->setLimit($options['limit']);
             }
@@ -131,18 +131,14 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function getSearchOperators($table, $field, $type)
+    public function getSearchOperators($type)
     {
         $result = [];
         foreach ($this->_fields as $suffix => $options) {
-            $fieldName = $field . '_' . $suffix;
-            $handler = new $options['handler'];
+            $fieldName = $this->field . '_' . $suffix;
+            $handler = new $options['handler']($this->table, $fieldName, $this->cakeView);
 
-            $result[$fieldName] = $handler->getSearchOperators(
-                $table,
-                $fieldName,
-                $this->_getFieldTypeByFieldHandler($handler)
-            );
+            $result[$fieldName] = $handler->getSearchOperators($this->_getFieldTypeByFieldHandler($handler));
         }
 
         return $result;
@@ -151,11 +147,11 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function getSearchLabel($field)
+    public function getSearchLabel()
     {
         $result = [];
         foreach ($this->_fields as $suffix => $options) {
-            $fieldName = $field . '_' . $suffix;
+            $fieldName = $this->field . '_' . $suffix;
 
             $result[$fieldName] = parent::getSearchLabel($fieldName);
         }

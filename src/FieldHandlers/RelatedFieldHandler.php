@@ -54,15 +54,13 @@ class RelatedFieldHandler extends BaseFieldHandler
     /**
      * Method responsible for rendering field's input.
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string          field input
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
@@ -75,13 +73,13 @@ class RelatedFieldHandler extends BaseFieldHandler
             }
         }
 
-        $fieldName = $this->_getFieldName($table, $field, $options);
+        $fieldName = $this->_getFieldName($options);
 
         // create select input
         $input = $this->cakeView->Form->input($fieldName, [
             'options' => [$data => $relatedProperties['dispFieldVal']],
             'label' => false,
-            'id' => $field,
+            'id' => $this->field,
             'type' => 'select',
             'title' => $this->_getInputHelp($relatedProperties),
             'data-type' => 'select2',
@@ -100,7 +98,7 @@ class RelatedFieldHandler extends BaseFieldHandler
 
         // append embedded modal button
         if (!empty($options['embModal'])) {
-            $input .= sprintf(static::HTML_EMBEDDED_BTN, $field);
+            $input .= sprintf(static::HTML_EMBEDDED_BTN, $this->field);
         }
 
         // create input html
@@ -115,7 +113,7 @@ class RelatedFieldHandler extends BaseFieldHandler
         $input = sprintf(
             static::HTML_INPUT_WRAPPER,
             (bool)$options['fieldDefinitions']->getRequired() ? ' required' : '',
-            $this->cakeView->Form->label($field, null, ['class' => 'control-label']),
+            $this->cakeView->Form->label($this->field, null, ['class' => 'control-label']),
             $input
         );
 
@@ -125,16 +123,14 @@ class RelatedFieldHandler extends BaseFieldHandler
     /**
      * Method that renders related field's value.
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
         $result = null;
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
 
         if (empty($data)) {
             return $result;
@@ -183,7 +179,7 @@ class RelatedFieldHandler extends BaseFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function renderSearchInput(array $options = [])
     {
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), null);
 
@@ -191,11 +187,11 @@ class RelatedFieldHandler extends BaseFieldHandler
             static::HTML_INPUT,
             $relatedProperties['controller'],
             $this->_getInputIcon($relatedProperties),
-            $this->cakeView->Form->input($field, [
+            $this->cakeView->Form->input($this->field, [
                 'label' => false,
                 'options' => ['{{value}}' => ''],
                 'name' => '{{name}}',
-                'id' => $field,
+                'id' => $this->field,
                 'type' => 'select',
                 'title' => $this->_getInputHelp($relatedProperties),
                 'data-type' => 'select2',

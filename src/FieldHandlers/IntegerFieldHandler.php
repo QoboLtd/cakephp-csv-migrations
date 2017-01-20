@@ -13,7 +13,7 @@ class IntegerFieldHandler extends BaseFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
         $result = (int)filter_var($data, FILTER_SANITIZE_NUMBER_INT);
 

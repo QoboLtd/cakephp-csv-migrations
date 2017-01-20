@@ -14,12 +14,12 @@ class DecimalFieldHandler extends BaseFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         $result = (float)filter_var($data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
-        $args = $this->_getDbColumnArgs($table, $field);
+        $args = $this->_getDbColumnArgs();
 
         $precision = !empty($args['precision']) ? $args['precision']: 2;
 
@@ -35,23 +35,23 @@ class DecimalFieldHandler extends BaseFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         $fieldType = $options['fieldDefinitions']->getType();
 
         if (in_array($fieldType, array_keys($this->_fieldTypes))) {
             $fieldType = $this->_fieldTypes[$fieldType];
         }
 
-        $input = $this->_fieldToLabel($field, $options);
+        $input = $this->_fieldToLabel($options);
 
-        $input .= $this->cakeView->Form->input($this->_getFieldName($table, $field, $options), [
+        $input .= $this->cakeView->Form->input($this->_getFieldName($options), [
             'type' => $fieldType,
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'value' => $data,
             'step' => 'any',
-            'max' => $this->_getNumberMax($table, $field),
+            'max' => $this->_getNumberMax(),
             'label' => false
         ]);
 
@@ -61,7 +61,7 @@ class DecimalFieldHandler extends BaseFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function renderSearchInput(array $options = [])
     {
         $fieldType = $options['fieldDefinitions']->getType();
 
@@ -74,7 +74,7 @@ class DecimalFieldHandler extends BaseFieldHandler
             'value' => '{{value}}',
             'type' => $fieldType,
             'step' => 'any',
-            'max' => $this->_getNumberMax($table, $field),
+            'max' => $this->_getNumberMax(),
             'label' => false
         ]);
 
@@ -121,15 +121,13 @@ class DecimalFieldHandler extends BaseFieldHandler
     /**
      * Method that calculates max value for number input field.
      *
-     * @param  \Cake\ORM\Table $table Table instance
-     * @param  string          $field Field name
      * @return float
      */
-    protected function _getNumberMax(Table $table, $field)
+    protected function _getNumberMax()
     {
         $result = null;
 
-        $args = $this->_getDbColumnArgs($table, $field);
+        $args = $this->_getDbColumnArgs();
 
         if (!empty($args['length'])) {
             $result = str_repeat('9', (int)$args['length']);

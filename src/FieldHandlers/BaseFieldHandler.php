@@ -24,6 +24,20 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     const RENDER_PLAIN_VALUE = 'plain';
 
     /**
+     * Table object
+     *
+     * @var \Cake\ORM\Table
+     */
+    public $table;
+
+    /**
+     * Field name
+     *
+     * @var string
+     */
+    public $field;
+
+    /**
      * View instance.
      *
      * @var \Cake\View\View
@@ -232,10 +246,28 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * Constructor
      *
+     * @param \Cake\ORM\Table|string $table Table instance or name
+     * @param string $field Field name
      * @param object $cakeView Optional instance of the AppView
      */
-    public function __construct($cakeView = null)
+    public function __construct($table, $field, $cakeView = null)
     {
+        if (empty($table)) {
+            throw new \InvalidArgumentException('Table cannot be empty.');
+        }
+
+        if (empty($field)) {
+            throw new \InvalidArgumentException('Field cannot be empty.');
+        }
+
+        if (is_string($table)) {
+            $this->table = TableRegistry::get($table);
+        } else {
+            $this->table = $table;
+        }
+
+        $this->field = $field;
+
         if ($cakeView) {
             $this->cakeView = $cakeView;
         } else {
@@ -251,22 +283,20 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * and so on.  The result can be controlled via the variety
      * of options.
      *
-     * @param  mixed  $table   Name or instance of the Table
-     * @param  string $field   Field name
      * @param  string $data    Field data
      * @param  array  $options Field options
      * @return string          Field input HTML
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         $fieldType = $options['fieldDefinitions']->getType();
 
         if (in_array($fieldType, array_keys($this->_fieldTypes))) {
             $fieldType = $this->_fieldTypes[$fieldType];
         }
 
-        return $this->cakeView->Form->input($this->_getFieldName($table, $field, $options), [
+        return $this->cakeView->Form->input($this->_getFieldName($options), [
             'type' => $fieldType,
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'value' => $data
@@ -281,12 +311,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * and so on.  The result can be controlled via the variety
      * of options.
      *
-     * @param mixed  $table   Name or instance of the Table
-     * @param string $field   Field name
      * @param array  $options Field options
      * @return array          Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function renderSearchInput(array $options = [])
     {
         $fieldType = $options['fieldDefinitions']->getType();
 
@@ -312,15 +340,13 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * field.  The result can be controlled via the variety of
      * options.
      *
-     * @param  mixed  $table   Name or instance of the Table
-     * @param  string $field   Field name
      * @param  string $data    Field data
      * @param  array  $options Field options
      * @return string          Field value
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
-        $result = $this->_getFieldValueFromData($field, $data);
+        $result = $this->_getFieldValueFromData($data);
 
         return $result;
     }
@@ -335,7 +361,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return array                                           DbField instances
      */
-    public function fieldToDb(CsvField $csvField)
+    public function fieldToDb(CsvField $csvField, $table, $field)
     {
         $dbFields[] = new DbField(
             $csvField->getName(),
@@ -356,12 +382,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * are appropriate for a given field.
      *
      * @todo Drop the $type parameter, as field handler should know this already
-     * @param mixed $table  Name or instance of the Table
-     * @param string $field field name
      * @param string $type  Field type
      * @return array        List of search operators
      */
-    public function getSearchOperators($table, $field, $type)
+    public function getSearchOperators($type)
     {
         $result = [];
         if (empty($this->_searchOperators[$type]) || empty($this->_sqlOperators[$type])) {
@@ -383,11 +407,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * Get field label
      *
      * @todo Rename method to getLabel()
-     * @param string  $field Field name
      * @return string        Human-friendly field name
      */
-    public function getSearchLabel($field)
+    public function getSearchLabel($field = null)
     {
+        if (empty($field)) {
+            $field = $this->field;
+        }
+
         return Inflector::humanize($field);
     }
 
@@ -401,12 +428,15 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * * Request, use Request->data() with the key of the field name
      * * Otherwise assume the variable is the data already
      *
-     * @param string $field Field name
      * @param Entity|Request|mixed $data Variable to extract value from
      * @return mixed
      */
-    protected function _getFieldValueFromData($field, $data)
+    protected function _getFieldValueFromData($data, $field = null)
     {
+        if (empty($field)) {
+            $field = $this->field;
+        }
+
         $result = $data;
 
         if ($data instanceof Entity) {
@@ -440,41 +470,38 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * Method that generates field name based on its options.
      *
-     * @param  \Cake\ORM\Table $table Table instance
-     * @param  string $field          Field name
      * @param  array  $options        Field options
      * @return string
      */
-    protected function _getFieldName($table, $field, array $options = [])
+    protected function _getFieldName(array $options = [])
     {
         //used for linking manyToMany saved entities.
         if (isset($options['embedded'])) {
-            return $options['embedded'] . '.' . $field;
+            return $options['embedded'] . '.' . $this->field;
         }
 
-        if (empty($table)) {
-            return $field;
+        if (empty($this->table)) {
+            return $this->field;
         }
 
-        if (is_object($table)) {
-            return $table->alias() . '.' . $field;
+        if (is_object($this->table)) {
+            return $this->table->alias() . '.' . $this->field;
         }
 
-        return $table . '.' . $field;
+        return $this->table . '.' . $this->field;
     }
 
     /**
      * Method that generates input label based on field name or optional options label parameter.
      * It can either return just the field label value or the html markup.
      *
-     * @param  string  $field   Field name
      * @param  array   $options Field options
      * @param  bool    $html    Html flag
      * @return string           Label value or html markup
      */
-    protected function _fieldToLabel($field, array $options = [], $html = true)
+    protected function _fieldToLabel(array $options = [], $html = true)
     {
-        $result = array_key_exists('label', $options) ? (string)$options['label'] : $field;
+        $result = array_key_exists('label', $options) ? (string)$options['label'] : $this->field;
 
         if (!$html || empty($result)) {
             return $result;
@@ -486,24 +513,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * Returns arguments from database column definition.
      *
-     * @param  \Cake\ORM\Table|string $table  Table instance or name
-     * @param  string                 $column Column name
      * @param  array                  $args   Column arguments
      * @return array
      */
-    protected function _getDbColumnArgs($table, $column, array $args = [])
+    protected function _getDbColumnArgs(array $args = [])
     {
         $result = [];
 
-        if (empty($table)) {
-            return $result;
-        }
-
-        if (is_string($table)) {
-            $table = TableRegistry::get($table);
-        }
-
-        $data = $table->schema()->column($column);
+        $data = $this->table->schema()->column($this->field);
 
         if (empty($data)) {
             return $result;

@@ -13,17 +13,15 @@ class BooleanFieldHandler extends BaseFieldHandler
     /**
      * Method responsible for rendering field's input.
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string          field input
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
 
-        $fieldName = $this->_getFieldName($table, $field, $options);
+        $fieldName = $this->_getFieldName($options);
         $label = $this->cakeView->Form->label($fieldName);
         $input = $this->cakeView->Form->input($fieldName, [
             'type' => 'checkbox',
@@ -42,15 +40,13 @@ class BooleanFieldHandler extends BaseFieldHandler
     /**
      * Method that renders specified field's value based on the field's type.
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         $result = $data ? __('Yes') : __('No');
 
         return $result;
@@ -59,7 +55,7 @@ class BooleanFieldHandler extends BaseFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function renderSearchInput(array $options = [])
     {
         $fieldType = $options['fieldDefinitions']->getType();
 

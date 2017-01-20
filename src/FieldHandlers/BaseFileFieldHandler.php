@@ -81,22 +81,22 @@ class BaseFileFieldHandler extends RelatedFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
-        $fieldName = $this->_getFieldName($table, $field, $options);
+        $fieldName = $this->_getFieldName($options);
 
         $input['html'] = '';
         $input['html'] .= '<div class="form-group' . ((bool)$options['fieldDefinitions']->getRequired() ? ' required' : '') . '">';
-        $input['html'] .= $this->cakeView->Form->label($field);
+        $input['html'] .= $this->cakeView->Form->label($this->field);
         $input['html'] .= '<div class="input-group">';
 
-        $input['html'] .= $this->cakeView->Form->input($field, [
+        $input['html'] .= $this->cakeView->Form->input($this->field, [
             'label' => false,
             'name' => false,
-            'id' => $field . static::LABEL_FIELD_SUFFIX,
+            'id' => $this->field . static::LABEL_FIELD_SUFFIX,
             'type' => 'text',
             'disabled' => true,
             'value' => (!empty($relatedProperties['entity'])) ? $relatedProperties['dispFieldVal'] : '',
@@ -106,7 +106,7 @@ class BaseFileFieldHandler extends RelatedFieldHandler
         ]);
 
         $input['html'] .= '<div class="input-group-btn">';
-        $input['html'] .= '<button type="button" class="btn btn-default" data-toggle="modal" data-target="#' . $field . '_modal">';
+        $input['html'] .= '<button type="button" class="btn btn-default" data-toggle="modal" data-target="#' . $this->field . '_modal">';
         $input['html'] .= '<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>';
         $input['html'] .= '</button>';
         $input['html'] .= '</div>';
@@ -124,8 +124,8 @@ class BaseFileFieldHandler extends RelatedFieldHandler
         $input['html'] .= $this->cakeView->Form->input($fieldName, ['type' => 'hidden', 'value' => (!is_null($data) ? $data : '')]);
 
         $embeddedAssocName = null;
-        foreach ($table->associations() as $association) {
-            if ($association->foreignKey() === $field) {
+        foreach ($this->table->associations() as $association) {
+            if ($association->foreignKey() === $this->field) {
                 $embeddedAssocName = $association->name();
                 break;
             }
@@ -147,11 +147,11 @@ class BaseFileFieldHandler extends RelatedFieldHandler
             [
                 'query' => [
                     'embedded' => $fileController . '.' . $embeddedAssocName,
-                    'foreign_key' => $field
+                    'foreign_key' => $this->field
                 ]
             ]
         );
-        $input['embeddedForm'] = sprintf(static::EMBEDDED_FORM_HTML, $field, $embeddedForm);
+        $input['embeddedForm'] = sprintf(static::EMBEDDED_FORM_HTML, $this->field, $embeddedForm);
 
         return $input;
     }
@@ -159,7 +159,7 @@ class BaseFileFieldHandler extends RelatedFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function renderSearchInput(array $options = [])
     {
         return [];
     }

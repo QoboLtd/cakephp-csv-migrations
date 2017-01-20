@@ -8,13 +8,11 @@ class UrlFieldHandler extends BaseFieldHandler
     /**
      * Method that renders default type field's value.
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
         $result = filter_var($data, FILTER_SANITIZE_URL);
 

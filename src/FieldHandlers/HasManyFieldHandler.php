@@ -38,15 +38,13 @@ class HasManyFieldHandler extends RelatedFieldHandler
     /**
      * Method responsible for rendering field's input.
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string          field input
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
@@ -59,13 +57,13 @@ class HasManyFieldHandler extends RelatedFieldHandler
             }
         }
 
-        $fieldName = $this->_getFieldName($table, $field, $options);
+        $fieldName = $this->_getFieldName($options);
 
         // create select input
         $input = $this->cakeView->Form->input($options['associated_table_name'] . '._ids', [
             'options' => [$data => $relatedProperties['dispFieldVal']],
             'label' => false,
-            'id' => $field,
+            'id' => $this->field,
             'type' => 'select',
             'title' => $this->_getInputHelp($relatedProperties),
             'data-type' => 'select2',
@@ -87,7 +85,7 @@ class HasManyFieldHandler extends RelatedFieldHandler
         // append embedded modal button
         $input .= sprintf(
             static::HTML_EMBEDDED_BTN,
-            empty($options['emDataTarget']) ? $field : $options['emDataTarget']
+            empty($options['emDataTarget']) ? $this->field : $options['emDataTarget']
         );
 
         // create input html
@@ -104,7 +102,7 @@ class HasManyFieldHandler extends RelatedFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function renderSearchInput(array $options = [])
     {
         return false;
     }

@@ -69,9 +69,9 @@ class FieldHandlerFactory
     {
         $table = $this->_getTableInstance($table);
         $options = $this->_getExtraOptions($table, $field, $options);
-        $handler = $this->_getHandler($options['fieldDefinitions']->getType());
+        $handler = $this->_getHandler($options['fieldDefinitions']->getType(), $table, $field);
 
-        return $handler->renderInput($table, $field, $data, $options);
+        return $handler->renderInput($data, $options);
     }
 
     /**
@@ -85,9 +85,9 @@ class FieldHandlerFactory
     {
         $table = $this->_getTableInstance($table);
         $options = $this->_getExtraOptions($table, $field);
-        $handler = $this->_getHandler($options['fieldDefinitions']->getType());
+        $handler = $this->_getHandler($options['fieldDefinitions']->getType(), $table, $field);
 
-        return $handler->renderSearchInput($table, $field, $options);
+        return $handler->renderSearchInput($options);
     }
 
     /**
@@ -102,9 +102,9 @@ class FieldHandlerFactory
         $table = $this->_getTableInstance($table);
         $options = $this->_getExtraOptions($table, $field);
         $type = $options['fieldDefinitions']->getType();
-        $handler = $this->_getHandler($type);
+        $handler = $this->_getHandler($type, $table, $field);
 
-        return $handler->getSearchOperators($table, $field, $type);
+        return $handler->getSearchOperators($type);
     }
 
     /**
@@ -118,9 +118,9 @@ class FieldHandlerFactory
     {
         $table = $this->_getTableInstance($table);
         $options = $this->_getExtraOptions($table, $field);
-        $handler = $this->_getHandler($options['fieldDefinitions']->getType());
+        $handler = $this->_getHandler($options['fieldDefinitions']->getType(), $table, $field);
 
-        return $handler->getSearchLabel($options['fieldDefinitions']->getName());
+        return $handler->getSearchLabel();
     }
 
     /**
@@ -136,9 +136,9 @@ class FieldHandlerFactory
     {
         $table = $this->_getTableInstance($table);
         $options = $this->_getExtraOptions($table, $field, $options);
-        $handler = $this->_getHandler($options['fieldDefinitions']->getType());
+        $handler = $this->_getHandler($options['fieldDefinitions']->getType(), $table, $field);
 
-        return $handler->renderValue($table, $field, $data, $options);
+        return $handler->renderValue($data, $options);
     }
 
     /**
@@ -170,16 +170,14 @@ class FieldHandlerFactory
      */
     public function hasFieldHandler($fieldType)
     {
-        $result = false;
+        $interface = __NAMESPACE__ . '\\' . static::FIELD_HANDLER_INTERFACE;
 
-        try {
-            $handler = $this->_getHandler($fieldType, true);
-            $result = true;
-        } catch (\Exception $e) {
-            $result = false;
+        $handlerName = $this->_getHandlerByFieldType($fieldType, true);
+        if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
+            return true;
         }
 
-        return $result;
+        return false;
     }
 
     /**
@@ -219,19 +217,19 @@ class FieldHandlerFactory
         }
 
         /*
-         * @todo make this better, probably define defaults (scenario virtual fields)
-         */
-        if (empty($options['fieldDefinitions']['type'])) {
-            $options['fieldDefinitions']['type'] = 'string';
-        }
-
-        /*
         add field definitions to options array as CsvField Instance
          */
         if (!empty($fieldsDefinitions[$field])) {
             $options['fieldDefinitions'] = new CsvField($fieldsDefinitions[$field]);
         } else {
+            /*
+             * @todo make this better, probably define defaults (scenario virtual fields)
+             */
+            if (empty($options['fieldDefinitions']['type'])) {
+                $options['fieldDefinitions']['type'] = 'string';
+            }
             $options['fieldDefinitions']['name'] = $field;
+
             $options['fieldDefinitions'] = new CsvField($options['fieldDefinitions']);
         }
 
@@ -253,13 +251,13 @@ class FieldHandlerFactory
      * @param  bool   $failOnError Whether or not to throw exception on failure
      * @return object            FieldHandler instance
      */
-    protected function _getHandler($fieldType, $failOnError = false)
+    protected function _getHandler($fieldType, $table, $field, $failOnError = false)
     {
         $interface = __NAMESPACE__ . '\\' . static::FIELD_HANDLER_INTERFACE;
 
         $handlerName = $this->_getHandlerByFieldType($fieldType, true);
         if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
-            return new $handlerName($this->cakeView);
+            return new $handlerName($table, $field, $this->cakeView);
         }
 
         // Field hanlder does not exist, throw exception if necessary
@@ -270,7 +268,7 @@ class FieldHandlerFactory
         // Use default field handler
         $handlerName = __NAMESPACE__ . '\\' . static::DEFAULT_HANDLER_CLASS . static::HANDLER_SUFFIX;
         if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
-            return new $handlerName($this->cakeView);
+            return new $handlerName($table, $field, $this->cakeView);
         }
 
         // Neither the handler, nor the default handler can be used

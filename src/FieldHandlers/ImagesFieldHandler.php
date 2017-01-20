@@ -104,16 +104,16 @@ class ImagesFieldHandler extends BaseFileFieldHandler
      *
      * In this case, it renders the output based on the given value of data.
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         if (empty($data) && !empty($options['entity'])) {
-            $data = $this->_getFieldValueFromData('id', $options['entity']);
+            $data = $this->_getFieldValueFromData($options['entity'], 'id');
         }
         if (empty($data)) {
-            $result = $this->_renderInputWithoutData($table, $field, $options);
+            $result = $this->_renderInputWithoutData($options);
         } else {
-            $result = $this->_renderInputWithData($table, $field, $data, $options);
+            $result = $this->_renderInputWithData($data, $options);
         }
 
         return $result;
@@ -122,26 +122,24 @@ class ImagesFieldHandler extends BaseFileFieldHandler
     /**
      * Renders new file input field with no value. Applicable for add action.
      *
-     * @param  Table $table Table
-     * @param  string $field Field
      * @param  array $options Options
      * @return string HTML input field.
      */
-    protected function _renderInputWithoutData($table, $field, $options)
+    protected function _renderInputWithoutData($options)
     {
-        $fieldName = $this->_getFieldName($table, $field);
+        $fieldName = $this->_getFieldName();
         $uploadField = $this->cakeView->Form->file(
             $fieldName . '[]',
             [
                 'multiple' => true,
-                'data-upload-url' => sprintf("/api/%s/upload", Inflector::dasherize($table->table())),
+                'data-upload-url' => sprintf("/api/%s/upload", Inflector::dasherize($this->table->table())),
             ]
         );
 
-        $label = $this->cakeView->Form->label($field);
+        $label = $this->cakeView->Form->label($this->field);
 
         $hiddenIds = $this->cakeView->Form->hidden(
-            $this->_getFieldName($table, $field, $options) . '_ids][',
+            $this->_getFieldName($options) . '_ids][',
             [
                 'class' => str_replace('.', '_', $fieldName . '_ids'),
                 'value' => ''
@@ -154,32 +152,30 @@ class ImagesFieldHandler extends BaseFileFieldHandler
     /**
      * Renders new file input field with value. Applicable for edit action.
      *
-     * @param  Table $table Table
-     * @param  string $field Field
      * @param  mixed $data Data
      * @param  array $options Options
      * @return string HTML input field with data attribute.
      */
-    protected function _renderInputWithData($table, $field, $data, $options)
+    protected function _renderInputWithData($data, $options)
     {
         $files = [];
         $hiddenIds = '';
 
-        $fieldName = $this->_getFieldName($table, $field);
-        $fileUploadsUtils = new FileUploadsUtils($table);
+        $fieldName = $this->_getFieldName();
+        $fileUploadsUtils = new FileUploadsUtils($this->table);
 
-        $entities = $fileUploadsUtils->getFiles($table, $field, $data);
+        $entities = $fileUploadsUtils->getFiles($this->table, $this->field, $data);
 
         if ($entities instanceof \Cake\ORM\ResultSet) {
             if (!$entities->count()) {
-                return $this->_renderInputWithoutData($table, $field, $options);
+                return $this->_renderInputWithoutData($options);
             }
         }
 
         // @TODO: check if we return null anywhere, apart of ResultSet.
         // IF NOT: remove this block
         if (is_null($entities)) {
-            return $this->_renderInputWithoutData($table, $field, $options);
+            return $this->_renderInputWithoutData($options);
         }
 
         foreach ($entities as $file) {
@@ -189,7 +185,7 @@ class ImagesFieldHandler extends BaseFileFieldHandler
             ];
 
             $hiddenIds .= $this->cakeView->Form->hidden(
-                $this->_getFieldName($table, $field, $options) . '_ids][',
+                $this->_getFieldName($options) . '_ids][',
                 [
                     'class' => str_replace('.', '_', $fieldName . '_ids'),
                     'value' => $file->id
@@ -197,14 +193,14 @@ class ImagesFieldHandler extends BaseFileFieldHandler
             );
         }
 
-        $label = $this->cakeView->Form->label($field);
+        $label = $this->cakeView->Form->label($this->field);
 
         $uploadField = $this->cakeView->Form->file(
-            $this->_getFieldName($table, $field, $options) . '[]',
+            $this->_getFieldName($options) . '[]',
             [
                 'multiple' => true,
                 'data-document-id' => $data,
-                'data-upload-url' => sprintf("/api/%s/upload", Inflector::dasherize($table->table())),
+                'data-upload-url' => sprintf("/api/%s/upload", Inflector::dasherize($this->table->table())),
                 //passed to generate previews
                 'data-files' => json_encode($files),
             ]
@@ -216,23 +212,23 @@ class ImagesFieldHandler extends BaseFileFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
         $result = null;
         $defaultOptions = ['imageSize' => getenv('DEFAULT_IMAGE_SIZE')];
 
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         if (empty($data) && !empty($options['entity'])) {
-            $data = $this->_getFieldValueFromData('id', $options['entity']);
+            $data = $this->_getFieldValueFromData($options['entity'], 'id');
         }
 
         if (empty($data)) {
             return $result;
         }
 
-        $fileUploadsUtils = new FileUploadsUtils($table);
+        $fileUploadsUtils = new FileUploadsUtils($this->table);
 
-        $entities = $fileUploadsUtils->getFiles($table, $field, $data);
+        $entities = $fileUploadsUtils->getFiles($this->table, $this->field, $data);
 
         if (!empty($entities)) {
             $result = $this->_thumbnailsHtml($entities, $fileUploadsUtils, $defaultOptions);

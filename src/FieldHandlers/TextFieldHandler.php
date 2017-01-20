@@ -27,13 +27,11 @@ class TextFieldHandler extends BaseFieldHandler
     /**
      * Render value with autoparagraphs
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
         $result = filter_var($data, FILTER_SANITIZE_STRING);
 
@@ -49,7 +47,7 @@ class TextFieldHandler extends BaseFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function renderSearchInput(array $options = [])
     {
         $content = $this->cakeView->Form->input('{{name}}', [
             'value' => '{{value}}',

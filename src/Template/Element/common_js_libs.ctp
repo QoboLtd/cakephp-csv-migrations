@@ -40,7 +40,6 @@ echo $this->Html->script(
         'CsvMigrations.fileinput-load',
         'CsvMigrations.jquery.dynamicSelect',
         'CsvMigrations.jquery.dynamicSelectInit',
-        'CsvMigrations.jquery.dynamicSelectInit',
         'AdminLTE./plugins/iCheck/icheck.min',
         'CsvMigrations.icheck.init',
         'AdminLTE./plugins/daterangepicker/moment.min',

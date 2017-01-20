@@ -279,7 +279,9 @@ class FileUploadsUtils
             if (isset($data[$tableInstance->alias()][$savedIdsField])) {
                 $savedIds = $data[$tableInstance->alias()][$savedIdsField];
             } else {
-                $savedIds = $data[$savedIdsField];
+                if (isset($data[$savedIdsField])) {
+                    $savedIds = $data[$savedIdsField];
+                }
             }
 
             if (empty($savedIds)) {

@@ -5,7 +5,6 @@ use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 $fhf = new FieldHandlerFactory($this);
-
 $defaultOptions = [
     'title' => null,
     'entity' => null,
@@ -37,13 +36,12 @@ $formOptions = [
         'action' => 'panels'
     ]),
     'name' => Inflector::dasherize($moduleAlias),
+    'type' => 'file',
 ];
+
 if (!empty($this->request->query['embedded'])) {
     $embControllerName = $this->request->controller;
-    if (!empty($this->request->plugin)) {
-        $embControllerName = $this->request->plugin . '.' . $embControllerName;
-    }
-    $formOptions['data-display_field'] = TableRegistry::get($embControllerName)->displayField();
+    $formOptions['url']['prefix'] = 'api';
     $formOptions['class'] = 'embeddedForm';
 
     if (!empty($this->request->query['modal_id'])) {
@@ -52,18 +50,13 @@ if (!empty($this->request->query['embedded'])) {
         $formOptions['data-modal_id'] = $this->request->query['foreign_key'] . '_modal';
     }
 
+    if (!empty($this->request->plugin)) {
+        $embControllerName = $this->request->plugin . '.' . $embControllerName;
+    }
+    $formOptions['data-display_field'] = TableRegistry::get($embControllerName)->displayField();
     $formOptions['data-field_id'] = $this->request->query['foreign_key'];
-    $parts = explode('.', $this->request->query['embedded']);
-    $first = array_shift($parts);
-    $formOptions['data-embedded'] = $first . (!empty($parts) ? '[' . implode('][', $parts) . ']' : '');
-    $formOptions['url']['prefix'] = 'api';
+    $formOptions['data-embedded'] = $this->request->query['embedded'];
 }
-
-/**
- * @todo Need to handle this for the forms without upload field.
- * @var array
- */
-$formOptions['type'] = 'file';
 ?>
 <section class="content-header">
     <h1><?= $options['title'] ?></h1>
@@ -117,9 +110,7 @@ $formOptions['type'] = 'file';
                         if (!is_null($field['plugin'])) {
                             $tableName = $field['plugin'] . '.' . $tableName;
                         }
-                        if (!empty($this->request->query['embedded'])) {
-                            $handlerOptions['embedded'] = $this->request->query['embedded'];
-                        }
+
                         $input = $fhf->renderInput(
                             $tableName,
                             $field['name'],
@@ -159,11 +150,8 @@ $formOptions['type'] = 'file';
      */
     if (!$this->request->param('pass.conversion')) {
         echo $this->Form->button(__('Submit'), ['name' => 'btn_operation', 'value' => 'submit', 'class' => 'btn btn-primary']);
-
-        if (empty($this->request->query['embedded'])) {
-            echo "&nbsp;";
-            echo $this->Form->button(__('Cancel'), ['name' => 'btn_operation', 'value' => 'cancel', 'class' => 'btn']);
-        }
+        echo "&nbsp;";
+        echo $this->Form->button(__('Cancel'), ['name' => 'btn_operation', 'value' => 'cancel', 'class' => 'btn']);
 
         echo $this->Form->end();
     }
@@ -175,11 +163,6 @@ $formOptions['type'] = 'file';
             $embeddedFieldName = substr($embeddedField['name'], strrpos($embeddedField['name'], '.') + 1);
             list($embeddedPlugin, $embeddedController) = pluginSplit(
                 substr($embeddedField['name'], 0, strrpos($embeddedField['name'], '.'))
-            );
-
-            $embeddedAssocName = CsvMigrationsUtils::createAssociationName(
-                $embeddedPlugin . $embeddedController,
-                $embeddedFieldName
             );
         ?>
         <!-- Modal -->
@@ -200,7 +183,7 @@ $formOptions['type'] = 'file';
                         ],
                         [
                             'query' => [
-                                'embedded' => $this->request->controller . '.' . $embeddedAssocName,
+                                'embedded' => $embeddedController,
                                 'foreign_key' => $embeddedFieldName
                             ]
                         ]

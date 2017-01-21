@@ -28,16 +28,16 @@ class FileFieldHandler extends BaseFileFieldHandler
      *
      * In this case, it renders the output based on the given value of data.
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         if (empty($data) && !empty($options['entity'])) {
-            $data = $this->_getFieldValueFromData('id', $options['entity']);
+            $data = $this->_getFieldValueFromData($options['entity'], 'id');
         }
         if (empty($data)) {
-            $result = $this->_renderInputWithoutData($table, $field, $options);
+            $result = $this->_renderInputWithoutData($options);
         } else {
-            $result = $this->_renderInputWithData($table, $field, $data, $options);
+            $result = $this->_renderInputWithData($data, $options);
         }
 
         return $result;
@@ -46,18 +46,16 @@ class FileFieldHandler extends BaseFileFieldHandler
     /**
      * Renders new file input field with no value. Applicable for add action.
      *
-     * @param  Table $table Table
-     * @param  string $field Field
      * @param  array $options Options
      * @return string HTML input field.
      */
-    protected function _renderInputWithoutData($table, $field, $options)
+    protected function _renderInputWithoutData($options)
     {
         $uploadField = $this->cakeView->Form->file(
-            $this->_getFieldName($table, $field, $options) . '[]',
+            $this->_getFieldName($this->table, $this->field, $options) . '[]',
             ['multiple' => true]
         );
-        $label = $this->cakeView->Form->label($field);
+        $label = $this->cakeView->Form->label($this->field);
 
         return sprintf(self::WRAPPER, $label, $uploadField);
     }
@@ -65,19 +63,17 @@ class FileFieldHandler extends BaseFileFieldHandler
     /**
      * Renders new file input field with value. Applicable for edit action.
      *
-     * @param  Table $table Table
-     * @param  string $field Field
      * @param  mixed $data Data
      * @param  array $options Options
      * @return string HTML input field with data attribute.
      */
-    protected function _renderInputWithData($table, $field, $data, $options)
+    protected function _renderInputWithData($data, $options)
     {
-        $fileUploadsUtils = new FileUploadsUtils($table);
+        $fileUploadsUtils = new FileUploadsUtils($this->table);
         $entities = $fileUploadsUtils->getFiles($data);
 
         if (is_null($entities)) {
-            return $this->_renderInputWithoutData($table, $field, $options);
+            return $this->_renderInputWithoutData($options);
         }
 
         $files = [];
@@ -89,14 +85,14 @@ class FileFieldHandler extends BaseFileFieldHandler
         }
 
         $uploadField = $this->cakeView->Form->file(
-            $this->_getFieldName($table, $field, $options) . '[]',
+            $this->_getFieldName($options) . '[]',
             [
                 'multiple' => true,
                 'data-document-id' => $data,
                 'data-files' => json_encode($files),
             ]
         );
-        $label = $this->cakeView->Form->label($field);
+        $label = $this->cakeView->Form->label($this->field);
 
         return sprintf(self::WRAPPER, $label, $uploadField);
     }
@@ -104,11 +100,11 @@ class FileFieldHandler extends BaseFileFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         if (empty($data) && !empty($options['entity'])) {
-            $data = $this->_getFieldValueFromData('id', $options['entity']);
+            $data = $this->_getFieldValueFromData($options['entity'], 'id');
         }
 
         return parent::renderValue($table, $field, $data, $options);

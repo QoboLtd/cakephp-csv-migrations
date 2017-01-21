@@ -11,6 +11,14 @@ use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
 use CsvMigrations\View\AppView;
 
+/**
+ * BaseFieldHandler
+ *
+ * This class provides the fallback functionality that
+ * is common to all field handlers.
+ *
+ * @abstract
+ */
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
     /**
@@ -266,7 +274,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $this->table = $table;
         }
 
-        $this->field = $field;
+        $this->field = (string)$field;
 
         if ($cakeView) {
             $this->cakeView = $cakeView;

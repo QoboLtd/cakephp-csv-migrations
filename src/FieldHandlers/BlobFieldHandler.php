@@ -42,8 +42,6 @@ class BlobFieldHandler extends BaseFieldHandler
      *
      * @todo Add support for encoding (base64, etc) via $options
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string

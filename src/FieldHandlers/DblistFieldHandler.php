@@ -23,16 +23,14 @@ class DblistFieldHandler extends BaseFieldHandler
     /**
      * Method responsible for rendering field's input.
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string          field input
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
         $result = '';
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         //CsvField object is mandatory
         if (!isset($options['fieldDefinitions']) ||
             !($options['fieldDefinitions'] instanceof CsvField)) {
@@ -40,13 +38,13 @@ class DblistFieldHandler extends BaseFieldHandler
         }
         $csvObj = $options['fieldDefinitions'];
         $list = $csvObj->getListName();
-        $field = $this->_getFieldName($table, $field, $options);
+        $fieldName = $this->_getFieldName($options);
         $options = [
             'value' => $data,
             'required' => $csvObj->getRequired(),
         ];
         $options += $this->_defaultOptions;
-        $result = $this->cakeView->cell('CsvMigrations.Dblist::' . __FUNCTION__, [$field, $list, $options])->render(__FUNCTION__);
+        $result = $this->cakeView->cell('CsvMigrations.Dblist::' . __FUNCTION__, [$fieldName, $list, $options])->render(__FUNCTION__);
 
         return $result;
     }
@@ -54,16 +52,14 @@ class DblistFieldHandler extends BaseFieldHandler
     /**
      * Method that renders list field's value.
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
         $result = '';
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
 
         //CsvField object is mandatory
         if (!isset($options['fieldDefinitions']) ||
@@ -79,7 +75,7 @@ class DblistFieldHandler extends BaseFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function renderSearchInput(array $options = [])
     {
         $content = $this->cakeView->cell(
             'CsvMigrations.Dblist::renderInput',
@@ -101,7 +97,7 @@ class DblistFieldHandler extends BaseFieldHandler
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return array list of DbField instances
      */
-    public function fieldToDb(CsvField $csvField)
+    public function fieldToDb(CsvField $csvField, $table, $field)
     {
         $dbFields[] = new DbField(
             $csvField->getName(),

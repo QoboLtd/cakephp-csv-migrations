@@ -13,15 +13,13 @@ class SublistFieldHandler extends ListFieldHandler
     /**
      * Method responsible for rendering field's input.
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string          field input
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit(), null, false);
         $optionValues = $this->_getSelectOptions($options['fieldDefinitions']->getLimit(), '');
         $structure = $this->_dynamicSelectStructure($fieldOptions);
@@ -39,7 +37,7 @@ class SublistFieldHandler extends ListFieldHandler
         // get selectors
         $selectors = [];
         for ($i = 0; $i <= $levels; $i++) {
-            $selectors[] = '[data-target="' . 'dynamic-select-' . $field . '_' . $i . '"]';
+            $selectors[] = '[data-target="' . 'dynamic-select-' . $this->field . '_' . $i . '"]';
         }
 
         // default input options
@@ -58,7 +56,7 @@ class SublistFieldHandler extends ListFieldHandler
         $inputs = [];
         for ($i = 0; $i <= $levels; $i++) {
             $inputOptions = $defaultOptions;
-            $inputOptions['data-target'] = 'dynamic-select-' . $field . '_' . $i;
+            $inputOptions['data-target'] = 'dynamic-select-' . $this->field . '_' . $i;
             if (0 === $i) {
                 $inputOptions['data-type'] = 'dynamic-select';
                 $inputOptions['data-structure'] = json_encode($structure);
@@ -74,7 +72,7 @@ class SublistFieldHandler extends ListFieldHandler
                 $inputOptions['data-value'] = implode('.', array_slice($data, 0, $i + 1));
             }
             $inputs[] = $this->cakeView->Form->input(
-                $this->_getFieldName($table, $field, $options),
+                $this->_getFieldName($options),
                 $inputOptions
             );
         }
@@ -85,7 +83,7 @@ class SublistFieldHandler extends ListFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function renderSearchInput(array $options = [])
     {
         return false;
     }

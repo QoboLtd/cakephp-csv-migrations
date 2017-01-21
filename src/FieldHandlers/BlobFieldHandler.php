@@ -10,7 +10,7 @@ class BlobFieldHandler extends BaseFieldHandler
      * {@inheritDoc}
      * In addtion, it sets the limit to Phinx\Db\Adapter\MysqlAdapter::TEXT_LONG
      */
-    public function fieldToDb(CsvField $csvField)
+    public function fieldToDb(CsvField $csvField, $table, $field)
     {
         $dbFields[] = new DbField(
             $csvField->getName(),
@@ -27,14 +27,14 @@ class BlobFieldHandler extends BaseFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         if (is_resource($data)) {
             $data = stream_get_contents($data);
         }
 
-        return parent::renderInput($table, $field, $data, $options);
+        return parent::renderInput($data, $options);
     }
 
     /**
@@ -48,9 +48,9 @@ class BlobFieldHandler extends BaseFieldHandler
      * @param  array  $options field options
      * @return string
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         $result = $data;
         if (is_resource($data)) {
             $result = stream_get_contents($data);
@@ -62,7 +62,7 @@ class BlobFieldHandler extends BaseFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function renderSearchInput(array $options = [])
     {
         $content = $this->cakeView->Form->input('{{name}}', [
             'value' => '{{value}}',

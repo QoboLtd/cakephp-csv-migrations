@@ -24,15 +24,13 @@ class TimeFieldHandler extends BaseFieldHandler
     /**
      * Method responsible for rendering field's input.
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string          field input
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         if ($data instanceof Time) {
             $data = $data->i18nFormat(static::TIME_FORMAT);
         }
@@ -41,7 +39,7 @@ class TimeFieldHandler extends BaseFieldHandler
         if (isset($options['fieldDefinitions']) && is_object($options['fieldDefinitions'])) {
             $required = (bool)$options['fieldDefinitions']->getRequired();
         }
-        $fieldName = $this->_getFieldName($table, $field, $options);
+        $fieldName = $this->_getFieldName($options);
 
         if (isset($options['element'])) {
             $result = $this->cakeView->element($options['element'], [
@@ -75,15 +73,13 @@ class TimeFieldHandler extends BaseFieldHandler
     /**
      * Method that renders default type field's value.
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
      * @param  string $data    field data
      * @param  array  $options field options
      * @return string
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $data = $this->_getFieldValueFromData($data);
         if (is_object($data)) {
             $result = $data->i18nFormat(static::TIME_FORMAT);
         } else {
@@ -96,7 +92,7 @@ class TimeFieldHandler extends BaseFieldHandler
     /**
      * {@inheritDoc}
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function renderSearchInput(array $options = [])
     {
         if (isset($options['element'])) {
             $content = $this->cakeView->element($options['element'], [

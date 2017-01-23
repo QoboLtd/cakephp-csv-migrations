@@ -80,9 +80,6 @@ class FieldHandlerFactoryTest extends TestCase
         parent::setUp();
 
         $dir = dirname(__DIR__) . DS . '..' . DS . 'data' . DS . 'CsvMigrations' . DS;
-        Configure::write('CsvMigrations.migrations.path', $dir . 'migrations' . DS);
-        Configure::write('CsvMigrations.lists.path', $dir . 'lists' . DS);
-        Configure::write('CsvMigrations.migrations.filename', 'migration');
 
         $mockTrait = $this->getMockForTrait(MigrationTrait::class);
         $this->csvData = $mockTrait->getFieldsDefinitions($this->tableName);
@@ -109,7 +106,7 @@ class FieldHandlerFactoryTest extends TestCase
     public function testFieldToDb()
     {
         $csvField = new CsvField(['name' => 'blah', 'type' => 'string']);
-        $result = $this->fhf->fieldToDb($csvField);
+        $result = $this->fhf->fieldToDb($csvField, $this->FooTable, 'id');
         $this->assertTrue(is_array($result), "fieldToDb() method does not return an array");
         $this->assertFalse(empty($result), "fieldToDb() method returns an empty array");
     }

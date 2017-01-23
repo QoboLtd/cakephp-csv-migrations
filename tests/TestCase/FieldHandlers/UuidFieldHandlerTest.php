@@ -10,7 +10,7 @@ class UuidFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new UuidFieldHandler();
+        $this->fh = new UuidFieldHandler('fields', 'uuid');
     }
 
     public function testInterface()
@@ -40,7 +40,7 @@ class UuidFieldHandlerTest extends PHPUnit_Framework_TestCase
      */
     public function testRenderValue($value, $description)
     {
-        $result = $this->fh->renderValue(null, null, $value, []);
+        $result = $this->fh->renderValue($value, []);
         $this->assertEquals($value, $result, "Value rendering is broken for: $description");
     }
 }

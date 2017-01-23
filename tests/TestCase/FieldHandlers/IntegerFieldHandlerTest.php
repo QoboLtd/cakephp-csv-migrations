@@ -10,7 +10,7 @@ class IntegerFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new IntegerFieldHandler();
+        $this->fh = new IntegerFieldHandler('fields', 'integer');
     }
 
     public function testInterface()
@@ -39,7 +39,7 @@ class IntegerFieldHandlerTest extends PHPUnit_Framework_TestCase
      */
     public function testRenderValue($value, $expected, $description)
     {
-        $result = $this->fh->renderValue(null, null, $value, []);
+        $result = $this->fh->renderValue($value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 }

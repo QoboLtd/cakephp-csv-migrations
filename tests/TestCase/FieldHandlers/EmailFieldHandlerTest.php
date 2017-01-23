@@ -10,7 +10,7 @@ class EmailFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new EmailFieldHandler();
+        $this->fh = new EmailFieldHandler('fields', 'email');
     }
 
     public function testInterface()
@@ -41,13 +41,13 @@ class EmailFieldHandlerTest extends PHPUnit_Framework_TestCase
      */
     public function testRenderValue($value, $expected, $description)
     {
-        $result = $this->fh->renderValue(null, null, $value, []);
+        $result = $this->fh->renderValue($value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 
     public function testRenderValueWithPlainFlag()
     {
-        $result = $this->fh->renderValue(null, null, 'john.smith@company.com', ['renderAs' => 'plain']);
+        $result = $this->fh->renderValue('john.smith@company.com', ['renderAs' => 'plain']);
         $this->assertEquals('john.smith@company.com', $result);
     }
 }

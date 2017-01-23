@@ -10,7 +10,7 @@ class DecimalFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new DecimalFieldHandler();
+        $this->fh = new DecimalFieldHandler('fields', 'decimal');
     }
 
     public function testInterface()
@@ -41,7 +41,7 @@ class DecimalFieldHandlerTest extends PHPUnit_Framework_TestCase
      */
     public function testRenderValue($value, $expected, $description)
     {
-        $result = $this->fh->renderValue(null, null, $value, []);
+        $result = $this->fh->renderValue($value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 }

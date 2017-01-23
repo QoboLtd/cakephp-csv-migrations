@@ -10,7 +10,7 @@ class TextFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new TextFieldHandler();
+        $this->fh = new TextFieldHandler('fields', 'text');
     }
 
     public function testInterface()
@@ -40,13 +40,13 @@ class TextFieldHandlerTest extends PHPUnit_Framework_TestCase
      */
     public function testRenderValue($value, $expected, $description)
     {
-        $result = $this->fh->renderValue(null, null, $value, []);
+        $result = $this->fh->renderValue($value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 
     public function testRenderValueWithPlainFlag()
     {
-        $result = $this->fh->renderValue(null, null, 'Hello World!', ['renderAs' => 'plain']);
+        $result = $this->fh->renderValue('Hello World!', ['renderAs' => 'plain']);
         $this->assertEquals('Hello World!', $result);
     }
 }

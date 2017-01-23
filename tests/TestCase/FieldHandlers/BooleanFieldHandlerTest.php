@@ -10,7 +10,7 @@ class BooleanFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new BooleanFieldHandler();
+        $this->fh = new BooleanFieldHandler('fields', 'boolean');
     }
 
     public function testInterface()
@@ -34,7 +34,7 @@ class BooleanFieldHandlerTest extends PHPUnit_Framework_TestCase
      */
     public function testRenderValue($value, $expected, $description)
     {
-        $result = $this->fh->renderValue(null, null, $value, []);
+        $result = $this->fh->renderValue($value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 }

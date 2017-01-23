@@ -11,7 +11,7 @@ class DatetimeFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new DatetimeFieldHandler();
+        $this->fh = new DatetimeFieldHandler('fields', 'datetime');
     }
 
     public function testInterface()
@@ -37,13 +37,13 @@ class DatetimeFieldHandlerTest extends PHPUnit_Framework_TestCase
      */
     public function testRenderValue($value, $expected, $description)
     {
-        $result = $this->fh->renderValue(null, null, $value, []);
+        $result = $this->fh->renderValue($value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 
     public function testRenderInput()
     {
-        $result = $this->fh->renderInput('SomeTable', 'some_field', '2016-10-15 13:30');
+        $result = $this->fh->renderInput('2016-10-15 13:30');
         $this->assertRegExp('/some_field/', $result, "Input rendering does not contain field name");
     }
 }

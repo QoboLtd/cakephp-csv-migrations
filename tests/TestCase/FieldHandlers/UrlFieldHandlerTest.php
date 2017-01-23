@@ -10,7 +10,7 @@ class UrlFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new UrlFieldHandler();
+        $this->fh = new UrlFieldHandler('fields', 'url');
     }
 
     public function testInterface()
@@ -42,13 +42,13 @@ class UrlFieldHandlerTest extends PHPUnit_Framework_TestCase
      */
     public function testRenderValue($value, $expected, $description)
     {
-        $result = $this->fh->renderValue(null, null, $value, []);
+        $result = $this->fh->renderValue($value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 
     public function testRenderValueWithPlainFlag()
     {
-        $result = $this->fh->renderValue(null, null, 'http://www.google.com', ['renderAs' => 'plain']);
+        $result = $this->fh->renderValue('http://www.google.com', ['renderAs' => 'plain']);
         $this->assertEquals('http://www.google.com', $result);
     }
 }

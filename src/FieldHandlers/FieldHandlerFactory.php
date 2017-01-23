@@ -199,7 +199,6 @@ class FieldHandlerFactory
 
         // Return a cached instance if we have one
         if (in_array($tableName, array_keys($this->_tableInstances))) {
-
             return $this->_tableInstances[$tableName];
         }
 
@@ -231,6 +230,7 @@ class FieldHandlerFactory
         // add field definitions to options array as CsvField Instance
         if (!empty($fieldsDefinitions[$field])) {
             $options['fieldDefinitions'] = new CsvField($fieldsDefinitions[$field]);
+
             return $options;
         }
 

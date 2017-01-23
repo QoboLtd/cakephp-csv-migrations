@@ -6,7 +6,7 @@ use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 class IntegerFieldHandler extends BaseSimpleFieldHandler
 {
     /**
-     * {@inheritDoc}
+     * Database field type
      */
     const DB_FIELD_TYPE = 'integer';
 
@@ -16,7 +16,15 @@ class IntegerFieldHandler extends BaseSimpleFieldHandler
     const INPUT_FIELD_TYPE = 'number';
 
     /**
-     * {@inheritDoc}
+     * Render field value
+     *
+     * This method prepares the output of the value for the given
+     * field.  The result can be controlled via the variety of
+     * options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field value
      */
     public function renderValue($data, array $options = [])
     {
@@ -31,6 +39,14 @@ class IntegerFieldHandler extends BaseSimpleFieldHandler
         return $result;
     }
 
+    /**
+     * Get search operators
+     *
+     * This method prepares a list of search operators that
+     * are appropriate for a given field.
+     *
+     * @return array List of search operators
+     */
     public function getSearchOperators()
     {
         return [

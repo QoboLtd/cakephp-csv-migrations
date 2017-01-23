@@ -31,14 +31,13 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
     /**
      * Constructor
      *
-     * @param \Cake\ORM\Table|string $table Table instance or name
-     * @param string $field Field name
+     * @param mixed  $table    Name or instance of the Table
+     * @param string $field    Field name
      * @param object $cakeView Optional instance of the AppView
      */
     public function __construct($table, $field, $cakeView = null)
     {
         parent::__construct($table, $field, $cakeView);
-
         $this->_setCombinedFields();
     }
 
@@ -125,8 +124,8 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
      * and so on.  The result can be controlled via the variety
      * of options.
      *
-     * @param array  $options Field options
-     * @return array          Array of field input HTML, pre and post CSS, JS, etc
+     * @param  array  $options Field options
+     * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
     public function renderSearchInput(array $options = [])
     {
@@ -193,7 +192,7 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
      * Get field label
      *
      * @todo Rename method to getLabel()
-     * @return string        Human-friendly field name
+     * @return string Human-friendly field name
      */
     public function getSearchLabel()
     {

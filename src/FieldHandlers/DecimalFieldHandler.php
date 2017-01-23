@@ -7,7 +7,7 @@ use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 class DecimalFieldHandler extends BaseSimpleFieldHandler
 {
     /**
-     * {@inheritDoc}
+     * Database field type
      */
     const DB_FIELD_TYPE = 'decimal';
 
@@ -17,7 +17,15 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
     const INPUT_FIELD_TYPE = 'number';
 
     /**
-     * {@inheritDoc}
+     * Render field value
+     *
+     * This method prepares the output of the value for the given
+     * field.  The result can be controlled via the variety of
+     * options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field value
      */
     public function renderValue($data, array $options = [])
     {
@@ -38,7 +46,16 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
     }
 
     /**
-     * {@inheritDoc}
+     * Render field input
+     *
+     * This method prepares the form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field input HTML
      */
     public function renderInput($data = '', array $options = [])
     {
@@ -59,7 +76,15 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
     }
 
     /**
-     * {@inheritDoc}
+     * Render field search input
+     *
+     * This method prepares the search form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  array  $options Field options
+     * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
     public function renderSearchInput(array $options = [])
     {
@@ -77,6 +102,14 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
         ];
     }
 
+    /**
+     * Get search operators
+     *
+     * This method prepares a list of search operators that
+     * are appropriate for a given field.
+     *
+     * @return array List of search operators
+     */
     public function getSearchOperators()
     {
         return [
@@ -100,7 +133,14 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
     }
 
     /**
-     * {@inheritDoc}
+     * Convert CsvField to one or more DbField instances
+     *
+     * Simple fields from migrations CSV map one-to-one to
+     * the database fields.  More complex fields can combine
+     * multiple database fields for a single CSV entry.
+     *
+     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @return array                                           DbField instances
      */
     public function fieldToDb(CsvField $csvField)
     {
@@ -128,7 +168,7 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
     }
 
     /**
-     * Method that calculates max value for number input field.
+     * Get max value for number input field.
      *
      * @return float
      */

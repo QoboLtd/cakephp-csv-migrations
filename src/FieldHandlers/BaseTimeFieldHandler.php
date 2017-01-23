@@ -11,6 +11,14 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
  */
 abstract class BaseTimeFieldHandler extends BaseFieldHandler
 {
+    /**
+     * Get search operators
+     *
+     * This method prepares a list of search operators that
+     * are appropriate for a given field.
+     *
+     * @return array List of search operators
+     */
     public function getSearchOperators()
     {
         return [

@@ -11,11 +11,15 @@ class UrlFieldHandler extends BaseSimpleFieldHandler
     const INPUT_FIELD_TYPE = 'url';
 
     /**
-     * Method that renders default type field's value.
+     * Render field value
      *
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string
+     * This method prepares the output of the value for the given
+     * field.  The result can be controlled via the variety of
+     * options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field value
      */
     public function renderValue($data, array $options = [])
     {

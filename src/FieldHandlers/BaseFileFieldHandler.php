@@ -8,6 +8,12 @@ use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\RelatedFieldHandler;
 use CsvMigrations\FileUploadsUtils;
 
+/**
+ * BaseFileFieldHandler
+ *
+ * This class provides the fallback functionality that
+ * is common to all file field handlers.
+ */
 class BaseFileFieldHandler extends RelatedFieldHandler
 {
     /**
@@ -79,7 +85,16 @@ class BaseFileFieldHandler extends RelatedFieldHandler
     const ICON_SIZE = '48';
 
     /**
-     * {@inheritDoc}
+     * Render field input
+     *
+     * This method prepares the form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field input HTML
      */
     public function renderInput($data = '', array $options = [])
     {
@@ -157,7 +172,15 @@ class BaseFileFieldHandler extends RelatedFieldHandler
     }
 
     /**
-     * {@inheritDoc}
+     * Render field search input
+     *
+     * This method prepares the search form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  array  $options Field options
+     * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
     public function renderSearchInput(array $options = [])
     {
@@ -165,7 +188,7 @@ class BaseFileFieldHandler extends RelatedFieldHandler
     }
 
     /**
-     * Get appropriate file icon url by file extension.
+     * Get file icon url by file extension
      *
      * @param  string $extension File extension
      * @return string

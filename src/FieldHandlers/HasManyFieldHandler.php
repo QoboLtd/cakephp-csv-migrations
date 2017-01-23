@@ -36,11 +36,16 @@ class HasManyFieldHandler extends RelatedFieldHandler
         </div>';
 
     /**
-     * Method responsible for rendering field's input.
+     * Render field input
      *
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string          field input
+     * This method prepares the form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field input HTML
      */
     public function renderInput($data = '', array $options = [])
     {
@@ -100,10 +105,18 @@ class HasManyFieldHandler extends RelatedFieldHandler
     }
 
     /**
-     * {@inheritDoc}
+     * Render field search input
+     *
+     * This method prepares the search form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  array  $options Field options
+     * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
     public function renderSearchInput(array $options = [])
     {
-        return false;
+        return [];
     }
 }

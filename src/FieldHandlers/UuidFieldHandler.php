@@ -10,6 +10,14 @@ class UuidFieldHandler extends BaseSimpleFieldHandler
      */
     const DB_FIELD_TYPE = 'uuid';
 
+    /**
+     * Get search operators
+     *
+     * This method prepares a list of search operators that
+     * are appropriate for a given field.
+     *
+     * @return array List of search operators
+     */
     public function getSearchOperators()
     {
         return [

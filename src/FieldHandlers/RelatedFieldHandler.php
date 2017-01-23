@@ -52,11 +52,16 @@ class RelatedFieldHandler extends BaseFieldHandler
         </div>';
 
     /**
-     * Method responsible for rendering field's input.
+     * Render field input
      *
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string          field input
+     * This method prepares the form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field input HTML
      */
     public function renderInput($data = '', array $options = [])
     {
@@ -121,11 +126,15 @@ class RelatedFieldHandler extends BaseFieldHandler
     }
 
     /**
-     * Method that renders related field's value.
+     * Render field value
      *
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string
+     * This method prepares the output of the value for the given
+     * field.  The result can be controlled via the variety of
+     * options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field value
      */
     public function renderValue($data, array $options = [])
     {
@@ -177,7 +186,15 @@ class RelatedFieldHandler extends BaseFieldHandler
     }
 
     /**
-     * {@inheritDoc}
+     * Render field search input
+     *
+     * This method prepares the search form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  array  $options Field options
+     * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
     public function renderSearchInput(array $options = [])
     {
@@ -242,6 +259,14 @@ class RelatedFieldHandler extends BaseFieldHandler
         ];
     }
 
+    /**
+     * Get search operators
+     *
+     * This method prepares a list of search operators that
+     * are appropriate for a given field.
+     *
+     * @return array List of search operators
+     */
     public function getSearchOperators()
     {
         return [
@@ -257,10 +282,14 @@ class RelatedFieldHandler extends BaseFieldHandler
     }
 
     /**
-     * Method responsible for converting csv field instance to database field instance.
+     * Convert CsvField to one or more DbField instances
+     *
+     * Simple fields from migrations CSV map one-to-one to
+     * the database fields.  More complex fields can combine
+     * multiple database fields for a single CSV entry.
      *
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @return array list of DbField instances
+     * @return array                                           DbField instances
      */
     public function fieldToDb(CsvField $csvField)
     {
@@ -277,7 +306,8 @@ class RelatedFieldHandler extends BaseFieldHandler
     }
 
     /**
-     * Method that generates input help string.
+     * Generate input help string
+     *
      * Can be used as a value for placeholder or title attributes.
      *
      * @param array $properties Input properties
@@ -304,7 +334,7 @@ class RelatedFieldHandler extends BaseFieldHandler
     }
 
     /**
-     * Method that returns input field associated icon.
+     * Get input field associated icon
      *
      * @param array $properties Input properties
      * @return string

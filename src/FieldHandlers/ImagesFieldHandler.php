@@ -18,7 +18,7 @@ class ImagesFieldHandler extends BaseFileFieldHandler
     const WRAPPER = '<div class="form-group">%s%s%s</div>';
 
     /**
-     * Method that checks if specified image version exists.
+     * Check if specified image version exists
      *
      * @param  Entity $entity  Entity
      * @param  string           $version Image version
@@ -36,7 +36,7 @@ class ImagesFieldHandler extends BaseFileFieldHandler
     }
 
     /**
-     * Method that generates and returns thumbnails html markup.
+     * Generates thumbnails html markup.
      *
      * @param ResultSet $entities File Entities
      * @param FileUploadsUtils $fileUploadsUtils fileUploadsUtils class object
@@ -96,13 +96,17 @@ class ImagesFieldHandler extends BaseFileFieldHandler
         return $result;
     }
 
-
     /**
-     * {@inheritDoc}
-     * @todo To avoid confusion: data param is not used because
-     * it has no value. We do not store anything in the file field on DB.
+     * Render field input
      *
-     * In this case, it renders the output based on the given value of data.
+     * This method prepares the form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field input HTML
      */
     public function renderInput($data = '', array $options = [])
     {
@@ -120,7 +124,9 @@ class ImagesFieldHandler extends BaseFileFieldHandler
     }
 
     /**
-     * Renders new file input field with no value. Applicable for add action.
+     * Render new file input field with no value
+     *
+     * Applicable for add action.
      *
      * @param  array $options Options
      * @return string HTML input field.
@@ -150,7 +156,9 @@ class ImagesFieldHandler extends BaseFileFieldHandler
     }
 
     /**
-     * Renders new file input field with value. Applicable for edit action.
+     * Render new file input field with value
+     *
+     * Applicable for edit action.
      *
      * @param  mixed $data Data
      * @param  array $options Options
@@ -210,7 +218,15 @@ class ImagesFieldHandler extends BaseFileFieldHandler
     }
 
     /**
-     * {@inheritDoc}
+     * Render field value
+     *
+     * This method prepares the output of the value for the given
+     * field.  The result can be controlled via the variety of
+     * options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field value
      */
     public function renderValue($data, array $options = [])
     {

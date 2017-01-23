@@ -77,8 +77,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * Constructor
      *
-     * @param \Cake\ORM\Table|string $table Table instance or name
-     * @param string $field Field name
+     * @param mixed  $table    Name or instance of the Table
+     * @param string $field    Field name
      * @param object $cakeView Optional instance of the AppView
      */
     public function __construct($table, $field, $cakeView = null)
@@ -137,8 +137,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * and so on.  The result can be controlled via the variety
      * of options.
      *
-     * @param array  $options Field options
-     * @return array          Array of field input HTML, pre and post CSS, JS, etc
+     * @param  array  $options Field options
+     * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
     public function renderSearchInput(array $options = [])
     {
@@ -233,7 +233,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * Get field label
      *
      * @todo Rename method to getLabel()
-     * @return string        Human-friendly field name
+     * @return string Human-friendly field name
      */
     public function getSearchLabel($field = null)
     {
@@ -294,7 +294,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     }
 
     /**
-     * Method that generates field name based on its options.
+     * Generate field name based on its options.
      *
      * @param  array  $options        Field options
      * @return string
@@ -313,7 +313,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     }
 
     /**
-     * Method that generates input label based on field name or optional options label parameter.
+     * Generates input label based on field name or label options
+     *
      * It can either return just the field label value or the html markup.
      *
      * @param  array   $options Field options
@@ -332,9 +333,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     }
 
     /**
-     * Returns arguments from database column definition.
+     * Get database column definition.
      *
-     * @param  array                  $args   Column arguments
+     * @param  array $args Column arguments
      * @return array
      */
     protected function _getDbColumnArgs(array $args = [])

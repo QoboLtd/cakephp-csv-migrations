@@ -30,4 +30,26 @@ class IntegerFieldHandler extends BaseFieldHandler
 
         return $result;
     }
+
+    public function getSearchOperators()
+    {
+        return [
+            'is' => [
+                'label' => 'is',
+                'operator' => 'IN',
+            ],
+            'is_not' => [
+                'label' => 'is not',
+                'operator' => 'NOT IN',
+            ],
+            'greater' => [
+                'label' => 'greater',
+                'operator' => '>',
+            ],
+            'less' => [
+                'label' => 'less',
+                'operator' => '<',
+            ],
+        ];
+    }
 }

@@ -49,4 +49,15 @@ class TextFieldHandlerTest extends PHPUnit_Framework_TestCase
         $result = $this->fh->renderValue('Hello World!', ['renderAs' => 'plain']);
         $this->assertEquals('Hello World!', $result);
     }
+
+    public function testGetSearchOperators()
+    {
+        $result = $this->fh->getSearchOperators();
+        $this->assertTrue(is_array($result), "getSearchOperators() did not return an array");
+        $this->assertFalse(empty($result), "getSearchOperators() returned an empty result");
+        $this->assertArrayHasKey('contains', $result, "getSearchOperators() did not return 'contains' key");
+        $this->assertArrayHasKey('not_contains', $result, "getSearchOperators() did not return 'not_contains' key");
+        $this->assertArrayHasKey('starts_with', $result, "getSearchOperators() did not return 'starts_with' key");
+        $this->assertArrayHasKey('ends_with', $result, "getSearchOperators() did not return 'ends_with' key");
+    }
 }

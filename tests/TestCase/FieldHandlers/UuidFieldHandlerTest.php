@@ -43,4 +43,13 @@ class UuidFieldHandlerTest extends PHPUnit_Framework_TestCase
         $result = $this->fh->renderValue($value, []);
         $this->assertEquals($value, $result, "Value rendering is broken for: $description");
     }
+
+    public function testGetSearchOperators()
+    {
+        $result = $this->fh->getSearchOperators();
+        $this->assertTrue(is_array($result), "getSearchOperators() did not return an array");
+        $this->assertFalse(empty($result), "getSearchOperators() returned an empty result");
+        $this->assertArrayHasKey('is', $result, "getSearchOperators() did not return 'is' key");
+        $this->assertArrayHasKey('is_not', $result, "getSearchOperators() did not return 'is_not' key");
+    }
 }

@@ -88,4 +88,18 @@ class BooleanFieldHandler extends BaseFieldHandler
             ]
         ];
     }
+
+    public function getSearchOperators()
+    {
+        return [
+            'is' => [
+                'label' => 'is',
+                'operator' => 'IN',
+            ],
+            'is_not' => [
+                'label' => 'is not',
+                'operator' => 'NOT IN',
+            ],
+        ];
+    }
 }

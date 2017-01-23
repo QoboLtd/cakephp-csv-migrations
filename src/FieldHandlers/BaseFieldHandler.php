@@ -72,173 +72,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     ];
 
     /**
-     * Per type search operators.
-     *
-     * @var array
-     */
-    protected $_searchOperators = [
-        'uuid' => ['is' => 'Is', 'is_not' => 'Is not'],
-        'related' => ['is' => 'Is', 'is_not' => 'Is not'],
-        'boolean' => ['is' => 'Is', 'is_not' => 'Is not'],
-        'list' => ['is' => 'Is', 'is_not' => 'Is not'],
-        'dblist' => ['is' => 'Is', 'is_not' => 'Is not'],
-        'string' => [
-            'contains' => 'Contains',
-            'not_contains' => 'Does not contain',
-            'starts_with' => 'Starts with',
-            'ends_with' => 'Ends with'
-        ],
-        'text' => [
-            'contains' => 'Contains',
-            'not_contains' => 'Does not contain',
-            'starts_with' => 'Starts with',
-            'ends_with' => 'Ends with'
-        ],
-        'textarea' => [
-            'contains' => 'Contains',
-            'not_contains' => 'Does not contain',
-            'starts_with' => 'Starts with',
-            'ends_with' => 'Ends with'
-        ],
-        'blob' => [
-            'contains' => 'Contains',
-            'not_contains' => 'Does not contain',
-            'starts_with' => 'Starts with',
-            'ends_with' => 'Ends with'
-        ],
-        'email' => [
-            'contains' => 'Contains',
-            'not_contains' => 'Does not contain',
-            'starts_with' => 'Starts with',
-            'ends_with' => 'Ends with'
-        ],
-        'phone' => [
-            'contains' => 'Contains',
-            'not_contains' => 'Does not contain',
-            'starts_with' => 'Starts with',
-            'ends_with' => 'Ends with'
-        ],
-        'url' => [
-            'contains' => 'Contains',
-            'not_contains' => 'Does not contain',
-            'starts_with' => 'Starts with',
-            'ends_with' => 'Ends with'
-        ],
-        'integer' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'greater', 'less' => 'less'],
-        'decimal' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'greater', 'less' => 'less'],
-        'datetime' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'from', 'less' => 'to'],
-        'reminder' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'from', 'less' => 'to'],
-        'date' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'from', 'less' => 'to'],
-        'time' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'from', 'less' => 'to']
-    ];
-
-    /**
-     * Per type sql operators.
-     *
-     * @var array
-     */
-    protected $_sqlOperators = [
-        'uuid' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN']
-        ],
-        'related' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN']
-        ],
-        'boolean' => [
-            'is' => ['operator' => 'IS'],
-            'is_not' => ['operator' => 'IS NOT']
-        ],
-        'list' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN']
-        ],
-        'dblist' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN']
-        ],
-        'string' => [
-            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
-            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
-            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
-            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
-        ],
-        'text' => [
-            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
-            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
-            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
-            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
-        ],
-        'textarea' => [
-            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
-            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
-            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
-            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
-        ],
-        'blob' => [
-            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
-            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
-            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
-            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
-        ],
-        'email' => [
-            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
-            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
-            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
-            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
-        ],
-        'phone' => [
-            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
-            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
-            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
-            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
-        ],
-        'url' => [
-            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
-            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
-            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
-            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
-        ],
-        'integer' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN'],
-            'greater' => ['operator' => '>'],
-            'less' => ['operator' => '<']
-        ],
-        'decimal' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN'],
-            'greater' => ['operator' => '>'],
-            'less' => ['operator' => '<']
-        ],
-        'datetime' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN'],
-            'greater' => ['operator' => '>'],
-            'less' => ['operator' => '<']
-        ],
-        'reminder' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN'],
-            'greater' => ['operator' => '>'],
-            'less' => ['operator' => '<']
-        ],
-        'date' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN'],
-            'greater' => ['operator' => '>'],
-            'less' => ['operator' => '<']
-        ],
-        'time' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN'],
-            'greater' => ['operator' => '>'],
-            'less' => ['operator' => '<']
-        ]
-    ];
-
-    /**
      * Constructor
      *
      * @param \Cake\ORM\Table|string $table Table instance or name
@@ -365,26 +198,32 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * This method prepares a list of search operators that
      * are appropriate for a given field.
      *
-     * @todo Drop the $type parameter, as field handler should know this already
-     * @param string $type  Field type
-     * @return array        List of search operators
+     * @return array List of search operators
      */
-    public function getSearchOperators($type)
+    public function getSearchOperators()
     {
-        $result = [];
-        if (empty($this->_searchOperators[$type]) || empty($this->_sqlOperators[$type])) {
-            return $result;
-        }
-
-        foreach ($this->_searchOperators[$type] as $value => $label) {
-            if (empty($this->_sqlOperators[$type][$value])) {
-                continue;
-            }
-
-            $result[$value] = array_merge(['label' => $label], $this->_sqlOperators[$type][$value]);
-        }
-
-        return $result;
+        return [
+            'contains' => [
+                'label' => 'contains',
+                'operator' => 'LIKE',
+                'pattern' => '%{{value}}%',
+            ],
+            'not_contains' => [
+                'label' => 'does not contain',
+                'operator' => 'NOT LIKE',
+                'pattern' => '%{{value}}%',
+            ],
+            'starts_with' => [
+                'label' => 'starts with',
+                'operator' => 'LIKE',
+                'pattern' => '{{value}}%',
+            ],
+            'ends_with' => [
+                'label' => 'ends with',
+                'operator' => 'LIKE',
+                'pattern' => '%{{value}}',
+            ],
+        ];
     }
 
     /**

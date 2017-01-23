@@ -176,11 +176,9 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
      * This method prepares a list of search operators that
      * are appropriate for a given field.
      *
-     * @todo Drop the $type parameter, as field handler should know this already
-     * @param string $type  Field type
-     * @return array        List of search operators
+     * @return array List of search operators
      */
-    public function getSearchOperators($type)
+    public function getSearchOperators()
     {
         $result = [];
         foreach ($this->_fields as $suffix => $options) {

@@ -51,4 +51,15 @@ class UrlFieldHandlerTest extends PHPUnit_Framework_TestCase
         $result = $this->fh->renderValue('http://www.google.com', ['renderAs' => 'plain']);
         $this->assertEquals('http://www.google.com', $result);
     }
+
+    public function testGetSearchOperators()
+    {
+        $result = $this->fh->getSearchOperators();
+        $this->assertTrue(is_array($result), "getSearchOperators() did not return an array");
+        $this->assertFalse(empty($result), "getSearchOperators() returned an empty result");
+        $this->assertArrayHasKey('contains', $result, "getSearchOperators() did not return 'contains' key");
+        $this->assertArrayHasKey('not_contains', $result, "getSearchOperators() did not return 'not_contains' key");
+        $this->assertArrayHasKey('starts_with', $result, "getSearchOperators() did not return 'starts_with' key");
+        $this->assertArrayHasKey('ends_with', $result, "getSearchOperators() did not return 'ends_with' key");
+    }
 }

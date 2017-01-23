@@ -40,4 +40,15 @@ class ReminderFieldHandlerTest extends PHPUnit_Framework_TestCase
         $result = $this->fh->renderValue($value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
+
+    public function testGetSearchOperators()
+    {
+        $result = $this->fh->getSearchOperators();
+        $this->assertTrue(is_array($result), "getSearchOperators() did not return an array");
+        $this->assertFalse(empty($result), "getSearchOperators() returned an empty result");
+        $this->assertArrayHasKey('is', $result, "getSearchOperators() did not return 'is' key");
+        $this->assertArrayHasKey('is_not', $result, "getSearchOperators() did not return 'is_not' key");
+        $this->assertArrayHasKey('greater', $result, "getSearchOperators() did not return 'greater' key");
+        $this->assertArrayHasKey('less', $result, "getSearchOperators() did not return 'less' key");
+    }
 }

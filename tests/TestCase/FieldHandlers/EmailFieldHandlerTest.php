@@ -50,4 +50,15 @@ class EmailFieldHandlerTest extends PHPUnit_Framework_TestCase
         $result = $this->fh->renderValue('john.smith@company.com', ['renderAs' => 'plain']);
         $this->assertEquals('john.smith@company.com', $result);
     }
+
+    public function testGetSearchOperators()
+    {
+        $result = $this->fh->getSearchOperators();
+        $this->assertTrue(is_array($result), "getSearchOperators() did not return an array");
+        $this->assertFalse(empty($result), "getSearchOperators() returned an empty result");
+        $this->assertArrayHasKey('contains', $result, "getSearchOperators() did not return 'contains' key");
+        $this->assertArrayHasKey('not_contains', $result, "getSearchOperators() did not return 'not_contains' key");
+        $this->assertArrayHasKey('starts_with', $result, "getSearchOperators() did not return 'starts_with' key");
+        $this->assertArrayHasKey('ends_with', $result, "getSearchOperators() did not return 'ends_with' key");
+    }
 }

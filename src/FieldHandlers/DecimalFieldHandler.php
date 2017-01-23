@@ -77,6 +77,28 @@ class DecimalFieldHandler extends BaseFieldHandler
         ];
     }
 
+    public function getSearchOperators()
+    {
+        return [
+            'is' => [
+                'label' => 'is',
+                'operator' => 'IN',
+            ],
+            'is_not' => [
+                'label' => 'is not',
+                'operator' => 'NOT IN',
+            ],
+            'greater' => [
+                'label' => 'greater',
+                'operator' => '>',
+            ],
+            'less' => [
+                'label' => 'less',
+                'operator' => '<',
+            ],
+        ];
+    }
+
     /**
      * {@inheritDoc}
      */

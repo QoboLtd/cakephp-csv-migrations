@@ -139,4 +139,26 @@ class DatetimeFieldHandler extends BaseFieldHandler
             ]
         ];
     }
+
+    public function getSearchOperators()
+    {
+        return [
+            'is' => [
+                'label' => 'is',
+                'operator' => 'IN',
+            ],
+            'is_not' => [
+                'label' => 'is not',
+                'operator' => 'NOT IN',
+            ],
+            'greater' => [
+                'label' => 'from',
+                'operator' => '>',
+            ],
+            'less' => [
+                'label' => 'to',
+                'operator' => '<',
+            ],
+        ];
+    }
 }

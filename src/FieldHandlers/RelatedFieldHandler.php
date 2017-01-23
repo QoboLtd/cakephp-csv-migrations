@@ -242,6 +242,20 @@ class RelatedFieldHandler extends BaseFieldHandler
         ];
     }
 
+    public function getSearchOperators()
+    {
+        return [
+            'is' => [
+                'label' => 'is',
+                'operator' => 'IN',
+            ],
+            'is_not' => [
+                'label' => 'is not',
+                'operator' => 'NOT IN',
+            ],
+        ];
+    }
+
     /**
      * Method responsible for converting csv field instance to database field instance.
      *

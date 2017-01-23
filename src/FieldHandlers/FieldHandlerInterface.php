@@ -14,8 +14,8 @@ interface FieldHandlerInterface
     /**
      * Constructor
      *
-     * @param  mixed  $table   Name or instance of the Table
-     * @param  string $field   Field name
+     * @param mixed  $table    Name or instance of the Table
+     * @param string $field    Field name
      * @param object $cakeView Optional instance of the AppView
      */
     public function __construct($table, $field, $cakeView = null);
@@ -42,8 +42,8 @@ interface FieldHandlerInterface
      * and so on.  The result can be controlled via the variety
      * of options.
      *
-     * @param array  $options Field options
-     * @return array          Array of field input HTML, pre and post CSS, JS, etc
+     * @param  array  $options Field options
+     * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
     public function renderSearchInput(array $options = []);
 
@@ -66,17 +66,15 @@ interface FieldHandlerInterface
      * This method prepares a list of search operators that
      * are appropriate for a given field.
      *
-     * @todo Drop the $type parameter, as field handler should know this already
-     * @param string $type  Field type
-     * @return array        List of search operators
+     * @return array List of search operators
      */
-    public function getSearchOperators($type);
+    public function getSearchOperators();
 
     /**
      * Get field label
      *
      * @todo Rename method to getLabel()
-     * @return string        Human-friendly field name
+     * @return string Human-friendly field name
      */
     public function getSearchLabel();
 

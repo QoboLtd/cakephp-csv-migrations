@@ -104,7 +104,7 @@ class FieldHandlerFactory
         $type = $options['fieldDefinitions']->getType();
         $handler = $this->_getHandler($type, $table, $field);
 
-        return $handler->getSearchOperators($type);
+        return $handler->getSearchOperators();
     }
 
     /**

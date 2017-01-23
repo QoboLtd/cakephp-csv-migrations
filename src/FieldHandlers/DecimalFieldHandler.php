@@ -2,9 +2,9 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\ORM\Table;
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 
-class DecimalFieldHandler extends BaseFieldHandler
+class DecimalFieldHandler extends BaseSimpleFieldHandler
 {
     /**
      * {@inheritDoc}
@@ -104,14 +104,7 @@ class DecimalFieldHandler extends BaseFieldHandler
      */
     public function fieldToDb(CsvField $csvField)
     {
-        $dbFields[] = new DbField(
-            $csvField->getName(),
-            static::DB_FIELD_TYPE,
-            $csvField->getLimit(),
-            $csvField->getRequired(),
-            $csvField->getNonSearchable(),
-            $csvField->getUnique()
-        );
+        $dbFields = parent::fieldToDb($csvField);
 
         // set precision and scale provided by csv migration decimal field type definition
         foreach ($dbFields as &$dbField) {

@@ -1,9 +1,9 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 
-class BooleanFieldHandler extends BaseFieldHandler
+class BooleanFieldHandler extends BaseSimpleFieldHandler
 {
     /**
      * Database field type

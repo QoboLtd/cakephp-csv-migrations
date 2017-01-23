@@ -1,9 +1,9 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 
-class IntegerFieldHandler extends BaseFieldHandler
+class IntegerFieldHandler extends BaseSimpleFieldHandler
 {
     /**
      * {@inheritDoc}

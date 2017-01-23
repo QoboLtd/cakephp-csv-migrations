@@ -2,9 +2,9 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\I18n\Time;
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\BaseTimeFieldHandler;
 
-class TimeFieldHandler extends BaseFieldHandler
+class TimeFieldHandler extends BaseTimeFieldHandler
 {
     /**
      * {@inheritDoc}
@@ -138,28 +138,6 @@ class TimeFieldHandler extends BaseFieldHandler
                     'block' => 'css'
                 ]
             ]
-        ];
-    }
-
-    public function getSearchOperators()
-    {
-        return [
-            'is' => [
-                'label' => 'is',
-                'operator' => 'IN',
-            ],
-            'is_not' => [
-                'label' => 'is not',
-                'operator' => 'NOT IN',
-            ],
-            'greater' => [
-                'label' => 'from',
-                'operator' => '>',
-            ],
-            'less' => [
-                'label' => 'to',
-                'operator' => '<',
-            ],
         ];
     }
 }

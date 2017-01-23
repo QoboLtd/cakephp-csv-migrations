@@ -1,17 +1,15 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\ListFieldHandler;
+use CsvMigrations\FieldHandlers\BaseFieldHandler;
 
 /**
  * BaseCombinedFieldHandler
  *
  * This class provides the fallback functionality that
  * is common to combined field handlers.
- *
- * @todo Extend base class, not a particular list handler
  */
-abstract class BaseCombinedFieldHandler extends ListFieldHandler
+abstract class BaseCombinedFieldHandler extends BaseFieldHandler
 {
     /**
      * Input(s) wrapper html markup

@@ -1,10 +1,10 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class TextFieldHandler extends BaseFieldHandler
+class TextFieldHandler extends BaseSimpleFieldHandler
 {
     /**
      * HTML form field type

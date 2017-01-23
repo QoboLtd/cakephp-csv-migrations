@@ -17,6 +17,9 @@ use CsvMigrations\View\AppView;
  * This class provides the fallback functionality that
  * is common to all field handlers.
  *
+ * NOTE: Try to avoid inheriting from this class directly.
+ *       Instead, use one of the more specific base classes.
+ *
  * @abstract
  */
 abstract class BaseFieldHandler implements FieldHandlerInterface

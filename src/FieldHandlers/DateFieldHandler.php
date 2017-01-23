@@ -2,9 +2,9 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\I18n\Date;
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\BaseTimeFieldHandler;
 
-class DateFieldHandler extends BaseFieldHandler
+class DateFieldHandler extends BaseTimeFieldHandler
 {
     /**
      * Database field type
@@ -140,28 +140,6 @@ class DateFieldHandler extends BaseFieldHandler
                     'block' => 'css'
                 ]
             ]
-        ];
-    }
-
-    public function getSearchOperators()
-    {
-        return [
-            'is' => [
-                'label' => 'is',
-                'operator' => 'IN',
-            ],
-            'is_not' => [
-                'label' => 'is not',
-                'operator' => 'NOT IN',
-            ],
-            'greater' => [
-                'label' => 'from',
-                'operator' => '>',
-            ],
-            'less' => [
-                'label' => 'to',
-                'operator' => '<',
-            ],
         ];
     }
 }

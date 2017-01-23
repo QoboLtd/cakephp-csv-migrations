@@ -10,7 +10,7 @@ class DefaultFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new DefaultFieldHandler('fields', 'string');
+        $this->fh = new DefaultFieldHandler('fields', 'field_string');
     }
 
     public function testInterface()

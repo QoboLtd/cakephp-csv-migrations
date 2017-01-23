@@ -10,7 +10,7 @@ class TextFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new TextFieldHandler('fields', 'text');
+        $this->fh = new TextFieldHandler('fields', 'field_text');
     }
 
     public function testInterface()

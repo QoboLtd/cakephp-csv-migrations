@@ -11,7 +11,7 @@ class TimeFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new TimeFieldHandler('fields', 'time');
+        $this->fh = new TimeFieldHandler('fields', 'field_time');
     }
 
     public function testInterface()
@@ -44,6 +44,6 @@ class TimeFieldHandlerTest extends PHPUnit_Framework_TestCase
     public function testRenderInput()
     {
         $result = $this->fh->renderInput('13:30');
-        $this->assertRegExp('/some_field/', $result, "Input rendering does not contain field name");
+        $this->assertRegExp('/field_time/', $result, "Input rendering does not contain field name");
     }
 }

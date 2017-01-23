@@ -11,7 +11,7 @@ class ReminderFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new ReminderFieldHandler('fields', 'reminder');
+        $this->fh = new ReminderFieldHandler('fields', 'field_reminder');
     }
 
     public function testInterface()

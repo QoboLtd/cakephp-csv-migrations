@@ -10,7 +10,7 @@ class DecimalFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new DecimalFieldHandler('fields', 'decimal');
+        $this->fh = new DecimalFieldHandler('fields', 'field_decimal');
     }
 
     public function testInterface()

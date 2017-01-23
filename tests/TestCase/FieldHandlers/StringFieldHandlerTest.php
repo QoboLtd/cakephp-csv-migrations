@@ -10,7 +10,7 @@ class StringFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new StringFieldHandler('fields', 'string');
+        $this->fh = new StringFieldHandler('fields', 'field_string');
     }
 
     public function testInterface()

@@ -10,7 +10,7 @@ class EmailFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new EmailFieldHandler('fields', 'email');
+        $this->fh = new EmailFieldHandler('fields', 'field_email');
     }
 
     public function testInterface()

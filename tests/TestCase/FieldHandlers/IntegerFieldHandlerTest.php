@@ -10,7 +10,7 @@ class IntegerFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new IntegerFieldHandler('fields', 'integer');
+        $this->fh = new IntegerFieldHandler('fields', 'field_integer');
     }
 
     public function testInterface()

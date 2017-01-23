@@ -10,7 +10,7 @@ class UrlFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new UrlFieldHandler('fields', 'url');
+        $this->fh = new UrlFieldHandler('fields', 'field_url');
     }
 
     public function testInterface()

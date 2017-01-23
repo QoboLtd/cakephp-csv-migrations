@@ -10,7 +10,7 @@ class BooleanFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new BooleanFieldHandler('fields', 'boolean');
+        $this->fh = new BooleanFieldHandler('fields', 'field_boolean');
     }
 
     public function testInterface()

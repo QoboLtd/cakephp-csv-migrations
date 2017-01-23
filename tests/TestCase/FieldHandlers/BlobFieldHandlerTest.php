@@ -10,7 +10,7 @@ class BlobFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new BlobFieldHandler('fields', 'blob');
+        $this->fh = new BlobFieldHandler('fields', 'field_blob');
     }
 
     public function testInterface()

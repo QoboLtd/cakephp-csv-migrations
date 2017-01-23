@@ -10,7 +10,7 @@ class UuidFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fh = new UuidFieldHandler('fields', 'uuid');
+        $this->fh = new UuidFieldHandler('fields', 'field_uuid');
     }
 
     public function testInterface()

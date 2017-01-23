@@ -6,6 +6,11 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 class EmailFieldHandler extends BaseFieldHandler
 {
     /**
+     * HTML form field type
+     */
+    const INPUT_FIELD_TYPE = 'email';
+
+    /**
      * Method that renders default type field's value.
      *
      * @param  string $data    field data

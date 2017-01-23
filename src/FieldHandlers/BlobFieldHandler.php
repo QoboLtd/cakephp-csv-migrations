@@ -7,6 +7,11 @@ use Phinx\Db\Adapter\MysqlAdapter;
 class BlobFieldHandler extends BaseFieldHandler
 {
     /**
+     * HTML form field type
+     */
+    const INPUT_FIELD_TYPE = 'textarea';
+
+    /**
      * {@inheritDoc}
      * In addtion, it sets the limit to Phinx\Db\Adapter\MysqlAdapter::TEXT_LONG
      */

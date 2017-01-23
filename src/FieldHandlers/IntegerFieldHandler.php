@@ -11,6 +11,11 @@ class IntegerFieldHandler extends BaseFieldHandler
     const DB_FIELD_TYPE = 'integer';
 
     /**
+     * HTML form field type
+     */
+    const INPUT_FIELD_TYPE = 'number';
+
+    /**
      * {@inheritDoc}
      */
     public function renderValue($data, array $options = [])

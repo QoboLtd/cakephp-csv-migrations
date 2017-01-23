@@ -22,9 +22,14 @@ use CsvMigrations\View\AppView;
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
     /**
-     * Default Database Field type
+     * Default database field type
      */
     const DB_FIELD_TYPE = 'string';
+
+    /**
+     * Default HTML form field type
+     */
+    const INPUT_FIELD_TYPE = 'text';
 
     /**
      * Flag for rendering value as is
@@ -46,29 +51,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public $field;
 
     /**
-     * View instance.
+     * View instance
      *
      * @var \Cake\View\View
      */
     public $cakeView;
-
-    /**
-     * Csv field types respective input field types
-     *
-     * @var array
-     */
-    protected $_fieldTypes = [
-        'text' => 'textarea',
-        'blob' => 'textarea',
-        'string' => 'text',
-        'uuid' => 'text',
-        'integer' => 'number',
-        'decimal' => 'number',
-        'url' => 'url',
-        'email' => 'email',
-        'phone' => 'tel',
-        'boolean' => 'checkbox'
-    ];
 
     /**
      * Custom form input templates.
@@ -298,14 +285,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public function renderInput($data = '', array $options = [])
     {
         $data = $this->_getFieldValueFromData($data);
-        $fieldType = $options['fieldDefinitions']->getType();
-
-        if (in_array($fieldType, array_keys($this->_fieldTypes))) {
-            $fieldType = $this->_fieldTypes[$fieldType];
-        }
 
         return $this->cakeView->Form->input($this->_getFieldName($options), [
-            'type' => $fieldType,
+            'type' => static::INPUT_FIELD_TYPE,
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'value' => $data
         ]);
@@ -324,15 +306,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function renderSearchInput(array $options = [])
     {
-        $fieldType = $options['fieldDefinitions']->getType();
-
-        if (in_array($fieldType, array_keys($this->_fieldTypes))) {
-            $fieldType = $this->_fieldTypes[$fieldType];
-        }
-
         $content = $this->cakeView->Form->input('{{name}}', [
             'value' => '{{value}}',
-            'type' => $fieldType,
+            'type' => static::INPUT_FIELD_TYPE,
             'label' => false
         ]);
 

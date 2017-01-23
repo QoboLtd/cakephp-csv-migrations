@@ -11,6 +11,11 @@ class BooleanFieldHandler extends BaseFieldHandler
     const DB_FIELD_TYPE = 'boolean';
 
     /**
+     * HTML form field type
+     */
+    const INPUT_FIELD_TYPE = 'checkbox';
+
+    /**
      * Method responsible for rendering field's input.
      *
      * @param  string $data    field data
@@ -57,14 +62,8 @@ class BooleanFieldHandler extends BaseFieldHandler
      */
     public function renderSearchInput(array $options = [])
     {
-        $fieldType = $options['fieldDefinitions']->getType();
-
-        if (in_array($fieldType, array_keys($this->_fieldTypes))) {
-            $fieldType = $this->_fieldTypes[$fieldType];
-        }
-
         $content = $this->cakeView->Form->input('{{name}}', [
-            'type' => 'checkbox',
+            'type' => static::INPUT_FIELD_TYPE,
             'class' => 'square',
             'label' => false
         ]);

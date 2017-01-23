@@ -6,6 +6,11 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 class UrlFieldHandler extends BaseFieldHandler
 {
     /**
+     * HTML form field type
+     */
+    const INPUT_FIELD_TYPE = 'url';
+
+    /**
      * Method that renders default type field's value.
      *
      * @param  string $data    field data

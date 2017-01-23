@@ -12,6 +12,11 @@ class DecimalFieldHandler extends BaseFieldHandler
     const DB_FIELD_TYPE = 'decimal';
 
     /**
+     * HTML form field type
+     */
+    const INPUT_FIELD_TYPE = 'number';
+
+    /**
      * {@inheritDoc}
      */
     public function renderValue($data, array $options = [])
@@ -38,16 +43,11 @@ class DecimalFieldHandler extends BaseFieldHandler
     public function renderInput($data = '', array $options = [])
     {
         $data = $this->_getFieldValueFromData($data);
-        $fieldType = $options['fieldDefinitions']->getType();
-
-        if (in_array($fieldType, array_keys($this->_fieldTypes))) {
-            $fieldType = $this->_fieldTypes[$fieldType];
-        }
 
         $input = $this->_fieldToLabel($options);
 
         $input .= $this->cakeView->Form->input($this->_getFieldName($options), [
-            'type' => $fieldType,
+            'type' => static::INPUT_FIELD_TYPE,
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'value' => $data,
             'step' => 'any',
@@ -63,16 +63,10 @@ class DecimalFieldHandler extends BaseFieldHandler
      */
     public function renderSearchInput(array $options = [])
     {
-        $fieldType = $options['fieldDefinitions']->getType();
-
-        if (in_array($fieldType, array_keys($this->_fieldTypes))) {
-            $fieldType = $this->_fieldTypes[$fieldType];
-        }
-
         $content = $this->cakeView->Form->input('', [
             'name' => '{{name}}',
             'value' => '{{value}}',
-            'type' => $fieldType,
+            'type' => static::INPUT_FIELD_TYPE,
             'step' => 'any',
             'max' => $this->_getNumberMax(),
             'label' => false

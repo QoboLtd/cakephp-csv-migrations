@@ -6,7 +6,6 @@ field_datetime,datetime
 field_dblist,dblist('dblist')
 field_decimal,decimal
 field_email,email
-field_file,file
 field_files,files
 field_images,images
 field_integer,integer,

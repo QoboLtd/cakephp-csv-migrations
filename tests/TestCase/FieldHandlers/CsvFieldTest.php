@@ -245,7 +245,8 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
             ['boolean', 'boolean'],
             ['string', 'string'],
             ['integer', 'integer'],
-            ['file', 'file']
+            ['files', 'files'],
+            ['images', 'images'],
         ];
     }
 

@@ -26,13 +26,6 @@ class FieldHandlerFactory
     const FIELD_HANDLER_INTERFACE = 'FieldHandlerInterface';
 
     /**
-     * Current Table name
-     *
-     * @var string
-     */
-    protected $_tableName;
-
-    /**
      * Loaded Table instances
      *
      * @var array
@@ -181,23 +174,39 @@ class FieldHandlerFactory
     }
 
     /**
-     * Method that sets and returns Table instance
+     * Get table instance
      *
+     * @throws \InvalidArgumentException when $table is not an object or string
      * @param  mixed  $table  name or instance of the Table
      * @return object         Table instance
      */
     protected function _getTableInstance($table)
     {
-        // set table name
+        $tableName = '';
         if (is_object($table)) {
-            $this->setTableName($table->alias());
+            $tableName = $table->alias();
+            // Update instance cache with the freshest copy and exist
+            $this->_tableInstances[$tableName] = $table;
+
+            return $table;
+        } elseif (is_string($table)) {
+            // Will need to do some work later
+            $tableName = $table;
         } else {
-            $this->setTableName($table);
+            // Avoid ambiguity
+            throw new \InvalidArgumentException("Table must be a name or instance object");
         }
 
-        $tableInstance = $this->_setTableInstance($table);
+        // Return a cached instance if we have one
+        if (in_array($tableName, array_keys($this->_tableInstances))) {
 
-        return $tableInstance;
+            return $this->_tableInstances[$tableName];
+        }
+
+        // Populate cache
+        $this->_tableInstances[$tableName] = TableRegistry::get($tableName);
+
+        return $this->_tableInstances[$tableName];
     }
 
     /**
@@ -276,17 +285,6 @@ class FieldHandlerFactory
     }
 
     /**
-     * Set table name
-     *
-     * @param string $tableName table name
-     * @return void
-     */
-    public function setTableName($tableName)
-    {
-        $this->_tableName = $tableName;
-    }
-
-    /**
      * Get field handler class name
      *
      * This method constructs handler class name based on provided field type.
@@ -304,26 +302,5 @@ class FieldHandlerFactory
         }
 
         return $result;
-    }
-
-    /**
-     * Method that adds specified table to the _tableInstances
-     * array and returns the table's instance.
-     *
-     * @param  mixed $table name or instance of the Table
-     * @return object       instance of specified Table
-     */
-    protected function _setTableInstance($table)
-    {
-        // add table instance to _modelInstances array
-        if (!in_array($this->_tableName, array_keys($this->_tableInstances))) {
-            // get table instance
-            if (!is_object($table)) {
-                $table = TableRegistry::get($this->_tableName);
-            }
-            $this->_tableInstances[$this->_tableName] = $table;
-        }
-
-        return $this->_tableInstances[$this->_tableName];
     }
 }

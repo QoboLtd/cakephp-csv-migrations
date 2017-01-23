@@ -40,7 +40,7 @@ class FieldHandlerFactory
     public $cakeView = null;
 
     /**
-     * Constructor method.
+     * Constructor
      *
      * @param mixed $cakeView View object or null
      */
@@ -50,7 +50,7 @@ class FieldHandlerFactory
     }
 
     /**
-     * Method responsible for rendering field's input.
+     * Render field form input
      *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
@@ -68,7 +68,7 @@ class FieldHandlerFactory
     }
 
     /**
-     * Method responsible for rendering field's search input.
+     * Render field search form input
      *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
@@ -84,7 +84,7 @@ class FieldHandlerFactory
     }
 
     /**
-     * Method that returns field search operators based on field type.
+     * Get search operators
      *
      * @param mixed $table Name or instance of the Table
      * @param string $field Field name
@@ -101,7 +101,7 @@ class FieldHandlerFactory
     }
 
     /**
-     * Method that returns search field label.
+     * Get field search field label
      *
      * @param mixed $table Name or instance of the Table
      * @param string $field Field name
@@ -117,7 +117,7 @@ class FieldHandlerFactory
     }
 
     /**
-     * Method that renders specified field's value based on the field's type.
+     * Render field value
      *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
@@ -135,7 +135,7 @@ class FieldHandlerFactory
     }
 
     /**
-     * Method responsible for converting csv field instance to database field instance.
+     * Convert field CSV into database fields
      *
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return array list of DbField instances
@@ -165,7 +165,7 @@ class FieldHandlerFactory
     {
         $interface = __NAMESPACE__ . '\\' . static::FIELD_HANDLER_INTERFACE;
 
-        $handlerName = $this->_getHandlerByFieldType($fieldType, true);
+        $handlerName = $this->_getHandlerClassName($fieldType, true);
         if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
             return true;
         }
@@ -210,7 +210,9 @@ class FieldHandlerFactory
     }
 
     /**
-     * Method that adds extra parameters to the field options array.
+     * Get field definitions
+     *
+     * ... and possibly other options.
      *
      * @param  object $tableInstance instance of the Table
      * @param  string $field         field name
@@ -219,28 +221,30 @@ class FieldHandlerFactory
      */
     protected function _getExtraOptions($tableInstance, $field, array $options = [])
     {
-        // get fields definitions
-        // if the field is csv-based
+        $fieldsDefinitions = [];
+
+        // get fields definitions from the table
         if (is_callable([$tableInstance, 'getFieldsDefinitions']) && method_exists($tableInstance, 'getFieldsDefinitions')) {
             $fieldsDefinitions = $tableInstance->getFieldsDefinitions($tableInstance->alias());
         }
 
-        /*
-        add field definitions to options array as CsvField Instance
-         */
+        // add field definitions to options array as CsvField Instance
         if (!empty($fieldsDefinitions[$field])) {
             $options['fieldDefinitions'] = new CsvField($fieldsDefinitions[$field]);
-        } else {
-            /*
-             * @todo make this better, probably define defaults (scenario virtual fields)
-             */
-            if (empty($options['fieldDefinitions']['type'])) {
-                $options['fieldDefinitions']['type'] = 'string';
-            }
-            $options['fieldDefinitions']['name'] = $field;
-
-            $options['fieldDefinitions'] = new CsvField($options['fieldDefinitions']);
+            return $options;
         }
+
+        // When no field definitions are available, we fallback on some defaults.
+        // This is necessary in order to provide field handler functionality for
+        // things that we don't know much about.
+        // For example, virtual fields, which lack definitions, yet can use field
+        // handler functionality to display labels, values, and the like.
+        $options['fieldDefinitions']['name'] = $field;
+        if (empty($options['fieldDefinitions']['type'])) {
+            $options['fieldDefinitions']['type'] = strtolower(static::DEFAULT_HANDLER_CLASS);
+        }
+
+        $options['fieldDefinitions'] = new CsvField($options['fieldDefinitions']);
 
         return $options;
     }
@@ -264,7 +268,7 @@ class FieldHandlerFactory
     {
         $interface = __NAMESPACE__ . '\\' . static::FIELD_HANDLER_INTERFACE;
 
-        $handlerName = $this->_getHandlerByFieldType($fieldType, true);
+        $handlerName = $this->_getHandlerClassName($fieldType, true);
         if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
             return new $handlerName($table, $field, $this->cakeView);
         }
@@ -293,7 +297,7 @@ class FieldHandlerFactory
      * @param  bool   $withNamespace whether or not to include namespace
      * @return string                handler class name
      */
-    protected function _getHandlerByFieldType($type, $withNamespace = false)
+    protected function _getHandlerClassName($type, $withNamespace = false)
     {
         $result = Inflector::camelize($type) . static::HANDLER_SUFFIX;
 

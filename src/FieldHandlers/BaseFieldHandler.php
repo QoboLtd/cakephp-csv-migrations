@@ -369,7 +369,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return array                                           DbField instances
      */
-    public function fieldToDb(CsvField $csvField, $table, $field)
+    public function fieldToDb(CsvField $csvField)
     {
         $dbFields[] = new DbField(
             $csvField->getName(),
@@ -523,7 +523,12 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $result = [];
 
-        $data = $this->table->schema()->column($this->field);
+        $data = [];
+        try {
+            $data = $this->table->schema()->column($this->field);
+        } catch (\Exception $e) {
+            // Ignore the fact that the database table does not exist
+        }
 
         if (empty($data)) {
             return $result;

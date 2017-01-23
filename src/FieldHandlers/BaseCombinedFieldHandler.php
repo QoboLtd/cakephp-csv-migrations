@@ -153,7 +153,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return array                                           DbField instances
      */
-    public function fieldToDb(CsvField $csvField, $table, $field)
+    public function fieldToDb(CsvField $csvField)
     {
         $dbFields = [];
         foreach ($this->_fields as $suffix => $options) {
@@ -164,7 +164,7 @@ abstract class BaseCombinedFieldHandler extends ListFieldHandler
                 $subField->setLimit($options['limit']);
             }
 
-            $dbFields = array_merge($dbFields, $handler->fieldToDb($subField, $table, $field));
+            $dbFields = array_merge($dbFields, $handler->fieldToDb($subField));
         }
 
         return $dbFields;

@@ -92,15 +92,6 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
         $csvField->setType('');
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testSetTypeUnsupportedValueThrowsException()
-    {
-        $csvField = new CsvField(current($this->csvData));
-        $csvField->setType('foobar');
-    }
-
     public function testGetType()
     {
         foreach ($this->getterProvider() as $v) {
@@ -239,7 +230,6 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
             ['FooBar', 'FooBar'],
             [123, 123],
             ['123', '123'],
-            [['foo'], ['foo']]
         ];
     }
 

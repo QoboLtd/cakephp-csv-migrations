@@ -62,6 +62,7 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
      */
     public function renderInput($data = '', array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $label = $this->cakeView->Form->label($this->field);
 
         $inputs = [];
@@ -97,6 +98,7 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
     public function renderValue($data, array $options = [])
     {
         $result = [];
+        $options = array_merge($this->defaultOptions, $options);
         foreach ($this->_fields as $suffix => $fieldOptions) {
             $fieldName = $this->field . '_' . $suffix;
             $fieldData = $this->_getFieldValueFromData($data, $fieldName);
@@ -130,6 +132,7 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
     public function renderSearchInput(array $options = [])
     {
         $result = [];
+        $options = array_merge($this->defaultOptions, $options);
         foreach ($this->_fields as $suffix => $fieldOptions) {
             $options['fieldDefinitions']->setType($fieldOptions['handler']::DB_FIELD_TYPE);
             $fieldName = $this->field . '_' . $suffix;

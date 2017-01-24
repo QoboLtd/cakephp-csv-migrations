@@ -23,6 +23,7 @@ class EmailFieldHandler extends BaseSimpleFieldHandler
      */
     public function renderValue($data, array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $result = filter_var($data, FILTER_SANITIZE_EMAIL);
 
         // Only link to valid emails, to avoid unpredictable behavior

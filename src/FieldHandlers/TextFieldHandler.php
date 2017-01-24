@@ -49,6 +49,7 @@ class TextFieldHandler extends BaseSimpleFieldHandler
      */
     public function renderValue($data, array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $result = filter_var($data, FILTER_SANITIZE_STRING);
 
         if (!empty($result)) {
@@ -74,6 +75,7 @@ class TextFieldHandler extends BaseSimpleFieldHandler
      */
     public function renderSearchInput(array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $content = $this->cakeView->Form->input('{{name}}', [
             'value' => '{{value}}',
             'type' => 'text',

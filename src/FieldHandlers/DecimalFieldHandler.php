@@ -29,6 +29,7 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
      */
     public function renderValue($data, array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $data = $this->_getFieldValueFromData($data);
         $result = (float)filter_var($data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
@@ -59,6 +60,7 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
      */
     public function renderInput($data = '', array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $data = $this->_getFieldValueFromData($data);
 
         $input = $this->_fieldToLabel($options);
@@ -88,6 +90,7 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
      */
     public function renderSearchInput(array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $content = $this->cakeView->Form->input('', [
             'name' => '{{name}}',
             'value' => '{{value}}',

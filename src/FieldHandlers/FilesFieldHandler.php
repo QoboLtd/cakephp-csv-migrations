@@ -31,6 +31,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
      */
     public function renderInput($data = '', array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $data = $this->_getFieldValueFromData($data);
         if (empty($data) && !empty($options['entity'])) {
             $data = $this->_getFieldValueFromData($options['entity'], 'id');
@@ -197,6 +198,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
     public function renderValue($data, array $options = [])
     {
         $result = null;
+        $options = array_merge($this->defaultOptions, $options);
 
         $data = $this->_getFieldValueFromData($data);
         if (empty($data) && !empty($options['entity'])) {

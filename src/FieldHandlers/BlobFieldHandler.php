@@ -50,6 +50,7 @@ class BlobFieldHandler extends BaseSimpleFieldHandler
      */
     public function renderInput($data = '', array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $data = $this->_getFieldValueFromData($data);
         if (is_resource($data)) {
             $data = stream_get_contents($data);
@@ -71,6 +72,7 @@ class BlobFieldHandler extends BaseSimpleFieldHandler
      */
     public function renderValue($data, array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         // TODO: Add support for encoding (base64, etc) via $options
         $data = $this->_getFieldValueFromData($data);
         $result = $data;
@@ -94,6 +96,7 @@ class BlobFieldHandler extends BaseSimpleFieldHandler
      */
     public function renderSearchInput(array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $content = $this->cakeView->Form->input('{{name}}', [
             'value' => '{{value}}',
             'type' => 'text',

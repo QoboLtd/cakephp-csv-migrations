@@ -34,6 +34,7 @@ class ListFieldHandler extends BaseFieldHandler
      */
     public function renderInput($data = '', array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $data = $this->_getFieldValueFromData($data);
         $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
 
@@ -62,6 +63,7 @@ class ListFieldHandler extends BaseFieldHandler
     public function renderValue($data, array $options = [])
     {
         $result = '';
+        $options = array_merge($this->defaultOptions, $options);
         $data = $this->_getFieldValueFromData($data);
 
         if (empty($data)) {
@@ -106,6 +108,7 @@ class ListFieldHandler extends BaseFieldHandler
      */
     public function renderSearchInput(array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $content = $this->cakeView->Form->select(
             '{{name}}',
             $this->_getSelectOptions($options['fieldDefinitions']->getLimit()),

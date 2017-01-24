@@ -28,6 +28,7 @@ class IntegerFieldHandler extends BaseSimpleFieldHandler
      */
     public function renderValue($data, array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $result = (int)filter_var($data, FILTER_SANITIZE_NUMBER_INT);
 
         if (!empty($result) && is_numeric($result)) {

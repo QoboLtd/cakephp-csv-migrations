@@ -61,6 +61,13 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public $cakeView;
 
     /**
+     * Default options
+     *
+     * @var array
+     */
+    public $defaultOptions = [];
+
+    /**
      * Custom form input templates.
      *
      * @var input
@@ -83,24 +90,88 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function __construct($table, $field, $cakeView = null)
     {
+        $this->setTable($table);
+        $this->setField($field);
+        $this->setDefaultOptions();
+        $this->setView($cakeView);
+    }
+
+    /**
+     * Set table
+     *
+     * @throws \InvalidArgumentException when table is empty
+     * @param mixed $table Table name of instance
+     * @return void
+     */
+    protected function setTable($table)
+    {
         if (empty($table)) {
             throw new \InvalidArgumentException('Table cannot be empty.');
         }
-
-        if (empty($field)) {
-            throw new \InvalidArgumentException('Field cannot be empty.');
-        }
-
         if (is_string($table)) {
             $this->table = TableRegistry::get($table);
         } else {
             $this->table = $table;
         }
+    }
 
-        $this->field = (string)$field;
+    /**
+     * Set field
+     *
+     * @throws \InvalidArgumentException when field is empty
+     * @param string $field Field name
+     * @return void
+     */
+    protected function setField($field)
+    {
+        $field = (string)$field;
+        if (empty($field)) {
+            throw new \InvalidArgumentException('Field cannot be empty.');
+        }
+        $this->field = $field;
+    }
 
-        if ($cakeView) {
-            $this->cakeView = $cakeView;
+    /**
+     * Set default options
+     *
+     * Populate the $defaultOptions to make sure we always have
+     * the fieldDefinitions options for the current field.
+     *
+     * @return void
+     */
+    protected function setDefaultOptions()
+    {
+        if (method_exists($this->table, 'getFieldsDefinitions') && is_callable([$this->table, 'getFieldsDefinitions'])) {
+            $fieldDefinitions = $this->table->getFieldsDefinitions([
+                $this->field => [
+                    'name' => $this->field,
+                    'type' => self::DB_FIELD_TYPE, // not static:: to preserve string
+                ]
+            ]);
+            if (!empty($fieldDefinitions[$this->field])) {
+                $this->defaultOptions['fieldDefinitions'] = new CsvField($fieldDefinitions[$this->field]);
+            }
+        } else {
+            // This should never be the case, except, maybe
+            // for some unit test runs or custom non-CSV
+            // modules.
+            $this->defaultOptions['fieldDefinitions'] = null;
+        }
+    }
+
+    /**
+     * Set view
+     *
+     * If an instance of the view is given, use that.
+     * Otherwise, instantiate a new view.
+     *
+     * @param object $view View
+     * @return void
+     */
+    protected function setView($view = null)
+    {
+        if ($view) {
+            $this->cakeView = $view;
         } else {
             $this->cakeView = new AppView();
         }
@@ -120,6 +191,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function renderInput($data = '', array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $data = $this->_getFieldValueFromData($data);
 
         return $this->cakeView->Form->input($this->_getFieldName($options), [
@@ -142,6 +214,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function renderSearchInput(array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $content = $this->cakeView->Form->input('{{name}}', [
             'value' => '{{value}}',
             'type' => static::INPUT_FIELD_TYPE,
@@ -166,6 +239,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function renderValue($data, array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $result = $this->_getFieldValueFromData($data);
 
         return $result;

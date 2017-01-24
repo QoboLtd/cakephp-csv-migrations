@@ -18,6 +18,20 @@ class ImagesFieldHandler extends BaseFileFieldHandler
     const WRAPPER = '<div class="form-group">%s%s%s</div>';
 
     /**
+     * Set default options
+     *
+     * Set default options from the upstream classes and
+     * add default image size.
+     *
+     * @return void
+     */
+    protected function setDefaultOptions()
+    {
+        parent::setDefaultOptions();
+        $this->defaultOptions['imageSize'] = getenv('DEFAULT_IMAGE_SIZE');
+    }
+
+    /**
      * Check if specified image version exists
      *
      * @param  Entity $entity  Entity
@@ -110,6 +124,7 @@ class ImagesFieldHandler extends BaseFileFieldHandler
      */
     public function renderInput($data = '', array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $options);
         $data = $this->_getFieldValueFromData($data);
         if (empty($data) && !empty($options['entity'])) {
             $data = $this->_getFieldValueFromData($options['entity'], 'id');
@@ -231,7 +246,7 @@ class ImagesFieldHandler extends BaseFileFieldHandler
     public function renderValue($data, array $options = [])
     {
         $result = null;
-        $defaultOptions = ['imageSize' => getenv('DEFAULT_IMAGE_SIZE')];
+        $options = array_merge($this->defaultOptions, $options);
 
         $data = $this->_getFieldValueFromData($data);
         if (empty($data) && !empty($options['entity'])) {

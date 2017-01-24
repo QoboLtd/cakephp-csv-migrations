@@ -12,7 +12,7 @@ use RuntimeException;
 trait MigrationTrait
 {
     /**
-     * Field definitions for current csv module.
+     * Cached CSV field definitions for the current module
      *
      * @var array
      */
@@ -28,32 +28,70 @@ trait MigrationTrait
     /**
      * Get fields from CSV file
      *
-     * @return array Associative array of fields and their definitions
+     * This method gets all fields defined in the CSV and returns
+     * them as an associative array.
+     *
+     * Additionally, an associative array of stub fields can be
+     * passed, which will be included in the returned definitions.
+     * This is useful when working with fields which are NOT part
+     * of the migration.csv definitions, such as combined fields
+     * and virtual fields.
+     *
+     * If the field exists in the CSV configuration and is passed
+     * as a stub field, then the CSV definition will be preferred.
+     *
+     * Note that this method is called very frequently during the
+     * rendering of the views, so performance is important.  For
+     * this reason, parsed definitions are stored in the property
+     * to avoid unnecessary processing of files and conversion of
+     * data.
+     *
+     * @param  array $stubFields Stub fields
+     * @return array             Associative array of fields and their definitions
      */
-    public function getFieldsDefinitions()
+    public function getFieldsDefinitions(array $stubFields = [])
     {
+        $result = [];
+
+        // Get cached definitions
         if (!empty($this->_fieldDefinitions)) {
-            return $this->_fieldDefinitions;
+            $result = $this->_fieldDefinitions;
         }
 
-        if (is_callable([$this, 'alias'])) {
-            $moduleName = $this->alias();
-        } else {
-            throw new RuntimeException("Failed getting field definitions for unknown module");
+        // Fetch definitions from CSV if cache is empty
+        if (empty($result)) {
+            if (is_callable([$this, 'alias'])) {
+                $moduleName = $this->alias();
+            } else {
+                throw new RuntimeException("Failed getting field definitions for unknown module");
+            }
+
+            $pathFinder = new MigrationPathFinder;
+            $path = $pathFinder->find($moduleName);
+
+            // Parser knows how to make sure that the file exists.  But it can
+            // also throw other exceptions, which we don't want to avoid for
+            // now.
+            if (is_readable($path)) {
+                $parser = new MigrationParser();
+                // Set fields definitions cache
+                $this->_fieldDefinitions = $parser->wrapFromPath($path);
+                $result = $this->_fieldDefinitions;
+            }
         }
 
-        $pathFinder = new MigrationPathFinder;
-        $path = $pathFinder->find($moduleName);
-
-        // Parser knows how to make sure that the file exists.  But it can
-        // also throw other exceptions, which we don't want to avoid for
-        // now.
-        if (is_readable($path)) {
-            $parser = new MigrationParser();
-            $this->_fieldDefinitions = $parser->wrapFromPath($path);
+        if (empty($stubFields)) {
+            return $result;
         }
 
-        return $this->_fieldDefinitions;
+        // Merge $result with $stubFields
+        foreach ($stubFields as $field => $definition) {
+            if (!in_array($field, array_keys($result))) {
+                $result[$field] = $definition;
+            }
+        }
+
+        return $result;
     }
 
     /**

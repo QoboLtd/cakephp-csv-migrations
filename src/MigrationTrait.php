@@ -26,10 +26,10 @@ trait MigrationTrait
     private $__assocIdentifiers = ['related'];
 
     /**
-     * Method that retrieves fields from csv file and returns them in associate array format.
+     * Get fields from CSV file
      *
      * @param  string $moduleName Module Name
-     * @return array
+     * @return array Associative array of fields and their definitions
      */
     public function getFieldsDefinitions($moduleName = null)
     {
@@ -60,7 +60,7 @@ trait MigrationTrait
     }
 
     /**
-     * Method that sets current model table associations.
+     * Set current model table associations
      *
      * @param array $config The configuration for the Table.
      * @return void
@@ -72,7 +72,7 @@ trait MigrationTrait
     }
 
     /**
-     * Method that sets current model table associations from config file.
+     * Set current model table associations from config file
      *
      * @param array $config The configuration for the Table.
      * @return void
@@ -93,7 +93,7 @@ trait MigrationTrait
     }
 
     /**
-     * Method that sets current model table associations from csv file.
+     * Set current model table associations from CSV file
      *
      * @param array $config The configuration for the Table.
      * @return void
@@ -173,7 +173,7 @@ trait MigrationTrait
     }
 
     /**
-     * Convert field details into CSV object.
+     * Convert field details into CSV object
      *
      * @see  _csvData();
      * @param  array  $data The return of _csvData function
@@ -255,16 +255,12 @@ trait MigrationTrait
             }
         }
 
-        /*
-        covers case where CsvMigration configuration files reside in a plugin.
-         */
+        // Covers case where CsvMigration configuration files reside in a plugin
         $plugin = $this->_getPluginNameFromPath($path);
 
         if (is_null($plugin)) {
-            /*
-            covers case where CsvMigration model and controller reside in
-            a plugin (even if configuration files reside in the APP level).
-             */
+            // covers case where CsvMigration model and controller reside in
+            // a plugin (even if configuration files reside in the APP level).
             $plugin = $this->_getPluginNameFromRegistryAlias();
         }
 
@@ -282,9 +278,12 @@ trait MigrationTrait
     }
 
     /**
+     * Get all reports configurations
+     *
      * Used in <model>/report/<slug> method
      * to get reports from the ini file on the dynamic
      * model/table.
+     *
      * @return array $config containing all reports from ini files
      */
     public function _getReports()
@@ -321,7 +320,7 @@ trait MigrationTrait
     }
 
     /**
-     * Returns the name of the plugin from its path.
+     * Get the name of the plugin from its path
      *
      * @param  string $path Path of the plugin.
      * @return string       Name of plugin.
@@ -345,7 +344,7 @@ trait MigrationTrait
     }
 
     /**
-     * Returns the name of the plugin from current Table's registry alias value.
+     * Get the name of the plugin from current Table's registry alias value
      *
      * @return string Name of plugin.
      */

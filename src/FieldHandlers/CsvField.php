@@ -189,7 +189,7 @@ class CsvField
      * return the default limit.  In case of a type
      * with limit, it will strip the type away and
      * return the limit alone.
-    *
+     *
      * @param  string $type field type
      * @return mixed        field limit
      */

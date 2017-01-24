@@ -51,14 +51,8 @@ class FooTableTest extends TestCase
     {
         parent::setUp();
 
-        $dir = dirname(__DIR__) . DS . '..' . DS . '..' . DS . 'data' . DS . 'CsvMigrations' . DS;
-
-        /*
-        point to test data
-         */
-        Configure::write('CsvMigrations.migrations.path', $dir . 'migrations' . DS);
-        Configure::write('CsvMigrations.lists.path', $dir . 'lists' . DS);
-        Configure::write('CsvMigrations.migrations.filename', 'migration');
+        $dir = dirname(__DIR__) . DS . '..' . DS . '..' . DS . 'data' . DS . 'Modules' . DS;
+        Configure::write('CsvMigrations.modules.path', $dir);
 
         $config = TableRegistry::exists('Foo') ? [] : ['className' => 'CsvMigrations\Test\TestCase\Model\Table\FooTable'];
         $this->FooTable = TableRegistry::get('Foo', $config);
@@ -108,6 +102,22 @@ class FooTableTest extends TestCase
         );
     }
 
+    public function testGetReports()
+    {
+        $result = $this->FooTable->_getReports();
+
+        $this->assertNotEmpty($result);
+        $this->assertArrayHasKey('Foo', $result);
+    }
+
+    /**
+     * @dataProvider csvProvider
+     */
+    public function testGetFieldsDefinitions($name, $expected)
+    {
+        $this->assertEquals($expected, $this->FooTable->getFieldsDefinitions());
+    }
+
     public function testModuleAliasGetter()
     {
         $this->assertSame('Foobar', $this->FooTable->moduleAlias());
@@ -134,14 +144,6 @@ class FooTableTest extends TestCase
         $this->assertEquals('reminder_date', $fields[0]['name'], "Field reminder is incorrectly matched");
     }
 
-    /**
-     * @dataProvider fieldsDefinitionsProvider
-     */
-    public function testGetFieldsDefinitions($name, $expected)
-    {
-        $this->assertEquals($expected, $this->FooTable->getFieldsDefinitions($name));
-    }
-
     public function moduleAliasProvider()
     {
         return [
@@ -150,11 +152,11 @@ class FooTableTest extends TestCase
         ];
     }
 
-    public function fieldsDefinitionsProvider()
+    public function csvProvider()
     {
         return [
             [
-                null,
+                'Foo',
                 [
                     'id' => [
                         'name' => 'id',
@@ -229,9 +231,9 @@ class FooTableTest extends TestCase
                     'reminder_date' => [
                         'name' => 'reminder_date',
                         'type' => 'reminder',
-                        'required' => null,
-                        'non-searchable' => null,
-                        'unique' => null,
+                        'required' => '',
+                        'non-searchable' => '',
+                        'unique' => false
                     ],
                     'created' => [
                         'name' => 'created',

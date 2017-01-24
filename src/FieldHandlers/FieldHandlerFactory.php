@@ -224,7 +224,7 @@ class FieldHandlerFactory
 
         // get fields definitions from the table
         if (is_callable([$tableInstance, 'getFieldsDefinitions']) && method_exists($tableInstance, 'getFieldsDefinitions')) {
-            $fieldsDefinitions = $tableInstance->getFieldsDefinitions($tableInstance->alias());
+            $fieldsDefinitions = $tableInstance->getFieldsDefinitions();
         }
 
         // add field definitions to options array as CsvField Instance

@@ -145,7 +145,7 @@ class Table extends BaseTable
     public function getReminderFields()
     {
         $result = [];
-        foreach ($this->getFieldsDefinitions(Inflector::camelize($this->table())) as $field) {
+        foreach ($this->getFieldsDefinitions() as $field) {
             if ($field['type'] == 'reminder') {
                 $result[] = $field;
             }

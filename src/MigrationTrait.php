@@ -28,21 +28,18 @@ trait MigrationTrait
     /**
      * Get fields from CSV file
      *
-     * @param  string $moduleName Module Name
      * @return array Associative array of fields and their definitions
      */
-    public function getFieldsDefinitions($moduleName = null)
+    public function getFieldsDefinitions()
     {
         if (!empty($this->_fieldDefinitions)) {
             return $this->_fieldDefinitions;
         }
 
-        if (is_null($moduleName)) {
-            if (is_callable([$this, 'alias'])) {
-                $moduleName = $this->alias();
-            } else {
-                throw new RuntimeException("Failed getting field definitions for unknown module");
-            }
+        if (is_callable([$this, 'alias'])) {
+            $moduleName = $this->alias();
+        } else {
+            throw new RuntimeException("Failed getting field definitions for unknown module");
         }
 
         $pathFinder = new MigrationPathFinder;

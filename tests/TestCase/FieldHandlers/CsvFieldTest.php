@@ -128,12 +128,26 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
         $csvField->setLimit('');
     }
 
-    public function testGetLimit()
+    /**
+     * @dataProvider limitSetterProvider
+     */
+    public function testGetLimit($expected, $type)
     {
-        foreach ($this->getterProvider() as $v) {
-            $csvField = new CsvField(array_shift($this->csvData));
-            $this->assertEquals($v[2], $csvField->getLimit());
-        }
+        $csvField = new CsvField(current($this->csvData));
+        $csvField->setLimit($type);
+        $this->assertEquals($expected, $csvField->getLimit());
+    }
+
+    /**
+     * @dataProvider limitSetterProvider
+     */
+    public function testGetListName($expected, $type)
+    {
+        $csvField = new CsvField(current($this->csvData));
+        $csvField->setLimit($type);
+        $expected = $csvField->getLimit();
+        $actual = $csvField->getListName();
+        $this->assertEquals($expected, $actual);
     }
 
     public function testGetAssocCsvModule()

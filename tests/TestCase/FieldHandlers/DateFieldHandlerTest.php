@@ -47,6 +47,13 @@ class DateFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertRegExp('/field_date/', $result, "Input rendering does not contain field name");
     }
 
+    public function testRenderSearchInput()
+    {
+        $result = $this->fh->renderSearchInput();
+        $this->assertTrue(is_array($result));
+        $this->assertFalse(empty($result));
+    }
+
     public function testGetSearchOperators()
     {
         $result = $this->fh->getSearchOperators();

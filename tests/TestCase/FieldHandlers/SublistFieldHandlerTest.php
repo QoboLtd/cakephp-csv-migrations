@@ -19,6 +19,13 @@ class SublistFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\FieldHandlerInterface', $implementedInterfaces), "FieldHandlerInterface is not implemented");
     }
 
+    public function testRenderSearchInput()
+    {
+        $result = $this->fh->renderSearchInput();
+        $this->assertTrue(is_array($result));
+        $this->assertTrue(empty($result));
+    }
+
     public function testGetSearchOperators()
     {
         $result = $this->fh->getSearchOperators();

@@ -73,6 +73,14 @@ class ListPathFinderTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException InvalidArgumentException
      */
+    public function testFindExceptionModuleEmpty()
+    {
+        $path = $this->pf->find(null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
     public function testFindExceptionPathNotString()
     {
         $path = $this->pf->find('Foo', ['foo' => 'bar']);

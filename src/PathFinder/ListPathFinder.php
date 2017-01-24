@@ -21,16 +21,19 @@ class ListPathFinder extends BasePathFinder
     /**
      * Find path
      *
-     * Find path to a given liste.  Make sure that $path
+     * Find path to a given list.  Make sure that $path
      * parameter is required, and, if the value is
      * given without the file extension, attach one to make it
      * easier to find.
      *
+     * If the module is empty, or list is not found in the module,
+     * we fallback on the Common module.
+     *
      * @param string $module Module to look for files in
-     * @param string $path     Path to look for
+     * @param string $path   Path to look for
      * @return null|string|array Null for not found, string for single path, array for multiple paths
      */
-    public function find($module = null, $path = null)
+    public function find($module, $path = null)
     {
         if (empty($module)) {
             $module = self::DEFAULT_MODULE;
@@ -48,6 +51,19 @@ class ListPathFinder extends BasePathFinder
             $path .= $this->extension;
         }
 
-        return parent::find($module, $path);
+        $result = null;
+        try {
+            $result = parent::find($module, $path);
+        } catch (\Exception $e) {
+            if ($modules == self::DEFAULT_MODULE) {
+                throw $e;
+            }
+        }
+
+        if (($result === null) && ($module <> self::DEFAULT_MODULE)) {
+            $result = parent::find(self::DEFAULT_MODULE, $path);
+        }
+
+        return $result;
     }
 }

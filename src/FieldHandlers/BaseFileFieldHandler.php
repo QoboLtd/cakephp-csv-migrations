@@ -5,7 +5,7 @@ use Cake\Core\Configure;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
-use CsvMigrations\FieldHandlers\RelatedFieldHandler;
+use CsvMigrations\FieldHandlers\BaseRelatedFieldHandler;
 use CsvMigrations\FileUploadsUtils;
 
 /**
@@ -14,7 +14,7 @@ use CsvMigrations\FileUploadsUtils;
  * This class provides the fallback functionality that
  * is common to all file field handlers.
  */
-class BaseFileFieldHandler extends RelatedFieldHandler
+class BaseFileFieldHandler extends BaseRelatedFieldHandler
 {
     /**
      * Action name for file edit

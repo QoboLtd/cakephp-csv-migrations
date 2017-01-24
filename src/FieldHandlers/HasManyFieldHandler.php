@@ -5,9 +5,9 @@ use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\View\Helper\IdGeneratorTrait;
-use CsvMigrations\FieldHandlers\RelatedFieldHandler;
+use CsvMigrations\FieldHandlers\BaseRelatedFieldHandler;
 
-class HasManyFieldHandler extends RelatedFieldHandler
+class HasManyFieldHandler extends BaseRelatedFieldHandler
 {
     /**
      * Action name for html link

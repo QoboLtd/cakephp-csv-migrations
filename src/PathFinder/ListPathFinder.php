@@ -55,7 +55,7 @@ class ListPathFinder extends BasePathFinder
         try {
             $result = parent::find($module, $path);
         } catch (\Exception $e) {
-            if ($modules == self::DEFAULT_MODULE) {
+            if ($module == self::DEFAULT_MODULE) {
                 throw $e;
             }
         }

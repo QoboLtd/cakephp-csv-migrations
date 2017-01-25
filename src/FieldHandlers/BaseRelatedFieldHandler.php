@@ -65,7 +65,7 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
      */
     public function renderInput($data = '', array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
@@ -140,7 +140,7 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
     public function renderValue($data, array $options = [])
     {
         $result = null;
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
 
         if (empty($data)) {
@@ -200,7 +200,7 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
      */
     public function renderSearchInput(array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), null);
 
         $content = sprintf(

@@ -29,7 +29,7 @@ class BooleanFieldHandler extends BaseSimpleFieldHandler
      */
     public function renderInput($data = '', array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
 
         $fieldName = $this->_getFieldName($options);
@@ -61,7 +61,7 @@ class BooleanFieldHandler extends BaseSimpleFieldHandler
      */
     public function renderValue($data, array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
         $result = $data ? __('Yes') : __('No');
 
@@ -81,7 +81,7 @@ class BooleanFieldHandler extends BaseSimpleFieldHandler
      */
     public function renderSearchInput(array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $content = $this->cakeView->Form->input('{{name}}', [
             'type' => static::INPUT_FIELD_TYPE,
             'class' => 'square',

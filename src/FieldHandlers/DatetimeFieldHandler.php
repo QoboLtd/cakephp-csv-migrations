@@ -35,7 +35,7 @@ class DatetimeFieldHandler extends BaseTimeFieldHandler
      */
     public function renderInput($data = '', array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
         if ($data instanceof Time) {
             $data = $data->i18nFormat(static::DATETIME_FORMAT);
@@ -87,7 +87,7 @@ class DatetimeFieldHandler extends BaseTimeFieldHandler
      */
     public function renderValue($data, array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
         if (is_object($data)) {
             $result = $data->i18nFormat(static::DATETIME_FORMAT);
@@ -111,7 +111,7 @@ class DatetimeFieldHandler extends BaseTimeFieldHandler
      */
     public function renderSearchInput(array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         if (isset($options['element'])) {
             $content = $this->cakeView->element($options['element'], [
                 'options' => [

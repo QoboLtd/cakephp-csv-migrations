@@ -35,7 +35,7 @@ class DblistFieldHandler extends BaseFieldHandler
     public function renderInput($data = '', array $options = [])
     {
         $result = '';
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
         //CsvField object is mandatory
         if (!isset($options['fieldDefinitions']) ||
@@ -69,7 +69,7 @@ class DblistFieldHandler extends BaseFieldHandler
     public function renderValue($data, array $options = [])
     {
         $result = '';
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
 
         //CsvField object is mandatory
@@ -96,7 +96,7 @@ class DblistFieldHandler extends BaseFieldHandler
      */
     public function renderSearchInput(array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $content = $this->cakeView->cell(
             'CsvMigrations.Dblist::renderInput',
             [

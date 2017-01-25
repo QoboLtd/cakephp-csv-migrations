@@ -141,22 +141,55 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected function setDefaultOptions()
     {
+        $stubFields = [
+            $this->field => [
+                'name' => $this->field,
+                'type' => self::DB_FIELD_TYPE, // not static:: to preserve string
+            ],
+        ];
         if (method_exists($this->table, 'getFieldsDefinitions') && is_callable([$this->table, 'getFieldsDefinitions'])) {
-            $fieldDefinitions = $this->table->getFieldsDefinitions([
-                $this->field => [
-                    'name' => $this->field,
-                    'type' => self::DB_FIELD_TYPE, // not static:: to preserve string
-                ]
-            ]);
-            if (!empty($fieldDefinitions[$this->field])) {
-                $this->defaultOptions['fieldDefinitions'] = new CsvField($fieldDefinitions[$this->field]);
-            }
+            $fieldDefinitions = $this->table->getFieldsDefinitions($stubFields);
+            $this->defaultOptions['fieldDefinitions'] = new CsvField($fieldDefinitions[$this->field]);
         } else {
             // This should never be the case, except, maybe
             // for some unit test runs or custom non-CSV
             // modules.
-            $this->defaultOptions['fieldDefinitions'] = null;
+            $this->defaultOptions['fieldDefinitions'] = new CsvField($stubFields[$this->field]);
         }
+    }
+
+    /**
+     * Fix provided options
+     *
+     * This method is here to fix some issues with backward
+     * compatibility and make sure that $options parameters
+     * are consistent throughout.
+     *
+     * @param array  $options Options to fix
+     * @return array          Fixed options
+     */
+    protected function fixOptions(array $options = [])
+    {
+        $result = $options;
+        if (empty($result)) {
+            return $result;
+        }
+
+        // Previously, fieldDefinitions could be either an array or a CsvField instance.
+        // Now we expect it to always be a CsvField instance.  So, if we have a non-empty
+        // array, then instantiate CsvField with the values from it.
+        if (!empty($result['fieldDefinitions']) && is_array($result['fieldDefinitions'])) {
+            // Sometimes, when setting fieldDefinitions manually to render a particular
+            // type, the name is omitted.  This works for an array, but doesn't work for
+            // the CsvField instance, as the name is required.  Gladly, we know the name
+            // and can fix it easily.
+            if (empty($result['fieldDefinitions']['name'])) {
+                $result['fieldDefinitions']['name'] = $this->field;
+            }
+            $result['fieldDefinitions'] = new CsvField($result['fieldDefinitions']);
+        }
+
+        return $result;
     }
 
     /**
@@ -191,7 +224,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function renderInput($data = '', array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
 
         return $this->cakeView->Form->input($this->_getFieldName($options), [
@@ -214,7 +247,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function renderSearchInput(array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $content = $this->cakeView->Form->input('{{name}}', [
             'value' => '{{value}}',
             'type' => static::INPUT_FIELD_TYPE,
@@ -239,7 +272,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function renderValue($data, array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $result = $this->_getFieldValueFromData($data);
 
         return $result;
@@ -307,6 +340,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * Get field label
      *
      * @todo Rename method to getLabel()
+     * @param  string $field Optional field name
      * @return string Human-friendly field name
      */
     public function getSearchLabel($field = null)
@@ -328,7 +362,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * * Request, use Request->data() with the key of the field name
      * * Otherwise assume the variable is the data already
      *
-     * @param Entity|Request|mixed $data Variable to extract value from
+     * @param Entity|Request|mixed $data  Variable to extract value from
+     * @param string               $field Optional field name
      * @return mixed
      */
     protected function _getFieldValueFromData($data, $field = null)

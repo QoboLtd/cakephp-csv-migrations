@@ -23,7 +23,7 @@ class UrlFieldHandler extends BaseSimpleFieldHandler
      */
     public function renderValue($data, array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $result = filter_var($data, FILTER_SANITIZE_URL);
 
         // Only link to URLs with schema, to avoid unpredictable behavior

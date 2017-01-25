@@ -24,7 +24,7 @@ class SublistFieldHandler extends ListFieldHandler
      */
     public function renderInput($data = '', array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $options);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
         $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit(), null, false);
         $optionValues = $this->_getSelectOptions($options['fieldDefinitions']->getLimit(), '');

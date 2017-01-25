@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
@@ -133,6 +134,8 @@ class FieldHandlerFactory
      *
      * @todo Figure out which one of the two fields we actually need
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @param  mixed                                 $table Name of instance of Table
+     * @param  string                                $field Field name
      * @return array list of DbField instances
      */
     public function fieldToDb(CsvField $csvField, $table, $field)
@@ -214,10 +217,10 @@ class FieldHandlerFactory
      * @param  string|array  $field Field name
      * @return object               FieldHandler instance
      */
-    protected function _getHandler($table, $field)
+    protected function _getHandler(Table $table, $field)
     {
-        if (!is_object($table)) {
-            throw new \InvalidArgumentException("Table parameter is not an instance of Table class");
+        if (empty($table)) {
+            throw new \InvalidArgumentException("Table parameter is empty");
         }
         if (empty($field)) {
             throw new \InvalidArgumentException("Field parameter is empty");
@@ -225,10 +228,10 @@ class FieldHandlerFactory
 
         // Prepare the stub field
         $fieldName = '';
-        $stubField = [];
+        $stubFields = [];
         if (is_string($field)) {
             $fieldName = $field;
-            $stubField = [
+            $stubFields = [
                 $fieldName => [
                     'name' => $fieldName,
                     'type' => 'string',
@@ -242,7 +245,7 @@ class FieldHandlerFactory
                 throw new \InvalidArgumentException("Field array is missing 'type' key");
             }
             $fieldName = $field['name'];
-            $stubField = [
+            $stubFields = [
                 $fieldName => $field,
             ];
         } else {
@@ -251,9 +254,9 @@ class FieldHandlerFactory
 
         $fieldDefinitions = [];
         if (method_exists($table, 'getFieldsDefinitions') && is_callable([$table, 'getFieldsDefinitions'])) {
-            $fieldDefinitions = $table->getFieldsDefinitions($stubField);
+            $fieldDefinitions = $table->getFieldsDefinitions($stubFields);
         } else {
-            throw new \RuntimeException("Failed to get field definitions");
+            $fieldDefinitions = $stubFields;
         }
 
         if (empty($fieldDefinitions[$fieldName])) {

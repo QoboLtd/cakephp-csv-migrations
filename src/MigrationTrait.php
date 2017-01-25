@@ -44,7 +44,14 @@ trait MigrationTrait
      * rendering of the views, so performance is important.  For
      * this reason, parsed definitions are stored in the property
      * to avoid unnecessary processing of files and conversion of
-     * data.
+     * data. Stub fields, however, won't be cached as they are not
+     * real definitions and might vary from call to call.
+     *
+     * There are cases, when no field definitions are available at
+     * all.  For example, external, non-CSV modules.  For those
+     * cases, all exceptions and errors are silenced and an empty
+     * array of field definitions is returned.  Unless, of course,
+     * there are stub fields provided.
      *
      * @param  array $stubFields Stub fields
      * @return array             Associative array of fields and their definitions
@@ -60,23 +67,22 @@ trait MigrationTrait
 
         // Fetch definitions from CSV if cache is empty
         if (empty($result)) {
+            $moduleName = null;
             if (is_callable([$this, 'alias'])) {
                 $moduleName = $this->alias();
-            } else {
-                throw new RuntimeException("Failed getting field definitions for unknown module");
             }
 
-            $pathFinder = new MigrationPathFinder;
-            $path = $pathFinder->find($moduleName);
-
-            // Parser knows how to make sure that the file exists.  But it can
-            // also throw other exceptions, which we don't want to avoid for
-            // now.
-            if (is_readable($path)) {
+            try {
+                $pathFinder = new MigrationPathFinder;
+                $path = $pathFinder->find($moduleName);
                 $parser = new MigrationParser();
                 // Set fields definitions cache
-                $this->_fieldDefinitions = $parser->wrapFromPath($path);
-                $result = $this->_fieldDefinitions;
+                $result = $parser->wrapFromPath($path);
+                if (!empty($result)) {
+                    $this->_fieldDefinitions = $result;
+                }
+            } catch (\Exception $e) {
+                // Ignore all exceptions thrown by path finder and parser
             }
         }
 
@@ -86,7 +92,7 @@ trait MigrationTrait
 
         // Merge $result with $stubFields
         foreach ($stubFields as $field => $definition) {
-            if (!in_array($field, array_keys($result))) {
+            if (empty($result) || !in_array($field, array_keys($result))) {
                 $result[$field] = $definition;
             }
         }

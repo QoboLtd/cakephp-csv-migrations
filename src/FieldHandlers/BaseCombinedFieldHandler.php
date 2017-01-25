@@ -185,7 +185,7 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
             $fieldName = $this->field . '_' . $suffix;
             $handler = new $options['handler']($this->table, $fieldName, $this->cakeView);
 
-            $result[$fieldName] = $handler->getSearchOperators($this->_getFieldTypeByFieldHandler($handler));
+            $result[$fieldName] = $handler->getSearchOperators();
         }
 
         return $result;

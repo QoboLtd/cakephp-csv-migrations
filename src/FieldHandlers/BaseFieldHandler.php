@@ -390,19 +390,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     }
 
     /**
-     * Get field type by field handler class name.
-     *
-     * @param object $handler Field handler instance
-     * @return string
-     */
-    protected function _getFieldTypeByFieldHandler($handler)
-    {
-        list(, $type) = pluginSplit(App::shortName(get_class($handler), 'FieldHandlers', 'FieldHandler'));
-
-        return Inflector::underscore($type);
-    }
-
-    /**
      * Generate field name based on its options.
      *
      * @param  array  $options        Field options

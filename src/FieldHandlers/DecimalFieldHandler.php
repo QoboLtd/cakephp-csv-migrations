@@ -17,6 +17,26 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
     const INPUT_FIELD_TYPE = 'number';
 
     /**
+     * Precision
+     *
+     * Temporary setting for decimal precision, until
+     * we learn to read it from the fields.ini.
+     *
+     * @todo Replace with configuration from fields.ini
+     */
+    const PRECISION = 2;
+
+    /**
+     * Max value
+     *
+     * Temporary setting for maximum value, until
+     * we learn to read it from the fields.ini.
+     *
+     * @todo Replace with configuration from fields.ini
+     */
+    const MAX_VALUE = '99999999.99';
+
+    /**
      * Render field value
      *
      * This method prepares the output of the value for the given
@@ -33,12 +53,8 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
         $data = $this->_getFieldValueFromData($data);
         $result = (float)filter_var($data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
-        $args = $this->_getDbColumnArgs();
-
-        $precision = !empty($args['precision']) ? $args['precision']: 2;
-
         if (!empty($result) && is_numeric($result)) {
-            $result = number_format($result, $precision);
+            $result = number_format($result, static::PRECISION);
         } else {
             $result = (string)$result;
         }
@@ -70,7 +86,7 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'value' => $data,
             'step' => 'any',
-            'max' => $this->_getNumberMax(),
+            'max' => (float)static::MAX_VALUE,
             'label' => $options['label'],
         ]);
 
@@ -96,7 +112,7 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
             'value' => '{{value}}',
             'type' => static::INPUT_FIELD_TYPE,
             'step' => 'any',
-            'max' => $this->_getNumberMax(),
+            'max' => (float)static::MAX_VALUE,
             'label' => false
         ]);
 
@@ -168,27 +184,5 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
         }
 
         return $dbFields;
-    }
-
-    /**
-     * Get max value for number input field.
-     *
-     * @return float
-     */
-    protected function _getNumberMax()
-    {
-        $result = null;
-
-        $args = $this->_getDbColumnArgs();
-
-        if (!empty($args['length'])) {
-            $result = str_repeat('9', (int)$args['length']);
-        }
-
-        if ($result && !empty($args['precision'])) {
-            $result = substr_replace($result, '.', $args['length'] - $args['precision'], 0);
-        }
-
-        return (float)$result;
     }
 }

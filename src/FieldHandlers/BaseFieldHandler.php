@@ -420,40 +420,4 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         return $result;
     }
-
-    /**
-     * Get database column definition.
-     *
-     * @param  array $args Column arguments
-     * @return array
-     */
-    protected function _getDbColumnArgs(array $args = [])
-    {
-        $result = [];
-
-        $data = [];
-        try {
-            $data = $this->table->schema()->column($this->field);
-        } catch (\Exception $e) {
-            // Ignore the fact that the database table does not exist
-        }
-
-        if (empty($data)) {
-            return $result;
-        }
-
-        if (empty($args)) {
-            return $data;
-        }
-
-        foreach ($data as $k => $v) {
-            if (!in_array($k, $args)) {
-                continue;
-            }
-
-            $result[$k] = $v;
-        }
-
-        return $result;
-    }
 }

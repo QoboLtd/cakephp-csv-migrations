@@ -61,6 +61,13 @@ interface FieldHandlerInterface
     public function renderValue($data, array $options = []);
 
     /**
+     * Render field name
+     *
+     * @return string
+     */
+    public function renderName();
+
+    /**
      * Get search operators
      *
      * This method prepares a list of search operators that

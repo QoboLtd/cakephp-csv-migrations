@@ -55,7 +55,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
      */
     protected function _renderInputWithoutData($options)
     {
-        $fieldName = $this->_getFieldName();
+        $fieldName = $this->table->alias() . '.' . $this->field;
 
         $uploadField = $this->cakeView->Form->file(
             $fieldName . '[]',
@@ -65,10 +65,10 @@ class FilesFieldHandler extends BaseFileFieldHandler
             ]
         );
 
-        $label = $this->cakeView->Form->label($this->field);
+        $label = $options['label'] ? $this->cakeView->Form->label($fieldName . '[]', $options['label']) : '';
 
         $hiddenIds = $this->cakeView->Form->hidden(
-            $this->_getFieldName($options) . '_ids][',
+            $fieldName . '_ids][',
             [
                 'class' => str_replace('.', '_', $fieldName . '_ids'),
                 'value' => ''
@@ -92,8 +92,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
         $files = [];
         $hiddenIds = '';
 
-        $fieldName = $this->_getFieldName();
-
+        $fieldName = $this->table->alias() . '.' . $this->field;
 
         $fileUploadsUtils = new FileUploadsUtils($this->table);
 
@@ -118,7 +117,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
             ];
 
             $hiddenIds .= $this->cakeView->Form->hidden(
-                $this->_getFieldName($options) . '_ids][',
+                $fieldName . '_ids][',
                 [
                     'class' => str_replace('.', '_', $fieldName . '_ids'),
                     'value' => $file->id
@@ -126,7 +125,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
             );
         }
 
-        $label = $this->cakeView->Form->label($this->field);
+        $label = $options['label'] ? $this->cakeView->Form->label($fieldName . '[]', $options['label']) : '';
 
         $uploadField = $this->cakeView->Form->file(
             $fieldName . '[]',

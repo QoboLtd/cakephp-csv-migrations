@@ -15,7 +15,7 @@ class DblistFieldHandler extends BaseFieldHandler
      *
      * @var array
      */
-    protected $_defaultOptions = [
+    protected $_defaultInputOptions = [
         'class' => 'form-control',
         'label' => true
     ];
@@ -44,12 +44,12 @@ class DblistFieldHandler extends BaseFieldHandler
         }
         $csvObj = $options['fieldDefinitions'];
         $list = $csvObj->getListName();
-        $fieldName = $this->_getFieldName($options);
+        $fieldName = $this->table->alias() . '.' . $this->field;
         $options = [
             'value' => $data,
             'required' => $csvObj->getRequired(),
         ];
-        $options += $this->_defaultOptions;
+        $options += $this->_defaultInputOptions;
         $result = $this->cakeView->cell('CsvMigrations.Dblist::' . __FUNCTION__, [$fieldName, $list, $options])->render(__FUNCTION__);
 
         return $result;
@@ -102,7 +102,7 @@ class DblistFieldHandler extends BaseFieldHandler
             [
                 '{{name}}',
                 $options['fieldDefinitions']->getListName(),
-                ['label' => false] + $this->_defaultOptions
+                ['label' => false] + $this->_defaultInputOptions
             ]
         )->render('renderInput');
 

@@ -148,7 +148,7 @@ class ImagesFieldHandler extends BaseFileFieldHandler
      */
     protected function _renderInputWithoutData($options)
     {
-        $fieldName = $this->_getFieldName();
+        $fieldName = $this->table->alias() . '.' . $this->field;
         $uploadField = $this->cakeView->Form->file(
             $fieldName . '[]',
             [
@@ -157,10 +157,10 @@ class ImagesFieldHandler extends BaseFileFieldHandler
             ]
         );
 
-        $label = $this->cakeView->Form->label($this->field);
+        $label = $options['label'] ? $this->cakeView->Form->label($fieldName . '[]', $options['label']) : '';
 
         $hiddenIds = $this->cakeView->Form->hidden(
-            $this->_getFieldName($options) . '_ids][',
+            $fieldName . '_ids][',
             [
                 'class' => str_replace('.', '_', $fieldName . '_ids'),
                 'value' => ''
@@ -184,7 +184,7 @@ class ImagesFieldHandler extends BaseFileFieldHandler
         $files = [];
         $hiddenIds = '';
 
-        $fieldName = $this->_getFieldName();
+        $fieldName = $this->table->alias() . '.' . $this->field;
         $fileUploadsUtils = new FileUploadsUtils($this->table);
 
         $entities = $fileUploadsUtils->getFiles($this->table, $this->field, $data);
@@ -208,7 +208,7 @@ class ImagesFieldHandler extends BaseFileFieldHandler
             ];
 
             $hiddenIds .= $this->cakeView->Form->hidden(
-                $this->_getFieldName($options) . '_ids][',
+                $fieldName . '_ids][',
                 [
                     'class' => str_replace('.', '_', $fieldName . '_ids'),
                     'value' => $file->id
@@ -216,10 +216,10 @@ class ImagesFieldHandler extends BaseFileFieldHandler
             );
         }
 
-        $label = $this->cakeView->Form->label($this->field);
+        $label = $options['label'] ? $this->cakeView->Form->label($fieldName . '[]', $options['label']) : '';
 
         $uploadField = $this->cakeView->Form->file(
-            $this->_getFieldName($options) . '[]',
+            $fieldName . '[]',
             [
                 'multiple' => true,
                 'data-document-id' => $data,

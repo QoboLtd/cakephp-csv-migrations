@@ -141,6 +141,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected function setDefaultOptions()
     {
+        // set $options['fieldDefinitions']
         $stubFields = [
             $this->field => [
                 'name' => $this->field,
@@ -156,6 +157,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             // modules.
             $this->defaultOptions['fieldDefinitions'] = new CsvField($stubFields[$this->field]);
         }
+
+        // set $options['label']
+        $this->defaultOptions['label'] = $this->renderName();
     }
 
     /**
@@ -227,8 +231,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
 
-        return $this->cakeView->Form->input($this->_getFieldName($options), [
+        $fieldName = $this->table->alias() . '.' . $this->field;
+
+        return $this->cakeView->Form->input($fieldName, [
             'type' => static::INPUT_FIELD_TYPE,
+            'label' => $options['label'],
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'value' => $data
         ]);
@@ -257,6 +264,31 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         return [
             'content' => $content
         ];
+    }
+
+    /**
+     * Render field name
+     *
+     * @return string
+     */
+    public function renderName()
+    {
+        $text = $this->field;
+
+        // Borrowed from FormHelper::label()
+        if (substr($text, -5) === '._ids') {
+            $text = substr($text, 0, -5);
+        }
+        if (strpos($text, '.') !== false) {
+            $fieldElements = explode('.', $text);
+            $text = array_pop($fieldElements);
+        }
+        if (substr($text, -3) === '_id') {
+            $text = substr($text, 0, -3);
+        }
+        $text = __(Inflector::humanize(Inflector::underscore($text)));
+
+        return $text;
     }
 
     /**
@@ -387,45 +419,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         }
 
         return $result;
-    }
-
-    /**
-     * Generate field name based on its options.
-     *
-     * @param  array  $options        Field options
-     * @return string
-     */
-    protected function _getFieldName(array $options = [])
-    {
-        if (empty($this->table)) {
-            return $this->field;
-        }
-
-        if (is_object($this->table)) {
-            return $this->table->alias() . '.' . $this->field;
-        }
-
-        return $this->table . '.' . $this->field;
-    }
-
-    /**
-     * Generates input label based on field name or label options
-     *
-     * It can either return just the field label value or the html markup.
-     *
-     * @param  array   $options Field options
-     * @param  bool    $html    Html flag
-     * @return string           Label value or html markup
-     */
-    protected function _fieldToLabel(array $options = [], $html = true)
-    {
-        $result = array_key_exists('label', $options) ? (string)$options['label'] : $this->field;
-
-        if (!$html || empty($result)) {
-            return $result;
-        }
-
-        return $this->cakeView->Form->label($result);
     }
 
     /**

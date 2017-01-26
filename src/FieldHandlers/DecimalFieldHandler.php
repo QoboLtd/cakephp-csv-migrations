@@ -63,15 +63,15 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
 
-        $input = $this->_fieldToLabel($options);
+        $fieldName = $this->table->alias() . '.' . $this->field;
 
-        $input .= $this->cakeView->Form->input($this->_getFieldName($options), [
+        $input = $this->cakeView->Form->input($fieldName, [
             'type' => static::INPUT_FIELD_TYPE,
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'value' => $data,
             'step' => 'any',
             'max' => $this->_getNumberMax(),
-            'label' => false
+            'label' => $options['label'],
         ]);
 
         return $input;

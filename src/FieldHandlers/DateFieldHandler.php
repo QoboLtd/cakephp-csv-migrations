@@ -50,14 +50,14 @@ class DateFieldHandler extends BaseTimeFieldHandler
         if (isset($options['fieldDefinitions']) && is_object($options['fieldDefinitions'])) {
             $required = (bool)$options['fieldDefinitions']->getRequired();
         }
-        $fieldName = $this->_getFieldName($options);
+        $fieldName = $this->table->alias() . '.' . $this->field;
 
         if (isset($options['element'])) {
             return $this->cakeView->element($options['element'], [
                 'options' => [
                     'fieldName' => $fieldName,
                     'type' => static::INPUT_FIELD_TYPE,
-                    'label' => true,
+                    'label' => $options['label'],
                     'required' => $required,
                     'value' => $data
                 ]
@@ -65,6 +65,7 @@ class DateFieldHandler extends BaseTimeFieldHandler
         } else {
             return $this->cakeView->Form->input($fieldName, [
                 'type' => 'text',
+                'label' => $options['label'],
                 'data-provide' => 'datepicker',
                 'autocomplete' => 'off',
                 'data-date-format' => static::JS_DATE_FORMAT,

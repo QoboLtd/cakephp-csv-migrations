@@ -63,7 +63,7 @@ class HasManyFieldHandler extends BaseRelatedFieldHandler
             }
         }
 
-        $fieldName = $this->_getFieldName($options);
+        $fieldName = $this->table->alias() . '.' . $this->field;
 
         // create select input
         $input = $this->cakeView->Form->input($options['associated_table_name'] . '._ids', [

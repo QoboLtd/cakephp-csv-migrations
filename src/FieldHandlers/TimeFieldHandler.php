@@ -45,14 +45,15 @@ class TimeFieldHandler extends BaseTimeFieldHandler
         if (isset($options['fieldDefinitions']) && is_object($options['fieldDefinitions'])) {
             $required = (bool)$options['fieldDefinitions']->getRequired();
         }
-        $fieldName = $this->_getFieldName($options);
+
+        $fieldName = $this->table->alias() . '.' . $this->field;
 
         if (isset($options['element'])) {
             $result = $this->cakeView->element($options['element'], [
                 'options' => [
                     'fieldName' => $fieldName,
                     'type' => static::INPUT_FIELD_TYPE,
-                    'label' => true,
+                    'label' => $options['label'],
                     'required' => $required,
                     'value' => $data
                 ]
@@ -60,6 +61,7 @@ class TimeFieldHandler extends BaseTimeFieldHandler
         } else {
             $result = $this->cakeView->Form->input($fieldName, [
                 'type' => 'text',
+                'label' => $options['label'],
                 'data-provide' => 'timepicker',
                 'autocomplete' => 'off',
                 'required' => $required,

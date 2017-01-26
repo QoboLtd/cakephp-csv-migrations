@@ -102,11 +102,11 @@ class BaseFileFieldHandler extends BaseRelatedFieldHandler
         $data = $this->_getFieldValueFromData($data);
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
-        $fieldName = $this->_getFieldName($options);
+        $fieldName = $this->table->alias() . '.' . $this->field;
 
         $input['html'] = '';
         $input['html'] .= '<div class="form-group' . ((bool)$options['fieldDefinitions']->getRequired() ? ' required' : '') . '">';
-        $input['html'] .= $this->cakeView->Form->label($this->field);
+        $input['html'] .= $options['label'] ? $this->cakeView->Form->label($this->field, $options['label']) : '';
         $input['html'] .= '<div class="input-group">';
 
         $input['html'] .= $this->cakeView->Form->input($this->field, [

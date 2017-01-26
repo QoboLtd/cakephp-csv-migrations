@@ -79,7 +79,7 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
             }
         }
 
-        $fieldName = $this->_getFieldName($options);
+        $fieldName = $this->table->alias() . '.' . $this->field;
 
         // create select input
         $input = $this->cakeView->Form->input($fieldName, [
@@ -119,7 +119,7 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
         $input = sprintf(
             static::HTML_INPUT_WRAPPER,
             (bool)$options['fieldDefinitions']->getRequired() ? ' required' : '',
-            $this->cakeView->Form->label($this->field, null, ['class' => 'control-label']),
+            $this->cakeView->Form->label($this->field, $options['label'], ['class' => 'control-label']),
             $input
         );
 

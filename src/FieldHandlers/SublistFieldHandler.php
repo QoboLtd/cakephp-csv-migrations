@@ -78,7 +78,7 @@ class SublistFieldHandler extends ListFieldHandler
                 $inputOptions['data-value'] = implode('.', array_slice($data, 0, $i + 1));
             }
             $inputs[] = $this->cakeView->Form->input(
-                $this->_getFieldName($options),
+                $this->table->alias() . '.' . $this->field,
                 $inputOptions
             );
         }

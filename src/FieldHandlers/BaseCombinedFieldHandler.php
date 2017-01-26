@@ -63,12 +63,15 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
     public function renderInput($data = '', array $options = [])
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $label = $this->cakeView->Form->label($this->field);
+
+        // Use combined field name as a single label for all inputs
+        $label = $options['label'] ? $this->cakeView->Form->label($this->field, $options['label']) : false;
 
         $inputs = [];
         foreach ($this->_fields as $suffix => $preOptions) {
             $options['fieldDefinitions']->setType($preOptions['handler']::DB_FIELD_TYPE);
-            $options['label'] = null;
+            // Skip individual inputs' label
+            $options['label'] = false;
             $fieldName = $this->field . '_' . $suffix;
 
             $fieldData = $this->_getFieldValueFromData($data, $fieldName);

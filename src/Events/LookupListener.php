@@ -97,6 +97,8 @@ class LookupListener extends BaseViewListener
                 ['renderAs' => RelatedFieldHandler::RENDER_PLAIN_VALUE]
             );
         }
+        // sort results
+        asort($result);
 
         $event->result = $result;
     }

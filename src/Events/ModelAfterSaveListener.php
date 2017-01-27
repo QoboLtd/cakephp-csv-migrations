@@ -408,6 +408,8 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         if ($entity->$field instanceof Time) {
             $start = new \DateTime($entity->$field->format('Y-m-d H:i:s'), $dtz);
+        } elseif ($entity->$field instanceof \DateTime) {
+            $start = $entity->$field;
         } else {
             $start = new \DateTime(date('Y-m-d H:i:s', strtotime($entity->$field)), $dtz);
         }

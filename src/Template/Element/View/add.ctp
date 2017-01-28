@@ -111,12 +111,20 @@ if (!empty($this->request->query['embedded'])) {
                             $tableName = $field['plugin'] . '.' . $tableName;
                         }
 
+                        // allowing query params to define field values.
+                        $fieldValue = null;
+                        if (!empty($this->request->query($field['name']))) {
+                            $fieldValue = $this->request->query($field['name']);
+                        }
+
+                        if (isset($this->request->data[$field['name']])) {
+                            $fieldValue = $this->request->data[$field['name']];
+                        }
+
                         $input = $fhf->renderInput(
                             $tableName,
                             $field['name'],
-                            isset($this->request->data[$field['name']])
-                                ? $this->request->data[$field['name']]
-                                : null,
+                            $fieldValue,
                             $handlerOptions
                         );
 

@@ -219,9 +219,6 @@ class FieldHandlerFactory
      */
     protected function _getHandler(Table $table, $field)
     {
-        if (empty($table)) {
-            throw new \InvalidArgumentException("Table parameter is empty");
-        }
         if (empty($field)) {
             throw new \InvalidArgumentException("Field parameter is empty");
         }

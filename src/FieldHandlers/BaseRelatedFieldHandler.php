@@ -79,7 +79,7 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
             }
         }
 
-        $fieldName = $this->table->alias() . '.' . $this->field;
+        $fieldName = $this->table->aliasField($this->field);
 
         // create select input
         $input = $this->cakeView->Form->input($fieldName, [

@@ -55,7 +55,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
      */
     protected function _renderInputWithoutData($options)
     {
-        $fieldName = $this->table->alias() . '.' . $this->field;
+        $fieldName = $this->table->aliasField($this->field);
 
         $uploadField = $this->cakeView->Form->file(
             $fieldName . '[]',
@@ -92,7 +92,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
         $files = [];
         $hiddenIds = '';
 
-        $fieldName = $this->table->alias() . '.' . $this->field;
+        $fieldName = $this->table->aliasField($this->field);
 
         $fileUploadsUtils = new FileUploadsUtils($this->table);
 

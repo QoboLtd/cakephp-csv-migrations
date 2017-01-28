@@ -231,7 +231,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
 
-        $fieldName = $this->table->alias() . '.' . $this->field;
+        $fieldName = $this->table->aliasField($this->field);
 
         return $this->cakeView->Form->input($fieldName, [
             'type' => static::INPUT_FIELD_TYPE,

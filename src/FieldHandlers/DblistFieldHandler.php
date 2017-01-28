@@ -44,7 +44,7 @@ class DblistFieldHandler extends BaseFieldHandler
         }
         $csvObj = $options['fieldDefinitions'];
         $list = $csvObj->getListName();
-        $fieldName = $this->table->alias() . '.' . $this->field;
+        $fieldName = $this->table->aliasField($this->field);
         $options = [
             'value' => $data,
             'required' => $csvObj->getRequired(),

@@ -38,7 +38,7 @@ class ListFieldHandler extends BaseFieldHandler
         $data = $this->_getFieldValueFromData($data);
         $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
 
-        $fieldName = $this->table->alias() . '.' . $this->field;
+        $fieldName = $this->table->aliasField($this->field);
 
         $input = '';
         $input .= $options['label'] ? $this->cakeView->Form->label($fieldName, $options['label']) : '';

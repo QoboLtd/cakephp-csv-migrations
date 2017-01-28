@@ -32,7 +32,7 @@ class BooleanFieldHandler extends BaseSimpleFieldHandler
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
 
-        $fieldName = $this->table->alias() . '.' . $this->field;
+        $fieldName = $this->table->aliasField($this->field);
         $label = $options['label'] ? $this->cakeView->Form->label($fieldName, $options['label']) : '';
         $input = $this->cakeView->Form->input($fieldName, [
             'type' => 'checkbox',

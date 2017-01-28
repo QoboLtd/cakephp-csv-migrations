@@ -50,7 +50,7 @@ class DateFieldHandler extends BaseTimeFieldHandler
         if (isset($options['fieldDefinitions']) && is_object($options['fieldDefinitions'])) {
             $required = (bool)$options['fieldDefinitions']->getRequired();
         }
-        $fieldName = $this->table->alias() . '.' . $this->field;
+        $fieldName = $this->table->aliasField($this->field);
 
         if (isset($options['element'])) {
             return $this->cakeView->element($options['element'], [

@@ -2,19 +2,14 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\ORM\Table;
-use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
+use CsvMigrations\FieldHandlers\BaseNumberFieldHandler;
 
-class DecimalFieldHandler extends BaseSimpleFieldHandler
+class DecimalFieldHandler extends BaseNumberFieldHandler
 {
     /**
      * Database field type
      */
     const DB_FIELD_TYPE = 'decimal';
-
-    /**
-     * HTML form field type
-     */
-    const INPUT_FIELD_TYPE = 'number';
 
     /**
      * Precision
@@ -35,30 +30,6 @@ class DecimalFieldHandler extends BaseSimpleFieldHandler
      * @todo Replace with configuration from fields.ini
      */
     const MAX_VALUE = '99999999.99';
-
-    /**
-     * Search operators
-     *
-     * @var array
-     */
-    public $searchOperators = [
-        'is' => [
-            'label' => 'is',
-            'operator' => 'IN',
-        ],
-        'is_not' => [
-            'label' => 'is not',
-            'operator' => 'NOT IN',
-        ],
-        'greater' => [
-            'label' => 'greater',
-            'operator' => '>',
-        ],
-        'less' => [
-            'label' => 'less',
-            'operator' => '<',
-        ],
-    ];
 
     /**
      * Render field value

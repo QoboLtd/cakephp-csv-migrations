@@ -1,30 +1,11 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
-use CsvMigrations\ListTrait;
+use CsvMigrations\FieldHandlers\BaseCsvListFieldHandler;
 
-class SublistFieldHandler extends ListFieldHandler
+class SublistFieldHandler extends BaseCsvListFieldHandler
 {
-    use ListTrait;
-
     const JS_SELECTORS = "$('%s').val('%s').change();";
-
-    /**
-     * Search operators
-     *
-     * @var array
-     */
-    public $searchOperators = [
-        'is' => [
-            'label' => 'is',
-            'operator' => 'IN',
-        ],
-        'is_not' => [
-            'label' => 'is not',
-            'operator' => 'NOT IN',
-        ],
-    ];
 
     /**
      * Render field input
@@ -100,40 +81,6 @@ class SublistFieldHandler extends ListFieldHandler
         }
 
         return implode('', $inputs);
-    }
-
-    /**
-     * Get options for field search
-     *
-     * This method prepares an array of search options, which includes
-     * label, form input, supported search operators, etc.  The result
-     * can be controlled with a variety of options.
-     *
-     * @param  array  $options Field options
-     * @return array           Array of field input HTML, pre and post CSS, JS, etc
-     */
-    public function getSearchOptions(array $options = [])
-    {
-        // Fix options as early as possible
-        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $result = parent::getSearchOptions($options);
-        if (empty($result[$this->field]['input'])) {
-            return $result;
-        }
-
-        $content = $this->cakeView->Form->select(
-            '{{name}}',
-            $this->_getSelectOptions($options['fieldDefinitions']->getLimit()),
-            [
-                'label' => false
-            ]
-        );
-
-        $result[$this->field]['input'] = [
-            'content' => $content
-        ];
-
-        return $result;
     }
 
     /**

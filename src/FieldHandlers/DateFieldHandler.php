@@ -17,9 +17,9 @@ class DateFieldHandler extends BaseTimeFieldHandler
     const INPUT_FIELD_TYPE = 'datepicker';
 
     /**
-     * Date format
+     * Date/time format
      */
-    const DATE_FORMAT = 'yyyy-MM-dd';
+    const FORMAT = 'yyyy-MM-dd';
 
     /**
      * Javascript date format
@@ -43,7 +43,7 @@ class DateFieldHandler extends BaseTimeFieldHandler
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
         if ($data instanceof Date) {
-            $data = $data->i18nFormat(static::DATE_FORMAT);
+            $data = $data->i18nFormat(static::FORMAT);
         }
 
         $required = false;
@@ -80,30 +80,6 @@ class DateFieldHandler extends BaseTimeFieldHandler
                 ]
             ]);
         }
-    }
-
-    /**
-     * Render field value
-     *
-     * This method prepares the output of the value for the given
-     * field.  The result can be controlled via the variety of
-     * options.
-     *
-     * @param  string $data    Field data
-     * @param  array  $options Field options
-     * @return string          Field value
-     */
-    public function renderValue($data, array $options = [])
-    {
-        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $data = $this->_getFieldValueFromData($data);
-        if (is_object($data)) {
-            $result = $data->i18nFormat(static::DATE_FORMAT);
-        } else {
-            $result = $data;
-        }
-
-        return $result;
     }
 
     /**

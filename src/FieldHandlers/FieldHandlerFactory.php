@@ -68,48 +68,19 @@ class FieldHandlerFactory
     }
 
     /**
-     * Render field search form input
+     * Get search options
      *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
-     * @return string          field input
+     * @param  array  $options field options
+     * @return array           Array of fields and their options
      */
-    public function renderSearchInput($table, $field)
+    public function getSearchOptions($table, $field, array $options = [])
     {
         $table = $this->_getTableInstance($table);
         $handler = $this->_getHandler($table, $field);
 
-        return $handler->renderSearchInput($options);
-    }
-
-    /**
-     * Get search operators
-     *
-     * @param mixed $table Name or instance of the Table
-     * @param string $field Field name
-     * @return array
-     */
-    public function getSearchOperators($table, $field)
-    {
-        $table = $this->_getTableInstance($table);
-        $handler = $this->_getHandler($table, $field);
-
-        return $handler->getSearchOperators();
-    }
-
-    /**
-     * Get field search field label
-     *
-     * @param mixed $table Name or instance of the Table
-     * @param string $field Field name
-     * @return string
-     */
-    public function getSearchLabel($table, $field)
-    {
-        $table = $this->_getTableInstance($table);
-        $handler = $this->_getHandler($table, $field);
-
-        return $handler->getSearchLabel();
+        return $handler->getSearchOptions($options);
     }
 
     /**

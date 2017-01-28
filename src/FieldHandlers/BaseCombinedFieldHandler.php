@@ -122,17 +122,16 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
     }
 
     /**
-     * Render field search input
+     * Get options for field search
      *
-     * This method prepares the search form input for the given field,
-     * including the input itself, label, pre-populated value,
-     * and so on.  The result can be controlled via the variety
-     * of options.
+     * This method prepares an array of search options, which includes
+     * label, form input, supported search operators, etc.  The result
+     * can be controlled with a variety of options.
      *
      * @param  array  $options Field options
      * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function renderSearchInput(array $options = [])
+    public function getSearchOptions(array $options = [])
     {
         $result = [];
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
@@ -140,7 +139,10 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
             $options['fieldDefinitions']->setType($fieldOptions['handler']::DB_FIELD_TYPE);
             $fieldName = $this->field . '_' . $suffix;
             $handler = new $fieldOptions['handler']($this->table, $fieldName, $this->cakeView);
-            $result[$fieldName] = $handler->renderSearchInput($options);
+            $fieldOptions = $handler->getSearchOptions($options);
+            if (!empty($fieldOptions)) {
+                $result = array_merge($result, $fieldOptions);
+            }
         }
 
         return $result;
@@ -171,44 +173,5 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
         }
 
         return $dbFields;
-    }
-
-    /**
-     * Get search operators
-     *
-     * This method prepares a list of search operators that
-     * are appropriate for a given field.
-     *
-     * @return array List of search operators
-     */
-    public function getSearchOperators()
-    {
-        $result = [];
-        foreach ($this->_fields as $suffix => $options) {
-            $fieldName = $this->field . '_' . $suffix;
-            $handler = new $options['handler']($this->table, $fieldName, $this->cakeView);
-
-            $result[$fieldName] = $handler->getSearchOperators();
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get field label
-     *
-     * @todo Rename method to getLabel()
-     * @return string Human-friendly field name
-     */
-    public function getSearchLabel()
-    {
-        $result = [];
-        foreach ($this->_fields as $suffix => $options) {
-            $fieldName = $this->field . '_' . $suffix;
-
-            $result[$fieldName] = parent::getSearchLabel($fieldName);
-        }
-
-        return $result;
     }
 }

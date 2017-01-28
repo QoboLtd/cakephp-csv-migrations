@@ -11,24 +11,17 @@ class UuidFieldHandler extends BaseSimpleFieldHandler
     const DB_FIELD_TYPE = 'uuid';
 
     /**
-     * Get search operators
+     * Get options for field search
      *
-     * This method prepares a list of search operators that
-     * are appropriate for a given field.
+     * This method prepares an array of search options, which includes
+     * label, form input, supported search operators, etc.  The result
+     * can be controlled with a variety of options.
      *
-     * @return array List of search operators
+     * @param  array  $options Field options
+     * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function getSearchOperators()
+    public function getSearchOptions(array $options = [])
     {
-        return [
-            'is' => [
-                'label' => 'is',
-                'operator' => 'IN',
-            ],
-            'is_not' => [
-                'label' => 'is not',
-                'operator' => 'NOT IN',
-            ],
-        ];
+        return [];
     }
 }

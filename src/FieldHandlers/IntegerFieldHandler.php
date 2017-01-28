@@ -16,6 +16,30 @@ class IntegerFieldHandler extends BaseSimpleFieldHandler
     const INPUT_FIELD_TYPE = 'number';
 
     /**
+     * Search operators
+     *
+     * @var array
+     */
+    public $searchOperators = [
+        'is' => [
+            'label' => 'is',
+            'operator' => 'IN',
+        ],
+        'is_not' => [
+            'label' => 'is not',
+            'operator' => 'NOT IN',
+        ],
+        'greater' => [
+            'label' => 'greater',
+            'operator' => '>',
+        ],
+        'less' => [
+            'label' => 'less',
+            'operator' => '<',
+        ],
+    ];
+
+    /**
      * Render field value
      *
      * This method prepares the output of the value for the given
@@ -38,35 +62,5 @@ class IntegerFieldHandler extends BaseSimpleFieldHandler
         }
 
         return $result;
-    }
-
-    /**
-     * Get search operators
-     *
-     * This method prepares a list of search operators that
-     * are appropriate for a given field.
-     *
-     * @return array List of search operators
-     */
-    public function getSearchOperators()
-    {
-        return [
-            'is' => [
-                'label' => 'is',
-                'operator' => 'IN',
-            ],
-            'is_not' => [
-                'label' => 'is not',
-                'operator' => 'NOT IN',
-            ],
-            'greater' => [
-                'label' => 'greater',
-                'operator' => '>',
-            ],
-            'less' => [
-                'label' => 'less',
-                'operator' => '<',
-            ],
-        ];
     }
 }

@@ -68,6 +68,34 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public $defaultOptions = [];
 
     /**
+     * Search operators
+     *
+     * @var array
+     */
+    public $searchOperators = [
+        'contains' => [
+            'label' => 'contains',
+            'operator' => 'LIKE',
+            'pattern' => '%{{value}}%',
+        ],
+        'not_contains' => [
+            'label' => 'does not contain',
+            'operator' => 'NOT LIKE',
+            'pattern' => '%{{value}}%',
+        ],
+        'starts_with' => [
+            'label' => 'starts with',
+            'operator' => 'LIKE',
+            'pattern' => '{{value}}%',
+        ],
+        'ends_with' => [
+            'label' => 'ends with',
+            'operator' => 'LIKE',
+            'pattern' => '%{{value}}',
+        ],
+    ];
+
+    /**
      * Custom form input templates.
      *
      * @var input
@@ -242,28 +270,41 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     }
 
     /**
-     * Render field search input
+     * Get options for field search
      *
-     * This method prepares the search form input for the given field,
-     * including the input itself, label, pre-populated value,
-     * and so on.  The result can be controlled via the variety
-     * of options.
+     * This method prepares an array of search options, which includes
+     * label, form input, supported search operators, etc.  The result
+     * can be controlled with a variety of options.
      *
      * @param  array  $options Field options
      * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function renderSearchInput(array $options = [])
+    public function getSearchOptions(array $options = [])
     {
+        $result = [];
+
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+
+        if ($options['fieldDefinitions']->getNonSearchable()) {
+            return $result;
+        }
+
         $content = $this->cakeView->Form->input('{{name}}', [
             'value' => '{{value}}',
             'type' => static::INPUT_FIELD_TYPE,
             'label' => false
         ]);
 
-        return [
-            'content' => $content
+        $result[$this->field] = [
+            'type' => $options['fieldDefinitions']->getType(),
+            'label' => $this->renderName(),
+            'operators' => $this->searchOperators,
+            'input' => [
+                'content' => $content,
+            ],
         ];
+
+        return $result;
     }
 
     /**
@@ -332,56 +373,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         );
 
         return $dbFields;
-    }
-
-    /**
-     * Get search operators
-     *
-     * This method prepares a list of search operators that
-     * are appropriate for a given field.
-     *
-     * @return array List of search operators
-     */
-    public function getSearchOperators()
-    {
-        return [
-            'contains' => [
-                'label' => 'contains',
-                'operator' => 'LIKE',
-                'pattern' => '%{{value}}%',
-            ],
-            'not_contains' => [
-                'label' => 'does not contain',
-                'operator' => 'NOT LIKE',
-                'pattern' => '%{{value}}%',
-            ],
-            'starts_with' => [
-                'label' => 'starts with',
-                'operator' => 'LIKE',
-                'pattern' => '{{value}}%',
-            ],
-            'ends_with' => [
-                'label' => 'ends with',
-                'operator' => 'LIKE',
-                'pattern' => '%{{value}}',
-            ],
-        ];
-    }
-
-    /**
-     * Get field label
-     *
-     * @todo Rename method to getLabel()
-     * @param  string $field Optional field name
-     * @return string Human-friendly field name
-     */
-    public function getSearchLabel($field = null)
-    {
-        if (empty($field)) {
-            $field = $this->field;
-        }
-
-        return Inflector::humanize($field);
     }
 
     /**

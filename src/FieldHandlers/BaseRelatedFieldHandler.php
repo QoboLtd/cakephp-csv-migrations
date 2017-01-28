@@ -52,6 +52,22 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
         </div>';
 
     /**
+     * Search operators
+     *
+     * @var array
+     */
+    public $searchOperators = [
+        'is' => [
+            'label' => 'is',
+            'operator' => 'IN',
+        ],
+        'is_not' => [
+            'label' => 'is not',
+            'operator' => 'NOT IN',
+        ],
+    ];
+
+    /**
      * Render field input
      *
      * This method prepares the form input for the given field,
@@ -188,19 +204,24 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
     }
 
     /**
-     * Render field search input
+     * Get options for field search
      *
-     * This method prepares the search form input for the given field,
-     * including the input itself, label, pre-populated value,
-     * and so on.  The result can be controlled via the variety
-     * of options.
+     * This method prepares an array of search options, which includes
+     * label, form input, supported search operators, etc.  The result
+     * can be controlled with a variety of options.
      *
      * @param  array  $options Field options
      * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function renderSearchInput(array $options = [])
+    public function getSearchOptions(array $options = [])
     {
+        // Fix options as early as possible
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $result = parent::getSearchOptions($options);
+        if (empty($result[$this->field]['input'])) {
+            return $result;
+        }
+
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), null);
 
         $content = sprintf(
@@ -227,7 +248,7 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
             ])
         );
 
-        return [
+        $result[$this->field]['input'] = [
             'content' => $content,
             'post' => [
                 [
@@ -260,28 +281,8 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
                 ]
             ]
         ];
-    }
 
-    /**
-     * Get search operators
-     *
-     * This method prepares a list of search operators that
-     * are appropriate for a given field.
-     *
-     * @return array List of search operators
-     */
-    public function getSearchOperators()
-    {
-        return [
-            'is' => [
-                'label' => 'is',
-                'operator' => 'IN',
-            ],
-            'is_not' => [
-                'label' => 'is not',
-                'operator' => 'NOT IN',
-            ],
-        ];
+        return $result;
     }
 
     /**

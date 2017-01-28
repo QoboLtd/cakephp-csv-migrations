@@ -12,16 +12,11 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 abstract class BaseTimeFieldHandler extends BaseFieldHandler
 {
     /**
-     * Get search operators
+     * Search operators
      *
-     * This method prepares a list of search operators that
-     * are appropriate for a given field.
-     *
-     * @return array List of search operators
+     * @var array
      */
-    public function getSearchOperators()
-    {
-        return [
+    public $searchOperators = [
             'is' => [
                 'label' => 'is',
                 'operator' => 'IN',
@@ -38,6 +33,5 @@ abstract class BaseTimeFieldHandler extends BaseFieldHandler
                 'label' => 'to',
                 'operator' => '<',
             ],
-        ];
-    }
+    ];
 }

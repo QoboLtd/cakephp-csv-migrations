@@ -101,19 +101,24 @@ class DatetimeFieldHandler extends BaseTimeFieldHandler
     }
 
     /**
-     * Render field search input
+     * Get options for field search
      *
-     * This method prepares the search form input for the given field,
-     * including the input itself, label, pre-populated value,
-     * and so on.  The result can be controlled via the variety
-     * of options.
+     * This method prepares an array of search options, which includes
+     * label, form input, supported search operators, etc.  The result
+     * can be controlled with a variety of options.
      *
      * @param  array  $options Field options
      * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function renderSearchInput(array $options = [])
+    public function getSearchOptions(array $options = [])
     {
+        // Fix options as early as possible
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $result = parent::getSearchOptions($options);
+        if (empty($result[$this->field]['input'])) {
+            return $result;
+        }
+
         if (isset($options['element'])) {
             $content = $this->cakeView->element($options['element'], [
                 'options' => [
@@ -140,7 +145,7 @@ class DatetimeFieldHandler extends BaseTimeFieldHandler
             ]);
         }
 
-        return [
+        $result[$this->field]['input'] = [
             'content' => $content,
             'post' => [
                 [
@@ -160,5 +165,7 @@ class DatetimeFieldHandler extends BaseTimeFieldHandler
                 ]
             ]
         ];
+
+        return $result;
     }
 }

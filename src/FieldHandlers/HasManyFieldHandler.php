@@ -106,17 +106,16 @@ class HasManyFieldHandler extends BaseRelatedFieldHandler
     }
 
     /**
-     * Render field search input
+     * Get options for field search
      *
-     * This method prepares the search form input for the given field,
-     * including the input itself, label, pre-populated value,
-     * and so on.  The result can be controlled via the variety
-     * of options.
+     * This method prepares an array of search options, which includes
+     * label, form input, supported search operators, etc.  The result
+     * can be controlled with a variety of options.
      *
      * @param  array  $options Field options
      * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function renderSearchInput(array $options = [])
+    public function getSearchOptions(array $options = [])
     {
         return [];
     }

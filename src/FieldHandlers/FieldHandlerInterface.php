@@ -35,17 +35,16 @@ interface FieldHandlerInterface
     public function renderInput($data = '', array $options = []);
 
     /**
-     * Render field search input
+     * Get options for field search
      *
-     * This method prepares the search form input for the given field,
-     * including the input itself, label, pre-populated value,
-     * and so on.  The result can be controlled via the variety
-     * of options.
+     * This method prepares an array of search options, which includes
+     * label, form input, supported search operators, etc.  The result
+     * can be controlled with a variety of options.
      *
      * @param  array  $options Field options
      * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function renderSearchInput(array $options = []);
+    public function getSearchOptions(array $options = []);
 
     /**
      * Render field value
@@ -66,24 +65,6 @@ interface FieldHandlerInterface
      * @return string
      */
     public function renderName();
-
-    /**
-     * Get search operators
-     *
-     * This method prepares a list of search operators that
-     * are appropriate for a given field.
-     *
-     * @return array List of search operators
-     */
-    public function getSearchOperators();
-
-    /**
-     * Get field label
-     *
-     * @todo Rename method to getLabel()
-     * @return string Human-friendly field name
-     */
-    public function getSearchLabel();
 
     /**
      * Convert CsvField to one or more DbField instances

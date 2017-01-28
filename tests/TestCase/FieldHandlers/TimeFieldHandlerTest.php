@@ -7,11 +7,14 @@ use PHPUnit_Framework_TestCase;
 
 class TimeFieldHandlerTest extends PHPUnit_Framework_TestCase
 {
+    protected $table = 'Fields';
+    protected $field = 'field_time';
+
     protected $fh;
 
     protected function setUp()
     {
-        $this->fh = new TimeFieldHandler('fields', 'field_time');
+        $this->fh = new TimeFieldHandler($this->table, $this->field);
     }
 
     public function testInterface()
@@ -47,14 +50,23 @@ class TimeFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertRegExp('/field_time/', $result, "Input rendering does not contain field name");
     }
 
-    public function testGetSearchOperators()
+    public function testGetSearchOptions()
     {
-        $result = $this->fh->getSearchOperators();
-        $this->assertTrue(is_array($result), "getSearchOperators() did not return an array");
-        $this->assertFalse(empty($result), "getSearchOperators() returned an empty result");
-        $this->assertArrayHasKey('is', $result, "getSearchOperators() did not return 'is' key");
-        $this->assertArrayHasKey('is_not', $result, "getSearchOperators() did not return 'is_not' key");
-        $this->assertArrayHasKey('greater', $result, "getSearchOperators() did not return 'greater' key");
-        $this->assertArrayHasKey('less', $result, "getSearchOperators() did not return 'less' key");
+        $result = $this->fh->getSearchOptions();
+
+        $this->assertTrue(is_array($result), "getSearchOptions() did not return an array");
+        $this->assertFalse(empty($result), "getSearchOptions() returned an empty result");
+
+        $this->assertArrayHasKey($this->field, $result, "getSearchOptions() did not return field key");
+
+        $this->assertArrayHasKey('type', $result[$this->field], "getSearchOptions() did not return 'type' key");
+        $this->assertArrayHasKey('label', $result[$this->field], "getSearchOptions() did not return 'label' key");
+        $this->assertArrayHasKey('operators', $result[$this->field], "getSearchOptions() did not return 'operators' key");
+        $this->assertArrayHasKey('input', $result[$this->field], "getSearchOptions() did not return 'input' key");
+
+        $this->assertArrayHasKey('is', $result[$this->field]['operators'], "getSearchOptions() did not return 'is' operator");
+        $this->assertArrayHasKey('is_not', $result[$this->field]['operators'], "getSearchOptions() did not return 'is_not' operator");
+        $this->assertArrayHasKey('greater', $result[$this->field]['operators'], "getSearchOptions() did not return 'greater' operator");
+        $this->assertArrayHasKey('less', $result[$this->field]['operators'], "getSearchOptions() did not return 'less' operator");
     }
 }

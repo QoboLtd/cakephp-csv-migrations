@@ -6,11 +6,14 @@ use PHPUnit_Framework_TestCase;
 
 class ImagesFieldHandlerTest extends PHPUnit_Framework_TestCase
 {
+    protected $table = 'Fields';
+    protected $field = 'field_images';
+
     protected $fh;
 
     protected function setUp()
     {
-        $this->fh = new ImagesFieldHandler('fields', 'field_images');
+        $this->fh = new ImagesFieldHandler($this->table, $this->field);
     }
 
     public function testInterface()
@@ -19,12 +22,11 @@ class ImagesFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\FieldHandlerInterface', $implementedInterfaces), "FieldHandlerInterface is not implemented");
     }
 
-    public function testGetSearchOperators()
+    public function testGetSearchOptions()
     {
-        $result = $this->fh->getSearchOperators();
-        $this->assertTrue(is_array($result), "getSearchOperators() did not return an array");
-        $this->assertFalse(empty($result), "getSearchOperators() returned an empty result");
-        $this->assertArrayHasKey('is', $result, "getSearchOperators() did not return 'is' key");
-        $this->assertArrayHasKey('is_not', $result, "getSearchOperators() did not return 'is_not' key");
+        $result = $this->fh->getSearchOptions();
+
+        $this->assertTrue(is_array($result), "getSearchOptions() did not return an array");
+        $this->assertTrue(empty($result), "getSearchOptions() returned a non-empty result");
     }
 }

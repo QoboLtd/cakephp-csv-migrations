@@ -6,11 +6,14 @@ use PHPUnit_Framework_TestCase;
 
 class DefaultFieldHandlerTest extends PHPUnit_Framework_TestCase
 {
+    protected $table = 'Fields';
+    protected $field = 'field_string';
+
     protected $fh;
 
     protected function setUp()
     {
-        $this->fh = new DefaultFieldHandler('fields', 'field_string');
+        $this->fh = new DefaultFieldHandler($this->table, $this->field);
     }
 
     public function testInterface()

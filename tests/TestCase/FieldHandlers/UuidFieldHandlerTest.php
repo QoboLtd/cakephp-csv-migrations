@@ -6,11 +6,14 @@ use PHPUnit_Framework_TestCase;
 
 class UuidFieldHandlerTest extends PHPUnit_Framework_TestCase
 {
+    protected $table = 'Fields';
+    protected $field = 'field_uuid';
+
     protected $fh;
 
     protected function setUp()
     {
-        $this->fh = new UuidFieldHandler('fields', 'field_uuid');
+        $this->fh = new UuidFieldHandler($this->table, $this->field);
     }
 
     public function testInterface()
@@ -44,12 +47,11 @@ class UuidFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($value, $result, "Value rendering is broken for: $description");
     }
 
-    public function testGetSearchOperators()
+    public function testGetSearchOptions()
     {
-        $result = $this->fh->getSearchOperators();
-        $this->assertTrue(is_array($result), "getSearchOperators() did not return an array");
-        $this->assertFalse(empty($result), "getSearchOperators() returned an empty result");
-        $this->assertArrayHasKey('is', $result, "getSearchOperators() did not return 'is' key");
-        $this->assertArrayHasKey('is_not', $result, "getSearchOperators() did not return 'is_not' key");
+        $result = $this->fh->getSearchOptions();
+
+        $this->assertTrue(is_array($result), "getSearchOptions() did not return an array");
+        $this->assertTrue(empty($result), "getSearchOptions() returned a non-empty result");
     }
 }

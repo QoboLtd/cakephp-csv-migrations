@@ -1,7 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 
 /**
  * BaseTimeFieldHandler
@@ -9,7 +9,7 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
  * This class provides the fallback functionality that
  * is common to date and time field handlers.
  */
-abstract class BaseTimeFieldHandler extends BaseFieldHandler
+abstract class BaseTimeFieldHandler extends BaseSimpleFieldHandler
 {
     /**
      * Date/time format

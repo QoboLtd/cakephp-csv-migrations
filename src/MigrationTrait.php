@@ -92,7 +92,7 @@ trait MigrationTrait
 
         // Merge $result with $stubFields
         foreach ($stubFields as $field => $definition) {
-            if (empty($result) || !in_array($field, array_keys($result))) {
+            if (!array_key_exists($field, $result)) {
                 $result[$field] = $definition;
             }
         }

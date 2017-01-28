@@ -12,7 +12,6 @@ use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldTrait;
-use CsvMigrations\ListTrait;
 use CsvMigrations\MigrationTrait;
 
 /**
@@ -23,7 +22,6 @@ class Table extends BaseTable
 {
     use ConfigurationTrait;
     use FieldTrait;
-    use ListTrait;
     use MigrationTrait;
 
     /**

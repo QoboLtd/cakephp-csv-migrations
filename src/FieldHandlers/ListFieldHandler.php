@@ -6,11 +6,6 @@ use CsvMigrations\FieldHandlers\BaseCsvListFieldHandler;
 class ListFieldHandler extends BaseCsvListFieldHandler
 {
     /**
-     * Field type match pattern
-     */
-    const FIELD_TYPE_PATTERN = '/list\((.*?)\)/';
-
-    /**
      * Input field html markup
      */
     const INPUT_HTML = '<div class="form-group">%s</div>';

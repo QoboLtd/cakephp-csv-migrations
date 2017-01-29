@@ -12,11 +12,6 @@ use RegexIterator;
 class FieldHandlerFactory
 {
     /**
-     * Default Field Handler class name
-     */
-    const DEFAULT_HANDLER_CLASS = 'Default';
-
-    /**
      * Field Handler classes suffix
      */
     const HANDLER_SUFFIX = 'FieldHandler';

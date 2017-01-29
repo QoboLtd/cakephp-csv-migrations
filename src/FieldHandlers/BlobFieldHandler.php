@@ -7,6 +7,11 @@ use Phinx\Db\Adapter\MysqlAdapter;
 class BlobFieldHandler extends BaseSimpleFieldHandler
 {
     /**
+     * Database field type
+     */
+    const DB_FIELD_TYPE = 'blob';
+
+    /**
      * HTML form field type
      */
     const INPUT_FIELD_TYPE = 'textarea';
@@ -23,17 +28,16 @@ class BlobFieldHandler extends BaseSimpleFieldHandler
      */
     public function fieldToDb(CsvField $csvField)
     {
-        $dbFields[] = new DbField(
-            $csvField->getName(),
-            $csvField->getType(),
-            // Set the limit to Phinx\Db\Adapter\MysqlAdapter::TEXT_LONG
-            MysqlAdapter::BLOB_LONG,
-            $csvField->getRequired(),
-            $csvField->getNonSearchable(),
-            $csvField->getUnique()
-        );
+        $csvField->setType(self::DB_FIELD_TYPE);
+        // Set the limit to Phinx\Db\Adapter\MysqlAdapter::BLOB_LONG
+        $csvField->setLimit(MysqlAdapter::BLOB_LONG);
 
-        return $dbFields;
+        $dbField = DbField::fromCsvField($csvField);
+        $result = [
+            $this->field => $dbField,
+        ];
+
+        return $result;
     }
 
     /**

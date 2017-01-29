@@ -405,16 +405,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function fieldToDb(CsvField $csvField)
     {
-        $dbFields[] = new DbField(
-            $csvField->getName(),
-            static::DB_FIELD_TYPE,
-            $csvField->getLimit(),
-            $csvField->getRequired(),
-            $csvField->getNonSearchable(),
-            $csvField->getUnique()
-        );
+        $csvField->setType(static::DB_FIELD_TYPE);
 
-        return $dbFields;
+        $dbField = DbField::fromCsvField($csvField);
+        $result = [
+            $this->field => $dbField,
+        ];
+
+        return $result;
     }
 
     /**
@@ -443,7 +441,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         // Use $data->$field if available as Entity
         if ($data instanceof Entity) {
             $result = null;
-            if (property_exists($data, $field)) {
+            if (isset($data->$field)) {
                 $result = $data->$field;
             }
 

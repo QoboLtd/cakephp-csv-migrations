@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use CsvMigrations\FieldHandlers\CsvField;
 use InvalidArgumentException;
 
 class DbField
@@ -81,6 +82,24 @@ class DbField
         $this->setRequired($required);
         $this->setNonSearchable($nonSearchable);
         $this->setUnique($unique);
+    }
+
+    /**
+     * Construct a new instance from CsvField
+     *
+     * @param CsvField $CsvField CsvField instance
+     * @return DbField
+     */
+    public static function fromCsvField(CsvField $csvField)
+    {
+        return new self(
+            $csvField->getName(),
+            $csvField->getType(),
+            $csvField->getLimit(),
+            $csvField->getRequired(),
+            $csvField->getNonSearchable(),
+            $csvField->getUnique()
+        );
     }
 
     /**

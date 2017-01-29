@@ -39,15 +39,14 @@ abstract class BaseListFieldHandler extends BaseFieldHandler
      */
     public function fieldToDb(CsvField $csvField)
     {
-        $dbFields[] = new DbField(
-            $csvField->getName(),
-            static::DB_FIELD_TYPE,
-            null,
-            $csvField->getRequired(),
-            $csvField->getNonSearchable(),
-            $csvField->getUnique()
-        );
+        $csvField->setType(static::DB_FIELD_TYPE);
+        $csvField->setLimit(null);
 
-        return $dbFields;
+        $dbField = DbField::fromCsvField($csvField);
+        $result = [
+            $this->field => $dbField,
+        ];
+
+        return $result;
     }
 }

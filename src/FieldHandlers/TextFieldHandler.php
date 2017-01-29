@@ -7,6 +7,11 @@ use Phinx\Db\Adapter\MysqlAdapter;
 class TextFieldHandler extends BaseStringFieldHandler
 {
     /**
+     * Database field type
+     */
+    const DB_FIELD_TYPE = 'text';
+
+    /**
      * HTML form field type
      */
     const INPUT_FIELD_TYPE = 'textarea';
@@ -23,17 +28,16 @@ class TextFieldHandler extends BaseStringFieldHandler
      */
     public function fieldToDb(CsvField $csvField)
     {
-        $dbFields[] = new DbField(
-            $csvField->getName(),
-            $csvField->getType(),
-            // Set the limit to Phinx\Db\Adapter\MysqlAdapter::TEXT_LONG
-            MysqlAdapter::TEXT_LONG,
-            $csvField->getRequired(),
-            $csvField->getNonSearchable(),
-            $csvField->getUnique()
-        );
+        $csvField->setType(self::DB_FIELD_TYPE);
+        // Set the limit to Phinx\Db\Adapter\MysqlAdapter::TEXT_LONG
+        $csvField->setLimit(MysqlAdapter::TEXT_LONG);
 
-        return $dbFields;
+        $dbField = DbField::fromCsvField($csvField);
+        $result = [
+            $this->field => $dbField,
+        ];
+
+        return $result;
     }
 
     /**

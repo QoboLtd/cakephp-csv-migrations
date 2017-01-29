@@ -1,9 +1,9 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
+use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
 
-class PhoneFieldHandler extends BaseSimpleFieldHandler
+class PhoneFieldHandler extends BaseStringFieldHandler
 {
     /**
      * HTML form field type

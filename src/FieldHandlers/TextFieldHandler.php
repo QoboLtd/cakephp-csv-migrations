@@ -1,10 +1,10 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
+use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class TextFieldHandler extends BaseSimpleFieldHandler
+class TextFieldHandler extends BaseStringFieldHandler
 {
     /**
      * HTML form field type
@@ -50,7 +50,8 @@ class TextFieldHandler extends BaseSimpleFieldHandler
     public function renderValue($data, array $options = [])
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $result = filter_var($data, FILTER_SANITIZE_STRING);
+        $data = (string)$this->_getFieldValueFromData($data);
+        $result = $this->sanitizeValue($data, $options);
 
         if (!empty($result)) {
             if (!isset($options['renderAs']) || !$options['renderAs'] === static::RENDER_PLAIN_VALUE) {

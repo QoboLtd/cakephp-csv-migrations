@@ -1,9 +1,9 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
+use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
 
-class UuidFieldHandler extends BaseSimpleFieldHandler
+class UuidFieldHandler extends BaseStringFieldHandler
 {
     /**
      * Field type

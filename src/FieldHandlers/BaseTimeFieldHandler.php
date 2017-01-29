@@ -1,7 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
+use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
 
 /**
  * BaseTimeFieldHandler
@@ -9,7 +9,7 @@ use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
  * This class provides the fallback functionality that
  * is common to date and time field handlers.
  */
-abstract class BaseTimeFieldHandler extends BaseSimpleFieldHandler
+abstract class BaseTimeFieldHandler extends BaseStringFieldHandler
 {
     /**
      * Date/time format
@@ -58,8 +58,9 @@ abstract class BaseTimeFieldHandler extends BaseSimpleFieldHandler
         if (is_object($data)) {
             $result = $data->i18nFormat(static::FORMAT);
         } else {
-            $result = $data;
+            $result = (string)$data;
         }
+        $result = $this->sanitizeValue($result, $options);
 
         return $result;
     }

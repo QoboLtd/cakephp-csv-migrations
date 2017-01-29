@@ -279,7 +279,12 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
             [null, 'integer'],
             [5, 'integer(5)'],
             [11, 'integer(11)'],
-            [null, 'file']
+            [null, 'file'],
+            [null, null],
+            [5, '5'],
+            [5, 5],
+            [5, -5],
+            [null, 0],
         ];
     }
 

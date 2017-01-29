@@ -164,19 +164,25 @@ class CsvField
     /**
      * Extract field type from type value
      *
-     * In case of simple field, like text, this will
-     * return the type itself.  In case of a type
-     * with limit, it will strip the limit away and
-     * return the type alone.
+     * Field type can be either simple or combined
+     * with limit.  For example:
+     *
+     * * Simple: uuid, string, date.
+     * * Combined: string(100), list(Foo).
+     *
+     * In case of a simple type, it is returned as is.  For
+     * the combined typed, the limit is stripped out and a
+     * simple type only is returned.
      *
      * @param  string $type field type
      * @return string       field type
      */
     protected function _extractType($type)
     {
-        if (false !== strpos($type, '(')) {
-            preg_match(static::PATTERN_TYPE, $type, $matches);
-            $type = $matches[1];
+        if (preg_match(static::PATTERN_TYPE, $type, $matches)) {
+            if (!empty($matches[1])) {
+                $type = $matches[1];
+            }
         }
 
         return $type;
@@ -185,21 +191,26 @@ class CsvField
     /**
      * Extract field limit from type value
      *
-     * In case of simple field, like text, this will
-     * return the default limit.  In case of a type
-     * with limit, it will strip the type away and
-     * return the limit alone.
+     * Field type can be either simple or combined
+     * with limit.  For example:
+     *
+     * * Simple: uuid, string, date.
+     * * Combined: string(100), list(Foo).
+     *
+     * In case of a simple type, the default limit is
+     * retured.  For the combined typed, the type is
+     * stripped out and a limit only is returned.
      *
      * @param  string $type field type
      * @return mixed        field limit
      */
     protected function _extractLimit($type)
     {
-        if (false !== strpos($type, '(')) {
-            preg_match(static::PATTERN_TYPE, $type, $matches);
-            $limit = $matches[2];
-        } else {
-            $limit = static::DEFAULT_FIELD_LIMIT;
+        $limit = static::DEFAULT_FIELD_LIMIT;
+        if (preg_match(static::PATTERN_TYPE, $type, $matches)) {
+            if (!empty($matches[2])) {
+                $limit = $matches[2];
+            }
         }
 
         return $limit;
@@ -208,6 +219,7 @@ class CsvField
     /**
      * Set field name
      *
+     * @throws \InvalidArgumentException when name is empty
      * @param string $name field name
      * @return void
      */
@@ -234,14 +246,15 @@ class CsvField
     /**
      * Set field type
      *
-     * @param string $type field type
+     * @throws \InvalidArgumentException when type is empty
+     * @param  string $type field type
      * @return void
      */
     public function setType($type)
     {
         $type = (string)$type;
         if (empty($type)) {
-            throw new \InvalidArgumentException(__CLASS__ . ': Empty field type is not allowed: ' . $this->getName());
+            throw new \InvalidArgumentException('Empty field type is not allowed: ' . $this->getName());
         }
 
         $this->_type = $this->_extractType($type);
@@ -258,25 +271,47 @@ class CsvField
     }
 
     /**
-     * Set field limit from type
+     * Set field limit
      *
-     * @param string $type field type
+     * Type is set as is if it is null or integer.  If
+     * it passses is_numeric() then it's cast to integer.
+     * In all other cases, it is assumed that the limit is
+     * a string defining field type, and limit needs to be
+     * extracted.
+     *
+     * @param mixed $limit field limit
      * @return void
      */
-    public function setLimit($type)
+    public function setLimit($limit)
     {
-        $type = (string)$type;
-        if (empty($type)) {
+        if ($limit === null) {
+            $this->_limit = $limit;
+
+            return;
+        }
+
+        if (is_int($limit) || is_numeric($limit)) {
+            $result = abs((int)$limit);
+            if ($result == 0) {
+                $result = null;
+            }
+            $this->_limit = $result;
+
+            return;
+        }
+
+        $result = (string)$limit;
+        if (empty($result)) {
             throw new \InvalidArgumentException('Empty field type is not allowed: ' . $this->getName());
         }
 
-        $this->_limit = $this->_extractLimit($type);
+        $this->_limit = $this->_extractLimit($result);
     }
 
     /**
      * Get field limit
      *
-     * @return int
+     * @return int|null
      */
     public function getLimit()
     {
@@ -306,7 +341,7 @@ class CsvField
      */
     public function getAssocCsvModule()
     {
-        return $this->_limit;
+        return $this->getLimit();
     }
 
     /**

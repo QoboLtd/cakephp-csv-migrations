@@ -147,10 +147,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             throw new \InvalidArgumentException('Table cannot be empty.');
         }
         if (is_string($table)) {
-            $this->table = TableRegistry::get($table);
-        } else {
-            $this->table = $table;
+            $table = TableRegistry::get($table);
         }
+        $this->table = $table;
     }
 
     /**

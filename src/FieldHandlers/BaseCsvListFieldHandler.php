@@ -63,6 +63,7 @@ abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
                 $result = sprintf(static::VALUE_NOT_FOUND_HTML, $data);
             }
         }
+        $result = $this->sanitizeValue($result, $options);
 
         return $result;
     }

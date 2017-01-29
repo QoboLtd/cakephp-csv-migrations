@@ -117,6 +117,7 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
         }
 
         $result = implode('&nbsp;', $result);
+        $result = $this->sanitizeValue($result, $options);
 
         return $result;
     }

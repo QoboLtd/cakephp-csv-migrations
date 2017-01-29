@@ -24,11 +24,6 @@ class Table extends BaseTable
     use FieldTrait;
     use MigrationTrait;
 
-    /**
-     * Searchable parameter name
-     */
-    const PARAM_NON_SEARCHABLE = 'non-searchable';
-
     /* @var array $_currentUser to store user session */
     protected $_currentUser;
 

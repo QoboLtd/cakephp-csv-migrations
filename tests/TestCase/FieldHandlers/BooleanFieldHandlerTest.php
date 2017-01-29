@@ -25,6 +25,8 @@ class BooleanFieldHandlerTest extends PHPUnit_Framework_TestCase
     public function getValues()
     {
         return [
+            [null, 'No', 'Null'],
+            ['', 'No', 'Empty string'],
             [1, 'Yes', 'Integer true'],
             [0, 'No', 'Integer false'],
             ['1', 'Yes', 'String true'],

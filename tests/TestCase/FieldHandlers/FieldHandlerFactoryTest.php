@@ -3,11 +3,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use Cake\Core\Configure;
 use Cake\ORM\Entity;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Parser\Csv\MigrationParser;
 use CsvMigrations\PathFinder\MigrationPathFinder;

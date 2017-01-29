@@ -1,7 +1,6 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\ListFieldHandler;
 use PHPUnit_Framework_TestCase;
 

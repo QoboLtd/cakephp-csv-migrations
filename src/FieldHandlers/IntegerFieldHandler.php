@@ -11,23 +11,12 @@ class IntegerFieldHandler extends BaseNumberFieldHandler
     const DB_FIELD_TYPE = 'integer';
 
     /**
-     * Sanitize field value
+     * Sanitize options
      *
-     * This method filters the value and removes anything
-     * potentially dangerous.  Ideally, it should always be
-     * called before rendering the value to the user, in
-     * order to avoid cross-site scripting (XSS) attacks.
+     * Name of filter_var() filter to run and all desired
+     * options/flags.
      *
-     * @throws \InvalidArgumentException when data is not a string
-     * @param  string $data    Field data
-     * @param  array  $options Field options
-     * @return string          Field value
+     * @var array
      */
-    public function sanitizeValue($data, array $options = [])
-    {
-        $data = parent::sanitizeValue($data, $options);
-        $data = filter_var($data, FILTER_SANITIZE_NUMBER_INT);
-
-        return $data;
-    }
+    public $sanitizeOptions = [FILTER_SANITIZE_NUMBER_INT];
 }

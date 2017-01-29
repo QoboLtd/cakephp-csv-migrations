@@ -11,6 +11,16 @@ class UrlFieldHandler extends BaseStringFieldHandler
     const INPUT_FIELD_TYPE = 'url';
 
     /**
+     * Sanitize options
+     *
+     * Name of filter_var() filter to run and all desired
+     * options/flags.
+     *
+     * @var array
+     */
+    public $sanitizeOptions = [FILTER_SANITIZE_URL];
+
+    /**
      * Render field value
      *
      * This method prepares the output of the value for the given
@@ -35,26 +45,5 @@ class UrlFieldHandler extends BaseStringFieldHandler
         }
 
         return $result;
-    }
-
-    /**
-     * Sanitize field value
-     *
-     * This method filters the value and removes anything
-     * potentially dangerous.  Ideally, it should always be
-     * called before rendering the value to the user, in
-     * order to avoid cross-site scripting (XSS) attacks.
-     *
-     * @throws \InvalidArgumentException when data is not a string
-     * @param  string $data    Field data
-     * @param  array  $options Field options
-     * @return string          Field value
-     */
-    public function sanitizeValue($data, array $options = [])
-    {
-        $data = parent::sanitizeValue($data, $options);
-        $data = filter_var($data, FILTER_SANITIZE_URL);
-
-        return $data;
     }
 }

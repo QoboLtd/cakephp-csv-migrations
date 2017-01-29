@@ -257,7 +257,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public function renderInput($data = '', array $options = [])
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $data = $this->_getFieldValueFromData($data);
+        $data = (string)$this->_getFieldValueFromData($data);
 
         $fieldName = $this->table->aliasField($this->field);
 
@@ -346,9 +346,35 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public function renderValue($data, array $options = [])
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $result = $this->_getFieldValueFromData($data);
+        $result = (string)$this->_getFieldValueFromData($data);
+        $result = $this->sanitizeValue($result, $options);
 
         return $result;
+    }
+
+    /**
+     * Sanitize field value
+     *
+     * This method filters the value and removes anything
+     * potentially dangerous.  Ideally, it should always be
+     * called before rendering the value to the user, in
+     * order to avoid cross-site scripting (XSS) attacks.
+     *
+     * @throws \InvalidArgumentException when data is not a string
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field value
+     */
+    public function sanitizeValue($data, array $options = [])
+    {
+        if (!is_string($data)) {
+            throw new \InvalidArgumentException("Cannot sanitize a non-string value");
+        }
+
+        $data = trim($data);
+        $data = filter_var($data, FILTER_UNSAFE_RAW);
+
+        return $data;
     }
 
     /**

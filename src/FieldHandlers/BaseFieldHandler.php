@@ -437,16 +437,25 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $field = $this->field;
         }
 
+        // Use data as is
         $result = $data;
 
+        // Use $data->$field if available as Entity
         if ($data instanceof Entity) {
-            $result = $data->$field;
+            $result = null;
+            if (property_exists($data, $field)) {
+                $result = $data->$field;
+            }
 
             return $result;
         }
 
+        // Use $data->data[$field] if available as Request
         if ($data instanceof Request) {
-            $result = isset($data->data[$field]) ? $data->data[$field] : null;
+            $result = null;
+            if (is_array($data->data) && array_key_exists($field, $data->data)) {
+                $result = $data->data[$field];
+            }
 
             return $result;
         }

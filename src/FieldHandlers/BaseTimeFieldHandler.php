@@ -61,6 +61,7 @@ abstract class BaseTimeFieldHandler extends BaseStringFieldHandler
             $result = (string)$data;
         }
         $result = $this->sanitizeValue($result, $options);
+        $result = $this->formatValue($result, $options);
 
         return $result;
     }

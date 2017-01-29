@@ -79,6 +79,8 @@ class BlobFieldHandler extends BaseSimpleFieldHandler
         if (is_resource($data)) {
             $result = stream_get_contents($data);
         }
+        $result = $this->sanitizeValue($result, $options);
+        $result = $this->formatValue($result, $options);
 
         return $result;
     }

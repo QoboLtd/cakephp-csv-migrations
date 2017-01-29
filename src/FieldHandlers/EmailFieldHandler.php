@@ -21,28 +21,37 @@ class EmailFieldHandler extends BaseStringFieldHandler
     public $sanitizeOptions = [FILTER_SANITIZE_EMAIL];
 
     /**
-     * Render field value
+     * Format field value
      *
-     * This method prepares the output of the value for the given
-     * field.  The result can be controlled via the variety of
-     * options.
+     * This method provides a customization point for formatting
+     * of the field value before rendering.
      *
-     * @param  string $data    Field data
-     * @param  array  $options Field options
-     * @return string          Field value
+     * NOTE: The value WILL NOT be sanitized during the formatting.
+     *       It is assumed that sanitization happens either before
+     *       or after this method is called.
+     *
+     * @param mixed $data    Field value data
+     * @param array $options Field formatting options
+     * @return string
      */
-    public function renderValue($data, array $options = [])
+    protected function formatValue($data, array $options = [])
     {
-        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $data = (string)$this->_getFieldValueFromData($data);
-        $result = $this->sanitizeValue($data, $options);
+        $result = (string)$data;
+
+        if (empty($result)) {
+            return $result;
+        }
+
+        if (array_key_exists('renderAs', $options) && ($options['renderAs'] === static::RENDER_PLAIN_VALUE)) {
+            return $result;
+        }
 
         // Only link to valid emails, to avoid unpredictable behavior
-        if (!empty($result) && filter_var($result, FILTER_VALIDATE_EMAIL)) {
-            if (!isset($options['renderAs']) || !$options['renderAs'] === static::RENDER_PLAIN_VALUE) {
-                $result = $this->cakeView->Html->link($result, 'mailto:' . $result, ['target' => '_blank']);
-            }
+        if (filter_var($result, FILTER_VALIDATE_EMAIL) === false) {
+            return $result;
         }
+
+        $result = $this->cakeView->Html->link($result, 'mailto:' . $result, ['target' => '_blank']);
 
         return $result;
     }

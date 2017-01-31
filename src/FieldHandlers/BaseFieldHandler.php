@@ -73,6 +73,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         'boolean' => ['is' => 'Is', 'is_not' => 'Is not'],
         'list' => ['is' => 'Is', 'is_not' => 'Is not'],
         'dblist' => ['is' => 'Is', 'is_not' => 'Is not'],
+        'sublist' => ['is' => 'Is', 'is_not' => 'Is not'],
         'string' => [
             'contains' => 'Contains',
             'not_contains' => 'Does not contain',
@@ -146,6 +147,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             'is_not' => ['operator' => 'NOT IN']
         ],
         'dblist' => [
+            'is' => ['operator' => 'IN'],
+            'is_not' => ['operator' => 'NOT IN']
+        ],
+        'sublist' => [
             'is' => ['operator' => 'IN'],
             'is_not' => ['operator' => 'NOT IN']
         ],

@@ -83,14 +83,6 @@ class SublistFieldHandler extends ListFieldHandler
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function renderSearchInput($table, $field, array $options = [])
-    {
-        return false;
-    }
-
-    /**
      * Converts list options to supported dynamiSelect lib structure (see link).
      *
      * @param array $options List options

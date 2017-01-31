@@ -36,26 +36,24 @@ class LookupListener extends BaseViewListener
     public function beforeLookup(Event $event, Query $query)
     {
         $request = $event->subject()->request;
-        if (!empty($request->query['query'])) {
-            $table = $event->subject()->{$event->subject()->name};
+        $table = $event->subject()->{$event->subject()->name};
 
-            $typeaheadFields = [];
-            // Get typeahead fields from configuration
-            if (method_exists($table, 'typeaheadFields') && is_callable([$table, 'typeaheadFields'])) {
-                $typeaheadFields = $table->typeaheadFields();
-            }
-            // If there are no typeahead fields configured, use displayFields()
-            if (empty($typeaheadFields)) {
-                $typeaheadFields[] = $table->displayField();
-            }
+        $fields = $this->_getTypeaheadFields($table);
 
-            if (!empty($typeaheadFields)) {
-                foreach ($typeaheadFields as $field) {
-                    $query->orWhere([$field . ' LIKE' => '%' . $request->query['query'] . '%']);
-                }
-            } else {
-                throw new RuntimeException("No typeahead or display field configured for " . $table->alias());
-            }
+        if (empty($fields)) {
+            throw new RuntimeException("No typeahead or display field configured for " . $table->alias());
+        }
+
+        $query->order($this->_getOrderByFields($table, $query, $fields));
+
+        if (!$request->query('query')) {
+            return;
+        }
+
+        // add typeahead fields to where clause
+        $value = $request->query('query');
+        foreach ($fields as $field) {
+            $query->orWhere([$field . ' LIKE' => '%' . $value . '%']);
         }
     }
 
@@ -97,10 +95,77 @@ class LookupListener extends BaseViewListener
                 ['renderAs' => RelatedFieldHandler::RENDER_PLAIN_VALUE]
             );
         }
-        // sort results
-        asort($result);
 
         $event->result = $result;
+    }
+
+    /**
+     * Get module's type-ahead fields.
+     *
+     * @param \Cake\ORM\Table $table Table instance
+     * @return array
+     */
+    protected function _getTypeaheadFields(Table $table)
+    {
+        // Get typeahead fields from configuration
+        $result = [];
+        if (method_exists($table, 'typeaheadFields') && is_callable([$table, 'typeaheadFields'])) {
+            $result = $table->typeaheadFields();
+        }
+        // If there are no typeahead fields configured, use displayFields()
+        if (empty($result)) {
+            $result[] = $table->displayField();
+        }
+
+        foreach ($result as &$typeaheadField) {
+            $typeaheadField = $table->aliasField($typeaheadField);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get order by fields for lookup Query.
+     *
+     * @param \Cake\ORM\Table $table Table instance
+     * @param \Cake\ORM\Query $query ORM Query
+     * @param array $fields Optional fields to be used in order by clause
+     * @return array
+     */
+    protected function _getOrderByFields(Table $table, Query $query, array $fields = [])
+    {
+        $tableConfig = [];
+        if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
+            $tableConfig = $table->getConfig();
+        }
+
+        if (empty($tableConfig['parent']['module'])) {
+            return $fields;
+        }
+
+        // order by parent module
+        foreach ($table->associations() as $association) {
+            if ($association->className() !== $tableConfig['parent']['module']) {
+                continue;
+            }
+
+            $targetTable = $association->target();
+            $primaryKey = $targetTable->aliasField($association->primaryKey());
+            $foreignKey = $table->aliasField($association->foreignKey());
+            // join parent table
+            $query->join([
+                'table' => 'projects',
+                'alias' => $association->name(),
+                'type' => 'INNER',
+                'conditions' => $foreignKey . ' = ' . $primaryKey . ' OR ' . $foreignKey . ' IS NULL'
+            ]);
+
+            // add parent display field to order-by fields
+            array_unshift($fields, $targetTable->aliasField($targetTable->displayField()));
+            break;
+        }
+
+        return $fields;
     }
 
     /**

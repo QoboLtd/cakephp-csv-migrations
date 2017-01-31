@@ -54,6 +54,18 @@ class SublistFieldHandler extends ListFieldHandler
             $count = count($data);
         }
 
+        $options['captions'] = !empty($options['captions']) ? $options['captions'] : __('Please select');
+
+        // if captions are provided but fewer than the levels we have, use the first caption for all levels.
+        if (is_array($options['captions']) && count($options['captions'] < $levels + 1)) {
+            $options['captions'] = array_fill(0, $levels + 1, $options['captions'][0]);
+        }
+
+        // if captions is a string, use it for all levels.
+        if (is_string($options['captions'])) {
+            $options['captions'] = array_fill(0, $levels + 1, $options['captions']);
+        }
+
         // get inputs
         $inputs = [];
         for ($i = 0; $i <= $levels; $i++) {
@@ -63,6 +75,7 @@ class SublistFieldHandler extends ListFieldHandler
                 $inputOptions['data-type'] = 'dynamic-select';
                 $inputOptions['data-structure'] = json_encode($structure);
                 $inputOptions['data-option-values'] = json_encode(array_flip($optionValues));
+                $inputOptions['data-captions'] = json_encode($options['captions']);
                 $inputOptions['data-selectors'] = json_encode($selectors);
                 $inputOptions['data-hide-next'] = true;
                 $inputOptions['data-previous-default-value'] = true;

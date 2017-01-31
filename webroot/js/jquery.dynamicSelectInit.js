@@ -18,12 +18,14 @@
                 var structure = $(this).data('structure');
                 var option_values = $(this).data('option-values');
                 var selectors = $(this).data('selectors');
+                var captions = $(this).data('captions');
                 var hide_next = $(this).data('hide-next');
                 var previous_default_value = $(this).data('previous-default-value');
                 $(document).dynamicSelect({
                     structure: structure,
                     optionValues: option_values,
                     selectors: selectors,
+                    captions: captions,
                     hideNext: hide_next,
                     previousDefaultValue: previous_default_value
                 });

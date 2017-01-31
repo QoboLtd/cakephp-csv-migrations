@@ -40,11 +40,11 @@ class LookupListener extends BaseViewListener
 
         $fields = $this->_getTypeaheadFields($table);
 
-        if (empty($fields)) {
-            throw new RuntimeException("No typeahead or display field configured for " . $table->alias());
-        }
-
         $query->order($this->_getOrderByFields($table, $query, $fields));
+
+        if (empty($fields)) {
+            return;
+        }
 
         if (!$request->query('query')) {
             return;

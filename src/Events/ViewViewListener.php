@@ -9,11 +9,6 @@ use CsvMigrations\Events\BaseViewListener;
 class ViewViewListener extends BaseViewListener
 {
     /**
-     * Pretty format identifier
-     */
-    const FORMAT_PRETTY = 'pretty';
-
-    /**
      * {@inheritDoc}
      */
     public function implementedEvents()

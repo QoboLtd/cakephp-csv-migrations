@@ -22,11 +22,6 @@ class IndexViewListener extends BaseViewListener
     const MENU_PROPERTY_NAME = '_Menus';
 
     /**
-     * Pretty format identifier
-     */
-    const FORMAT_PRETTY = 'pretty';
-
-    /**
      * {@inheritDoc}
      */
     public function implementedEvents()

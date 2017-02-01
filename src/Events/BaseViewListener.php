@@ -25,6 +25,11 @@ abstract class BaseViewListener implements EventListenerInterface
     use PrettifyTrait;
 
     /**
+     * Pretty format identifier
+     */
+    const FORMAT_PRETTY = 'pretty';
+
+    /**
      * Datatables format identifier
      */
     const FORMAT_DATATABLES = 'datatables';

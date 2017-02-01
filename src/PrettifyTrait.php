@@ -49,7 +49,8 @@ trait PrettifyTrait
                         continue;
                     }
 
-                    $tableName = $table->association($associatedEntity->source())->className();
+                    list(, $associationName) = pluginSplit($associatedEntity->source());
+                    $tableName = $table->association($associationName)->className();
                     $this->_prettify($associatedEntity, $tableName);
                 }
             }

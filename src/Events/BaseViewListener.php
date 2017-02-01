@@ -35,24 +35,16 @@ abstract class BaseViewListener implements EventListenerInterface
     const FORMAT_DATATABLES = 'datatables';
 
     /**
-     * Here we list forced associations when fetching record(s) associated data.
-     * This is useful, for example, when trying to fetch a record(s) associated
-     * documents (such as photos, pdfs etc), which are nested two levels deep.
-     *
-     * To detect these nested associations, since our association names
-     * are constructed dynamically, we use the associations class names
-     * as identifiers.
-     *
-     * @var array
+     * File association class name
      */
-    protected $_nestedAssociations = [];
+    const FILE_CLASS_NAME = 'Burzum/FileStorage.FileStorage';
 
     /**
-     * Nested association chain for retrieving associated file records
+     * Current module fields list which are associated with files
      *
      * @var array
      */
-    protected $_fileAssociations = ['Documents'];
+    protected $_fileAssociationFields = [];
 
     /**
      * Wrapper method that checks if Table instance has method 'findByLookupFields'
@@ -272,39 +264,22 @@ abstract class BaseViewListener implements EventListenerInterface
     }
 
     /**
-     * Method responsible for retrieving current Table's associations
+     * Method responsible for retrieving current Table's file associations
      *
-     * @param  Cake\Event\Event $event Event instance
+     * @param  Cake\ORM\Table $table Table instance
      * @return array
      */
-    protected function _getAssociations(Event $event)
+    protected function _getFileAssociations(Table $table)
     {
         $result = [];
 
-        $associations = $event->subject()->{$event->subject()->name}->associations();
+        foreach ($table->associations() as $association) {
+            if (static::FILE_CLASS_NAME !== $association->className()) {
+                continue;
+            }
 
-        if (empty($associations)) {
-            return $result;
+            $result[] = $association->name();
         }
-
-        // always include file associations
-        $result = $this->_containAssociations(
-            $associations,
-            $this->_fileAssociations,
-            true
-        );
-
-        if (!$event->subject()->request->query('associated')) {
-            return $result;
-        }
-
-        $result = array_merge(
-            $this->_containAssociations(
-                $associations,
-                $this->_nestedAssociations
-            ),
-            $result
-        );
 
         return $result;
     }

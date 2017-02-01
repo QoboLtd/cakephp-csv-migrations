@@ -38,7 +38,12 @@ class IndexViewListener extends BaseViewListener
      */
     public function beforePaginate(Event $event, Query $query)
     {
-        $query->contain($this->_getAssociations($event));
+        $table = $event->subject()->{$event->subject()->name};
+        $request = $event->subject()->request;
+
+        if (!in_array($request->query('format'), [static::FORMAT_PRETTY, static::FORMAT_DATATABLES])) {
+            $query->contain($this->_getFileAssociations($table));
+        }
         $this->_filterByConditions($query, $event);
         $this->_selectActionFields($query, $event);
         $this->_handleDtSorting($query, $event);

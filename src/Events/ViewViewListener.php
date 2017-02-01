@@ -24,8 +24,14 @@ class ViewViewListener extends BaseViewListener
      */
     public function beforeFind(Event $event, Query $query)
     {
+        $table = $event->subject()->{$event->subject()->name};
+        $request = $event->subject()->request;
+
         $this->_lookupFields($query, $event);
-        $query->contain($this->_getAssociations($event));
+
+        if (static::FORMAT_PRETTY !== $request->query('format')) {
+            $query->contain($this->_getFileAssociations($table));
+        }
     }
 
     /**

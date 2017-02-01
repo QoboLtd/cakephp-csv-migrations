@@ -10,6 +10,7 @@ use Cake\Network\Request;
 use Cake\ORM\AssociationCollection;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
+use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
@@ -191,62 +192,21 @@ abstract class BaseViewListener implements EventListenerInterface
     /**
      * Method for including files.
      *
-     * @param  Entity $entity Entity
-     * @param  Event  $event  Event instance
+     * @param \Cake\ORM\Entity $entity Entity
+     * @param \Cake\ORM\Table $table Table instance
      * @return void
-     * @todo   this method is very hardcoded and has been added because of an issue with the soft delete
-     *         plugin (https://github.com/UseMuffin/Trash), which affects contain() functionality with
-     *         belongsTo associations. Once the issue is resolved this method can be removed.
+     * @todo this method is very hardcoded and has been added because of an issue with the soft delete
+     *       plugin (https://github.com/UseMuffin/Trash), which affects contain() functionality with
+     *       belongsTo associations. Once the issue is resolved this method can be removed.
      */
-    protected function _includeFiles(Entity $entity, Event $event)
+    protected function _restructureFiles(Entity $entity, Table $table)
     {
-        $associations = $event->subject()->{$event->subject()->name}->associations();
+        $fileAssociationFields = $this->_getFileAssociationFields($table);
+        foreach ($fileAssociationFields as $associationName => $fieldName) {
+            $associatedFieldName = Inflector::underscore($associationName);
 
-        foreach ($associations as $docAssoc) {
-            if ('Documents' !== $docAssoc->className()) {
-                continue;
-            }
-
-            // get id from current entity
-            $id = $entity->{$docAssoc->foreignKey()};
-
-            // skip if id is empty
-            if (empty($id)) {
-                continue;
-            }
-
-            // generate property name from association name (example: photos_document)
-            $docPropertyName = $this->_associationPropertyName($docAssoc->name());
-            $entity->{$docPropertyName} = $docAssoc->target()->get($id);
-
-            foreach ($docAssoc->target()->associations() as $fileAssoc) {
-                if ('Files' !== $fileAssoc->className()) {
-                    continue;
-                }
-
-                $query = $fileAssoc->target()->find('all', [
-                    'conditions' => [$fileAssoc->foreignKey() => $entity->{$docPropertyName}->id]
-                ]);
-
-                // generate property name from association name (document_id_files)
-                $filePropertyName = Inflector::underscore($fileAssoc->name());
-                $entity->{$docPropertyName}->{$filePropertyName} = $query->all();
-
-                foreach ($fileAssoc->target()->associations() as $fileStorageAssoc) {
-                    if ('Burzum/FileStorage.FileStorage' !== $fileStorageAssoc->className()) {
-                        continue;
-                    }
-
-                    $foreignKey = $fileStorageAssoc->foreignKey();
-                    // generate property name from association name (file_id_file_storage_file_storage)
-                    $fileStoragePropertyName = $this->_associationPropertyName($fileStorageAssoc->name());
-
-                    foreach ($entity->{$docPropertyName}->{$filePropertyName} as $file) {
-                        $fileStorage = $fileStorageAssoc->target()->get($file->{$foreignKey});
-                        $file->{$fileStoragePropertyName} = $fileStorage;
-                    }
-                }
-            }
+            $entity->set($fieldName, $entity->get($associatedFieldName));
+            $entity->unsetProperty($associatedFieldName);
         }
     }
 
@@ -285,67 +245,29 @@ abstract class BaseViewListener implements EventListenerInterface
     }
 
     /**
-     * Method that retrieve's Table association names
-     * to be passed to the ORM Query.
+     * Method responsible for retrieving file associations field names
      *
-     * Nested associations can travel as many levels deep
-     * as defined in the parameter array. Using the example
-     * array below, our code will look for a direct association
-     * with class name 'Documents'. If found, it will add the
-     * association's name to the result array and it will loop
-     * through its associations to look for a direct association
-     * with class name 'Files'. If found again, it will add it to
-     * the result array (nested within the Documents association name)
-     * and will carry on until it runs out of nesting levels or
-     * matching associations.
-     *
-     * Example array:
-     * ['Documents', 'Files', 'Burzum/FileStorage.FileStorage']
-     *
-     * Example result:
-     * [
-     *     'PhotosDocuments' => [
-     *         'DocumentIdFiles' => [
-     *             'FileIdFileStorageFileStorage' => []
-     *         ]
-     *     ]
-     * ]
-     *
-     * @param  Cake\ORM\AssociationCollection $associations       Table associations
-     * @param  array                          $nestedAssociations Nested associations
-     * @param  bool                           $onlyNested         Flag for including only nested associations
+     * @param  Cake\ORM\Table $table Table instance
      * @return array
      */
-    protected function _containAssociations(
-        AssociationCollection $associations,
-        array $nestedAssociations = [],
-        $onlyNested = false
-    ) {
+    protected function _getFileAssociationFields(Table $table)
+    {
         $result = [];
 
-        foreach ($associations as $association) {
-            if (!$onlyNested) {
-                $result[$association->name()] = [];
-            }
-
-            if (empty($nestedAssociations)) {
-                continue;
-            }
-
-            foreach ($nestedAssociations as $nestedAssociation) {
-                if ($nestedAssociation !== $association->className()) {
-                    continue;
-                }
-
-                $result[$association->name()] = [
-                    'DocumentIdFiles' => [
-                        'FileIdFileStorageFileStorage' => []
-                    ]
-                ];
-            }
+        if (!empty($this->_fileAssociationFields)) {
+            return $this->_fileAssociationFields;
         }
 
-        return $result;
+        foreach ($table->associations() as $association) {
+            if (static::FILE_CLASS_NAME !== $association->className()) {
+                continue;
+            }
+            $result[$association->name()] = $association->conditions()['model_field'];
+        }
+
+        $this->_fileAssociationFields = $result;
+
+        return $this->_fileAssociationFields;
     }
 
     /**

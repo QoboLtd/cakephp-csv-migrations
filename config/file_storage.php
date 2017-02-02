@@ -30,7 +30,7 @@ Configure::write('ThumbnailVersions', [
 
 
 Configure::write('FileStorage', [
-    'pathBuilderOptions' => ['pathBuilderOptions' => ['pathPrefix' => '/uploads']],
+    'pathBuilderOptions' => ['pathPrefix' => 'uploads'],
     'association' => 'UploadDocuments',
     'imageSizes' => [
         'file_storage' => [

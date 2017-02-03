@@ -30,7 +30,7 @@ Configure::write('ThumbnailVersions', [
 
 
 Configure::write('FileStorage', [
-    'pathBuilderOptions' => ['pathBuilderOptions' => ['pathPrefix' => '/uploads']],
+    'pathBuilderOptions' => ['pathPrefix' => '/uploads'],
     'association' => 'UploadDocuments',
     'imageSizes' => [
         'file_storage' => [
@@ -66,5 +66,5 @@ StorageManager::config(
         'class' => '\Gaufrette\Filesystem'
     ]
 );
-$listener = new BaseListener(Configure::read('FileStorage.pathBuilderOptions'));
+$listener = new BaseListener(Configure::read('FileStorage'));
 EventManager::instance()->on($listener);

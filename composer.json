@@ -4,7 +4,6 @@
     "type": "cakephp-plugin",
     "license": "GPL-2.0",
     "require": {
-        "php": ">=5.4.16",
         "cakephp/cakephp": ">3.0.0 <4.0",
         "cakephp/migrations": "~1.0",
         "league/csv": "^8.1",
@@ -19,7 +18,7 @@
         "maiconpinto/cakephp-adminlte-theme": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "*",
+        "phpunit/phpunit": "^5.0",
         "cakephp/cakephp-codesniffer": "dev-master"
     },
     "replace": {

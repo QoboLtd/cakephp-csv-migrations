@@ -66,7 +66,5 @@ StorageManager::config(
         'class' => '\Gaufrette\Filesystem'
     ]
 );
-$listener = new BaseListener([
-    'pathBuilderOptions' => Configure::read('FileStorage.pathBuilderOptions')
-]);
+$listener = new BaseListener(Configure::read('FileStorage'));
 EventManager::instance()->on($listener);

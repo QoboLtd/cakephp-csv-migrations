@@ -162,7 +162,7 @@ class ViewViewTabsListener implements EventListenerInterface
         $labelCounts = [];
         // Gather labels for all associations
         foreach ($tableInstance->associations() as $association) {
-            $assocTableInstance = TableRegistry::get($association->table());
+            $assocTableInstance = $association->target();
 
             $icon = $this->_getTableIcon($assocTableInstance);
             $assocAlias = $association->alias();

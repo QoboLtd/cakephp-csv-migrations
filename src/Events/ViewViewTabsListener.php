@@ -26,7 +26,6 @@ class ViewViewTabsListener implements EventListenerInterface
      * @var \Cake\ORM\Table
      */
     protected $_tableInstance;
-    protected $_assocTypes;
 
     /**
      * Mapping of association name to method name

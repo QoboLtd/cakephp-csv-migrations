@@ -374,7 +374,7 @@ class ViewViewTabsListener implements EventListenerInterface
             )
         );
 
-        $query = $this->_tableInstance->{$assocName}->find('all', [
+        $query = $association->target()->find('all', [
             'conditions' => [$assocForeignKey => $recordId]
         ]);
         $records = $query->all();

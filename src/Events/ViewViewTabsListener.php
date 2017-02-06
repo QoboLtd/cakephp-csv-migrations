@@ -20,8 +20,23 @@ class ViewViewTabsListener implements EventListenerInterface
 
     const ASSOC_FIELDS_ACTION = 'index';
 
+    /**
+     * Current Table instance
+     *
+     * @var \Cake\ORM\Table
+     */
     protected $_tableInstance;
     protected $_assocTypes;
+
+    /**
+     * Mapping of association name to method name
+     *
+     * @var array
+     */
+    protected $_associationsMap = [
+        'manyToMany' => '_manyToManyAssociatedRecords',
+        'oneToMany' => '_oneToManyAssociatedRecords'
+    ];
 
     /**
      * Implemented Events
@@ -109,6 +124,10 @@ class ViewViewTabsListener implements EventListenerInterface
                 continue;
             }
 
+            if (!in_array($association->type(), array_keys($this->_associationsMap))) {
+                continue;
+            }
+
             // We hide from associations file_storage,
             // as it's rendered within field handlers.
             if ('Burzum/FileStorage.FileStorage' == $association->className()) {
@@ -127,10 +146,6 @@ class ViewViewTabsListener implements EventListenerInterface
                 'associationObject' => $class,
                 'targetClass' => $association->className(),
             ];
-
-            if (in_array($tab['associationObject'], ['BelongsTo'])) {
-                continue;
-            }
 
             if (!empty($tab['targetClass'])) {
                 array_push($tabs, $tab);
@@ -162,6 +177,9 @@ class ViewViewTabsListener implements EventListenerInterface
         $labelCounts = [];
         // Gather labels for all associations
         foreach ($tableInstance->associations() as $association) {
+            if (!in_array($association->type(), array_keys($this->_associationsMap))) {
+                continue;
+            }
             $assocTableInstance = $association->target();
 
             $icon = $this->_getTableIcon($assocTableInstance);
@@ -258,18 +276,12 @@ class ViewViewTabsListener implements EventListenerInterface
 
         $this->_tableInstance = TableRegistry::get($table);
 
-        $associationsMap = [
-            'manyToMany' => '_manyToManyAssociatedRecords',
-            'oneToMany' => '_oneToManyAssociatedRecords',
-            'manyToOne' => '_manyToOneAssociatedRecords',
-        ];
-
         foreach ($this->_tableInstance->associations() as $association) {
             if ($options['tab']['associationName'] == $association->name()) {
                 $type = $association->type();
 
-                if (in_array($type, array_keys($associationsMap))) {
-                    $content = $this->{$associationsMap[$type]}($association, $request);
+                if (in_array($type, array_keys($this->_associationsMap))) {
+                    $content = $this->{$this->_associationsMap[$type]}($association, $request);
                     if (!empty($content['records'])) {
                         break;
                     }

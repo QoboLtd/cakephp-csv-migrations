@@ -101,11 +101,8 @@ if (empty($options['title'])) {
                         }
                         ?>
                         <?php if (!$embeddedDirty) : // non-embedded field ?>
-                            <div class="col-xs-4 col-md-2 text-right">
-                                <strong><?= Inflector::humanize($field['name']) ?>:</strong>
-                            </div>
-                            <div class="col-xs-8 col-md-4">
                             <?php
+
                             $tableName = $field['model'];
                             if (!is_null($field['plugin'])) {
                                 $tableName = $field['plugin'] . '.' . $tableName;
@@ -114,6 +111,19 @@ if (empty($options['title'])) {
                                 'entity' => $options['entity'],
                                 'imageSize' => 'small'
                             ];
+
+                            $label = $fhf->renderName(
+                                $tableName,
+                                $field['name'],
+                                $renderOptions
+                            );
+
+                            ?>
+                            <div class="col-xs-4 col-md-2 text-right">
+                                <strong><?= $label?>:</strong>
+                            </div>
+                            <div class="col-xs-8 col-md-4">
+                            <?php
                             $value = $fhf->renderValue(
                                 $tableName,
                                 $field['name'],

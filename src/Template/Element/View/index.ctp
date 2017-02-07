@@ -2,6 +2,9 @@
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+
+$fhf = new FieldHandlerFactory($this);
 
 // Setup Index View js logic
 echo $this->Html->css('AdminLTE./plugins/datatables/dataTables.bootstrap', ['block' => 'css']);
@@ -62,7 +65,22 @@ if (empty($options['title'])) {
                 <thead>
                     <tr>
                     <?php foreach ($options['fields'] as $field) : ?>
-                        <th><?= Inflector::humanize($field[0]['name']); ?></th>
+                    <?php
+
+                    $tableName = $field[0]['model'];
+                    if (!is_null($field[0]['plugin'])) {
+                        $tableName = $field[0]['plugin'] . '.' . $tableName;
+                    }
+                    $renderOptions = [];
+
+                    $label = $fhf->renderName(
+                        $tableName,
+                        $field[0]['name'],
+                        $renderOptions
+                    );
+
+                    ?>
+                        <th><?= $label ?></th>
                     <?php endforeach; ?>
                     <th><?= __('Actions'); ?></th>
                     </tr>

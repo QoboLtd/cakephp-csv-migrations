@@ -62,6 +62,23 @@ class FieldHandlerFactory
         return $handler->renderInput($data, $options);
     }
 
+
+    /**
+     * Render field form label
+     *
+     * @param  mixed  $table   name or instance of the Table
+     * @param  string $field   field name
+     * @param  array  $options field options
+     * @return string          field input
+     */
+    public function renderName($table, $field, array $options = [])
+    {
+        $table = $this->_getTableInstance($table);
+        $handler = $this->_getHandler($table, $field, $options);
+
+        return $handler->renderName();
+    }
+
     /**
      * Get search options
      *

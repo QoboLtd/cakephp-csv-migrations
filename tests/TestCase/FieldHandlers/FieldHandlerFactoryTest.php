@@ -101,6 +101,12 @@ class FieldHandlerFactoryTest extends TestCase
         $this->assertRegexp('/input/i', $result, "Rendering input for 'id' field has no 'input'");
     }
 
+    public function testRenderName()
+    {
+        $result = $this->fhf->renderName($this->table, 'testField');
+        $this->assertEquals('Test Field', $result);
+    }
+
     public function testRenderValue()
     {
         $result = $this->fhf->renderValue($this->table, 'id', 'blah');

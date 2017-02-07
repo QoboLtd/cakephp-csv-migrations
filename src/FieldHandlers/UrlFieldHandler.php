@@ -1,29 +1,57 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
 
-class UrlFieldHandler extends BaseFieldHandler
+class UrlFieldHandler extends BaseStringFieldHandler
 {
     /**
-     * Method that renders default type field's value.
+     * HTML form field type
+     */
+    const INPUT_FIELD_TYPE = 'url';
+
+    /**
+     * Sanitize options
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
+     * Name of filter_var() filter to run and all desired
+     * options/flags.
+     *
+     * @var array
+     */
+    public $sanitizeOptions = [FILTER_SANITIZE_URL];
+
+    /**
+     * Format field value
+     *
+     * This method provides a customization point for formatting
+     * of the field value before rendering.
+     *
+     * NOTE: The value WILL NOT be sanitized during the formatting.
+     *       It is assumed that sanitization happens either before
+     *       or after this method is called.
+     *
+     * @param mixed $data    Field value data
+     * @param array $options Field formatting options
      * @return string
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    protected function formatValue($data, array $options = [])
     {
-        $result = filter_var($data, FILTER_SANITIZE_URL);
+        $result = (string)$data;
+
+        if (empty($result)) {
+            return $result;
+        }
+
+        if (array_key_exists('renderAs', $options) && ($options['renderAs'] === static::RENDER_PLAIN_VALUE)) {
+            return $result;
+        }
 
         // Only link to URLs with schema, to avoid unpredictable behavior
-        if (!empty($result) && filter_var($result, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED)) {
-            if (!isset($options['renderAs']) || !$options['renderAs'] === static::RENDER_PLAIN_VALUE) {
-                $result = $this->cakeView->Html->link($result, $result, ['target' => '_blank']);
-            }
+        if (filter_var($result, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED) === false) {
+            return $result;
         }
+
+        $result = $this->cakeView->Html->link($result, $result, ['target' => '_blank']);
 
         return $result;
     }

@@ -2,9 +2,9 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\I18n\Time;
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\BaseTimeFieldHandler;
 
-class DatetimeFieldHandler extends BaseFieldHandler
+class DatetimeFieldHandler extends BaseTimeFieldHandler
 {
     /**
      * Database field type
@@ -17,38 +17,43 @@ class DatetimeFieldHandler extends BaseFieldHandler
     const INPUT_FIELD_TYPE = 'datetimepicker';
 
     /**
-     * Datetime format
+     * Date/time format
      */
-    const DATETIME_FORMAT = 'yyyy-MM-dd HH:mm';
+    const FORMAT = 'yyyy-MM-dd HH:mm';
 
     /**
-     * Method responsible for rendering field's input.
+     * Render field input
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string          field input
+     * This method prepares the form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field input HTML
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $data = $this->_getFieldValueFromData($data);
         if ($data instanceof Time) {
-            $data = $data->i18nFormat(static::DATETIME_FORMAT);
+            $data = $data->i18nFormat(static::FORMAT);
         }
 
         $required = false;
         if (isset($options['fieldDefinitions']) && is_object($options['fieldDefinitions'])) {
             $required = (bool)$options['fieldDefinitions']->getRequired();
         }
-        $fieldName = $this->_getFieldName($table, $field, $options);
+
+        $fieldName = $this->table->aliasField($this->field);
 
         if (isset($options['element'])) {
             return $this->cakeView->element($options['element'], [
                 'options' => [
                     'fieldName' => $fieldName,
                     'type' => static::INPUT_FIELD_TYPE,
-                    'label' => true,
+                    'label' => $options['label'],
                     'required' => $required,
                     'value' => $data
                 ]
@@ -56,6 +61,7 @@ class DatetimeFieldHandler extends BaseFieldHandler
         } else {
             return $this->cakeView->Form->input($fieldName, [
                 'type' => 'text',
+                'label' => $options['label'],
                 'data-provide' => 'datetimepicker',
                 'autocomplete' => 'off',
                 'required' => $required,
@@ -71,31 +77,24 @@ class DatetimeFieldHandler extends BaseFieldHandler
     }
 
     /**
-     * Method that renders default type field's value.
+     * Get options for field search
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string
+     * This method prepares an array of search options, which includes
+     * label, form input, supported search operators, etc.  The result
+     * can be controlled with a variety of options.
+     *
+     * @param  array  $options Field options
+     * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function getSearchOptions(array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
-        if (is_object($data)) {
-            $result = $data->i18nFormat(static::DATETIME_FORMAT);
-        } else {
-            $result = $data;
+        // Fix options as early as possible
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $result = parent::getSearchOptions($options);
+        if (empty($result[$this->field]['input'])) {
+            return $result;
         }
 
-        return $result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function renderSearchInput($table, $field, array $options = [])
-    {
         if (isset($options['element'])) {
             $content = $this->cakeView->element($options['element'], [
                 'options' => [
@@ -122,7 +121,7 @@ class DatetimeFieldHandler extends BaseFieldHandler
             ]);
         }
 
-        return [
+        $result[$this->field]['input'] = [
             'content' => $content,
             'post' => [
                 [
@@ -142,5 +141,7 @@ class DatetimeFieldHandler extends BaseFieldHandler
                 ]
             ]
         ];
+
+        return $result;
     }
 }

@@ -1,8 +1,8 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
 
-class StringFieldHandler extends BaseFieldHandler
+class StringFieldHandler extends BaseStringFieldHandler
 {
 }

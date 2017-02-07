@@ -3,13 +3,12 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use Cake\Core\Configure;
 use Cake\ORM\Entity;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
-use CsvMigrations\MigrationTrait;
+use CsvMigrations\Parser\Csv\MigrationParser;
+use CsvMigrations\PathFinder\MigrationPathFinder;
 
 /**
  * Foo Entity.
@@ -52,9 +51,10 @@ class FieldHandlerFactoryTest extends TestCase
 
     /**
      * Table instance
+     *
      * @var Cake\ORM\Table
      */
-    public $FooTable;
+    public $table;
 
     /**
      * Csv Data
@@ -79,37 +79,38 @@ class FieldHandlerFactoryTest extends TestCase
     {
         parent::setUp();
 
-        $dir = dirname(__DIR__) . DS . '..' . DS . 'data' . DS . 'CsvMigrations' . DS;
-        Configure::write('CsvMigrations.migrations.path', $dir . 'migrations' . DS);
-        Configure::write('CsvMigrations.lists.path', $dir . 'lists' . DS);
-        Configure::write('CsvMigrations.migrations.filename', 'migration');
+        $dir = dirname(__DIR__) . DS . '..' . DS . 'data' . DS . 'Modules' . DS;
+        Configure::write('CsvMigrations.modules.path', $dir);
 
-        $mockTrait = $this->getMockForTrait(MigrationTrait::class);
-        $this->csvData = $mockTrait->getFieldsDefinitions($this->tableName);
+        $pf = new MigrationPathFinder();
+        $path = $pf->find($this->tableName);
+        $parser = new MigrationParser();
+        $this->csvData = $parser->wrapFromPath($path);
+
         $config = TableRegistry::exists($this->tableName)
             ? []
             : ['className' => 'CsvMigrations\Test\TestCase\Model\Table\FooTable'];
-        $this->FooTable = TableRegistry::get($this->tableName, $config);
+        $this->table = TableRegistry::get($this->tableName, $config);
 
         $this->fhf = new FieldHandlerFactory();
     }
 
     public function testRenderInput()
     {
-        $result = $this->fhf->renderInput($this->FooTable, 'id');
+        $result = $this->fhf->renderInput($this->table, 'id');
         $this->assertRegexp('/input/i', $result, "Rendering input for 'id' field has no 'input'");
     }
 
     public function testRenderValue()
     {
-        $result = $this->fhf->renderValue($this->FooTable, 'id', 'blah');
+        $result = $this->fhf->renderValue($this->table, 'id', 'blah');
         $this->assertRegexp('/blah/i', $result, "Rendering value 'blah' for 'id' field has no 'blah'");
     }
 
     public function testFieldToDb()
     {
         $csvField = new CsvField(['name' => 'blah', 'type' => 'string']);
-        $result = $this->fhf->fieldToDb($csvField);
+        $result = $this->fhf->fieldToDb($csvField, $this->table, 'id');
         $this->assertTrue(is_array($result), "fieldToDb() method does not return an array");
         $this->assertFalse(empty($result), "fieldToDb() method returns an empty array");
     }

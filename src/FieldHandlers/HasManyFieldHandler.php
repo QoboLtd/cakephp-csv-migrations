@@ -5,9 +5,9 @@ use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\View\Helper\IdGeneratorTrait;
-use CsvMigrations\FieldHandlers\RelatedFieldHandler;
+use CsvMigrations\FieldHandlers\BaseRelatedFieldHandler;
 
-class HasManyFieldHandler extends RelatedFieldHandler
+class HasManyFieldHandler extends BaseRelatedFieldHandler
 {
     /**
      * Action name for html link
@@ -36,17 +36,21 @@ class HasManyFieldHandler extends RelatedFieldHandler
         </div>';
 
     /**
-     * Method responsible for rendering field's input.
+     * Render field input
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string          field input
+     * This method prepares the form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field input HTML
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $data = $this->_getFieldValueFromData($data);
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
@@ -59,13 +63,13 @@ class HasManyFieldHandler extends RelatedFieldHandler
             }
         }
 
-        $fieldName = $this->_getFieldName($table, $field, $options);
+        $fieldName = $this->table->aliasField($this->field);
 
         // create select input
         $input = $this->cakeView->Form->input($options['associated_table_name'] . '._ids', [
             'options' => [$data => $relatedProperties['dispFieldVal']],
             'label' => false,
-            'id' => $field,
+            'id' => $this->field,
             'type' => 'select',
             'title' => $this->_getInputHelp($relatedProperties),
             'data-type' => 'select2',
@@ -87,7 +91,7 @@ class HasManyFieldHandler extends RelatedFieldHandler
         // append embedded modal button
         $input .= sprintf(
             static::HTML_EMBEDDED_BTN,
-            empty($options['emDataTarget']) ? $field : $options['emDataTarget']
+            empty($options['emDataTarget']) ? $this->field : $options['emDataTarget']
         );
 
         // create input html
@@ -102,10 +106,17 @@ class HasManyFieldHandler extends RelatedFieldHandler
     }
 
     /**
-     * {@inheritDoc}
+     * Get options for field search
+     *
+     * This method prepares an array of search options, which includes
+     * label, form input, supported search operators, etc.  The result
+     * can be controlled with a variety of options.
+     *
+     * @param  array  $options Field options
+     * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function getSearchOptions(array $options = [])
     {
-        return false;
+        return [];
     }
 }

@@ -11,12 +11,28 @@ use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
 use CsvMigrations\View\AppView;
 
+/**
+ * BaseFieldHandler
+ *
+ * This class provides the fallback functionality that
+ * is common to all field handlers.
+ *
+ * NOTE: Try to avoid inheriting from this class directly.
+ *       Instead, use one of the more specific base classes.
+ *
+ * @abstract
+ */
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
     /**
-     * Default Database Field type
+     * Default database field type
      */
     const DB_FIELD_TYPE = 'string';
+
+    /**
+     * Default HTML form field type
+     */
+    const INPUT_FIELD_TYPE = 'text';
 
     /**
      * Flag for rendering value as is
@@ -24,29 +40,70 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     const RENDER_PLAIN_VALUE = 'plain';
 
     /**
-     * View instance.
+     * Table object
+     *
+     * @var \Cake\ORM\Table
+     */
+    public $table;
+
+    /**
+     * Field name
+     *
+     * @var string
+     */
+    public $field;
+
+    /**
+     * View instance
      *
      * @var \Cake\View\View
      */
     public $cakeView;
 
     /**
-     * Csv field types respective input field types
+     * Default options
      *
      * @var array
      */
-    protected $_fieldTypes = [
-        'text' => 'textarea',
-        'blob' => 'textarea',
-        'string' => 'text',
-        'uuid' => 'text',
-        'integer' => 'number',
-        'decimal' => 'number',
-        'url' => 'url',
-        'email' => 'email',
-        'phone' => 'tel',
-        'boolean' => 'checkbox'
+    public $defaultOptions = [];
+
+    /**
+     * Search operators
+     *
+     * @var array
+     */
+    public $searchOperators = [
+        'contains' => [
+            'label' => 'contains',
+            'operator' => 'LIKE',
+            'pattern' => '%{{value}}%',
+        ],
+        'not_contains' => [
+            'label' => 'does not contain',
+            'operator' => 'NOT LIKE',
+            'pattern' => '%{{value}}%',
+        ],
+        'starts_with' => [
+            'label' => 'starts with',
+            'operator' => 'LIKE',
+            'pattern' => '{{value}}%',
+        ],
+        'ends_with' => [
+            'label' => 'ends with',
+            'operator' => 'LIKE',
+            'pattern' => '%{{value}}',
+        ],
     ];
+
+    /**
+     * Sanitize options
+     *
+     * Name of filter_var() filter to run and all desired
+     * options/flags.
+     *
+     * @var array
+     */
+    public $sanitizeOptions = [FILTER_UNSAFE_RAW];
 
     /**
      * Custom form input templates.
@@ -63,186 +120,132 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     ];
 
     /**
-     * Per type search operators.
-     *
-     * @var array
-     */
-    protected $_searchOperators = [
-        'uuid' => ['is' => 'Is', 'is_not' => 'Is not'],
-        'related' => ['is' => 'Is', 'is_not' => 'Is not'],
-        'boolean' => ['is' => 'Is', 'is_not' => 'Is not'],
-        'list' => ['is' => 'Is', 'is_not' => 'Is not'],
-        'dblist' => ['is' => 'Is', 'is_not' => 'Is not'],
-        'sublist' => ['is' => 'Is', 'is_not' => 'Is not'],
-        'string' => [
-            'contains' => 'Contains',
-            'not_contains' => 'Does not contain',
-            'starts_with' => 'Starts with',
-            'ends_with' => 'Ends with'
-        ],
-        'text' => [
-            'contains' => 'Contains',
-            'not_contains' => 'Does not contain',
-            'starts_with' => 'Starts with',
-            'ends_with' => 'Ends with'
-        ],
-        'textarea' => [
-            'contains' => 'Contains',
-            'not_contains' => 'Does not contain',
-            'starts_with' => 'Starts with',
-            'ends_with' => 'Ends with'
-        ],
-        'blob' => [
-            'contains' => 'Contains',
-            'not_contains' => 'Does not contain',
-            'starts_with' => 'Starts with',
-            'ends_with' => 'Ends with'
-        ],
-        'email' => [
-            'contains' => 'Contains',
-            'not_contains' => 'Does not contain',
-            'starts_with' => 'Starts with',
-            'ends_with' => 'Ends with'
-        ],
-        'phone' => [
-            'contains' => 'Contains',
-            'not_contains' => 'Does not contain',
-            'starts_with' => 'Starts with',
-            'ends_with' => 'Ends with'
-        ],
-        'url' => [
-            'contains' => 'Contains',
-            'not_contains' => 'Does not contain',
-            'starts_with' => 'Starts with',
-            'ends_with' => 'Ends with'
-        ],
-        'integer' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'greater', 'less' => 'less'],
-        'decimal' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'greater', 'less' => 'less'],
-        'datetime' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'from', 'less' => 'to'],
-        'reminder' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'from', 'less' => 'to'],
-        'date' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'from', 'less' => 'to'],
-        'time' => ['is' => 'Is', 'is_not' => 'Is not', 'greater' => 'from', 'less' => 'to']
-    ];
-
-    /**
-     * Per type sql operators.
-     *
-     * @var array
-     */
-    protected $_sqlOperators = [
-        'uuid' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN']
-        ],
-        'related' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN']
-        ],
-        'boolean' => [
-            'is' => ['operator' => 'IS'],
-            'is_not' => ['operator' => 'IS NOT']
-        ],
-        'list' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN']
-        ],
-        'dblist' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN']
-        ],
-        'sublist' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN']
-        ],
-        'string' => [
-            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
-            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
-            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
-            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
-        ],
-        'text' => [
-            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
-            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
-            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
-            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
-        ],
-        'textarea' => [
-            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
-            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
-            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
-            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
-        ],
-        'blob' => [
-            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
-            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
-            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
-            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
-        ],
-        'email' => [
-            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
-            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
-            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
-            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
-        ],
-        'phone' => [
-            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
-            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
-            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
-            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
-        ],
-        'url' => [
-            'contains' => ['operator' => 'LIKE', 'pattern' => '%{{value}}%'],
-            'not_contains' => ['operator' => 'NOT LIKE', 'pattern' => '%{{value}}%'],
-            'starts_with' => ['operator' => 'LIKE', 'pattern' => '{{value}}%'],
-            'ends_with' => ['operator' => 'LIKE', 'pattern' => '%{{value}}']
-        ],
-        'integer' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN'],
-            'greater' => ['operator' => '>'],
-            'less' => ['operator' => '<']
-        ],
-        'decimal' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN'],
-            'greater' => ['operator' => '>'],
-            'less' => ['operator' => '<']
-        ],
-        'datetime' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN'],
-            'greater' => ['operator' => '>'],
-            'less' => ['operator' => '<']
-        ],
-        'reminder' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN'],
-            'greater' => ['operator' => '>'],
-            'less' => ['operator' => '<']
-        ],
-        'date' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN'],
-            'greater' => ['operator' => '>'],
-            'less' => ['operator' => '<']
-        ],
-        'time' => [
-            'is' => ['operator' => 'IN'],
-            'is_not' => ['operator' => 'NOT IN'],
-            'greater' => ['operator' => '>'],
-            'less' => ['operator' => '<']
-        ]
-    ];
-
-    /**
      * Constructor
      *
+     * @param mixed  $table    Name or instance of the Table
+     * @param string $field    Field name
      * @param object $cakeView Optional instance of the AppView
      */
-    public function __construct($cakeView = null)
+    public function __construct($table, $field, $cakeView = null)
     {
-        if ($cakeView) {
-            $this->cakeView = $cakeView;
+        $this->setTable($table);
+        $this->setField($field);
+        $this->setDefaultOptions();
+        $this->setView($cakeView);
+    }
+
+    /**
+     * Set table
+     *
+     * @throws \InvalidArgumentException when table is empty
+     * @param mixed $table Table name of instance
+     * @return void
+     */
+    protected function setTable($table)
+    {
+        if (empty($table)) {
+            throw new \InvalidArgumentException('Table cannot be empty.');
+        }
+        if (is_string($table)) {
+            $table = TableRegistry::get($table);
+        }
+        $this->table = $table;
+    }
+
+    /**
+     * Set field
+     *
+     * @throws \InvalidArgumentException when field is empty
+     * @param string $field Field name
+     * @return void
+     */
+    protected function setField($field)
+    {
+        $field = (string)$field;
+        if (empty($field)) {
+            throw new \InvalidArgumentException('Field cannot be empty.');
+        }
+        $this->field = $field;
+    }
+
+    /**
+     * Set default options
+     *
+     * Populate the $defaultOptions to make sure we always have
+     * the fieldDefinitions options for the current field.
+     *
+     * @return void
+     */
+    protected function setDefaultOptions()
+    {
+        // set $options['fieldDefinitions']
+        $stubFields = [
+            $this->field => [
+                'name' => $this->field,
+                'type' => self::DB_FIELD_TYPE, // not static:: to preserve string
+            ],
+        ];
+        if (method_exists($this->table, 'getFieldsDefinitions') && is_callable([$this->table, 'getFieldsDefinitions'])) {
+            $fieldDefinitions = $this->table->getFieldsDefinitions($stubFields);
+            $this->defaultOptions['fieldDefinitions'] = new CsvField($fieldDefinitions[$this->field]);
+        } else {
+            // This should never be the case, except, maybe
+            // for some unit test runs or custom non-CSV
+            // modules.
+            $this->defaultOptions['fieldDefinitions'] = new CsvField($stubFields[$this->field]);
+        }
+
+        // set $options['label']
+        $this->defaultOptions['label'] = $this->renderName();
+    }
+
+    /**
+     * Fix provided options
+     *
+     * This method is here to fix some issues with backward
+     * compatibility and make sure that $options parameters
+     * are consistent throughout.
+     *
+     * @param array  $options Options to fix
+     * @return array          Fixed options
+     */
+    protected function fixOptions(array $options = [])
+    {
+        $result = $options;
+        if (empty($result)) {
+            return $result;
+        }
+
+        // Previously, fieldDefinitions could be either an array or a CsvField instance.
+        // Now we expect it to always be a CsvField instance.  So, if we have a non-empty
+        // array, then instantiate CsvField with the values from it.
+        if (!empty($result['fieldDefinitions']) && is_array($result['fieldDefinitions'])) {
+            // Sometimes, when setting fieldDefinitions manually to render a particular
+            // type, the name is omitted.  This works for an array, but doesn't work for
+            // the CsvField instance, as the name is required.  Gladly, we know the name
+            // and can fix it easily.
+            if (empty($result['fieldDefinitions']['name'])) {
+                $result['fieldDefinitions']['name'] = $this->field;
+            }
+            $result['fieldDefinitions'] = new CsvField($result['fieldDefinitions']);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Set view
+     *
+     * If an instance of the view is given, use that.
+     * Otherwise, instantiate a new view.
+     *
+     * @param object $view View
+     * @return void
+     */
+    protected function setView($view = null)
+    {
+        if ($view) {
+            $this->cakeView = $view;
         } else {
             $this->cakeView = new AppView();
         }
@@ -256,58 +259,86 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * and so on.  The result can be controlled via the variety
      * of options.
      *
-     * @param  mixed  $table   Name or instance of the Table
-     * @param  string $field   Field name
      * @param  string $data    Field data
      * @param  array  $options Field options
      * @return string          Field input HTML
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
-        $fieldType = $options['fieldDefinitions']->getType();
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $data = (string)$this->_getFieldValueFromData($data);
 
-        if (in_array($fieldType, array_keys($this->_fieldTypes))) {
-            $fieldType = $this->_fieldTypes[$fieldType];
-        }
+        $fieldName = $this->table->aliasField($this->field);
 
-        return $this->cakeView->Form->input($this->_getFieldName($table, $field, $options), [
-            'type' => $fieldType,
+        return $this->cakeView->Form->input($fieldName, [
+            'type' => static::INPUT_FIELD_TYPE,
+            'label' => $options['label'],
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'value' => $data
         ]);
     }
 
     /**
-     * Render field search input
+     * Get options for field search
      *
-     * This method prepares the search form input for the given field,
-     * including the input itself, label, pre-populated value,
-     * and so on.  The result can be controlled via the variety
-     * of options.
+     * This method prepares an array of search options, which includes
+     * label, form input, supported search operators, etc.  The result
+     * can be controlled with a variety of options.
      *
-     * @param mixed  $table   Name or instance of the Table
-     * @param string $field   Field name
-     * @param array  $options Field options
-     * @return array          Array of field input HTML, pre and post CSS, JS, etc
+     * @param  array  $options Field options
+     * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function getSearchOptions(array $options = [])
     {
-        $fieldType = $options['fieldDefinitions']->getType();
+        $result = [];
 
-        if (in_array($fieldType, array_keys($this->_fieldTypes))) {
-            $fieldType = $this->_fieldTypes[$fieldType];
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+
+        if ($options['fieldDefinitions']->getNonSearchable()) {
+            return $result;
         }
 
         $content = $this->cakeView->Form->input('{{name}}', [
             'value' => '{{value}}',
-            'type' => $fieldType,
+            'type' => static::INPUT_FIELD_TYPE,
             'label' => false
         ]);
 
-        return [
-            'content' => $content
+        $result[$this->field] = [
+            'type' => $options['fieldDefinitions']->getType(),
+            'label' => $this->renderName(),
+            'operators' => $this->searchOperators,
+            'input' => [
+                'content' => $content,
+            ],
         ];
+
+        return $result;
+    }
+
+    /**
+     * Render field name
+     *
+     * @return string
+     */
+    public function renderName()
+    {
+        $text = $this->field;
+
+        // Borrowed from FormHelper::label()
+        if (substr($text, -5) === '._ids') {
+            $text = substr($text, 0, -5);
+        }
+        if (strpos($text, '.') !== false) {
+            $fieldElements = explode('.', $text);
+            $text = array_pop($fieldElements);
+        }
+        if (substr($text, -3) === '_id') {
+            $text = substr($text, 0, -3);
+        }
+        $text = __(Inflector::humanize(Inflector::underscore($text)));
+
+        return $text;
     }
 
     /**
@@ -317,15 +348,46 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * field.  The result can be controlled via the variety of
      * options.
      *
-     * @param  mixed  $table   Name or instance of the Table
-     * @param  string $field   Field name
      * @param  string $data    Field data
      * @param  array  $options Field options
      * @return string          Field value
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
-        $result = $this->_getFieldValueFromData($field, $data);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $result = (string)$this->_getFieldValueFromData($data);
+        $result = $this->sanitizeValue($result, $options);
+
+        return $result;
+    }
+
+    /**
+     * Sanitize field value
+     *
+     * This method filters the value and removes anything
+     * potentially dangerous.  Ideally, it should always be
+     * called before rendering the value to the user, in
+     * order to avoid cross-site scripting (XSS) attacks.
+     *
+     * @throws \RuntimeException when cannot sanitize data
+     * @param  mixed  $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field value
+     */
+    public function sanitizeValue($data, array $options = [])
+    {
+        $result = trim((string)$data);
+
+        if (empty($this->sanitizeOptions)) {
+            return $result;
+        }
+
+        $filterParams = $this->sanitizeOptions;
+        array_unshift($filterParams, $data);
+        $result = call_user_func_array('filter_var', $filterParams);
+        if ($result === false) {
+            throw new \RuntimeException("Failed to sanitize field value");
+        }
 
         return $result;
     }
@@ -342,58 +404,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function fieldToDb(CsvField $csvField)
     {
-        $dbFields[] = new DbField(
-            $csvField->getName(),
-            static::DB_FIELD_TYPE,
-            $csvField->getLimit(),
-            $csvField->getRequired(),
-            $csvField->getNonSearchable(),
-            $csvField->getUnique()
-        );
+        $csvField->setType(static::DB_FIELD_TYPE);
 
-        return $dbFields;
-    }
-
-    /**
-     * Get search operators
-     *
-     * This method prepares a list of search operators that
-     * are appropriate for a given field.
-     *
-     * @todo Drop the $type parameter, as field handler should know this already
-     * @param mixed $table  Name or instance of the Table
-     * @param string $field field name
-     * @param string $type  Field type
-     * @return array        List of search operators
-     */
-    public function getSearchOperators($table, $field, $type)
-    {
-        $result = [];
-        if (empty($this->_searchOperators[$type]) || empty($this->_sqlOperators[$type])) {
-            return $result;
-        }
-
-        foreach ($this->_searchOperators[$type] as $value => $label) {
-            if (empty($this->_sqlOperators[$type][$value])) {
-                continue;
-            }
-
-            $result[$value] = array_merge(['label' => $label], $this->_sqlOperators[$type][$value]);
-        }
+        $dbField = DbField::fromCsvField($csvField);
+        $result = [
+            $this->field => $dbField,
+        ];
 
         return $result;
-    }
-
-    /**
-     * Get field label
-     *
-     * @todo Rename method to getLabel()
-     * @param string  $field Field name
-     * @return string        Human-friendly field name
-     */
-    public function getSearchLabel($field)
-    {
-        return Inflector::humanize($field);
     }
 
     /**
@@ -406,119 +424,37 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * * Request, use Request->data() with the key of the field name
      * * Otherwise assume the variable is the data already
      *
-     * @param string $field Field name
-     * @param Entity|Request|mixed $data Variable to extract value from
+     * @param Entity|Request|mixed $data  Variable to extract value from
+     * @param string               $field Optional field name
      * @return mixed
      */
-    protected function _getFieldValueFromData($field, $data)
+    protected function _getFieldValueFromData($data, $field = null)
     {
+        if (empty($field)) {
+            $field = $this->field;
+        }
+
+        // Use data as is
         $result = $data;
 
+        // Use $data->$field if available as Entity
         if ($data instanceof Entity) {
-            $result = $data->$field;
-
-            return $result;
-        }
-
-        if ($data instanceof Request) {
-            $result = isset($data->data[$field]) ? $data->data[$field] : null;
-
-            return $result;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get field type by field handler class name.
-     *
-     * @param object $handler Field handler instance
-     * @return string
-     */
-    protected function _getFieldTypeByFieldHandler($handler)
-    {
-        list(, $type) = pluginSplit(App::shortName(get_class($handler), 'FieldHandlers', 'FieldHandler'));
-
-        return Inflector::underscore($type);
-    }
-
-    /**
-     * Method that generates field name based on its options.
-     *
-     * @param  \Cake\ORM\Table $table Table instance
-     * @param  string $field          Field name
-     * @param  array  $options        Field options
-     * @return string
-     */
-    protected function _getFieldName($table, $field, array $options = [])
-    {
-        if (empty($table)) {
-            return $field;
-        }
-
-        if (is_object($table)) {
-            return $table->alias() . '.' . $field;
-        }
-
-        return $table . '.' . $field;
-    }
-
-    /**
-     * Method that generates input label based on field name or optional options label parameter.
-     * It can either return just the field label value or the html markup.
-     *
-     * @param  string  $field   Field name
-     * @param  array   $options Field options
-     * @param  bool    $html    Html flag
-     * @return string           Label value or html markup
-     */
-    protected function _fieldToLabel($field, array $options = [], $html = true)
-    {
-        $result = array_key_exists('label', $options) ? (string)$options['label'] : $field;
-
-        if (!$html || empty($result)) {
-            return $result;
-        }
-
-        return $this->cakeView->Form->label($result);
-    }
-
-    /**
-     * Returns arguments from database column definition.
-     *
-     * @param  \Cake\ORM\Table|string $table  Table instance or name
-     * @param  string                 $column Column name
-     * @param  array                  $args   Column arguments
-     * @return array
-     */
-    protected function _getDbColumnArgs($table, $column, array $args = [])
-    {
-        $result = [];
-
-        if (empty($table)) {
-            return $result;
-        }
-
-        if (is_string($table)) {
-            $table = TableRegistry::get($table);
-        }
-
-        $data = $table->schema()->column($column);
-
-        if (empty($data)) {
-            return $result;
-        }
-
-        if (empty($args)) {
-            return $data;
-        }
-
-        foreach ($data as $k => $v) {
-            if (!in_array($k, $args)) {
-                continue;
+            $result = null;
+            if (isset($data->$field)) {
+                $result = $data->$field;
             }
 
-            $result[$k] = $v;
+            return $result;
+        }
+
+        // Use $data->data[$field] if available as Request
+        if ($data instanceof Request) {
+            $result = null;
+            if (is_array($data->data) && array_key_exists($field, $data->data)) {
+                $result = $data->data[$field];
+            }
+
+            return $result;
         }
 
         return $result;

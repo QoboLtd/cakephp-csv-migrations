@@ -6,12 +6,9 @@ use CsvMigrations\FieldHandlers\BaseCombinedFieldHandler;
 class MetricFieldHandler extends BaseCombinedFieldHandler
 {
     /**
-     * {@inheritDoc}
-     */
-    const FIELD_TYPE_PATTERN = '/metric\((.*?)\)/';
-
-    /**
-     * {@inheritDoc}
+     * Set combined fields
+     *
+     * @return void
      */
     protected function _setCombinedFields()
     {

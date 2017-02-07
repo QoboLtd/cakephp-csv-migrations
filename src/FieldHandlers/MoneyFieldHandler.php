@@ -6,12 +6,9 @@ use CsvMigrations\FieldHandlers\BaseCombinedFieldHandler;
 class MoneyFieldHandler extends BaseCombinedFieldHandler
 {
     /**
-     * {@inheritDoc}
-     */
-    const FIELD_TYPE_PATTERN = '/money\((.*?)\)/';
-
-    /**
-     * {@inheritDoc}
+     * Set combined fields
+     *
+     * @return void
      */
     protected function _setCombinedFields()
     {

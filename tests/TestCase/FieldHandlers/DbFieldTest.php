@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
+use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use PHPUnit_Framework_TestCase;
 
@@ -16,6 +17,28 @@ class DbFieldTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($dbField->getRequired(), "Field required was not properly set");
         $this->assertTrue($dbField->getNonSearchable(), "Field non-searchable was not properly set");
         $this->assertTrue($dbField->getUnique(), "Field unique was not properly set");
+    }
+
+    public function testFromCsvField()
+    {
+        $csvField = new CsvField([
+            'name' => 'field',
+            'type' => 'string(255)',
+            'required' => true,
+            'non-searchable' => true,
+            'unique' => true,
+        ]);
+        $result = DbField::fromCsvField($csvField);
+
+        $this->assertTrue(is_object($result), "fromCsvField() returned a non-object");
+        $this->asserttrue(is_a($result, 'CsvMigrations\FieldHandlers\DbField'), "fromCsvField() did not return a DbField instance");
+
+        $this->assertEquals('field', $result->getName(), "fromCsvField() did not set correct name");
+        $this->assertEquals('string', $result->getType(), "fromCsvField() did not set correct type");
+        $this->assertEquals(255, $result->getLimit(), "fromCsvField() did not set correct limit");
+        $this->assertEquals(true, $result->getRequired(), "fromCsvField() did not set correct required");
+        $this->assertEquals(true, $result->getNonSearchable(), "fromCsvField() did not set correct non-searchable");
+        $this->assertEquals(true, $result->getUnique(), "fromCsvField() did not set correct unique");
     }
 
     public function testSetOptions()

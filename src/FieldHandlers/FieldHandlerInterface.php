@@ -14,9 +14,11 @@ interface FieldHandlerInterface
     /**
      * Constructor
      *
+     * @param mixed  $table    Name or instance of the Table
+     * @param string $field    Field name
      * @param object $cakeView Optional instance of the AppView
      */
-    public function __construct($cakeView = null);
+    public function __construct($table, $field, $cakeView = null);
 
     /**
      * Render field input
@@ -26,28 +28,23 @@ interface FieldHandlerInterface
      * and so on.  The result can be controlled via the variety
      * of options.
      *
-     * @param  mixed  $table   Name or instance of the Table
-     * @param  string $field   Field name
      * @param  string $data    Field data
      * @param  array  $options Field options
      * @return string          Field input HTML
      */
-    public function renderInput($table, $field, $data = '', array $options = []);
+    public function renderInput($data = '', array $options = []);
 
     /**
-     * Render field search input
+     * Get options for field search
      *
-     * This method prepares the search form input for the given field,
-     * including the input itself, label, pre-populated value,
-     * and so on.  The result can be controlled via the variety
-     * of options.
+     * This method prepares an array of search options, which includes
+     * label, form input, supported search operators, etc.  The result
+     * can be controlled with a variety of options.
      *
-     * @param mixed  $table   Name or instance of the Table
-     * @param string $field   Field name
-     * @param array  $options Field options
-     * @return array          Array of field input HTML, pre and post CSS, JS, etc
+     * @param  array  $options Field options
+     * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function renderSearchInput($table, $field, array $options = []);
+    public function getSearchOptions(array $options = []);
 
     /**
      * Render field value
@@ -56,36 +53,32 @@ interface FieldHandlerInterface
      * field.  The result can be controlled via the variety of
      * options.
      *
-     * @param  mixed  $table   Name or instance of the Table
-     * @param  string $field   Field name
      * @param  string $data    Field data
      * @param  array  $options Field options
      * @return string          Field value
      */
-    public function renderValue($table, $field, $data, array $options = []);
+    public function renderValue($data, array $options = []);
 
     /**
-     * Get search operators
+     * Sanitize field value
      *
-     * This method prepares a list of search operators that
-     * are appropriate for a given field.
+     * This method filters the value and removes anything
+     * potentially dangerous.  Ideally, it should always be
+     * called before rendering the value to the user, in
+     * order to avoid cross-site scripting (XSS) attacks.
      *
-     * @todo Drop the $type parameter, as field handler should know this already
-     * @param mixed $table  Name or instance of the Table
-     * @param string $field field name
-     * @param string $type  Field type
-     * @return array        List of search operators
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field value
      */
-    public function getSearchOperators($table, $field, $type);
+    public function sanitizeValue($data, array $options = []);
 
     /**
-     * Get field label
+     * Render field name
      *
-     * @todo Rename method to getLabel()
-     * @param string  $field Field name
-     * @return string        Human-friendly field name
+     * @return string
      */
-    public function getSearchLabel($field);
+    public function renderName();
 
     /**
      * Convert CsvField to one or more DbField instances

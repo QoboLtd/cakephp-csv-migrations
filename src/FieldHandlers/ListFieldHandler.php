@@ -1,128 +1,44 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
-use CsvMigrations\ListTrait;
+use CsvMigrations\FieldHandlers\BaseCsvListFieldHandler;
 
-class ListFieldHandler extends BaseFieldHandler
+class ListFieldHandler extends BaseCsvListFieldHandler
 {
-    use ListTrait;
-
-    /**
-     * Field type match pattern
-     */
-    const FIELD_TYPE_PATTERN = '/list\((.*?)\)/';
-
     /**
      * Input field html markup
      */
     const INPUT_HTML = '<div class="form-group">%s</div>';
 
-    const VALUE_NOT_FOUND_HTML = '%s <span class="text-danger glyphicon glyphicon-exclamation-sign" title="Invalid list item" aria-hidden="true"></span>';
-
     /**
-     * Method responsible for rendering field's input.
+     * Render field input
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string          field input
+     * This method prepares the form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field input HTML
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $data = $this->_getFieldValueFromData($data);
         $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
 
-        $input = $this->_fieldToLabel($field, $options);
+        $fieldName = $this->table->aliasField($this->field);
 
-        $input .= $this->cakeView->Form->select($this->_getFieldName($table, $field, $options), $fieldOptions, [
+        $input = '';
+        $input .= $options['label'] ? $this->cakeView->Form->label($fieldName, $options['label']) : '';
+
+        $input .= $this->cakeView->Form->select($fieldName, $fieldOptions, [
             'class' => 'form-control',
             'required' => (bool)$options['fieldDefinitions']->getRequired(),
             'value' => $data
         ]);
 
         return sprintf(static::INPUT_HTML, $input);
-    }
-
-    /**
-     * Method that renders list field's value.
-     *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string
-     */
-    public function renderValue($table, $field, $data, array $options = [])
-    {
-        $result = '';
-        $data = $this->_getFieldValueFromData($field, $data);
-
-        if (empty($data)) {
-            return $result;
-        }
-
-        $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
-
-        if (isset($fieldOptions[$data])) {
-            // Concatenate all parents together with value
-            $parents = explode('.', $data);
-            if (!empty($parents)) {
-                $path = '';
-                foreach ($parents as $parent) {
-                    $path = empty($path) ? $parent : $path . '.' . $parent;
-                    if (isset($fieldOptions[$path])) {
-                        $result .= $fieldOptions[$path];
-                    }
-                }
-            }
-        } else {
-            if (isset($options['renderAs']) && $options['renderAs'] === static::RENDER_PLAIN_VALUE) {
-                $result = $data;
-            } else {
-                $result = sprintf(static::VALUE_NOT_FOUND_HTML, $data);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function renderSearchInput($table, $field, array $options = [])
-    {
-        $content = $this->cakeView->Form->select(
-            '{{name}}',
-            $this->_getSelectOptions($options['fieldDefinitions']->getLimit()),
-            [
-                'label' => false
-            ]
-        );
-
-        return [
-            'content' => $content
-        ];
-    }
-
-    /**
-     * Method responsible for converting csv field instance to database field instance.
-     *
-     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @return array list of DbField instances
-     */
-    public function fieldToDb(CsvField $csvField)
-    {
-        $dbFields[] = new DbField(
-            $csvField->getName(),
-            static::DB_FIELD_TYPE,
-            null,
-            $csvField->getRequired(),
-            $csvField->getNonSearchable(),
-            $csvField->getUnique()
-        );
-
-        return $dbFields;
     }
 }

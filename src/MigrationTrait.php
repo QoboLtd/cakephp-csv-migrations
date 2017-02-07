@@ -12,7 +12,7 @@ use RuntimeException;
 trait MigrationTrait
 {
     /**
-     * Field definitions for current csv module.
+     * Cached CSV field definitions for the current module
      *
      * @var array
      */
@@ -26,41 +26,82 @@ trait MigrationTrait
     private $__assocIdentifiers = ['related'];
 
     /**
-     * Method that retrieves fields from csv file and returns them in associate array format.
+     * Get fields from CSV file
      *
-     * @param  string $moduleName Module Name
-     * @return array
+     * This method gets all fields defined in the CSV and returns
+     * them as an associative array.
+     *
+     * Additionally, an associative array of stub fields can be
+     * passed, which will be included in the returned definitions.
+     * This is useful when working with fields which are NOT part
+     * of the migration.csv definitions, such as combined fields
+     * and virtual fields.
+     *
+     * If the field exists in the CSV configuration and is passed
+     * as a stub field, then the CSV definition will be preferred.
+     *
+     * Note that this method is called very frequently during the
+     * rendering of the views, so performance is important.  For
+     * this reason, parsed definitions are stored in the property
+     * to avoid unnecessary processing of files and conversion of
+     * data. Stub fields, however, won't be cached as they are not
+     * real definitions and might vary from call to call.
+     *
+     * There are cases, when no field definitions are available at
+     * all.  For example, external, non-CSV modules.  For those
+     * cases, all exceptions and errors are silenced and an empty
+     * array of field definitions is returned.  Unless, of course,
+     * there are stub fields provided.
+     *
+     * @param  array $stubFields Stub fields
+     * @return array             Associative array of fields and their definitions
      */
-    public function getFieldsDefinitions($moduleName = null)
+    public function getFieldsDefinitions(array $stubFields = [])
     {
+        $result = [];
+
+        // Get cached definitions
         if (!empty($this->_fieldDefinitions)) {
-            return $this->_fieldDefinitions;
+            $result = $this->_fieldDefinitions;
         }
 
-        if (is_null($moduleName)) {
+        // Fetch definitions from CSV if cache is empty
+        if (empty($result)) {
+            $moduleName = null;
             if (is_callable([$this, 'alias'])) {
                 $moduleName = $this->alias();
-            } else {
-                throw new RuntimeException("Failed getting field definitions for unknown module");
+            }
+
+            try {
+                $pathFinder = new MigrationPathFinder;
+                $path = $pathFinder->find($moduleName);
+                $parser = new MigrationParser();
+                // Set fields definitions cache
+                $result = $parser->wrapFromPath($path);
+                if (!empty($result)) {
+                    $this->_fieldDefinitions = $result;
+                }
+            } catch (\Exception $e) {
+                // Ignore all exceptions thrown by path finder and parser
             }
         }
 
-        $pathFinder = new MigrationPathFinder;
-        $path = $pathFinder->find($moduleName);
-
-        // Parser knows how to make sure that the file exists.  But it can
-        // also throw other exceptions, which we don't want to avoid for
-        // now.
-        if (is_readable($path)) {
-            $parser = new MigrationParser();
-            $this->_fieldDefinitions = $parser->wrapFromPath($path);
+        if (empty($stubFields)) {
+            return $result;
         }
 
-        return $this->_fieldDefinitions;
+        // Merge $result with $stubFields
+        foreach ($stubFields as $field => $definition) {
+            if (!array_key_exists($field, $result)) {
+                $result[$field] = $definition;
+            }
+        }
+
+        return $result;
     }
 
     /**
-     * Method that sets current model table associations.
+     * Set current model table associations
      *
      * @param array $config The configuration for the Table.
      * @return void
@@ -72,7 +113,7 @@ trait MigrationTrait
     }
 
     /**
-     * Method that sets current model table associations from config file.
+     * Set current model table associations from config file
      *
      * @param array $config The configuration for the Table.
      * @return void
@@ -93,7 +134,7 @@ trait MigrationTrait
     }
 
     /**
-     * Method that sets current model table associations from csv file.
+     * Set current model table associations from CSV file
      *
      * @param array $config The configuration for the Table.
      * @return void
@@ -173,7 +214,7 @@ trait MigrationTrait
     }
 
     /**
-     * Convert field details into CSV object.
+     * Convert field details into CSV object
      *
      * @see  _csvData();
      * @param  array  $data The return of _csvData function
@@ -255,16 +296,12 @@ trait MigrationTrait
             }
         }
 
-        /*
-        covers case where CsvMigration configuration files reside in a plugin.
-         */
+        // Covers case where CsvMigration configuration files reside in a plugin
         $plugin = $this->_getPluginNameFromPath($path);
 
         if (is_null($plugin)) {
-            /*
-            covers case where CsvMigration model and controller reside in
-            a plugin (even if configuration files reside in the APP level).
-             */
+            // covers case where CsvMigration model and controller reside in
+            // a plugin (even if configuration files reside in the APP level).
             $plugin = $this->_getPluginNameFromRegistryAlias();
         }
 
@@ -282,9 +319,12 @@ trait MigrationTrait
     }
 
     /**
+     * Get all reports configurations
+     *
      * Used in <model>/report/<slug> method
      * to get reports from the ini file on the dynamic
      * model/table.
+     *
      * @return array $config containing all reports from ini files
      */
     public function _getReports()
@@ -321,7 +361,7 @@ trait MigrationTrait
     }
 
     /**
-     * Returns the name of the plugin from its path.
+     * Get the name of the plugin from its path
      *
      * @param  string $path Path of the plugin.
      * @return string       Name of plugin.
@@ -345,7 +385,7 @@ trait MigrationTrait
     }
 
     /**
-     * Returns the name of the plugin from current Table's registry alias value.
+     * Get the name of the plugin from current Table's registry alias value
      *
      * @return string Name of plugin.
      */

@@ -12,7 +12,6 @@ use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldTrait;
-use CsvMigrations\ListTrait;
 use CsvMigrations\MigrationTrait;
 
 /**
@@ -23,13 +22,7 @@ class Table extends BaseTable
 {
     use ConfigurationTrait;
     use FieldTrait;
-    use ListTrait;
     use MigrationTrait;
-
-    /**
-     * Searchable parameter name
-     */
-    const PARAM_NON_SEARCHABLE = 'non-searchable';
 
     /* @var array $_currentUser to store user session */
     protected $_currentUser;
@@ -145,7 +138,7 @@ class Table extends BaseTable
     public function getReminderFields()
     {
         $result = [];
-        foreach ($this->getFieldsDefinitions(Inflector::camelize($this->table())) as $field) {
+        foreach ($this->getFieldsDefinitions() as $field) {
             if ($field['type'] == 'reminder') {
                 $result[] = $field;
             }

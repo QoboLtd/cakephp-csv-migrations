@@ -29,7 +29,7 @@ class ViewPathFinder extends BasePathFinder
      * @param string $path     Path to look for
      * @return null|string|array Null for not found, string for single path, array for multiple paths
      */
-    public function find($module = null, $path = null)
+    public function find($module, $path = null)
     {
         if (empty($path)) {
             throw new \InvalidArgumentException("Path is not specified");

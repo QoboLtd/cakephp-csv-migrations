@@ -5,7 +5,6 @@ use Cake\Core\Configure;
 
 abstract class BasePathFinder implements PathFinderInterface
 {
-    protected $requireModule = true;
     protected $pathConfigKey = 'CsvMigrations.modules.path';
     protected $prefix;
     protected $fileName;
@@ -13,22 +12,18 @@ abstract class BasePathFinder implements PathFinderInterface
     /**
      * Find path
      *
-     * Most files will require the $module parameter to
-     * make search more specific.
-     *
+     * @throws \InvalidArgumentException when module or path is not specified
      * @param string $module Module to look for files in
      * @param string $path     Path to look for
      * @return null|string|array Null for not found, string for single path, array for multiple paths
      */
-    public function find($module = null, $path = null)
+    public function find($module, $path = null)
     {
-        if ($this->requireModule) {
-            if (empty($module)) {
-                throw new \InvalidArgumentException("Module is not specified");
-            }
-            if (!is_string($module)) {
-                throw new \InvalidArgumentException("Module name is not a string");
-            }
+        if (empty($module)) {
+            throw new \InvalidArgumentException("Module is not specified");
+        }
+        if (!is_string($module)) {
+            throw new \InvalidArgumentException("Module name is not a string");
         }
 
         if (empty($path)) {
@@ -42,9 +37,7 @@ abstract class BasePathFinder implements PathFinderInterface
             throw new \InvalidArgumentException("pathConfigKey is empty");
         }
         $result = Configure::readOrFail($this->pathConfigKey);
-        if ($this->requireModule) {
-            $result .= $module . DIRECTORY_SEPARATOR;
-        }
+        $result .= $module . DIRECTORY_SEPARATOR;
 
         if (!empty($this->prefix)) {
             $path = $this->prefix . DIRECTORY_SEPARATOR . $path;
@@ -62,7 +55,7 @@ abstract class BasePathFinder implements PathFinderInterface
      *
      * If the path is not valid, throw an exception.
      *
-     * @throws \InvalidArgumentException
+     * @throws \InvalidArgumentException when path is invalid
      * @param string $path Path to validate
      * @return void
      */

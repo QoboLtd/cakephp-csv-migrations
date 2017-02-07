@@ -2,100 +2,63 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\ORM\Table;
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\BaseNumberFieldHandler;
 
-class DecimalFieldHandler extends BaseFieldHandler
+class DecimalFieldHandler extends BaseNumberFieldHandler
 {
     /**
-     * {@inheritDoc}
+     * Database field type
      */
     const DB_FIELD_TYPE = 'decimal';
 
     /**
-     * {@inheritDoc}
+     * Step size to use for number field
      */
-    public function renderValue($table, $field, $data, array $options = [])
-    {
-        $data = $this->_getFieldValueFromData($field, $data);
-        $result = (float)filter_var($data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-
-        $args = $this->_getDbColumnArgs($table, $field);
-
-        $precision = !empty($args['precision']) ? $args['precision']: 2;
-
-        if (!empty($result) && is_numeric($result)) {
-            $result = number_format($result, $precision);
-        } else {
-            $result = (string)$result;
-        }
-
-        return $result;
-    }
+    const INPUT_FIELD_STEP = 'any';
 
     /**
-     * {@inheritDoc}
+     * Precision
+     *
+     * Temporary setting for decimal precision, until
+     * we learn to read it from the fields.ini.
+     *
+     * @todo Replace with configuration from fields.ini
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
-    {
-        $data = $this->_getFieldValueFromData($field, $data);
-        $fieldType = $options['fieldDefinitions']->getType();
-
-        if (in_array($fieldType, array_keys($this->_fieldTypes))) {
-            $fieldType = $this->_fieldTypes[$fieldType];
-        }
-
-        $input = $this->_fieldToLabel($field, $options);
-
-        $input .= $this->cakeView->Form->input($this->_getFieldName($table, $field, $options), [
-            'type' => $fieldType,
-            'required' => (bool)$options['fieldDefinitions']->getRequired(),
-            'value' => $data,
-            'step' => 'any',
-            'max' => $this->_getNumberMax($table, $field),
-            'label' => false
-        ]);
-
-        return $input;
-    }
+    const PRECISION = 2;
 
     /**
-     * {@inheritDoc}
+     * Max value
+     *
+     * Temporary setting for maximum value, until
+     * we learn to read it from the fields.ini.
+     *
+     * @todo Replace with configuration from fields.ini
      */
-    public function renderSearchInput($table, $field, array $options = [])
-    {
-        $fieldType = $options['fieldDefinitions']->getType();
-
-        if (in_array($fieldType, array_keys($this->_fieldTypes))) {
-            $fieldType = $this->_fieldTypes[$fieldType];
-        }
-
-        $content = $this->cakeView->Form->input('', [
-            'name' => '{{name}}',
-            'value' => '{{value}}',
-            'type' => $fieldType,
-            'step' => 'any',
-            'max' => $this->_getNumberMax($table, $field),
-            'label' => false
-        ]);
-
-        return [
-            'content' => $content
-        ];
-    }
+    const MAX_VALUE = '99999999.99';
 
     /**
-     * {@inheritDoc}
+     * Sanitize options
+     *
+     * Name of filter_var() filter to run and all desired
+     * options/flags.
+     *
+     * @var array
+     */
+    public $sanitizeOptions = [FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION];
+
+    /**
+     * Convert CsvField to one or more DbField instances
+     *
+     * Simple fields from migrations CSV map one-to-one to
+     * the database fields.  More complex fields can combine
+     * multiple database fields for a single CSV entry.
+     *
+     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @return array                                           DbField instances
      */
     public function fieldToDb(CsvField $csvField)
     {
-        $dbFields[] = new DbField(
-            $csvField->getName(),
-            static::DB_FIELD_TYPE,
-            $csvField->getLimit(),
-            $csvField->getRequired(),
-            $csvField->getNonSearchable(),
-            $csvField->getUnique()
-        );
+        $dbFields = parent::fieldToDb($csvField);
 
         // set precision and scale provided by csv migration decimal field type definition
         foreach ($dbFields as &$dbField) {
@@ -116,29 +79,5 @@ class DecimalFieldHandler extends BaseFieldHandler
         }
 
         return $dbFields;
-    }
-
-    /**
-     * Method that calculates max value for number input field.
-     *
-     * @param  \Cake\ORM\Table $table Table instance
-     * @param  string          $field Field name
-     * @return float
-     */
-    protected function _getNumberMax(Table $table, $field)
-    {
-        $result = null;
-
-        $args = $this->_getDbColumnArgs($table, $field);
-
-        if (!empty($args['length'])) {
-            $result = str_repeat('9', (int)$args['length']);
-        }
-
-        if ($result && !empty($args['precision'])) {
-            $result = substr_replace($result, '.', $args['length'] - $args['precision'], 0);
-        }
-
-        return (float)$result;
     }
 }

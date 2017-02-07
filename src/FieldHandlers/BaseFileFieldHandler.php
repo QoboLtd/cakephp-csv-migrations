@@ -5,10 +5,16 @@ use Cake\Core\Configure;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
-use CsvMigrations\FieldHandlers\RelatedFieldHandler;
+use CsvMigrations\FieldHandlers\BaseRelatedFieldHandler;
 use CsvMigrations\FileUploadsUtils;
 
-class BaseFileFieldHandler extends RelatedFieldHandler
+/**
+ * BaseFileFieldHandler
+ *
+ * This class provides the fallback functionality that
+ * is common to all file field handlers.
+ */
+class BaseFileFieldHandler extends BaseRelatedFieldHandler
 {
     /**
      * Action name for file edit
@@ -79,24 +85,34 @@ class BaseFileFieldHandler extends RelatedFieldHandler
     const ICON_SIZE = '48';
 
     /**
-     * {@inheritDoc}
+     * Render field input
+     *
+     * This method prepares the form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field input HTML
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $data = $this->_getFieldValueFromData($data);
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
 
-        $fieldName = $this->_getFieldName($table, $field, $options);
+        $fieldName = $this->table->aliasField($this->field);
 
         $input['html'] = '';
         $input['html'] .= '<div class="form-group' . ((bool)$options['fieldDefinitions']->getRequired() ? ' required' : '') . '">';
-        $input['html'] .= $this->cakeView->Form->label($field);
+        $input['html'] .= $options['label'] ? $this->cakeView->Form->label($this->field, $options['label']) : '';
         $input['html'] .= '<div class="input-group">';
 
-        $input['html'] .= $this->cakeView->Form->input($field, [
+        $input['html'] .= $this->cakeView->Form->input($this->field, [
             'label' => false,
             'name' => false,
-            'id' => $field . static::LABEL_FIELD_SUFFIX,
+            'id' => $this->field . static::LABEL_FIELD_SUFFIX,
             'type' => 'text',
             'disabled' => true,
             'value' => (!empty($relatedProperties['entity'])) ? $relatedProperties['dispFieldVal'] : '',
@@ -106,7 +122,7 @@ class BaseFileFieldHandler extends RelatedFieldHandler
         ]);
 
         $input['html'] .= '<div class="input-group-btn">';
-        $input['html'] .= '<button type="button" class="btn btn-default" data-toggle="modal" data-target="#' . $field . '_modal">';
+        $input['html'] .= '<button type="button" class="btn btn-default" data-toggle="modal" data-target="#' . $this->field . '_modal">';
         $input['html'] .= '<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>';
         $input['html'] .= '</button>';
         $input['html'] .= '</div>';
@@ -124,8 +140,8 @@ class BaseFileFieldHandler extends RelatedFieldHandler
         $input['html'] .= $this->cakeView->Form->input($fieldName, ['type' => 'hidden', 'value' => (!is_null($data) ? $data : '')]);
 
         $embeddedAssocName = null;
-        foreach ($table->associations() as $association) {
-            if ($association->foreignKey() === $field) {
+        foreach ($this->table->associations() as $association) {
+            if ($association->foreignKey() === $this->field) {
                 $embeddedAssocName = $association->name();
                 break;
             }
@@ -147,25 +163,32 @@ class BaseFileFieldHandler extends RelatedFieldHandler
             [
                 'query' => [
                     'embedded' => $fileController . '.' . $embeddedAssocName,
-                    'foreign_key' => $field
+                    'foreign_key' => $this->field
                 ]
             ]
         );
-        $input['embeddedForm'] = sprintf(static::EMBEDDED_FORM_HTML, $field, $embeddedForm);
+        $input['embeddedForm'] = sprintf(static::EMBEDDED_FORM_HTML, $this->field, $embeddedForm);
 
         return $input;
     }
 
     /**
-     * {@inheritDoc}
+     * Get options for field search
+     *
+     * This method prepares an array of search options, which includes
+     * label, form input, supported search operators, etc.  The result
+     * can be controlled with a variety of options.
+     *
+     * @param  array  $options Field options
+     * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function getSearchOptions(array $options = [])
     {
         return [];
     }
 
     /**
-     * Get appropriate file icon url by file extension.
+     * Get file icon url by file extension
      *
      * @param  string $extension File extension
      * @return string

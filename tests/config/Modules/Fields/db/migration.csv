@@ -1,0 +1,23 @@
+FIELD NAME,FIELD TYPE,REQUIRED,NOT SEARCHABLE,UNIQUE
+field_blob,blob
+field_boolean,boolean
+field_date,date
+field_datetime,datetime
+field_dblist,dblist('dblist')
+field_decimal,decimal
+field_email,email
+field_files,files
+field_images,images
+field_integer,integer,
+field_list,list('list')
+field_metric,metric('metric')
+field_money,money('money')
+field_phone,phone
+field_related,related('Fields')
+field_reminder,reminder
+field_string,string
+field_sublist,sublist('sublist')
+field_text,text
+field_time,time
+field_url,url
+field_uuid,uuid

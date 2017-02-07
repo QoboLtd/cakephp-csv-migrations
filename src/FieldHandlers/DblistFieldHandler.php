@@ -1,38 +1,37 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\BaseListFieldHandler;
 
-class DblistFieldHandler extends BaseFieldHandler
+class DblistFieldHandler extends BaseListFieldHandler
 {
-    /**
-     * Field type
-     */
-    const DB_FIELD_TYPE = 'string';
-
     /**
      * Input default options
      *
      * @var array
      */
-    protected $_defaultOptions = [
+    protected $_defaultInputOptions = [
         'class' => 'form-control',
         'label' => true
     ];
 
     /**
-     * Method responsible for rendering field's input.
+     * Render field input
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string          field input
+     * This method prepares the form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field input HTML
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($data = '', array $options = [])
     {
         $result = '';
-        $data = $this->_getFieldValueFromData($field, $data);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $data = $this->_getFieldValueFromData($data);
         //CsvField object is mandatory
         if (!isset($options['fieldDefinitions']) ||
             !($options['fieldDefinitions'] instanceof CsvField)) {
@@ -40,30 +39,33 @@ class DblistFieldHandler extends BaseFieldHandler
         }
         $csvObj = $options['fieldDefinitions'];
         $list = $csvObj->getListName();
-        $field = $this->_getFieldName($table, $field, $options);
+        $fieldName = $this->table->aliasField($this->field);
         $options = [
             'value' => $data,
             'required' => $csvObj->getRequired(),
         ];
-        $options += $this->_defaultOptions;
-        $result = $this->cakeView->cell('CsvMigrations.Dblist::' . __FUNCTION__, [$field, $list, $options])->render(__FUNCTION__);
+        $options += $this->_defaultInputOptions;
+        $result = $this->cakeView->cell('CsvMigrations.Dblist::' . __FUNCTION__, [$fieldName, $list, $options])->render(__FUNCTION__);
 
         return $result;
     }
 
     /**
-     * Method that renders list field's value.
+     * Render field value
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string
+     * This method prepares the output of the value for the given
+     * field.  The result can be controlled via the variety of
+     * options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field value
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
         $result = '';
-        $data = $this->_getFieldValueFromData($field, $data);
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $data = $this->_getFieldValueFromData($data);
 
         //CsvField object is mandatory
         if (!isset($options['fieldDefinitions']) ||
@@ -77,41 +79,37 @@ class DblistFieldHandler extends BaseFieldHandler
     }
 
     /**
-     * {@inheritDoc}
+     * Get options for field search
+     *
+     * This method prepares an array of search options, which includes
+     * label, form input, supported search operators, etc.  The result
+     * can be controlled with a variety of options.
+     *
+     * @param  array  $options Field options
+     * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function getSearchOptions(array $options = [])
     {
+        // Fix options as early as possible
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $result = parent::getSearchOptions($options);
+        if (empty($result[$this->field]['input'])) {
+            return $result;
+        }
+
         $content = $this->cakeView->cell(
             'CsvMigrations.Dblist::renderInput',
             [
                 '{{name}}',
                 $options['fieldDefinitions']->getListName(),
-                ['label' => false] + $this->_defaultOptions
+                ['label' => false] + $this->_defaultInputOptions
             ]
         )->render('renderInput');
 
-        return [
+        $result[$this->field]['input'] = [
             'content' => $content
         ];
-    }
 
-    /**
-     * Method responsible for converting csv field instance to database field instance.
-     *
-     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @return array list of DbField instances
-     */
-    public function fieldToDb(CsvField $csvField)
-    {
-        $dbFields[] = new DbField(
-            $csvField->getName(),
-            static::DB_FIELD_TYPE,
-            null,
-            $csvField->getRequired(),
-            $csvField->getNonSearchable(),
-            $csvField->getUnique()
-        );
-
-        return $dbFields;
+        return $result;
     }
 }

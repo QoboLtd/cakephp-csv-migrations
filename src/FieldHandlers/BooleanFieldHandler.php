@@ -1,9 +1,9 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 
-class BooleanFieldHandler extends BaseFieldHandler
+class BooleanFieldHandler extends BaseSimpleFieldHandler
 {
     /**
      * Database field type
@@ -11,20 +11,55 @@ class BooleanFieldHandler extends BaseFieldHandler
     const DB_FIELD_TYPE = 'boolean';
 
     /**
-     * Method responsible for rendering field's input.
-     *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string          field input
+     * HTML form field type
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
-    {
-        $data = $this->_getFieldValueFromData($field, $data);
+    const INPUT_FIELD_TYPE = 'checkbox';
 
-        $fieldName = $this->_getFieldName($table, $field, $options);
-        $label = $this->cakeView->Form->label($fieldName);
+    /**
+     * Search operators
+     *
+     * @var array
+     */
+    public $searchOperators = [
+        'is' => [
+            'label' => 'is',
+            'operator' => 'IN',
+        ],
+        'is_not' => [
+            'label' => 'is not',
+            'operator' => 'NOT IN',
+        ],
+    ];
+
+    /**
+     * Sanitize options
+     *
+     * Name of filter_var() filter to run and all desired
+     * options/flags.
+     *
+     * @var array
+     */
+    public $sanitizeOptions = [FILTER_SANITIZE_NUMBER_INT];
+
+    /**
+     * Render field input
+     *
+     * This method prepares the form input for the given field,
+     * including the input itself, label, pre-populated value,
+     * and so on.  The result can be controlled via the variety
+     * of options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field input HTML
+     */
+    public function renderInput($data = '', array $options = [])
+    {
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $data = $this->_getFieldValueFromData($data);
+
+        $fieldName = $this->table->aliasField($this->field);
+        $label = $options['label'] ? $this->cakeView->Form->label($fieldName, $options['label']) : '';
         $input = $this->cakeView->Form->input($fieldName, [
             'type' => 'checkbox',
             'class' => 'square',
@@ -40,40 +75,52 @@ class BooleanFieldHandler extends BaseFieldHandler
     }
 
     /**
-     * Method that renders specified field's value based on the field's type.
+     * Format field value
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
+     * This method provides a customization point for formatting
+     * of the field value before rendering.
+     *
+     * NOTE: The value WILL NOT be sanitized during the formatting.
+     *       It is assumed that sanitization happens either before
+     *       or after this method is called.
+     *
+     * @param mixed $data    Field value data
+     * @param array $options Field formatting options
      * @return string
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    protected function formatValue($data, array $options = [])
     {
-        $data = $this->_getFieldValueFromData($field, $data);
         $result = $data ? __('Yes') : __('No');
 
         return $result;
     }
 
     /**
-     * {@inheritDoc}
+     * Get options for field search
+     *
+     * This method prepares an array of search options, which includes
+     * label, form input, supported search operators, etc.  The result
+     * can be controlled with a variety of options.
+     *
+     * @param  array  $options Field options
+     * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function renderSearchInput($table, $field, array $options = [])
+    public function getSearchOptions(array $options = [])
     {
-        $fieldType = $options['fieldDefinitions']->getType();
-
-        if (in_array($fieldType, array_keys($this->_fieldTypes))) {
-            $fieldType = $this->_fieldTypes[$fieldType];
+        // Fix options as early as possible
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $result = parent::getSearchOptions($options);
+        if (empty($result[$this->field]['input'])) {
+            return $result;
         }
 
         $content = $this->cakeView->Form->input('{{name}}', [
-            'type' => 'checkbox',
+            'type' => static::INPUT_FIELD_TYPE,
             'class' => 'square',
             'label' => false
         ]);
 
-        return [
+        $result[$this->field]['input'] = [
             'content' => $content,
             'post' => [
                 [
@@ -92,5 +139,7 @@ class BooleanFieldHandler extends BaseFieldHandler
                 ]
             ]
         ];
+
+        return $result;
     }
 }

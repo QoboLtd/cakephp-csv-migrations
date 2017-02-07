@@ -150,6 +150,8 @@ abstract class BaseViewListener implements EventListenerInterface
     {
         $result = [];
 
+        $table = $event->subject()->{$event->subject()->name};
+
         $migrationFields = $this->_getMigrationFields($event->subject()->request);
         if (empty($migrationFields)) {
             return $result;
@@ -163,12 +165,12 @@ abstract class BaseViewListener implements EventListenerInterface
             }
 
             $csvField = new CsvField($migrationFields[$field]);
-            foreach ($fhf->fieldToDb($csvField) as $dbField) {
+            foreach ($fhf->fieldToDb($csvField, $table, $field) as $dbField) {
                 $result[] = $dbField->getName();
             }
         }
 
-        $virtualFields = $event->subject()->{$event->subject()->name}->getVirtualFields();
+        $virtualFields = $table->getVirtualFields();
 
         if (empty($virtualFields)) {
             return $result;

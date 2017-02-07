@@ -1,15 +1,13 @@
 <?php
 namespace CsvMigrations\View;
 
-use BootstrapUI\View\UIView;
+use Cake\View\View;
 
 /**
  * App View class
  */
-class AppView extends UIView
+class AppView extends View
 {
-    public $layout = 'QoboAdminPanel.basic';
-
     /**
      * Initialization hook method.
      *

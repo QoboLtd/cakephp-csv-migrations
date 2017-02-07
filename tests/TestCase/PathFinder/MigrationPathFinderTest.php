@@ -47,7 +47,7 @@ class MigrationPathFinderTest extends PHPUnit_Framework_TestCase
      */
     public function testFindExceptionModuleEmpty()
     {
-        $path = $this->pf->find();
+        $path = $this->pf->find(null);
     }
 
     /**

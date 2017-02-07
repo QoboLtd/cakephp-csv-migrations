@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
@@ -11,11 +12,6 @@ use RegexIterator;
 class FieldHandlerFactory
 {
     /**
-     * Default Field Handler class name
-     */
-    const DEFAULT_HANDLER_CLASS = 'Default';
-
-    /**
      * Field Handler classes suffix
      */
     const HANDLER_SUFFIX = 'FieldHandler';
@@ -24,13 +20,6 @@ class FieldHandlerFactory
      * Field Handler Interface class name
      */
     const FIELD_HANDLER_INTERFACE = 'FieldHandlerInterface';
-
-    /**
-     * Current Table name
-     *
-     * @var string
-     */
-    protected $_tableName;
 
     /**
      * Loaded Table instances
@@ -47,7 +36,7 @@ class FieldHandlerFactory
     public $cakeView = null;
 
     /**
-     * Constructor method.
+     * Constructor
      *
      * @param mixed $cakeView View object or null
      */
@@ -57,7 +46,7 @@ class FieldHandlerFactory
     }
 
     /**
-     * Method responsible for rendering field's input.
+     * Render field form input
      *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
@@ -68,63 +57,29 @@ class FieldHandlerFactory
     public function renderInput($table, $field, $data = '', array $options = [])
     {
         $table = $this->_getTableInstance($table);
-        $options = $this->_getExtraOptions($table, $field, $options);
-        $handler = $this->_getHandler($options['fieldDefinitions']->getType());
+        $handler = $this->_getHandler($table, $field);
 
-        return $handler->renderInput($table, $field, $data, $options);
+        return $handler->renderInput($data, $options);
     }
 
     /**
-     * Method responsible for rendering field's search input.
+     * Get search options
      *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
-     * @return string          field input
+     * @param  array  $options field options
+     * @return array           Array of fields and their options
      */
-    public function renderSearchInput($table, $field)
+    public function getSearchOptions($table, $field, array $options = [])
     {
         $table = $this->_getTableInstance($table);
-        $options = $this->_getExtraOptions($table, $field);
-        $handler = $this->_getHandler($options['fieldDefinitions']->getType());
+        $handler = $this->_getHandler($table, $field);
 
-        return $handler->renderSearchInput($table, $field, $options);
+        return $handler->getSearchOptions($options);
     }
 
     /**
-     * Method that returns field search operators based on field type.
-     *
-     * @param mixed $table Name or instance of the Table
-     * @param string $field Field name
-     * @return array
-     */
-    public function getSearchOperators($table, $field)
-    {
-        $table = $this->_getTableInstance($table);
-        $options = $this->_getExtraOptions($table, $field);
-        $type = $options['fieldDefinitions']->getType();
-        $handler = $this->_getHandler($type);
-
-        return $handler->getSearchOperators($table, $field, $type);
-    }
-
-    /**
-     * Method that returns search field label.
-     *
-     * @param mixed $table Name or instance of the Table
-     * @param string $field Field name
-     * @return string
-     */
-    public function getSearchLabel($table, $field)
-    {
-        $table = $this->_getTableInstance($table);
-        $options = $this->_getExtraOptions($table, $field);
-        $handler = $this->_getHandler($options['fieldDefinitions']->getType());
-
-        return $handler->getSearchLabel($options['fieldDefinitions']->getName());
-    }
-
-    /**
-     * Method that renders specified field's value based on the field's type.
+     * Render field value
      *
      * @param  mixed  $table   name or instance of the Table
      * @param  string $field   field name
@@ -135,21 +90,23 @@ class FieldHandlerFactory
     public function renderValue($table, $field, $data, array $options = [])
     {
         $table = $this->_getTableInstance($table);
-        $options = $this->_getExtraOptions($table, $field, $options);
-        $handler = $this->_getHandler($options['fieldDefinitions']->getType());
+        $handler = $this->_getHandler($table, $field);
 
-        return $handler->renderValue($table, $field, $data, $options);
+        return $handler->renderValue($data, $options);
     }
 
     /**
-     * Method responsible for converting csv field instance to database field instance.
+     * Convert field CSV into database fields
      *
+     * @todo Figure out which one of the two fields we actually need
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @param  mixed                                 $table Name of instance of Table
+     * @param  string                                $field Field name
      * @return array list of DbField instances
      */
-    public function fieldToDb(CsvField $csvField)
+    public function fieldToDb(CsvField $csvField, $table, $field)
     {
-        $handler = $this->_getHandler($csvField->getType());
+        $handler = $this->_getHandler($table, $field);
         $fields = $handler->fieldToDb($csvField);
 
         return $fields;
@@ -170,122 +127,116 @@ class FieldHandlerFactory
      */
     public function hasFieldHandler($fieldType)
     {
-        $result = false;
+        $interface = __NAMESPACE__ . '\\' . static::FIELD_HANDLER_INTERFACE;
 
-        try {
-            $handler = $this->_getHandler($fieldType, true);
-            $result = true;
-        } catch (\Exception $e) {
-            $result = false;
+        $handlerName = $this->_getHandlerClassName($fieldType, true);
+        if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
+            return true;
         }
 
-        return $result;
+        return false;
     }
 
     /**
-     * Method that sets and returns Table instance
+     * Get table instance
      *
+     * @throws \InvalidArgumentException when $table is not an object or string
      * @param  mixed  $table  name or instance of the Table
      * @return object         Table instance
      */
     protected function _getTableInstance($table)
     {
-        // set table name
+        $tableName = '';
         if (is_object($table)) {
-            $this->setTableName($table->alias());
+            $tableName = $table->alias();
+            // Update instance cache with the freshest copy and exist
+            $this->_tableInstances[$tableName] = $table;
+
+            return $table;
+        } elseif (is_string($table)) {
+            // Will need to do some work later
+            $tableName = $table;
         } else {
-            $this->setTableName($table);
+            // Avoid ambiguity
+            throw new \InvalidArgumentException("Table must be a name or instance object");
         }
 
-        $tableInstance = $this->_setTableInstance($table);
-
-        return $tableInstance;
-    }
-
-    /**
-     * Method that adds extra parameters to the field options array.
-     *
-     * @param  object $tableInstance instance of the Table
-     * @param  string $field         field name
-     * @param  array  $options       field options
-     * @return array
-     */
-    protected function _getExtraOptions($tableInstance, $field, array $options = [])
-    {
-        // get fields definitions
-        // if the field is csv-based
-        if (is_callable([$tableInstance, 'getFieldsDefinitions']) && method_exists($tableInstance, 'getFieldsDefinitions')) {
-            $fieldsDefinitions = $tableInstance->getFieldsDefinitions($tableInstance->alias());
+        // Return a cached instance if we have one
+        if (in_array($tableName, array_keys($this->_tableInstances))) {
+            return $this->_tableInstances[$tableName];
         }
 
-        /*
-         * @todo make this better, probably define defaults (scenario virtual fields)
-         */
-        if (empty($options['fieldDefinitions']['type'])) {
-            $options['fieldDefinitions']['type'] = 'string';
-        }
+        // Populate cache
+        $this->_tableInstances[$tableName] = TableRegistry::get($tableName);
 
-        /*
-        add field definitions to options array as CsvField Instance
-         */
-        if (!empty($fieldsDefinitions[$field])) {
-            $options['fieldDefinitions'] = new CsvField($fieldsDefinitions[$field]);
-        } else {
-            $options['fieldDefinitions']['name'] = $field;
-            $options['fieldDefinitions'] = new CsvField($options['fieldDefinitions']);
-        }
-
-        return $options;
+        return $this->_tableInstances[$tableName];
     }
 
     /**
      * Get field handler instance
      *
      * This method returns an instance of the appropriate
-     * FieldHandler class based on field Type.
+     * FieldHandler class.
      *
-     * In case the field handler cannot be found or instantiated
-     * the method either returns a default handler, or throws an
-     * expcetion (based on $failOnError parameter).
-     *
-     * @throws \RuntimeException when failed to instantiate field handler and $failOnError is true
-     * @param  string  $fieldType field type
-     * @param  bool   $failOnError Whether or not to throw exception on failure
-     * @return object            FieldHandler instance
+     * @throws \RuntimeException when failed to instantiate field handler
+     * @param  Table         $table Table instance
+     * @param  string|array  $field Field name
+     * @return object               FieldHandler instance
      */
-    protected function _getHandler($fieldType, $failOnError = false)
+    protected function _getHandler(Table $table, $field)
     {
+        if (empty($field)) {
+            throw new \InvalidArgumentException("Field parameter is empty");
+        }
+
+        // Prepare the stub field
+        $fieldName = '';
+        $stubFields = [];
+        if (is_string($field)) {
+            $fieldName = $field;
+            $stubFields = [
+                $fieldName => [
+                    'name' => $fieldName,
+                    'type' => 'string',
+                ],
+            ];
+        } elseif (is_array($field)) {
+            if (empty($field['name'])) {
+                throw new \InvalidArgumentException("Field array is missing 'name' key");
+            }
+            if (empty($field['type'])) {
+                throw new \InvalidArgumentException("Field array is missing 'type' key");
+            }
+            $fieldName = $field['name'];
+            $stubFields = [
+                $fieldName => $field,
+            ];
+        } else {
+            throw new \InvalidArgumentException("Field can be either a string or an associative array");
+        }
+
+        $fieldDefinitions = [];
+        if (method_exists($table, 'getFieldsDefinitions') && is_callable([$table, 'getFieldsDefinitions'])) {
+            $fieldDefinitions = $table->getFieldsDefinitions($stubFields);
+        } else {
+            $fieldDefinitions = $stubFields;
+        }
+
+        if (empty($fieldDefinitions[$fieldName])) {
+            throw new \RuntimeException("Failed to get definition for field '$fieldName'");
+        }
+
+        $field = new CsvField($fieldDefinitions[$fieldName]);
+        $fieldType = $field->getType();
+
         $interface = __NAMESPACE__ . '\\' . static::FIELD_HANDLER_INTERFACE;
 
-        $handlerName = $this->_getHandlerByFieldType($fieldType, true);
+        $handlerName = $this->_getHandlerClassName($fieldType, true);
         if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
-            return new $handlerName($this->cakeView);
+            return new $handlerName($table, $fieldName, $this->cakeView);
         }
 
-        // Field hanlder does not exist, throw exception if necessary
-        if ($failOnError) {
-            throw new \RuntimeException("No field handler defined for field type [$fieldType]");
-        }
-
-        // Use default field handler
-        $handlerName = __NAMESPACE__ . '\\' . static::DEFAULT_HANDLER_CLASS . static::HANDLER_SUFFIX;
-        if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
-            return new $handlerName($this->cakeView);
-        }
-
-        // Neither the handler, nor the default handler can be used
-        throw new \RuntimeException("Default field handler [" . static::DEFAULT_HANDLER_CLASS . "] cannot be used");
-    }
-
-    /**
-     * Set table name
-     *
-     * @param string $tableName table name
-     * @return void
-     */
-    public function setTableName($tableName)
-    {
-        $this->_tableName = $tableName;
+        throw new \RuntimeException("No field handler defined for field type [$fieldType]");
     }
 
     /**
@@ -297,7 +248,7 @@ class FieldHandlerFactory
      * @param  bool   $withNamespace whether or not to include namespace
      * @return string                handler class name
      */
-    protected function _getHandlerByFieldType($type, $withNamespace = false)
+    protected function _getHandlerClassName($type, $withNamespace = false)
     {
         $result = Inflector::camelize($type) . static::HANDLER_SUFFIX;
 
@@ -306,26 +257,5 @@ class FieldHandlerFactory
         }
 
         return $result;
-    }
-
-    /**
-     * Method that adds specified table to the _tableInstances
-     * array and returns the table's instance.
-     *
-     * @param  mixed $table name or instance of the Table
-     * @return object       instance of specified Table
-     */
-    protected function _setTableInstance($table)
-    {
-        // add table instance to _modelInstances array
-        if (!in_array($this->_tableName, array_keys($this->_tableInstances))) {
-            // get table instance
-            if (!is_object($table)) {
-                $table = TableRegistry::get($this->_tableName);
-            }
-            $this->_tableInstances[$this->_tableName] = $table;
-        }
-
-        return $this->_tableInstances[$this->_tableName];
     }
 }

@@ -129,6 +129,7 @@ class FieldHandlerFactory
             $field = $csvField->getName();
         }
 
+        $table = $this->_getTableInstance($table);
         $handler = $this->_getHandler($table, $field);
         $fields = $handler->fieldToDb($csvField);
 

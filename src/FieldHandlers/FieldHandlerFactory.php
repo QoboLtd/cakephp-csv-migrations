@@ -57,7 +57,7 @@ class FieldHandlerFactory
     public function renderInput($table, $field, $data = '', array $options = [])
     {
         $table = $this->_getTableInstance($table);
-        $handler = $this->_getHandler($table, $field);
+        $handler = $this->_getHandler($table, $field, $options);
 
         return $handler->renderInput($data, $options);
     }
@@ -73,7 +73,7 @@ class FieldHandlerFactory
     public function getSearchOptions($table, $field, array $options = [])
     {
         $table = $this->_getTableInstance($table);
-        $handler = $this->_getHandler($table, $field);
+        $handler = $this->_getHandler($table, $field, $options);
 
         return $handler->getSearchOptions($options);
     }
@@ -90,7 +90,7 @@ class FieldHandlerFactory
     public function renderValue($table, $field, $data, array $options = [])
     {
         $table = $this->_getTableInstance($table);
-        $handler = $this->_getHandler($table, $field);
+        $handler = $this->_getHandler($table, $field, $options);
 
         return $handler->renderValue($data, $options);
     }
@@ -179,21 +179,31 @@ class FieldHandlerFactory
      * FieldHandler class.
      *
      * @throws \RuntimeException when failed to instantiate field handler
-     * @param  Table         $table Table instance
-     * @param  string|array  $field Field name
-     * @return object               FieldHandler instance
+     * @param  Table         $table   Table instance
+     * @param  string|array  $field   Field name
+     * @param  array         $options Field options
+     * @return object                 FieldHandler instance
      */
-    protected function _getHandler(Table $table, $field)
+    protected function _getHandler(Table $table, $field, array $options = [])
     {
         if (empty($field)) {
             throw new \InvalidArgumentException("Field parameter is empty");
         }
 
-        // Prepare the stub field
+        // Save field name
         $fieldName = '';
-        $stubFields = [];
         if (is_string($field)) {
             $fieldName = $field;
+        }
+
+        // Overwrite field with field difinitions options
+        if (!empty($options['fieldDefinitions'])) {
+            $field = $options['fieldDefinitions'];
+        }
+
+        // Prepare the stub field
+        $stubFields = [];
+        if (is_string($field)) {
             $stubFields = [
                 $fieldName => [
                     'name' => $fieldName,
@@ -201,6 +211,11 @@ class FieldHandlerFactory
                 ],
             ];
         } elseif (is_array($field)) {
+            // Try our best to find the field name
+            if (empty($field['name']) && !empty($fieldName)) {
+                $field['name'] = $fieldName;
+            }
+
             if (empty($field['name'])) {
                 throw new \InvalidArgumentException("Field array is missing 'name' key");
             }

@@ -104,8 +104,12 @@ class FieldHandlerFactory
      * @param  string                                $field Field name
      * @return array list of DbField instances
      */
-    public function fieldToDb(CsvField $csvField, $table, $field)
+    public function fieldToDb(CsvField $csvField, $table, $field = null)
     {
+        if (empty($field)) {
+            $field = $csvField->getName();
+        }
+
         $handler = $this->_getHandler($table, $field);
         $fields = $handler->fieldToDb($csvField);
 

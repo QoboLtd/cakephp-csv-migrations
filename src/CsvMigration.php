@@ -91,9 +91,9 @@ class CsvMigration extends AbstractMigration
         $tableFields = $this->_getTableFields();
 
         if (empty($tableFields)) {
-            $this->_createFromCsv($csvData);
+            $this->_createFromCsv($csvData, $tableName);
         } else {
-            $this->_updateFromCsv($csvData, $tableFields);
+            $this->_updateFromCsv($csvData, $tableName, $tableFields);
         }
     }
 
@@ -193,16 +193,17 @@ class CsvMigration extends AbstractMigration
     }
 
     /**
-     * Create new fields from csv data.
+     * Create new fields from csv data
      *
-     * @param  array $csvData csv data
+     * @param  array $csvData CSV data
+     * @param  string $table  Table name
      * @return void
      */
-    protected function _createFromCsv(array $csvData)
+    protected function _createFromCsv(array $csvData, $table)
     {
         foreach ($csvData as $col) {
             $csvField = new CsvField($col);
-            $dbFields = $this->_fhf->fieldToDb($csvField);
+            $dbFields = $this->_fhf->fieldToDb($csvField, $table);
 
             if (empty($dbFields)) {
                 continue;
@@ -215,13 +216,14 @@ class CsvMigration extends AbstractMigration
     }
 
     /**
-     * Update (modify/delete) table fields in comparison to the csv data.
+     * Update (modify/delete) table fields in comparison to the CSV data
      *
-     * @param  array $csvData      csv data
-     * @param  array $tableFields  existing table fields
+     * @param  array  $csvData    CSV data
+     * @param  string $table      Table name
+     * @param  array  $tableField Existing table fields
      * @return void
      */
-    protected function _updateFromCsv(array $csvData, array $tableFields)
+    protected function _updateFromCsv(array $csvData, $table, array $tableFields)
     {
         // get existing table column names
         foreach ($tableFields as &$tableField) {
@@ -232,7 +234,7 @@ class CsvMigration extends AbstractMigration
         $editedColumns = [];
         foreach ($csvData as $col) {
             $csvField = new CsvField($col);
-            $dbFields = $this->_fhf->fieldToDb($csvField);
+            $dbFields = $this->_fhf->fieldToDb($csvField, $table);
 
             if (empty($dbFields)) {
                 continue;

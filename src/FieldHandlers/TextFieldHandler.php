@@ -26,7 +26,7 @@ class TextFieldHandler extends BaseStringFieldHandler
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return array                                           DbField instances
      */
-    public function fieldToDb(CsvField $csvField)
+    public static function fieldToDb(CsvField $csvField)
     {
         $csvField->setType(self::DB_FIELD_TYPE);
         // Set the limit to Phinx\Db\Adapter\MysqlAdapter::TEXT_LONG
@@ -34,7 +34,7 @@ class TextFieldHandler extends BaseStringFieldHandler
 
         $dbField = DbField::fromCsvField($csvField);
         $result = [
-            $this->field => $dbField,
+            $csvField->getName() => $dbField,
         ];
 
         return $result;

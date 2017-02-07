@@ -26,27 +26,7 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
      *
      * @var array
      */
-    protected $_fields = [];
-
-    /**
-     * Constructor
-     *
-     * @param mixed  $table    Name or instance of the Table
-     * @param string $field    Field name
-     * @param object $cakeView Optional instance of the AppView
-     */
-    public function __construct($table, $field, $cakeView = null)
-    {
-        parent::__construct($table, $field, $cakeView);
-        $this->_setCombinedFields();
-    }
-
-    /**
-     * Set combined fields
-     *
-     * @return void
-     */
-    abstract protected function _setCombinedFields();
+    protected static $_fields = [];
 
     /**
      * Render field input
@@ -68,7 +48,7 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
         $label = $options['label'] ? $this->cakeView->Form->label($this->field, $options['label']) : false;
 
         $inputs = [];
-        foreach ($this->_fields as $suffix => $preOptions) {
+        foreach (static::$_fields as $suffix => $preOptions) {
             $options['fieldDefinitions']->setType($preOptions['handler']::DB_FIELD_TYPE);
             // Skip individual inputs' label
             $options['label'] = false;
@@ -102,7 +82,7 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
     {
         $result = [];
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        foreach ($this->_fields as $suffix => $fieldOptions) {
+        foreach (static::$_fields as $suffix => $fieldOptions) {
             $fieldName = $this->field . '_' . $suffix;
             $fieldData = $this->_getFieldValueFromData($data, $fieldName);
             // fieldData will most probably be empty when dealing with combined fields for
@@ -136,7 +116,7 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
     {
         $result = [];
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        foreach ($this->_fields as $suffix => $fieldOptions) {
+        foreach (static::$_fields as $suffix => $fieldOptions) {
             $options['fieldDefinitions']->setType($fieldOptions['handler']::DB_FIELD_TYPE);
             $fieldName = $this->field . '_' . $suffix;
             $handler = new $fieldOptions['handler']($this->table, $fieldName, $this->cakeView);
@@ -159,18 +139,17 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return array                                           DbField instances
      */
-    public function fieldToDb(CsvField $csvField)
+    public static function fieldToDb(CsvField $csvField)
     {
         $dbFields = [];
-        foreach ($this->_fields as $suffix => $options) {
+        foreach (static::$_fields as $suffix => $options) {
             $subField = clone $csvField;
             $subField->setName($csvField->getName() . '_' . $suffix);
-            $handler = new $options['handler']($this->table, $subField->getName(), $this->cakeView);
             if (isset($options['limit'])) {
                 $subField->setLimit($options['limit']);
             }
 
-            $dbFields = array_merge($dbFields, $handler->fieldToDb($subField));
+            $dbFields = array_merge($dbFields, $options['handler']::fieldToDb($subField));
         }
 
         return $dbFields;

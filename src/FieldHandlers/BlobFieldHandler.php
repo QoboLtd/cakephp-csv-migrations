@@ -26,7 +26,7 @@ class BlobFieldHandler extends BaseSimpleFieldHandler
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return array                                           DbField instances
      */
-    public function fieldToDb(CsvField $csvField)
+    public static function fieldToDb(CsvField $csvField)
     {
         $csvField->setType(self::DB_FIELD_TYPE);
         // Set the limit to Phinx\Db\Adapter\MysqlAdapter::BLOB_LONG
@@ -34,7 +34,7 @@ class BlobFieldHandler extends BaseSimpleFieldHandler
 
         $dbField = DbField::fromCsvField($csvField);
         $result = [
-            $this->field => $dbField,
+            $csvField->getName() => $dbField,
         ];
 
         return $result;

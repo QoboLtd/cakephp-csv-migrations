@@ -90,5 +90,5 @@ interface FieldHandlerInterface
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return array                                           DbField instances
      */
-    public function fieldToDb(CsvField $csvField);
+    public static function fieldToDb(CsvField $csvField);
 }

@@ -117,23 +117,24 @@ class FieldHandlerFactory
     /**
      * Convert field CSV into database fields
      *
-     * @todo Figure out which one of the two fields we actually need
+     * **NOTE** For the time-being, we are not utilizing $table and $field
+     *          parameters.  They are here to ease the near-future refactoring
+     *          of the FieldHandlerFactory class into a proper (and simple)
+     *          factory.
+     *
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @param  mixed                                 $table Name of instance of Table
-     * @param  string                                $field Field name
+     * @param  mixed                                 $table    Name or instance of the Table
+     * @param  string                                $field    Field name
      * @return array list of DbField instances
      */
     public function fieldToDb(CsvField $csvField, $table, $field = null)
     {
-        if (empty($field)) {
-            $field = $csvField->getName();
+        if (!static::hasFieldHandler($csvField->getType())) {
+            throw new \RuntimeException("No field handler for type [" . $csvField->getType . "]");
         }
+        $handlerName = static::_getHandlerClassName($csvField->getType(), true);
 
-        $table = $this->_getTableInstance($table);
-        $handler = $this->_getHandler($table, $field);
-        $fields = $handler->fieldToDb($csvField);
-
-        return $fields;
+        return $handlerName::fieldToDb($csvField);
     }
 
     /**
@@ -149,11 +150,11 @@ class FieldHandlerFactory
      * @param string $fieldType Field type
      * @return bool             True if yes, false otherwise
      */
-    public function hasFieldHandler($fieldType)
+    public static function hasFieldHandler($fieldType)
     {
         $interface = __NAMESPACE__ . '\\' . static::FIELD_HANDLER_INTERFACE;
 
-        $handlerName = $this->_getHandlerClassName($fieldType, true);
+        $handlerName = static::_getHandlerClassName($fieldType, true);
         if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
             return true;
         }
@@ -270,7 +271,7 @@ class FieldHandlerFactory
 
         $interface = __NAMESPACE__ . '\\' . static::FIELD_HANDLER_INTERFACE;
 
-        $handlerName = $this->_getHandlerClassName($fieldType, true);
+        $handlerName = static::_getHandlerClassName($fieldType, true);
         if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
             return new $handlerName($table, $fieldName, $this->cakeView);
         }
@@ -287,7 +288,7 @@ class FieldHandlerFactory
      * @param  bool   $withNamespace whether or not to include namespace
      * @return string                handler class name
      */
-    protected function _getHandlerClassName($type, $withNamespace = false)
+    protected static function _getHandlerClassName($type, $withNamespace = false)
     {
         $result = Inflector::camelize($type) . static::HANDLER_SUFFIX;
 

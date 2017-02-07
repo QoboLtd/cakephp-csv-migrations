@@ -36,26 +36,26 @@ class LookupListener extends BaseViewListener
     public function beforeLookup(Event $event, Query $query)
     {
         $request = $event->subject()->request;
-        if (!empty($request->query['query'])) {
-            $table = $event->subject()->{$event->subject()->name};
+        $table = $event->subject()->{$event->subject()->name};
 
-            $typeaheadFields = [];
-            // Get typeahead fields from configuration
-            if (method_exists($table, 'typeaheadFields') && is_callable([$table, 'typeaheadFields'])) {
-                $typeaheadFields = $table->typeaheadFields();
-            }
-            // If there are no typeahead fields configured, use displayFields()
-            if (empty($typeaheadFields)) {
-                $typeaheadFields[] = $table->displayField();
-            }
+        $fields = $this->_getTypeaheadFields($table);
 
-            if (!empty($typeaheadFields)) {
-                foreach ($typeaheadFields as $field) {
-                    $query->orWhere([$field . ' LIKE' => '%' . $request->query['query'] . '%']);
-                }
-            } else {
-                throw new RuntimeException("No typeahead or display field configured for " . $table->alias());
-            }
+        $query->order($this->_getOrderByFields($table, $query, $fields));
+
+        $this->_joinParentTables($table, $query);
+
+        if (empty($fields)) {
+            return;
+        }
+
+        if (!$request->query('query')) {
+            return;
+        }
+
+        // add typeahead fields to where clause
+        $value = $request->query('query');
+        foreach ($fields as $field) {
+            $query->orWhere([$field . ' LIKE' => '%' . $value . '%']);
         }
     }
 
@@ -79,50 +79,185 @@ class LookupListener extends BaseViewListener
         // values as deep as needed.
         $fhf = new FieldHandlerFactory();
 
-        $tableConfig = [];
-        if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
-            $tableConfig = $table->getConfig();
-        }
-
-        $result = [];
-        foreach ($entities as $k => $v) {
-            $result[$k] = '';
-            if (!empty($tableConfig['parent']['module'])) {
-                $result[$k] .= $this->_prependParentModule($table, $k);
-            }
-            $result[$k] .= $fhf->renderValue(
+        foreach ($entities as $id => $label) {
+            $event->result[$id] = $fhf->renderValue(
                 $table,
                 $table->displayField(),
-                $v,
+                $label,
                 ['renderAs' => RelatedFieldHandler::RENDER_PLAIN_VALUE]
             );
         }
-        // sort results
-        asort($result);
 
-        $event->result = $result;
+        $parentModule = $this->_getParentModule($table);
+        if (empty($parentModule)) {
+            return;
+        }
+
+        foreach ($event->result as $id => &$label) {
+            $label = $this->_prependParentModule($table->registryAlias(), $parentModule, $id, $label);
+        }
     }
 
     /**
-     * Prepend parent module display field value to resultset.
+     * Get module's type-ahead fields.
      *
      * @param \Cake\ORM\Table $table Table instance
-     * @param string $id uuid
      * @return array
      */
-    protected function _prependParentModule(Table $table, $id)
+    protected function _getTypeaheadFields(Table $table)
     {
-        $result = '';
-        $parentProperties = $this->_getRelatedParentProperties(
-            $this->_getRelatedProperties($table->registryAlias(), $id)
-        );
-
-        if (empty($parentProperties['dispFieldVal'])) {
-            return $result;
+        // Get typeahead fields from configuration
+        $result = [];
+        if (method_exists($table, 'typeaheadFields') && is_callable([$table, 'typeaheadFields'])) {
+            $result = $table->typeaheadFields();
+        }
+        // If there are no typeahead fields configured, use displayFields()
+        if (empty($result)) {
+            $result[] = $table->displayField();
         }
 
-        $result = $parentProperties['dispFieldVal'] . ' ' . $this->_separator . ' ';
+        foreach ($result as &$typeaheadField) {
+            $typeaheadField = $table->aliasField($typeaheadField);
+        }
 
         return $result;
+    }
+
+    /**
+     * Get order by fields for lookup Query.
+     *
+     * @param \Cake\ORM\Table $table Table instance
+     * @param \Cake\ORM\Query $query ORM Query
+     * @param array $fields Optional fields to be used in order by clause
+     * @return array
+     */
+    protected function _getOrderByFields(Table $table, Query $query, array $fields = [])
+    {
+        $parentModule = $this->_getParentModule($table);
+
+        if (empty($parentModule)) {
+            return $fields;
+        }
+
+        $parentAssociation = null;
+        foreach ($table->associations() as $association) {
+            if ($association->className() !== $parentModule) {
+                continue;
+            }
+            $parentAssociation = $association;
+            break;
+        }
+
+        if (is_null($parentAssociation)) {
+            return $fields;
+        }
+
+        $targetTable = $parentAssociation->target();
+
+        // add parent display field to order-by fields
+        array_unshift($fields, $targetTable->aliasField($targetTable->displayField()));
+
+        $fields = $this->_getOrderByFields($targetTable, $query, $fields);
+
+        return $fields;
+    }
+
+    /**
+     * Join parent modules.
+     *
+     * @param \Cake\ORM\Table $table Table instance
+     * @param \Cake\ORM\Query $query ORM Query
+     * @return void
+     */
+    protected function _joinParentTables(Table $table, Query $query)
+    {
+        $parentModule = $this->_getParentModule($table);
+
+        if (empty($parentModule)) {
+            return;
+        }
+
+        $parentAssociation = null;
+        foreach ($table->associations() as $association) {
+            if ($association->className() !== $parentModule) {
+                continue;
+            }
+            $parentAssociation = $association;
+            break;
+        }
+
+        if (is_null($parentAssociation)) {
+            return;
+        }
+
+        $targetTable = $parentAssociation->target();
+        $primaryKey = $targetTable->aliasField($parentAssociation->primaryKey());
+        $foreignKey = $table->aliasField($parentAssociation->foreignKey());
+
+        // join parent table
+        $query->join([
+            'table' => $targetTable->table(),
+            'alias' => $parentAssociation->name(),
+            'type' => 'INNER',
+            'conditions' => $foreignKey . ' = ' . $primaryKey . ' OR ' . $foreignKey . ' IS NULL'
+        ]);
+
+        $this->_joinParentTables($targetTable, $query);
+    }
+
+    /**
+     * Returns parent module name for provided Table instance.
+     * If parent module is not defined then it returns null.
+     *
+     * @param \Cake\ORM\Table $table Table instance
+     * @return string|null
+     */
+    protected function _getParentModule(Table $table)
+    {
+        if (!method_exists($table, 'getConfig') || !is_callable([$table, 'getConfig'])) {
+            return null;
+        }
+
+        $tableConfig = $table->getConfig();
+        if (empty($tableConfig['parent']['module'])) {
+            return null;
+        }
+
+        return $tableConfig['parent']['module'];
+    }
+
+    /**
+     * Prepend parent module display field to label.
+     *
+     * @param string $tableName Table name
+     * @param string $parentModule Parent module name
+     * @param string $id uuid
+     * @param string $label Label
+     * @return array
+     */
+    protected function _prependParentModule($tableName, $parentModule, $id, $label)
+    {
+        $properties = $this->_getRelatedParentProperties(
+            $this->_getRelatedProperties($tableName, $id)
+        );
+
+        if (empty($properties['dispFieldVal'])) {
+            return $label;
+        }
+
+        $prefix = $properties['dispFieldVal'] . ' ' . $this->_separator . ' ';
+
+        if (empty($properties['config']['parent']['module']) || empty($properties['id'])) {
+            return $prefix . $label;
+        }
+
+        $prefix = $this->_prependParentModule(
+            $parentModule,
+            $properties['config']['parent']['module'],
+            $properties['id'],
+            $prefix
+        );
+
+        return $prefix . $label;
     }
 }

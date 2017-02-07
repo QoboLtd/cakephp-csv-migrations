@@ -20,8 +20,22 @@ class ViewViewTabsListener implements EventListenerInterface
 
     const ASSOC_FIELDS_ACTION = 'index';
 
+    /**
+     * Current Table instance
+     *
+     * @var \Cake\ORM\Table
+     */
     protected $_tableInstance;
-    protected $_assocTypes;
+
+    /**
+     * Mapping of association name to method name
+     *
+     * @var array
+     */
+    protected $_associationsMap = [
+        'manyToMany' => '_manyToManyAssociatedRecords',
+        'oneToMany' => '_oneToManyAssociatedRecords'
+    ];
 
     /**
      * Implemented Events
@@ -109,6 +123,10 @@ class ViewViewTabsListener implements EventListenerInterface
                 continue;
             }
 
+            if (!in_array($association->type(), array_keys($this->_associationsMap))) {
+                continue;
+            }
+
             // We hide from associations file_storage,
             // as it's rendered within field handlers.
             if ('Burzum/FileStorage.FileStorage' == $association->className()) {
@@ -127,10 +145,6 @@ class ViewViewTabsListener implements EventListenerInterface
                 'associationObject' => $class,
                 'targetClass' => $association->className(),
             ];
-
-            if (in_array($tab['associationObject'], ['BelongsTo'])) {
-                continue;
-            }
 
             if (!empty($tab['targetClass'])) {
                 array_push($tabs, $tab);
@@ -162,7 +176,10 @@ class ViewViewTabsListener implements EventListenerInterface
         $labelCounts = [];
         // Gather labels for all associations
         foreach ($tableInstance->associations() as $association) {
-            $assocTableInstance = TableRegistry::get($association->table());
+            if (!in_array($association->type(), array_keys($this->_associationsMap))) {
+                continue;
+            }
+            $assocTableInstance = $association->target();
 
             $icon = $this->_getTableIcon($assocTableInstance);
             $assocAlias = $association->alias();
@@ -258,18 +275,12 @@ class ViewViewTabsListener implements EventListenerInterface
 
         $this->_tableInstance = TableRegistry::get($table);
 
-        $associationsMap = [
-            'manyToMany' => '_manyToManyAssociatedRecords',
-            'oneToMany' => '_oneToManyAssociatedRecords',
-            'manyToOne' => '_manyToOneAssociatedRecords',
-        ];
-
         foreach ($this->_tableInstance->associations() as $association) {
             if ($options['tab']['associationName'] == $association->name()) {
                 $type = $association->type();
 
-                if (in_array($type, array_keys($associationsMap))) {
-                    $content = $this->{$associationsMap[$type]}($association, $request);
+                if (in_array($type, array_keys($this->_associationsMap))) {
+                    $content = $this->{$this->_associationsMap[$type]}($association, $request);
                     if (!empty($content['records'])) {
                         break;
                     }
@@ -336,86 +347,6 @@ class ViewViewTabsListener implements EventListenerInterface
     }
 
     /**
-     * Method that retrieves many to one associated records.
-     *
-     * @param  \Cake\ORM\Association $association Association object
-     * @param \Cake\Network\Request $request passed
-     * @return array associated records
-     */
-    protected function _manyToOneAssociatedRecords(Association $association, Request $request)
-    {
-        $result = [];
-        $tableName = $this->_tableInstance->table();
-        $primaryKey = $this->_tableInstance->primaryKey();
-        $assocTableName = $association->table();
-        $assocPrimaryKey = $association->primaryKey();
-        $assocForeignKey = $association->foreignKey();
-        $recordId = $request->params['pass'][0];
-        $displayField = $association->displayField();
-
-        /*
-         * skip inverse relationship
-         *
-         * @todo find better way to handle it
-         */
-        if ($tableName === $assocTableName) {
-            return $result;
-        }
-
-        $connection = ConnectionManager::get('default');
-        // NOTE: This will break if $assocTableName has no primary key or has a combined primary key
-        $records = $connection
-            ->execute(
-                'SELECT ' . $assocTableName . '.' . $assocPrimaryKey . ' FROM ' . $tableName . ' LEFT JOIN ' . $assocTableName . ' ON ' . $tableName . '.' . $assocForeignKey . ' = ' . $assocTableName . '.' . $assocPrimaryKey . ' WHERE ' . $tableName . '.' . $primaryKey . ' = :id LIMIT 1',
-                ['id' => $recordId]
-            )
-            ->fetchAll('assoc');
-
-        // store associated table records, make sure associated record still exists.
-        if (!empty($records[0][$assocPrimaryKey]) &&
-            $association->exists([$assocPrimaryKey => $records[0][$assocPrimaryKey]])
-        ) {
-            //$result = $association->get($records[0][$assocPrimaryKey])->{$displayField};
-            $records = $association->get($records[0][$assocPrimaryKey]);
-        } else {
-            $records = null;
-        }
-
-        try {
-            $csvFields = $this->_getAssociationCsvFields($association, static::ASSOC_FIELDS_ACTION);
-        } catch (\Exception $e) {
-            $csvFields = [];
-        }
-
-        // get associated index View csv fields
-        $fields = array_unique(
-            array_merge(
-                [$association->displayField()],
-                $csvFields
-            )
-        );
-
-        // store association name
-        $result['assoc_name'] = $association->name();
-        // store associated table name
-        $result['table_name'] = $association->table();
-        // store associated table class name
-        $result['class_name'] = $association->className();
-        // store associated table display field
-        $result['display_field'] = $association->displayField();
-        // store associated table primary key
-        $result['primary_key'] = $association->primaryKey();
-        // store associated table foreign key
-        $result['foreign_key'] = Inflector::singularize($assocTableName) . '_' . $association->primaryKey();
-        // store associated table fields
-        $result['fields'] = $fields;
-        // store associated table records
-        $result['records'] = $records;
-
-        return $result;
-    }
-
-    /**
      * Method that retrieves one to many associated records
      *
      * @param  \Cake\ORM\Association $association Association object
@@ -443,7 +374,7 @@ class ViewViewTabsListener implements EventListenerInterface
             )
         );
 
-        $query = $this->_tableInstance->{$assocName}->find('all', [
+        $query = $association->target()->find('all', [
             'conditions' => [$assocForeignKey => $recordId]
         ]);
         $records = $query->all();

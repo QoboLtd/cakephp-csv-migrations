@@ -22,11 +22,6 @@ class IndexViewListener extends BaseViewListener
     const MENU_PROPERTY_NAME = '_Menus';
 
     /**
-     * Pretty format identifier
-     */
-    const FORMAT_PRETTY = 'pretty';
-
-    /**
      * {@inheritDoc}
      */
     public function implementedEvents()
@@ -43,7 +38,12 @@ class IndexViewListener extends BaseViewListener
      */
     public function beforePaginate(Event $event, Query $query)
     {
-        $query->contain($this->_getAssociations($event));
+        $table = $event->subject()->{$event->subject()->name};
+        $request = $event->subject()->request;
+
+        if (!in_array($request->query('format'), [static::FORMAT_PRETTY, static::FORMAT_DATATABLES])) {
+            $query->contain($this->_getFileAssociations($table));
+        }
         $this->_filterByConditions($query, $event);
         $this->_selectActionFields($query, $event);
         $this->_handleDtSorting($query, $event);
@@ -58,16 +58,27 @@ class IndexViewListener extends BaseViewListener
             return;
         }
 
+        $table = $event->subject()->{$event->subject()->name};
+        $request = $event->subject()->request;
+
         foreach ($entities as $entity) {
             $this->_resourceToString($entity);
         }
 
-        // @todo temporary functionality, please see _includeFiles() method documentation.
-        foreach ($entities as $entity) {
-            $this->_includeFiles($entity, $event);
-        }
+        if (in_array($request->query('format'), [static::FORMAT_PRETTY, static::FORMAT_DATATABLES])) {
+            $fields = [];
+            if (static::FORMAT_DATATABLES === $request->query('format')) {
+                $fields = $this->_getActionFields($event->subject()->request);
+            }
 
-        $this->_prettifyEntities($entities, $event);
+            foreach ($entities as $entity) {
+                $this->_prettify($entity, $table, $fields);
+            }
+        } else { // @todo temporary functionality, please see _includeFiles() method documentation.
+            foreach ($entities as $entity) {
+                $this->_restructureFiles($entity, $table);
+            }
+        }
         $this->_includeMenus($entities, $event);
     }
 
@@ -147,7 +158,7 @@ class IndexViewListener extends BaseViewListener
             return;
         }
 
-        $virtualFields = $event->subject()->{$event->subject()->name}->getVirtualFields();
+        $table = $event->subject()->{$event->subject()->name};
 
         $sortCol = $event->subject()->request->query('order.0.column') ?: 0;
 
@@ -166,48 +177,23 @@ class IndexViewListener extends BaseViewListener
             return;
         }
 
-        $sortCol = $fields[$sortCol];
-
-        $sortCols = [];
+        $sortCols = $fields[$sortCol];
         // handle virtual field
-        if (!empty($virtualFields) && isset($virtualFields[$sortCol])) {
-            $sortCols = $virtualFields[$sortCol];
-        } else {
-            $sortCols = (array)$sortCol;
+        $virtualFields = $table->getVirtualFields();
+        if (!empty($virtualFields) && isset($virtualFields[$sortCols])) {
+            $sortCols = $virtualFields[$sortCols];
         }
+        $sortCols = (array)$sortCols;
 
         // prefix table name
         foreach ($sortCols as &$v) {
-            $v = $event->subject()->name . '.' . $v;
+            $v = $table->aliasField($v);
         }
 
         // add sort direction to all columns
         $conditions = array_fill_keys($sortCols, $sortDir);
 
         $query->order($conditions);
-    }
-
-    /**
-     * Method that prepares entities to run through pretiffy logic.
-     *
-     * @param  \Cake\ORM\ResultSet $entities Entities
-     * @param  \Cake\Event\Event   $event    Event instance
-     * @return void
-     */
-    protected function _prettifyEntities(ResultSet $entities, Event $event)
-    {
-        if (!in_array($event->subject()->request->query('format'), [static::FORMAT_PRETTY, static::FORMAT_DATATABLES])) {
-            return;
-        }
-
-        $fields = [];
-        if (static::FORMAT_DATATABLES === $event->subject()->request->query('format')) {
-            $fields = $this->_getActionFields($event->subject()->request);
-        }
-
-        foreach ($entities as $entity) {
-            $this->_prettify($entity, $event->subject()->{$event->subject()->name}, $fields);
-        }
     }
 
     /**

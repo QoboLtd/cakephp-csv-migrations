@@ -26,7 +26,7 @@ class BooleanFieldHandlerTest extends PHPUnit_Framework_TestCase
     public function testFieldToDb()
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => 'text']);
-        $result = $this->fh->fieldToDb($csvField);
+        $result = $this->fh::fieldToDb($csvField);
 
         $this->assertTrue(is_array($result), "fieldToDb() did not return an array");
         $this->assertFalse(empty($result), "fieldToDb() returned an empty array");

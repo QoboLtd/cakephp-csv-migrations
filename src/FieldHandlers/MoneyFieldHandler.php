@@ -6,19 +6,16 @@ use CsvMigrations\FieldHandlers\BaseCombinedFieldHandler;
 class MoneyFieldHandler extends BaseCombinedFieldHandler
 {
     /**
-     * Set combined fields
+     * Combined fields
      *
-     * @return void
+     * @var array
      */
-    protected function _setCombinedFields()
-    {
-        $this->_fields = [
-            'amount' => [
-                'handler' => __NAMESPACE__ . '\\DecimalFieldHandler'
-            ],
-            'currency' => [
-                'handler' => __NAMESPACE__ . '\\ListFieldHandler'
-            ]
-        ];
-    }
+    protected static $_fields = [
+        'amount' => [
+            'handler' => __NAMESPACE__ . '\\DecimalFieldHandler'
+        ],
+        'currency' => [
+            'handler' => __NAMESPACE__ . '\\ListFieldHandler'
+        ]
+    ];
 }

@@ -218,9 +218,9 @@ class CsvMigration extends AbstractMigration
     /**
      * Update (modify/delete) table fields in comparison to the CSV data
      *
-     * @param  array  $csvData    CSV data
-     * @param  string $table      Table name
-     * @param  array  $tableField Existing table fields
+     * @param  array  $csvData     CSV data
+     * @param  string $table       Table name
+     * @param  array  $tableFields Existing table fields
      * @return void
      */
     protected function _updateFromCsv(array $csvData, $table, array $tableFields)

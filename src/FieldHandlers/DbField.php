@@ -87,7 +87,7 @@ class DbField
     /**
      * Construct a new instance from CsvField
      *
-     * @param CsvField $CsvField CsvField instance
+     * @param CsvField $csvField CsvField instance
      * @return DbField
      */
     public static function fromCsvField(CsvField $csvField)

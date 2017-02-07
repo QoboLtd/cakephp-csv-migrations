@@ -297,14 +297,14 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return array                                           DbField instances
      */
-    public function fieldToDb(CsvField $csvField)
+    public static function fieldToDb(CsvField $csvField)
     {
         $csvField->setType(static::DB_FIELD_TYPE);
         $csvField->setLimit(null);
 
         $dbField = DbField::fromCsvField($csvField);
         $result = [
-            $this->field => $dbField,
+            $csvField->getName() => $dbField,
         ];
 
         return $result;

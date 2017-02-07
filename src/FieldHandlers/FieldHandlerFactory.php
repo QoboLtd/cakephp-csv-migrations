@@ -76,6 +76,8 @@ class FieldHandlerFactory
         $table = $this->_getTableInstance($table);
         $handler = $this->_getHandler($table, $field, $options);
 
+        //@TODO: add options for the renderName instance methods,
+        //so we could customize the label.
         return $handler->renderName();
     }
 

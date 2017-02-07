@@ -128,8 +128,12 @@ class FieldHandlerFactory
         if (empty($field)) {
             $field = $csvField->getName();
         }
-
-        $table = $this->_getTableInstance($table);
+        try {
+            $table = $this->_getTableInstance($table);
+        } catch (\Exception $e) {
+            $table = new \Cake\ORM\Table();
+            echo $e->getMessage();
+        }
         $handler = $this->_getHandler($table, $field);
         $fields = $handler->fieldToDb($csvField);
 
@@ -189,7 +193,6 @@ class FieldHandlerFactory
         if (in_array($tableName, array_keys($this->_tableInstances))) {
             return $this->_tableInstances[$tableName];
         }
-
         // Populate cache
         $this->_tableInstances[$tableName] = TableRegistry::get($tableName);
 
@@ -264,7 +267,6 @@ class FieldHandlerFactory
         if (empty($fieldDefinitions[$fieldName])) {
             throw new \RuntimeException("Failed to get definition for field '$fieldName'");
         }
-
         $field = new CsvField($fieldDefinitions[$fieldName]);
         $fieldType = $field->getType();
 

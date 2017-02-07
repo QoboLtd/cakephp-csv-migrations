@@ -64,9 +64,9 @@ class CsvMigration extends AbstractMigration
     public function csv(Table $table, $path = '')
     {
         $this->_fhf = new FieldHandlerFactory();
+
         $this->_table = $table;
         $this->_handleCsv($path);
-
         return $this->_table;
     }
 
@@ -79,6 +79,7 @@ class CsvMigration extends AbstractMigration
     protected function _handleCsv($path = '')
     {
         $tableName = Inflector::pluralize(Inflector::classify($this->_table->getName()));
+
         if ('' === trim($path)) {
             $pathFinder = new MigrationPathFinder;
             $path = $pathFinder->find($tableName);
@@ -89,7 +90,6 @@ class CsvMigration extends AbstractMigration
         $csvData = array_merge($csvData, $this->_requiredFields);
 
         $tableFields = $this->_getTableFields();
-
         if (empty($tableFields)) {
             $this->_createFromCsv($csvData, $tableName);
         } else {
@@ -203,7 +203,7 @@ class CsvMigration extends AbstractMigration
     {
         foreach ($csvData as $col) {
             $csvField = new CsvField($col);
-            $dbFields = $this->_fhf->fieldToDb($csvField, $table);
+            $dbFields = $this->_fhf->fieldToDb($csvField, $table, ['name' => $csvField->getName(), 'type' => $csvField->getType()]);
 
             if (empty($dbFields)) {
                 continue;

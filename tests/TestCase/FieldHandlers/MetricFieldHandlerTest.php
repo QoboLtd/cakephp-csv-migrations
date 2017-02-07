@@ -28,7 +28,8 @@ class MetricFieldHandlerTest extends PHPUnit_Framework_TestCase
     public function testFieldToDb()
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => 'text']);
-        $result = $this->fh::fieldToDb($csvField);
+        $fh = $this->fh;
+        $result = $fh::fieldToDb($csvField);
 
         $this->assertTrue(is_array($result), "fieldToDb() did not return an array");
         $this->assertFalse(empty($result), "fieldToDb() returned an empty array");

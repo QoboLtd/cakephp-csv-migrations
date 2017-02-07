@@ -291,7 +291,7 @@ class CsvField
         }
 
         if (is_int($limit) || is_numeric($limit)) {
-            $result = abs((int)$limit);
+            $result = abs($limit);
             if ($result == 0) {
                 $result = null;
             }

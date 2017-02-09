@@ -97,17 +97,24 @@ class DblistFieldHandler extends BaseListFieldHandler
             return $result;
         }
 
-        $content = $this->cakeView->cell(
-            'CsvMigrations.Dblist::renderInput',
-            [
-                '{{name}}',
-                $options['fieldDefinitions']->getListName(),
-                ['label' => false] + $this->_defaultInputOptions
-            ]
-        )->render('renderInput');
+        $list = $options['fieldDefinitions']->getListName();
+
+        $table = TableRegistry::get('CsvMigrations.Dblists');
+        // create new list if it does not exist
+        $this->_createList($table, $list);
+
+        $params = [
+            'field' => $this->field,
+            'name' => '{{name}}',
+            'type' => static::INPUT_FIELD_TYPE,
+            'label' => false,
+            'required' => $options['fieldDefinitions']->getRequired(),
+            'value' => '{{value}}',
+            'options' => $table->find('options', ['name' => $list])
+        ];
 
         $result[$this->field]['input'] = [
-            'content' => $content
+            'content' => $this->_renderElement('renderInput', $params, $options)
         ];
 
         return $result;

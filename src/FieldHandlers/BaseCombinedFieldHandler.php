@@ -56,6 +56,7 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
         $params = [
             'field' => $this->field,
             'label' => $label,
+            'required' => $options['fieldDefinitions']->getRequired(),
             'inputs' => $inputs
         ];
 

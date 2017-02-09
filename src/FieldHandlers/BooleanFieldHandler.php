@@ -59,19 +59,17 @@ class BooleanFieldHandler extends BaseSimpleFieldHandler
         $data = $this->_getFieldValueFromData($data);
 
         $fieldName = $this->table->aliasField($this->field);
-        $label = $options['label'] ? $this->cakeView->Form->label($fieldName, $options['label']) : '';
-        $input = $this->cakeView->Form->input($fieldName, [
-            'type' => 'checkbox',
-            'class' => 'square',
-            'required' => (bool)$options['fieldDefinitions']->getRequired(),
-            'checked' => $data,
-            'label' => false,
-            'templates' => [
-                'inputContainer' => '<div class="{{required}}">' . $label . '<div class="clearfix"></div>{{content}}</div>'
-            ]
-        ]);
 
-        return $input;
+        $params = [
+            'field' => $this->field,
+            'name' => $fieldName,
+            'type' => static::INPUT_FIELD_TYPE,
+            'label' => $options['label'],
+            'required' => $options['fieldDefinitions']->getRequired(),
+            'value' => $data
+        ];
+
+        return $this->_renderElement(__FUNCTION__, $params, $options);
     }
 
     /**

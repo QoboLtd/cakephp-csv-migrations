@@ -1,9 +1,6 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use Cake\I18n\Date;
-use CsvMigrations\FieldHandlers\BaseTimeFieldHandler;
-
 class DateFieldHandler extends BaseTimeFieldHandler
 {
     /**
@@ -25,62 +22,6 @@ class DateFieldHandler extends BaseTimeFieldHandler
      * Javascript date format
      */
     const JS_DATE_FORMAT = 'yyyy-mm-dd';
-
-    /**
-     * Render field input
-     *
-     * This method prepares the form input for the given field,
-     * including the input itself, label, pre-populated value,
-     * and so on.  The result can be controlled via the variety
-     * of options.
-     *
-     * @param  string $data    Field data
-     * @param  array  $options Field options
-     * @return string          Field input HTML
-     */
-    public function renderInput($data = '', array $options = [])
-    {
-        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $data = $this->_getFieldValueFromData($data);
-        if ($data instanceof Date) {
-            $data = $data->i18nFormat(static::FORMAT);
-        }
-
-        $required = false;
-        if (isset($options['fieldDefinitions']) && is_object($options['fieldDefinitions'])) {
-            $required = (bool)$options['fieldDefinitions']->getRequired();
-        }
-        $fieldName = $this->table->aliasField($this->field);
-
-        if (isset($options['element'])) {
-            return $this->cakeView->element($options['element'], [
-                'options' => [
-                    'fieldName' => $fieldName,
-                    'type' => static::INPUT_FIELD_TYPE,
-                    'label' => $options['label'],
-                    'required' => $required,
-                    'value' => $data
-                ]
-            ]);
-        } else {
-            return $this->cakeView->Form->input($fieldName, [
-                'type' => 'text',
-                'label' => $options['label'],
-                'data-provide' => 'datepicker',
-                'autocomplete' => 'off',
-                'data-date-format' => static::JS_DATE_FORMAT,
-                'data-date-autoclose' => true,
-                'required' => $required,
-                'value' => $data,
-                'templates' => [
-                    'input' => vsprintf($this->_templates['input'], [
-                        '',
-                        'calendar'
-                    ])
-                ]
-            ]);
-        }
-    }
 
     /**
      * Get options for field search

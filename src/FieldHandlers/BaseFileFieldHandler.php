@@ -1,11 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use Cake\Core\Configure;
-use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
-use CsvMigrations\FieldHandlers\BaseRelatedFieldHandler;
 use CsvMigrations\FileUploadsUtils;
 
 /**
@@ -14,17 +10,17 @@ use CsvMigrations\FileUploadsUtils;
  * This class provides the fallback functionality that
  * is common to all file field handlers.
  */
-class BaseFileFieldHandler extends BaseRelatedFieldHandler
+class BaseFileFieldHandler extends BaseFieldHandler
 {
     /**
-     * Action name for file edit
+     * HTML form field type
      */
-    const ACTION_EDIT = 'edit';
+    const INPUT_FIELD_TYPE = 'file';
 
     /**
-     * Action name for file add
+     * Field type
      */
-    const ACTION_ADD = 'add';
+    const DB_FIELD_TYPE = 'uuid';
 
     /**
      * CSS Framework grid columns number
@@ -45,24 +41,6 @@ class BaseFileFieldHandler extends BaseRelatedFieldHandler
      * CSS Framework row html markup
      */
     const GRID_COL_HTML = '<div class="col-xs-%d col-sm-%d col-md-%d col-lg-%d">%s</div>';
-
-    /**
-     * Embedded Form html markup
-     */
-    const EMBEDDED_FORM_HTML = '
-        <div id="%s_modal" class="modal fade" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">%s</div>
-                </div>
-            </div>
-        </div>
-    ';
 
     /**
      * Default thumbnail file
@@ -100,76 +78,30 @@ class BaseFileFieldHandler extends BaseRelatedFieldHandler
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
-        $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
+        if (empty($data) && !empty($options['entity'])) {
+            $data = $this->_getFieldValueFromData($options['entity'], 'id');
+        }
 
         $fieldName = $this->table->aliasField($this->field);
 
-        $input['html'] = '';
-        $input['html'] .= '<div class="form-group' . ((bool)$options['fieldDefinitions']->getRequired() ? ' required' : '') . '">';
-        $input['html'] .= $options['label'] ? $this->cakeView->Form->label($this->field, $options['label']) : '';
-        $input['html'] .= '<div class="input-group">';
-
-        $input['html'] .= $this->cakeView->Form->input($this->field, [
-            'label' => false,
-            'name' => false,
-            'id' => $this->field . static::LABEL_FIELD_SUFFIX,
-            'type' => 'text',
-            'disabled' => true,
-            'value' => (!empty($relatedProperties['entity'])) ? $relatedProperties['dispFieldVal'] : '',
-            'escape' => false,
-            'data-id' => $this->_domId($fieldName),
-            'required' => (bool)$options['fieldDefinitions']->getRequired()
-        ]);
-
-        $input['html'] .= '<div class="input-group-btn">';
-        $input['html'] .= '<button type="button" class="btn btn-default" data-toggle="modal" data-target="#' . $this->field . '_modal">';
-        $input['html'] .= '<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>';
-        $input['html'] .= '</button>';
-        $input['html'] .= '</div>';
-
-        $input['html'] .= '</div>';
-        $input['html'] .= '</div>';
-
-        // @NOTE: trashed records will return null entity,
-        // we must pay attention for embedded forms passing $data.
-        // Trashed entity should generate /documents/add URL, not edit.
-        if (empty($relatedProperties['entity'])) {
-            $data = null;
+        $entities = null;
+        if (!empty($data)) {
+            $fileUploadsUtils = new FileUploadsUtils($this->table);
+            $entities = $fileUploadsUtils->getFiles($this->table, $this->field, $data);
         }
 
-        $input['html'] .= $this->cakeView->Form->input($fieldName, ['type' => 'hidden', 'value' => (!is_null($data) ? $data : '')]);
+        $params = [
+            'field' => $this->field,
+            'name' => $fieldName,
+            'type' => static::INPUT_FIELD_TYPE,
+            'label' => $options['label'],
+            'required' => $options['fieldDefinitions']->getRequired(),
+            'value' => $data,
+            'entities' => $entities,
+            'table' => Inflector::dasherize($this->table->table())
+        ];
 
-        $embeddedAssocName = null;
-        foreach ($this->table->associations() as $association) {
-            if ($association->foreignKey() === $this->field) {
-                $embeddedAssocName = $association->name();
-                break;
-            }
-        }
-
-        list($filePlugin, $fileController) = pluginSplit($options['fieldDefinitions']->getLimit());
-
-        $url = $this->cakeView->Url->build([
-            'plugin' => $filePlugin,
-            'controller' => $fileController,
-            'action' => !empty($data) ? static::ACTION_EDIT : static::ACTION_ADD,
-            !empty($data) ? $data : null
-        ]);
-
-        $embeddedAssocName = Inflector::underscore(Inflector::singularize($embeddedAssocName));
-
-        $embeddedForm = $this->cakeView->requestAction(
-            $url,
-            [
-                'query' => [
-                    'embedded' => $fileController . '.' . $embeddedAssocName,
-                    'foreign_key' => $this->field
-                ]
-            ]
-        );
-        $input['embeddedForm'] = sprintf(static::EMBEDDED_FORM_HTML, $this->field, $embeddedForm);
-
-        return $input;
+        return $this->_renderElement('renderInput', $params, $options);
     }
 
     /**

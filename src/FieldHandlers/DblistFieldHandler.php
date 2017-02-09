@@ -1,19 +1,16 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use CsvMigrations\FieldHandlers\BaseListFieldHandler;
 
 class DblistFieldHandler extends BaseListFieldHandler
 {
     /**
-     * Input default options
-     *
-     * @var array
+     * Field type
      */
-    protected $_defaultInputOptions = [
-        'class' => 'form-control',
-        'label' => true
-    ];
+    const INPUT_FIELD_TYPE = 'select';
 
     /**
      * Render field input
@@ -29,25 +26,28 @@ class DblistFieldHandler extends BaseListFieldHandler
      */
     public function renderInput($data = '', array $options = [])
     {
-        $result = '';
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
-        //CsvField object is mandatory
-        if (!isset($options['fieldDefinitions']) ||
-            !($options['fieldDefinitions'] instanceof CsvField)) {
-            return $result;
-        }
-        $csvObj = $options['fieldDefinitions'];
-        $list = $csvObj->getListName();
-        $fieldName = $this->table->aliasField($this->field);
-        $options = [
-            'value' => $data,
-            'required' => $csvObj->getRequired(),
-        ];
-        $options += $this->_defaultInputOptions;
-        $result = $this->cakeView->cell('CsvMigrations.Dblist::' . __FUNCTION__, [$fieldName, $list, $options])->render(__FUNCTION__);
 
-        return $result;
+        $fieldName = $this->table->aliasField($this->field);
+
+        $list = $options['fieldDefinitions']->getListName();
+
+        $table = TableRegistry::get('CsvMigrations.Dblists');
+        // create new list if it does not exist
+        $this->_createList($table, $list);
+
+        $params = [
+            'field' => $this->field,
+            'name' => $fieldName,
+            'type' => static::INPUT_FIELD_TYPE,
+            'label' => $options['label'],
+            'required' => $options['fieldDefinitions']->getRequired(),
+            'value' => $data,
+            'options' => $table->find('options', ['name' => $list])
+        ];
+
+        return $this->_renderElement(__FUNCTION__, $params, $options);
     }
 
     /**
@@ -111,5 +111,25 @@ class DblistFieldHandler extends BaseListFieldHandler
         ];
 
         return $result;
+    }
+
+    /**
+     * Create new list.
+     *
+     * It will fail to create a new list if the given name already exists.
+     *
+     * @param \Cake\ORM\Table $table Table instance
+     * @param string $name List's name
+     * @return bool         True on sucess.
+     */
+    protected function _createList(Table $table, $name = '')
+    {
+        if ($table->exists(['name' => $name])) {
+            return false;
+        }
+
+        $entity = $table->newEntity(['name' => $name]);
+
+        return $table->save($entity);
     }
 }

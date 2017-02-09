@@ -6,9 +6,9 @@ use CsvMigrations\FieldHandlers\BaseCsvListFieldHandler;
 class ListFieldHandler extends BaseCsvListFieldHandler
 {
     /**
-     * Input field html markup
+     * Field type
      */
-    const INPUT_HTML = '<div class="form-group">%s</div>';
+    const INPUT_FIELD_TYPE = 'select';
 
     /**
      * Render field input
@@ -26,19 +26,19 @@ class ListFieldHandler extends BaseCsvListFieldHandler
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
-        $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
 
         $fieldName = $this->table->aliasField($this->field);
 
-        $input = '';
-        $input .= $options['label'] ? $this->cakeView->Form->label($fieldName, $options['label']) : '';
+        $params = [
+            'field' => $this->field,
+            'name' => $fieldName,
+            'type' => static::INPUT_FIELD_TYPE,
+            'label' => $options['label'],
+            'required' => $options['fieldDefinitions']->getRequired(),
+            'value' => $data,
+            'options' => $this->_getSelectOptions($options['fieldDefinitions']->getLimit())
+        ];
 
-        $input .= $this->cakeView->Form->select($fieldName, $fieldOptions, [
-            'class' => 'form-control',
-            'required' => (bool)$options['fieldDefinitions']->getRequired(),
-            'value' => $data
-        ]);
-
-        return sprintf(static::INPUT_HTML, $input);
+        return $this->_renderElement(__FUNCTION__, $params, $options);
     }
 }

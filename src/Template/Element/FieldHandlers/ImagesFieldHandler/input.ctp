@@ -18,7 +18,7 @@ if ($value && $entities && $entities->count()) {
     $options['data-files'] = json_encode($files);
 }
 ?>
-<div class="form-group">
+<div class="form-group<?= $required ? ' required' : '' ?>">
 <?= $this->Form->label($name . '[]', $label) ?>
 <?= $this->Form->{$type}($name . '[]', $options); ?>
 <?php if ($entities && $entities->count()) : ?>

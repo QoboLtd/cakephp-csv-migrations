@@ -283,14 +283,35 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         return $this->_renderElement(__FUNCTION__, $params, $options);
     }
 
-    protected function _renderElement($type, array $params, array $options = [])
+    /**
+     * Render Field Handler element
+     *
+     * Handles logic for rendering appropriate element based on Field Handler
+     * class and render method (renderInput, renderValue etc).
+     *
+     * Supports rendering custom element by passing the element's name using
+     * $options['element'] parameter. If the element does exist, it will be used,
+     * and the Field Handler appropriate parameters will be passed to it.
+     *
+     * If a custom element was not provided, then it will try and use the specific
+     * Field Handler's render element. If there is no specific render element for
+     * the Field Handler, it will use the Base Field Handler element. If that does
+     * not exist either, then an exception will be thrown.
+     *
+     * @param string $method Method name (example: renderInput)
+     * @param array $params Element parameters
+     * @param array $options Field options
+     * @throws \RuntimeException If no element was found
+     * @return string
+     */
+    protected function _renderElement($method, array $params, array $options = [])
     {
         // render custom element
         if (!empty($options['element']) && $this->cakeView->elementExists($options['element'])) {
             return $this->cakeView->element($options['element'], $params);
         }
 
-        $type = strtolower($type);
+        $type = strtolower($method);
         $type = str_replace('render', '', $type);
 
         $fqcn = get_class($this);

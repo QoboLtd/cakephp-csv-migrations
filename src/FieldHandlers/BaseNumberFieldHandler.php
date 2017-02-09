@@ -105,16 +105,18 @@ abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
 
         $fieldName = $this->table->aliasField($this->field);
 
-        $input = $this->cakeView->Form->input($fieldName, [
+        $params = [
+            'field' => $this->field,
+            'name' => $fieldName,
             'type' => static::INPUT_FIELD_TYPE,
-            'required' => (bool)$options['fieldDefinitions']->getRequired(),
+            'label' => $options['label'],
+            'required' => $options['fieldDefinitions']->getRequired(),
             'value' => $data,
             'step' => static::INPUT_FIELD_STEP,
-            'max' => static::MAX_VALUE,
-            'label' => $options['label'],
-        ]);
+            'max' => static::MAX_VALUE
+        ];
 
-        return $input;
+        return $this->_renderElement(__FUNCTION__, $params, $options);
     }
 
     /**

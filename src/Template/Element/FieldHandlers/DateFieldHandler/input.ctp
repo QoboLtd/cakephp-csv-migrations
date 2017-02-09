@@ -2,8 +2,10 @@
 echo $this->Form->input($name, [
     'type' => 'text',
     'label' => $label,
-    'data-provide' => 'datetimepicker',
+    'data-provide' => 'datepicker',
     'autocomplete' => 'off',
+    'data-date-format' => 'yyyy-mm-dd',
+    'data-date-autoclose' => true,
     'required' => (bool)$required,
     'value' => $value,
     'templates' => [

@@ -18,22 +18,6 @@ class DblistCell extends Cell
     protected $_validCellOptions = [];
 
     /**
-     * Render the select options.
-     *
-     * @param  string $field   field name
-     * @param  string $list    List name
-     * @param  array  $options Input options
-     * @return void
-     */
-    public function renderInput($field, $list = null, array $options = [])
-    {
-        $this->loadModel('CsvMigrations.Dblists');
-        $this->_createList($list);
-        $selOptions = $this->Dblists->find('options', ['name' => $list]);
-        $this->set(compact('field', 'list', 'options', 'selOptions'));
-    }
-
-    /**
      * Match and render the sucessfull value.
      *
      * Checks the given list if it has the given value in its list items.

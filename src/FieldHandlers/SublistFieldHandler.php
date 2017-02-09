@@ -5,7 +5,10 @@ use CsvMigrations\FieldHandlers\BaseCsvListFieldHandler;
 
 class SublistFieldHandler extends BaseCsvListFieldHandler
 {
-    const JS_SELECTORS = "$('%s').val('%s').change();";
+    /**
+     * Field type
+     */
+    const INPUT_FIELD_TYPE = 'select';
 
     /**
      * Render field input
@@ -23,64 +26,25 @@ class SublistFieldHandler extends BaseCsvListFieldHandler
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
+
+        $fieldName = $this->table->aliasField($this->field);
+
         $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit(), null, false);
         $optionValues = $this->_getSelectOptions($options['fieldDefinitions']->getLimit(), '');
         $structure = $this->_dynamicSelectStructure($fieldOptions);
 
-        $levels = 0;
-        // get nesting level based on dot notation
-        foreach ($optionValues as $k => $v) {
-            $count = substr_count($k, '.');
-            if ($count <= $levels) {
-                continue;
-            }
-            $levels = $count;
-        }
-
-        // get selectors
-        $selectors = [];
-        for ($i = 0; $i <= $levels; $i++) {
-            $selectors[] = '[data-target="' . 'dynamic-select-' . $this->field . '_' . $i . '"]';
-        }
-
-        // default input options
-        $defaultOptions = [
-            'type' => 'select',
-            'required' => (bool)$options['fieldDefinitions']->getRequired()
+        $params = [
+            'field' => $this->field,
+            'name' => $fieldName,
+            'type' => static::INPUT_FIELD_TYPE,
+            'label' => $options['label'],
+            'required' => $options['fieldDefinitions']->getRequired(),
+            'value' => $data,
+            'optionValues' => $optionValues,
+            'structure' => $structure
         ];
 
-        // edit mode
-        if (!empty($data)) {
-            $data = explode('.', $data);
-            $count = count($data);
-        }
-
-        // get inputs
-        $inputs = [];
-        for ($i = 0; $i <= $levels; $i++) {
-            $inputOptions = $defaultOptions;
-            $inputOptions['data-target'] = 'dynamic-select-' . $this->field . '_' . $i;
-            if (0 === $i) {
-                $inputOptions['data-type'] = 'dynamic-select';
-                $inputOptions['data-structure'] = json_encode($structure);
-                $inputOptions['data-option-values'] = json_encode(array_flip($optionValues));
-                $inputOptions['data-selectors'] = json_encode($selectors);
-                $inputOptions['data-hide-next'] = true;
-                $inputOptions['data-previous-default-value'] = true;
-            } else {
-                $inputOptions['label'] = false;
-            }
-            // edit mode
-            if (!empty($data) && ($i + 1) <= $count) {
-                $inputOptions['data-value'] = implode('.', array_slice($data, 0, $i + 1));
-            }
-            $inputs[] = $this->cakeView->Form->input(
-                $this->table->aliasField($this->field),
-                $inputOptions
-            );
-        }
-
-        return implode('', $inputs);
+        return $this->_renderElement(__FUNCTION__, $params, $options);
     }
 
     /**

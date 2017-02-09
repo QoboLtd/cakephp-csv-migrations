@@ -12,16 +12,6 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 abstract class BaseCombinedFieldHandler extends BaseFieldHandler
 {
     /**
-     * Input(s) wrapper html markup
-     */
-    const WRAPPER_HTML = '%s<div class="row">%s</div>';
-
-    /**
-     * Input field html markup
-     */
-    const INPUT_HTML = '<div class="col-xs-6 col-lg-4">%s</div>';
-
-    /**
      * Combined fields
      *
      * @var array
@@ -44,12 +34,11 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
 
-        // Use combined field name as a single label for all inputs
-        $label = $options['label'] ? $this->cakeView->Form->label($this->field, $options['label']) : false;
+        $label = $options['label'];
 
         $inputs = [];
         foreach (static::$_fields as $suffix => $preOptions) {
-            $options['fieldDefinitions']->setType($preOptions['handler']::DB_FIELD_TYPE);
+            // $options['fieldDefinitions']->setType($preOptions['handler']::DB_FIELD_TYPE);
             // Skip individual inputs' label
             $options['label'] = false;
             $fieldName = $this->field . '_' . $suffix;
@@ -61,10 +50,16 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
 
             $handler = new $preOptions['handler']($this->table, $fieldName, $this->cakeView);
 
-            $inputs[] = sprintf(static::INPUT_HTML, $handler->renderInput($fieldData, $options));
+            $inputs[] = $handler->renderInput($fieldData, $options);
         }
 
-        return sprintf(static::WRAPPER_HTML, $label, implode('', $inputs));
+        $params = [
+            'field' => $this->field,
+            'label' => $label,
+            'inputs' => $inputs
+        ];
+
+        return $this->_renderElement(__FUNCTION__, $params, $options);
     }
 
     /**

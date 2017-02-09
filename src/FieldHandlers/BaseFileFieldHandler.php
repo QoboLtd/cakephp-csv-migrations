@@ -18,6 +18,11 @@ class BaseFileFieldHandler extends BaseFieldHandler
     const INPUT_FIELD_TYPE = 'file';
 
     /**
+     * Field type
+     */
+    const DB_FIELD_TYPE = 'uuid';
+
+    /**
      * CSS Framework grid columns number
      */
     const GRID_COUNT = 12;

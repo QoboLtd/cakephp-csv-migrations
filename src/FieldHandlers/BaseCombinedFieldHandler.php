@@ -38,7 +38,6 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
 
         $inputs = [];
         foreach (static::$_fields as $suffix => $preOptions) {
-            // $options['fieldDefinitions']->setType($preOptions['handler']::DB_FIELD_TYPE);
             // Skip individual inputs' label
             $options['label'] = false;
             $fieldName = $this->field . '_' . $suffix;

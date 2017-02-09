@@ -10,6 +10,7 @@ use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
 use CsvMigrations\View\AppView;
+use RuntimeException;
 
 /**
  * BaseFieldHandler
@@ -270,12 +271,46 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         $fieldName = $this->table->aliasField($this->field);
 
-        return $this->cakeView->Form->input($fieldName, [
+        $params = [
+            'field' => $this->field,
+            'name' => $fieldName,
             'type' => static::INPUT_FIELD_TYPE,
             'label' => $options['label'],
-            'required' => (bool)$options['fieldDefinitions']->getRequired(),
+            'required' => $options['fieldDefinitions']->getRequired(),
             'value' => $data
-        ]);
+        ];
+
+        return $this->_renderElement(__FUNCTION__, $params, $options);
+    }
+
+    protected function _renderElement($type, array $params, array $options = [])
+    {
+        // render custom element
+        if (!empty($options['element']) && $this->cakeView->elementExists($options['element'])) {
+            return $this->cakeView->element($options['element'], $params);
+        }
+
+        $type = strtolower($type);
+        $type = str_replace('render', '', $type);
+
+        $fqcn = get_class($this);
+        $className = substr($fqcn, strrpos($fqcn, '\\') + 1);
+
+        $element = 'CsvMigrations.FieldHandlers/' . $className . '/' . $type;
+
+        // if element does not exist, use default one
+        if (!$this->cakeView->elementExists($element)) {
+            $element = 'CsvMigrations.FieldHandlers/BaseFieldHandler/' . $type;
+        }
+
+        // if no element was found, throw exception
+        if (!$this->cakeView->elementExists($element)) {
+            throw new RuntimeException(
+                Inflector::humanize($type) . ' element, for class ' . $className . ', was not found.'
+            );
+        }
+
+        return $this->cakeView->element($element, $params);
     }
 
     /**

@@ -64,8 +64,9 @@
     };
 
     Panel.prototype.resetPanels = function () {
-        $('[data-provide="dynamic-panel"].hidden').find(':input').attr('disabled', false);
-        $('[data-provide="dynamic-panel"]').removeClass('hidden');
+        var $form = this.form;
+        $form.find('[data-provide="dynamic-panel"].hidden').find(':input').attr('disabled', false);
+        $form.find('[data-provide="dynamic-panel"]').removeClass('hidden');
     };
 
     Panel.prototype.observe = function () {

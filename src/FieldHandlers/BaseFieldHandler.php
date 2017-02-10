@@ -12,6 +12,8 @@ use CsvMigrations\FieldHandlers\FieldHandlerInterface;
 use CsvMigrations\Parser\Ini\Parser as IniParser;
 use CsvMigrations\PathFinder\ConfigPathFinder;
 use CsvMigrations\View\AppView;
+use Exception;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -152,7 +154,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     protected function setTable($table)
     {
         if (empty($table)) {
-            throw new \InvalidArgumentException('Table cannot be empty.');
+            throw new InvalidArgumentException('Table cannot be empty.');
         }
         if (is_string($table)) {
             $table = TableRegistry::get($table);
@@ -171,7 +173,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $field = (string)$field;
         if (empty($field)) {
-            throw new \InvalidArgumentException('Field cannot be empty.');
+            throw new InvalidArgumentException('Field cannot be empty.');
         }
         $this->field = $field;
     }
@@ -454,7 +456,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         array_unshift($filterParams, $data);
         $result = call_user_func_array('filter_var', $filterParams);
         if ($result === false) {
-            throw new \RuntimeException("Failed to sanitize field value");
+            throw new RuntimeException("Failed to sanitize field value");
         }
 
         return $result;

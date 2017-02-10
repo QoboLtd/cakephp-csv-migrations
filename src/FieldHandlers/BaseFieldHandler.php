@@ -525,6 +525,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             return $result;
         }
 
+        if (!$result) {
+            $result = $this->getFieldsIniParams('default');
+        }
+
         return $result;
     }
 

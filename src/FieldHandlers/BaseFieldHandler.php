@@ -9,6 +9,8 @@ use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
+use CsvMigrations\Parser\Ini\Parser as IniParser;
+use CsvMigrations\PathFinder\ConfigPathFinder;
 use CsvMigrations\View\AppView;
 use RuntimeException;
 
@@ -25,6 +27,11 @@ use RuntimeException;
  */
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
+    /**
+     * Fields ini filename
+     */
+    const FIELDS_INI_FILENAME = 'fields.ini';
+
     /**
      * Default database field type
      */
@@ -511,6 +518,26 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             }
 
             return $result;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Parse and return fields ini configuration file.
+     *
+     * @return array
+     */
+    protected function _parseFieldsIni()
+    {
+        $result = [];
+        try {
+            $pathFinder = new ConfigPathFinder;
+            $path = $pathFinder->find(Inflector::camelize($this->table->table()), static::FIELDS_INI_FILENAME);
+            $parser = new IniParser;
+            $result = $parser->parseFromPath($path);
+        } catch (Exception $e) {
+            //
         }
 
         return $result;

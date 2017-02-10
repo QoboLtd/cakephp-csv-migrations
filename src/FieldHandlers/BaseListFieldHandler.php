@@ -12,6 +12,11 @@ use CsvMigrations\FieldHandlers\BaseFieldHandler;
 abstract class BaseListFieldHandler extends BaseFieldHandler
 {
     /**
+     * Empty option label for select inputs
+     */
+    const EMPTY_OPTION_LABEL = ' -- Please choose -- ';
+
+    /**
      * Search operators
      *
      * @var array

@@ -29,6 +29,9 @@ class ListFieldHandler extends BaseCsvListFieldHandler
 
         $fieldName = $this->table->aliasField($this->field);
 
+        $selectOptions = ['' => static::EMPTY_OPTION_LABEL];
+        $selectOptions += $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
+
         $params = [
             'field' => $this->field,
             'name' => $fieldName,
@@ -36,7 +39,7 @@ class ListFieldHandler extends BaseCsvListFieldHandler
             'label' => $options['label'],
             'required' => $options['fieldDefinitions']->getRequired(),
             'value' => $data,
-            'options' => $this->_getSelectOptions($options['fieldDefinitions']->getLimit())
+            'options' => $selectOptions
         ];
 
         return $this->_renderElement(__FUNCTION__, $params, $options);

@@ -388,6 +388,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $text = $this->field;
 
+        $label = $this->getFieldsIniParams('label');
+        if ($label) {
+            return $label;
+        }
+
         // Borrowed from FormHelper::label()
         if (substr($text, -5) === '._ids') {
             $text = substr($text, 0, -5);

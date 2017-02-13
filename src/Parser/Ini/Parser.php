@@ -65,6 +65,10 @@ class Parser extends AbstractIniParser
             throw new \RuntimeException('Path must be a string');
         }
 
+        if (!is_string($field)) {
+            throw new \RuntimeException('Field must be a string');
+        }
+
         // skip if path or field values not provided
         if (empty($path) || empty($field)) {
             return $result;

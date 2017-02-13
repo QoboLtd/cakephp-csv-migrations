@@ -597,16 +597,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * Parse and return fields ini configuration file.
      *
-     * @return array
+     * @return string
      */
-    protected function _parseFieldsIni()
+    protected function _getFieldsIniPath()
     {
-        $result = [];
+        $result = '';
         try {
             $pathFinder = new ConfigPathFinder;
-            $path = $pathFinder->find(Inflector::camelize($this->table->table()), static::FIELDS_INI_FILENAME);
-            $parser = new IniParser;
-            $result = $parser->parseFromPath($path);
+            $result = $pathFinder->find(Inflector::camelize($this->table->table()), static::FIELDS_INI_FILENAME);
         } catch (Exception $e) {
             //
         }

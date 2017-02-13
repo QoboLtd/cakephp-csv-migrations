@@ -9,7 +9,11 @@ use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
+use CsvMigrations\Parser\Ini\Parser as IniParser;
+use CsvMigrations\PathFinder\ConfigPathFinder;
 use CsvMigrations\View\AppView;
+use Exception;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -25,6 +29,11 @@ use RuntimeException;
  */
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
+    /**
+     * Fields ini filename
+     */
+    const FIELDS_INI_FILENAME = 'fields.ini';
+
     /**
      * Default database field type
      */
@@ -145,7 +154,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     protected function setTable($table)
     {
         if (empty($table)) {
-            throw new \InvalidArgumentException('Table cannot be empty.');
+            throw new InvalidArgumentException('Table cannot be empty.');
         }
         if (is_string($table)) {
             $table = TableRegistry::get($table);
@@ -164,7 +173,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $field = (string)$field;
         if (empty($field)) {
-            throw new \InvalidArgumentException('Field cannot be empty.');
+            throw new InvalidArgumentException('Field cannot be empty.');
         }
         $this->field = $field;
     }
@@ -381,6 +390,13 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $text = $this->field;
 
+        $path = $this->_getFieldsIniPath();
+        $parser = new IniParser;
+        $label = $parser->getFieldsIniParams($path, $text, 'label');
+        if ($label) {
+            return $label;
+        }
+
         // Borrowed from FormHelper::label()
         if (substr($text, -5) === '._ids') {
             $text = substr($text, 0, -5);
@@ -442,7 +458,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         array_unshift($filterParams, $data);
         $result = call_user_func_array('filter_var', $filterParams);
         if ($result === false) {
-            throw new \RuntimeException("Failed to sanitize field value");
+            throw new RuntimeException("Failed to sanitize field value");
         }
 
         return $result;
@@ -511,6 +527,34 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             }
 
             return $result;
+        }
+
+        if (!$result) {
+            $path = $this->_getFieldsIniPath();
+            $parser = new IniParser;
+            $default = $parser->getFieldsIniParams($path, $field, 'default');
+            if (empty($default)) {
+                return $result;
+            }
+            $result = $default;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Gets fields ini configuration file path.
+     *
+     * @return string
+     */
+    protected function _getFieldsIniPath()
+    {
+        $result = '';
+        try {
+            $pathFinder = new ConfigPathFinder;
+            $result = $pathFinder->find(Inflector::camelize($this->table->table()), static::FIELDS_INI_FILENAME);
+        } catch (Exception $e) {
+            //
         }
 
         return $result;

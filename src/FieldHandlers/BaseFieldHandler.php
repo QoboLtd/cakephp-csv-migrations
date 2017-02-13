@@ -390,7 +390,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $text = $this->field;
 
-        $label = $this->getFieldsIniParams('label');
+        $path = $this->_getFieldsIniPath();
+        $parser = new IniParser;
+        $label = $parser->getFieldsIniParams($path, $text, 'label');
         if ($label) {
             return $label;
         }
@@ -528,7 +530,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         }
 
         if (!$result) {
-            $default = $this->getFieldsIniParams('default');
+            $path = $this->_getFieldsIniPath();
+            $parser = new IniParser;
+            $default = $parser->getFieldsIniParams($path, $field, 'default');
             if (empty($default)) {
                 return $result;
             }
@@ -539,63 +543,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     }
 
     /**
-     * Get fields ini parameters
-     *
-     * Retrieves and returns fields ini parameters. It accepts a single parameter
-     * in a string format or multiple parameters in an array format. If no parameters
-     * are requested then the full field ini configuration is returned.
-     *
-     * If no field ini configration was found then the return value will be an empty
-     * array if multiple parameters were requested or null if one parameter was
-     * requested.
-     *
-     * @param string|array|null $params Field ini parameters
-     * @return string|array|null
-     */
-    public function getFieldsIniParams($params = null)
-    {
-        if (is_array($params) && 1 === count($params)) {
-            $params = current($params);
-        }
-        $result = is_string($params) ? null : [];
-
-        $parsed = $this->_parseFieldsIni();
-
-        // return empty result if fields ini was not parsed
-        if (empty($parsed)) {
-            return $result;
-        }
-
-        // return empty result if current field has no ini configuration
-        if (empty($parsed[$this->field])) {
-            return $result;
-        }
-
-        // return all configuration for current field if no specific params requested
-        if (empty($params)) {
-            return $parsed[$this->field];
-        }
-
-        if (is_string($params)) {
-            $result = !empty($parsed[$this->field][$params]) ? $parsed[$this->field][$params] : $result;
-
-            return $result;
-        }
-
-        // pick only requested params for current field ini configuration
-        foreach ($params as $param) {
-            if (empty($parsed[$this->field][$param])) {
-                continue;
-            }
-
-            $result[$param] = $parsed[$this->field][$param];
-        }
-
-        return $result;
-    }
-
-    /**
-     * Parse and return fields ini configuration file.
+     * Gets fields ini configuration file path.
      *
      * @return string
      */

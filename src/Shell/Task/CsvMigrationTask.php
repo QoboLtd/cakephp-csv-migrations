@@ -2,6 +2,7 @@
 namespace CsvMigrations\Shell\Task;
 
 use Cake\Core\Configure;
+use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
 use CsvMigrations\PathFinder\MigrationPathFinder;
 use Migrations\Shell\Task\MigrationTask;
@@ -13,15 +14,6 @@ use Phinx\Util\Util;
 class CsvMigrationTask extends MigrationTask
 {
     /**
-     * Tasks to be loaded by this Task
-     *
-     * @var array
-     */
-    public $tasks = [
-        'Bake.Model'
-    ];
-
-    /**
      * Timestamp
      * @var string
      */
@@ -32,14 +24,22 @@ class CsvMigrationTask extends MigrationTask
      */
     public function main($name = null)
     {
+        if (empty(Configure::read('CsvMigrations.modules.path'))) {
+            $this->abort('CSV modules path is not defined.');
+        }
+
         $this->__timestamp = Util::getCurrentTimestamp();
 
-        $this->Model->connection = $this->connection;
-        $allTables = $this->Model->listUnskipped();
-        if (!in_array(Inflector::tableize($name), $allTables)) {
-            $this->out('Possible tables based on your current database:');
-            foreach ($allTables as $table) {
-                $this->out('- ' . $this->_camelize($table));
+        $modules = $this->_getCsvModules();
+        if (empty($modules)) {
+            $this->abort('There are no CSV modules in this system');
+        }
+
+        // output system's available csv modules
+        if (!in_array($this->_camelize($name), $modules)) {
+            $this->out('Possible modules based on your current csv configuration:');
+            foreach ($modules as $module) {
+                $this->out('- ' . $module);
             }
 
             return true;
@@ -86,6 +86,19 @@ class CsvMigrationTask extends MigrationTask
             'table' => $table,
             'name' => $name
         ];
+    }
+
+    /**
+     * Get CSV module names from defined modules directory.
+     *
+     * @return array
+     */
+    protected function _getCsvModules()
+    {
+        $dir = new Folder(Configure::read('CsvMigrations.modules.path'));
+        $folders = $dir->read(true)[0];
+
+        return (array)$folders;
     }
 
     /**

@@ -12,7 +12,6 @@
  * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-$tableMethod = $this->Migration->tableMethod($action);
 %>
 <?php
 use CsvMigrations\CsvMigration;
@@ -28,17 +27,14 @@ class <%= $name %> extends CsvMigration
      */
     public function change()
     {
-<% if ('create' === $tableMethod): %>
-        if (!$this->hasTable('<%= $table%>')) {
-            $table = $this->table('<%= $table%>');
-            $table = $this->csv($table);
-            $table-><%= $tableMethod %>();
-        }
-<% else: %>
         $table = $this->table('<%= $table%>');
         $table = $this->csv($table);
-        $table-><%= $tableMethod %>();
-<% endif; %>
+
+        if (!$this->hasTable('<%= $table%>')) {
+            $table->create();
+        } else {
+            $table->update();
+        }
 
         $joinedTables = $this->joins('<%= $table%>');
         if (!empty($joinedTables)) {

@@ -12,6 +12,14 @@ use Phinx\Util\Util;
  */
 class CsvMigrationTask extends MigrationTask
 {
+    /**
+     * Tasks to be loaded by this Task
+     *
+     * @var array
+     */
+    public $tasks = [
+        'Bake.Model'
+    ];
 
     /**
      * Timestamp
@@ -25,6 +33,17 @@ class CsvMigrationTask extends MigrationTask
     public function main($name = null)
     {
         $this->__timestamp = Util::getCurrentTimestamp();
+
+        $this->Model->connection = $this->connection;
+        $allTables = $this->Model->listUnskipped();
+        if (!in_array(Inflector::tableize($name), $allTables)) {
+            $this->out('Possible tables based on your current database:');
+            foreach ($allTables as $table) {
+                $this->out('- ' . $this->_camelize($table));
+            }
+
+            return true;
+        }
 
         parent::main($name);
     }

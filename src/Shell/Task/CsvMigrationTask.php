@@ -80,10 +80,9 @@ class CsvMigrationTask extends MigrationTask
      */
     public function templateData()
     {
-        list($action, $table, $name) = $this->_getVars($this->BakeTemplate->viewVars['name']);
+        list($table, $name) = $this->_getVars($this->BakeTemplate->viewVars['name']);
 
         return [
-            'action' => $action,
             'table' => $table,
             'name' => $name
         ];
@@ -92,24 +91,16 @@ class CsvMigrationTask extends MigrationTask
     /**
      * Returns variables for bake template.
      *
-     * @param  string $actionName action name
+     * @param  string $tableName Table name
      * @return array
      */
-    protected function _getVars($actionName)
+    protected function _getVars($tableName)
     {
-        $action = $this->detectAction($actionName);
+        $table = Inflector::tableize($tableName);
 
-        if (empty($action)) {
-            $table = $actionName;
-            $action = 'create_table';
-        } else {
-            list($action, $table) = $action;
-        }
-        $table = Inflector::tableize($table);
+        $name = Inflector::camelize($tableName) . $this->_getLastModifiedTime($table);
 
-        $name = Inflector::camelize($actionName) . $this->_getLastModifiedTime($table);
-
-        return [$action, $table, $name];
+        return [$table, $name];
     }
 
     /**

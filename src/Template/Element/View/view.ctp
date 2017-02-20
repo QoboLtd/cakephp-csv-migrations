@@ -271,7 +271,7 @@ echo $this->element('CsvMigrations.common_js_libs');
                         $this->eventManager()->dispatch($tabContentEvent);
                         $content = $tabContentEvent->result;
 
-                        if (!empty($content)) {
+                        if (!empty($content) && !isset($content['rawOutput'])) {
                             echo $this->cell('CsvMigrations.TabContent', [
                             [
                                 'request' => $this->request,
@@ -281,7 +281,13 @@ echo $this->element('CsvMigrations.common_js_libs');
                                 'entity' => $options['entity'],
                             ]
                             ]);
+                        }
 
+                        if (!empty($content['rawOutput'])) {
+                            echo $content['rawOutput'];
+                        }
+
+                        if (!empty($content)) {
                             echo $this->Html->scriptBlock(
                                 '$(".' . $tab['containerId'] . '").DataTable({
                                         "paging": true,

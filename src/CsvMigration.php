@@ -268,7 +268,7 @@ class CsvMigration extends AbstractMigration
         $this->_table->addColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
         // set field as unique
         if ($dbField->getUnique()) {
-            $this->_table->addIndex([$dbField->getName()], ['unique' => $dbField->getUnique()]);
+            $this->_table->addIndex([$dbField->getName()], ['unique' => true]);
         }
         // set id as primary key
         if ('id' === $dbField->getName()) {
@@ -289,7 +289,14 @@ class CsvMigration extends AbstractMigration
         $this->_table->changeColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
         // set field as unique
         if ($dbField->getUnique()) {
-            $this->_table->addIndex([$dbField->getName()], ['unique' => $dbField->getUnique()]);
+            // avoid creation of duplicate indexes
+            if (!$this->_table->hasIndex($dbField->getName())) {
+                $this->_table->addIndex([$dbField->getName()], ['unique' => true]);
+            }
+        } else {
+            if ($this->_table->hasIndex($dbField->getName())) {
+                $this->_table->removeIndexByName($dbField->getName());
+            }
         }
     }
 

@@ -293,6 +293,10 @@ class CsvMigration extends AbstractMigration
             if (!$this->_table->hasIndex($dbField->getName())) {
                 $this->_table->addIndex([$dbField->getName()], ['unique' => true]);
             }
+        } else {
+            if ($this->_table->hasIndex($dbField->getName())) {
+                $this->_table->removeIndexByName($dbField->getName());
+            }
         }
     }
 

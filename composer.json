@@ -4,7 +4,7 @@
     "type": "cakephp-plugin",
     "license": "GPL-2.0",
     "require": {
-        "cakephp/cakephp": ">3.0.0 <4.0",
+        "cakephp/cakephp": "~3.3.0",
         "cakephp/migrations": "~1.0",
         "league/csv": "^8.1",
         "piwik/ini": "^1.0",

@@ -35,7 +35,8 @@
                 drops: "down",
                 timePicker12Hour: false,
                 timePickerIncrement: 5,
-                format: "YYYY-MM-DD HH:mm"
+                format: "YYYY-MM-DD HH:mm",
+                startDate: moment().format("YYYY-MM-DD 10:00")
             });
         }
     };

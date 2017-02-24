@@ -26,11 +26,16 @@ class ListFieldHandler extends BaseCsvListFieldHandler
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
+        $selectOptions = ['' => static::EMPTY_OPTION_LABEL];
 
         $fieldName = $this->table->aliasField($this->field);
 
-        $selectOptions = ['' => static::EMPTY_OPTION_LABEL];
-        $selectOptions += $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
+        // if select options are not pre-defined
+        if (empty($options['selectOptions'])) {
+            $selectOptions += $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
+        } else {
+            $selectOptions += $options['selectOptions'];
+        }
 
         $params = [
             'field' => $this->field,

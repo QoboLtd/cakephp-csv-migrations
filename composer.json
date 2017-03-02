@@ -4,7 +4,6 @@
     "type": "cakephp-plugin",
     "license": "GPL-2.0",
     "require": {
-        "cakephp/migrations": "~1.0",
         "friendsofcake/crud": "^4.3",
         "symfony/expression-language": "^3.1",
         "admad/cakephp-jwt-auth": "^2.0",

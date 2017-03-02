@@ -130,11 +130,11 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
             }
 
             if (isset($options['renderAs']) && $options['renderAs'] === static::RENDER_PLAIN_VALUE) {
-                $inputs[] = h($properties['dispFieldVal']);
+                $inputs[] = $properties['dispFieldVal'];
             } else {
                 // generate related record(s) html link
                 $inputs[] = $this->cakeView->Html->link(
-                    h($properties['dispFieldVal']),
+                    $properties['dispFieldVal'],
                     $this->cakeView->Url->build([
                         'prefix' => false,
                         'plugin' => $properties['plugin'],

@@ -4,17 +4,11 @@
     "type": "cakephp-plugin",
     "license": "GPL-2.0",
     "require": {
-        "cakephp/cakephp": "~3.3.0",
         "cakephp/migrations": "~1.0",
-        "league/csv": "^8.1",
-        "piwik/ini": "^1.0",
-        "burzum/cakephp-file-storage": "^1.1",
         "friendsofcake/crud": "^4.3",
         "symfony/expression-language": "^3.1",
         "admad/cakephp-jwt-auth": "^2.0",
-        "muffin/trash": "^1.1",
         "eluceo/ical": "^0.11.0",
-        "maiconpinto/cakephp-adminlte-theme": "^1.0"
         "qobo/cakephp-utils": "^1.0"
     },
     "require-dev": {

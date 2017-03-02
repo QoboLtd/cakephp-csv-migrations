@@ -201,6 +201,7 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
             ])
         );
 
+        $result[$this->field]['source'] = $options['fieldDefinitions']->getLimit();
         $result[$this->field]['input'] = [
             'content' => $content,
             'post' => [

@@ -13,25 +13,21 @@ use CsvMigrations\Events\ReportListener;
 use CsvMigrations\Events\ViewViewListener;
 use CsvMigrations\Events\ViewViewTabsListener;
 
-Configure::write('CsvMigrations.actions', ['index', 'view', 'add', 'edit']);
-Configure::write('CsvMigrations.modules.path', CONFIG . 'Modules' . DS);
-Configure::write('CsvMigrations.reports.filename', 'reports');
-Configure::write('CsvMigrations.default_icon', 'cube');
-Configure::write('CsvMigrations.select2', [
-    'min_length' => 0,
-    'timeout' => 300,
-    'id' => '[data-type="select2"]',
-    'limit' => 10
-]);
-Configure::write('CsvMigrations.acl', [
-    'class' => null, // currently only accepts Table class with prefixed plugin name. Example: 'MyPlugin.TableName'
-    'method' => null,
-    'component' => null
-]);
-Configure::write('CsvMigrations.api', [
-    'auth' => true,
-    'token' => null
-]);
+/**
+ * Plugin configuration
+ */
+// get app level config
+$config = Configure::read('CsvMigrations');
+$config = $config ? $config : [];
+
+// load default plugin config
+Configure::load('CsvMigrations.csv_migrations');
+
+// overwrite default plugin config by app level config
+Configure::write('CsvMigrations', array_replace_recursive(
+    Configure::read('CsvMigrations'),
+    $config
+));
 
 EventManager::instance()->on(new AddViewListener());
 EventManager::instance()->on(new EditViewListener());

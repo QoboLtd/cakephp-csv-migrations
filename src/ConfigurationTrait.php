@@ -3,8 +3,8 @@ namespace CsvMigrations;
 
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
-use CsvMigrations\Parser\Ini\Parser;
-use CsvMigrations\PathFinder\ConfigPathFinder;
+use Qobo\Utils\Parser\Ini\Parser;
+use Qobo\Utils\PathFinder\ConfigPathFinder;
 
 trait ConfigurationTrait
 {

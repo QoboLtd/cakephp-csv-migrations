@@ -14,12 +14,12 @@ use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
-use CsvMigrations\Parser\Csv\MigrationParser;
-use CsvMigrations\Parser\Csv\ViewParser;
-use CsvMigrations\PathFinder\MigrationPathFinder;
-use CsvMigrations\PathFinder\ViewPathFinder;
 use CsvMigrations\PrettifyTrait;
 use InvalidArgumentException;
+use Qobo\Utils\Parser\Csv\MigrationParser;
+use Qobo\Utils\Parser\Csv\ViewParser;
+use Qobo\Utils\PathFinder\MigrationPathFinder;
+use Qobo\Utils\PathFinder\ViewPathFinder;
 
 abstract class BaseViewListener implements EventListenerInterface
 {

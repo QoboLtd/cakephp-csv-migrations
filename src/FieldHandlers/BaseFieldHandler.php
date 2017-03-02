@@ -9,11 +9,11 @@ use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
-use CsvMigrations\Parser\Ini\Parser as IniParser;
-use CsvMigrations\PathFinder\ConfigPathFinder;
 use CsvMigrations\View\AppView;
 use Exception;
 use InvalidArgumentException;
+use Qobo\Utils\Parser\Ini\Parser as IniParser;
+use Qobo\Utils\PathFinder\ConfigPathFinder;
 use RuntimeException;
 
 /**

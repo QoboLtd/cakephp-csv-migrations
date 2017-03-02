@@ -8,10 +8,10 @@ use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
-use CsvMigrations\Parser\Csv\MigrationParser;
-use CsvMigrations\PathFinder\MigrationPathFinder;
 use Migrations\AbstractMigration;
 use Migrations\Table;
+use Qobo\Utils\Parser\Csv\MigrationParser;
+use Qobo\Utils\PathFinder\MigrationPathFinder;
 use RuntimeException;
 
 /**

@@ -4,9 +4,9 @@ namespace CsvMigrations\Shell\Task;
 use Cake\Core\Configure;
 use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
-use CsvMigrations\PathFinder\MigrationPathFinder;
 use Migrations\Shell\Task\MigrationTask;
 use Phinx\Util\Util;
+use Qobo\Utils\PathFinder\MigrationPathFinder;
 
 /**
  * CsvMigrations baking migration task, used to extend CakePHP's bake functionality.

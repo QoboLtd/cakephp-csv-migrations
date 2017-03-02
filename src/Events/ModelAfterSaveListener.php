@@ -124,7 +124,6 @@ class ModelAfterSaveListener implements EventListenerInterface
             return $sent;
         }
 
-
         if (method_exists($table, 'getCurrentUser') && is_callable([$table, 'getCurrentUser'])) {
             $currentUser = $table->getCurrentUser();
             $emailContent .= " by " . $currentUser['email'];
@@ -378,7 +377,6 @@ class ModelAfterSaveListener implements EventListenerInterface
         $dates = $this->_getEventTime($entity, $options);
         $vEvent->setDtStart($dates['start']);
         $vEvent->setDtEnd($dates['end']);
-
 
         if ($entity->location) {
             $vEvent->setLocation($entity->location, "Location:");

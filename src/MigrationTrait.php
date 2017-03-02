@@ -4,9 +4,9 @@ namespace CsvMigrations;
 use Cake\Core\Configure;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\Parser\Csv\MigrationParser;
-use CsvMigrations\Parser\Ini\Parser;
-use CsvMigrations\PathFinder\MigrationPathFinder;
+use Qobo\Utils\Parser\Csv\MigrationParser;
+use Qobo\Utils\Parser\Ini\Parser;
+use Qobo\Utils\PathFinder\MigrationPathFinder;
 use RuntimeException;
 
 trait MigrationTrait

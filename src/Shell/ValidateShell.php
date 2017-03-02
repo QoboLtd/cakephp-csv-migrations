@@ -5,14 +5,14 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
-use CsvMigrations\Parser\Csv\ListParser;
-use CsvMigrations\Parser\Csv\MigrationParser;
-use CsvMigrations\Parser\Csv\ViewParser;
-use CsvMigrations\Parser\Ini\Parser;
-use CsvMigrations\PathFinder\ConfigPathFinder;
-use CsvMigrations\PathFinder\ListPathFinder;
-use CsvMigrations\PathFinder\MigrationPathFinder;
-use CsvMigrations\PathFinder\ViewPathFinder;
+use Qobo\Utils\Parser\Csv\ListParser;
+use Qobo\Utils\Parser\Csv\MigrationParser;
+use Qobo\Utils\Parser\Csv\ViewParser;
+use Qobo\Utils\Parser\Ini\Parser;
+use Qobo\Utils\PathFinder\ConfigPathFinder;
+use Qobo\Utils\PathFinder\ListPathFinder;
+use Qobo\Utils\PathFinder\MigrationPathFinder;
+use Qobo\Utils\PathFinder\ViewPathFinder;
 
 class ValidateShell extends Shell
 {

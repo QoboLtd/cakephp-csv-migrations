@@ -11,8 +11,8 @@ use Cake\Utility\Inflector;
 use CsvMigrations\MigrationTrait;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
-use CsvMigrations\Parser\Csv\ViewParser;
-use CsvMigrations\PathFinder\ViewPathFinder;
+use Qobo\Utils\Parser\Csv\ViewParser;
+use Qobo\Utils\PathFinder\ViewPathFinder;
 
 class ViewViewTabsListener implements EventListenerInterface
 {
@@ -290,8 +290,6 @@ class ViewViewTabsListener implements EventListenerInterface
 
         return $content;
     }
-
-
 
     /**
      * Method that retrieves many to many associated records

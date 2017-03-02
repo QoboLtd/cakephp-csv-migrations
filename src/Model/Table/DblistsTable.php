@@ -90,7 +90,6 @@ class DblistsTable extends Table
         return $rules;
     }
 
-
     /**
      * Reusable query options.
      *

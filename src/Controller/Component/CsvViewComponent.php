@@ -13,8 +13,8 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
-use CsvMigrations\Parser\Csv\ViewParser;
-use CsvMigrations\PathFinder\ViewPathFinder;
+use Qobo\Utils\Parser\Csv\ViewParser;
+use Qobo\Utils\PathFinder\ViewPathFinder;
 use \Exception;
 use \RuntimeException;
 

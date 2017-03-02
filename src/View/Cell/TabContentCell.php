@@ -25,7 +25,6 @@ class TabContentCell extends Cell
      */
     protected $_displayTemplates = ['display', 'panel'];
 
-
     /**
      * _getDisplayTemplate
      * Cells operate in different ctp files.

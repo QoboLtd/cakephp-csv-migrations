@@ -62,7 +62,6 @@ class FieldHandlerFactory
         return $handler->renderInput($data, $options);
     }
 
-
     /**
      * Render field form label
      *

@@ -28,7 +28,6 @@ class CsvModuleTask extends BakeTask
         'Bake.BakeTemplate'
     ];
 
-
     /**
      * {@inheritDoc}
      */

@@ -10,7 +10,6 @@ use CsvMigrations\Controller\DblistItemsController;
 class DblistItemsControllerTest extends IntegrationTestCase
 {
 
-
     /**
      * Test index method
      *

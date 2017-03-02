@@ -4,8 +4,8 @@ namespace CsvMigrations\FieldHandlers;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\BaseListFieldHandler;
-use CsvMigrations\Parser\Csv\ListParser;
-use CsvMigrations\PathFinder\ListPathFinder;
+use Qobo\Utils\Parser\Csv\ListParser;
+use Qobo\Utils\PathFinder\ListPathFinder;
 
 /**
  * BaseCsvListFieldHandler

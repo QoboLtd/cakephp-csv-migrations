@@ -139,6 +139,7 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
         $.ajax({
             url: url,
             type: 'get',
+            data: { format: 'pretty' },
             dataType: 'json',
             contentType: 'application/json',
             headers: {

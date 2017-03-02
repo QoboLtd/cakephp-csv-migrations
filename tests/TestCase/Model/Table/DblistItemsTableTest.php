@@ -28,7 +28,6 @@ class DblistItemsTableTest extends TestCase
      */
     public $DblistItems;
 
-
     /**
      * setUp method
      *

@@ -291,8 +291,6 @@ class ViewViewTabsListener implements EventListenerInterface
         return $content;
     }
 
-
-
     /**
      * Method that retrieves many to many associated records
      *

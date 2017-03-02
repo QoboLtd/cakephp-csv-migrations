@@ -87,7 +87,6 @@ trait ConfigurationTrait
      */
     protected $_hiddenAssociations = [];
 
-
     /**
      * Association Labels
      * @var array

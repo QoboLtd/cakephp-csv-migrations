@@ -55,7 +55,6 @@ trait PrettifyTrait
                 }
             }
 
-
             $renderOptions = ['entity' => $entity];
             $entity->{$field} = $this->__fhf->renderValue(
                 $table instanceof Table ? $table->registryAlias() : $table,

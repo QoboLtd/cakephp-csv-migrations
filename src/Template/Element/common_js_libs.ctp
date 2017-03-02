@@ -23,7 +23,6 @@ echo $this->Html->scriptBlock(
     ['block' => 'scriptBotton']
 );
 
-
 $fileInputOptions = Configure::read('CsvMigrations.BootstrapFileInput');
 echo $this->Html->scriptBlock(
     'fileInputOptions = ' . json_encode($fileInputOptions) . ';',

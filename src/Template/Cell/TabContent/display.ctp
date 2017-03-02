@@ -69,7 +69,6 @@ we don't do the linkage - they would have hidden ID by default
         $handlerOptions['fieldDefinitions']['non-searchable'] = true;
         $handlerOptions['fieldDefinitions']['unique'] = false;
 
-
         echo $this->Form->create(null, $formOptions);
         // display typeahead field for associated module(s)
         echo $fhf->renderInput(

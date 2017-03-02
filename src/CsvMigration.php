@@ -300,7 +300,6 @@ class CsvMigration extends AbstractMigration
         }
     }
 
-
     /**
      * Method used for deleting an existing DB table column.
      *

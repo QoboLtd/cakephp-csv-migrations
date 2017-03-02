@@ -3,9 +3,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\Parser\Csv\MigrationParser;
-use CsvMigrations\PathFinder\MigrationPathFinder;
 use PHPUnit_Framework_TestCase;
+use Qobo\Utils\Parser\Csv\MigrationParser;
+use Qobo\Utils\PathFinder\MigrationPathFinder;
 
 class CsvFieldTest extends PHPUnit_Framework_TestCase
 {

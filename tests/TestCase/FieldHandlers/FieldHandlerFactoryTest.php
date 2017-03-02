@@ -7,8 +7,8 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
-use CsvMigrations\Parser\Csv\MigrationParser;
-use CsvMigrations\PathFinder\MigrationPathFinder;
+use Qobo\Utils\Parser\Csv\MigrationParser;
+use Qobo\Utils\PathFinder\MigrationPathFinder;
 
 /**
  * Foo Entity.

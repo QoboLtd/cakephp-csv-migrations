@@ -68,6 +68,9 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
             width: '100%',
             placeholder: placeholder,
             minimumInputLength: that.min_length,
+            escapeMarkup: function (text) {
+                return text;
+            },
             ajax: {
                 url: $(input).data('url'),
                 dataType: 'json',
@@ -136,6 +139,7 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
         $.ajax({
             url: url,
             type: 'get',
+            data: { format: 'pretty' },
             dataType: 'json',
             contentType: 'application/json',
             headers: {

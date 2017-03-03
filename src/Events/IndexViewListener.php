@@ -179,9 +179,11 @@ class IndexViewListener extends BaseViewListener
 
         $sortCols = $fields[$sortCol];
         // handle virtual field
-        $virtualFields = $table->getVirtualFields();
-        if (!empty($virtualFields) && isset($virtualFields[$sortCols])) {
-            $sortCols = $virtualFields[$sortCols];
+        if (method_exists($table, 'getVirtualFields') && is_callable([$table, 'getVirtualFields'])) {
+            $virtualFields = $table->getVirtualFields();
+            if (!empty($virtualFields) && isset($virtualFields[$sortCols])) {
+                $sortCols = $virtualFields[$sortCols];
+            }
         }
         $sortCols = (array)$sortCols;
 

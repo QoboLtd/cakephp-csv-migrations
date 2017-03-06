@@ -163,7 +163,7 @@ if (!empty($this->request->query['embedded'])) {
         $cancelBtnOptions = [
             'name' => 'btn_operation',
             'value' => 'cancel',
-            'class' => 'btn',
+            'class' => 'btn remove-client-validation',
         ];
 
         if ($this->request->query('embedded')) {

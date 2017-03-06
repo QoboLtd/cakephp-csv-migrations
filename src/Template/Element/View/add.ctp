@@ -159,8 +159,22 @@ if (!empty($this->request->query['embedded'])) {
     if (!$this->request->param('pass.conversion')) {
         echo $this->Form->button(__('Submit'), ['name' => 'btn_operation', 'value' => 'submit', 'class' => 'btn btn-primary']);
         echo "&nbsp;";
-        echo $this->Form->button(__('Cancel'), ['name' => 'btn_operation', 'value' => 'cancel', 'class' => 'btn']);
 
+        $cancelBtnOptions = [
+            'name' => 'btn_operation',
+            'value' => 'cancel',
+            'class' => 'btn',
+        ];
+
+        if ($this->request->query('embedded')) {
+            $cancelBtnOptions = array_merge($cancelBtnOptions, [
+                'type' => 'button',
+                'aria-label' => 'Close',
+                'data-dismiss' => 'modal',
+            ]);
+        }
+
+        echo $this->Form->button(__('Cancel'), $cancelBtnOptions);
         echo $this->Form->end();
     }
     ?>

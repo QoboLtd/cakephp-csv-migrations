@@ -2,6 +2,7 @@
 namespace CsvMigrations\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
+use Qobo\Utils\Parser\Ini\Parser;
 
 abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
 {
@@ -76,6 +77,13 @@ abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
     protected function formatValue($data, array $options = [])
     {
         $result = (float)$data;
+
+        $path = $this->_getFieldsIniPath();
+        $parser = new Parser;
+        $format = $parser->getFieldsIniParams($path, $this->field, 'format');
+        if ('raw' === $format) {
+            return $result;
+        }
 
         if (!empty($result) && is_numeric($result)) {
             $result = number_format($result, static::PRECISION);

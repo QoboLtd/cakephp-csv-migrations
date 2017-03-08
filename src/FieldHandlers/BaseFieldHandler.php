@@ -13,7 +13,7 @@ use CsvMigrations\View\AppView;
 use Exception;
 use InvalidArgumentException;
 use Qobo\Utils\Parser\Ini\Parser as IniParser;
-use Qobo\Utils\PathFinder\ConfigPathFinder;
+use Qobo\Utils\PathFinder\FieldsIniPathFinder;
 use RuntimeException;
 
 /**
@@ -29,11 +29,6 @@ use RuntimeException;
  */
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
-    /**
-     * Fields ini filename
-     */
-    const FIELDS_INI_FILENAME = 'fields.ini';
-
     /**
      * Default database field type
      */
@@ -551,8 +546,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $result = '';
         try {
-            $pathFinder = new ConfigPathFinder;
-            $result = $pathFinder->find(Inflector::camelize($this->table->table()), static::FIELDS_INI_FILENAME);
+            $pathFinder = new FieldsIniPathFinder;
+            $result = $pathFinder->find(Inflector::camelize($this->table->table()));
         } catch (Exception $e) {
             //
         }

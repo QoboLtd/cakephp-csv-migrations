@@ -51,31 +51,30 @@ class DblistFieldHandler extends BaseListFieldHandler
     }
 
     /**
-     * Render field value
+     * Format field value
      *
-     * This method prepares the output of the value for the given
-     * field.  The result can be controlled via the variety of
-     * options.
+     * This method provides a customization point for formatting
+     * of the field value before rendering.
      *
-     * @param  string $data    Field data
-     * @param  array  $options Field options
-     * @return string          Field value
+     * NOTE: The value WILL NOT be sanitized during the formatting.
+     *       It is assumed that sanitization happens either before
+     *       or after this method is called.
+     *
+     * @param mixed $data    Field value data
+     * @param array $options Field formatting options
+     * @return string
      */
-    public function renderValue($data, array $options = [])
+    public function formatValue($data, array $options = [])
     {
-        $result = '';
-        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $data = $this->_getFieldValueFromData($data);
-
         //CsvField object is mandatory
         if (!isset($options['fieldDefinitions']) ||
             !($options['fieldDefinitions'] instanceof CsvField)) {
-            return $result;
+            return $data;
         }
-        $csvObj = $options['fieldDefinitions'];
-        $list = $csvObj->getListName();
 
-        return $this->cakeView->cell('CsvMigrations.Dblist::' . __FUNCTION__, [$data, $list])->render(__FUNCTION__);
+        $list = $options['fieldDefinitions']->getListName();
+
+        return $this->cakeView->cell('CsvMigrations.Dblist::renderValue', [$data, $list])->render('renderValue');
     }
 
     /**

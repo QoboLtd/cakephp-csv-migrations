@@ -22,21 +22,22 @@ abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
     const VALUE_NOT_FOUND_HTML = '%s <span class="text-danger glyphicon glyphicon-exclamation-sign" title="Invalid list item" aria-hidden="true"></span>';
 
     /**
-     * Render field value
+     * Format field value
      *
-     * This method prepares the output of the value for the given
-     * field.  The result can be controlled via the variety of
-     * options.
+     * This method provides a customization point for formatting
+     * of the field value before rendering.
      *
-     * @param  string $data    Field data
-     * @param  array  $options Field options
-     * @return string          Field value
+     * NOTE: The value WILL NOT be sanitized during the formatting.
+     *       It is assumed that sanitization happens either before
+     *       or after this method is called.
+     *
+     * @param mixed $data    Field value data
+     * @param array $options Field formatting options
+     * @return string
      */
-    public function renderValue($data, array $options = [])
+    protected function formatValue($data, array $options = [])
     {
         $result = '';
-        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $data = $this->_getFieldValueFromData($data);
 
         if (empty($data)) {
             return $result;
@@ -63,7 +64,6 @@ abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
                 $result = sprintf(static::VALUE_NOT_FOUND_HTML, $data);
             }
         }
-        $result = $this->sanitizeValue($result, $options);
 
         return $result;
     }

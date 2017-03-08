@@ -385,7 +385,13 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $text = $this->field;
 
-        $path = $this->_getFieldsIniPath();
+        $path = '';
+        try {
+            $pathFinder = new FieldsIniPathFinder;
+            $path = $pathFinder->find(Inflector::camelize($this->table->table()));
+        } catch (Exception $e) {
+            //
+        }
         $parser = new IniParser;
         $label = $parser->getFieldsIniParams($path, $text, 'label');
         if ($label) {
@@ -525,31 +531,19 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         }
 
         if (!$result) {
-            $path = $this->_getFieldsIniPath();
+            $path = '';
+            try {
+                $pathFinder = new FieldsIniPathFinder;
+                $path = $pathFinder->find(Inflector::camelize($this->table->table()));
+            } catch (Exception $e) {
+                //
+            }
             $parser = new IniParser;
             $default = $parser->getFieldsIniParams($path, $field, 'default');
             if (empty($default)) {
                 return $result;
             }
             $result = $default;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Gets fields ini configuration file path.
-     *
-     * @return string
-     */
-    protected function _getFieldsIniPath()
-    {
-        $result = '';
-        try {
-            $pathFinder = new FieldsIniPathFinder;
-            $result = $pathFinder->find(Inflector::camelize($this->table->table()));
-        } catch (Exception $e) {
-            //
         }
 
         return $result;

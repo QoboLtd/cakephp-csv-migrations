@@ -1,7 +1,11 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
+use Exception;
+use Qobo\Utils\Parser\Ini\Parser;
+use Qobo\Utils\PathFinder\FieldsPathFinder;
 
 abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
 {
@@ -76,6 +80,20 @@ abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
     protected function formatValue($data, array $options = [])
     {
         $result = (float)$data;
+
+        $path = '';
+        try {
+            $pathFinder = new FieldsPathFinder;
+            $path = $pathFinder->find(Inflector::camelize($this->table->table()));
+        } catch (Exception $e) {
+            //
+        }
+
+        $parser = new Parser;
+        $format = $parser->getFieldsIniParams($path, $this->field, 'format');
+        if ('raw' === $format) {
+            return $result;
+        }
 
         if (!empty($result) && is_numeric($result)) {
             $result = number_format($result, static::PRECISION);

@@ -13,7 +13,7 @@ use CsvMigrations\View\AppView;
 use Exception;
 use InvalidArgumentException;
 use Qobo\Utils\Parser\Ini\Parser as IniParser;
-use Qobo\Utils\PathFinder\ConfigPathFinder;
+use Qobo\Utils\PathFinder\FieldsPathFinder;
 use RuntimeException;
 
 /**
@@ -29,11 +29,6 @@ use RuntimeException;
  */
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
-    /**
-     * Fields ini filename
-     */
-    const FIELDS_INI_FILENAME = 'fields.ini';
-
     /**
      * Default database field type
      */
@@ -390,7 +385,13 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $text = $this->field;
 
-        $path = $this->_getFieldsIniPath();
+        $path = '';
+        try {
+            $pathFinder = new FieldsPathFinder;
+            $path = $pathFinder->find(Inflector::camelize($this->table->table()));
+        } catch (Exception $e) {
+            //
+        }
         $parser = new IniParser;
         $label = $parser->getFieldsIniParams($path, $text, 'label');
         if ($label) {
@@ -530,31 +531,19 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         }
 
         if (!$result) {
-            $path = $this->_getFieldsIniPath();
+            $path = '';
+            try {
+                $pathFinder = new FieldsPathFinder;
+                $path = $pathFinder->find(Inflector::camelize($this->table->table()));
+            } catch (Exception $e) {
+                //
+            }
             $parser = new IniParser;
             $default = $parser->getFieldsIniParams($path, $field, 'default');
             if (empty($default)) {
                 return $result;
             }
             $result = $default;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Gets fields ini configuration file path.
-     *
-     * @return string
-     */
-    protected function _getFieldsIniPath()
-    {
-        $result = '';
-        try {
-            $pathFinder = new ConfigPathFinder;
-            $result = $pathFinder->find(Inflector::camelize($this->table->table()), static::FIELDS_INI_FILENAME);
-        } catch (Exception $e) {
-            //
         }
 
         return $result;

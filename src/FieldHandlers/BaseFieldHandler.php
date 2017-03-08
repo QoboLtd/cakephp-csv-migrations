@@ -13,7 +13,7 @@ use CsvMigrations\View\AppView;
 use Exception;
 use InvalidArgumentException;
 use Qobo\Utils\Parser\Ini\Parser as IniParser;
-use Qobo\Utils\PathFinder\FieldsIniPathFinder;
+use Qobo\Utils\PathFinder\FieldsPathFinder;
 use RuntimeException;
 
 /**
@@ -387,7 +387,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         $path = '';
         try {
-            $pathFinder = new FieldsIniPathFinder;
+            $pathFinder = new FieldsPathFinder;
             $path = $pathFinder->find(Inflector::camelize($this->table->table()));
         } catch (Exception $e) {
             //
@@ -533,7 +533,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         if (!$result) {
             $path = '';
             try {
-                $pathFinder = new FieldsIniPathFinder;
+                $pathFinder = new FieldsPathFinder;
                 $path = $pathFinder->find(Inflector::camelize($this->table->table()));
             } catch (Exception $e) {
                 //

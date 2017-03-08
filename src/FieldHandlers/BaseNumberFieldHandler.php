@@ -5,7 +5,7 @@ use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 use Exception;
 use Qobo\Utils\Parser\Ini\Parser;
-use Qobo\Utils\PathFinder\FieldsIniPathFinder;
+use Qobo\Utils\PathFinder\FieldsPathFinder;
 
 abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
 {
@@ -83,7 +83,7 @@ abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
 
         $path = '';
         try {
-            $pathFinder = new FieldsIniPathFinder;
+            $pathFinder = new FieldsPathFinder;
             $path = $pathFinder->find(Inflector::camelize($this->table->table()));
         } catch (Exception $e) {
             //

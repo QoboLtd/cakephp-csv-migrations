@@ -1,8 +1,6 @@
 <?php
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
-
 /**
  * BaseSimpleFieldHandler
  *
@@ -45,6 +43,11 @@ abstract class BaseSimpleFieldHandler extends BaseFieldHandler
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $result = parent::renderValue($data, $options);
+
+        if (!empty($options['renderAs']) && static::RENDER_PLAIN_VALUE === $options['renderAs']) {
+            return $result;
+        }
+
         $result = $this->formatValue($result, $options);
 
         return $result;

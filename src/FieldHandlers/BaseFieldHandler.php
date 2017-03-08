@@ -202,6 +202,20 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         // set $options['label']
         $this->defaultOptions['label'] = $this->renderName();
+
+        $path = '';
+        try {
+            $pathFinder = new FieldsPathFinder;
+            $path = $pathFinder->find(Inflector::camelize($this->table->table()));
+        } catch (Exception $e) {
+            //
+        }
+        $parser = new IniParser;
+        $renderAs = $parser->getFieldsIniParams($path, $this->field, 'renderAs');
+
+        if (!empty($renderAs)) {
+            $this->defaultOptions['renderAs'] = $renderAs;
+        }
     }
 
     /**

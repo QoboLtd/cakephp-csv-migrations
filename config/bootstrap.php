@@ -9,6 +9,7 @@ use CsvMigrations\Events\IndexViewListener;
 use CsvMigrations\Events\LayoutListener;
 use CsvMigrations\Events\LookupListener;
 use CsvMigrations\Events\ModelAfterSaveListener;
+use CsvMigrations\Events\Model\AutoIncrementEventListener;
 use CsvMigrations\Events\ReportListener;
 use CsvMigrations\Events\ViewViewListener;
 use CsvMigrations\Events\ViewViewTabsListener;
@@ -29,6 +30,7 @@ Configure::write('CsvMigrations', array_replace_recursive(
     $config
 ));
 
+EventManager::instance()->on(new AutoIncrementEventListener());
 EventManager::instance()->on(new AddViewListener());
 EventManager::instance()->on(new EditViewListener());
 EventManager::instance()->on(new IndexViewListener());

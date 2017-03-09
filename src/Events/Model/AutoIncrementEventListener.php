@@ -63,12 +63,13 @@ class AutoIncrementEventListener implements EventListenerInterface
             $query = $event->subject()->find('withTrashed');
             $query->select([$field => $query->func()->max($field)]);
             $max = $query->first()->toArray();
+            $max = (float)$max[$field];
 
             if (empty($options['min'])) {
-                $entity->{$field} = $max[$field] + 1;
+                $entity->{$field} = $max + 1;
             } else {
                 // if value is less than the allowed minimum, then set it to the minimum.
-                $entity->{$field} = $max[$field] < $options['min'] ? $options['min'] : $max[$field] + 1;
+                $entity->{$field} = $max < $options['min'] ? $options['min'] : $max + 1;
             }
         }
     }

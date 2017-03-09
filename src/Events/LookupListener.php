@@ -3,9 +3,12 @@ namespace CsvMigrations\Events;
 
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use CsvMigrations\Events\BaseViewListener;
+use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\FieldHandlers\RelatedFieldHandler;
 use CsvMigrations\FieldHandlers\RelatedFieldTrait;
@@ -38,6 +41,28 @@ class LookupListener extends BaseViewListener
         $request = $event->subject()->request;
         $table = $event->subject()->{$event->subject()->name};
 
+        $query = $this->_alterQuery($table, $query, $request);
+    }
+
+    /**
+     * Alters lookup query and adds ORDER BY clause, WHERE clause
+     * if a query string is passed and typeahead fields are defined.
+     *
+     * Also it adds table JOIN if parent modules are defined.
+     *
+     * Additionally if any of the defined typeahead fields is a related
+     * one, then the WHERE clause condition changes from LIKE to IN and
+     * includes the related module's UUIDs that matched the query string.
+     *
+     * NOTE: There are recursive calls between this method and _getRelatedModuleValues().
+     *
+     * @param \Cake\ORM\Table $table Table instance
+     * @param \Cake\ORM\Query $query Query object
+     * @param \Cake\Http\ServerRequest $request Request object
+     * @return \Cake\ORM\Query
+     */
+    protected function _alterQuery(Table $table, Query $query, ServerRequest $request)
+    {
         $fields = $this->_getTypeaheadFields($table);
 
         $query->order($this->_getOrderByFields($table, $query, $fields));
@@ -45,18 +70,83 @@ class LookupListener extends BaseViewListener
         $this->_joinParentTables($table, $query);
 
         if (empty($fields)) {
-            return;
+            return $query;
         }
 
         if (!$request->query('query')) {
-            return;
+            return $query;
         }
 
         // add typeahead fields to where clause
         $value = $request->query('query');
         foreach ($fields as $field) {
-            $query->orWhere([$field . ' LIKE' => '%' . $value . '%']);
+            $csvField = $this->_getCsvField($field, $table);
+            if (!empty($csvField) && 'related' === $csvField->getType()) {
+                $values = $this->_getRelatedModuleValues($csvField, $request);
+                $query->orWhere([$field . ' IN' => $values]);
+            } else {
+                $query->orWhere([$field . ' LIKE' => '%' . $value . '%']);
+            }
         }
+
+        return $query;
+    }
+
+    /**
+     * Instantiates and returns a CsvField object of the provided field.
+     *
+     * @param string $field Field name
+     * @param \Cake\ORM\Table $table Table instance
+     * @return null|CsvMigrations\FieldHandlers\CsvField
+     */
+    protected function _getCsvField($field, Table $table)
+    {
+        $result = null;
+        if (false !== strpos($field, '.')) {
+            list(, $field) = explode('.', $field);
+        }
+
+        if (empty($field)) {
+            return $result;
+        }
+
+        $method = 'getFieldsDefinitions';
+        if (!method_exists($table, $method) || !is_callable([$table, $method])) {
+            return $result;
+        }
+
+        $fieldsDefinitions = $table->{$method}();
+        if (empty($fieldsDefinitions[$field])) {
+            return $result;
+        }
+
+        return new CsvField($fieldsDefinitions[$field]);
+    }
+
+    /**
+     * Returns related module UUIDs matching the query string.
+     *
+     * NOTE: There are recursive calls between this method and _alterQuery().
+     *
+     * @param \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @param \Cake\Http\ServerRequest $request Request object
+     * @return array
+     */
+    protected function _getRelatedModuleValues(CsvField $csvField, ServerRequest $request)
+    {
+        $table = TableRegistry::get($csvField->getLimit());
+        $query = $table->find('list', [
+            'keyField' => $table->primaryKey()
+        ]);
+
+        // recursive call
+        $query = $this->_alterQuery($table, $query, $request);
+
+        $result = $query->toArray();
+
+        $result = !empty($result) ? array_keys($result) : [null];
+
+        return $result;
     }
 
     /**

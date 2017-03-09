@@ -202,6 +202,20 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         // set $options['label']
         $this->defaultOptions['label'] = $this->renderName();
+
+        $path = '';
+        try {
+            $pathFinder = new FieldsPathFinder;
+            $path = $pathFinder->find(Inflector::camelize($this->table->table()));
+        } catch (Exception $e) {
+            //
+        }
+        $parser = new IniParser;
+        $renderAs = $parser->getFieldsIniParams($path, $this->field, 'renderAs');
+
+        if (!empty($renderAs)) {
+            $this->defaultOptions['renderAs'] = $renderAs;
+        }
     }
 
     /**
@@ -431,7 +445,32 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         $result = (string)$this->_getFieldValueFromData($data);
         $result = $this->sanitizeValue($result, $options);
 
+        if (!empty($options['renderAs']) && static::RENDER_PLAIN_VALUE === $options['renderAs']) {
+            return $result;
+        }
+
+        $result = $this->formatValue($result, $options);
+
         return $result;
+    }
+
+    /**
+     * Format field value
+     *
+     * This method provides a customization point for formatting
+     * of the field value before rendering.
+     *
+     * NOTE: The value WILL NOT be sanitized during the formatting.
+     *       It is assumed that sanitization happens either before
+     *       or after this method is called.
+     *
+     * @param mixed $data    Field value data
+     * @param array $options Field formatting options
+     * @return string
+     */
+    protected function formatValue($data, array $options = [])
+    {
+        return (string)$data;
     }
 
     /**

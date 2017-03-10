@@ -44,7 +44,8 @@ class ListFieldHandler extends BaseCsvListFieldHandler
             'label' => $options['label'],
             'required' => $options['fieldDefinitions']->getRequired(),
             'value' => $data,
-            'options' => $selectOptions
+            'options' => $selectOptions,
+            'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
         ];
 
         return $this->_renderElement(__FUNCTION__, $params, $options);

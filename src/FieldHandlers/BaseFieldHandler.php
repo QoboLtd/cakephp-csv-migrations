@@ -295,7 +295,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             'type' => static::INPUT_FIELD_TYPE,
             'label' => $options['label'],
             'required' => $options['fieldDefinitions']->getRequired(),
-            'value' => $data
+            'value' => $data,
+            'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
         ];
 
         return $this->_renderElement(__FUNCTION__, $params, $options);

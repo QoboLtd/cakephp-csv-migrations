@@ -3,7 +3,7 @@ $label = $this->Form->label($name, $label);
 
 echo $this->Form->input($name, [
     'type' => $type,
-    'class' => 'square',
+    'class' => 'square' . ( (isset($extraClasses) && !empty($extraClasses)) ? ' ' . $extraClasses : null ),
     'required' => (bool)$required,
     'checked' => (bool)$value,
     'label' => false,

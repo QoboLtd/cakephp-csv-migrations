@@ -195,9 +195,6 @@ class ViewViewTabsListener implements EventListenerInterface
             } else {
                 // Otherwise use table alias or name as label
                 $labels[$assocAlias]['label'] = Inflector::humanize($association->table());
-                if (method_exists($assocTableInstance, 'moduleAlias')) {
-                    $labels[$assocAlias]['label'] = Inflector::humanize($assocTableInstance->moduleAlias());
-                }
             }
 
             // Initialize counter for current label, if needed
@@ -208,7 +205,7 @@ class ViewViewTabsListener implements EventListenerInterface
             $labelCounts[$labels[$assocAlias]['label']]++;
         }
 
-        // Not that we have all the labels, check if we have any duplicate labels
+        // Now that we have all the labels, check if we have any duplicate labels
         // and append the association field name to those that are not unique.
         // Also, while we are at it, construct the actual label string from the
         // icon, label, and field name.

@@ -44,6 +44,27 @@ class CsvMigration extends AbstractMigration
      * @var array
      */
     protected $_requiredFields = [
+        'id' => [
+            'name' => 'id',
+            'type' => 'uuid',
+            'required' => true,
+            'non-searchable' => false,
+            'unique' => true
+        ],
+        'created' => [
+            'name' => 'created',
+            'type' => 'datetime',
+            'required' => false,
+            'non-searchable' => false,
+            'unique' => false
+        ],
+        'modified' => [
+            'name' => 'modified',
+            'type' => 'datetime',
+            'required' => false,
+            'non-searchable' => false,
+            'unique' => false
+        ],
         'trashed' => [
             'name' => 'trashed',
             'type' => 'datetime',

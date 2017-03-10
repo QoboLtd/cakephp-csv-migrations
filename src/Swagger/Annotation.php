@@ -67,8 +67,6 @@ class Annotation
                 property="{{property}}",
                 type="{{type}}"
             )',
-            // example="3af32bdd-86d5-4bfa-80dd-889ba9be1e64",
-            // description="Trading account CRM id"
         'paths' => '/**
             @SWG\Get(
                 path="/api/{{module_url}}",

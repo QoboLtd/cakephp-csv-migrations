@@ -68,7 +68,7 @@ class CsvMigration extends AbstractMigration
         'trashed' => [
             'name' => 'trashed',
             'type' => 'datetime',
-            'required' => true,
+            'required' => false,
             'non-searchable' => true,
             'unique' => false
         ]

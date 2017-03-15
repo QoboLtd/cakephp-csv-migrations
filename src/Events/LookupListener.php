@@ -85,6 +85,10 @@ class LookupListener extends BaseViewListener
                 $values = $this->_getRelatedModuleValues($csvField, $request);
                 $query->orWhere([$field . ' IN' => $values]);
             } else {
+                // always type-cast fields to string for LIKE clause to work.
+                // otherwise for cases where type is integer LIKE value '%123%' will be converted to '0'
+                $typeMap = array_combine($fields, array_pad([], count($fields), 'string'));
+                $query->typeMap($typeMap);
                 $query->orWhere([$field . ' LIKE' => '%' . $value . '%']);
             }
         }

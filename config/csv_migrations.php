@@ -1,4 +1,13 @@
 <?php
+// get upload limit in bytes
+$uploadLimit = ini_get('upload_max_filesize');
+if (preg_match('/(\d+)K/i', $uploadLimit, $matches)) {
+    $uploadLimit = $matches[1] * 1024;
+} elseif (preg_match('/(\d+)M/i', $uploadLimit, $matches)) {
+    $uploadLimit = $matches[1] * 1024 * 1024;
+} elseif (preg_match('/(\d+)G/i', $uploadLimit, $matches)) {
+    $uploadLimit = $matches[1] * 1024 * 1024 * 1024;
+}
 // CsvMigrations plugin configuration
 return [
     'CsvMigrations' => [
@@ -40,7 +49,8 @@ return [
                 ],
                 'maxFileCount' => 30,
                 'fileSizeGetter' => true,
-                'maxFileSize' => 2000,
+                // this should always be set in kilobytes
+                'maxFileSize' => (int)($uploadLimit / 1024),
             ],
             'initialPreviewConfig' => [
                 'url' => "/api/file-storages/delete/"

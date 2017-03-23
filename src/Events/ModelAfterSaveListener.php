@@ -8,6 +8,7 @@ use Cake\Event\EventListenerInterface;
 use Cake\I18n\Time;
 use Cake\Mailer\Email;
 use Cake\ORM\Table;
+use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
@@ -109,7 +110,7 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         $eventSubject = $emailSubjectValue ?: 'reminder';
         $emailSubject = Inflector::singularize($table->alias()) . ": " . $eventSubject;
-        $emailContent = Inflector::singularize($table->alias()) . " information was ";
+        $emailContent = Inflector::singularize($table->alias()) . ' ' . $emailSubjectValue . " information was ";
         // If the record is being updated, prefix the above subject with "(Updated) ".
         if (!$entity->isNew()) {
             $emailSubject = '(Updated) ' . $emailSubject;
@@ -126,12 +127,16 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         if (method_exists($table, 'getCurrentUser') && is_callable([$table, 'getCurrentUser'])) {
             $currentUser = $table->getCurrentUser();
-            $emailContent .= " by " . $currentUser['email'];
+            $emailContent .= " by " . $currentUser['name'];
         }
         // append changelog if entity is not new
         if (!$entity->isNew()) {
-            $emailContent .= "\n\n" . $this->_getChangelog($entity);
+            $emailContent .= ":\n\n" . $this->_getChangelog($entity);
         }
+
+        // append link
+        $entityUrl = Router::url(['controller' => $table->table(), 'action' => 'view', $entity->id], true);
+        $emailContent .= "\n\nSee more: " . $entityUrl;
 
         foreach ($emails as $email) {
             $vCalendar = new \Eluceo\iCal\Component\Calendar('-//Calendar Events//EN//');
@@ -146,6 +151,7 @@ class ModelAfterSaveListener implements EventListenerInterface
                 'attendees' => $vAttendees,
                 'field' => $reminderField,
                 'timezone' => $timezone,
+                'url' => $entityUrl
             ]);
 
             if (!$entity->isNew()) {
@@ -370,9 +376,13 @@ class ModelAfterSaveListener implements EventListenerInterface
         $vEvent->setOrganizer($vOrganizer);
         $vEvent->setSummary($options['subject']);
 
+        $description = '';
         if ($entity->description) {
-            $vEvent->setDescription($entity->description);
+            $description .= $entity->description . "\n\n";
         }
+        $description .= $options['url'];
+
+        $vEvent->setDescription($description);
 
         $dates = $this->_getEventTime($entity, $options);
         $vEvent->setDtStart($dates['start']);

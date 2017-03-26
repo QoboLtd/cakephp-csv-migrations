@@ -109,7 +109,8 @@ if (empty($options['title'])) {
                             }
                             $renderOptions = [
                                 'entity' => $options['entity'],
-                                'imageSize' => 'small'
+                                'imageSize' => 'small',
+                                'showTranslateButton' => true,
                             ];
 
                             $label = $fhf->renderName(
@@ -127,7 +128,7 @@ if (empty($options['title'])) {
                             $value = $fhf->renderValue(
                                 $tableName,
                                 $field['name'],
-                                $options['entity']->{$field['name']},
+                                $options['entity'], //->{$field['name']},
                                 $renderOptions
                             );
                             echo $value;
@@ -313,4 +314,67 @@ echo $this->element('CsvMigrations.common_js_libs');
 $event = new Event('View.View.Body.Bottom', $this, ['request' => $this->request, 'options' => $options]);
 $this->eventManager()->dispatch($event);
 echo $event->result;
+
+$modalBody = $this->requestAction([
+            'plugin' => 'Translations',
+            'controller' => 'Translations',
+            'action' => 'add'
+        ], [
+            'query' => [
+                'embedded' => 'Translations',
+                'foreign_key' => 'object_foreign_key',
+                'modal_id' => 'translations_translate_id_modal',
+            ]
+        ]);
 ?>
+<div id="translations_translate_id_modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">&nbsp;</h4>
+                </div> <!-- modal-header -->
+            
+                <div class="modal-body">
+                    <?= $modalBody ?>
+                </div>
+            </div> <!-- modal-content -->
+        </div> <!-- modal-dialog -->
+    </div> <!-- modal window -->
+<script src="http://localhost:8000/admin_l_t_e/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+<script>
+$(document).ready(function () {
+    console.log('we are here!');
+    $('#translations_translate_id_modal').on('show.bs.modal', function (event) {
+        console.log('open modal');
+        var button = $(event.relatedTarget);
+        var record_id = button.data('record');
+        var model_name = button.data('model');
+        var field_name = button.data('field');
+        
+        console.log('record_id=' + record_id + '; model_name=' + model_name + '; field_name='+field_name);
+        console.log('/translations/translations?object_foreign_key='+record_id+'&object_model='+model_name+'&object_field='+field_name+'&json=1');
+
+        $.get('/translations/translations?object_foreign_key='+record_id+'&object_model='+model_name+'&object_field='+field_name+'&json=1', function(data) {
+            console.log(data);
+            if (data) {
+                //data = $.parseJSON(data);
+                $.each(data, function(key, val) {
+                    console.log('lang=' + val['language']['short_code'] + '; translation=' + val['translation']);
+                    $('#translation_' + val['language']['short_code']).val(val['translation']);
+                });
+            }
+        });
+          
+        $('input[name=object_foreign_key]').val(record_id);
+        $('input[name=object_model]').val(model_name);
+        $('input[name=object_field]').val(field_name);
+    });
+    $('#translations_translate_id_modal').on('hidden.bs.modal', '.modal', function () {
+        console.log('close modal');
+        $(this).removeData('bs.modal');
+    });
+});
+</script>

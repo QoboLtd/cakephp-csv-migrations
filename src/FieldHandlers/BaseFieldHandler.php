@@ -70,7 +70,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      *
      * @var array
      */
-    public $defaultOptions = [];
+    public $defaultOptions = [
+        'showTranslateButton' => false
+    ];
 
     /**
      * Search operators
@@ -452,6 +454,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         $result = $this->formatValue($result, $options);
 
+        if ($options['showTranslateButton']) {
+            $result = $this->_getTranslateButton($data, $options) . $result;
+        }
+
         return $result;
     }
 
@@ -586,6 +592,22 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $result = $default;
         }
 
+        return $result;
+    }
+    
+    /**
+     *  _getTranslateButton() - returns translate button code
+     *
+     * @param array $data       array with field data
+     * @param array $options    array with options
+     * @return string           code of translate button
+     */
+    protected function _getTranslateButton($data, $options)
+    {
+        $result = '';
+        if (!empty($data->id)) {
+            $result = '<a href="#translations_translate_id_modal" data-toggle="modal" data-record="'.$data->id.'" data-model="'.$this->table->alias().'" data-field="'.$this->field.'"><i class="fa fa-globe"></i></a>';
+        }
         return $result;
     }
 }

@@ -1,5 +1,9 @@
 <section class="content-header">
-    <h4><?= __d('CsvMigrations', 'Create Database List Item') ?></h4>
+    <div class="row">
+        <div class="col-xs-12 col-md-6">
+            <h4><?= __d('CsvMigrations', 'Create Database List Item') ?></h4>
+        </div>
+    </div>
 </section>
 <section class="content">
     <div class="box box-default">

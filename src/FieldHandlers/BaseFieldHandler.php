@@ -594,7 +594,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         return $result;
     }
-    
+
     /**
      *  _getTranslateButton() - returns translate button code
      *
@@ -606,8 +606,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $result = '';
         if (!empty($data->id)) {
-            $result = '<a href="#translations_translate_id_modal" data-toggle="modal" data-record="'.$data->id.'" data-model="'.$this->table->alias().'" data-field="'.$this->field.'"><i class="fa fa-globe"></i></a>';
+            $result = '<a href="#translations_translate_id_modal" data-toggle="modal" data-record="' . $data->id .
+                        '" data-model="' . $this->table->alias() . '" data-field="' . $this->field . '"><i class="fa fa-globe"></i></a>';
         }
+
         return $result;
     }
 }

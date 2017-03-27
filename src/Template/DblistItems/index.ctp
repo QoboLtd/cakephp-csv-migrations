@@ -1,5 +1,5 @@
 <section class="content-header">
-    <h1>
+    <h4>
         <?= __d('CsvMigrations', 'Database List Items') ?>
         <small><?= $list->get('name') ?></small>
         <div class="pull-right">
@@ -7,7 +7,7 @@
                 <?= $this->element('CsvMigrations.Menu/dblist_items_index_top', ['entity' => $list, 'user' => $user]) ?>
             </div>
         </div>
-    </h1>
+    </h4>
 </section>
 <section class="content">
     <div class="box">

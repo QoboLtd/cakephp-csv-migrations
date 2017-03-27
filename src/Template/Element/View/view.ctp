@@ -8,6 +8,14 @@ use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 $fhf = new FieldHandlerFactory($this);
+echo $this->Html->script(
+    [
+        'Translations.translation'
+    ],
+    [
+        'block' => 'scriptBotton'
+    ]
+);
 
 $defaultOptions = [
     'title' => null,
@@ -342,56 +350,3 @@ $modalBody = $this->requestAction([
             </div> <!-- modal-content -->
         </div> <!-- modal-dialog -->
     </div> <!-- modal window -->
-<script src="http://localhost:8000/admin_l_t_e/plugins/jQuery/jQuery-2.1.4.min.js"></script>
-<script>
-$(document).ready(function () {
-    console.log('we are here!');
-    $('#translations_translate_id_modal').on('show.bs.modal', function (event) {
-        console.log('open modal');
-        $('#translate_result').html = '&nbsp;';
-        var button = $(event.relatedTarget);
-        var record_id = button.data('record');
-        var model_name = button.data('model');
-        var field_name = button.data('field');
-        
-        console.log('record_id=' + record_id + '; model_name=' + model_name + '; field_name='+field_name);
-        console.log('/translations/translations?object_foreign_key='+record_id+'&object_model='+model_name+'&object_field='+field_name+'&json=1');
-
-        $.get('/translations/translations?object_foreign_key='+record_id+'&object_model='+model_name+'&object_field='+field_name+'&json=1', function (data) {
-            console.log(data);
-            if (data.length != 0) {
-                console.log('Set found translations ...');
-                $.each(data, function (key, val) {
-                    console.log('lang=' + val['language']['short_code'] + '; translation=' + val['translation']);
-                    $('#translation_' + val['language']['short_code']).val(val['translation']);
-                });
-            } else {
-                console.log('Cleaning previous data ...');
-                $('textarea[name=translation]').each(function () {
-                    console.log('walking throug textareas: ' + this.value);
-                    this.value = '';
-                });  
-            }
-        });
-          
-        $('input[name=object_foreign_key]').val(record_id);
-        $('input[name=object_model]').val(model_name);
-        $('input[name=object_field]').val(field_name);
-    });
-    $('#translations_translate_id_modal').on('hidden.bs.modal', '.modal', function () {
-        console.log('close modal');
-        $(this).removeData('bs.modal');
-    });
-    $('button[name=btn_translation]').click(function () {
-        console.log('close modal');
-        $('#translate_result').html = '&nbsp;';
-        console.log('Button is pressed ...');
-        form = $(this).closest("form");
-        $.post('/translations/translations/addOrUpdate', form.serialize(), function (data) {
-            console.log(data);
-            $('#translate_result').attr('class', data ? 'alert-success' : 'alert-danger');
-            $('#translate_result').html(data ? 'Translation is created or updated successfully.' : 'Translation cannot be saved.').show().delay(5000).fadeOut();
-        });
-    });
-});
-</script>

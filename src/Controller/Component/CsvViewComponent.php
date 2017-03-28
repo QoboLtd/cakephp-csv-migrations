@@ -13,8 +13,9 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
-use \Exception;
-use \RuntimeException;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Exception;
+use RuntimeException;
 
 /**
  * CsvView component

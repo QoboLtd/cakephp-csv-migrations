@@ -61,9 +61,12 @@ if (empty($options['title'])) {
 ?>
 <?php if (empty($this->request->query['embedded'])) : ?>
 <section class="content-header">
-    <h1>
-        <?= $options['title'] ?>
-        <div class="pull-right">
+    <div class="row">
+        <div class="col-xs-12 col-md-6">
+            <h4><?= $options['title'] ?></h4>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <div class="pull-right">
             <div class="btn-group btn-group-sm" role="group">
                 <?= $this->element('CsvMigrations.Menu/view_top', [
                     'options' => $options,
@@ -71,8 +74,9 @@ if (empty($options['title'])) {
                     'displayField' => $displayField
                 ]); ?>
             </div>
+            </div>
         </div>
-    </h1>
+    </div>
 </section>
 <section class="content">
 <?php endif; ?>

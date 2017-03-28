@@ -4,9 +4,7 @@ namespace CsvMigrations;
 use Cake\Core\Configure;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\CsvField;
-use Qobo\Utils\Parser\Csv\MigrationParser;
-use Qobo\Utils\Parser\Ini\Parser;
-use Qobo\Utils\PathFinder\MigrationPathFinder;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 use RuntimeException;
 
 trait MigrationTrait
@@ -73,16 +71,13 @@ trait MigrationTrait
             }
 
             try {
-                $pathFinder = new MigrationPathFinder;
-                $path = $pathFinder->find($moduleName);
-                $parser = new MigrationParser();
-                // Set fields definitions cache
-                $result = $parser->wrapFromPath($path);
+                $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $moduleName);
+                $result = $mc->parse();
                 if (!empty($result)) {
                     $this->_fieldDefinitions = $result;
                 }
             } catch (\Exception $e) {
-                // Ignore all exceptions thrown by path finder and parser
+                //
             }
         }
 
@@ -284,16 +279,18 @@ trait MigrationTrait
         if (empty($modules)) {
             return $result;
         }
-        // TODO : Remove hardcoded names
-        $migrationFilename = 'db' . DIRECTORY_SEPARATOR . 'migration.csv';
         foreach ($modules as $module) {
-            $moduleMigrationFilename = $path . $module . DIRECTORY_SEPARATOR . $migrationFilename;
-            if (file_exists($moduleMigrationFilename)) {
-                if (!isset($csvFiles[$module])) {
-                    $csvFiles[$module] = [];
-                }
-                $csvFiles[$module][] = $moduleMigrationFilename;
+            $config = '';
+            try {
+                $config = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
+                $config->find();
+            } catch (\Exception $e) {
+                continue;
             }
+            if (!isset($csvFiles[$module])) {
+                $csvFiles[$module] = [];
+            }
+            $csvFiles[$module][] = $config;
         }
 
         // Covers case where CsvMigration configuration files reside in a plugin
@@ -305,13 +302,12 @@ trait MigrationTrait
             $plugin = $this->_getPluginNameFromRegistryAlias();
         }
 
-        $parser = new MigrationParser();
-        foreach ($csvFiles as $csvModule => $paths) {
+        foreach ($csvFiles as $csvModule => $configs) {
             if (!is_null($plugin)) {
                 $csvModule = $plugin . '.' . $csvModule;
             }
-            foreach ($paths as $path) {
-                $result[$csvModule] = $parser->wrapFromPath($path);
+            foreach ($configs as $config) {
+                $result[$csvModule] = $config->parse();
             }
         }
 
@@ -336,23 +332,25 @@ trait MigrationTrait
         if (empty($modules)) {
             return $result;
         }
-        // TODO : Remove hardcoded names
-        $reportFilename = 'config' . DIRECTORY_SEPARATOR . 'reports.ini';
         foreach ($modules as $module) {
-            $moduleReportFilename = $path . $module . DIRECTORY_SEPARATOR . $reportFilename;
-            if (file_exists($moduleReportFilename)) {
-                if (!isset($csvFiles[$module])) {
-                    $result[$module] = [];
-                }
-                $result[$module][] = $moduleReportFilename;
+            $report = '';
+            try {
+                $report = new ModuleConfig(ModuleConfig::CONFIG_TYPE_REPORTS, $module);
+                $report->find();
+            } catch (\Exception $e) {
+                continue;
             }
+
+            if (!isset($csvFiles[$module])) {
+                $result[$module] = [];
+            }
+            $result[$module][] = $report;
         }
 
         if (!empty($result)) {
-            $parser = new Parser();
-            foreach ($result as $model => $paths) {
-                foreach ($paths as $p) {
-                    $config[$model] = $parser->parseFromPath($p);
+            foreach ($result as $model => $reports) {
+                foreach ($reports as $r) {
+                    $config[$model] = $r->parse();
                 }
             }
         }

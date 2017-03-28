@@ -50,13 +50,18 @@ if (empty($options['title'])) {
 }
 ?>
 <section class="content-header">
-    <h1><?= $options['title'] ?>
-        <div class="pull-right">
-            <div class="btn-group btn-group-sm" role="group">
-                <?= $this->element('CsvMigrations.Menu/index_top', ['user' => $user]) ?>
+    <div class="row">
+        <div class="col-xs-12 col-md-6">
+            <h4><?= $options['title'] ?></h4>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <div class="pull-right">
+                <div class="btn-group btn-group-sm" role="group">
+                    <?= $this->element('CsvMigrations.Menu/index_top', ['user' => $user]) ?>
+                </div>
             </div>
         </div>
-    </h1>
+    </div>
 </section>
 <section class="content">
     <div class="box">

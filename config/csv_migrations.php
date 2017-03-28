@@ -1,13 +1,7 @@
 <?php
 // get upload limit in bytes
-$uploadLimit = ini_get('upload_max_filesize');
-if (preg_match('/(\d+)K/i', $uploadLimit, $matches)) {
-    $uploadLimit = $matches[1] * 1024;
-} elseif (preg_match('/(\d+)M/i', $uploadLimit, $matches)) {
-    $uploadLimit = $matches[1] * 1024 * 1024;
-} elseif (preg_match('/(\d+)G/i', $uploadLimit, $matches)) {
-    $uploadLimit = $matches[1] * 1024 * 1024 * 1024;
-}
+$uploadLimit = sizeToBytes(ini_get('upload_max_filesize'));
+
 // CsvMigrations plugin configuration
 return [
     'CsvMigrations' => [

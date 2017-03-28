@@ -4,8 +4,7 @@ namespace CsvMigrations\FieldHandlers;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\BaseListFieldHandler;
-use Qobo\Utils\Parser\Csv\ListParser;
-use Qobo\Utils\PathFinder\ListPathFinder;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 /**
  * BaseCsvListFieldHandler
@@ -144,14 +143,12 @@ abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
         }
         $listData = [];
         try {
-            $pathFinder = new ListPathFinder;
-            $path = $pathFinder->find($module, $listName);
-            $parser = new ListParser();
-            $listData = $parser->parseFromPath($path);
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_LIST, $module, $listName);
+            $listData = $mc->parse();
         } catch (\Exception $e) {
             /* Do nothing.
              *
-             * ListPathFinder and ListParser check for the
+             * ModuleConfig checks for the
              * file to exist and to be readable and so on,
              * but here we do load lists recursively (for
              * sub-lists, etc), which might result in files

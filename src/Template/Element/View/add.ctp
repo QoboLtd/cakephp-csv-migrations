@@ -59,7 +59,7 @@ if (!empty($this->request->query['embedded'])) {
 }
 ?>
 <section class="content-header">
-    <h1><?= $options['title'] ?></h1>
+    <h4><?= $options['title'] ?></h4>
 </section>
 <section class="content">
     <?php

@@ -12,8 +12,7 @@ use CsvMigrations\FieldHandlers\FieldHandlerInterface;
 use CsvMigrations\View\AppView;
 use Exception;
 use InvalidArgumentException;
-use Qobo\Utils\Parser\Ini\Parser as IniParser;
-use Qobo\Utils\PathFinder\FieldsPathFinder;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 use RuntimeException;
 
 /**
@@ -205,15 +204,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         // set $options['label']
         $this->defaultOptions['label'] = $this->renderName();
 
-        $path = '';
+        $renderAs = '';
         try {
-            $pathFinder = new FieldsPathFinder;
-            $path = $pathFinder->find(Inflector::camelize($this->table->table()));
-        } catch (Exception $e) {
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
+            $config = $mc->parse();
+            $renderAs = empty($config[$this->field]['renderAs']) ? '' : $config[$this->field]['renderAs'];
+        } catch (\Exception $e) {
             //
         }
-        $parser = new IniParser;
-        $renderAs = $parser->getFieldsIniParams($path, $this->field, 'renderAs');
 
         if (!empty($renderAs)) {
             $this->defaultOptions['renderAs'] = $renderAs;
@@ -402,15 +400,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $text = $this->field;
 
-        $path = '';
+        $label = '';
         try {
-            $pathFinder = new FieldsPathFinder;
-            $path = $pathFinder->find(Inflector::camelize($this->table->table()));
-        } catch (Exception $e) {
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
+            $config = $mc->parse();
+            $label = empty($config[$text]['label']) ? '' : $config[$text]['label'];
+        } catch (\Exception $e) {
             //
         }
-        $parser = new IniParser;
-        $label = $parser->getFieldsIniParams($path, $text, 'label');
         if ($label) {
             return $label;
         }
@@ -577,15 +574,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         }
 
         if (!$result) {
-            $path = '';
+            $default = '';
             try {
-                $pathFinder = new FieldsPathFinder;
-                $path = $pathFinder->find(Inflector::camelize($this->table->table()));
-            } catch (Exception $e) {
+                $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
+                $config = $mc->parse();
+                $default = empty($config[$field]['default']) ? '' : $config[$field]['default'];
+            } catch (\Exception $e) {
                 //
             }
-            $parser = new IniParser;
-            $default = $parser->getFieldsIniParams($path, $field, 'default');
             if (empty($default)) {
                 return $result;
             }

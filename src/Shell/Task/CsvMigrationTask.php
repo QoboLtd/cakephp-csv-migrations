@@ -6,7 +6,7 @@ use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
 use Migrations\Shell\Task\MigrationTask;
 use Phinx\Util\Util;
-use Qobo\Utils\PathFinder\MigrationPathFinder;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 /**
  * CsvMigrations baking migration task, used to extend CakePHP's bake functionality.
@@ -126,8 +126,8 @@ class CsvMigrationTask extends MigrationTask
     {
         $tableName = Inflector::camelize($tableName);
 
-        $pathFinder = new MigrationPathFinder;
-        $path = $pathFinder->find($tableName);
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $tableName);
+        $path = $mc->find();
 
         // Unit time stamp to YYYYMMDDhhmmss
         $result = date('YmdHis', filemtime($path));

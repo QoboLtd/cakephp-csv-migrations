@@ -1,12 +1,14 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
+use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\BlobFieldHandler;
 use CsvMigrations\FieldHandlers\CsvField;
 use PHPUnit_Framework_TestCase;
 
 class BlobFieldHandlerTest extends PHPUnit_Framework_TestCase
 {
+    protected $dataDir;
     protected $table = 'Fields';
     protected $field = 'field_blob';
 
@@ -14,6 +16,8 @@ class BlobFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $this->dataDir = dirname(dirname(__DIR__)) . DS . 'config' . DS . 'Modules' . DS;
+        Configure::write('CsvMigrations.modules.path', $this->dataDir);
         $this->fh = new BlobFieldHandler($this->table, $this->field);
     }
 

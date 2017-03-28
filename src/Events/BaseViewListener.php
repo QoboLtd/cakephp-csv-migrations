@@ -16,10 +16,7 @@ use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\PrettifyTrait;
 use InvalidArgumentException;
-use Qobo\Utils\Parser\Csv\MigrationParser;
-use Qobo\Utils\Parser\Csv\ViewParser;
-use Qobo\Utils\PathFinder\MigrationPathFinder;
-use Qobo\Utils\PathFinder\ViewPathFinder;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 abstract class BaseViewListener implements EventListenerInterface
 {
@@ -97,11 +94,8 @@ abstract class BaseViewListener implements EventListenerInterface
         $result = [];
 
         try {
-            $pathFinder = new MigrationPathFinder;
-            $path = $pathFinder->find($request->controller);
-
-            $parser = new MigrationParser();
-            $result = $parser->wrapFromPath($path);
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $request->controller);
+            $result = $mc->parse();
         } catch (InvalidArgumentException $e) {
             Log::error($e);
         }
@@ -127,11 +121,8 @@ abstract class BaseViewListener implements EventListenerInterface
         }
 
         try {
-            $pathFinder = new ViewPathFinder;
-            $path = $pathFinder->find($controller, $action);
-
-            $parser = new ViewParser();
-            $result = $parser->parseFromPath($path);
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $controller, $action);
+            $result = $mc->parse();
         } catch (InvalidArgumentException $e) {
             Log::error($e);
         }

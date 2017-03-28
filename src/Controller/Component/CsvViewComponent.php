@@ -13,8 +13,8 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Exception;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 use RuntimeException;
 
 /**

@@ -7,8 +7,7 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
-use Qobo\Utils\Parser\Csv\MigrationParser;
-use Qobo\Utils\PathFinder\MigrationPathFinder;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 /**
  * Foo Entity.
@@ -82,10 +81,8 @@ class FieldHandlerFactoryTest extends TestCase
         $dir = dirname(__DIR__) . DS . '..' . DS . 'data' . DS . 'Modules' . DS;
         Configure::write('CsvMigrations.modules.path', $dir);
 
-        $pf = new MigrationPathFinder();
-        $path = $pf->find($this->tableName);
-        $parser = new MigrationParser();
-        $this->csvData = $parser->wrapFromPath($path);
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $this->tableName);
+        $this->csvData = $mc->parse();
 
         $config = TableRegistry::exists($this->tableName)
             ? []

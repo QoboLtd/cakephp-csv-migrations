@@ -13,8 +13,6 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
-use Qobo\Utils\Parser\Csv\ViewParser;
-use Qobo\Utils\PathFinder\ViewPathFinder;
 use \Exception;
 use \RuntimeException;
 
@@ -133,9 +131,8 @@ class CsvViewComponent extends Component
     {
         $result = [];
 
-        $pathFinder = new ViewPathFinder();
-        $path = $pathFinder->find($this->request->controller, $this->request->action);
-        $result = $this->_getFieldsFromCsv($path);
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $this->request->controller, $this->request->action);
+        $result = $mc->parse();
 
         list($plugin, $model) = pluginSplit($this->_tableInstance->registryAlias());
         /*
@@ -151,23 +148,6 @@ class CsvViewComponent extends Component
         }
         $this->_controllerInstance->set('fields', $result);
         $this->_controllerInstance->set('_serialize', ['fields']);
-    }
-
-    /**
-     * Method that gets fields from a csv file
-     *
-     * @param  string $path   csv file path
-     * @return array          csv data
-     */
-    protected function _getFieldsFromCsv($path)
-    {
-        $result = [];
-        if (is_readable($path)) {
-            $parser = new ViewParser();
-            $result = $parser->parseFromPath($path);
-        }
-
-        return $result;
     }
 
     /**

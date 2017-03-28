@@ -605,6 +605,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     protected function _getTranslateButton($data, $options)
     {
         $result = '';
+        // TODO: add here check the rights and module config to hide translation button
         if (!empty($data->id)) {
             $result = '<a href="#translations_translate_id_modal" data-toggle="modal" data-record="' . $data->id .
                         '" data-model="' . $this->table->alias() . '" data-field="' . $this->field . '"><i class="fa fa-globe"></i></a>';

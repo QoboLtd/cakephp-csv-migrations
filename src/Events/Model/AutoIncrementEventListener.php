@@ -8,9 +8,7 @@ use Cake\Event\EventListenerInterface;
 use Cake\Utility\Inflector;
 use CsvMigrations\Table;
 use Exception;
-use Qobo\Utils\Parser\Ini\Parser;
-use Qobo\Utils\PathFinder\FieldsPathFinder;
-use Qobo\Utils\PathFinder\MigrationPathFinder;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class AutoIncrementEventListener implements EventListenerInterface
 {
@@ -88,33 +86,30 @@ class AutoIncrementEventListener implements EventListenerInterface
         $result = [];
 
         $moduleName = Inflector::camelize($table->table());
-        $path = '';
         try {
-            $pathFinder = new FieldsPathFinder;
-            $path = $pathFinder->find($moduleName);
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, $moduleName);
+            $config = $mc->parse();
         } catch (Exception $e) {
             // do nothing
+            return $result;
         }
 
-        if (!empty($path)) {
-            $parser = new Parser;
-            $moduleFields = $table->getFieldsDefinitions();
-            foreach (array_keys($moduleFields) as $field) {
-                $autoIncrement = (bool)$parser->getFieldsIniParams($path, $field, 'auto-increment');
-                if (!$autoIncrement) {
-                    continue;
-                }
-                $result[$field] = [];
-
-                $min = $parser->getFieldsIniParams($path, $field, 'min');
-                if (!is_int($min) && !is_float($min)) {
-                    continue;
-                }
-
-                $result[$field] = [
-                    'min' => $min
-                ];
+        $moduleFields = $table->getFieldsDefinitions();
+        foreach (array_keys($moduleFields) as $field) {
+            $autoIncrement = empty($config[$field]['auto-increment']) ? false : (bool)$config[$field]['auto-increment'];
+            if (!$autoIncrement) {
+                continue;
             }
+            $result[$field] = [];
+
+            $min = empty($config[$field]['min']) ? null : $config[$field]['min'];
+            if (!is_int($min) && !is_float($min)) {
+                continue;
+            }
+
+            $result[$field] = [
+                'min' => $min
+            ];
         }
 
         return $result;

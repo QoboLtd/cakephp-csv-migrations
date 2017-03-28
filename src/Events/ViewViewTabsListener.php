@@ -11,8 +11,7 @@ use Cake\Utility\Inflector;
 use CsvMigrations\MigrationTrait;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
-use Qobo\Utils\Parser\Csv\ViewParser;
-use Qobo\Utils\PathFinder\ViewPathFinder;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class ViewViewTabsListener implements EventListenerInterface
 {
@@ -423,9 +422,8 @@ class ViewViewTabsListener implements EventListenerInterface
         }
 
         try {
-            $pathFinder = new ViewPathFinder;
-            $path = $pathFinder->find($tableName, $action);
-            $csvFields = $this->_getFieldsFromCsv($path);
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $tableName, $action);
+            $csvFields = $mc->parse();
         } catch (Exception $e) {
             return $result;
         }
@@ -437,23 +435,6 @@ class ViewViewTabsListener implements EventListenerInterface
         $result = array_map(function ($v) {
             return $v[0];
         }, $csvFields);
-
-        return $result;
-    }
-
-    /**
-     * Method that gets fields from a csv file
-     *
-     * @param  string $path   csv file path
-     * @return array          csv data
-     */
-    protected function _getFieldsFromCsv($path)
-    {
-        $result = [];
-        if (is_readable($path)) {
-            $parser = new ViewParser();
-            $result = $parser->parseFromPath($path);
-        }
 
         return $result;
     }

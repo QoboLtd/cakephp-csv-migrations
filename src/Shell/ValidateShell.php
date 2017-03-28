@@ -5,14 +5,7 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
-use Qobo\Utils\Parser\Csv\ListParser;
-use Qobo\Utils\Parser\Csv\MigrationParser;
-use Qobo\Utils\Parser\Csv\ViewParser;
-use Qobo\Utils\Parser\Ini\Parser;
-use Qobo\Utils\PathFinder\ConfigPathFinder;
-use Qobo\Utils\PathFinder\ListPathFinder;
-use Qobo\Utils\PathFinder\MigrationPathFinder;
-use Qobo\Utils\PathFinder\ViewPathFinder;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class ValidateShell extends Shell
 {
@@ -166,10 +159,8 @@ class ValidateShell extends Shell
         }
         $listItems = [];
         try {
-            $pathFinder = new ListPathFinder;
-            $path = $pathFinder->find(null, $list);
-            $parser = new ListParser;
-            $listItems = $parser->parseFromPath($path);
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_LIST, null, $list);
+            $listItems = $mc->parse();
         } catch (\Exception $e) {
             // We don't care about the specifics of the failure
         }
@@ -220,10 +211,8 @@ class ValidateShell extends Shell
 
         $moduleFields = [];
         try {
-            $pathFinder = new MigrationPathFinder;
-            $path = $pathFinder->find($module);
-            $parser = new MigrationParser;
-            $moduleFields = $parser->parseFromPath($path);
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
+            $moduleFields = $mc->parse();
         } catch (\Exception $e) {
             // We already report issues with migration in _checkMigrationPresence()
         }
@@ -261,10 +250,8 @@ class ValidateShell extends Shell
 
         $config = [];
         try {
-            $pathFinder = new ConfigPathFinder;
-            $path = $pathFinder->find($module);
-            $parser = new Parser;
-            $config = $parser->parseFromPath($path);
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, $module);
+            $config = $mc->parse();
         } catch (\Exception $e) {
             return $result;
         }
@@ -329,12 +316,9 @@ class ValidateShell extends Shell
             $moduleErrors = [];
             $this->out(' - ' . $module . ' ... ', 0);
             try {
-                $pathFinder = new ConfigPathFinder;
-                $path = $pathFinder->find($module);
-                $parser = new Parser;
-                $config = $parser->parseFromPath($path);
+                $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, $module);
+                $config = $mc->parse();
             } catch (\Exception $e) {
-                $path = $path ? '[' . $path . ']' : '';
                 $moduleErrors[] = $module . " module configuration file problem: " . $e->getMessage();
             }
             $result = empty($moduleErrors) ? '<success>OK</success>' : '<error>FAIL</error>';
@@ -365,14 +349,11 @@ class ValidateShell extends Shell
             $moduleErrors = [];
             $this->out(' - ' . $module . ' ... ', 0);
             try {
-                $pathFinder = new MigrationPathFinder;
-                $path = $pathFinder->find($module);
-                $parser = new MigrationParser;
-                $result = $parser->parseFromPath($path);
+                $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
+                $result = $mc->parse();
             } catch (\Exception $e) {
                 $this->out('<error>FAIL</error>');
-                $path = $path ? '[' . $path . ']' : '';
-                $moduleErrors[] = $module . " module migration file $path problem: " . $e->getMessage();
+                $moduleErrors[] = $module . " module migration file problem: " . $e->getMessage();
             }
             $result = empty($moduleErrors) ? '<success>OK</success>' : '<error>FAIL</error>';
             $this->out($result);
@@ -408,8 +389,8 @@ class ValidateShell extends Shell
             foreach ($views as $view) {
                 $path = '';
                 try {
-                    $pathFinder = new ViewPathFinder;
-                    $path = $pathFinder->find($module, $view);
+                    $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $module, $view);
+                    $path = $mc->find();
                 } catch (\Exception $e) {
                     // It's OK for view files to be missing.
                     // For example, Files and Users modules.
@@ -418,10 +399,8 @@ class ValidateShell extends Shell
                 if (file_exists($path)) {
                     $viewCounter++;
                     try {
-                        $parser = new ViewParser;
-                        $result = $parser->parseFromPath($path);
+                        $result = $mc->parse();
                     } catch (\Exception $e) {
-                        $path = $path ? '[' . $path . ']' : '';
                         $moduleErrors[] = $module . " module [$view] view file problem: " . $e->getMessage();
                     }
                 } else {
@@ -464,10 +443,8 @@ class ValidateShell extends Shell
             $this->out(' - ' . $module . ' ... ', 0);
             $config = null;
             try {
-                $pathFinder = new ConfigPathFinder;
-                $path = $pathFinder->find($module);
-                $parser = new Parser;
-                $config = $parser->parseFromPath($path);
+                $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, $module);
+                $config = $mc->parse();
             } catch (\Exception $e) {
                 // We've already reported this problem in _checkConfigPresence();
             }
@@ -652,10 +629,8 @@ class ValidateShell extends Shell
             $this->out(' - ' . $module . ' ... ', 0);
             $fields = null;
             try {
-                $pathFinder = new MigrationPathFinder;
-                $path = $pathFinder->find($module);
-                $parser = new MigrationParser;
-                $fields = $parser->parseFromPath($path);
+                $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
+                $fields = $mc->parse();
             } catch (\Exception $e) {
                 // We've already reported this problem in _checkMigrationPresence();
             }
@@ -769,10 +744,8 @@ class ValidateShell extends Shell
             foreach ($views as $view) {
                 $fields = null;
                 try {
-                    $pathFinder = new ViewPathFinder;
-                    $path = $pathFinder->find($module, $view);
-                    $parser = new ViewParser;
-                    $fields = $parser->parseFromPath($path);
+                    $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $module, $view);
+                    $fields = $mc->parse();
                 } catch (\Exception $e) {
                     // It's OK for view files to be missing.
                     // We already handle this in _checkViewsPresence()

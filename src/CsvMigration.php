@@ -10,8 +10,7 @@ use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use Migrations\AbstractMigration;
 use Migrations\Table;
-use Qobo\Utils\Parser\Csv\MigrationParser;
-use Qobo\Utils\PathFinder\MigrationPathFinder;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 use RuntimeException;
 
 /**
@@ -86,7 +85,7 @@ class CsvMigration extends AbstractMigration
     {
         $this->_fhf = new FieldHandlerFactory();
         $this->_table = $table;
-        $this->_handleCsv($path);
+        $this->_handleCsv();
 
         return $this->_table;
     }
@@ -94,19 +93,13 @@ class CsvMigration extends AbstractMigration
     /**
      * Apply changes from the CSV file
      *
-     * @param string $path Path to the CSV file
      * @return void
      */
-    protected function _handleCsv($path = '')
+    protected function _handleCsv()
     {
         $tableName = Inflector::pluralize(Inflector::classify($this->_table->getName()));
-        if ('' === trim($path)) {
-            $pathFinder = new MigrationPathFinder;
-            $path = $pathFinder->find($tableName);
-        }
-
-        $parser = new MigrationParser();
-        $csvData = $parser->wrapFromPath($path);
+        $mc = new ModuleConfig(CONFIG_TYPE_MIGRATION, $tableName);
+        $csvData = $mc->parse();
         $csvData = array_merge($csvData, $this->_requiredFields);
 
         $tableFields = $this->_getTableFields();

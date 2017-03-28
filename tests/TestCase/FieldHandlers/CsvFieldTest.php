@@ -4,8 +4,7 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers;
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\CsvField;
 use PHPUnit_Framework_TestCase;
-use Qobo\Utils\Parser\Csv\MigrationParser;
-use Qobo\Utils\PathFinder\MigrationPathFinder;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class CsvFieldTest extends PHPUnit_Framework_TestCase
 {
@@ -16,10 +15,8 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
         $dir = dirname(__DIR__) . DS . '..' . DS . 'data' . DS . 'Modules' . DS;
         Configure::write('CsvMigrations.modules.path', $dir);
 
-        $pf = new MigrationPathFinder();
-        $path = $pf->find('Foo');
-        $parser = new MigrationParser();
-        $this->csvData = $parser->wrapFromPath($path);
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, 'Foo');
+        $this->csvData = $mc->parse();
     }
 
     /**

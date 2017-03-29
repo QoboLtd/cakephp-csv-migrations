@@ -205,10 +205,16 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         $this->defaultOptions['label'] = $this->renderName();
 
         $renderAs = '';
+        $translatableModule = false;
+        $translatableField = false;
         try {
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($this->table->table()));
+            $config = $mc->parse();
+            $translatableModule = empty($config['table']['translatable']) ? false : $config['table']['translatable'];
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
             $config = $mc->parse();
             $renderAs = empty($config[$this->field]['renderAs']) ? '' : $config[$this->field]['renderAs'];
+            $translatableField = empty($config[$this->field]['translatable']) ? false : $config[$this->field]['translatable'];
         } catch (\Exception $e) {
             //
         }
@@ -216,6 +222,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         if (!empty($renderAs)) {
             $this->defaultOptions['renderAs'] = $renderAs;
         }
+
+        $this->defaultOptions['showTranslateButton'] = $translatableModule ? $translatableField : false;
     }
 
     /**

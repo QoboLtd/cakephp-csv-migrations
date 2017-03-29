@@ -122,7 +122,6 @@ if (empty($options['title'])) {
                             $renderOptions = [
                                 'entity' => $options['entity'],
                                 'imageSize' => 'small',
-                                'showTranslateButton' => true,
                             ];
 
                             $label = $fhf->renderName(

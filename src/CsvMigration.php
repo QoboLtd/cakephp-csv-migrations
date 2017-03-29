@@ -98,7 +98,7 @@ class CsvMigration extends AbstractMigration
     protected function _handleCsv()
     {
         $tableName = Inflector::pluralize(Inflector::classify($this->_table->getName()));
-        $mc = new ModuleConfig(CONFIG_TYPE_MIGRATION, $tableName);
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $tableName);
         $csvData = $mc->parse();
         $csvData = array_merge($csvData, $this->_requiredFields);
 

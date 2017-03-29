@@ -210,11 +210,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($this->table->table()));
             $config = $mc->parse();
-            $translatableModule = empty($config['table']['translatable']) ? false : $config['table']['translatable'];
+            $translatableModule = empty($config['table']['translatable']) ? false : (bool)$config['table']['translatable'];
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
             $config = $mc->parse();
             $renderAs = empty($config[$this->field]['renderAs']) ? '' : $config[$this->field]['renderAs'];
-            $translatableField = empty($config[$this->field]['translatable']) ? false : $config[$this->field]['translatable'];
+            $translatableField = empty($config[$this->field]['translatable']) ? false : (bool)$config[$this->field]['translatable'];
         } catch (\Exception $e) {
             //
         }

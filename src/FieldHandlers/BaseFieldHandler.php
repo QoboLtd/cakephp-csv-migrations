@@ -69,7 +69,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      *
      * @var array
      */
-    public $defaultOptions = [];
+    public $defaultOptions = [
+        'showTranslateButton' => false
+    ];
 
     /**
      * Search operators
@@ -203,10 +205,16 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         $this->defaultOptions['label'] = $this->renderName();
 
         $renderAs = '';
+        $translatableModule = false;
+        $translatableField = false;
         try {
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($this->table->table()));
+            $config = $mc->parse();
+            $translatableModule = empty($config['table']['translatable']) ? false : (bool)$config['table']['translatable'];
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
             $config = $mc->parse();
             $renderAs = empty($config[$this->field]['renderAs']) ? '' : $config[$this->field]['renderAs'];
+            $translatableField = empty($config[$this->field]['translatable']) ? false : (bool)$config[$this->field]['translatable'];
         } catch (\Exception $e) {
             //
         }
@@ -214,6 +222,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         if (!empty($renderAs)) {
             $this->defaultOptions['renderAs'] = $renderAs;
         }
+
+        $this->defaultOptions['showTranslateButton'] = $translatableModule ? $translatableField : false;
     }
 
     /**
@@ -449,6 +459,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         $result = $this->formatValue($result, $options);
 
+        if ($options['showTranslateButton']) {
+            $result = $this->_getTranslateButton($data, $options) . $result;
+        }
+
         return $result;
     }
 
@@ -580,6 +594,25 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
                 return $result;
             }
             $result = $default;
+        }
+
+        return $result;
+    }
+
+    /**
+     *  _getTranslateButton() - returns translate button code
+     *
+     * @param array $data       array with field data
+     * @param array $options    array with options
+     * @return string           code of translate button
+     */
+    protected function _getTranslateButton($data, $options)
+    {
+        $result = '';
+        // TODO: add here check the rights and module config to hide translation button
+        if (!empty($data->id)) {
+            $result = '<a href="#translations_translate_id_modal" data-toggle="modal" data-record="' . $data->id .
+                        '" data-model="' . $this->table->alias() . '" data-field="' . $this->field . '"><i class="fa fa-globe"></i></a>';
         }
 
         return $result;

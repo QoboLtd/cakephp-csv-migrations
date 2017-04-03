@@ -34,6 +34,8 @@ we don't do the linkage - they would have hidden ID by default
                 'embedded' => $emController,
                 'foreign_key' => $emFieldName,
                 'modal_id' => $emModal,
+                'related_model' => strtolower($this->request->controller),
+                'related_id' => $this->request->pass[0],
             ]
         ]);
     } catch (ForbiddenException $e) {
@@ -48,16 +50,15 @@ we don't do the linkage - they would have hidden ID by default
         if (!is_null($this->request->plugin)) {
             $tableName = $this->request->plugin . '.' . $tableName;
         }
-
         $formOptions = [
             'url' => [
                 'plugin' => $this->request->plugin,
                 'controller' => $this->request->controller,
                 'action' => 'edit',
                 $this->request->pass[0]
-            ]
+            ],
+            'id' => 'link_related'
         ];
-
         $handlerOptions = [];
         // set associated table name to be used on input field's name
         $handlerOptions['associated_table_name'] = $content['table_name'];
@@ -77,7 +78,6 @@ we don't do the linkage - they would have hidden ID by default
             null,
             $handlerOptions
         );
-
         // set existing related records as hidden fields
         foreach ($content['records'] as $record) {
             echo $this->Form->hidden($content['table_name'] . '._ids[]', [

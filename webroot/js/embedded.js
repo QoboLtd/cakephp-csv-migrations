@@ -54,6 +54,7 @@ var embedded = embedded || {};
         var embedded = $(form).data('embedded');
         var modalId = $(form).data('modal_id');
         var data = {};
+        var related = {};
 
         $.each($(form).serializeArray(), function (i, field) {
             if (0 === field.name.indexOf(embedded)) {
@@ -79,11 +80,13 @@ var embedded = embedded || {};
                 } else {
                     data[name] = field.value;
                 }
+            } else {
+                if (field.name.match(/related_(id|model)/)) {
+                    related[field.name] = field.value;
+                }
             }
         });
-
         data = JSON.stringify(data);
-
         $.ajax({
             url: url,
             type: 'post',
@@ -97,7 +100,8 @@ var embedded = embedded || {};
                 /*
                 set related field display-field and value
                  */
-                that._setRelatedField(url, data.data.id, form);
+                that._setRelations(related, data.data.id, embedded.toLowerCase());
+                //that._setRelatedField(url, data.data.id, form);
 
                 /*
                 clear embedded form
@@ -108,6 +112,49 @@ var embedded = embedded || {};
                 hide modal
                  */
                 $('#' + modalId).modal('hide');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+            }
+        });
+    };
+
+    /**
+     * Set value and display field for related field after successful form submission.
+     *
+     * @param {array} related   related data
+     * @param {string} id       record id
+     * @param {string} model    model name
+     * @return {void}
+     */
+    Embedded.prototype._setRelations = function (related, id, model) {
+        var that = this;
+        url = '/' + related.related_model + '/edit/' + related.related_id;
+        data = {
+            [model] : {
+                '_ids' : [
+                    id
+                ]
+            }
+        };
+        $("input[name='" + model + "[_ids][]']").each(function () {
+            data[model]['_ids'].push($(this).val());
+        });
+        data = JSON.stringify(data);
+        $.ajax({
+            url: url,
+            type: 'post',
+            dataType: 'json',
+            data: data,
+            contentType: 'application/json',
+            headers: {
+                'Authorization': 'Bearer ' + that.api_token
+            },
+            success: function (data, textStatus, jqXHR) {
+                window.location.hash = '#' + model;
+                location.reload();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);

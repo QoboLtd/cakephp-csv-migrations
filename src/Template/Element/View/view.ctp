@@ -234,6 +234,18 @@ echo $this->element('CsvMigrations.common_js_libs');
                 'block' => 'scriptBotton'
             ]
         );
+        echo $this->Html->scriptBlock(
+            '
+                var url = document.location.toString();
+                if (matches = url.match(/(.*)(#.*)/)) {
+                    $(".nav-tabs a[href=\'" + matches["2"] + "\']").tab("show");
+                    history.pushState("", document.title, window.location.pathname + window.location.search);
+                }
+            ',
+            [
+                'block' => 'scriptBotton'
+            ]
+        );
     ?>
         <?php if (!empty($tabs)) : ?>
         <div class="nav-tabs-custom">
@@ -339,17 +351,17 @@ $modalBody = $this->requestAction([
         ]);
 ?>
 <div id="translations_translate_id_modal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h2 class="modal-title"><?= __('Manage Translations') ?></h2>
-                </div> <!-- modal-header -->
-                <div class="modal-body">
-                    <?= $modalBody ?>
-                </div>
-            </div> <!-- modal-content -->
-        </div> <!-- modal-dialog -->
-    </div> <!-- modal window -->
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h2 class="modal-title"><?= __('Manage Translations') ?></h2>
+            </div> <!-- modal-header -->
+            <div class="modal-body">
+                <?= $modalBody ?>
+            </div>
+        </div> <!-- modal-content -->
+    </div> <!-- modal-dialog -->
+</div> <!-- modal window -->

@@ -50,6 +50,14 @@ if (!empty($this->request->query['embedded'])) {
         $formOptions['data-modal_id'] = $this->request->query['foreign_key'] . '_modal';
     }
 
+    if (!empty($this->request->query['related_model'])) {
+        $relatedModel = $this->request->query['related_model'];
+    }
+
+    if (!empty($this->request->query['related_id'])) {
+        $relatedId = $this->request->query('related_id');
+    }
+
     if (!empty($this->request->plugin)) {
         $embControllerName = $this->request->plugin . '.' . $embControllerName;
     }
@@ -69,6 +77,11 @@ if (!empty($this->request->query['embedded'])) {
      */
     if (!$this->request->param('pass.conversion')) {
         echo $this->Form->create($options['entity'], $formOptions);
+
+        if (!empty($relatedModel)) {
+            echo $this->Form->hidden('related_model', ['value' => $relatedModel]);
+            echo $this->Form->hidden('related_id', ['value' => $relatedId]);
+        }
     }
     ?>
     <?php

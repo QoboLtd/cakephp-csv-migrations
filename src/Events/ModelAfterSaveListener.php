@@ -166,17 +166,21 @@ class ModelAfterSaveListener implements EventListenerInterface
 
             $headers = "Content-Type: text/calendar; charset=utf-8";
             $headers .= 'Content-Disposition: attachment; filename="event.ics"';
-            $emailer = new Email('default');
 
-            $emailer->to($email)
-                ->setHeaders([$headers])
-                ->subject($emailSubject)
-                ->attachments(['event.ics' => [
-                    'contentDisposition' => true,
-                    'mimetype' => 'text/calendar',
-                    'data' => $vCalendar->render()
-                ]]);
-            $sent = $emailer->send($emailContent);
+            try {
+                $emailer = new Email('default');
+                $emailer->to($email)
+                    ->setHeaders([$headers])
+                    ->subject($emailSubject)
+                    ->attachments(['event.ics' => [
+                        'contentDisposition' => true,
+                        'mimetype' => 'text/calendar',
+                        'data' => $vCalendar->render()
+                    ]]);
+                $sent = $emailer->send($emailContent);
+            } catch (\Exception $e) {
+                // TODO : Add logging here
+            }
         }
 
         return $sent;
@@ -408,8 +412,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      */
     protected function _getEventTime($entity, $options)
     {
-        $start = $end = null;
-        $due = null;
+        $start = $end = $due = null;
         $durationMinutes = 0;
         $dtz = $options['dtz'];
         $field = $options['field'];
@@ -439,7 +442,14 @@ class ModelAfterSaveListener implements EventListenerInterface
             }
 
             if (!empty($due)) {
-                $end = new \DateTime($due->format('Y-m-d H:i:s'), $dtz);
+                // Quick fix for task #3648. We need a more reliable way here though.
+                if (is_string($due)) {
+                    $end = new \DateTime($due, $dtz);
+                } elseif (is_object($due)) {
+                    $end = new \DateTime($due->format('Y-m-d H:i:s'), $dtz);
+                } else {
+                    throw new \RuntimeException("Due date type [" . gettype($due) . "] is unsupported");
+                }
             }
         }
 

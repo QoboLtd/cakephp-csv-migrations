@@ -30,7 +30,7 @@ class BaseFileFieldHandler extends BaseFieldHandler
     /**
      * Limit of thumbnails to display
      */
-    const THUMBNAIL_LIMIT = 3;
+    const THUMBNAIL_LIMIT = 6;
 
     /**
      * CSS Framework row html markup

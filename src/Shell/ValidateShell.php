@@ -319,6 +319,12 @@ class ValidateShell extends Shell
                 $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, $module);
                 $config = $mc->parse();
             } catch (\Exception $e) {
+                $parseErrors = $mc->getParserErrors();
+                if (!empty($parseErrors)) {
+                    foreach ($parseErrors as $parseError) {
+                        $moduleErrors[] = "Parser error for $module config file: $parseError";
+                    }
+                }
                 $moduleErrors[] = $module . " module configuration file problem: " . $e->getMessage();
             }
             $result = empty($moduleErrors) ? '<success>OK</success>' : '<error>FAIL</error>';
@@ -352,7 +358,12 @@ class ValidateShell extends Shell
                 $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
                 $result = $mc->parse();
             } catch (\Exception $e) {
-                $this->out('<error>FAIL</error>');
+                $parseErrors = $mc->getParserErrors();
+                if (!empty($parseErrors)) {
+                    foreach ($parseErrors as $parseError) {
+                        $moduleErrors[] = "Parser error for $module migration file: $parseError";
+                    }
+                }
                 $moduleErrors[] = $module . " module migration file problem: " . $e->getMessage();
             }
             $result = empty($moduleErrors) ? '<success>OK</success>' : '<error>FAIL</error>';
@@ -401,6 +412,13 @@ class ValidateShell extends Shell
                     try {
                         $result = $mc->parse();
                     } catch (\Exception $e) {
+                        $parseErrors = $mc->getParserErrors();
+                        if (!empty($parseErrors)) {
+                            foreach ($parseErrors as $parseError) {
+                                $moduleErrors[] = "Parser error for [$view] view file of [$module]: $parseError";
+                            }
+                        }
+
                         $moduleErrors[] = $module . " module [$view] view file problem: " . $e->getMessage();
                     }
                 } else {

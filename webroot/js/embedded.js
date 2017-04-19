@@ -100,8 +100,11 @@ var embedded = embedded || {};
                 /*
                 set related field display-field and value
                  */
-                that._setRelations(related, data.data.id, embedded.toLowerCase());
-                //that._setRelatedField(url, data.data.id, form);
+                if (related.related_model) {
+                    that._setRelations(related, data.data.id, embedded.toLowerCase());
+                } else {
+                    that._setRelatedField(url, data.data.id, form);
+                }
 
                 /*
                 clear embedded form

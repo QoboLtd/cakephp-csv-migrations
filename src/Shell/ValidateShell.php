@@ -94,7 +94,7 @@ class ValidateShell extends Shell
                 '_checkViewsFields',
             ];
 
-            $this->out("Checking module $module", 1);
+            $this->out("Checking module $module", 2);
 
             if (!in_array($module, $this->modules)) {
                 $errors[] = "$module is not a CSV module";

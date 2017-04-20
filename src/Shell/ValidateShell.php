@@ -72,7 +72,7 @@ class ValidateShell extends Shell
      * modules will be validated.
      *
      * @param array $modules List of module names to validate
-     * @return integer Count of errors found
+     * @return int Count of errors found
      */
     protected function validateModules(array $modules = [])
     {

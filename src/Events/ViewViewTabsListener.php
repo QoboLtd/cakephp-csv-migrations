@@ -193,7 +193,12 @@ class ViewViewTabsListener implements EventListenerInterface
                 $labels[$assocAlias]['label'] = $associationLabels[$assocAlias];
             } else {
                 // Otherwise use table alias or name as label
-                $labels[$assocAlias]['label'] = Inflector::humanize($association->table());
+                $table = TableRegistry::get($association->className());
+                if (method_exists($table, 'moduleAlias') && is_callable([$table, 'moduleAlias'])) {
+                    $labels[$assocAlias]['label'] = $table->moduleAlias();
+                } else {
+                    $labels[$assocAlias]['label'] = Inflector::humanize($association->table());
+                }
             }
 
             // Initialize counter for current label, if needed
@@ -221,10 +226,9 @@ class ViewViewTabsListener implements EventListenerInterface
             // * Tableize: primary_contact_id_leads
             // * Humanize: Primary Contact Id Leads
             // * Remove association table: Primary Contact Id
+            $className = $tableInstance->association($assocAlias)->className();
             $fieldName = Inflector::humanize(Inflector::tableize($assocAlias));
-            $fieldName = str_replace($assocAlias, '', Inflector::humanize(Inflector::tableize($assocAlias)));
-            $fieldName = trim(str_replace($label['label'], '', $fieldName));
-
+            $fieldName = trim(str_replace($className, '', $fieldName));
             // Field can be empty in case of, for example, many-to-many relationships.
             if (!empty($fieldName)) {
                 $labels[$assocAlias] .= sprintf(" (%s)", $fieldName);

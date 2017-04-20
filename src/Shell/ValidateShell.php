@@ -86,12 +86,9 @@ class ValidateShell extends Shell
             $errors = [];
             $warnings = [];
             $checks = [
-                '_checkConfigPresence',
-                '_checkMigrationPresence',
-                '_checkViewsPresence',
-                '_checkConfigOptions',
-                '_checkMigrationFields',
-                '_checkViewsFields',
+                '_checkConfig',
+                '_checkMigration',
+                '_checkViews',
             ];
 
             $this->out("Checking module $module", 2);
@@ -348,12 +345,12 @@ class ValidateShell extends Shell
     }
 
     /**
-     * Check if config.ini file is present for given module
+     * Check module config
      *
      * @param string $module Module name
      * @return array A list of errors
      */
-    protected function _checkConfigPresence($module)
+    protected function _checkConfig($module)
     {
         $errors = [];
         $warnings = [];
@@ -370,131 +367,6 @@ class ValidateShell extends Shell
                 }
             }
             $errors[] = $module . " module configuration file problem: " . $e->getMessage();
-        }
-        $result = empty($errors) ? '<success>OK</success>' : '<error>FAIL</error>';
-        $this->out($result);
-
-        $result = [
-            'errors' => $errors,
-            'warnings' => $warnings,
-        ];
-
-        return $result;
-    }
-
-    /**
-     * Check if migration.csv file is present for given module
-     *
-     * @param string $module Module name
-     * @return array A list of errors
-     */
-    protected function _checkMigrationPresence($module)
-    {
-        $errors = [];
-        $warnings = [];
-
-        $this->out(' - Migration ... ', 0);
-        try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
-            $result = $mc->parse();
-        } catch (\Exception $e) {
-            $parseErrors = $mc->getParserErrors();
-            if (!empty($parseErrors)) {
-                foreach ($parseErrors as $parseError) {
-                    $errors[] = "Parser error for $module migration file: $parseError";
-                }
-            }
-            $errors[] = $module . " module migration file problem: " . $e->getMessage();
-        }
-        $result = empty($errors) ? '<success>OK</success>' : '<error>FAIL</error>';
-        $this->out($result);
-
-        $result = [
-            'errors' => $errors,
-            'warnings' => $warnings,
-        ];
-
-        return $result;
-    }
-
-    /**
-     * Check if view files are present for given module
-     *
-     * @param string $module Module name
-     * @return array A list of errors
-     */
-    protected function _checkViewsPresence($module)
-    {
-        $errors = [];
-        $warnings = [];
-
-        $views = Configure::read('CsvMigrations.actions');
-
-        $viewCounter = 0;
-        $this->out(' - Views ... ', 0);
-        foreach ($views as $view) {
-            $path = '';
-            try {
-                $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $module, $view);
-                $path = $mc->find();
-            } catch (\Exception $e) {
-                // It's OK for view files to be missing.
-                // For example, Files and Users modules.
-            }
-            // If the view file does exist, it has to be parseable.
-            if (file_exists($path)) {
-                $viewCounter++;
-                try {
-                    $result = $mc->parse();
-                } catch (\Exception $e) {
-                    $parseErrors = $mc->getParserErrors();
-                    if (!empty($parseErrors)) {
-                        foreach ($parseErrors as $parseError) {
-                            $errors[] = "Parser error for [$view] view file of [$module]: $parseError";
-                        }
-                    }
-
-                    $errors[] = $module . " module [$view] view file problem: " . $e->getMessage();
-                }
-            } else {
-                $warnings[] = $module . " module [$view] view file is missing";
-            }
-        }
-        // Warn if the module is missing standard views
-        if ($viewCounter < count($views)) {
-            $this->out('<warning>' . (int)$viewCounter . ' views</warning> ... ', 0);
-        } else {
-            $this->out('<info>' . (int)$viewCounter . ' views</info> ... ', 0);
-        }
-        $result = empty($errors) ? '<success>OK</success>' : '<error>FAIL</error>';
-        $this->out($result);
-
-        $result = [
-            'errors' => $errors,
-            'warnings' => $warnings,
-        ];
-
-        return $result;
-    }
-
-    /**
-     * Check configuration options for given module
-     *
-     * @param string $module Module name
-     * @return array A list of errors
-     */
-    protected function _checkConfigOptions($module)
-    {
-        $errors = [];
-        $warnings = [];
-
-        $this->out(' - Configuration options ... ', 0);
-        $config = null;
-        try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, $module);
-            $config = $mc->parse();
-        } catch (\Exception $e) {
-            // We've already reported this problem in _checkConfigPresence();
         }
 
         // Check configuration options
@@ -659,23 +531,28 @@ class ValidateShell extends Shell
     }
 
     /**
-     * Check migration.csv fields for given module
+     * Check module migration
      *
      * @param string $module Module name
      * @return array A list of errors
      */
-    protected function _checkMigrationFields($module)
+    protected function _checkMigration($module)
     {
         $errors = [];
         $warnings = [];
 
-        $this->out(' - Migration fields ... ', 0);
-        $fields = null;
+        $this->out(' - Migration ... ', 0);
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
             $fields = $mc->parse();
         } catch (\Exception $e) {
-            // We've already reported this problem in _checkMigrationPresence();
+            $parseErrors = $mc->getParserErrors();
+            if (!empty($parseErrors)) {
+                foreach ($parseErrors as $parseError) {
+                    $errors[] = "Parser error for $module migration file: $parseError";
+                }
+            }
+            $errors[] = $module . " module migration file problem: " . $e->getMessage();
         }
 
         if ($fields) {
@@ -766,12 +643,12 @@ class ValidateShell extends Shell
     }
 
     /**
-     * Check fields in all views for given module
+     * Check module views
      *
      * @param string $module Module name
      * @return array A list of errors
      */
-    protected function _checkViewsFields($module)
+    protected function _checkViews($module)
     {
         $errors = [];
         $warnings = [];
@@ -779,65 +656,84 @@ class ValidateShell extends Shell
         $views = Configure::read('CsvMigrations.actions');
 
         $viewCounter = 0;
-        $this->out(' - View fields ... ', 0);
+        $this->out(' - Views ... ', 0);
         foreach ($views as $view) {
-            $fields = null;
+            $path = '';
             try {
                 $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $module, $view);
-                $fields = $mc->parse();
+                $path = $mc->find();
             } catch (\Exception $e) {
                 // It's OK for view files to be missing.
-                // We already handle this in _checkViewsPresence()
+                // For example, Files and Users modules.
             }
+
             // If the view file does exist, it has to be parseable.
-            if ($fields) {
+            if ($path && file_exists($path)) {
                 $viewCounter++;
-                foreach ($fields as $field) {
-                    if (count($field) > 3) {
-                        $errors[] = $module . " module [$view] view has more than 2 columns";
-                    } elseif (count($field) == 3) {
-                        // Get rid of the first column, which is the panel name
-                        array_shift($field);
-                        $isEmbedded = false;
-                        foreach ($field as $column) {
-                            if ($column == 'EMBEDDED') {
-                                $isEmbedded = true;
-                                continue;
-                            } else {
-                                if ($isEmbedded) {
-                                    list($embeddedModule, $embeddedModuleField) = explode('.', $column);
-                                    if (empty($embeddedModule)) {
-                                        $errors[] = $module . " module [$view] view reference EMBEDDED column without a module";
-                                    } else {
-                                        if (!$this->_isValidModule($embeddedModule)) {
-                                            $errors[] = $module . " module [$view] view reference EMBEDDED column with unknown module '$embeddedModule'";
-                                        }
-                                    }
-                                    if (empty($embeddedModuleField)) {
-                                        $errors[] = $module . " module [$view] view reference EMBEDDED column without a module field";
-                                    } else {
-                                        if (!$this->_isValidModuleField($module, $embeddedModuleField)) {
-                                            $errors[] = $module . " module [$view] view reference EMBEDDED column with unknown field '$embeddedModuleField' of module '$embeddedModule'";
-                                        }
-                                    }
-                                    $isEmbedded = false;
+                try {
+                    $fields = $mc->parse();
+                } catch (\Exception $e) {
+                    $parseErrors = $mc->getParserErrors();
+                    if (!empty($parseErrors)) {
+                        foreach ($parseErrors as $parseError) {
+                            $errors[] = "Parser error for [$view] view file of [$module]: $parseError";
+                        }
+                    }
+
+                    $errors[] = $module . " module [$view] view file problem: " . $e->getMessage();
+                }
+
+                // If the view file does exist, it has to be parseable.
+                if ($fields) {
+                    foreach ($fields as $field) {
+                        if (count($field) > 3) {
+                            $errors[] = $module . " module [$view] view has more than 2 columns";
+                        } elseif (count($field) == 3) {
+                            // Get rid of the first column, which is the panel name
+                            array_shift($field);
+                            $isEmbedded = false;
+                            foreach ($field as $column) {
+                                if ($column == 'EMBEDDED') {
+                                    $isEmbedded = true;
+                                    continue;
                                 } else {
-                                    if ($column && !$this->_isValidModuleField($module, $column)) {
-                                        $errors[] = $module . " module [$view] view references unknown field '$column'";
+                                    if ($isEmbedded) {
+                                        list($embeddedModule, $embeddedModuleField) = explode('.', $column);
+                                        if (empty($embeddedModule)) {
+                                            $errors[] = $module . " module [$view] view reference EMBEDDED column without a module";
+                                        } else {
+                                            if (!$this->_isValidModule($embeddedModule)) {
+                                                $errors[] = $module . " module [$view] view reference EMBEDDED column with unknown module '$embeddedModule'";
+                                            }
+                                        }
+                                        if (empty($embeddedModuleField)) {
+                                            $errors[] = $module . " module [$view] view reference EMBEDDED column without a module field";
+                                        } else {
+                                            if (!$this->_isValidModuleField($module, $embeddedModuleField)) {
+                                                $errors[] = $module . " module [$view] view reference EMBEDDED column with unknown field '$embeddedModuleField' of module '$embeddedModule'";
+                                            }
+                                        }
+                                        $isEmbedded = false;
+                                    } else {
+                                        if ($column && !$this->_isValidModuleField($module, $column)) {
+                                            $errors[] = $module . " module [$view] view references unknown field '$column'";
+                                        }
                                     }
                                 }
                             }
-                        }
-                        if ($isEmbedded) {
-                            $errors[] = $module . " module [$view] view incorrectly uses EMBEDDED in the last column";
-                        }
-                    } elseif (count($field) == 1) {
-                        // index view
-                        if ($field[0] && !$this->_isValidModuleField($module, $field[0])) {
-                            $errors[] = $module . " module [$view] view references unknown field '" . $field[0] . "'";
+                            if ($isEmbedded) {
+                                $errors[] = $module . " module [$view] view incorrectly uses EMBEDDED in the last column";
+                            }
+                        } elseif (count($field) == 1) {
+                            // index view
+                            if ($field[0] && !$this->_isValidModuleField($module, $field[0])) {
+                                $errors[] = $module . " module [$view] view references unknown field '" . $field[0] . "'";
+                            }
                         }
                     }
                 }
+            } else {
+                $warnings[] = $module . " module [$view] view file is missing";
             }
         }
         // Warn if the module is missing standard views

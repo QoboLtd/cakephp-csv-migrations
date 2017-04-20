@@ -98,8 +98,8 @@ class ValidateShell extends Shell
             } else {
                 foreach ($checks as $check) {
                     $checkResult = $this->$check($module);
-                    $errors += $checkResult['errors'];
-                    $warnings += $checkResult['warnings'];
+                    $errors = array_merge($errors, $checkResult['errors']);
+                    $warnings = array_merge($warnings, $checkResult['warnings']);
                 }
             }
 

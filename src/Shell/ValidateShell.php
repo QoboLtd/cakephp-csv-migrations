@@ -23,6 +23,9 @@ class ValidateShell extends Shell
     {
         $parser = new ConsoleOptionParser('console');
         $parser->description('Validate CSV and configuration files of all CSV modules');
+        $parser->addArgument('modules', [
+            'help' => 'Comma-separated list of modules to validate.  All will be checked if omitted.',
+        ]);
 
         return $parser;
     }
@@ -30,10 +33,18 @@ class ValidateShell extends Shell
     /**
      * Main method for shell execution
      *
+     * @param string $modules Comma-separated list of module names to validate
      * @return void
      */
-    public function main()
+    public function main($modules = null)
     {
+        $modules = (string)$modules;
+        if (!empty($modules)) {
+            $modules = explode(',', $modules);
+        } else {
+            $modules = [];
+        }
+
         $this->out('Checking CSV files and configurations');
         $this->hr();
         try {
@@ -47,13 +58,31 @@ class ValidateShell extends Shell
             exit();
         }
 
-        $errorsCount = 0;
-        foreach ($this->modules as $module) {
-            // Temporary skip of Common module configurations
-            if ($module == 'Common') {
-                continue;
-            }
+        $errorsCount = $this->validateModules($modules);
+        if ($errorsCount > 0) {
+            $this->abort("Errors found: $errorsCount.  Validation failed!");
+        }
+        $this->out('<success>No errors found. Validation passed!</success>');
+    }
 
+    /**
+     * Validate a given list of modules
+     *
+     * If the list of modules is omitted, then all CSV
+     * modules will be validated.
+     *
+     * @param array $modules List of module names to validate
+     * @return integer Count of errors found
+     */
+    protected function validateModules(array $modules = [])
+    {
+        $result = 0;
+
+        if (empty($modules)) {
+            $modules = $this->modules;
+        }
+
+        foreach ($modules as $module) {
             $errors = [];
             $warnings = [];
             $checks = [
@@ -66,20 +95,22 @@ class ValidateShell extends Shell
             ];
 
             $this->out("Checking module $module", 1);
-            foreach ($checks as $check) {
-                $checkResult = $this->$check($module);
-                $errors += $checkResult['errors'];
-                $warnings += $checkResult['warnings'];
+
+            if (!in_array($module, $this->modules)) {
+                $errors[] = "$module is not a CSV module";
+            } else {
+                foreach ($checks as $check) {
+                    $checkResult = $this->$check($module);
+                    $errors += $checkResult['errors'];
+                    $warnings += $checkResult['warnings'];
+                }
             }
 
-            $errorsCount += count($errors);
+            $result += count($errors);
             $this->_printCheckStatus($errors, $warnings);
         }
 
-        if ($errorsCount) {
-            $this->abort("Errors found: $errorsCount.  Validation failed!");
-        }
-        $this->out('<success>No errors found. Validation passed!</success>');
+        return $result;
     }
 
     /**

@@ -199,7 +199,6 @@ class ViewViewTabsListener implements EventListenerInterface
                 } else {
                     $labels[$assocAlias]['label'] = Inflector::humanize($association->table());
                 }
-                // $labels[$assocAlias]['label'] = Inflector::humanize($association->table());
             }
 
             // Initialize counter for current label, if needed

@@ -1,4 +1,9 @@
 <?php
+/**
+ * THIS ELEMENT IS DEPRECATED
+ */
+?>
+<?php
 use Cake\Event\Event;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;

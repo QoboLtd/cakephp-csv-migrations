@@ -48,7 +48,7 @@ class ValidateShell extends Shell
         }
 
         $errorsCount = 0;
-        foreach ($this->modules as $module => $path) {
+        foreach ($this->modules as $module) {
             // Temporary skip of Common module configurations
             if ($module == 'Common') {
                 continue;
@@ -65,9 +65,9 @@ class ValidateShell extends Shell
                 '_checkViewsFields',
             ];
 
-            $this->out("Checking module $module ($path)", 1);
+            $this->out("Checking module $module", 1);
             foreach ($checks as $check) {
-                $checkResult = $this->$check($module, $path);
+                $checkResult = $this->$check($module);
                 $errors += $checkResult['errors'];
                 $warnings += $checkResult['warnings'];
             }
@@ -83,9 +83,9 @@ class ValidateShell extends Shell
     }
 
     /**
-     * Find the list of CSV modules and their paths
+     * Find the list of CSV modules
      *
-     * @return array List of modules and their paths
+     * @return array List of modules
      */
     protected function _findCsvModules()
     {
@@ -103,7 +103,7 @@ class ValidateShell extends Shell
             if ($fileinfo->isDot()) {
                 continue;
             }
-            $result[$fileinfo->getFilename()] = $fileinfo->getPathname();
+            $result[] = $fileinfo->getFilename();
         }
         asort($result);
 
@@ -152,7 +152,7 @@ class ValidateShell extends Shell
     {
         $result = false;
 
-        if (in_array($module, array_keys($this->modules))) {
+        if (in_array($module, $this->modules)) {
             $result = true;
         }
 
@@ -320,10 +320,9 @@ class ValidateShell extends Shell
      * Check if config.ini file is present for given module
      *
      * @param string $module Module name
-     * @param string $path Module path
      * @return array A list of errors
      */
-    protected function _checkConfigPresence($module, $path)
+    protected function _checkConfigPresence($module)
     {
         $errors = [];
         $warnings = [];
@@ -356,10 +355,9 @@ class ValidateShell extends Shell
      * Check if migration.csv file is present for given module
      *
      * @param string $module Module name
-     * @param string $path Module path
      * @return array A list of errors
      */
-    protected function _checkMigrationPresence($module, $path)
+    protected function _checkMigrationPresence($module)
     {
         $errors = [];
         $warnings = [];
@@ -392,10 +390,9 @@ class ValidateShell extends Shell
      * Check if view files are present for given module
      *
      * @param string $module Module name
-     * @param string $path Module path
      * @return array A list of errors
      */
-    protected function _checkViewsPresence($module, $path)
+    protected function _checkViewsPresence($module)
     {
         $errors = [];
         $warnings = [];
@@ -453,10 +450,9 @@ class ValidateShell extends Shell
      * Check configuration options for given module
      *
      * @param string $module Module name
-     * @param string $path Module path
      * @return array A list of errors
      */
-    protected function _checkConfigOptions($module, $path)
+    protected function _checkConfigOptions($module)
     {
         $errors = [];
         $warnings = [];
@@ -635,10 +631,9 @@ class ValidateShell extends Shell
      * Check migration.csv fields for given module
      *
      * @param string $module Module name
-     * @param string $path Module path
      * @return array A list of errors
      */
-    protected function _checkMigrationFields($module, $path)
+    protected function _checkMigrationFields($module)
     {
         $errors = [];
         $warnings = [];
@@ -743,10 +738,9 @@ class ValidateShell extends Shell
      * Check fields in all views for given module
      *
      * @param string $module Module name
-     * @param string $path Module path
      * @return array A list of errors
      */
-    protected function _checkViewsFields($module, $path)
+    protected function _checkViewsFields($module)
     {
         $errors = [];
         $warnings = [];

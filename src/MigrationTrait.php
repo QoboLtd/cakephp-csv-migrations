@@ -284,7 +284,7 @@ trait MigrationTrait
             $config = [];
             try {
                 $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
-                $config = (array)json_decode(json_encode($mc->parse), true);
+                $config = (array)json_decode(json_encode($mc->parse()), true);
             } catch (\Exception $e) {
                 continue;
             }
@@ -294,7 +294,7 @@ trait MigrationTrait
             if (!isset($csvFiles[$module])) {
                 $csvFiles[$module] = [];
             }
-            $csvFiles[$module][] = $config;
+            $csvFiles[$module] = $config;
         }
 
         // Covers case where CsvMigration configuration files reside in a plugin

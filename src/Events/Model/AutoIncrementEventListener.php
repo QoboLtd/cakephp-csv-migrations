@@ -88,7 +88,7 @@ class AutoIncrementEventListener implements EventListenerInterface
         $moduleName = Inflector::camelize($table->table());
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, $moduleName);
-            $config = $mc->parse();
+            $config = (array)json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             // do nothing
             return $result;

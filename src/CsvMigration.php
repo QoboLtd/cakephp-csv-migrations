@@ -99,7 +99,7 @@ class CsvMigration extends AbstractMigration
     {
         $tableName = Inflector::pluralize(Inflector::classify($this->_table->getName()));
         $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $tableName);
-        $csvData = $mc->parse();
+        $csvData = (array)json_decode(json_encode($mc->parse()), true);
         $csvData = array_merge($csvData, $this->_requiredFields);
 
         $tableFields = $this->_getTableFields();

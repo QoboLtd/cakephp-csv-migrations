@@ -427,7 +427,7 @@ class ViewViewTabsListener implements EventListenerInterface
 
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $tableName, $action);
-            $csvFields = $mc->parse();
+            $csvFields = $mc->parse()->items;
         } catch (Exception $e) {
             return $result;
         }

@@ -95,7 +95,7 @@ abstract class BaseViewListener implements EventListenerInterface
 
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $request->controller);
-            $result = $mc->parse();
+            $result = $mc->parse()->items;
         } catch (InvalidArgumentException $e) {
             Log::error($e);
         }
@@ -122,7 +122,7 @@ abstract class BaseViewListener implements EventListenerInterface
 
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $controller, $action);
-            $result = $mc->parse();
+            $result = $mc->parse()->items;
         } catch (InvalidArgumentException $e) {
             Log::error($e);
         }

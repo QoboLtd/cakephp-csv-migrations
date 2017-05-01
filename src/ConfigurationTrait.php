@@ -130,7 +130,7 @@ trait ConfigurationTrait
         $result = [];
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($tableName));
-            $result = $mc->parse();
+            $result = (array)json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             // It's OK for the configuration not to exist. We should probably log it.
         }

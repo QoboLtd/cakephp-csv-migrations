@@ -72,7 +72,7 @@ trait MigrationTrait
 
             try {
                 $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $moduleName);
-                $result = $mc->parse();
+                $result = (array)json_decode(json_encode($mc->parse()), true);
                 if (!empty($result)) {
                     $this->_fieldDefinitions = $result;
                 }
@@ -276,15 +276,19 @@ trait MigrationTrait
         $result = [];
         $path = Configure::readOrFail('CsvMigrations.modules.path');
         $modules = $this->_getAllModules($path);
+        $csvFiles = [];
         if (empty($modules)) {
             return $result;
         }
         foreach ($modules as $module) {
-            $config = '';
+            $config = [];
             try {
-                $config = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
-                $config->find();
+                $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
+                $config = (array)json_decode(json_encode($mc->parse), true);
             } catch (\Exception $e) {
+                continue;
+            }
+            if (empty($config)) {
                 continue;
             }
             if (!isset($csvFiles[$module])) {
@@ -302,13 +306,11 @@ trait MigrationTrait
             $plugin = $this->_getPluginNameFromRegistryAlias();
         }
 
-        foreach ($csvFiles as $csvModule => $configs) {
+        foreach ($csvFiles as $csvModule => $config) {
             if (!is_null($plugin)) {
                 $csvModule = $plugin . '.' . $csvModule;
             }
-            foreach ($configs as $config) {
-                $result[$csvModule] = $config->parse();
-            }
+            $result[$csvModule] = $config;
         }
 
         return $result;
@@ -333,14 +335,16 @@ trait MigrationTrait
             return $result;
         }
         foreach ($modules as $module) {
-            $report = '';
+            $report = [];
             try {
-                $report = new ModuleConfig(ModuleConfig::CONFIG_TYPE_REPORTS, $module);
-                $report->find();
+                $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_REPORTS, $module);
+                $report = (array)json_decode(json_encode($mc->parse()), true);
             } catch (\Exception $e) {
                 continue;
             }
-
+            if (empty($report)) {
+                continue;
+            }
             if (!isset($csvFiles[$module])) {
                 $result[$module] = [];
             }
@@ -349,9 +353,7 @@ trait MigrationTrait
 
         if (!empty($result)) {
             foreach ($result as $model => $reports) {
-                foreach ($reports as $r) {
-                    $config[$model] = $r->parse();
-                }
+                $config[$model] = $reports;
             }
         }
 

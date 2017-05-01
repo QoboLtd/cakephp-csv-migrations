@@ -81,6 +81,7 @@ class FooTableTest extends TestCase
                     'display_field' => 'name',
                     'typeahead_fields' => 'name,foobar',
                     'lookup_fields' => 'foo,bar,baz',
+                    'icon' => 'cube'
                 ],
                 'virtualFields' => [
                     'name' => 'full_name',

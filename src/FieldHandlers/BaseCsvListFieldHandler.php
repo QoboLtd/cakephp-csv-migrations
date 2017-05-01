@@ -144,7 +144,7 @@ abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
         $listData = [];
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_LIST, $module, $listName);
-            $listData = $mc->parse();
+            $listData = $mc->parse()->items;
         } catch (\Exception $e) {
             /* Do nothing.
              *

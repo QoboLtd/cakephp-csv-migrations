@@ -398,7 +398,7 @@ class ValidateShell extends Shell
 
             // [parent] section
             if (!empty($config['parent'])) {
-                 if (!empty($config['parent']['module'])) {
+                if (!empty($config['parent']['module'])) {
                     if (!$this->_isValidModule($config['parent']['module'])) {
                         $errors[] = $module . " config [parent] section references unknown module '" . $config['parent']['module'] . "' in 'module' key";
                     }

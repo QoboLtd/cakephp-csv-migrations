@@ -206,8 +206,8 @@ class ValidateShell extends Shell
         }
         $listItems = [];
         try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_LIST, null, $list);
-            $listItems = $mc->parse();
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_LIST, $module, $list);
+            $listItems = $mc->parse()->items;
         } catch (\Exception $e) {
             // We don't care about the specifics of the failure
         }
@@ -259,7 +259,7 @@ class ValidateShell extends Shell
         $moduleFields = [];
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
-            $moduleFields = $mc->parse();
+            $moduleFields = json_decode(json_encode($mc->parse()), true);
         } catch (\Exception $e) {
             // We already report issues with migration in _checkMigrationPresence()
         }
@@ -298,7 +298,7 @@ class ValidateShell extends Shell
         $config = [];
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, $module);
-            $config = $mc->parse();
+            $config = (array)json_decode(json_encode($mc->parse()), true);
         } catch (\Exception $e) {
             return $result;
         }
@@ -356,18 +356,15 @@ class ValidateShell extends Shell
         $warnings = [];
 
         $this->out(' - Module config ... ', 0);
+        $config = [];
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, $module);
-            $config = $mc->parse();
+            $config = json_decode(json_encode($mc->parse()), true);
         } catch (\Exception $e) {
-            $parseErrors = $mc->getParserErrors();
-            if (!empty($parseErrors)) {
-                foreach ($parseErrors as $parseError) {
-                    $errors[] = "Parser error for $module config file: $parseError";
-                }
-            }
-            $errors[] = $module . " module configuration file problem: " . $e->getMessage();
+            // We need errors and warnings irrelevant of the exception
         }
+        $errors = array_merge($errors, $mc->getErrors());
+        $warnings = array_merge($warnings, $mc->getWarnings());
 
         // Check configuration options
         if ($config) {
@@ -378,12 +375,6 @@ class ValidateShell extends Shell
                     if (!$this->_isValidModuleField($module, $config['table']['display_field'])) {
                         $errors[] = $module . " config [table] section references unknown field '" . $config['table']['display_field'] . "' in 'display_field' key";
                     }
-                } else {
-                    $warnings[] = $module . " config [table] section does not specify 'display_field' key";
-                }
-                // 'icon' key is optional, but strongly suggested
-                if (empty($config['table']['icon'])) {
-                    $warnings[] = $module . " config [table] section does not specify 'icon' key";
                 }
                 // 'typeahead_fields' key is optional, but must contain valid fields if specified
                 if (!empty($config['table']['typeahead_fields'])) {
@@ -407,10 +398,7 @@ class ValidateShell extends Shell
 
             // [parent] section
             if (!empty($config['parent'])) {
-                if (empty($config['parent']['module'])) {
-                    $errors[] = $module . " config [parent] section is missing 'module' key";
-                }
-                if (!empty($config['parent']['module'])) {
+                 if (!empty($config['parent']['module'])) {
                     if (!$this->_isValidModule($config['parent']['module'])) {
                         $errors[] = $module . " config [parent] section references unknown module '" . $config['parent']['module'] . "' in 'module' key";
                     }
@@ -457,9 +445,7 @@ class ValidateShell extends Shell
             // [manyToMany] section
             if (!empty($config['manyToMany'])) {
                 // 'module' key is required and must contain valid modules
-                if (empty($config['manyToMany']['modules'])) {
-                    $errors[] = $module . " config [manyToMany] section is missing 'modules' key";
-                } else {
+                if (!empty($config['manyToMany']['modules'])) {
                     $manyToManyModules = explode(',', $config['manyToMany']['modules']);
                     foreach ($manyToManyModules as $manyToManyModule) {
                         if (!$this->_isValidModule($manyToManyModule)) {
@@ -485,9 +471,7 @@ class ValidateShell extends Shell
             // [conversion] section
             if (!empty($config['conversion'])) {
                 // 'module' key is required and must contain valid modules
-                if (empty($config['conversion']['modules'])) {
-                    $errors[] = $module . " config [conversion] section is missing 'modules' key";
-                } else {
+                if (!empty($config['conversion']['modules'])) {
                     $conversionModules = explode(',', $config['conversion']['modules']);
                     foreach ($conversionModules as $conversionModule) {
                         // Only check for simple modules, not the vendor/plugin ones
@@ -542,18 +526,15 @@ class ValidateShell extends Shell
         $warnings = [];
 
         $this->out(' - Migration ... ', 0);
+        $fields = [];
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
-            $fields = $mc->parse();
+            $fields = json_decode(json_encode($mc->parse()), true);
         } catch (\Exception $e) {
-            $parseErrors = $mc->getParserErrors();
-            if (!empty($parseErrors)) {
-                foreach ($parseErrors as $parseError) {
-                    $errors[] = "Parser error for $module migration file: $parseError";
-                }
-            }
-            $errors[] = $module . " module migration file problem: " . $e->getMessage();
+            // We need errors and warnings irrelevant of the exception
         }
+        $errors = array_merge($errors, $mc->getErrors());
+        $warnings = array_merge($warnings, $mc->getWarnings());
 
         if ($fields) {
             $seenFields = [];
@@ -670,18 +651,14 @@ class ValidateShell extends Shell
             // If the view file does exist, it has to be parseable.
             if ($path && file_exists($path)) {
                 $viewCounter++;
+                $fields = [];
                 try {
-                    $fields = $mc->parse();
+                    $fields = $mc->parse()->items;
                 } catch (\Exception $e) {
-                    $parseErrors = $mc->getParserErrors();
-                    if (!empty($parseErrors)) {
-                        foreach ($parseErrors as $parseError) {
-                            $errors[] = "Parser error for [$view] view file of [$module]: $parseError";
-                        }
-                    }
-
-                    $errors[] = $module . " module [$view] view file problem: " . $e->getMessage();
+                    // We need errors and warnings irrelevant of the exception
                 }
+                $errors = array_merge($errors, $mc->getErrors());
+                $warnings = array_merge($warnings, $mc->getWarnings());
 
                 // If the view file does exist, it has to be parseable.
                 if ($fields) {

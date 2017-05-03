@@ -95,7 +95,7 @@ abstract class BaseViewListener implements EventListenerInterface
 
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $request->controller);
-            $result = $mc->parse()->items;
+            $result = json_decode(json_encode($mc->parse()), true);
         } catch (InvalidArgumentException $e) {
             Log::error($e);
         }

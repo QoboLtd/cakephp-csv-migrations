@@ -209,17 +209,17 @@ abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
         $result = [];
 
         foreach ($data as $field) {
-            $result[$prefix . $field['value']] = [
-                'label' => $field['label'],
-                'inactive' => (bool)$field['inactive']
+            $result[$prefix . $field->value] = [
+                'label' => $field->label,
+                'inactive' => (bool)$field->inactive
             ];
 
             /*
             get child options
              */
-            $children = $this->__getListFieldOptions($listName . DS . $field['value'], $prefix . $field['value'] . '.');
+            $children = $this->__getListFieldOptions($listName . DS . $field->value, $prefix . $field->value . '.');
             if (!empty($children)) {
-                $result[$prefix . $field['value']]['children'] = $children;
+                $result[$prefix . $field->value]['children'] = $children;
             }
         }
 

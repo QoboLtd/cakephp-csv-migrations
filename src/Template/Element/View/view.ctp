@@ -147,12 +147,12 @@ if (empty($options['title'])) {
                             ?>
                             </div>
                         <?php endif; ?>
-                        <?php elseif ('' !== trim($field['name'])) : ?>
+                    <?php elseif ('' !== trim($field['name'])) : ?>
                             <?php
                             $embeddedFields[] = $field['name'];
                             $embeddedDirty = false;
                             ?>
-                        <?php else : ?>
+                    <?php else : ?>
                             <div class="col-xs-4 col-md-2 text-right">&nbsp;</div>
                             <div class="col-xs-8 col-md-4">&nbsp;</div>
                     <?php endif; ?>

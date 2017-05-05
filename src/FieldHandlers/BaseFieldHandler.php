@@ -216,7 +216,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $renderAs = empty($config[$this->field]['renderAs']) ? '' : $config[$this->field]['renderAs'];
             $translatableField = empty($config[$this->field]['translatable']) ? false : (bool)$config[$this->field]['translatable'];
         } catch (\Exception $e) {
-            echo $e;
+            // TODO: push exception into the log!
         }
 
         if (!empty($renderAs)) {

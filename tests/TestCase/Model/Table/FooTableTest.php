@@ -105,7 +105,7 @@ class FooTableTest extends TestCase
 
     public function testGetReports()
     {
-        $result = $this->FooTable->_getReports();
+        $result = $this->FooTable->getReports();
 
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey('Foo', $result);

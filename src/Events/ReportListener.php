@@ -29,7 +29,7 @@ class ReportListener implements EventListenerInterface
      */
     public function getAllReports(Event $event)
     {
-        $data = $this->_getReports();
+        $data = $this->getReports();
 
         return $data;
     }

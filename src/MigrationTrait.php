@@ -325,7 +325,7 @@ trait MigrationTrait
      *
      * @return array $config containing all reports from ini files
      */
-    public function _getReports()
+    protected function _getReports()
     {
         $result = $config = [];
 
@@ -345,19 +345,10 @@ trait MigrationTrait
             if (empty($report)) {
                 continue;
             }
-            if (!isset($csvFiles[$module])) {
-                $result[$module] = [];
-            }
-            $result[$module][] = $report;
+            
+            $result[$module] = $report;
         }
-
-        if (!empty($result)) {
-            foreach ($result as $model => $reports) {
-                $config[$model] = $reports;
-            }
-        }
-
-        return $config;
+        return $result;
     }
 
     /**

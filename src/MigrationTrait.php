@@ -325,7 +325,7 @@ trait MigrationTrait
      *
      * @return array $config containing all reports from ini files
      */
-    public function _getReports()
+    protected function _getReports()
     {
         $result = $config = [];
 

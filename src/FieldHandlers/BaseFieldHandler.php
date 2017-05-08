@@ -615,7 +615,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $fieldValue = $data->$fieldName;
 
             $result = '<a href="#translations_translate_id_modal" data-toggle="modal" data-record="' . $data->id .
-                        '" data-model="' . $this->table->alias() . '" data-field="' . $fieldName . '" data-value="' . $fieldValue . '"><i class="fa fa-globe"></i></a>';
+                        '" data-model="' . $this->table->alias() . '" data-field="' . $fieldName . '" data-value="' . $fieldValue . '"><i class="fa fa-globe"></i></a>&nbsp;';
         }
 
         return $result;

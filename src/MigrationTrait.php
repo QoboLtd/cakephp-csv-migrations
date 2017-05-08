@@ -345,9 +345,10 @@ trait MigrationTrait
             if (empty($report)) {
                 continue;
             }
-            
+
             $result[$module] = $report;
         }
+
         return $result;
     }
 

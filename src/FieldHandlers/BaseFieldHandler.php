@@ -2,6 +2,7 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\Core\App;
+use Cake\Log\LogTrait;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
@@ -28,6 +29,8 @@ use RuntimeException;
  */
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
+    use LogTrait;
+
     /**
      * Default database field type
      */
@@ -216,7 +219,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $renderAs = empty($config[$this->field]['renderAs']) ? '' : $config[$this->field]['renderAs'];
             $translatableField = empty($config[$this->field]['translatable']) ? false : (bool)$config[$this->field]['translatable'];
         } catch (\Exception $e) {
-            // TODO: push exception into the log!
+            $this->log('Exception to parse INI config file: ' . $e->getMessage() . '. Be sure you have all properties in the specific JSON schema!');
         }
 
         if (!empty($renderAs)) {

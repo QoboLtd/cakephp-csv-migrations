@@ -32,10 +32,7 @@ class DblistFieldHandler extends BaseListFieldHandler
         $fieldName = $this->table->aliasField($this->field);
 
         $list = $options['fieldDefinitions']->getListName();
-
         $table = TableRegistry::get('CsvMigrations.Dblists');
-        // create new list if it does not exist
-        $this->_createList($table, $list);
 
         $params = [
             'field' => $this->field,
@@ -44,7 +41,7 @@ class DblistFieldHandler extends BaseListFieldHandler
             'label' => $options['label'],
             'required' => $options['fieldDefinitions']->getRequired(),
             'value' => $data,
-            'options' => $table->find('options', ['name' => $list])
+            'options' => $table->find('options', ['name' => $list]),
         ];
 
         return $this->_renderElement(__FUNCTION__, $params, $options);
@@ -99,8 +96,6 @@ class DblistFieldHandler extends BaseListFieldHandler
         $list = $options['fieldDefinitions']->getListName();
 
         $table = TableRegistry::get('CsvMigrations.Dblists');
-        // create new list if it does not exist
-        $this->_createList($table, $list);
 
         $params = [
             'field' => $this->field,
@@ -117,25 +112,5 @@ class DblistFieldHandler extends BaseListFieldHandler
         ];
 
         return $result;
-    }
-
-    /**
-     * Create new list.
-     *
-     * It will fail to create a new list if the given name already exists.
-     *
-     * @param \Cake\ORM\Table $table Table instance
-     * @param string $name List's name
-     * @return bool         True on sucess.
-     */
-    protected function _createList(Table $table, $name = '')
-    {
-        if ($table->exists(['name' => $name])) {
-            return false;
-        }
-
-        $entity = $table->newEntity(['name' => $name]);
-
-        return $table->save($entity);
     }
 }

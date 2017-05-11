@@ -280,16 +280,15 @@ class CsvMigration extends AbstractMigration
     protected function _createColumn(DbField $dbField)
     {
         $this->_table->addColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
-        // set field as unique
-        if ($dbField->getUnique()) {
-            $this->_table->addIndex([$dbField->getName()], ['unique' => true]);
-        }
+
         // set id as primary key
         if ('id' === $dbField->getName()) {
             $this->_table->addPrimaryKey([
                 $dbField->getName(),
             ]);
         }
+
+        $this->_addIndexes($dbField, false);
     }
 
     /**
@@ -312,6 +311,92 @@ class CsvMigration extends AbstractMigration
                 $this->_table->removeIndexByName($dbField->getName());
             }
         }
+
+        $this->_addIndexes($dbField);
+    }
+
+    /**
+     * Adds indexes to specified dbField.
+     *
+     * @param \CsvMigrations\FieldHandlers\DbField $dbField DbField object
+     * @param bool $exists Table exists flag
+     * @return void
+     */
+    protected function _addIndexes(DbField $dbField, $exists = true)
+    {
+        if ('id' === $dbField->getName()) {
+            return;
+        }
+
+        $this->_removeIndexes($dbField, $exists);
+
+        $added = false;
+        if ($dbField->getUnique()) {
+            $added = $this->_addIndex($dbField, 'unique', $exists);
+        }
+
+        if (!$added && 'uuid' === $dbField->getType()) {
+            $this->_addIndex($dbField, 'lookup', $exists);
+        }
+    }
+
+    /**
+     * Remove column indexes.
+     *
+     * @param \CsvMigrations\FieldHandlers\DbField $dbField DbField object
+     * @param bool $exists Table exists flag
+     * @return void
+     */
+    protected function _removeIndexes(DbField $dbField, $exists = true)
+    {
+        if (!(bool)$exists) {
+            return;
+        }
+
+        // remove legacy index
+        $this->_table->removeIndexByName($dbField->getName());
+
+        // remove unique index
+        if (!$dbField->getUnique() && $this->_table->hasIndex($dbField->getName())) {
+            $indexName = 'unique_' . $dbField->getName();
+            $this->_table->removeIndexByName($indexName);
+        }
+
+        // remove lookup index
+        if ('uuid' !== $dbField->getType() && $this->_table->hasIndex($dbField->getName())) {
+            $indexName = 'lookup_' . $dbField->getName();
+            $this->_table->removeIndexByName($indexName);
+        }
+    }
+
+    /**
+     * Add column index by type.
+     *
+     * @param \CsvMigrations\FieldHandlers\DbField $dbField DbField object
+     * @param string $type Index type
+     * @param bool $exists Table exists flag
+     * @return bool
+     */
+    protected function _addIndex(DbField $dbField, $type, $exists = true)
+    {
+        if (empty($type) || !is_string($type)) {
+            return false;
+        }
+
+        // skip if table exists and has specified index
+        if ($exists && $this->_table->hasIndex($dbField->getName())) {
+            return false;
+        }
+
+        $options = [];
+        $options['name'] = $type . '_' . $dbField->getName();
+        if ('unique' === $type) {
+            $options['unique'] = true;
+        }
+
+        $this->_table->addIndex($dbField->getName(), $options);
+
+        return true;
     }
 
     /**

@@ -63,7 +63,7 @@ class FileUploadsUtils
     /**
      * Contructor method
      *
-     * @param UploadTable $table Upload Table Instance
+     * @param \Cake\ORM\Table $table Upload Table Instance
      */
     public function __construct(UploadTable $table)
     {
@@ -124,14 +124,14 @@ class FileUploadsUtils
      * Actual save() clone, but with optional entity, as we
      * don't have it saved yet, and saving files first.
      *
-     * @param Cake\ORM\Entity $entity of the parent record
+     * @param Cake\ORM\Table $table Table instance
      * @param string $field name of the association
      * @param array $files passed via file upload input field
      * @param array $options specifying if its AJAX call or not
      *
      * @return mixed $result boolean or file_storage ID.
      */
-    public function ajaxSave($entity, $field, array $files = [], $options = [])
+    public function ajaxSave(UploadTable $table, $field, array $files = [], $options = [])
     {
         $result = false;
 
@@ -145,7 +145,7 @@ class FileUploadsUtils
                 continue;
             }
 
-            $result = $this->_storeFileStorage($entity, $field, ['file' => $file], $options);
+            $result = $this->_storeFileStorage($table, $field, ['file' => $file], $options);
             if ($result) {
                 $result = [
                     'id' => $result->get('id'),
@@ -188,16 +188,16 @@ class FileUploadsUtils
     /**
      * Store to FileStorage table.
      *
-     * @param  object $docEntity Document entity
+     * @param  \Cake\ORM\Table $table Table instance
      * @param  string $field of the association
      * @param  array $fileData File data
      * @param  array $options for extra setup
      * @return object|bool Fresh created entity or false on unsuccesful attempts.
      */
-    protected function _storeFileStorage($docEntity, $field, $fileData, $options = [])
+    protected function _storeFileStorage($table, $field, $fileData, $options = [])
     {
         $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field);
-        $fileStorEnt = $this->_table->{$assocName}->newEntity($fileData);
+        $entity = $this->_table->{$assocName}->newEntity($fileData);
 
         $className = App::shortName(get_class($table), 'Model/Table', 'Table');
         $fieldsDefinitions = [];
@@ -211,10 +211,11 @@ class FileUploadsUtils
         $fieldOption = [];
         if (!empty($fieldsDefinitions)) {
             foreach ($fieldsDefinitions as $tableField => $definition) {
-                if ($tableField == $field) {
-                    $fieldOption = $definition;
-                    break;
+                if ($tableField !== $field) {
+                    continue;
                 }
+                $fieldOption = $definition;
+                break;
             }
         }
 
@@ -227,20 +228,20 @@ class FileUploadsUtils
             ];
         } else {
             $patchData = [
-                $this->_fileStorageForeignKey => $docEntity->get('id'),
+                $this->_fileStorageForeignKey => $table->get('id'),
                 'model' => $this->_table->table(),
                 'model_field' => $field,
             ];
         }
 
-        $fileStorEnt = $this->_table->{$assocName}->patchEntity($fileStorEnt, $patchData);
+        $entity = $this->_table->{$assocName}->patchEntity($entity, $patchData);
 
-        if ($this->_table->{$assocName}->save($fileStorEnt)) {
-            if (!empty($fieldOption) && $fieldOption['type'] == 'images') {
-                $this->createThumbnails($fileStorEnt);
+        if ($this->_table->{$assocName}->save($entity)) {
+            if (!empty($fieldOption) && $fieldOption['type'] === 'images') {
+                $this->createThumbnails($entity);
             }
 
-            return $fileStorEnt;
+            return $entity;
         }
 
         return false;

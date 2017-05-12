@@ -184,14 +184,35 @@ abstract class BaseViewListener implements EventListenerInterface
     }
 
     /**
-     * Method for including files.
+     * Move associated files under the corresponding entity property
+     * and unset association property.
+     *
+     * Entity argument:
+     *
+     * ```
+     * \Cake\ORM\Entity $object {
+     *     'file' => null,
+     *     'file_file_storage_file_storage' => [
+     *         0 => \Burzum\FileStorage\Model\Entity\FileStorage $object,
+     *         1 => \Burzum\FileStorage\Model\Entity\FileStorage $object
+     *     ]
+     * }
+     * ```
+     *
+     * Becomes:
+     *
+     * ```
+     * \Cake\ORM\Entity $object {
+     *     'file' => [
+     *         0 => \Burzum\FileStorage\Model\Entity\FileStorage $object,
+     *         1 => \Burzum\FileStorage\Model\Entity\FileStorage $object
+     *     ]
+     * }
+     * ```
      *
      * @param \Cake\ORM\Entity $entity Entity
      * @param \Cake\ORM\Table $table Table instance
      * @return void
-     * @todo this method is very hardcoded and has been added because of an issue with the soft delete
-     *       plugin (https://github.com/UseMuffin/Trash), which affects contain() functionality with
-     *       belongsTo associations. Once the issue is resolved this method can be removed.
      */
     protected function _restructureFiles(Entity $entity, Table $table)
     {

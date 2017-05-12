@@ -47,6 +47,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     const RENDER_PLAIN_VALUE = 'plain';
 
     /**
+     * Renderer to use
+     */
+    const RENDERER = 'plain';
+
+    /**
      * Table object
      *
      * @var \Cake\ORM\Table
@@ -454,12 +459,29 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $result = (string)$this->_getFieldValueFromData($data);
+
+        // Currently needed for blobs from the database, but might be handy later
+        // for network data and such.
+        // TODO: Add support for encoding (base64, et) via $options
+        if (is_resource($result)) {
+            $result = stream_get_contents($result);
+        }
         $result = $this->sanitizeValue($result, $options);
 
+        $renderer = static::RENDERER;
         if (!empty($options['renderAs']) && static::RENDER_PLAIN_VALUE === $options['renderAs']) {
-            return $result;
+            $renderer = $options['renderAs'];
         }
 
+        $rendererClass = __NAMESPACE__ . '\\Renderer\\' . ucfirst($renderer) . 'Renderer';
+        if (!class_exists($rendererClass)) {
+            throw new InvalidArgumentException("Renderer [$renderer] is not supporter");
+        }
+
+        $renderer = new $rendererClass($this->cakeView);
+        $result = $renderer->renderValue($result);
+
+        // TODO : This is temporary, until we migrate all to renderers
         $result = $this->formatValue($result, $options);
 
         if ($options['showTranslateButton']) {

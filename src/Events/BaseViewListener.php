@@ -14,6 +14,7 @@ use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\FileUploadsUtils;
 use CsvMigrations\PrettifyTrait;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
@@ -200,6 +201,42 @@ abstract class BaseViewListener implements EventListenerInterface
 
             $entity->set($fieldName, $entity->get($associatedFieldName));
             $entity->unsetProperty($associatedFieldName);
+            $this->_attachThumbnails($entity->{$fieldName}, $table);
+        }
+    }
+
+    /**
+     * Attach image file thumbnails into the entity.
+     *
+     * @param array $images Entity images
+     * @param \Cake\ORM\Table $table Table instance
+     * @return void
+     */
+    protected function _attachThumbnails(array $images, Table $table)
+    {
+        if (empty($images)) {
+            return;
+        }
+
+        $hashes = Configure::read('FileStorage.imageHashes.file_storage');
+        $fileUploadsUtils = new FileUploadsUtils($table);
+        $extensions = $fileUploadsUtils->getImgExtensions();
+
+        // append thumbnails
+        foreach ($images as &$image) {
+            // skip  non-image files
+            if (!in_array($image->extension, $extensions)) {
+                continue;
+            }
+
+            $image->set('thumbnails', []);
+            $path = dirname($image->path) . '/' . basename($image->path, $image->extension);
+            foreach ($hashes as $name => $hash) {
+                $thumbnailPath = $path . $hash . '.' . $image->extension;
+                // if thumbnail does not exist, provide the path to the original image
+                $thumbnailPath = !file_exists(WWW_ROOT . $thumbnailPath) ? $image->path : $thumbnailPath;
+                $image->thumbnails[$name] = $thumbnailPath;
+            }
         }
     }
 

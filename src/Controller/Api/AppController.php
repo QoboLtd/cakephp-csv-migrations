@@ -290,16 +290,25 @@ class AppController extends Controller
      */
     public function upload()
     {
+        $this->request->allowMethod(['post']);
+
         $this->autoRender = false;
 
         $saved = null;
         $response = [];
 
         foreach ($this->request->data() as $model => $files) {
-            if (is_array($files)) {
-                foreach ($files as $modelField => $fileInfo) {
-                    $saved = $this->_fileUploadsUtils->ajaxSave($this->{$this->name}, $modelField, $fileInfo, ['ajax' => true]);
-                }
+            if (!is_array($files)) {
+                continue;
+            }
+
+            foreach ($files as $modelField => $fileInfo) {
+                $saved = $this->_fileUploadsUtils->ajaxSave(
+                    $this->{$this->name},
+                    $modelField,
+                    $fileInfo,
+                    ['ajax' => true]
+                );
             }
         }
 

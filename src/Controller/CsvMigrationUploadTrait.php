@@ -4,6 +4,9 @@ namespace CsvMigrations\Controller;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 
+/**
+ * @deprecated v10.0.0 No longer used by internal code and not recommended.
+ */
 trait CsvMigrationUploadTrait
 {
 

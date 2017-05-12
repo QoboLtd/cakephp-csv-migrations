@@ -164,6 +164,7 @@ class FileUploadsUtils
      * @param  array            $files  Uploaded files
      * @param  array            $options for ajax call if any
      * @return bool
+     * @deprecated v10.0.0 No longer used by internal code and not recommended.
      */
     public function save(Entity $entity, array $files = [], $options = [])
     {
@@ -193,6 +194,7 @@ class FileUploadsUtils
      * @param  array $fileData File data
      * @param  array $options for extra setup
      * @return object|bool Fresh created entity or false on unsuccesful attempts.
+     * @todo $table can be typecasted to UploadTable, once deprecated method FileUploadsUtils::save() is removed.
      */
     protected function _storeFileStorage($table, $field, $fileData, $options = [])
     {
@@ -227,6 +229,7 @@ class FileUploadsUtils
                 'model_field' => $field,
             ];
         } else {
+            // @todo else statement can be removed, once deprecated method FileUploadsUtils::save() is removed.
             $patchData = [
                 $this->_fileStorageForeignKey => $table->get('id'),
                 'model' => $this->_table->table(),

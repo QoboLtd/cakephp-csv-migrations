@@ -17,7 +17,7 @@ class ImagesFieldHandler extends BaseFileFieldHandler
     protected function setDefaultOptions()
     {
         parent::setDefaultOptions();
-        $this->defaultOptions['imageSize'] = getenv('DEFAULT_IMAGE_SIZE');
+        $this->defaultOptions['imageSize'] = Configure::read('FileStorage.defaultImageSize');
     }
 
     /**

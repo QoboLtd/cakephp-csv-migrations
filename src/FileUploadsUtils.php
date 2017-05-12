@@ -2,13 +2,17 @@
 namespace CsvMigrations;
 
 use Burzum\FileStorage\Storage\StorageManager;
+use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\Log\Log;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\ORM\Table as UploadTable;
 use CsvMigrations\CsvMigrationsUtils;
+use InvalidArgumentException;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class FileUploadsUtils
 {
@@ -192,15 +196,19 @@ class FileUploadsUtils
      */
     protected function _storeFileStorage($docEntity, $field, $fileData, $options = [])
     {
-        $fieldsDefinitions = [];
-        $fieldOption = [];
         $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field);
         $fileStorEnt = $this->_table->{$assocName}->newEntity($fileData);
 
-        if (method_exists($this->_table, 'getFieldsDefinitions') && is_callable([$this->_table, 'getFieldsDefinitions'])) {
-            $fieldsDefinitions = $this->_table->getFieldsDefinitions();
+        $className = App::shortName(get_class($table), 'Model/Table', 'Table');
+        $fieldsDefinitions = [];
+        try {
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $className);
+            $fieldsDefinitions = json_decode(json_encode($mc->parse()), true);
+        } catch (InvalidArgumentException $e) {
+            Log::error($e);
         }
 
+        $fieldOption = [];
         if (!empty($fieldsDefinitions)) {
             foreach ($fieldsDefinitions as $tableField => $definition) {
                 if ($tableField == $field) {

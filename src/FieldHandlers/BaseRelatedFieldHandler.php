@@ -151,8 +151,6 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
             $result .= implode(' ' . $this->_separator . ' ', $inputs);
         }
 
-        $result = $this->sanitizeValue($result, $options);
-
         return $result;
     }
 

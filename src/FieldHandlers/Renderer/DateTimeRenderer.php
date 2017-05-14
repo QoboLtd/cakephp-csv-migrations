@@ -33,7 +33,7 @@ class DateTimeRenderer extends BaseRenderer
             }
         }
 
-        $result = (string)$value;
+        $result = parent::renderValue($value, $options);
 
         return $result;
     }

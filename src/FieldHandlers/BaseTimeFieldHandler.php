@@ -14,6 +14,11 @@ use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
 abstract class BaseTimeFieldHandler extends BaseStringFieldHandler
 {
     /**
+     * Renderer to use
+     */
+    const RENDERER = 'dateTime';
+
+    /**
      * Search operators
      *
      * @var array
@@ -36,32 +41,6 @@ abstract class BaseTimeFieldHandler extends BaseStringFieldHandler
                 'operator' => '<',
             ],
     ];
-
-    /**
-     * Render field value
-     *
-     * This method prepares the output of the value for the given
-     * field.  The result can be controlled via the variety of
-     * options.
-     *
-     * @param  string $data    Field data
-     * @param  array  $options Field options
-     * @return string          Field value
-     */
-    public function renderValue($data, array $options = [])
-    {
-        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $data = $this->_getFieldValueFromData($data);
-        if (is_object($data)) {
-            $result = $data->i18nFormat(static::FORMAT);
-        } else {
-            $result = (string)$data;
-        }
-        $result = $this->sanitizeValue($result, $options);
-        $result = $this->formatValue($result, $options);
-
-        return $result;
-    }
 
     /**
      * Render field input

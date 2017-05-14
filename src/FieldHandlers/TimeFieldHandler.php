@@ -14,6 +14,11 @@ class TimeFieldHandler extends BaseTimeFieldHandler
     const INPUT_FIELD_TYPE = 'timepicker';
 
     /**
+     * Renderer to use
+     */
+    const RENDERER = 'time';
+
+    /**
      * Date/time format
      */
     const FORMAT = 'HH:mm';

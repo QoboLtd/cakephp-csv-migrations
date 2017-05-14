@@ -14,6 +14,11 @@ class DateFieldHandler extends BaseTimeFieldHandler
     const INPUT_FIELD_TYPE = 'datepicker';
 
     /**
+     * Renderer to use
+     */
+    const RENDERER = 'date';
+
+    /**
      * Date/time format
      */
     const FORMAT = 'yyyy-MM-dd';

@@ -29,7 +29,11 @@ class EmailRenderer extends BaseRenderer
         // Sanitize
         $result = filter_var($result, FILTER_SANITIZE_EMAIL);
         if ($result === false) {
+            // If you find a case where FILTER_SANITIZE_EMAIL fails, add
+            // a unit test to EmailRendererTest and remove annotations here.
+            // @codeCoverageIgnoreStart
             throw new InvalidArgumentException("Failed to sanitize email");
+            // @codeCoverageIgnoreEnd
         }
 
         // Only link to valid emails, to avoid unpredictable behavior

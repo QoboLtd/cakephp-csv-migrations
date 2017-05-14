@@ -29,7 +29,11 @@ class UrlRenderer extends BaseRenderer
         // Sanitize
         $result = filter_var($result, FILTER_SANITIZE_URL);
         if ($result === false) {
+            // If you find a case where FILTER_SANITIZE_URL fails, add
+            // a unit test to UrlRendererTest and remove annotations here.
+            // @codeCoverageIgnoreStart
             throw new InvalidArgumentException("Failed to sanitize URL");
+            // @codeCoverageIgnoreEnd
         }
 
         // Only link to URLs with schema, to avoid unpredictable behavior

@@ -44,7 +44,12 @@ abstract class BaseRenderer implements RendererInterface
         // Sanitize
         $result = filter_var($result, FILTER_SANITIZE_STRING);
         if ($result === false) {
+            // If you find a case where FILTER_SANITIZE_STRING fails, add
+            // a unit test to StringRendererTest/PlainRendererTest and
+            // remove annotations here.
+            // @codeCoverageIgnoreStart
             throw new InvalidArgumentException("Failed to sanitize string");
+            // @codeCoverageIgnoreEnd
         }
 
         return $result;

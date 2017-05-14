@@ -468,7 +468,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         }
 
         $rendererClass = new $rendererClass($this->cakeView);
-        $result = (string)$rendererClass->renderValue($result);
+        $result = (string)$rendererClass->renderValue($result, $options);
 
         if ($renderer === static::RENDER_PLAIN_VALUE) {
             return $result;

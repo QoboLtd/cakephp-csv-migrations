@@ -32,7 +32,6 @@ class EmailRenderer extends BaseRenderer
             throw new RuntimeException("Failed to sanitize email");
         }
 
-
         // Only link to valid emails, to avoid unpredictable behavior
         if (filter_var($result, FILTER_VALIDATE_EMAIL) === false) {
             return $result;

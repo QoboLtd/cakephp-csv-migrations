@@ -37,16 +37,6 @@ class BooleanFieldHandler extends BaseSimpleFieldHandler
     ];
 
     /**
-     * Sanitize options
-     *
-     * Name of filter_var() filter to run and all desired
-     * options/flags.
-     *
-     * @var array
-     */
-    public $sanitizeOptions = [FILTER_SANITIZE_NUMBER_INT];
-
-    /**
      * Render field input
      *
      * This method prepares the form input for the given field,

@@ -17,14 +17,9 @@ class DecimalFieldHandler extends BaseNumberFieldHandler
     const INPUT_FIELD_STEP = 'any';
 
     /**
-     * Precision
-     *
-     * Temporary setting for decimal precision, until
-     * we learn to read it from the fields.ini.
-     *
-     * @todo Replace with configuration from fields.ini
+     * Renderer to use
      */
-    const PRECISION = 2;
+    const RENDERER = 'decimal';
 
     /**
      * Max value

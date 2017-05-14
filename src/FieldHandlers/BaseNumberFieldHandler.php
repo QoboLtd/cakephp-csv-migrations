@@ -14,14 +14,9 @@ abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
     const INPUT_FIELD_STEP = 1;
 
     /**
-     * Precision
-     *
-     * Temporary setting for decimal precision, until
-     * we learn to read it from the fields.ini.
-     *
-     * @todo Replace with configuration from fields.ini
+     * Renderer to use
      */
-    const PRECISION = 0;
+    const RENDERER = 'number';
 
     /**
      * Max value
@@ -56,33 +51,6 @@ abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
             'operator' => '<',
         ],
     ];
-
-    /**
-     * Format field value
-     *
-     * This method provides a customization point for formatting
-     * of the field value before rendering.
-     *
-     * NOTE: The value WILL NOT be sanitized during the formatting.
-     *       It is assumed that sanitization happens either before
-     *       or after this method is called.
-     *
-     * @param mixed $data    Field value data
-     * @param array $options Field formatting options
-     * @return string
-     */
-    protected function formatValue($data, array $options = [])
-    {
-        $result = (float)$data;
-
-        if (!empty($result) && is_numeric($result)) {
-            $result = number_format($result, static::PRECISION);
-        } else {
-            $result = (string)$result;
-        }
-
-        return $result;
-    }
 
     /**
      * Render field input

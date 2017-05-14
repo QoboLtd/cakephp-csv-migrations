@@ -18,7 +18,7 @@ class NumberRenderer extends BaseRenderer
      *
      * @todo Replace with configuration from fields.ini
      */
-    const PRECISION = 0;
+    const PRECISION = 2;
 
     /**
      * Render value

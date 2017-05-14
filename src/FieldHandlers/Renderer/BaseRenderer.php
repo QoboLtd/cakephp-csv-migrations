@@ -2,7 +2,7 @@
 namespace CsvMigrations\FieldHandlers\Renderer;
 
 use CsvMigrations\View\AppView;
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * BaseRenderer
@@ -28,7 +28,7 @@ abstract class BaseRenderer implements RendererInterface
     /**
      * Render value
      *
-     * @throws \RuntimeException when sanitize fails
+     * @throws \InvalidArgumentException when sanitize fails
      * @param mixed $value Value to render
      * @param array $options Rendering options
      * @return string Text, HTML or other string result
@@ -44,7 +44,7 @@ abstract class BaseRenderer implements RendererInterface
         // Sanitize
         $result = filter_var($result, FILTER_SANITIZE_STRING);
         if ($result === false) {
-            throw new RuntimeException("Failed to sanitize string");
+            throw new InvalidArgumentException("Failed to sanitize string");
         }
 
         return $result;

@@ -1,7 +1,7 @@
 <?php
 namespace CsvMigrations\FieldHandlers\Renderer;
 
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * NumberRenderer
@@ -23,7 +23,7 @@ class NumberRenderer extends BaseRenderer
     /**
      * Render value
      *
-     * @throws \RuntimeException when sanitize fails
+     * @throws \InvalidArgumentException when sanitize fails
      * @param mixed $value Value to render
      * @param array $options Rendering options
      * @return string Text, HTML or other string result
@@ -33,7 +33,7 @@ class NumberRenderer extends BaseRenderer
         // Sanitize
         $result = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         if ($result === false) {
-            throw new RuntimeException("Failed to sanitize number");
+            throw new InvalidArgumentException("Failed to sanitize number");
         }
 
         $result = (float)$result;

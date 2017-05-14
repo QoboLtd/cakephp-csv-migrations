@@ -448,7 +448,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public function renderValue($data, array $options = [])
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $result = (string)$this->_getFieldValueFromData($data);
+        $result = $this->_getFieldValueFromData($data);
 
         // Currently needed for blobs from the database, but might be handy later
         // for network data and such.
@@ -468,7 +468,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         }
 
         $rendererClass = new $rendererClass($this->cakeView);
-        $result = $rendererClass->renderValue($result);
+        $result = (string)$rendererClass->renderValue($result);
 
         if ($renderer === static::RENDER_PLAIN_VALUE) {
             return $result;

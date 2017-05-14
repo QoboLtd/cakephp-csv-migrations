@@ -49,7 +49,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * Renderer to use
      */
-    const RENDERER = 'plain';
+    const RENDERER = 'default';
 
     /**
      * Table object
@@ -469,7 +469,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         $result = $this->sanitizeValue($result, $options);
 
         $renderer = static::RENDERER;
-        if (!empty($options['renderAs']) && static::RENDER_PLAIN_VALUE === $options['renderAs']) {
+        if (!empty($options['renderAs'])) {
             $renderer = $options['renderAs'];
         }
 
@@ -478,8 +478,12 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             throw new InvalidArgumentException("Renderer [$renderer] is not supporter");
         }
 
-        $renderer = new $rendererClass($this->cakeView);
-        $result = $renderer->renderValue($result);
+        $rendererClass = new $rendererClass($this->cakeView);
+        $result = $rendererClass->renderValue($result);
+
+        if ($renderer === static::RENDER_PLAIN_VALUE) {
+            return $result;
+        }
 
         // TODO : This is temporary, until we migrate all to renderers
         $result = $this->formatValue($result, $options);

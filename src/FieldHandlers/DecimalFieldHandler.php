@@ -32,16 +32,6 @@ class DecimalFieldHandler extends BaseNumberFieldHandler
     const MAX_VALUE = '99999999.99';
 
     /**
-     * Sanitize options
-     *
-     * Name of filter_var() filter to run and all desired
-     * options/flags.
-     *
-     * @var array
-     */
-    public $sanitizeOptions = [FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION];
-
-    /**
      * Convert CsvField to one or more DbField instances
      *
      * Simple fields from migrations CSV map one-to-one to

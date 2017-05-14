@@ -48,7 +48,6 @@ class ViewViewListener extends BaseViewListener
 
         if (static::FORMAT_PRETTY === $request->query('format')) {
             $this->_prettify($entity, $table, []);
-            // $this->_prettifyEntity($entity, $table, $request);
         } else { // @todo temporary functionality, please see _includeFiles() method documentation.
             $this->_restructureFiles($entity, $table);
         }

@@ -17,7 +17,7 @@ class TextRenderer extends BaseRenderer
      */
     public function renderValue($value, array $options = [])
     {
-        $result = (string)$value;
+        $result = parent::renderValue($value, $options);
 
         if (empty($result)) {
             return $result;

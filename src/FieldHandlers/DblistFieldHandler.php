@@ -13,6 +13,34 @@ class DblistFieldHandler extends BaseListFieldHandler
     const INPUT_FIELD_TYPE = 'select';
 
     /**
+     * Renderer to use
+     */
+    const RENDERER = 'dblist';
+
+    /**
+     * Render field value
+     *
+     * This method prepares the output of the value for the given
+     * field.  The result can be controlled via the variety of
+     * options.
+     *
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field value
+     */
+    public function renderValue($data, array $options = [])
+    {
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $result = $this->_getFieldValueFromData($data);
+
+        if (empty($options['listName'])) {
+            $options['listName'] = $options['fieldDefinitions']->getListName();
+        }
+
+        return parent::renderValue($data, $options);
+    }
+
+    /**
      * Render field input
      *
      * This method prepares the form input for the given field,
@@ -45,33 +73,6 @@ class DblistFieldHandler extends BaseListFieldHandler
         ];
 
         return $this->_renderElement(__FUNCTION__, $params, $options);
-    }
-
-    /**
-     * Format field value
-     *
-     * This method provides a customization point for formatting
-     * of the field value before rendering.
-     *
-     * NOTE: The value WILL NOT be sanitized during the formatting.
-     *       It is assumed that sanitization happens either before
-     *       or after this method is called.
-     *
-     * @param mixed $data    Field value data
-     * @param array $options Field formatting options
-     * @return string
-     */
-    public function formatValue($data, array $options = [])
-    {
-        //CsvField object is mandatory
-        if (!isset($options['fieldDefinitions']) ||
-            !($options['fieldDefinitions'] instanceof CsvField)) {
-            return $data;
-        }
-
-        $list = $options['fieldDefinitions']->getListName();
-
-        return $this->cakeView->cell('CsvMigrations.Dblist::renderValue', [$data, $list])->render('renderValue');
     }
 
     /**

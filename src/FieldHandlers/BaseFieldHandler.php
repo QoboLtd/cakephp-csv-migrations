@@ -49,7 +49,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * Renderer to use
      */
-    const RENDERER = 'default';
+    const RENDERER = 'string';
 
     /**
      * Table object

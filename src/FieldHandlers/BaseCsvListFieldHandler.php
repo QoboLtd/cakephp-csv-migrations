@@ -4,6 +4,7 @@ namespace CsvMigrations\FieldHandlers;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\BaseListFieldHandler;
+use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 /**
@@ -16,51 +17,41 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
 abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
 {
     /**
-     * HTML to add to invalid list items
+     * Renderer to use
      */
-    const VALUE_NOT_FOUND_HTML = '%s <span class="text-danger glyphicon glyphicon-exclamation-sign" title="Invalid list item" aria-hidden="true"></span>';
+    const RENDERER = 'list';
 
     /**
-     * Format field value
+     * Render field value
      *
-     * This method provides a customization point for formatting
-     * of the field value before rendering.
+     * This method prepares the output of the value for the given
+     * field.  The result can be controlled via the variety of
+     * options.
      *
-     * NOTE: The value WILL NOT be sanitized during the formatting.
-     *       It is assumed that sanitization happens either before
-     *       or after this method is called.
-     *
-     * @param mixed $data    Field value data
-     * @param array $options Field formatting options
-     * @return string
+     * @param  string $data    Field data
+     * @param  array  $options Field options
+     * @return string          Field value
      */
-    protected function formatValue($data, array $options = [])
+    public function renderValue($data, array $options = [])
     {
-        $result = '';
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+        $result = $this->_getFieldValueFromData($data);
 
-        if (empty($data)) {
+        if (empty($result)) {
             return $result;
         }
 
-        $fieldOptions = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
-
-        if (isset($fieldOptions[$data])) {
-            // Concatenate all parents together with value
-            $parents = explode('.', $data);
-            if (!empty($parents)) {
-                $path = '';
-                foreach ($parents as $parent) {
-                    $path = empty($path) ? $parent : $path . '.' . $parent;
-                    if (isset($fieldOptions[$path])) {
-                        $result .= $fieldOptions[$path];
-                    }
-                }
-            }
-        } else {
-            $result = sprintf(static::VALUE_NOT_FOUND_HTML, $data);
+        if (!empty($options['listItems'])) {
+            return parent::renderValue($result, $options);
         }
 
-        return $result;
+        if (empty($options['fieldDefinitions'])) {
+            throw new InvalidArgumentException("No listItems or fieldDefinitions options provided");
+        }
+
+        $options['listItems'] = $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
+
+        return parent::renderValue($result, $options);
     }
 
     /**

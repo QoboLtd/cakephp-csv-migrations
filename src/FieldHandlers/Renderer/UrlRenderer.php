@@ -1,6 +1,8 @@
 <?php
 namespace CsvMigrations\FieldHandlers\Renderer;
 
+use RuntimeException;
+
 /**
  * UrlRenderer
  *
@@ -11,6 +13,7 @@ class UrlRenderer extends BaseRenderer
     /**
      * Render value
      *
+     * @throws \RuntimeException when sanitize fails
      * @param mixed $value Value to render
      * @param array $options Rendering options
      * @return string Text, HTML or other string result
@@ -21,6 +24,12 @@ class UrlRenderer extends BaseRenderer
 
         if (empty($result)) {
             return $result;
+        }
+
+        // Sanitize
+        $result = filter_var($result, FILTER_SANITIZE_URL);
+        if ($result === false) {
+            throw new RuntimeException("Failed to sanitize URL");
         }
 
         // Only link to URLs with schema, to avoid unpredictable behavior

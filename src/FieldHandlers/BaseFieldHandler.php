@@ -110,16 +110,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     ];
 
     /**
-     * Sanitize options
-     *
-     * Name of filter_var() filter to run and all desired
-     * options/flags.
-     *
-     * @var array
-     */
-    public $sanitizeOptions = [FILTER_UNSAFE_RAW];
-
-    /**
      * Custom form input templates.
      *
      * @var input
@@ -466,7 +456,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         if (is_resource($result)) {
             $result = stream_get_contents($result);
         }
-        $result = $this->sanitizeValue($result, $options);
 
         $renderer = static::RENDERER;
         if (!empty($options['renderAs'])) {
@@ -512,37 +501,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     protected function formatValue($data, array $options = [])
     {
         return (string)$data;
-    }
-
-    /**
-     * Sanitize field value
-     *
-     * This method filters the value and removes anything
-     * potentially dangerous.  Ideally, it should always be
-     * called before rendering the value to the user, in
-     * order to avoid cross-site scripting (XSS) attacks.
-     *
-     * @throws \RuntimeException when cannot sanitize data
-     * @param  mixed  $data    Field data
-     * @param  array  $options Field options
-     * @return string          Field value
-     */
-    public function sanitizeValue($data, array $options = [])
-    {
-        $result = trim((string)$data);
-
-        if (empty($this->sanitizeOptions)) {
-            return $result;
-        }
-
-        $filterParams = $this->sanitizeOptions;
-        array_unshift($filterParams, $data);
-        $result = call_user_func_array('filter_var', $filterParams);
-        if ($result === false) {
-            throw new RuntimeException("Failed to sanitize field value");
-        }
-
-        return $result;
     }
 
     /**

@@ -1,6 +1,8 @@
 <?php
 namespace CsvMigrations\FieldHandlers\Renderer;
 
+use RuntimeException;
+
 /**
  * EmailRenderer
  *
@@ -11,6 +13,7 @@ class EmailRenderer extends BaseRenderer
     /**
      * Render value
      *
+     * @throws \RuntimeException when sanitize fails
      * @param mixed $value Value to render
      * @param array $options Rendering options
      * @return string Text, HTML or other string result
@@ -22,6 +25,13 @@ class EmailRenderer extends BaseRenderer
         if (empty($result)) {
             return $result;
         }
+
+        // Sanitize
+        $result = filter_var($result, FILTER_SANITIZE_EMAIL);
+        if ($result === false) {
+            throw new RuntimeException("Failed to sanitize email");
+        }
+
 
         // Only link to valid emails, to avoid unpredictable behavior
         if (filter_var($result, FILTER_VALIDATE_EMAIL) === false) {

@@ -14,14 +14,4 @@ class EmailFieldHandler extends BaseStringFieldHandler
      * Renderer to use
      */
     const RENDERER = 'email';
-
-    /**
-     * Sanitize options
-     *
-     * Name of filter_var() filter to run and all desired
-     * options/flags.
-     *
-     * @var array
-     */
-    public $sanitizeOptions = [FILTER_SANITIZE_EMAIL];
 }

@@ -40,11 +40,11 @@ class ListRendererTest extends PHPUnit_Framework_TestCase
     public function testRenderValueNotFound()
     {
         $result = $this->renderer->renderValue('text', ['listItems' => ['foo' => 'Foo']]);
-        $expected = sprintf($this->renderer::VALUE_NOT_FOUND_HTML, 'text');
+        $expected = sprintf(ListRenderer::VALUE_NOT_FOUND_HTML, 'text');
         $this->assertEquals($expected, $result, "Value rendering is broken for missing text value");
 
         $result = $this->renderer->renderValue('<p>HTML</p>', ['listItems' => ['foo' => 'Foo']]);
-        $expected = sprintf($this->renderer::VALUE_NOT_FOUND_HTML, 'HTML');
+        $expected = sprintf(ListRenderer::VALUE_NOT_FOUND_HTML, 'HTML');
         $this->assertEquals($expected, $result, "Value rendering is broken for missing HTML value");
     }
 

@@ -474,33 +474,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             return $result;
         }
 
-        // TODO : This is temporary, until we migrate all to renderers
-        $result = $this->formatValue($result, $options);
-
         if ($options['showTranslateButton']) {
             $result = $this->_getTranslateButton($data, $options) . $result;
         }
 
         return $result;
-    }
-
-    /**
-     * Format field value
-     *
-     * This method provides a customization point for formatting
-     * of the field value before rendering.
-     *
-     * NOTE: The value WILL NOT be sanitized during the formatting.
-     *       It is assumed that sanitization happens either before
-     *       or after this method is called.
-     *
-     * @param mixed $data    Field value data
-     * @param array $options Field formatting options
-     * @return string
-     */
-    protected function formatValue($data, array $options = [])
-    {
-        return (string)$data;
     }
 
     /**

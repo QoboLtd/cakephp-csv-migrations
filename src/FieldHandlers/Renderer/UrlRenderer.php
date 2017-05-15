@@ -11,7 +11,17 @@ use InvalidArgumentException;
 class UrlRenderer extends BaseRenderer
 {
     /**
+     * Default link target
+     */
+    const TARGET = '_blank';
+
+    /**
      * Render value
+     *
+     * Supported options:
+     *
+     * * linkTarget - string for link target (_self, _blank, etc).
+     *                Default: '_blank'.
      *
      * @throws \InvalidArgumentException when sanitize fails
      * @param mixed $value Value to render
@@ -24,6 +34,10 @@ class UrlRenderer extends BaseRenderer
 
         if (empty($result)) {
             return $result;
+        }
+
+        if (!isset($options['linkTarget'])) {
+            $options['linkTarget'] = static::TARGET;
         }
 
         // Sanitize
@@ -41,7 +55,7 @@ class UrlRenderer extends BaseRenderer
             return $result;
         }
 
-        $result = $this->view->Html->link($result, $result, ['target' => '_blank']);
+        $result = $this->view->Html->link($result, $result, ['target' => $options['linkTarget']]);
 
         return $result;
     }

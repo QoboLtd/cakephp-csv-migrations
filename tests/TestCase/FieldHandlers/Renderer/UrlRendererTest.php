@@ -45,4 +45,15 @@ class UrlRendererTest extends PHPUnit_Framework_TestCase
         $result = $this->renderer->renderValue($value);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
+
+    public function testRenderValueWithOptions()
+    {
+        // Simple
+        $options = [
+            'linkTarget' => 'foobar',
+        ];
+        $result = $this->renderer->renderValue('http://www.google.com', $options);
+        $expected = '<a href="http://www.google.com" target="foobar">http://www.google.com</a>';
+        $this->assertEquals($expected, $result, "Value rendering is broken for simple value with option");
+    }
 }

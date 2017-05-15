@@ -28,7 +28,8 @@ class TimeRendererTest extends PHPUnit_Framework_TestCase
             ['2017-07-06', '2017-07-06', 'Date string'],
             ['14:20:00', '14:20:00', 'Time string'],
             ['foobar', 'foobar', 'Non-date string'],
-            [15, 15, 'Non-date integer'],
+            [15, '15', 'Non-date integer'],
+            [null, '', 'Null'],
             [Time::parse('2017-07-06 14:20:00'), '14:20', 'Time from object'],
         ];
     }
@@ -40,6 +41,12 @@ class TimeRendererTest extends PHPUnit_Framework_TestCase
     {
         $result = $this->renderer->renderValue($value);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
+    }
+
+    public function testRenderValueFormat()
+    {
+        $result = $this->renderer->renderValue(Time::parse('2017-07-06 14:20:00'), ['format' => 'yyyy']);
+        $this->assertEquals('2017', $result, "Value rendering is broken for custom format");
     }
 
     /**

@@ -29,7 +29,7 @@ class ListRenderer extends BaseRenderer
         $value = (string)$value;
 
         // No known list items, so render value as safe string
-        if (empty($options['listItems'])) {
+        if (!isset($options['listItems'])) {
             return parent::renderValue($value, $options);
         }
 

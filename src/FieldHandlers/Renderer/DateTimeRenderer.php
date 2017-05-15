@@ -34,7 +34,7 @@ class DateTimeRenderer extends BaseRenderer
     {
         $result = '';
 
-        if (empty($options['format'])) {
+        if (!isset($options['format'])) {
             $options['format'] = static::FORMAT;
         }
 

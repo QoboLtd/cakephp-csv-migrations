@@ -63,6 +63,5 @@ class LinkRendererTest extends PHPUnit_Framework_TestCase
         $result = $this->renderer->renderValue('123&456', $options);
         $expected = '<a href="http://example.com/123%26456/" target="foobar">123&amp;456</a>';
         $this->assertEquals($expected, $result, "Value rendering is broken for encoded value with option");
-
     }
 }

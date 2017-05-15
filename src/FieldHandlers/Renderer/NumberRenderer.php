@@ -23,6 +23,11 @@ class NumberRenderer extends BaseRenderer
     /**
      * Render value
      *
+     * Supported options:
+     *
+     * * precision - integer value as to how many decimal points to render.
+     *               Default: 2.
+     *
      * @throws \InvalidArgumentException when sanitize fails
      * @param mixed $value Value to render
      * @param array $options Rendering options
@@ -38,8 +43,12 @@ class NumberRenderer extends BaseRenderer
 
         $result = (float)$result;
 
+        if (!isset($options['precision'])) {
+            $options['precision'] = static::PRECISION;
+        }
+
         if (!empty($result) && is_numeric($result)) {
-            $result = number_format($result, static::PRECISION);
+            $result = number_format($result, $options['precision']);
         } else {
             $result = (string)$result;
         }

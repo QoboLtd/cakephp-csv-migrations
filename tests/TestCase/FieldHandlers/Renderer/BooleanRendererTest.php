@@ -1,16 +1,16 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Renderer;
 
-use CsvMigrations\FieldHandlers\Renderer\BooleanYesNoRenderer;
+use CsvMigrations\FieldHandlers\Renderer\BooleanRenderer;
 use PHPUnit_Framework_TestCase;
 
-class BooleanYesNoRendererTest extends PHPUnit_Framework_TestCase
+class BooleanRendererTest extends PHPUnit_Framework_TestCase
 {
     protected $renderer;
 
     protected function setUp()
     {
-        $this->renderer = new BooleanYesNoRenderer();
+        $this->renderer = new BooleanRenderer();
     }
 
     public function testInterface()
@@ -22,12 +22,12 @@ class BooleanYesNoRendererTest extends PHPUnit_Framework_TestCase
     public function getValues()
     {
         return [
-            [null, 'No', 'Null'],
-            ['', 'No', 'Empty string'],
-            [1, 'Yes', 'Integer true'],
-            [0, 'No', 'Integer false'],
-            ['1', 'Yes', 'String true'],
-            ['0', 'No', 'String false'],
+            [null, '0', 'Null'],
+            ['', '0', 'Empty string'],
+            [1, '1', 'Integer true'],
+            [0, '0', 'Integer false'],
+            ['1', '1', 'String true'],
+            ['0', '0', 'String false'],
         ];
     }
 
@@ -52,5 +52,21 @@ class BooleanYesNoRendererTest extends PHPUnit_Framework_TestCase
 
         $result = $this->renderer->renderValue(true, ['valueLabels' => $valueLabels]);
         $this->assertEquals('Yup', $result, "Value rendering is broken for true with custom labels");
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testRenderValueLabelsException()
+    {
+        $result = $this->renderer->renderValue(false, ['valueLabels' => 'this_is_not_an_array']);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testRenderValueLabelsCountException()
+    {
+        $result = $this->renderer->renderValue(false, ['valueLabels' => ['not_enough_labels']]);
     }
 }

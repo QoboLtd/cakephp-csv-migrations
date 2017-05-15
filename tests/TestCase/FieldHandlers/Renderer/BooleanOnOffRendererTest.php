@@ -1,16 +1,16 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Renderer;
 
-use CsvMigrations\FieldHandlers\Renderer\BooleanYesNoRenderer;
+use CsvMigrations\FieldHandlers\Renderer\BooleanOnOffRenderer;
 use PHPUnit_Framework_TestCase;
 
-class BooleanYesNoRendererTest extends PHPUnit_Framework_TestCase
+class BooleanOnOffRendererTest extends PHPUnit_Framework_TestCase
 {
     protected $renderer;
 
     protected function setUp()
     {
-        $this->renderer = new BooleanYesNoRenderer();
+        $this->renderer = new BooleanOnOffRenderer();
     }
 
     public function testInterface()
@@ -22,12 +22,12 @@ class BooleanYesNoRendererTest extends PHPUnit_Framework_TestCase
     public function getValues()
     {
         return [
-            [null, 'No', 'Null'],
-            ['', 'No', 'Empty string'],
-            [1, 'Yes', 'Integer true'],
-            [0, 'No', 'Integer false'],
-            ['1', 'Yes', 'String true'],
-            ['0', 'No', 'String false'],
+            [null, 'Off', 'Null'],
+            ['', 'Off', 'Empty string'],
+            [1, 'On', 'Integer true'],
+            [0, 'Off', 'Integer false'],
+            ['1', 'On', 'String true'],
+            ['0', 'Off', 'String false'],
         ];
     }
 

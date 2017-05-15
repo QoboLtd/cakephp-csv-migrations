@@ -2,11 +2,11 @@
 namespace CsvMigrations\FieldHandlers\Renderer;
 
 /**
- * BooleanYesNoRenderer
+ * BooleanOnOffRenderer
  *
- * Render boolean value as Yes or No string.
+ * Render boolean value as On or Off string.
  */
-class BooleanYesNoRenderer extends BooleanRenderer
+class BooleanOnOffRenderer extends BooleanRenderer
 {
     /**
      * Render value
@@ -14,7 +14,7 @@ class BooleanYesNoRenderer extends BooleanRenderer
      * Supported options:
      *
      * * valueLabels - array of two strings to use for labels.
-     *                 Defaults: 'No' for false, 'Yes' for true.
+     *                 Defaults: 'Off' for false, 'On' for true.
      *
      * @param mixed $value Value to render
      * @param array $options Rendering options
@@ -23,8 +23,8 @@ class BooleanYesNoRenderer extends BooleanRenderer
     public function renderValue($value, array $options = [])
     {
         $valueLabels = [
-            0 => __('No'),
-            1 => __('Yes'),
+            0 => __('Off'),
+            1 => __('On'),
         ];
 
         if (empty($options['valueLabels'])) {

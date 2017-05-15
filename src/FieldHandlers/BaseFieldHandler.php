@@ -199,29 +199,32 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $this->defaultOptions['fieldDefinitions'] = new CsvField($stubFields[$this->field]);
         }
 
-        // set $options['label']
-        $this->defaultOptions['label'] = $this->renderName();
-
-        $renderAs = '';
         $translatableModule = false;
         $translatableField = false;
+        $fieldOptions = [];
         try {
+            // Read translatable from config.ini
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($this->table->table()));
-            $config = (array)json_decode(json_encode($mc->parse()), true);
-            $translatableModule = empty($config['table']['translatable']) ? false : (bool)$config['table']['translatable'];
+            $moduleConfig = (array)json_decode(json_encode($mc->parse()), true);
+            $translatableModule = empty($moduleConfig['table']['translatable']) ? false : (bool)$moduleConfig['table']['translatable'];
+
+            // Read field options from fields.ini
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
-            $config = (array)json_decode(json_encode($mc->parse()), true);
-            $renderAs = empty($config[$this->field]['renderAs']) ? '' : $config[$this->field]['renderAs'];
-            $translatableField = empty($config[$this->field]['translatable']) ? false : (bool)$config[$this->field]['translatable'];
-        } catch (\Exception $e) {
-            $this->log("Failed to parse module configuration: " . $e->getMessage() . ".  Errors: " . print_r($mc->getErrors(), true));
+            $fieldOptions = (array)json_decode(json_encode($mc->parse()), true);
+            $translatableField = empty($fieldOptions[$this->field]['translatable']) ? false : (bool)$fieldOptions[$this->field]['translatable'];
+        } catch (Exception $e) {
+            $this->log("Failed to parse module or fields configuration: " . $e->getMessage() . ".  Errors: " . print_r($mc->getErrors(), true));
         }
 
-        if (!empty($renderAs)) {
-            $this->defaultOptions['renderAs'] = $renderAs;
+        if (!empty($fieldOptions[$this->field])) {
+            $this->defaultOptions = array_replace_recursive($this->defaultOptions, $fieldOptions[$this->field]);
         }
 
+        // Set showTranslateButton based on both module and field configuration
         $this->defaultOptions['showTranslateButton'] = $translatableModule ? $translatableField : false;
+
+        // set $options['label']
+        $this->defaultOptions['label'] = $this->renderName();
     }
 
     /**
@@ -412,7 +415,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $config = (array)json_decode(json_encode($mc->parse()), true);
             $label = empty($config[$text]['label']) ? '' : $config[$text]['label'];
         } catch (\Exception $e) {
-            //
+            $this->log("Failed to parse fields configuration: " . $e->getMessage() . ".  Errors: " . print_r($mc->getErrors(), true));
         }
         if ($label) {
             return $label;
@@ -553,7 +556,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
                 $config = (array)json_decode(json_encode($mc->parse()), true);
                 $default = empty($config[$field]['default']) ? '' : $config[$field]['default'];
             } catch (\Exception $e) {
-                //
+                $this->log("Failed to parse fields configuration: " . $e->getMessage() . ".  Errors: " . print_r($mc->getErrors(), true));
             }
             if (empty($default)) {
                 return $result;

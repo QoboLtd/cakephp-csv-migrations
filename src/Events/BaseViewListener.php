@@ -16,7 +16,6 @@ use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\FileUploadsUtils;
 use CsvMigrations\PrettifyTrait;
-use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 abstract class BaseViewListener implements EventListenerInterface
@@ -92,14 +91,8 @@ abstract class BaseViewListener implements EventListenerInterface
      */
     protected function _getMigrationFields(Request $request)
     {
-        $result = [];
-
-        try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $request->controller);
-            $result = json_decode(json_encode($mc->parse()), true);
-        } catch (InvalidArgumentException $e) {
-            Log::error($e);
-        }
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $request->controller);
+        $result = json_decode(json_encode($mc->parse()), true);
 
         return $result;
     }
@@ -113,20 +106,14 @@ abstract class BaseViewListener implements EventListenerInterface
      */
     protected function _getActionFields(Request $request, $action = null)
     {
-        $result = [];
-
         $controller = $request->controller;
 
         if (is_null($action)) {
             $action = $request->action;
         }
 
-        try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $controller, $action);
-            $result = $mc->parse()->items;
-        } catch (InvalidArgumentException $e) {
-            Log::error($e);
-        }
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $controller, $action);
+        $result = $mc->parse()->items;
 
         return $result;
     }

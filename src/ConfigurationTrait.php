@@ -127,14 +127,8 @@ trait ConfigurationTrait
      */
     protected function _setConfiguration($tableName)
     {
-        $result = [];
-        try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($tableName));
-            $result = (array)json_decode(json_encode($mc->parse()), true);
-        } catch (Exception $e) {
-            // It's OK for the configuration not to exist. We should probably log it.
-        }
-        $this->_config = $result;
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($tableName));
+        $this->_config = (array)json_decode(json_encode($mc->parse()), true);
 
         // display field from configuration file
         if (isset($this->_config['table']['display_field']) && method_exists($this, 'displayField')) {

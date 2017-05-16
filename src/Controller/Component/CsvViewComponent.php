@@ -13,9 +13,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
-use Exception;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
-use RuntimeException;
 
 /**
  * CsvView component
@@ -178,7 +176,6 @@ class CsvViewComponent extends Component
      * Method that arranges csv fetched fields into panels.
      *
      * @param  array  $data fields
-     * @throws \RuntimeException when csv field parameters count does not match
      * @return array        fields arranged in panels
      */
     protected function _arrangePanels(array $data)

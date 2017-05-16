@@ -11,7 +11,6 @@ use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
 use CsvMigrations\View\AppView;
-use Exception;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use RuntimeException;
@@ -201,20 +200,16 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         $translatableModule = false;
         $translatableField = false;
-        $fieldOptions = [];
-        try {
-            // Read translatable from config.ini
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($this->table->table()));
-            $moduleConfig = (array)json_decode(json_encode($mc->parse()), true);
-            $translatableModule = empty($moduleConfig['table']['translatable']) ? false : (bool)$moduleConfig['table']['translatable'];
 
-            // Read field options from fields.ini
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
-            $fieldOptions = (array)json_decode(json_encode($mc->parse()), true);
-            $translatableField = empty($fieldOptions[$this->field]['translatable']) ? false : (bool)$fieldOptions[$this->field]['translatable'];
-        } catch (Exception $e) {
-            $this->log("Failed to parse module or fields configuration: " . $e->getMessage() . ".  Errors: " . print_r($mc->getErrors(), true));
-        }
+        // Read translatable from config.ini
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($this->table->table()));
+        $moduleConfig = (array)json_decode(json_encode($mc->parse()), true);
+        $translatableModule = empty($moduleConfig['table']['translatable']) ? false : (bool)$moduleConfig['table']['translatable'];
+
+        // Read field options from fields.ini
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
+        $fieldOptions = (array)json_decode(json_encode($mc->parse()), true);
+        $translatableField = empty($fieldOptions[$this->field]['translatable']) ? false : (bool)$fieldOptions[$this->field]['translatable'];
 
         if (!empty($fieldOptions[$this->field])) {
             $this->defaultOptions = array_replace_recursive($this->defaultOptions, $fieldOptions[$this->field]);
@@ -409,14 +404,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $text = $this->field;
 
-        $label = '';
-        try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
-            $config = (array)json_decode(json_encode($mc->parse()), true);
-            $label = empty($config[$text]['label']) ? '' : $config[$text]['label'];
-        } catch (\Exception $e) {
-            $this->log("Failed to parse fields configuration: " . $e->getMessage() . ".  Errors: " . print_r($mc->getErrors(), true));
-        }
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
+        $config = (array)json_decode(json_encode($mc->parse()), true);
+        $label = empty($config[$text]['label']) ? '' : $config[$text]['label'];
+
         if ($label) {
             return $label;
         }
@@ -550,14 +541,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         }
 
         if (!$result) {
-            $default = '';
-            try {
-                $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
-                $config = (array)json_decode(json_encode($mc->parse()), true);
-                $default = empty($config[$field]['default']) ? '' : $config[$field]['default'];
-            } catch (\Exception $e) {
-                $this->log("Failed to parse fields configuration: " . $e->getMessage() . ".  Errors: " . print_r($mc->getErrors(), true));
-            }
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
+            $config = (array)json_decode(json_encode($mc->parse()), true);
+            $default = empty($config[$field]['default']) ? '' : $config[$field]['default'];
+
             if (empty($default)) {
                 return $result;
             }

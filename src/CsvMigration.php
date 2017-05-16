@@ -8,10 +8,10 @@ use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use Exception;
 use Migrations\AbstractMigration;
 use Migrations\Table;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
-use RuntimeException;
 
 /**
  * CSV Migration class
@@ -78,7 +78,6 @@ class CsvMigration extends AbstractMigration
      *
      * @param  \Migrations\Table $table Migrations table object
      * @param  string            $path  csv file path
-     * @throws \RuntimeException
      * @return \Migrations\Table
      */
     public function csv(Table $table, $path = '')
@@ -199,7 +198,7 @@ class CsvMigration extends AbstractMigration
         $result = [];
         try {
             $result = $this->_table->getColumns($this->_table->getName());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             //
         }
 

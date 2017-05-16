@@ -5,6 +5,7 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use Exception;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class ValidateShell extends Shell
@@ -49,7 +50,7 @@ class ValidateShell extends Shell
         $this->hr();
         try {
             $this->modules = $this->_findCsvModules();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->abort("Failed to find CSV modules: " . $e->getMessage());
         }
 
@@ -211,7 +212,7 @@ class ValidateShell extends Shell
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_LIST, $module, $list);
             $listItems = $mc->parse()->items;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // We don't care about the specifics of the failure
         }
 
@@ -263,7 +264,7 @@ class ValidateShell extends Shell
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
             $moduleFields = json_decode(json_encode($mc->parse()), true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // We already report issues with migration in _checkMigrationPresence()
         }
 
@@ -302,7 +303,7 @@ class ValidateShell extends Shell
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, $module);
             $config = (array)json_decode(json_encode($mc->parse()), true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $result;
         }
 
@@ -363,7 +364,7 @@ class ValidateShell extends Shell
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, $module);
             $config = json_decode(json_encode($mc->parse()), true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // We need errors and warnings irrelevant of the exception
         }
         $errors = array_merge($errors, $mc->getErrors());
@@ -533,7 +534,7 @@ class ValidateShell extends Shell
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, $module);
             $config = json_decode(json_encode($mc->parse()), true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // We need errors and warnings irrelevant of the exception
         }
         $errors = array_merge($errors, $mc->getErrors());
@@ -566,7 +567,7 @@ class ValidateShell extends Shell
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MENUS, $module);
             $config = json_decode(json_encode($mc->parse()), true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // We need errors and warnings irrelevant of the exception
         }
         $errors = array_merge($errors, $mc->getErrors());
@@ -599,7 +600,7 @@ class ValidateShell extends Shell
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_REPORTS, $module);
             $config = json_decode(json_encode($mc->parse()), true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // We need errors and warnings irrelevant of the exception
         }
         $errors = array_merge($errors, $mc->getErrors());
@@ -632,7 +633,7 @@ class ValidateShell extends Shell
         try {
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
             $fields = json_decode(json_encode($mc->parse()), true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // We need errors and warnings irrelevant of the exception
         }
         $errors = array_merge($errors, $mc->getErrors());
@@ -745,7 +746,7 @@ class ValidateShell extends Shell
             try {
                 $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $module, $view);
                 $path = $mc->find();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // It's OK for view files to be missing.
                 // For example, Files and Users modules.
             }
@@ -756,7 +757,7 @@ class ValidateShell extends Shell
                 $fields = [];
                 try {
                     $fields = $mc->parse()->items;
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     // We need errors and warnings irrelevant of the exception
                 }
                 $errors = array_merge($errors, $mc->getErrors());

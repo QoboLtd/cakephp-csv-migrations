@@ -425,12 +425,8 @@ class ViewViewTabsListener implements EventListenerInterface
             return $result;
         }
 
-        try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $tableName, $action);
-            $csvFields = $mc->parse()->items;
-        } catch (Exception $e) {
-            return $result;
-        }
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $tableName, $action);
+        $csvFields = $mc->parse()->items;
 
         if (empty($csvFields)) {
             return $result;

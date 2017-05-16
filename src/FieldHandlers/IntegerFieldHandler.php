@@ -11,12 +11,7 @@ class IntegerFieldHandler extends BaseNumberFieldHandler
     const DB_FIELD_TYPE = 'integer';
 
     /**
-     * Sanitize options
-     *
-     * Name of filter_var() filter to run and all desired
-     * options/flags.
-     *
-     * @var array
+     * Renderer to use
      */
-    public $sanitizeOptions = [FILTER_SANITIZE_NUMBER_INT];
+    const RENDERER = 'integer';
 }

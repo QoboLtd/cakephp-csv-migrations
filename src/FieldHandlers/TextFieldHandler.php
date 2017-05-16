@@ -17,6 +17,11 @@ class TextFieldHandler extends BaseStringFieldHandler
     const INPUT_FIELD_TYPE = 'textarea';
 
     /**
+     * Renderer to use
+     */
+    const RENDERER = 'text';
+
+    /**
      * Convert CsvField to one or more DbField instances
      *
      * Simple fields from migrations CSV map one-to-one to
@@ -36,38 +41,6 @@ class TextFieldHandler extends BaseStringFieldHandler
         $result = [
             $csvField->getName() => $dbField,
         ];
-
-        return $result;
-    }
-
-    /**
-     * Format field value
-     *
-     * This method provides a customization point for formatting
-     * of the field value before rendering.
-     *
-     * NOTE: The value WILL NOT be sanitized during the formatting.
-     *       It is assumed that sanitization happens either before
-     *       or after this method is called.
-     *
-     * @param mixed $data    Field value data
-     * @param array $options Field formatting options
-     * @return string
-     */
-    protected function formatValue($data, array $options = [])
-    {
-        $result = (string)$data;
-
-        if (empty($result)) {
-            return $result;
-        }
-
-        if (array_key_exists('renderAs', $options) && ($options['renderAs'] === static::RENDER_PLAIN_VALUE)) {
-            return $result;
-        }
-
-        // Auto-paragraph
-        $result = $this->cakeView->Text->autoParagraph($result);
 
         return $result;
     }

@@ -17,14 +17,9 @@ class DecimalFieldHandler extends BaseNumberFieldHandler
     const INPUT_FIELD_STEP = 'any';
 
     /**
-     * Precision
-     *
-     * Temporary setting for decimal precision, until
-     * we learn to read it from the fields.ini.
-     *
-     * @todo Replace with configuration from fields.ini
+     * Renderer to use
      */
-    const PRECISION = 2;
+    const RENDERER = 'decimal';
 
     /**
      * Max value
@@ -35,16 +30,6 @@ class DecimalFieldHandler extends BaseNumberFieldHandler
      * @todo Replace with configuration from fields.ini
      */
     const MAX_VALUE = '99999999.99';
-
-    /**
-     * Sanitize options
-     *
-     * Name of filter_var() filter to run and all desired
-     * options/flags.
-     *
-     * @var array
-     */
-    public $sanitizeOptions = [FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION];
 
     /**
      * Convert CsvField to one or more DbField instances

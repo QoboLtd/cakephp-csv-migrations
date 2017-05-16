@@ -16,6 +16,11 @@ class BooleanFieldHandler extends BaseSimpleFieldHandler
     const INPUT_FIELD_TYPE = 'checkbox';
 
     /**
+     * Renderer to use
+     */
+    const RENDERER = 'booleanYesNo';
+
+    /**
      * Search operators
      *
      * @var array
@@ -30,16 +35,6 @@ class BooleanFieldHandler extends BaseSimpleFieldHandler
             'operator' => 'NOT IN',
         ],
     ];
-
-    /**
-     * Sanitize options
-     *
-     * Name of filter_var() filter to run and all desired
-     * options/flags.
-     *
-     * @var array
-     */
-    public $sanitizeOptions = [FILTER_SANITIZE_NUMBER_INT];
 
     /**
      * Render field input
@@ -70,27 +65,6 @@ class BooleanFieldHandler extends BaseSimpleFieldHandler
         ];
 
         return $this->_renderElement(__FUNCTION__, $params, $options);
-    }
-
-    /**
-     * Format field value
-     *
-     * This method provides a customization point for formatting
-     * of the field value before rendering.
-     *
-     * NOTE: The value WILL NOT be sanitized during the formatting.
-     *       It is assumed that sanitization happens either before
-     *       or after this method is called.
-     *
-     * @param mixed $data    Field value data
-     * @param array $options Field formatting options
-     * @return string
-     */
-    protected function formatValue($data, array $options = [])
-    {
-        $result = $data ? __('Yes') : __('No');
-
-        return $result;
     }
 
     /**

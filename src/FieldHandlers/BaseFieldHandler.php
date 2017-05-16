@@ -2,7 +2,6 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\Core\App;
-use Cake\Log\LogTrait;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
@@ -11,7 +10,6 @@ use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
 use CsvMigrations\View\AppView;
-use Exception;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use RuntimeException;
@@ -29,8 +27,6 @@ use RuntimeException;
  */
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
-    use LogTrait;
-
     /**
      * Default database field type
      */
@@ -45,6 +41,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * Flag for rendering value as is
      */
     const RENDER_PLAIN_VALUE = 'plain';
+
+    /**
+     * Renderer to use
+     */
+    const RENDERER = 'string';
 
     /**
      * Table object
@@ -103,16 +104,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             'pattern' => '%{{value}}',
         ],
     ];
-
-    /**
-     * Sanitize options
-     *
-     * Name of filter_var() filter to run and all desired
-     * options/flags.
-     *
-     * @var array
-     */
-    public $sanitizeOptions = [FILTER_UNSAFE_RAW];
 
     /**
      * Custom form input templates.
@@ -204,29 +195,28 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $this->defaultOptions['fieldDefinitions'] = new CsvField($stubFields[$this->field]);
         }
 
-        // set $options['label']
-        $this->defaultOptions['label'] = $this->renderName();
-
-        $renderAs = '';
         $translatableModule = false;
         $translatableField = false;
-        try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($this->table->table()));
-            $config = (array)json_decode(json_encode($mc->parse()), true);
-            $translatableModule = empty($config['table']['translatable']) ? false : (bool)$config['table']['translatable'];
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
-            $config = (array)json_decode(json_encode($mc->parse()), true);
-            $renderAs = empty($config[$this->field]['renderAs']) ? '' : $config[$this->field]['renderAs'];
-            $translatableField = empty($config[$this->field]['translatable']) ? false : (bool)$config[$this->field]['translatable'];
-        } catch (\Exception $e) {
-            $this->log("Failed to parse module configuration: " . $e->getMessage() . ".  Errors: " . print_r($mc->getErrors(), true));
+
+        // Read translatable from config.ini
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($this->table->table()));
+        $moduleConfig = (array)json_decode(json_encode($mc->parse()), true);
+        $translatableModule = empty($moduleConfig['table']['translatable']) ? false : (bool)$moduleConfig['table']['translatable'];
+
+        // Read field options from fields.ini
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
+        $fieldOptions = (array)json_decode(json_encode($mc->parse()), true);
+        $translatableField = empty($fieldOptions[$this->field]['translatable']) ? false : (bool)$fieldOptions[$this->field]['translatable'];
+
+        if (!empty($fieldOptions[$this->field])) {
+            $this->defaultOptions = array_replace_recursive($this->defaultOptions, $fieldOptions[$this->field]);
         }
 
-        if (!empty($renderAs)) {
-            $this->defaultOptions['renderAs'] = $renderAs;
-        }
-
+        // Set showTranslateButton based on both module and field configuration
         $this->defaultOptions['showTranslateButton'] = $translatableModule ? $translatableField : false;
+
+        // set $options['label']
+        $this->defaultOptions['label'] = $this->renderName();
     }
 
     /**
@@ -411,14 +401,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $text = $this->field;
 
-        $label = '';
-        try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
-            $config = (array)json_decode(json_encode($mc->parse()), true);
-            $label = empty($config[$text]['label']) ? '' : $config[$text]['label'];
-        } catch (\Exception $e) {
-            //
-        }
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
+        $config = (array)json_decode(json_encode($mc->parse()), true);
+        $label = empty($config[$text]['label']) ? '' : $config[$text]['label'];
+
         if ($label) {
             return $label;
         }
@@ -453,67 +439,34 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public function renderValue($data, array $options = [])
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $result = (string)$this->_getFieldValueFromData($data);
-        $result = $this->sanitizeValue($result, $options);
+        $result = $this->_getFieldValueFromData($data);
 
-        if (!empty($options['renderAs']) && static::RENDER_PLAIN_VALUE === $options['renderAs']) {
-            return $result;
+        // Currently needed for blobs from the database, but might be handy later
+        // for network data and such.
+        // TODO: Add support for encoding (base64, et) via $options
+        if (is_resource($result)) {
+            $result = stream_get_contents($result);
         }
 
-        $result = $this->formatValue($result, $options);
+        $renderer = static::RENDERER;
+        if (!empty($options['renderAs'])) {
+            $renderer = $options['renderAs'];
+        }
+
+        $rendererClass = __NAMESPACE__ . '\\Renderer\\' . ucfirst($renderer) . 'Renderer';
+        if (!class_exists($rendererClass)) {
+            throw new InvalidArgumentException("Renderer [$renderer] is not supporter");
+        }
+
+        $rendererClass = new $rendererClass($this->cakeView);
+        $result = (string)$rendererClass->renderValue($result, $options);
+
+        if ($renderer === static::RENDER_PLAIN_VALUE) {
+            return $result;
+        }
 
         if ($options['showTranslateButton']) {
             $result = $this->_getTranslateButton($data, $options) . $result;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Format field value
-     *
-     * This method provides a customization point for formatting
-     * of the field value before rendering.
-     *
-     * NOTE: The value WILL NOT be sanitized during the formatting.
-     *       It is assumed that sanitization happens either before
-     *       or after this method is called.
-     *
-     * @param mixed $data    Field value data
-     * @param array $options Field formatting options
-     * @return string
-     */
-    protected function formatValue($data, array $options = [])
-    {
-        return (string)$data;
-    }
-
-    /**
-     * Sanitize field value
-     *
-     * This method filters the value and removes anything
-     * potentially dangerous.  Ideally, it should always be
-     * called before rendering the value to the user, in
-     * order to avoid cross-site scripting (XSS) attacks.
-     *
-     * @throws \RuntimeException when cannot sanitize data
-     * @param  mixed  $data    Field data
-     * @param  array  $options Field options
-     * @return string          Field value
-     */
-    public function sanitizeValue($data, array $options = [])
-    {
-        $result = trim((string)$data);
-
-        if (empty($this->sanitizeOptions)) {
-            return $result;
-        }
-
-        $filterParams = $this->sanitizeOptions;
-        array_unshift($filterParams, $data);
-        $result = call_user_func_array('filter_var', $filterParams);
-        if ($result === false) {
-            throw new RuntimeException("Failed to sanitize field value");
         }
 
         return $result;
@@ -585,14 +538,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         }
 
         if (!$result) {
-            $default = '';
-            try {
-                $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
-                $config = (array)json_decode(json_encode($mc->parse()), true);
-                $default = empty($config[$field]['default']) ? '' : $config[$field]['default'];
-            } catch (\Exception $e) {
-                //
-            }
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
+            $config = (array)json_decode(json_encode($mc->parse()), true);
+            $default = empty($config[$field]['default']) ? '' : $config[$field]['default'];
+
             if (empty($default)) {
                 return $result;
             }

@@ -5,7 +5,6 @@ use Cake\Core\Configure;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\CsvField;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
-use RuntimeException;
 
 trait MigrationTrait
 {
@@ -70,14 +69,10 @@ trait MigrationTrait
                 $moduleName = $this->alias();
             }
 
-            try {
-                $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $moduleName);
-                $result = (array)json_decode(json_encode($mc->parse()), true);
-                if (!empty($result)) {
-                    $this->_fieldDefinitions = $result;
-                }
-            } catch (\Exception $e) {
-                //
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $moduleName);
+            $result = (array)json_decode(json_encode($mc->parse()), true);
+            if (!empty($result)) {
+                $this->_fieldDefinitions = $result;
             }
         }
 
@@ -281,13 +276,9 @@ trait MigrationTrait
             return $result;
         }
         foreach ($modules as $module) {
-            $config = [];
-            try {
-                $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
-                $config = (array)json_decode(json_encode($mc->parse()), true);
-            } catch (\Exception $e) {
-                continue;
-            }
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
+            $config = (array)json_decode(json_encode($mc->parse()), true);
+
             if (empty($config)) {
                 continue;
             }
@@ -335,13 +326,9 @@ trait MigrationTrait
             return $result;
         }
         foreach ($modules as $module) {
-            $report = [];
-            try {
-                $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_REPORTS, $module);
-                $report = (array)json_decode(json_encode($mc->parse()), true);
-            } catch (\Exception $e) {
-                continue;
-            }
+            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_REPORTS, $module);
+            $report = (array)json_decode(json_encode($mc->parse()), true);
+
             if (empty($report)) {
                 continue;
             }

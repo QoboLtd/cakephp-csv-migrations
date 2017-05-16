@@ -64,32 +64,6 @@ class BlobFieldHandler extends BaseSimpleFieldHandler
     }
 
     /**
-     * Render field value
-     *
-     * This method prepares the output of the value for the given
-     * field.  The result can be controlled via the variety of
-     * options.
-     *
-     * @param  string $data    Field data
-     * @param  array  $options Field options
-     * @return string          Field value
-     */
-    public function renderValue($data, array $options = [])
-    {
-        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        // TODO: Add support for encoding (base64, etc) via $options
-        $data = $this->_getFieldValueFromData($data);
-        $result = $data;
-        if (is_resource($data)) {
-            $result = stream_get_contents($data);
-        }
-        $result = $this->sanitizeValue($result, $options);
-        $result = $this->formatValue($result, $options);
-
-        return $result;
-    }
-
-    /**
      * Get options for field search
      *
      * This method prepares an array of search options, which includes

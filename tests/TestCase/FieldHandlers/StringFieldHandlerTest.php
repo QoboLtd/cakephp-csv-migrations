@@ -84,4 +84,34 @@ class StringFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('starts_with', $result[$this->field]['operators'], "getSearchOptions() did not return 'starts_with' operator");
         $this->assertArrayHasKey('ends_with', $result[$this->field]['operators'], "getSearchOptions() did not return 'ends_with' operator");
     }
+
+    // These are non-StringFieldHandler specific tests.  They are here,
+    // because we need one field handler to play with.  It makes sense
+    // to use the most basic one, which a lot of others are falling
+    // back onto.
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testSetTableException()
+    {
+        $this->fh = new StringFieldHandler(null, $this->field);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testSetFieldException()
+    {
+        $this->fh = new StringFieldHandler($this->table, null);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testRenderValueMissingRendererException()
+    {
+        $this->fh = new StringFieldHandler($this->table, $this->field);
+        $result = $this->fh->renderValue('test', ['renderAs' => 'thisRendererDoesNotExist']);
+    }
 }

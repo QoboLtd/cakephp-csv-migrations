@@ -11,7 +11,6 @@ use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\ORM\Table as UploadTable;
 use CsvMigrations\CsvMigrationsUtils;
-use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class FileUploadsUtils
@@ -202,13 +201,8 @@ class FileUploadsUtils
         $entity = $this->_table->{$assocName}->newEntity($fileData);
 
         $className = App::shortName(get_class($table), 'Model/Table', 'Table');
-        $fieldsDefinitions = [];
-        try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $className);
-            $fieldsDefinitions = json_decode(json_encode($mc->parse()), true);
-        } catch (InvalidArgumentException $e) {
-            Log::error($e);
-        }
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $className);
+        $fieldsDefinitions = json_decode(json_encode($mc->parse()), true);
 
         $fieldOption = [];
         if (!empty($fieldsDefinitions)) {

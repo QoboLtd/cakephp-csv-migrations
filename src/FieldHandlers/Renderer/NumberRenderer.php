@@ -11,12 +11,7 @@ use InvalidArgumentException;
 class NumberRenderer extends BaseRenderer
 {
     /**
-     * Precision
-     *
-     * Temporary setting for decimal precision, until
-     * we learn to read it from the fields.ini.
-     *
-     * @todo Replace with configuration from fields.ini
+     * Decimal precision
      */
     const PRECISION = 2;
 

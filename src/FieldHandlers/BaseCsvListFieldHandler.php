@@ -189,8 +189,6 @@ abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
      * @param  string $listName list name
      * @param  string $prefix   nested option prefix
      * @return array
-     * @todo   Validation of CVS files should probably be done separately, elsewhere.
-     *         Note: the number of columns can vary per record.
      */
     private function __prepareListOptions($data, $listName, $prefix = null)
     {

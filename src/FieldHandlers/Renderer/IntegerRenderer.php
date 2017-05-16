@@ -9,12 +9,7 @@ namespace CsvMigrations\FieldHandlers\Renderer;
 class IntegerRenderer extends NumberRenderer
 {
     /**
-     * Precision
-     *
-     * Temporary setting for decimal precision, until
-     * we learn to read it from the fields.ini.
-     *
-     * @todo Replace with configuration from fields.ini
+     * Decimal precision
      */
     const PRECISION = 0;
 }

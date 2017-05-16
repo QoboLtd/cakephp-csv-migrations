@@ -2,7 +2,6 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\Core\App;
-use Cake\Log\LogTrait;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
@@ -28,8 +27,6 @@ use RuntimeException;
  */
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
-    use LogTrait;
-
     /**
      * Default database field type
      */

@@ -7,6 +7,7 @@ use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use Exception;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Utility;
 
 class ValidateShell extends Shell
 {
@@ -48,11 +49,9 @@ class ValidateShell extends Shell
 
         $this->out('Checking CSV files and configurations');
         $this->hr();
-        try {
-            $this->modules = $this->_findCsvModules();
-        } catch (Exception $e) {
-            $this->abort("Failed to find CSV modules: " . $e->getMessage());
-        }
+
+        $path = Configure::read('CsvMigrations.modules.path');
+        $this->modules = Utility::findDirs($path);
 
         if (empty($this->modules)) {
             $this->out('<warning>Did not find any CSV modules</warning>');
@@ -110,34 +109,6 @@ class ValidateShell extends Shell
             $result += count($errors);
             $this->_printCheckStatus($errors, $warnings);
         }
-
-        return $result;
-    }
-
-    /**
-     * Find the list of CSV modules
-     *
-     * @return array List of modules
-     */
-    protected function _findCsvModules()
-    {
-        $result = [];
-
-        $path = Configure::read('CsvMigrations.modules.path');
-        if (!is_readable($path)) {
-            throw new \RuntimeException("[$path] is not readable");
-        }
-        if (!is_dir($path)) {
-            throw new \RuntimeException("[$path] is not a directory");
-        }
-
-        foreach (new \DirectoryIterator($path) as $fileinfo) {
-            if ($fileinfo->isDot()) {
-                continue;
-            }
-            $result[] = $fileinfo->getFilename();
-        }
-        asort($result);
 
         return $result;
     }

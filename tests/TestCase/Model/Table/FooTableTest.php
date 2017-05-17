@@ -70,6 +70,25 @@ class FooTableTest extends TestCase
         parent::tearDown();
     }
 
+    public function testSetCurrentUser()
+    {
+        $user = [
+            'id' => 123,
+            'username' => 'some_foo_user',
+        ];
+        $result = $this->FooTable->setCurrentUser($user);
+        $this->assertEquals($user, $result, "setCurrentUser did not return the correct user");
+
+        $result = $this->FooTable->getCurrentUser();
+        $this->assertEquals($user, $result, "getCurrentUser did not return the correct user");
+    }
+
+    public function testGetParentRedirectUrl()
+    {
+        $result = $this->FooTable->getParentRedirectUrl($this->FooTable);
+        $this->assertTrue(is_array($result));
+    }
+
     public function testGetConfig()
     {
         $this->assertSame(
@@ -85,6 +104,9 @@ class FooTableTest extends TestCase
                 ],
                 'virtualFields' => [
                     'name' => 'full_name',
+                ],
+                'manyToMany' => [
+                    'modules' => 'Users',
                 ],
                 'parent' => [
                     'module' => 'TestModule',

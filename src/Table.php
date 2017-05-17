@@ -105,27 +105,36 @@ class Table extends BaseTable
         }
 
         $config = $table->getConfig();
-        if (isset($config['parent'])) {
-            $table->parentSection($config['parent']);
-            $module = $table->getParentModuleField();
-            $redirect = $table->getParentRedirectField();
-            $relation = $table->getParentRelationField();
+        if (!isset($config['parent'])) {
+            return $result;
+        }
 
-            if (empty($redirect)) {
-                return $result;
-            }
+        $table->parentSection($config['parent']);
+        $module = $table->getParentModuleField();
+        $redirect = $table->getParentRedirectField();
+        $relation = $table->getParentRelationField();
 
-            if ($redirect == 'parent') {
-                $result = [
-                    'controller' => $module,
-                    'action' => 'view',
-                    $entity->{$relation}
-                ];
-            }
+        if (empty($redirect)) {
+            return $result;
+        }
 
-            if ($redirect == 'self') {
-                $result = ['action' => 'view', $entity->id];
-            }
+        // For parent and self redirects, we have to have the
+        // actual entity.  So, if it's missing, we don't need
+        // to continue.
+        if (empty($entity)) {
+            return $result;
+        }
+
+        if ($redirect == 'parent') {
+            $result = [
+                'controller' => $module,
+                'action' => 'view',
+                $entity->{$relation}
+            ];
+        }
+
+        if ($redirect == 'self') {
+            $result = ['action' => 'view', $entity->id];
         }
 
         return $result;

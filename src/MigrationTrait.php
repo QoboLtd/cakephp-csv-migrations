@@ -5,6 +5,7 @@ use Cake\Core\Configure;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\CsvField;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Utility;
 
 trait MigrationTrait
 {
@@ -138,20 +139,22 @@ trait MigrationTrait
         //setting up files associations for FileStorage relation
         foreach ($csvObjData as $csvModule => $fields) {
             foreach ($fields as $csvObjField) {
-                if (in_array($csvObjField->getType(), ['files', 'images'])) {
-                    if ($csvModule == $config['table']) {
-                        $fieldName = $csvObjField->getName();
-                        $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $fieldName);
-                        $this->hasMany($assocName, [
-                            'className' => 'Burzum/FileStorage.FileStorage',
-                            'foreignKey' => 'foreign_key',
-                            'conditions' => [
-                                'model' => $this->table(),
-                                'model_field' => $fieldName,
-                            ]
-                        ]);
-                    }
+                if (!in_array($csvObjField->getType(), ['files', 'images'])) {
+                    continue;
                 }
+                if ($csvModule <> $config['table']) {
+                    continue;
+                }
+                $fieldName = $csvObjField->getName();
+                $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $fieldName);
+                $this->hasMany($assocName, [
+                    'className' => 'Burzum/FileStorage.FileStorage',
+                    'foreignKey' => 'foreign_key',
+                    'conditions' => [
+                        'model' => $this->table(),
+                        'model_field' => $fieldName,
+                    ]
+                ]);
             }
         }
 
@@ -167,7 +170,10 @@ trait MigrationTrait
                         'className' => $assoccsvModule,
                         'foreignKey' => $fieldName
                     ]);
-                } elseif ($config['table'] === $assoccsvModule) {
+                    continue;
+                }
+
+                if ($config['table'] === $assoccsvModule) {
                     //Foreignkey found in other module
                     $assocName = CsvMigrationsUtils::createAssociationName($csvModule, $fieldName);
                     $this->hasMany($assocName, [
@@ -229,34 +235,10 @@ trait MigrationTrait
      */
     protected function _getAllModules($path = null)
     {
-        $result = [];
-
         if (empty($path)) {
             $path = Configure::readOrFail('CsvMigrations.modules.path');
         }
-
-        if (empty($path)) {
-            return $result;
-        }
-
-        if (!file_exists($path)) {
-            return $result;
-        }
-
-        if (!is_dir($path)) {
-            return $result;
-        }
-
-        $dir = new \DirectoryIterator($path);
-        foreach ($dir as $module) {
-            if ($module->isDot()) {
-                continue;
-            }
-            if (!$module->isDir()) {
-                continue;
-            }
-            $result[] = $module->getFilename();
-        }
+        $result = Utility::findDirs($path);
 
         return $result;
     }

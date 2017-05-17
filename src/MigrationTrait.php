@@ -5,6 +5,7 @@ use Cake\Core\Configure;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\CsvField;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Utility;
 
 trait MigrationTrait
 {
@@ -234,34 +235,10 @@ trait MigrationTrait
      */
     protected function _getAllModules($path = null)
     {
-        $result = [];
-
         if (empty($path)) {
             $path = Configure::readOrFail('CsvMigrations.modules.path');
         }
-
-        if (empty($path)) {
-            return $result;
-        }
-
-        if (!file_exists($path)) {
-            return $result;
-        }
-
-        if (!is_dir($path)) {
-            return $result;
-        }
-
-        $dir = new \DirectoryIterator($path);
-        foreach ($dir as $module) {
-            if ($module->isDot()) {
-                continue;
-            }
-            if (!$module->isDir()) {
-                continue;
-            }
-            $result[] = $module->getFilename();
-        }
+        $result = Utility::findDirs($path);
 
         return $result;
     }

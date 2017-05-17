@@ -86,6 +86,9 @@ class FooTableTest extends TestCase
                 'virtualFields' => [
                     'name' => 'full_name',
                 ],
+                'manyToMany' => [
+                    'modules' => 'Users',
+                ],
                 'parent' => [
                     'module' => 'TestModule',
                     'redirect' => 'self',

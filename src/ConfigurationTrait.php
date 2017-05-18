@@ -34,12 +34,6 @@ trait ConfigurationTrait
      * @var string
      */
     protected $_icon;
-    /**
-     * Lookup fields used for fetching record(s) through the API
-     *
-     * @var array
-     */
-    protected $_lookupFields;
 
     /**
      * Each table might have a parent
@@ -65,13 +59,6 @@ trait ConfigurationTrait
      * @var array
      */
     protected $_tableAllowRemindersField = [];
-
-    /**
-     * Typeahead fields used for searching in related fields
-     *
-     * @var array
-     */
-    protected $_typeaheadFields;
 
     /**
      * Virtual fields
@@ -138,16 +125,6 @@ trait ConfigurationTrait
         // module icon from configuration file
         if (isset($this->_config['table']['icon'])) {
             $this->icon($this->_config['table']['icon']);
-        }
-
-        // lookup field(s) from configuration file
-        if (isset($this->_config['table']['lookup_fields'])) {
-            $this->lookupFields($this->_config['table']['lookup_fields']);
-        }
-
-        // typeahead field(s) from configuration file
-        if (isset($this->_config['table']['typeahead_fields'])) {
-            $this->typeaheadFields($this->_config['table']['typeahead_fields']);
         }
 
         // set module alias from configuration file
@@ -228,18 +205,15 @@ trait ConfigurationTrait
     }
 
     /**
-     * Returns the lookup fields or sets a new one
+     * Returns the lookup fields
      *
-     * @param string|null $fields sets lookup fields
-     * @return string
+     * @return array
      */
-    public function lookupFields($fields = null)
+    public function lookupFields()
     {
-        if ($fields !== null) {
-            $this->_lookupFields = explode(',', $fields);
-        }
+        $config = $this->getConfig();
 
-        return $this->_lookupFields;
+        return $config['table']['lookup_fields'];
     }
 
     /**
@@ -328,18 +302,15 @@ trait ConfigurationTrait
     }
 
     /**
-     * Returns the typeahead fields or sets a new one
+     * Returns the typeahead fields
      *
-     * @param string|null $fields sets typeahead fields
-     * @return string
+     * @return array
      */
-    public function typeaheadFields($fields = null)
+    public function typeaheadFields()
     {
-        if ($fields !== null) {
-            $this->_typeaheadFields = explode(',', $fields);
-        }
+        $config = $this->getConfig();
 
-        return $this->_typeaheadFields;
+        return $config['table']['typeahead_fields'];
     }
 
     /**

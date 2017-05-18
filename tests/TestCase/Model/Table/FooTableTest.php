@@ -98,8 +98,15 @@ class FooTableTest extends TestCase
                     'alias' => 'Foobar',
                     'searchable' => true,
                     'display_field' => 'name',
-                    'typeahead_fields' => 'name,foobar',
-                    'lookup_fields' => 'foo,bar,baz',
+                    'typeahead_fields' => [
+                        'name',
+                        'foobar',
+                    ],
+                    'lookup_fields' => [
+                        'foo',
+                        'bar',
+                        'baz',
+                    ],
                     'icon' => 'cube'
                 ],
                 'virtualFields' => [
@@ -123,6 +130,22 @@ class FooTableTest extends TestCase
                 ]
             ]
         );
+    }
+
+    public function testLookupFields()
+    {
+        $expected = [ 'foo', 'bar', 'baz'];
+        $actual = $this->FooTable->lookupFields();
+        $this->assertTrue(is_array($actual), "Non-array returned from lookupFields");
+        $this->assertEquals($expected, $actual, "Incorrect value returned from lookupFields");
+    }
+
+    public function testTypeaheadFields()
+    {
+        $expected = [ 'name', 'foobar'];
+        $actual = $this->FooTable->typeaheadFields();
+        $this->assertTrue(is_array($actual), "Non-array returned from typeaheadFields");
+        $this->assertEquals($expected, $actual, "Incorrect value returned from typeaheadFields");
     }
 
     public function testGetReports()

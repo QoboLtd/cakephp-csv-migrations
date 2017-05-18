@@ -135,21 +135,6 @@ class ConfigurationTraitTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testLookupFields()
-    {
-        $this->assertSame(
-            $this->mock->lookupFields(),
-            null,
-            "Default lookupField is not set yet"
-        );
-
-        $this->assertSame(
-            $this->mock->lookupFields('foo,bar'),
-            ['foo', 'bar'],
-            "Incorrect setting of lookUp fields"
-        );
-    }
-
     public function testVirtualFields()
     {
         $this->assertEquals(
@@ -170,21 +155,6 @@ class ConfigurationTraitTest extends PHPUnit_Framework_TestCase
             $this->mock->getVirtualFields(),
             ['name' => ['company_name', 'first_name', 'last_name']],
             'Incorrect Virtual Fields setting'
-        );
-    }
-
-    public function testTypeaheadFields()
-    {
-        $this->assertSame(
-            $this->mock->typeaheadFields(),
-            null,
-            "Incorrect default value"
-        );
-
-        $this->assertSame(
-            $this->mock->typeaheadFields('first_name,last_name'),
-            ['first_name', 'last_name'],
-            "Incorrect values passed"
         );
     }
 }

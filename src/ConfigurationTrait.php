@@ -8,25 +8,11 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
 trait ConfigurationTrait
 {
     /**
-     * Default icon
-     *
-     * When all else fails, use this icon.
-     */
-    public $defaultIcon = 'cube';
-
-    /**
      * Table/module configuration
      *
      * @var array
      */
     protected $_config = [];
-
-    /**
-     * Module icon
-     *
-     * @var string
-     */
-    protected $_icon;
 
     /**
      * Each table might have a parent
@@ -115,11 +101,6 @@ trait ConfigurationTrait
             $this->displayField($this->_config['table']['display_field']);
         }
 
-        // module icon from configuration file
-        if (isset($this->_config['table']['icon'])) {
-            $this->icon($this->_config['table']['icon']);
-        }
-
         // set module alias from configuration file
         if (isset($this->_config['table']['alias'])) {
             $this->moduleAlias($this->_config['table']['alias']);
@@ -164,29 +145,15 @@ trait ConfigurationTrait
     }
 
     /**
-     * Returns the module icon or sets a new one
+     * Returns the module icon
      *
-     * @param string|null $icon sets the icon
      * @return string
      */
-    public function icon($icon = null)
+    public function icon()
     {
-        if ($icon !== null) {
-            $this->_icon = (string)$icon;
-        }
+        $config = $this->getConfig();
 
-        // Default icon if none is set
-        if (empty($this->_icon)) {
-            $this->_icon = (string)Configure::read('CsvMigrations.default_icon');
-        }
-
-        // To avoid unncessary checks in the views for the missing
-        // icon, we should ALWAYS return something.
-        if (empty($this->_icon)) {
-            $this->_icon = $this->defaultIcon;
-        }
-
-        return $this->_icon;
+        return (string)$config['table']['icon'];
     }
 
     /**

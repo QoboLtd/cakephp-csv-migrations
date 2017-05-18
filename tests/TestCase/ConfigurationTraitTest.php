@@ -31,28 +31,6 @@ class ConfigurationTraitTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->mock->notifications());
     }
 
-    public function testIconDefault()
-    {
-        // Default icon
-        $expected = \Cake\Core\Configure::read('CsvMigrations.default_icon');
-
-        if (empty($expected)) {
-            $expected = $this->mock->defaultIcon;
-        }
-
-        $this->assertFalse(empty($expected), "Failed to find the fallback for the default icon");
-        $this->assertEquals($expected, $this->mock->icon());
-    }
-
-    public function testIcon()
-    {
-        // Setting icon
-        $expected = 'foobar';
-        $this->assertEquals($expected, $this->mock->icon($expected));
-        // Getting icon
-        $this->assertEquals($expected, $this->mock->icon());
-    }
-
     public function testModuleAlias()
     {
         $this->assertSame($this->mock->moduleAlias('foo'), 'foo');

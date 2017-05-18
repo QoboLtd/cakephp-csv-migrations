@@ -22,13 +22,6 @@ trait ConfigurationTrait
     protected $_config = [];
 
     /**
-     * Searchable flag
-     *
-     * @var boolean
-     */
-    protected $_searchable = false;
-
-    /**
      * Module icon
      *
      * @var string
@@ -136,11 +129,6 @@ trait ConfigurationTrait
             $this->tableSection($this->_config['table']);
         }
 
-        // set searchable flag from configuration file
-        if (isset($this->_config['table']['searchable'])) {
-            $this->isSearchable($this->_config['table']['searchable']);
-        }
-
         if (isset($this->_config['associations']['hide_associations'])) {
             $this->hiddenAssociations($this->_config['associations']['hide_associations']);
         }
@@ -164,18 +152,15 @@ trait ConfigurationTrait
     }
 
     /**
-     * Returns the searchable flag or sets a new one
+     * Returns the searchable flag
      *
-     * @param  bool|null $searchable sets module as (not) searchable
      * @return bool
      */
-    public function isSearchable($searchable = null)
+    public function isSearchable()
     {
-        if (!is_null($searchable)) {
-            $this->_searchable = (bool)$searchable;
-        }
+        $config = $this->getConfig();
 
-        return $this->_searchable;
+        return (bool)$config['table']['searchable'];
     }
 
     /**

@@ -12,17 +12,6 @@ class ConfigurationTraitTest extends PHPUnit_Framework_TestCase
         $this->mock = $this->getMockForTrait(ConfigurationTrait::class);
     }
 
-    public function testIsSearchable()
-    {
-        $this->assertFalse($this->mock->isSearchable());
-        $this->assertFalse($this->mock->isSearchable(0));
-        $this->assertFalse($this->mock->isSearchable(null));
-
-        $this->assertTrue($this->mock->isSearchable(true));
-        $this->assertTrue($this->mock->isSearchable(1));
-        $this->assertTrue($this->mock->isSearchable('foobar'));
-    }
-
     public function testNotifications()
     {
         $expected = [

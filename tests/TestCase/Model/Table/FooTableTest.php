@@ -140,6 +140,14 @@ class FooTableTest extends TestCase
         $this->assertEquals($expected, $actual, "Incorrect value returned from lookupFields");
     }
 
+    public function testIsSearchable()
+    {
+        $expected = true;
+        $actual = $this->FooTable->isSearchable();
+        $this->assertTrue(is_bool($actual), "Non-bool returned from isSearchable");
+        $this->assertEquals($expected, $actual, "Incorrect value returned from isSearchable");
+    }
+
     public function testTypeaheadFields()
     {
         $expected = [ 'name', 'foobar'];

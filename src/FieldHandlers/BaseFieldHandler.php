@@ -195,25 +195,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $this->defaultOptions['fieldDefinitions'] = new CsvField($stubFields[$this->field]);
         }
 
-        $translatableModule = false;
-        $translatableField = false;
-
-        // Read translatable from config.ini
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($this->table->table()));
-        $moduleConfig = (array)json_decode(json_encode($mc->parse()), true);
-        $translatableModule = empty($moduleConfig['table']['translatable']) ? false : (bool)$moduleConfig['table']['translatable'];
-
-        // Read field options from fields.ini
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
-        $fieldOptions = (array)json_decode(json_encode($mc->parse()), true);
-        $translatableField = empty($fieldOptions[$this->field]['translatable']) ? false : (bool)$fieldOptions[$this->field]['translatable'];
-
         if (!empty($fieldOptions[$this->field])) {
             $this->defaultOptions = array_replace_recursive($this->defaultOptions, $fieldOptions[$this->field]);
         }
-
-        // Set showTranslateButton based on both module and field configuration
-        $this->defaultOptions['showTranslateButton'] = $translatableModule ? $translatableField : false;
 
         // set $options['label']
         $this->defaultOptions['label'] = $this->renderName();
@@ -465,10 +449,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             return $result;
         }
 
-        if ($options['showTranslateButton']) {
-            $result = $this->_getTranslateButton($data, $options) . $result;
-        }
-
         return $result;
     }
 
@@ -546,28 +526,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
                 return $result;
             }
             $result = $default;
-        }
-
-        return $result;
-    }
-
-    /**
-     *  _getTranslateButton() - returns translate button code
-     *
-     * @param array $data       array with field data
-     * @param array $options    array with options
-     * @return string           code of translate button
-     */
-    protected function _getTranslateButton($data, $options)
-    {
-        $result = '';
-        // TODO: add here check the rights and module config to hide translation button
-        if (!empty($data->id)) {
-            $fieldName = $this->field;
-            $fieldValue = $data->$fieldName;
-
-            $result = '<a href="#translations_translate_id_modal" data-toggle="modal" data-record="' . $data->id .
-                        '" data-model="' . $this->table->alias() . '" data-field="' . $fieldName . '" data-value="' . $fieldValue . '"><i class="fa fa-globe"></i></a>&nbsp;';
         }
 
         return $result;

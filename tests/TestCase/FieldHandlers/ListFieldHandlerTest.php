@@ -23,6 +23,47 @@ class ListFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\FieldHandlerInterface', $implementedInterfaces), "FieldHandlerInterface is not implemented");
     }
 
+    public function getValues()
+    {
+        return [
+            ['one', 'One'],
+            ['two', 'Two'],
+        ];
+    }
+
+    /**
+     * @dataProvider getValues
+     */
+    public function testRenderValue($value, $expected)
+    {
+        $options['fieldDefinitions'] = new CsvField([
+            'name' => $this->field,
+            'type' => 'list(list)',
+            'required' => false,
+            'non-searchable' => false,
+            'unique' => false
+        ]);
+
+        $result = $this->fh->renderValue($value, $options);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testRenderValueWithWrongValue()
+    {
+        $options['fieldDefinitions'] = new CsvField([
+            'name' => $this->field,
+            'type' => 'list(list)',
+            'required' => false,
+            'non-searchable' => false,
+            'unique' => false
+        ]);
+
+        $result = $this->fh->renderValue('non-existing-value', $options);
+
+        $this->assertNotEquals('non-existing-value', $result);
+    }
+
     public function testFieldToDb()
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => 'text']);

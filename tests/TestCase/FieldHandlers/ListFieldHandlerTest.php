@@ -26,8 +26,9 @@ class ListFieldHandlerTest extends PHPUnit_Framework_TestCase
     public function getValues()
     {
         return [
-            ['one', 'One'],
-            ['two', 'Two'],
+            ['cy', 'Cyprus'],
+            ['usa', 'USA'],
+            ['uk', 'United Kingdom'],
         ];
     }
 
@@ -38,7 +39,7 @@ class ListFieldHandlerTest extends PHPUnit_Framework_TestCase
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
-            'type' => 'list(list)',
+            'type' => 'list(countries)',
             'required' => false,
             'non-searchable' => false,
             'unique' => false

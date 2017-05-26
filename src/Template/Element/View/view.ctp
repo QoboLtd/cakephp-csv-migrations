@@ -142,7 +142,21 @@ if (empty($options['title'])) {
                                 $options['entity'], //->{$field['name']},
                                 $renderOptions
                             );
-                            echo $value;
+                            $fieldName = $field['name'];
+                            $event = new Event('CsvMigrations.View.View.TranslationButton', $this, [
+                                'model' => $tableName,
+                                'options' => [
+                                    'record_id' => $options['entity']->id,
+                                    'field_name' => $fieldName,
+                                    'field_value' => $options['entity']->$fieldName,
+                                    'user' => $user,
+                                ]
+                            ]);
+
+                            $this->eventManager()->dispatch($event);
+                            $translationButton = $event->result;
+
+                            echo $translationButton . $value;
                             echo empty($value) ? '&nbsp;' : '';
                             ?>
                             </div>

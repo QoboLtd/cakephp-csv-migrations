@@ -121,7 +121,9 @@ class FooTableTest extends TestCase
                     ],
                 ],
                 'manyToMany' => [
-                    'modules' => 'Users',
+                    'modules' => [
+                        'Users',
+                    ],
                 ],
                 'parent' => [
                     'module' => 'TestModule',

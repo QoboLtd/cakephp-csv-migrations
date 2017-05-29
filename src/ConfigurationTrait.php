@@ -20,6 +20,7 @@ trait ConfigurationTrait
     public static $CONFIG_OPTION_HIDDEN_ASSOCIATIONS = 'associations.hide_associations';
     public static $CONFIG_OPTION_MODULE_ALIAS = 'table.alias';
     public static $CONFIG_OPTION_VIRTUAL_FIELDS = 'virtualFields';
+    public static $CONFIG_OPTION_MANY_TO_MANY_MODULES = 'manyToMany.modules';
 
     /**
      * Table/module configuration

@@ -416,9 +416,9 @@ class ValidateShell extends Shell
 
             // [manyToMany] section
             if (!empty($config['manyToMany'])) {
-                // 'module' key is required and must contain valid modules
+                // 'modules' key is required and must contain valid modules
                 if (!empty($config['manyToMany']['modules'])) {
-                    $manyToManyModules = explode(',', $config['manyToMany']['modules']);
+                    $manyToManyModules = $config['manyToMany']['modules'];
                     foreach ($manyToManyModules as $manyToManyModule) {
                         if (!$this->_isValidModule($manyToManyModule)) {
                             $errors[] = $module . " config [manyToMany] section references unknown module '$manyToManyModule' in 'modules' key";

@@ -10,6 +10,7 @@ use Cake\Mailer\Email;
 use Cake\ORM\Table;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
+use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 class ModelAfterSaveListener implements EventListenerInterface
@@ -59,7 +60,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         //get attendees Table for the event
         if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
             $config = $table->getConfig();
-            $remindersTo = $table->getTableAllowRemindersField();
+            $remindersTo = $table->getConfig(ConfigurationTrait::$CONFIG_OPTION_ALLOW_REMINDERS);
         }
 
         // skip if attendees Table is not defined

@@ -100,17 +100,6 @@ trait ConfigurationTrait
     }
 
     /**
-     * getTableAllowRemindersField
-     *
-     * @deprecated Use getConfig() directly instead
-     * @return array
-     */
-    public function getTableAllowRemindersField()
-    {
-        return (array)$this->getConfig(self::$CONFIG_OPTION_ALLOW_REMINDERS);
-    }
-
-    /**
      * getParentRelationField
      *
      * @return string

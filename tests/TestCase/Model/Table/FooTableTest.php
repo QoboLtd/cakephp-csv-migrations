@@ -160,7 +160,7 @@ class FooTableTest extends TestCase
     public function testTypeaheadFields()
     {
         $expected = ['name', 'foobar'];
-        $actual = $this->FooTable->typeaheadFields();
+        $actual = $this->FooTable->getConfig(ConfigurationTrait::$CONFIG_OPTION_TYPEAHEAD_FIELDS);
         $this->assertTrue(is_array($actual), "Non-array returned from typeaheadFields");
         $this->assertEquals($expected, $actual, "Incorrect value returned from typeaheadFields");
     }

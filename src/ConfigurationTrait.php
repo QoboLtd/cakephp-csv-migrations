@@ -139,17 +139,6 @@ trait ConfigurationTrait
     }
 
     /**
-     * Returns the typeahead fields
-     *
-     * @deprecated Use getConfig() directly instead
-     * @return array
-     */
-    public function typeaheadFields()
-    {
-        return (array)$this->getConfig(self::$CONFIG_OPTION_TYPEAHEAD_FIELDS);
-    }
-
-    /**
      * Return association labels if any present
      *
      * @deprecated Use getConfig() directly instead

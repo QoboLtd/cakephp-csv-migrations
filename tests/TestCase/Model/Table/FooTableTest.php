@@ -181,6 +181,20 @@ class FooTableTest extends TestCase
         $this->assertEquals($expected, $actual, "Incorrect value returned from hiddenAssociations");
     }
 
+    public function testNotifications()
+    {
+        $expected = [
+            'enable' => true,
+            'ignored_fields' => [
+                'created',
+                'modified',
+            ],
+        ];
+        $actual = $this->FooTable->getConfig(ConfigurationTrait::$CONFIG_OPTION_NOTIFICATIONS);
+        $this->assertTrue(is_array($actual), "Non-array returned from notifications");
+        $this->assertEquals($expected, $actual, "Incorrect value returned from notifications");
+    }
+
     public function testIsSearchable()
     {
         $expected = true;

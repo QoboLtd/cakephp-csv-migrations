@@ -139,17 +139,6 @@ trait ConfigurationTrait
     }
 
     /**
-     * Returns notifications config
-     *
-     * @deprecated Use getConfig() directly instead
-     * @return array
-     */
-    public function notifications()
-    {
-        return (array)$this->getConfig(self::$CONFIG_OPTION_ASSOCIATION_LABELS);
-    }
-
-    /**
      * Returns the module alias
      *
      * @return string

@@ -4,6 +4,7 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\SublistFieldHandler;
 use PHPUnit_Framework_TestCase;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class SublistFieldHandlerTest extends PHPUnit_Framework_TestCase
 {
@@ -21,6 +22,36 @@ class SublistFieldHandlerTest extends PHPUnit_Framework_TestCase
     {
         $implementedInterfaces = array_keys(class_implements($this->fh));
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\FieldHandlerInterface', $implementedInterfaces), "FieldHandlerInterface is not implemented");
+    }
+
+    public function testRenderInput()
+    {
+        $options['fieldDefinitions'] = new CsvField([
+            'name' => $this->field,
+            'type' => 'list(countries)',
+            'required' => false,
+            'non-searchable' => false,
+            'unique' => false
+        ]);
+
+        $result = $this->fh->renderInput(null, $options);
+
+        $this->assertContains('data-type="dynamic-select"', $result);
+        $this->assertContains('data-target', $result);
+        $this->assertContains('data-structure', $result);
+        $this->assertContains('data-option-values', $result);
+        $this->assertContains('data-selectors', $result);
+
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_LIST, null, 'countries');
+        foreach ($mc->parse()->items as $item) {
+            if ((bool)$item->inactive) {
+                $this->assertNotContains(h('"' . $item->value . '"'), $result);
+                $this->assertNotContains(h('"' . $item->label . '"'), $result);
+            } else {
+                $this->assertContains(h('"' . $item->value . '"'), $result);
+                $this->assertContains(h('"' . $item->label . '"'), $result);
+            }
+        }
     }
 
     public function testFieldToDb()

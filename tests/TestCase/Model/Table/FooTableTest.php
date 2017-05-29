@@ -107,10 +107,17 @@ class FooTableTest extends TestCase
                         'bar',
                         'baz',
                     ],
-                    'icon' => 'cube'
+                    'allow_reminders' => [
+                        'Users',
+                        'Contacts',
+                    ],
+                    'icon' => 'cube',
                 ],
                 'virtualFields' => [
-                    'name' => 'full_name',
+                    'name' => [
+                        'foo',
+                        'bar',
+                    ],
                 ],
                 'manyToMany' => [
                     'modules' => 'Users',
@@ -121,20 +128,29 @@ class FooTableTest extends TestCase
 
                 ],
                 'associations' => [
-                    'hide_associations' => 'TestTable',
+                    'hide_associations' => [
+                        'TestTable',
+                        'AnotherTable',
+                    ],
                 ],
-
                 'associationLabels' => [
                     'FieldIdTable' => 'Table',
                     'AnotherIdTableTwo' => 'Pretty Table'
-                ]
+                ],
+                'notifications' => [
+                    'enable' => true,
+                    'ignored_fields' => [
+                        'created',
+                        'modified',
+                    ],
+                ],
             ]
         );
     }
 
     public function testLookupFields()
     {
-        $expected = [ 'foo', 'bar', 'baz'];
+        $expected = ['foo', 'bar', 'baz'];
         $actual = $this->FooTable->lookupFields();
         $this->assertTrue(is_array($actual), "Non-array returned from lookupFields");
         $this->assertEquals($expected, $actual, "Incorrect value returned from lookupFields");
@@ -142,10 +158,26 @@ class FooTableTest extends TestCase
 
     public function testTypeaheadFields()
     {
-        $expected = [ 'name', 'foobar'];
+        $expected = ['name', 'foobar'];
         $actual = $this->FooTable->typeaheadFields();
         $this->assertTrue(is_array($actual), "Non-array returned from typeaheadFields");
         $this->assertEquals($expected, $actual, "Incorrect value returned from typeaheadFields");
+    }
+
+    public function testGetVirtualFields()
+    {
+        $expected = ['name' => ['foo', 'bar']];
+        $actual = $this->FooTable->getVirtualFields();
+        $this->assertTrue(is_array($actual), "Non-array returned from virtualFields");
+        $this->assertEquals($expected, $actual, "Incorrect value returned from virtualFields");
+    }
+
+    public function testHiddenAssociations()
+    {
+        $expected = ['TestTable', 'AnotherTable'];
+        $actual = $this->FooTable->hiddenAssociations();
+        $this->assertTrue(is_array($actual), "Non-array returned from hiddenAssociations");
+        $this->assertEquals($expected, $actual, "Incorrect value returned from hiddenAssociations");
     }
 
     public function testIsSearchable()
@@ -164,8 +196,15 @@ class FooTableTest extends TestCase
         $this->assertEquals($expected, $actual, "Incorrect value returned from icon");
     }
 
-    public function testGetReports()
+    public function testModuleAlias()
+    {
+        $expected = 'Foobar';
+        $actual = $this->FooTable->moduleAlias();
+        $this->assertTrue(is_string($actual), "Non-string returned from moduleAlias");
+        $this->assertEquals($expected, $actual, "Incorrect value returned from moduleAlias");
+    }
 
+    public function testGetReports()
     {
         $result = $this->FooTable->getReports();
 
@@ -186,18 +225,10 @@ class FooTableTest extends TestCase
         $this->assertSame('Foobar', $this->FooTable->moduleAlias());
     }
 
-    /**
-     * @dataProvider moduleAliasProvider
-     */
-    public function testModuleAliasSetter($alias, $expected)
-    {
-        $this->assertSame($expected, $this->FooTable->moduleAlias($alias));
-    }
-
     public function testModuleAliasGetterDefault()
     {
-        $this->FooTable->moduleAlias('Foo');
-        $this->assertSame('Foo', $this->FooTable->moduleAlias(null));
+        $this->FooTable->moduleAlias();
+        $this->assertSame('Foobar', $this->FooTable->moduleAlias());
     }
 
     public function testGetReminderFields()
@@ -205,14 +236,6 @@ class FooTableTest extends TestCase
         $fields = $this->FooTable->getReminderFields();
         $this->assertTrue(is_array($fields), "reminderFields is not an array");
         $this->assertEquals('reminder_date', $fields[0]['name'], "Field reminder is incorrectly matched");
-    }
-
-    public function moduleAliasProvider()
-    {
-        return [
-            [null, 'Foobar'],
-            ['Foo', 'Foo']
-        ];
     }
 
     public function csvProvider()

@@ -15,67 +15,6 @@ trait ConfigurationTrait
     protected $_config = [];
 
     /**
-     * Each table might have a parent
-     * @var string
-     */
-    protected $_parentModuleField;
-
-    /**
-     * relation field that identifies parent_id field
-     * @var string
-     */
-    protected $_parentRelationField;
-
-    /**
-     * redirect flag whether it should be self|parent
-     * to identify where to redirect
-     * @var string
-     */
-    protected $_parentRedirectField;
-
-    /**
-     * allow_reminders array
-     * @var array
-     */
-    protected $_tableAllowRemindersField = [];
-
-    /**
-     * Virtual fields
-     *
-     * @var array
-     */
-    protected $_virtualFields = [];
-
-    /**
-     * Hidden associations
-     * @var array
-     */
-    protected $_hiddenAssociations = [];
-
-    /**
-     * Association Labels
-     * @var array
-     */
-    protected $_associationLabels = [];
-
-    /**
-     * Module alias
-     *
-     * @var string
-     */
-    protected $_moduleAlias;
-
-    /**
-     * Notifications config
-     *
-     * @var array
-     */
-    protected $_notifications = [
-        'enable' => false,
-        'ignored_fields' => []
-    ];
-
-    /**
      * Method that returns table configuration.
      *
      * @return array
@@ -99,36 +38,6 @@ trait ConfigurationTrait
         // display field from configuration file
         if (isset($this->_config['table']['display_field']) && method_exists($this, 'displayField')) {
             $this->displayField($this->_config['table']['display_field']);
-        }
-
-        // set module alias from configuration file
-        if (isset($this->_config['table']['alias'])) {
-            $this->moduleAlias($this->_config['table']['alias']);
-        }
-
-        if (isset($this->_config['table']['allow_reminders'])) {
-            $this->tableSection($this->_config['table']);
-        }
-
-        if (isset($this->_config['associations']['hide_associations'])) {
-            $this->hiddenAssociations($this->_config['associations']['hide_associations']);
-        }
-
-        if (isset($this->_config['associationLabels'])) {
-            $this->associationLabels($this->_config['associationLabels']);
-        }
-
-        if (isset($this->_config['parent'])) {
-            $this->parentSection($this->_config['parent']);
-        }
-
-        if (isset($this->_config['notifications'])) {
-            $this->notifications($this->_config['notifications']);
-        }
-
-        // set virtual field(s)
-        if (isset($this->_config['virtualFields'])) {
-            $this->setVirtualFields($this->_config['virtualFields']);
         }
     }
 
@@ -169,70 +78,32 @@ trait ConfigurationTrait
     }
 
     /**
-     * parse 'parent' section variables
-     * @TODO: Currently we use only scalars for parent vars
-     * It should be expanded to support arrays if any appear.
-     * @param array $section containing 'parent' block from ini
-     * @return void
-     */
-    public function parentSection($section = [])
-    {
-        if (!empty($section)) {
-            foreach ($section as $fieldName => $fieldValues) {
-                $field = Inflector::camelize($fieldName);
-                $property = sprintf('_parent%sField', $field);
-                if (property_exists($this, $property)) {
-                    $this->{$property} = $fieldValues;
-                }
-            }
-        }
-    }
-
-    /**
-     * tableSection parser for the protected variables
-     *
-     * @TODO: currently parses only allow_reminders,
-     * not to break existing properties of 'table' section
-     *
-     * @param array $tableSection Section to parse
-     * @return void
-     */
-    public function tableSection($tableSection = [])
-    {
-        if (!empty($tableSection)) {
-            foreach ($tableSection as $fieldName => $fieldValues) {
-                if ($fieldName == 'allow_reminders') {
-                    $field = Inflector::camelize($fieldName);
-                    $property = sprintf('_table%sField', $field);
-
-                    if (property_exists($this, $property)) {
-                        if (!is_array($this->{$property})) {
-                            continue;
-                        }
-
-                        $this->{$property} = explode(',', $fieldValues);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * getTableAllowRemindersField
+     *
      * @return array
      */
     public function getTableAllowRemindersField()
     {
-        return $this->_tableAllowRemindersField;
+        $config = $this->getConfig();
+
+        return $config['table']['allow_reminders'];
     }
 
     /**
      * getParentRelationField
+     *
      * @return string
      */
     public function getParentModuleField()
     {
-        return $this->_parentModuleField;
+        $result = '';
+
+        $config = $this->getConfig();
+        if (!empty($config['parent']['module'])) {
+            $result = $config['parent']['module'];
+        }
+
+        return $result;
     }
 
     /**
@@ -241,7 +112,14 @@ trait ConfigurationTrait
      */
     public function getParentRedirectField()
     {
-        return $this->_parentRedirectField;
+        $result = '';
+
+        $config = $this->getConfig();
+        if (!empty($config['parent']['redirect'])) {
+            $result = $config['parent']['redirect'];
+        }
+
+        return $result;
     }
 
     /**
@@ -250,7 +128,14 @@ trait ConfigurationTrait
      */
     public function getParentRelationField()
     {
-        return $this->_parentRelationField;
+        $result = '';
+
+        $config = $this->getConfig();
+        if (!empty($config['parent']['relation'])) {
+            $result = $config['parent']['relation'];
+        }
+
+        return $result;
     }
 
     /**
@@ -267,105 +152,59 @@ trait ConfigurationTrait
 
     /**
      * Return association labels if any present
-     * @param array $fields received from CSV
+     *
      * @return array
      */
-    public function associationLabels($fields = [])
+    public function associationLabels()
     {
-        if (!empty($fields)) {
-            foreach ($fields as $name => $label) {
-                $this->_associationLabels[$name] = $label;
-            }
-        }
+        $config = $this->getConfig();
 
-        return $this->_associationLabels;
+        return $config['associationLabels'];
     }
 
     /**
-     * Returns notifications config or sets a new one.
+     * Returns notifications config
      *
-     * @param array $notifications sets notifications config
      * @return array
      */
-    public function notifications($notifications = [])
+    public function notifications()
     {
-        if (!empty($notifications)) {
-            foreach ($this->_notifications as $k => $v) {
-                if (empty($notifications[$k])) {
-                    continue;
-                }
+        $config = $this->getConfig();
 
-                $type = gettype($v);
-
-                $v = $notifications[$k];
-                switch ($type) {
-                    case 'boolean':
-                        $v = (bool)$v;
-                        break;
-
-                    case 'array':
-                        $v = is_string($v) ? explode(',', $v) : $v;
-                        break;
-                }
-
-                $this->_notifications[$k] = $v;
-            }
-        }
-
-        return $this->_notifications;
+        return $config['notifications'];
     }
 
     /**
      * Return the list of hidden Associations for the config
      * file
-     * @param string|null $fields received
      * @return array
      */
-    public function hiddenAssociations($fields = null)
+    public function hiddenAssociations()
     {
-        if ($fields !== null) {
-            $this->_hiddenAssociations = explode(',', $fields);
+        $result = [];
+
+        $config = $this->getConfig();
+        if (!empty($config['associations']['hide_associations'])) {
+            $result = $config['associations']['hide_associations'];
         }
 
-        return $this->_hiddenAssociations;
+        return $result;
     }
 
     /**
-     * Returns the module alias or sets a new one
+     * Returns the module alias
      *
-     * @param  string|null $alias sets a new name to be used as module alias
      * @return string
      */
-    public function moduleAlias($alias = null)
+    public function moduleAlias()
     {
-        if (!is_null($alias)) {
-            $this->_moduleAlias = $alias;
+        $config = $this->getConfig();
+        $result = (string)$config['table']['alias'];
+        if (empty($result)) {
+            $result = $this->alias();
         }
 
-        if (is_null($this->_moduleAlias)) {
-            $this->_moduleAlias = $this->alias();
-        }
-
-        return $this->_moduleAlias;
-    }
-
-    /**
-     * Virtual fields setter method.
-     *
-     * Sets Table's virtual fields as an associated array with the
-     * virtual field name as the key and the db fields name as value.
-     * @param array|null $fields passed to method from CSV
-     * @return void
-     */
-    public function setVirtualFields(array $fields = [])
-    {
-        if (empty($fields)) {
-            return;
-        }
-
-        foreach ($fields as $v => $k) {
-            $this->_virtualFields[$v] = explode(',', $k);
-        }
+        return $result;
     }
 
     /**
@@ -375,6 +214,13 @@ trait ConfigurationTrait
      */
     public function getVirtualFields()
     {
-        return $this->_virtualFields;
+        $result = [];
+
+        $config = $this->getConfig();
+        if (!empty($config['virtualFields'])) {
+            $result = $config['virtualFields'];
+        }
+
+        return $result;
     }
 }

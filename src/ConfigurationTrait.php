@@ -175,15 +175,4 @@ trait ConfigurationTrait
 
         return $result;
     }
-
-    /**
-     * Virtual fields getter method.
-     *
-     * @deprecated Use getConfig() directly instead
-     * @return array
-     */
-    public function getVirtualFields()
-    {
-        return (array)$this->getConfig(self::$CONFIG_OPTION_VIRTUAL_FIELDS);
-    }
 }

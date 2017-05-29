@@ -12,6 +12,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
+use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\FileUploadsUtils;
@@ -149,7 +150,7 @@ abstract class BaseViewListener implements EventListenerInterface
             }
         }
 
-        $virtualFields = $table->getVirtualFields();
+        $virtualFields = $table->getConfig(ConfigurationTrait::$CONFIG_OPTION_VIRTUAL_FIELDS);
 
         if (empty($virtualFields)) {
             return $result;

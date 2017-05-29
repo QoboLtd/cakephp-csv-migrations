@@ -168,7 +168,7 @@ class FooTableTest extends TestCase
     public function testGetVirtualFields()
     {
         $expected = ['name' => ['foo', 'bar']];
-        $actual = $this->FooTable->getVirtualFields();
+        $actual = $this->FooTable->getConfig(ConfigurationTrait::$CONFIG_OPTION_VIRTUAL_FIELDS);
         $this->assertTrue(is_array($actual), "Non-array returned from virtualFields");
         $this->assertEquals($expected, $actual, "Incorrect value returned from virtualFields");
     }

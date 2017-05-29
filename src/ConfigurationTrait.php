@@ -100,17 +100,6 @@ trait ConfigurationTrait
     }
 
     /**
-     * Returns the lookup fields
-     *
-     * @deprecated Use getConfig() directly instead
-     * @return array
-     */
-    public function lookupFields()
-    {
-        return (array)$this->getConfig(self::$CONFIG_OPTION_LOOKUP_FIELDS);
-    }
-
-    /**
      * getTableAllowRemindersField
      *
      * @deprecated Use getConfig() directly instead

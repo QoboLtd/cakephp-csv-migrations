@@ -4,6 +4,7 @@ namespace CsvMigrations\Test\TestCase\Model\Table;
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\Table;
 
 /**
@@ -151,7 +152,7 @@ class FooTableTest extends TestCase
     public function testLookupFields()
     {
         $expected = ['foo', 'bar', 'baz'];
-        $actual = $this->FooTable->lookupFields();
+        $actual = $this->FooTable->getConfig(ConfigurationTrait::$CONFIG_OPTION_LOOKUP_FIELDS);
         $this->assertTrue(is_array($actual), "Non-array returned from lookupFields");
         $this->assertEquals($expected, $actual, "Incorrect value returned from lookupFields");
     }

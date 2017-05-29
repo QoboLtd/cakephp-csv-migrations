@@ -203,8 +203,8 @@ class Table extends BaseTable
     {
         foreach ($this->associations() as $association) {
             $lookupFields = [];
-            if (method_exists($association->target(), 'lookupFields')) {
-                $lookupFields = $association->target()->lookupFields();
+            if (method_exists($association->target(), 'getConfig')) {
+                $lookupFields = (array)$association->target()->getConfig(ConfigurationTrait::$CONFIG_OPTION_LOOKUP_FIELDS);
             }
 
             if (empty($lookupFields)) {
@@ -259,7 +259,7 @@ class Table extends BaseTable
      */
     public function findByLookupFieldsWithValues(Query $query, array $values)
     {
-        $lookupFields = $this->lookupFields();
+        $lookupFields = (array)$this->getConfig(ConfigurationTrait::$CONFIG_OPTION_LOOKUP_FIELDS);
 
         if (empty($lookupFields) || empty($values)) {
             return $query;

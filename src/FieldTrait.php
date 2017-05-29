@@ -2,6 +2,7 @@
 namespace CsvMigrations;
 
 use Cake\ORM\Query;
+use CsvMigrations\ConfigurationTrait;
 
 trait FieldTrait
 {
@@ -14,7 +15,7 @@ trait FieldTrait
      */
     public function findByLookupFields(Query $query, $id)
     {
-        $lookupFields = $this->lookupFields();
+        $lookupFields = (array)$this->getConfig(ConfigurationTrait::$CONFIG_OPTION_LOOKUP_FIELDS);
 
         if (empty($lookupFields)) {
             return $query;

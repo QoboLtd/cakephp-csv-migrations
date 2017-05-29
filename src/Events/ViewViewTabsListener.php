@@ -108,7 +108,7 @@ class ViewViewTabsListener implements EventListenerInterface
 
         $this->_tableInstance = TableRegistry::get($table);
 
-        $hiddenAssociations = $this->_tableInstance->hiddenAssociations();
+        $hiddenAssociations = $this->_tableInstance->getConfig(ConfigurationTrait::$CONFIG_OPTION_HIDDEN_ASSOCIATIONS);
 
         $tabLabels = $this->_getTabLabels($this->_tableInstance);
 

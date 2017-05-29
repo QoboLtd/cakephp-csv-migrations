@@ -176,7 +176,7 @@ class FooTableTest extends TestCase
     public function testHiddenAssociations()
     {
         $expected = ['TestTable', 'AnotherTable'];
-        $actual = $this->FooTable->hiddenAssociations();
+        $actual = $this->FooTable->getConfig(ConfigurationTrait::$CONFIG_OPTION_HIDDEN_ASSOCIATIONS);
         $this->assertTrue(is_array($actual), "Non-array returned from hiddenAssociations");
         $this->assertEquals($expected, $actual, "Incorrect value returned from hiddenAssociations");
     }

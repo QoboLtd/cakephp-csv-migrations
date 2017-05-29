@@ -150,17 +150,6 @@ trait ConfigurationTrait
     }
 
     /**
-     * Return the list of hidden Associations
-     *
-     * @deprecated Use getConfig() directly instead
-     * @return array
-     */
-    public function hiddenAssociations()
-    {
-        return (array)$this->getConfig(self::$CONFIG_OPTION_HIDDEN_ASSOCIATIONS);
-    }
-
-    /**
      * Returns the module alias
      *
      * @return string

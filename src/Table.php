@@ -109,7 +109,6 @@ class Table extends BaseTable
             return $result;
         }
 
-        $table->parentSection($config['parent']);
         $module = $table->getParentModuleField();
         $redirect = $table->getParentRedirectField();
         $relation = $table->getParentRelationField();

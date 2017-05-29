@@ -119,7 +119,7 @@ class CsvMigration extends AbstractMigration
     public function joins($tableName)
     {
         $result = [];
-        $this->_setConfiguration($tableName);
+        $this->setConfig($tableName);
 
         if (empty($this->_config['manyToMany']['modules'])) {
             return $result;

@@ -61,7 +61,7 @@ class Table extends BaseTable
         $this->addBehavior('Muffin/Trash.Trash');
 
         // set table/module configuration
-        $this->_setConfiguration($this->table());
+        $this->setConfig($this->table());
 
         //Set the current module
         $config['table'] = $this->_currentTable();

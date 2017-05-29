@@ -2,11 +2,27 @@
 namespace CsvMigrations;
 
 use Cake\Core\Configure;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 trait ConfigurationTrait
 {
+    // Traits cannot have constants, so we rely on public static properties
+    public static $CONFIG_OPTION_SEARCHABLE = 'table.searchable';
+    public static $CONFIG_OPTION_ICON = 'table.icon';
+    public static $CONFIG_OPTION_LOOKUP_FIELDS = 'table.lookup_fields';
+    public static $CONFIG_OPTION_TYPEAHEAD_FIELDS = 'table.typeahead_fields';
+    public static $CONFIG_OPTION_ALLOW_REMINDERS = 'table.allow_reminders';
+    public static $CONFIG_OPTION_PARENT_MODULE = 'parent.module';
+    public static $CONFIG_OPTION_PARENT_REDIRECT = 'parent.redirect';
+    public static $CONFIG_OPTION_PARENT_RELATION = 'parent.relation';
+    public static $CONFIG_OPTION_ASSOCIATION_LABELS = 'associationLabels';
+    public static $CONFIG_OPTION_NOTIFICATIONS = 'notifications';
+    public static $CONFIG_OPTION_HIDDEN_ASSOCIATIONS = 'associations.hide_associations';
+    public static $CONFIG_OPTION_MODULE_ALIAS = 'table.alias';
+    public static $CONFIG_OPTION_VIRTUAL_FIELDS = 'virtualFields';
+
     /**
      * Table/module configuration
      *
@@ -15,22 +31,38 @@ trait ConfigurationTrait
     protected $_config = [];
 
     /**
-     * Method that returns table configuration.
+     * Get table configuration
      *
+     * Get the full table configuration, or some subset
+     * based on the given path.
+     *
+     * NOTE: Before this functionality makes any sense, you
+     *       need to call setConfig().
+     *
+     * @param string $path Path to subset of configuration
      * @return array
      */
-    public function getConfig()
+    public function getConfig($path = null)
     {
-        return $this->_config;
+        $result = [];
+
+        // Return everything if no subset specified
+        if (empty($path)) {
+            return $this->_config;
+        }
+
+        $result = Hash::extract($this->_config, $path);
+
+        return $result;
     }
 
     /**
-     * Method that sets table configuration.
+     * Set table configuration
      *
      * @param string $tableName table name
      * @return void
      */
-    protected function _setConfiguration($tableName)
+    public function setConfig($tableName)
     {
         $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($tableName));
         $this->_config = (array)json_decode(json_encode($mc->parse()), true);
@@ -48,9 +80,10 @@ trait ConfigurationTrait
      */
     public function isSearchable()
     {
-        $config = $this->getConfig();
+        $result = $this->getConfig(self::$CONFIG_OPTION_SEARCHABLE);
+        $result = isset($result[0]) ? (bool)$result[0] : false;
 
-        return (bool)$config['table']['searchable'];
+        return $result;
     }
 
     /**
@@ -60,33 +93,32 @@ trait ConfigurationTrait
      */
     public function icon()
     {
-        $config = $this->getConfig();
+        $result = $this->getConfig(self::$CONFIG_OPTION_ICON);
+        $result = isset($result[0]) ? (string)$result[0] : '';
 
-        return (string)$config['table']['icon'];
+        return $result;
     }
 
     /**
      * Returns the lookup fields
      *
+     * @deprecated Use getConfig() directly instead
      * @return array
      */
     public function lookupFields()
     {
-        $config = $this->getConfig();
-
-        return $config['table']['lookup_fields'];
+        return (array)$this->getConfig(self::$CONFIG_OPTION_LOOKUP_FIELDS);
     }
 
     /**
      * getTableAllowRemindersField
      *
+     * @deprecated Use getConfig() directly instead
      * @return array
      */
     public function getTableAllowRemindersField()
     {
-        $config = $this->getConfig();
-
-        return $config['table']['allow_reminders'];
+        return (array)$this->getConfig(self::$CONFIG_OPTION_ALLOW_REMINDERS);
     }
 
     /**
@@ -96,44 +128,34 @@ trait ConfigurationTrait
      */
     public function getParentModuleField()
     {
-        $result = '';
-
-        $config = $this->getConfig();
-        if (!empty($config['parent']['module'])) {
-            $result = $config['parent']['module'];
-        }
+        $result = $this->getConfig(self::$CONFIG_OPTION_PARENT_MODULE);
+        $result = isset($result[0]) ? (string)$result[0] : '';
 
         return $result;
     }
 
     /**
      * getParentRedirectField
+     *
      * @return string
      */
     public function getParentRedirectField()
     {
-        $result = '';
-
-        $config = $this->getConfig();
-        if (!empty($config['parent']['redirect'])) {
-            $result = $config['parent']['redirect'];
-        }
+        $result = $this->getConfig(self::$CONFIG_OPTION_PARENT_REDIRECT);
+        $result = isset($result[0]) ? (string)$result[0] : '';
 
         return $result;
     }
 
     /**
      * getParentRelationField
+     *
      * @return string
      */
     public function getParentRelationField()
     {
-        $result = '';
-
-        $config = $this->getConfig();
-        if (!empty($config['parent']['relation'])) {
-            $result = $config['parent']['relation'];
-        }
+        $result = $this->getConfig(self::$CONFIG_OPTION_PARENT_RELATION);
+        $result = isset($result[0]) ? (string)$result[0] : '';
 
         return $result;
     }
@@ -141,54 +163,45 @@ trait ConfigurationTrait
     /**
      * Returns the typeahead fields
      *
+     * @deprecated Use getConfig() directly instead
      * @return array
      */
     public function typeaheadFields()
     {
-        $config = $this->getConfig();
-
-        return $config['table']['typeahead_fields'];
+        return (array)$this->getConfig(self::$CONFIG_OPTION_TYPEAHEAD_FIELDS);
     }
 
     /**
      * Return association labels if any present
      *
+     * @deprecated Use getConfig() directly instead
      * @return array
      */
     public function associationLabels()
     {
-        $config = $this->getConfig();
-
-        return $config['associationLabels'];
+        return (array)$this->getConfig(self::$CONFIG_OPTION_ASSOCIATION_LABELS);
     }
 
     /**
      * Returns notifications config
      *
+     * @deprecated Use getConfig() directly instead
      * @return array
      */
     public function notifications()
     {
-        $config = $this->getConfig();
-
-        return $config['notifications'];
+        return (array)$this->getConfig(self::$CONFIG_OPTION_ASSOCIATION_LABELS);
     }
 
     /**
-     * Return the list of hidden Associations for the config
-     * file
+     * Return the list of hidden Associations
+     *
+     * @deprecated Use getConfig() directly instead
      * @return array
      */
     public function hiddenAssociations()
     {
-        $result = [];
-
-        $config = $this->getConfig();
-        if (!empty($config['associations']['hide_associations'])) {
-            $result = $config['associations']['hide_associations'];
-        }
-
-        return $result;
+        return (array)$this->getConfig(self::$CONFIG_OPTION_HIDDEN_ASSOCIATIONS);
     }
 
     /**
@@ -198,8 +211,8 @@ trait ConfigurationTrait
      */
     public function moduleAlias()
     {
-        $config = $this->getConfig();
-        $result = (string)$config['table']['alias'];
+        $result = $this->getConfig(self::$CONFIG_OPTION_MODULE_ALIAS);
+        $result = isset($result[0]) ? (string)$result[0] : '';
         if (empty($result)) {
             $result = $this->alias();
         }
@@ -210,17 +223,11 @@ trait ConfigurationTrait
     /**
      * Virtual fields getter method.
      *
+     * @deprecated Use getConfig() directly instead
      * @return array
      */
     public function getVirtualFields()
     {
-        $result = [];
-
-        $config = $this->getConfig();
-        if (!empty($config['virtualFields'])) {
-            $result = $config['virtualFields'];
-        }
-
-        return $result;
+        return (array)$this->getConfig(self::$CONFIG_OPTION_VIRTUAL_FIELDS);
     }
 }

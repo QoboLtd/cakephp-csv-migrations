@@ -23,6 +23,17 @@ class BooleanFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\FieldHandlerInterface', $implementedInterfaces), "FieldHandlerInterface is not implemented");
     }
 
+    public function testRenderInput()
+    {
+        $result = $this->fh->renderInput(null);
+
+        $this->assertContains('name="' . $this->table . '[' . $this->field . ']"', $result);
+        $this->assertContains('type="hidden"', $result);
+        $this->assertContains('type="checkbox"', $result);
+        $this->assertContains('value="0"', $result);
+        $this->assertContains('value="1"', $result);
+    }
+
     public function testFieldToDb()
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => 'text']);

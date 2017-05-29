@@ -42,7 +42,7 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
             $options['label'] = false;
             $fieldName = $this->field . '_' . $suffix;
 
-            $fieldData = $this->_getFieldValueFromData($data, $fieldName);
+            $fieldData = $data;
             if (empty($fieldData) && !empty($options['entity'])) {
                 $fieldData = $this->_getFieldValueFromData($options['entity'], $fieldName);
             }
@@ -79,7 +79,8 @@ abstract class BaseCombinedFieldHandler extends BaseFieldHandler
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         foreach (static::$_fields as $suffix => $fieldOptions) {
             $fieldName = $this->field . '_' . $suffix;
-            $fieldData = $this->_getFieldValueFromData($data, $fieldName);
+
+            $fieldData = $data;
             // fieldData will most probably be empty when dealing with combined fields for
             // example, field 'salary' will have no data since is converted to 'salary_amount'
             // and 'salary_currency'. In these cases we just re-call _getFeildValueFromData

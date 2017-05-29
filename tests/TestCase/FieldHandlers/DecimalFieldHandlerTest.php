@@ -25,7 +25,7 @@ class DecimalFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     public function testFieldToDb()
     {
-        $csvField = new CsvField(['name' => $this->field, 'type' => 'text']);
+        $csvField = new CsvField(['name' => $this->field, 'type' => 'decimal(12.4)']);
         $fh = $this->fh;
         $result = $fh::fieldToDb($csvField);
 
@@ -37,6 +37,36 @@ class DecimalFieldHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(DecimalFieldHandler::DB_FIELD_TYPE, $result[$this->field]->getType(), "fieldToDb() did not return correct type for DbField instance");
         $this->assertEquals('decimal', $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
+
+        $options = $result[$this->field]->getOptions();
+        $this->assertEquals('12.4', $options['limit']);
+        $this->assertEquals('12', $options['precision']);
+        $this->assertEquals('4', $options['scale']);
+        $this->assertEquals(true, $options['null']);
+    }
+
+    public function testFieldToDbNoLimit()
+    {
+        $csvField = new CsvField(['name' => $this->field, 'type' => 'decimal']);
+        $fh = $this->fh;
+        $result = $fh::fieldToDb($csvField);
+        $options = $result[$this->field]->getOptions();
+
+        $this->assertArrayNotHasKey('limit', $options);
+        $this->assertEquals('10', $options['precision']);
+        $this->assertEquals('2', $options['scale']);
+    }
+
+    public function testFieldToDbWrongLimit()
+    {
+        $csvField = new CsvField(['name' => $this->field, 'type' => 'decimal(15)']);
+        $fh = $this->fh;
+        $result = $fh::fieldToDb($csvField);
+        $options = $result[$this->field]->getOptions();
+
+        $this->assertEquals('15', $options['limit']);
+        $this->assertEquals('10', $options['precision']);
+        $this->assertEquals('2', $options['scale']);
     }
 
     public function getValues()

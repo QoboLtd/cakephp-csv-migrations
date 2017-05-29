@@ -23,6 +23,81 @@ class ListFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\FieldHandlerInterface', $implementedInterfaces), "FieldHandlerInterface is not implemented");
     }
 
+    public function getValues()
+    {
+        return [
+            ['cy', 'Cyprus'],
+            ['usa', 'USA'],
+            ['uk', 'United Kingdom'],
+        ];
+    }
+
+    /**
+     * @dataProvider getValues
+     */
+    public function testRenderValue($value, $expected)
+    {
+        $options['fieldDefinitions'] = new CsvField([
+            'name' => $this->field,
+            'type' => 'list(countries)',
+            'required' => false,
+            'non-searchable' => false,
+            'unique' => false
+        ]);
+
+        $result = $this->fh->renderValue($value, $options);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testRenderValueWithWrongValue()
+    {
+        $options['fieldDefinitions'] = new CsvField([
+            'name' => $this->field,
+            'type' => 'list(countries)',
+            'required' => false,
+            'non-searchable' => false,
+            'unique' => false
+        ]);
+
+        $result = $this->fh->renderValue('non-existing-value', $options);
+
+        $this->assertNotEquals('non-existing-value', $result);
+    }
+
+    public function testRenderValueEmptyData()
+    {
+        $result = $this->fh->renderValue('', []);
+
+        $this->assertEquals('', $result);
+    }
+
+    public function testRenderValueSetListItems()
+    {
+        $result = $this->fh->renderValue('foo', ['listItems' => ['foo' => 'Foo']]);
+
+        $this->assertEquals('Foo', $result);
+    }
+
+    public function testRenderInput()
+    {
+        $options['fieldDefinitions'] = new CsvField([
+            'name' => $this->field,
+            'type' => 'list(countries)',
+            'required' => false,
+            'non-searchable' => false,
+            'unique' => false
+        ]);
+
+        $result = $this->fh->renderInput(null, $options);
+
+        foreach ($this->getValues() as $value) {
+            reset($value);
+            $this->assertContains(current($value), $result);
+            $this->assertContains(next($value), $result);
+        }
+    }
+
     public function testFieldToDb()
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => 'text']);

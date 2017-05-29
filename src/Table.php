@@ -110,14 +110,14 @@ class Table extends BaseTable
             return $result;
         }
 
-        $config = $table->getConfig();
-        if (!isset($config['parent'])) {
+        $parent = (array)$table->getConfig(ConfigurationTrait::$CONFIG_OPTION_PARENT);
+        if (empty($parent)) {
             return $result;
         }
 
-        $module = $table->getParentModuleField();
-        $redirect = $table->getParentRedirectField();
-        $relation = $table->getParentRelationField();
+        $module = isset($parent['module']) ? $parent['module'] : '';
+        $redirect = isset($parent['redirect']) ? $parent['redirect'] : '';
+        $relation = isset($parent['relation']) ? $parent['relation'] : '';
 
         if (empty($redirect)) {
             return $result;

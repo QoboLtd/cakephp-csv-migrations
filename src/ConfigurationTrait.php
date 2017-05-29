@@ -14,9 +14,7 @@ trait ConfigurationTrait
     public static $CONFIG_OPTION_LOOKUP_FIELDS = 'table.lookup_fields';
     public static $CONFIG_OPTION_TYPEAHEAD_FIELDS = 'table.typeahead_fields';
     public static $CONFIG_OPTION_ALLOW_REMINDERS = 'table.allow_reminders';
-    public static $CONFIG_OPTION_PARENT_MODULE = 'parent.module';
-    public static $CONFIG_OPTION_PARENT_REDIRECT = 'parent.redirect';
-    public static $CONFIG_OPTION_PARENT_RELATION = 'parent.relation';
+    public static $CONFIG_OPTION_PARENT = 'parent';
     public static $CONFIG_OPTION_ASSOCIATION_LABELS = 'associationLabels';
     public static $CONFIG_OPTION_NOTIFICATIONS = 'notifications';
     public static $CONFIG_OPTION_HIDDEN_ASSOCIATIONS = 'associations.hide_associations';
@@ -94,45 +92,6 @@ trait ConfigurationTrait
     public function icon()
     {
         $result = $this->getConfig(self::$CONFIG_OPTION_ICON);
-        $result = isset($result[0]) ? (string)$result[0] : '';
-
-        return $result;
-    }
-
-    /**
-     * getParentRelationField
-     *
-     * @return string
-     */
-    public function getParentModuleField()
-    {
-        $result = $this->getConfig(self::$CONFIG_OPTION_PARENT_MODULE);
-        $result = isset($result[0]) ? (string)$result[0] : '';
-
-        return $result;
-    }
-
-    /**
-     * getParentRedirectField
-     *
-     * @return string
-     */
-    public function getParentRedirectField()
-    {
-        $result = $this->getConfig(self::$CONFIG_OPTION_PARENT_REDIRECT);
-        $result = isset($result[0]) ? (string)$result[0] : '';
-
-        return $result;
-    }
-
-    /**
-     * getParentRelationField
-     *
-     * @return string
-     */
-    public function getParentRelationField()
-    {
-        $result = $this->getConfig(self::$CONFIG_OPTION_PARENT_RELATION);
         $result = isset($result[0]) ? (string)$result[0] : '';
 
         return $result;

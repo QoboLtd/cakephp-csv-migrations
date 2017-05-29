@@ -15,8 +15,10 @@ use CsvMigrations\FieldTrait;
 use CsvMigrations\MigrationTrait;
 
 /**
- * Accounts Model
+ * CsvMigrations Table
  *
+ * All CSV modules should extend this Table
+ * class for configuration and functionality.
  */
 class Table extends BaseTable
 {
@@ -28,7 +30,8 @@ class Table extends BaseTable
     protected $_currentUser;
 
     /**
-     * setCurrentUser method
+     * setCurrentUser
+     *
      * @param array $user from Cake\Controller\Component\AuthComponent
      * @return array $_currentUser
      */
@@ -40,7 +43,8 @@ class Table extends BaseTable
     }
 
     /**
-     * getCurrentUser method
+     * getCurrentUser
+     *
      * @return array $_currentUser property
      */
     public function getCurrentUser()
@@ -49,7 +53,7 @@ class Table extends BaseTable
     }
 
     /**
-     * Initialize method
+     * Initialize
      *
      * @param array $config The configuration for the Table.
      * @return void
@@ -71,6 +75,7 @@ class Table extends BaseTable
 
     /**
      * afterSave hook
+     *
      * @param Cake\Event $event from the parent afterSave
      * @param EntityInterface $entity from the parent afterSave
      * @param ArrayObject $options from the parent afterSave
@@ -88,7 +93,8 @@ class Table extends BaseTable
     }
 
     /**
-     * getParentRedirectUrl method
+     * getParentRedirectUrl
+     *
      * Uses [parent] section of tables config.ini to define
      * where to redirect after the entity was added/edited.
      * @param Cake\ORM\Table $table of the entity table
@@ -141,6 +147,7 @@ class Table extends BaseTable
 
     /**
      * getReminderTypeFields
+     *
      * @return array $result containing reminder fieldnames
      */
     public function getReminderFields()
@@ -156,6 +163,8 @@ class Table extends BaseTable
     }
 
     /**
+     * enablePrimaryKeyAccess
+     *
      * Enable accessibility to associations primary key. Useful for
      * patching entities with associated data during updating process.
      *
@@ -174,6 +183,8 @@ class Table extends BaseTable
     }
 
     /**
+     * setAssociatedByLookupFields
+     *
      * Method that checks Entity's association fields (foreign keys) values and query's the database to find
      * the associated record. If the record is not found, it query's the database again to find it by its
      * display field. If found it replaces the associated field's value with the records id.
@@ -251,6 +262,8 @@ class Table extends BaseTable
     }
 
     /**
+     * findByLookupFieldsWithValues
+     *
      * Method that adds lookup fields with the matching values to the Where clause in ORM Query
      *
      * @param  \Cake\ORM\Query $query  Query instance
@@ -277,6 +290,8 @@ class Table extends BaseTable
     }
 
     /**
+     * _currentTable
+     *
      * Return current table in camelCase form.
      * It adds plugin name as a prefix.
      *

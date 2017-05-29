@@ -139,17 +139,6 @@ trait ConfigurationTrait
     }
 
     /**
-     * Return association labels if any present
-     *
-     * @deprecated Use getConfig() directly instead
-     * @return array
-     */
-    public function associationLabels()
-    {
-        return (array)$this->getConfig(self::$CONFIG_OPTION_ASSOCIATION_LABELS);
-    }
-
-    /**
      * Returns notifications config
      *
      * @deprecated Use getConfig() directly instead

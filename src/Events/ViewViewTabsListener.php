@@ -8,6 +8,7 @@ use Cake\Network\Request;
 use Cake\ORM\Association;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\MigrationTrait;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
@@ -99,7 +100,6 @@ class ViewViewTabsListener implements EventListenerInterface
     public function getTabsList(Event $event, $request, $entity, $options)
     {
         $tabs = [];
-        $labels = [];
         $params = $request->params;
         $table = $params['controller'];
         if (!is_null($params['plugin'])) {
@@ -108,14 +108,9 @@ class ViewViewTabsListener implements EventListenerInterface
 
         $this->_tableInstance = TableRegistry::get($table);
 
-        $config = $this->_tableInstance->getConfig();
         $hiddenAssociations = $this->_tableInstance->hiddenAssociations();
 
-        if (!empty($config['associationLabels'])) {
-            $labels = $this->_tableInstance->associationLabels($config['associationLabels']);
-        }
-
-        $tabLabels = $this->_getTabLabels($this->_tableInstance, $config);
+        $tabLabels = $this->_getTabLabels($this->_tableInstance);
 
         foreach ($this->_tableInstance->associations() as $association) {
             if (in_array($association->name(), $hiddenAssociations)) {
@@ -158,19 +153,14 @@ class ViewViewTabsListener implements EventListenerInterface
      *
      * Re-arrange tabs naming based on the config.ini and fieldNames
      * to avoid repetitive namings
-     * @param Cake\ORM\TableRegistry $tableInstance passed
-     * @param array $config of the config.ini
      *
+     * @param Cake\ORM\TableRegistry $tableInstance passed
      * @return array $labels with key/value storage of alias/name
      */
-    protected function _getTabLabels($tableInstance, $config = [])
+    protected function _getTabLabels($tableInstance)
     {
         $labels = [];
-        $associationLabels = [];
-
-        if (!empty($config['associationLabels'])) {
-            $associationLabels = $tableInstance->associationLabels($config['associationLabels']);
-        }
+        $associationLabels = $tableInstance->getConfig(ConfigurationTrait::$CONFIG_OPTION_ASSOCIATION_LABELS);
 
         $labelCounts = [];
         // Gather labels for all associations

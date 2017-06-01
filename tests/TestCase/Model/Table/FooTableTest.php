@@ -112,6 +112,10 @@ class FooTableTest extends TestCase
                         'Users',
                         'Contacts',
                     ],
+                    'basic_search_fields' => [
+                        'first_name',
+                        'last_name',
+                    ],
                     'icon' => 'cube',
                 ],
                 'virtualFields' => [

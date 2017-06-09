@@ -8,8 +8,8 @@
         "alt3/cakephp-swagger": "^1.0",
         "eluceo/ical": "^0.11.0",
         "friendsofcake/crud": "^4.3",
-        "qobo/cakephp-translations": "^3.0",
-        "qobo/cakephp-utils": "^3.0",
+        "qobo/cakephp-translations": "^4.0",
+        "qobo/cakephp-utils": "^4.0",
         "symfony/expression-language": "^3.1"
     },
     "require-dev": {

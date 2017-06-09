@@ -169,7 +169,6 @@ trait MigrationTrait
                         'className' => $assoccsvModule,
                         'foreignKey' => $fieldName
                     ]);
-                    continue;
                 }
 
                 if ($config['table'] === $assoccsvModule) {

@@ -1,11 +1,13 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
+use Cake\ORM\Entity;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DecimalFieldHandler;
 use CsvMigrations\FieldHandlers\ListFieldHandler;
 use CsvMigrations\FieldHandlers\MetricFieldHandler;
 use PHPUnit_Framework_TestCase;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class MetricFieldHandlerTest extends PHPUnit_Framework_TestCase
 {
@@ -23,6 +25,46 @@ class MetricFieldHandlerTest extends PHPUnit_Framework_TestCase
     {
         $implementedInterfaces = array_keys(class_implements($this->fh));
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\FieldHandlerInterface', $implementedInterfaces), "FieldHandlerInterface is not implemented");
+    }
+
+    public function testRenderValue()
+    {
+        $options['entity'] = new Entity(['field_metric_amount' => 135.50, 'field_metric_unit' => 'ft']);
+        $options['fieldDefinitions'] = new CsvField([
+            'name' => $this->field,
+            'type' => 'metric(units_area)',
+            'required' => false,
+            'non-searchable' => false,
+            'unique' => false
+        ]);
+
+        $result = $this->fh->renderValue(null, $options);
+
+        $this->assertEquals('135.50&nbsp;ft&sup2;', $result);
+    }
+
+    public function testRenderInput()
+    {
+        $options['fieldDefinitions'] = new CsvField([
+            'name' => $this->field,
+            'type' => 'metric(units_area)',
+            'required' => false,
+            'non-searchable' => false,
+            'unique' => false
+        ]);
+
+        $result = $this->fh->renderInput(null, $options);
+
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_LIST, null, 'units_area');
+        foreach ($mc->parse()->items as $item) {
+            if ((bool)$item->inactive) {
+                $this->assertNotContains('value="' . $item->value . '"', $result);
+                $this->assertNotContains(h($item->label), $result);
+            } else {
+                $this->assertContains('value="' . $item->value . '"', $result);
+                $this->assertContains(h($item->label), $result);
+            }
+        }
     }
 
     public function testFieldToDb()

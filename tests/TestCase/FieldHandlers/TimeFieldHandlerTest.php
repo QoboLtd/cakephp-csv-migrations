@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
+use Cake\I18n\Date;
 use Cake\I18n\Time;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\TimeFieldHandler;
@@ -65,6 +66,22 @@ class TimeFieldHandlerTest extends PHPUnit_Framework_TestCase
     {
         $result = $this->fh->renderInput('13:30');
         $this->assertRegExp('/field_time/', $result, "Input rendering does not contain field name");
+    }
+
+    public function testRenderInputWithTimeObject()
+    {
+        $result = $this->fh->renderInput(new Time('13:30'));
+
+        $this->assertContains('name="' . $this->table . '[' . $this->field . ']"', $result);
+        $this->assertContains('value="13:30"', $result);
+        $this->assertContains('data-provide="timepicker"', $result);
+    }
+
+    public function testRenderInputWithDateObject()
+    {
+        $result = $this->fh->renderInput(new Date('13:30'));
+
+        $this->assertContains('value="13:30"', $result);
     }
 
     public function testGetSearchOptions()

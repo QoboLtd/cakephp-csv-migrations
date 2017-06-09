@@ -1,11 +1,13 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
+use Cake\ORM\Entity;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DecimalFieldHandler;
 use CsvMigrations\FieldHandlers\ListFieldHandler;
 use CsvMigrations\FieldHandlers\MoneyFieldHandler;
 use PHPUnit_Framework_TestCase;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class MoneyFieldHandlerTest extends PHPUnit_Framework_TestCase
 {
@@ -23,6 +25,46 @@ class MoneyFieldHandlerTest extends PHPUnit_Framework_TestCase
     {
         $implementedInterfaces = array_keys(class_implements($this->fh));
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\FieldHandlerInterface', $implementedInterfaces), "FieldHandlerInterface is not implemented");
+    }
+
+    public function testRenderValue()
+    {
+        $options['entity'] = new Entity(['field_money_amount' => 150, 'field_money_currency' => 'eur']);
+        $options['fieldDefinitions'] = new CsvField([
+            'name' => $this->field,
+            'type' => 'money(currencies)',
+            'required' => false,
+            'non-searchable' => false,
+            'unique' => false
+        ]);
+
+        $result = $this->fh->renderValue(null, $options);
+
+        $this->assertEquals('150.00&nbsp;EUR', $result);
+    }
+
+    public function testRenderInput()
+    {
+        $options['fieldDefinitions'] = new CsvField([
+            'name' => $this->field,
+            'type' => 'money(countries)',
+            'required' => false,
+            'non-searchable' => false,
+            'unique' => false
+        ]);
+
+        $result = $this->fh->renderInput(null, $options);
+
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_LIST, null, 'countries');
+        foreach ($mc->parse()->items as $item) {
+            if ((bool)$item->inactive) {
+                $this->assertNotContains('value="' . $item->value . '"', $result);
+                $this->assertNotContains($item->label, $result);
+            } else {
+                $this->assertContains('value="' . $item->value . '"', $result);
+                $this->assertContains($item->label, $result);
+            }
+        }
     }
 
     public function testFieldToDb()

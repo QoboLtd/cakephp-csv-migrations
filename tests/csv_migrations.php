@@ -7,3 +7,9 @@ Configure::write('CsvMigrations.api', [
     'auth' => true,
     'token' => null
 ]);
+Configure::write('CsvMigrations.select2', [
+    'min_length' => 0,
+    'timeout' => 300,
+    'id' => '[data-type="select2"]',
+    'limit' => 10
+]);

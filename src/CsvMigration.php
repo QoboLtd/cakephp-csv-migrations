@@ -119,13 +119,12 @@ class CsvMigration extends AbstractMigration
     public function joins($tableName)
     {
         $result = [];
-        $this->_setConfiguration($tableName);
+        $this->setConfig($tableName);
 
-        if (empty($this->_config['manyToMany']['modules'])) {
+        $manyToMany = (array)$this->getConfig(ConfigurationTrait::$CONFIG_OPTION_MANY_TO_MANY_MODULES);
+        if (empty($manyToMany)) {
             return $result;
         }
-
-        $manyToMany = explode(',', $this->_config['manyToMany']['modules']);
 
         foreach ($manyToMany as $module) {
             // skip manyToMany table creation if one of the tables does not exist

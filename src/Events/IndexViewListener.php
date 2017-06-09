@@ -7,6 +7,7 @@ use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
+use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\Events\BaseViewListener;
 
 class IndexViewListener extends BaseViewListener
@@ -179,8 +180,8 @@ class IndexViewListener extends BaseViewListener
 
         $sortCols = $fields[$sortCol];
         // handle virtual field
-        if (method_exists($table, 'getVirtualFields') && is_callable([$table, 'getVirtualFields'])) {
-            $virtualFields = $table->getVirtualFields();
+        if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
+            $virtualFields = $table->getConfig(ConfigurationTrait::$CONFIG_OPTION_VIRTUAL_FIELDS);
             if (!empty($virtualFields) && isset($virtualFields[$sortCols])) {
                 $sortCols = $virtualFields[$sortCols];
             }

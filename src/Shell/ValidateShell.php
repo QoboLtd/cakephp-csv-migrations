@@ -353,8 +353,7 @@ class ValidateShell extends Shell
                 }
                 // 'typeahead_fields' key is optional, but must contain valid fields if specified
                 if (!empty($config['table']['typeahead_fields'])) {
-                    $typeaheadFields = explode(',', trim($config['table']['typeahead_fields']));
-                    foreach ($typeaheadFields as $typeaheadField) {
+                    foreach ($config['table']['typeahead_fields'] as $typeaheadField) {
                         if (!$this->_isValidModuleField($module, $typeaheadField)) {
                             $errors[] = $module . " config [table] section references unknown field '" . $typeaheadField . "' in 'typeahead_fields' key";
                         }
@@ -362,8 +361,7 @@ class ValidateShell extends Shell
                 }
                 // 'lookup_fields' key is optional, but must contain valid fields if specified
                 if (!empty($config['table']['lookup_fields'])) {
-                    $lookupFields = explode(',', $config['table']['lookup_fields']);
-                    foreach ($lookupFields as $lookupField) {
+                    foreach ($config['table']['lookup_fields'] as $lookupField) {
                         if (!$this->_isValidModuleField($module, $lookupField)) {
                             $errors[] = $module . " config [table] section references unknown field '" . $lookupField . "' in 'lookup_fields' key";
                         }
@@ -404,12 +402,11 @@ class ValidateShell extends Shell
             // [virtualFields] section
             if (!empty($config['virtualFields'])) {
                 foreach ($config['virtualFields'] as $virtualField => $realFields) {
-                    $realFieldsList = explode(',', $realFields);
-                    if (empty($realFieldsList)) {
+                    if (empty($realFields)) {
                         $errors[] = $module . " config [virtualFields] section does not define real fields for '$virtualField' virtual field";
                         continue;
                     }
-                    foreach ($realFieldsList as $realField) {
+                    foreach ($realFields as $realField) {
                         if (!$this->_isRealModuleField($module, $realField)) {
                             $errors[] = $module . " config [virtualFields] section uses a non-real field in '$virtualField' virtual field";
                         }
@@ -419,9 +416,9 @@ class ValidateShell extends Shell
 
             // [manyToMany] section
             if (!empty($config['manyToMany'])) {
-                // 'module' key is required and must contain valid modules
+                // 'modules' key is required and must contain valid modules
                 if (!empty($config['manyToMany']['modules'])) {
-                    $manyToManyModules = explode(',', $config['manyToMany']['modules']);
+                    $manyToManyModules = $config['manyToMany']['modules'];
                     foreach ($manyToManyModules as $manyToManyModule) {
                         if (!$this->_isValidModule($manyToManyModule)) {
                             $errors[] = $module . " config [manyToMany] section references unknown module '$manyToManyModule' in 'modules' key";

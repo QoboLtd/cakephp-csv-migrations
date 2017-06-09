@@ -7,6 +7,7 @@ use Cake\Http\ServerRequest;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\Events\BaseViewListener;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
@@ -202,8 +203,8 @@ class LookupListener extends BaseViewListener
     {
         // Get typeahead fields from configuration
         $result = [];
-        if (method_exists($table, 'typeaheadFields') && is_callable([$table, 'typeaheadFields'])) {
-            $result = $table->typeaheadFields();
+        if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
+            $result = $table->getConfig(ConfigurationTrait::$CONFIG_OPTION_TYPEAHEAD_FIELDS);
         }
         // If there are no typeahead fields configured, use displayFields()
         if (empty($result)) {

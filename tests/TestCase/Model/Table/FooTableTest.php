@@ -4,6 +4,7 @@ namespace CsvMigrations\Test\TestCase\Model\Table;
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\Table;
 
 /**
@@ -98,15 +99,35 @@ class FooTableTest extends TestCase
                     'alias' => 'Foobar',
                     'searchable' => true,
                     'display_field' => 'name',
-                    'typeahead_fields' => 'name,foobar',
-                    'lookup_fields' => 'foo,bar,baz',
-                    'icon' => 'cube'
+                    'typeahead_fields' => [
+                        'name',
+                        'foobar',
+                    ],
+                    'lookup_fields' => [
+                        'foo',
+                        'bar',
+                        'baz',
+                    ],
+                    'allow_reminders' => [
+                        'Users',
+                        'Contacts',
+                    ],
+                    'basic_search_fields' => [
+                        'first_name',
+                        'last_name',
+                    ],
+                    'icon' => 'cube',
                 ],
                 'virtualFields' => [
-                    'name' => 'full_name',
+                    'name' => [
+                        'foo',
+                        'bar',
+                    ],
                 ],
                 'manyToMany' => [
-                    'modules' => 'Users',
+                    'modules' => [
+                        'Users',
+                    ],
                 ],
                 'parent' => [
                     'module' => 'TestModule',
@@ -114,15 +135,94 @@ class FooTableTest extends TestCase
 
                 ],
                 'associations' => [
-                    'hide_associations' => 'TestTable',
+                    'hide_associations' => [
+                        'TestTable',
+                        'AnotherTable',
+                    ],
                 ],
-
                 'associationLabels' => [
                     'FieldIdTable' => 'Table',
                     'AnotherIdTableTwo' => 'Pretty Table'
-                ]
+                ],
+                'notifications' => [
+                    'enable' => true,
+                    'ignored_fields' => [
+                        'created',
+                        'modified',
+                    ],
+                ],
             ]
         );
+    }
+
+    public function testLookupFields()
+    {
+        $expected = ['foo', 'bar', 'baz'];
+        $actual = $this->FooTable->getConfig(ConfigurationTrait::$CONFIG_OPTION_LOOKUP_FIELDS);
+        $this->assertTrue(is_array($actual), "Non-array returned from lookupFields");
+        $this->assertEquals($expected, $actual, "Incorrect value returned from lookupFields");
+    }
+
+    public function testTypeaheadFields()
+    {
+        $expected = ['name', 'foobar'];
+        $actual = $this->FooTable->getConfig(ConfigurationTrait::$CONFIG_OPTION_TYPEAHEAD_FIELDS);
+        $this->assertTrue(is_array($actual), "Non-array returned from typeaheadFields");
+        $this->assertEquals($expected, $actual, "Incorrect value returned from typeaheadFields");
+    }
+
+    public function testGetVirtualFields()
+    {
+        $expected = ['name' => ['foo', 'bar']];
+        $actual = $this->FooTable->getConfig(ConfigurationTrait::$CONFIG_OPTION_VIRTUAL_FIELDS);
+        $this->assertTrue(is_array($actual), "Non-array returned from virtualFields");
+        $this->assertEquals($expected, $actual, "Incorrect value returned from virtualFields");
+    }
+
+    public function testHiddenAssociations()
+    {
+        $expected = ['TestTable', 'AnotherTable'];
+        $actual = $this->FooTable->getConfig(ConfigurationTrait::$CONFIG_OPTION_HIDDEN_ASSOCIATIONS);
+        $this->assertTrue(is_array($actual), "Non-array returned from hiddenAssociations");
+        $this->assertEquals($expected, $actual, "Incorrect value returned from hiddenAssociations");
+    }
+
+    public function testNotifications()
+    {
+        $expected = [
+            'enable' => true,
+            'ignored_fields' => [
+                'created',
+                'modified',
+            ],
+        ];
+        $actual = $this->FooTable->getConfig(ConfigurationTrait::$CONFIG_OPTION_NOTIFICATIONS);
+        $this->assertTrue(is_array($actual), "Non-array returned from notifications");
+        $this->assertEquals($expected, $actual, "Incorrect value returned from notifications");
+    }
+
+    public function testIsSearchable()
+    {
+        $expected = true;
+        $actual = $this->FooTable->isSearchable();
+        $this->assertTrue(is_bool($actual), "Non-bool returned from isSearchable");
+        $this->assertEquals($expected, $actual, "Incorrect value returned from isSearchable");
+    }
+
+    public function testIcon()
+    {
+        $expected = 'cube';
+        $actual = $this->FooTable->icon();
+        $this->assertTrue(is_string($actual), "Non-string returned from icon");
+        $this->assertEquals($expected, $actual, "Incorrect value returned from icon");
+    }
+
+    public function testModuleAlias()
+    {
+        $expected = 'Foobar';
+        $actual = $this->FooTable->moduleAlias();
+        $this->assertTrue(is_string($actual), "Non-string returned from moduleAlias");
+        $this->assertEquals($expected, $actual, "Incorrect value returned from moduleAlias");
     }
 
     public function testGetReports()
@@ -146,18 +246,10 @@ class FooTableTest extends TestCase
         $this->assertSame('Foobar', $this->FooTable->moduleAlias());
     }
 
-    /**
-     * @dataProvider moduleAliasProvider
-     */
-    public function testModuleAliasSetter($alias, $expected)
-    {
-        $this->assertSame($expected, $this->FooTable->moduleAlias($alias));
-    }
-
     public function testModuleAliasGetterDefault()
     {
-        $this->FooTable->moduleAlias('Foo');
-        $this->assertSame('Foo', $this->FooTable->moduleAlias(null));
+        $this->FooTable->moduleAlias();
+        $this->assertSame('Foobar', $this->FooTable->moduleAlias());
     }
 
     public function testGetReminderFields()
@@ -165,14 +257,6 @@ class FooTableTest extends TestCase
         $fields = $this->FooTable->getReminderFields();
         $this->assertTrue(is_array($fields), "reminderFields is not an array");
         $this->assertEquals('reminder_date', $fields[0]['name'], "Field reminder is incorrectly matched");
-    }
-
-    public function moduleAliasProvider()
-    {
-        return [
-            [null, 'Foobar'],
-            ['Foo', 'Foo']
-        ];
     }
 
     public function csvProvider()

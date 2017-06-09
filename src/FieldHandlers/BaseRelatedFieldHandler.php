@@ -273,7 +273,7 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
         $result = '';
         // use typeahead fields
         if (!empty($properties['config']['table']['typeahead_fields'])) {
-            $result = explode(',', $properties['config']['table']['typeahead_fields']);
+            $result = $properties['config']['table']['typeahead_fields'];
             if (!empty($result)) {
                 $result = implode(', or ', array_map(function ($value) {
                     return Inflector::humanize($value);

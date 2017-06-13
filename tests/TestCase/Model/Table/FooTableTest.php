@@ -5,6 +5,7 @@ use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\ConfigurationTrait;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Table;
 
 /**
@@ -257,6 +258,16 @@ class FooTableTest extends TestCase
         $fields = $this->FooTable->getReminderFields();
         $this->assertTrue(is_array($fields), "reminderFields is not an array");
         $this->assertEquals('reminder_date', $fields[0]['name'], "Field reminder is incorrectly matched");
+    }
+
+    public function testFieldsOptionsRenderer()
+    {
+        $fhf = new FieldHandlerFactory();
+        $result = $fhf->renderValue($this->FooTable, 'status', 'active');
+        $this->assertEquals('active', $result, "Field options are ignored during rendering (renderer set)");
+
+        $result = $fhf->renderValue($this->FooTable, 'gender', 'm');
+        $this->assertEquals('Male', $result, "Field options are ignored during rendering (renderer not set)");
     }
 
     public function csvProvider()

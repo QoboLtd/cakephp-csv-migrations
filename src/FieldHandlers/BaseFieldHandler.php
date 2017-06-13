@@ -108,7 +108,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * Custom form input templates.
      *
-     * @var input
+     * @var array Associative array of templates
      */
     protected $_templates = [
         'input' => '<div class="input-group %s">
@@ -178,6 +178,13 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected function setDefaultOptions()
     {
+        // Populate default options from the fields.ini
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
+        $config = (array)json_decode(json_encode($mc->parse()), true);
+        if (!empty($config[$this->field])) {
+            $this->defaultOptions = array_replace_recursive($this->defaultOptions, $config[$this->field]);
+        }
+
         // set $options['fieldDefinitions']
         $stubFields = [
             $this->field => [
@@ -193,10 +200,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             // for some unit test runs or custom non-CSV
             // modules.
             $this->defaultOptions['fieldDefinitions'] = new CsvField($stubFields[$this->field]);
-        }
-
-        if (!empty($fieldOptions[$this->field])) {
-            $this->defaultOptions = array_replace_recursive($this->defaultOptions, $fieldOptions[$this->field]);
         }
 
         // set $options['label']

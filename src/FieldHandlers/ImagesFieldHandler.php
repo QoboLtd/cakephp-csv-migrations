@@ -23,7 +23,7 @@ class ImagesFieldHandler extends BaseFileFieldHandler
     /**
      * Check if specified image version exists
      *
-     * @param  Entity $entity  Entity
+     * @param  \Cake\ORM\Entity $entity  Entity
      * @param  string           $version Image version
      * @param  \CsvMigrations\FileUploadsUtils $fileUploadsUtils fileUploadsUtils class object
      * @return bool
@@ -41,7 +41,7 @@ class ImagesFieldHandler extends BaseFileFieldHandler
     /**
      * Generates thumbnails html markup.
      *
-     * @param ResultSet $entities File Entities
+     * @param \Cake\ORM\ResultSet $entities File Entities
      * @param FileUploadsUtils $fileUploadsUtils fileUploadsUtils class object
      * @param array $options for default thumbs versions and other setttings
      *

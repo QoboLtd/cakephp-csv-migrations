@@ -6,6 +6,7 @@ use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Network\Request;
 use Cake\ORM\Association;
+use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
@@ -89,15 +90,16 @@ class ViewViewTabsListener implements EventListenerInterface
 
     /**
      * getTabsList method
-     * Return the list of associations for the Entity
-     * as the tabs
+     * Return the list of associations for the Entity as the tabs.
+     *
      * @param Cake\Event $event passed
      * @param Cake\Request $request from the view
      * @param Cake\ORM\Entity $entity passed
+     * @param array $user User info
      * @param array $options extra setup
-     * @return array $tabs list with its labels and classes
+     * @return void
      */
-    public function getTabsList(Event $event, $request, $entity, $options)
+    public function getTabsList(Event $event, $request, Entity $entity, array $user, array $options)
     {
         $tabs = [];
         $params = $request->params;
@@ -140,12 +142,14 @@ class ViewViewTabsListener implements EventListenerInterface
                 'targetClass' => $association->className(),
             ];
 
-            if (!empty($tab['targetClass'])) {
-                array_push($tabs, $tab);
+            if (empty($tab['targetClass'])) {
+                continue;
             }
+
+            array_push($tabs, $tab);
         }
 
-        return compact('tabs');
+        $event->result['tabs'] = $tabs;
     }
 
     /**
@@ -266,15 +270,20 @@ class ViewViewTabsListener implements EventListenerInterface
         $this->_tableInstance = TableRegistry::get($table);
 
         foreach ($this->_tableInstance->associations() as $association) {
-            if ($options['tab']['associationName'] == $association->name()) {
-                $type = $association->type();
+            if ($association->name() !== $options['tab']['associationName']) {
+                continue;
+            }
 
-                if (in_array($type, array_keys($this->_associationsMap))) {
-                    $content = $this->{$this->_associationsMap[$type]}($association, $request);
-                    if (!empty($content['records'])) {
-                        break;
-                    }
-                }
+            $type = $association->type();
+
+            if (!in_array($type, array_keys($this->_associationsMap))) {
+                continue;
+            }
+
+            $content = $this->{$this->_associationsMap[$type]}($association, $request);
+
+            if (!empty($content['records'])) {
+                break;
             }
         }
 

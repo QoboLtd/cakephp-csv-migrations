@@ -232,6 +232,7 @@ echo $this->element('CsvMigrations.common_js_libs');
         $event = new Event('CsvMigrations.View.View.TabsList', $this, [
             'request' => $this->request,
             'entity' => $options['entity'],
+            'user' => $user,
             'options' => []
         ]);
 

@@ -202,10 +202,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $this->defaultOptions['fieldDefinitions'] = new CsvField($stubFields[$this->field]);
         }
 
-        if (!empty($fieldOptions[$this->field])) {
-            $this->defaultOptions = array_replace_recursive($this->defaultOptions, $fieldOptions[$this->field]);
-        }
-
         // set $options['label']
         $this->defaultOptions['label'] = $this->renderName();
     }

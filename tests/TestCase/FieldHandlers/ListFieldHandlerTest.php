@@ -79,6 +79,12 @@ class ListFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Foo', $result);
     }
 
+    public function testRenderValueWithPlainFlag()
+    {
+        $result = $this->fh->renderValue('foo', ['listItems' => ['foo' => 'Foo'], 'renderAs' => 'plain']);
+        $this->assertEquals('foo', $result);
+    }
+
     public function testRenderInput()
     {
         $options['fieldDefinitions'] = new CsvField([

@@ -178,6 +178,13 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected function setDefaultOptions()
     {
+        // Populate default options from the fields.ini
+        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
+        $config = (array)json_decode(json_encode($mc->parse()), true);
+        if (!empty($config[$this->field])) {
+            $this->defaultOptions = array_replace_recursive($this->defaultOptions, $config[$this->field]);
+        }
+
         // set $options['fieldDefinitions']
         $stubFields = [
             $this->field => [

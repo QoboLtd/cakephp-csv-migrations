@@ -8,7 +8,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
     /**
      * Generates file icons markup
      *
-     * @param ResultSet $entities File Entities
+     * @param \Cake\ORM\ResultSet $entities File Entities
      * @param FileUploadsUtils $fileUploadsUtils fileUploadsUtils class object
      *
      * @return string

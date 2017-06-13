@@ -108,7 +108,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * Custom form input templates.
      *
-     * @var input
+     * @var array Associative array of templates
      */
     protected $_templates = [
         'input' => '<div class="input-group %s">

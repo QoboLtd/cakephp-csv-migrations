@@ -93,9 +93,7 @@ class FooTableTest extends TestCase
 
     public function testGetConfig()
     {
-        $this->assertSame(
-            $this->FooTable->getConfig(),
-            [
+        $expected = [
                 'table' => [
                     'alias' => 'Foobar',
                     'searchable' => true,
@@ -118,6 +116,7 @@ class FooTableTest extends TestCase
                         'last_name',
                     ],
                     'icon' => 'cube',
+                    'translatable' => false,
                 ],
                 'virtualFields' => [
                     'name' => [
@@ -152,8 +151,16 @@ class FooTableTest extends TestCase
                         'modified',
                     ],
                 ],
-            ]
-        );
+            ];
+
+        $actual = $this->FooTable->getConfig();
+        foreach ($expected as $section => $options) {
+            $this->assertTrue(isset($actual[$section]), "getConfig() did not return section [$section]");
+            foreach ($options as $name => $value) {
+                $this->assertTrue(isset($actual[$section][$name]), "getConfig() did not return option [$name] in section [$section]");
+                $this->assertEquals($value, $actual[$section][$name], "getConfig() returned incorrect value for option [$name] in section [$section]");
+            }
+        }
     }
 
     public function testLookupFields()

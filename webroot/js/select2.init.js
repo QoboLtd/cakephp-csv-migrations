@@ -67,6 +67,7 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
             theme: 'bootstrap',
             width: '100%',
             placeholder: placeholder,
+            allowClear: true,
             minimumInputLength: that.min_length,
             escapeMarkup: function (text) {
                 return text;

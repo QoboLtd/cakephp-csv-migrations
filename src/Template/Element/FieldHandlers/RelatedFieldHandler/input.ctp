@@ -5,7 +5,7 @@
             <span class="fa fa-<?= $icon ?>"></span>
         </span>
         <?= $this->Form->input($name, [
-            'options' => [$value => $relatedProperties['dispFieldVal']],
+            'options' => $options,
             'label' => false,
             'id' => $field,
             'type' => $type,

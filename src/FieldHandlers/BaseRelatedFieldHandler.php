@@ -84,6 +84,7 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
             'label' => $options['label'],
             'required' => $options['fieldDefinitions']->getRequired(),
             'value' => $data,
+            'options' => ['' => '', $data => $relatedProperties['dispFieldVal']],
             'relatedProperties' => $relatedProperties,
             'embedded' => !empty($options['embModal']),
             'icon' => $this->_getInputIcon($relatedProperties),

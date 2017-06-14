@@ -19,6 +19,18 @@ class PanelTest extends TestCase
         ];
     }
 
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        unset($this->config);
+
+        parent::tearDown();
+    }
+
     public function testgetName()
     {
         $panel = new Panel('Foobar', $this->config);

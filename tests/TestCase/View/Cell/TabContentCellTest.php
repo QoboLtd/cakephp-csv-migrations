@@ -52,6 +52,8 @@ class TabContentCellTest extends TestCase
     public function tearDown()
     {
         unset($this->TabContent);
+        unset($this->request);
+        unset($this->response);
 
         parent::tearDown();
     }

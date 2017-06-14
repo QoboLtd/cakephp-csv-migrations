@@ -41,6 +41,18 @@ class DblistItemsTableTest extends TestCase
     }
 
     /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        unset($this->DblistItems);
+
+        parent::tearDown();
+    }
+
+    /**
      * Test initialize method
      *
      * @return void
@@ -103,17 +115,5 @@ class DblistItemsTableTest extends TestCase
                 break;
             }
         }
-    }
-
-    /**
-     * tearDown method
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        unset($this->DblistItems);
-
-        parent::tearDown();
     }
 }

@@ -52,6 +52,8 @@ class DblistCellTest extends TestCase
     public function tearDown()
     {
         unset($this->DbList);
+        unset($this->request);
+        unset($this->response);
 
         parent::tearDown();
     }

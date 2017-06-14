@@ -20,6 +20,19 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        unset($this->csvData);
+
+        parent::tearDown();
+    }
+
+
+    /**
      * Test that default values are set correct
      *
      * @see Task #2431

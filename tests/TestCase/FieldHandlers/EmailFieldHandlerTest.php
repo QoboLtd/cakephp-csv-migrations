@@ -17,6 +17,19 @@ class EmailFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->fh = new EmailFieldHandler($this->table, $this->field);
     }
 
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        unset($this->fh);
+
+        parent::tearDown();
+    }
+
+
     public function testInterface()
     {
         $implementedInterfaces = array_keys(class_implements($this->fh));

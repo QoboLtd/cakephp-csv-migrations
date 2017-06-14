@@ -13,6 +13,18 @@ class EmailRendererTest extends PHPUnit_Framework_TestCase
         $this->renderer = new EmailRenderer();
     }
 
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        unset($this->renderer);
+
+        parent::tearDown();
+    }
+
     public function testInterface()
     {
         $implementedInterfaces = array_keys(class_implements($this->renderer));

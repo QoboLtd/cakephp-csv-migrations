@@ -22,6 +22,19 @@ class RelatedFieldHandlerTest extends TestCase
         $this->fh = new RelatedFieldHandler($this->table, $this->field);
     }
 
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        unset($this->fh);
+
+        parent::tearDown();
+    }
+
+
     public function testInterface()
     {
         $implementedInterfaces = array_keys(class_implements($this->fh));

@@ -92,6 +92,21 @@ class FieldHandlerFactoryTest extends TestCase
         $this->fhf = new FieldHandlerFactory();
     }
 
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        unset($this->fh);
+        unset($this->table);
+        unset($this->csvData);
+
+        parent::tearDown();
+    }
+
+
     public function testRenderInput()
     {
         $result = $this->fhf->renderInput($this->table, 'id');

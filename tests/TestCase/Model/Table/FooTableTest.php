@@ -118,6 +118,7 @@ class FooTableTest extends TestCase
                         'last_name',
                     ],
                     'icon' => 'cube',
+                    'translatable' => false,
                 ],
                 'virtualFields' => [
                     'name' => [

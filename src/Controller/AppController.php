@@ -2,6 +2,7 @@
 namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
+use Cake\Http\Response;
 use Cake\ORM\TableRegistry;
 use CsvMigrations\FileUploadsUtils;
 
@@ -26,12 +27,15 @@ class AppController extends BaseController
      * or perform logic that needs to happen before each controller action.
      *
      * @param \Cake\Event\Event $event An Event instance
-     * @return void
+     * @return void|\Cake\Http\Response
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
     public function beforeFilter(\Cake\Event\Event $event)
     {
-        parent::beforeFilter($event);
+        $result = parent::beforeFilter($event);
+        if ($result instanceof Response) {
+            return $result;
+        }
 
         // pass module alias to the View
         $table = $this->loadModel();

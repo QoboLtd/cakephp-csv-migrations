@@ -26,6 +26,9 @@ class ListFieldHandler extends BaseCsvListFieldHandler
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
+        if (empty($data) && !empty($options['default'])) {
+            $data = $options['default'];
+        }
         $selectOptions = ['' => static::EMPTY_OPTION_LABEL];
 
         $fieldName = $this->table->aliasField($this->field);

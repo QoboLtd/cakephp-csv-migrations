@@ -19,6 +19,9 @@ class HasManyFieldHandler extends BaseRelatedFieldHandler
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
+        if (empty($data) && !empty($options['default'])) {
+            $data = $options['default'];
+        }
 
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {

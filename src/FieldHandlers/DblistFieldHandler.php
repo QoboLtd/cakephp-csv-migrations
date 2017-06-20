@@ -56,6 +56,9 @@ class DblistFieldHandler extends BaseListFieldHandler
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
+        if (empty($data) && !empty($options['default'])) {
+            $data = $options['default'];
+        }
 
         $fieldName = $this->table->aliasField($this->field);
 

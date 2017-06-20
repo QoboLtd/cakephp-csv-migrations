@@ -60,6 +60,10 @@ class BlobFieldHandler extends BaseSimpleFieldHandler
             $data = stream_get_contents($data);
         }
 
+        if (empty($data) && !empty($options['default'])) {
+            $data = $options['default'];
+        }
+
         return parent::renderInput($data, $options);
     }
 

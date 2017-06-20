@@ -58,6 +58,9 @@ abstract class BaseTimeFieldHandler extends BaseStringFieldHandler
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
+        if (empty($data) && !empty($options['default'])) {
+            $data = $options['default'];
+        }
 
         if ($data instanceof Time) {
             $data = $data->i18nFormat(static::FORMAT);

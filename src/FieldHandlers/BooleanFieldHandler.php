@@ -52,6 +52,9 @@ class BooleanFieldHandler extends BaseSimpleFieldHandler
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = $this->_getFieldValueFromData($data);
+        if (!is_bool($data) && !empty($options['default'])) {
+            $data = (bool)$options['default'];
+        }
 
         $fieldName = $this->table->aliasField($this->field);
 

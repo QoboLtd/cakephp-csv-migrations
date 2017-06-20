@@ -274,6 +274,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $data = (string)$this->_getFieldValueFromData($data);
+        if (empty($data) && !empty($options['default'])) {
+            $data = $options['default'];
+        }
 
         $fieldName = $this->table->aliasField($this->field);
 
@@ -518,17 +521,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             }
 
             return $result;
-        }
-
-        if (!$result) {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
-            $config = (array)json_decode(json_encode($mc->parse()), true);
-            $default = empty($config[$field]['default']) ? '' : $config[$field]['default'];
-
-            if (empty($default)) {
-                return $result;
-            }
-            $result = $default;
         }
 
         return $result;

@@ -5,6 +5,7 @@
             <span class="fa fa-<?= $icon ?>"></span>
         </span>
         <?= $this->Form->input($name, [
+            'empty' => true,
             'options' => $options,
             'label' => false,
             'id' => $field,

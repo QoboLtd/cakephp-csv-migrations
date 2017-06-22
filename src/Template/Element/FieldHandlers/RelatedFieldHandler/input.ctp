@@ -6,6 +6,7 @@
         </span>
         <?= $this->Form->input($name, [
             'empty' => true,
+            'value' => $value,
             'options' => $options,
             'label' => false,
             'id' => $field,

@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
+use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\ListFieldHandler;
 use PHPUnit_Framework_TestCase;
@@ -14,6 +15,9 @@ class ListFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $dir = dirname(__DIR__) . DS . '..' . DS . 'config' . DS . 'Modules' . DS;
+        Configure::write('CsvMigrations.modules.path', $dir);
+
         $this->fh = new ListFieldHandler($this->table, $this->field);
     }
 
@@ -23,9 +27,20 @@ class ListFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\FieldHandlerInterface', $implementedInterfaces), "FieldHandlerInterface is not implemented");
     }
 
-    public function getValues()
+    public function getRenderedValues()
     {
         return [
+            ['', ''],
+            ['cy', 'Cyprus'],
+            ['usa', 'USA'],
+            ['uk', 'United Kingdom'],
+        ];
+    }
+
+    public function getInputValues()
+    {
+        return [
+            ['', ' -- Please choose -- '],
             ['cy', 'Cyprus'],
             ['usa', 'USA'],
             ['uk', 'United Kingdom'],
@@ -33,7 +48,7 @@ class ListFieldHandlerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getValues
+     * @dataProvider getRenderedValues
      */
     public function testRenderValue($value, $expected)
     {
@@ -85,7 +100,10 @@ class ListFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $result);
     }
 
-    public function testRenderInput()
+    /**
+     * @dataProvider getInputValues
+     */
+    public function testRenderInput($value, $label)
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
@@ -97,10 +115,11 @@ class ListFieldHandlerTest extends PHPUnit_Framework_TestCase
 
         $result = $this->fh->renderInput(null, $options);
 
-        foreach ($this->getValues() as $value) {
-            reset($value);
-            $this->assertContains(current($value), $result);
-            $this->assertContains(next($value), $result);
+        $this->assertContains('"' . $value . '"', $result);
+        $this->assertContains($label, $result);
+
+        if ('uk' === $value) {
+            $this->assertContains('"' . $value . '" selected="selected"', $result);
         }
     }
 

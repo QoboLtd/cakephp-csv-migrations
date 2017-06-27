@@ -130,8 +130,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $this->setTable($table);
         $this->setField($field);
-        $this->setDefaultOptions();
         $this->setView($cakeView);
+        $this->setDefaultOptions();
     }
 
     /**

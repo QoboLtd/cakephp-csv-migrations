@@ -2,6 +2,7 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\Core\App;
+use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
@@ -204,6 +205,22 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         // set $options['label']
         $this->defaultOptions['label'] = $this->renderName();
+
+        // If we have a default value from configuration, pass it through
+        // processing for magic/dynamic values like dates and usernames.
+        if (!empty($this->defaultOptions['default'])) {
+            $eventName = 'CsvMigrations.FieldHandler.DefaultValue';
+            $event = new Event($eventName, $this, [
+                'default' => $this->defaultOptions['default']
+            ]);
+            $this->cakeView->eventManager()->dispatch($event);
+
+            // Only overwrite the default if any events were triggered
+            $listeners = $this->cakeView->eventManager()->listeners($eventName);
+            if (!empty($listeners)) {
+                $this->defaultOptions['default'] = $event->result;
+            }
+        }
     }
 
     /**

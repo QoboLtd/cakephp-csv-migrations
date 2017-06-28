@@ -15,7 +15,11 @@ foreach ($entities as $entity) {
         'html' => $this->Html->link('<i class="fa fa-eye"></i>', $url, [
             'title' => __('View'), 'class' => 'btn btn-default', 'escape' => false
         ]),
-        'url' => $url
+        'url' => $url,
+        'icon' => 'eye',
+        'label' => __('View'),
+        'noLable' => true,
+        'class' => 'btn btn-default',
     ];
 
     $url = [
@@ -29,7 +33,11 @@ foreach ($entities as $entity) {
         'html' => $this->Html->link('<i class="fa fa-pencil"></i>', $url, [
             'title' => __('Edit'), 'class' => 'btn btn-default', 'escape' => false
         ]),
-        'url' => $url
+        'url' => $url,
+        'icon' => 'pencil',
+        'label' => __('Edit'),
+        'noLable' => true,
+        'class' => 'btn btn-default',
     ];
 
     $url = [
@@ -53,13 +61,26 @@ foreach ($entities as $entity) {
                     'this record'
             )
         ]),
-        'url' => $url
+        'url' => $url,
+        'icon' => 'trash',
+        'label' => __('Delete'),
+        'noLable' => true,
+        'dataType' => 'ajax-delete-record',
+        'class' => 'btn btn-default',
+        'confirmMsg' => __(
+            'Are you sure you want to delete {0}?',
+            $entity->has($displayField) && !empty($entity->{$displayField}) ?
+                    strip_tags($entity->{$displayField}) :
+                    'this record'
+        )
+
     ];
 
     // broadcast menu event
     $event = new Event('CsvMigrations.Index.actionsMenu.beforeRender', $this, [
         'menu' => $menu,
-        'user' => $user
+        'user' => $user,
+        'type' => 'actions',
     ]);
     $this->EventManager()->dispatch($event);
 

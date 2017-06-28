@@ -18,7 +18,7 @@ foreach ($entities as $entity) {
         'url' => $url,
         'icon' => 'eye',
         'label' => __('View'),
-        'noLable' => true,
+        'noLabel' => true,
         'class' => 'btn btn-default',
     ];
 
@@ -36,7 +36,7 @@ foreach ($entities as $entity) {
         'url' => $url,
         'icon' => 'pencil',
         'label' => __('Edit'),
-        'noLable' => true,
+        'noLabel' => true,
         'class' => 'btn btn-default',
     ];
 
@@ -64,7 +64,7 @@ foreach ($entities as $entity) {
         'url' => $url,
         'icon' => 'trash',
         'label' => __('Delete'),
-        'noLable' => true,
+        'noLabel' => true,
         'dataType' => 'ajax-delete-record',
         'class' => 'btn btn-default',
         'confirmMsg' => __(

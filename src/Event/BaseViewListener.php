@@ -1,5 +1,5 @@
 <?php
-namespace CsvMigrations\Events;
+namespace CsvMigrations\Event;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;

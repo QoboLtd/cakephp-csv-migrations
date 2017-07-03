@@ -1,5 +1,5 @@
 <?php
-namespace CsvMigrations\Events;
+namespace CsvMigrations\Event;
 
 use App\View\AppView;
 use Cake\Event\Event;
@@ -8,7 +8,7 @@ use Cake\Network\Request;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use CsvMigrations\ConfigurationTrait;
-use CsvMigrations\Events\BaseViewListener;
+use CsvMigrations\Event\BaseViewListener;
 
 class IndexViewListener extends BaseViewListener
 {

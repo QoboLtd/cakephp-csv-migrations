@@ -3,16 +3,16 @@ use Burzum\FileStorage\Storage\Listener\BaseListener;
 use Burzum\FileStorage\Storage\StorageManager;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
-use CsvMigrations\Events\AddViewListener;
-use CsvMigrations\Events\EditViewListener;
-use CsvMigrations\Events\IndexViewListener;
-use CsvMigrations\Events\LayoutListener;
-use CsvMigrations\Events\LookupListener;
-use CsvMigrations\Events\ModelAfterSaveListener;
-use CsvMigrations\Events\Model\AutoIncrementEventListener;
-use CsvMigrations\Events\ReportListener;
-use CsvMigrations\Events\ViewViewListener;
-use CsvMigrations\Events\ViewViewTabsListener;
+use CsvMigrations\Event\AddViewListener;
+use CsvMigrations\Event\EditViewListener;
+use CsvMigrations\Event\IndexViewListener;
+use CsvMigrations\Event\LayoutListener;
+use CsvMigrations\Event\LookupListener;
+use CsvMigrations\Event\ModelAfterSaveListener;
+use CsvMigrations\Event\Model\AutoIncrementEventListener;
+use CsvMigrations\Event\ReportListener;
+use CsvMigrations\Event\ViewViewListener;
+use CsvMigrations\Event\ViewViewTabsListener;
 
 /**
  * Plugin configuration

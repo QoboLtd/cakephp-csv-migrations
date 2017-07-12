@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations;
 
+use Cake\Core\App;
 use Cake\Core\Configure;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\CsvField;
@@ -65,10 +66,8 @@ trait MigrationTrait
 
         // Fetch definitions from CSV if cache is empty
         if (empty($result)) {
-            $moduleName = null;
-            if (is_callable([$this, 'alias'])) {
-                $moduleName = $this->alias();
-            }
+            $moduleName = App::shortName(get_class($this), 'Model/Table', 'Table');
+            list(, $moduleName) = pluginSplit($moduleName);
 
             $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $moduleName);
             $result = (array)json_decode(json_encode($mc->parse()), true);

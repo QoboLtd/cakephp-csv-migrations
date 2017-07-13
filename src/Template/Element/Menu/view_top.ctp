@@ -11,8 +11,6 @@ if (!empty($this->request->plugin)) {
 
 $menu = [];
 
-$newMenu = [];
-
 $url = [
     'plugin' => $this->request->plugin,
     'controller' => $this->request->controller,

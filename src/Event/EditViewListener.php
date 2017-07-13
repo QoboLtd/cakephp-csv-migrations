@@ -1,10 +1,10 @@
 <?php
-namespace CsvMigrations\Events;
+namespace CsvMigrations\Event;
 
 use Cake\Event\Event;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
-use CsvMigrations\Events\BaseViewListener;
+use CsvMigrations\Event\BaseViewListener;
 
 class EditViewListener extends BaseViewListener
 {

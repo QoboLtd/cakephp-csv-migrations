@@ -1,5 +1,5 @@
 <?php
-namespace CsvMigrations\Events\Model;
+namespace CsvMigrations\Event\Model;
 
 use ArrayObject;
 use Cake\Datasource\EntityInterface;

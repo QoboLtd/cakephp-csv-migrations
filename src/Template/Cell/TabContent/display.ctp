@@ -34,7 +34,7 @@ we don't do the linkage - they would have hidden ID by default
                 'embedded' => $emController,
                 'foreign_key' => $emFieldName,
                 'modal_id' => $emModal,
-                'related_model' => strtolower($this->request->controller),
+                'related_model' => Inflector::delimit($this->request->controller, '-'),
                 'related_id' => $this->request->pass[0],
             ]
         ]);

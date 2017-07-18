@@ -17,6 +17,7 @@ class SeedShell extends Shell
     protected $modules = [];
     protected $modulesPolpulatedWithData = [];
     protected $skipModules = [];
+    protected $stack = [];
 
     /**
      * Configure option parser
@@ -379,6 +380,12 @@ class SeedShell extends Shell
             return;
         }
 
+        if (in_array($moduleName, $this->stack)) {
+            return;
+        }
+
+        $this->stack[] = $moduleName;
+
         if (in_array($moduleName, $this->modulesPolpulatedWithData)) {
             return;
         }
@@ -389,5 +396,6 @@ class SeedShell extends Shell
             }
         }
         $this->populateDataInModule($moduleName);
+        unset($this->stack[$moduleName]);
     }
 }

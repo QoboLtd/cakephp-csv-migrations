@@ -13,7 +13,7 @@ class SeedShell extends Shell
 {
     use MigrationTrait;
 
-    protected $numberOfData = 1;
+    protected $numberOfRecords = 1;
     protected $modules = [];
     protected $modulesPolpulatedWithData = [];
     protected $skipModules = [];
@@ -285,7 +285,7 @@ class SeedShell extends Shell
 
         $table = TableRegistry::get($moduleName);
 
-        for ($count = 0; $count < $this->numberOfData; $count++) {
+        for ($count = 0; $count < $this->numberOfRecords; $count++) {
             $entity = $table->newEntity();
 
             foreach ($module as $fieldName => $fieldData) {

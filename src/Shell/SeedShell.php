@@ -13,7 +13,7 @@ class SeedShell extends Shell
 {
     use MigrationTrait;
 
-    protected $numberOfRecords = 1;
+    protected $numberOfRecords = 5;
     protected $modules = [];
     protected $modulesPolpulatedWithData = [];
     protected $skipModules = [];
@@ -29,6 +29,12 @@ class SeedShell extends Shell
         $parser = parent::getOptionParser();
         $parser->description('CSV Migration Seeder');
 
+        $parser->addOption('numberofrecords', [
+            'short' => 'n',
+            'help' => 'Number of fake records to create.',
+            'default' => 5
+        ]);
+
         return $parser;
     }
 
@@ -39,6 +45,12 @@ class SeedShell extends Shell
      */
     public function main()
     {
+        $numberOfRecords = $this->param('numberofrecords');
+        $numberOfRecords = intval($numberOfRecords);
+        if ($numberOfRecords > 0) {
+            $this->numberOfRecords = $numberOfRecords;
+        }
+
         $path = Configure::readOrFail('CsvMigrations.modules.path');
         $this->modules = $this->_getAllModules($path);
         $csvFiles = $this->getModuleCsvData($this->modules);

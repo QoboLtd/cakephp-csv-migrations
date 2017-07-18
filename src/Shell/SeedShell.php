@@ -158,7 +158,7 @@ class SeedShell extends Shell
     protected function getModuleIds($moduleName)
     {
         $table = TableRegistry::get($moduleName);
-        $query = $table->find()->select('id')->toArray();
+        $query = $table->find()->limit(100)->select($table->getPrimaryKey())->toArray();
 
         $keysArray = [];
         foreach ($query as $data) {
@@ -213,9 +213,6 @@ class SeedShell extends Shell
                 if (strpos($field['type'], 'related') !== false) {
                     //get related module
                     $type = $this->getStringEnclosedInParenthesis($field['type']);
-                    /*if ( in_array($type, $this->skipModules) ){
-                        continue;
-                    }*/
                     $module['relations'][] = $type;
                 }
             }

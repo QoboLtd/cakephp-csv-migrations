@@ -13,10 +13,36 @@ class SeedShell extends Shell
 {
     use MigrationTrait;
 
+    /**
+     * Number of records to be added for each Module.
+     * @var int
+     */
     protected $numberOfRecords = 5;
+
+    /**
+     * Array storing all the csv Modules.
+     * @var array
+     */
     protected $modules = [];
+
+    /**
+     * Array responsible to know which Modules were filled with fake data.
+     * @var array
+     */
     protected $modulesPolpulatedWithData = [];
+
+    /**
+     * Array that holds the module names that will skipped the process for adding data.
+     *
+     * @var array
+     */
     protected $skipModules = [];
+
+    /**
+     * Array that is used as a stack in order to prevent the recursive loops over the modules that are referenced by themselves or by each other.
+     *
+     * @var array
+     */
     protected $stack = [];
 
     /**
@@ -58,6 +84,7 @@ class SeedShell extends Shell
         //check if module has relations
         $this->modules = $this->checkModuleRelations($csvFiles);
 
+        //First add fake data to modules that have not any relations.
         $noRelations = $this->getModulesWithoutRelations($this->modules);
         foreach ($noRelations as $moduleName) {
             $this->populateDataInModule($moduleName);
@@ -300,6 +327,7 @@ class SeedShell extends Shell
      * Insert data into module.
      *
      * @param string $moduleName module name.
+     * @return void
      */
     protected function populateDataInModule($moduleName)
     {
@@ -372,6 +400,7 @@ class SeedShell extends Shell
      * Hierarchical insert data into modules (based on index hierarchy).
      *
      * @param array $index index.
+     * @return void
      */
     protected function hierarchicalPopulateDataIntoModules(array $index = [])
     {
@@ -385,6 +414,7 @@ class SeedShell extends Shell
      *
      * @param string $moduleName module name.
      * @param array $index index.
+     * @return void
      */
     protected function checkHierarchyForModule($moduleName, array $index = [])
     {
@@ -392,22 +422,29 @@ class SeedShell extends Shell
             return;
         }
 
+        //In case the module tried to fill from a previews loop that is still in the stack return.
+        //this way we prevent infinit loops when 2 or more modules are referenced by themselves or by each other in a way that they produce circles.
         if (in_array($moduleName, $this->stack)) {
             return;
         }
 
+        //add the current module in the stack.
         $this->stack[] = $moduleName;
 
+        //In case the module is already filled with data.
         if (in_array($moduleName, $this->modulesPolpulatedWithData)) {
             return;
         }
 
+        //checking the case that the module do not has any relations.
         if (!empty($index[$moduleName]) && is_array($index[$moduleName])) {
             foreach ($index[$moduleName] as $relatedModule) {
                 $this->checkHierarchyForModule($relatedModule, $index);
             }
         }
         $this->populateDataInModule($moduleName);
+
+        //remove the current module from the stack.
         unset($this->stack[$moduleName]);
     }
 }

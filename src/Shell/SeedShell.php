@@ -45,6 +45,11 @@ class SeedShell extends Shell
         //check if module has relations
         $this->modules = $this->checkModuleRelations($csvFiles);
 
+        $noRelations = $this->getModulesWithoutRelations($this->modules);
+        foreach ($noRelations as $moduleName) {
+            $this->populateDataInModule($moduleName);
+        }
+
         //create index based on relations.
         $relationsIndex = $this->createRelationIndex($this->modules);
 
@@ -52,6 +57,25 @@ class SeedShell extends Shell
         $this->hierarchicalPopulateDataIntoModules($relationsIndex);
 
         $this->out("Done!");
+    }
+
+    /**
+     * Return a list of module names that do not have relations.
+     *
+     * @param array $modules modules.
+     * @return array
+     */
+    public function getModulesWithoutRelations(array $modules = [])
+    {
+        $noRelation = [];
+        foreach ($modules as $moduleName => $module) {
+            if (!empty($module['relations']) && !(is_array($module['relations'] && count($module['relations']) > 0))) {
+                continue;
+            }
+            $noRelation[] = $moduleName;
+        }
+
+        return $noRelation;
     }
 
     /**

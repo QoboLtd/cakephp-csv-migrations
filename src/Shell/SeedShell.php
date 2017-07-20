@@ -422,7 +422,7 @@ class SeedShell extends Shell
             return;
         }
 
-        //In case the module tried to fill from a previews loop that is still in the stack return.
+        //In case the module tried to fill from a previous loop that is still in the stack return.
         //this way we prevent infinit loops when 2 or more modules are referenced by themselves or by each other in a way that they produce circles.
         if (in_array($moduleName, $this->stack)) {
             return;

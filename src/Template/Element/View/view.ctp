@@ -265,16 +265,19 @@ echo $this->element('CsvMigrations.common_js_libs');
         <?php if (!empty($tabs)) : ?>
         <div class="nav-tabs-custom">
             <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
-            <?php foreach ($tabs as $k => $tab) :?>
-                <li role="presentation" class="<?= ($k == 0) ? 'active' : ''?>">
+            <?php $active = true; ?>
+            <?php foreach ($tabs as $tab) : ?>
+                <li role="presentation" class="<?= $active ? 'active' : ''?>">
                     <a href="#<?= $tab['containerId']?>" role="tab" data-toggle="tab"><?= $tab['label']?></a>
                 </li>
+                <?php $active = false; ?>
             <?php endforeach; ?>
             </ul>
 
             <div class="tab-content">
-                <?php foreach ($tabs as $k => $tab) :?>
-                    <div role="tabpanel" class="tab-pane <?= ($k == 0) ? 'active' : ''?>" id="<?= $tab['containerId']?>">
+                <?php $active = true; ?>
+                <?php foreach ($tabs as $tab) : ?>
+                    <div role="tabpanel" class="tab-pane <?= $active ? 'active' : ''?>" id="<?= $tab['containerId']?>">
                         <?php
                         $beforeTabContentEvent = new Event('CsvMigrations.View.View.TabContent.beforeContent', $this, [
                             'request' => $this->request,
@@ -337,6 +340,7 @@ echo $this->element('CsvMigrations.common_js_libs');
                         }
                         ?>
                     </div>
+                    <?php $active = false; ?>
                 <?php endforeach; ?>
             </div> <!-- .tab-content -->
         </div> <!-- .nav-tabs-custom -->

@@ -25,6 +25,8 @@ $menu[] = [
     'label' => __('Edit'),
     'class' => 'btn btn-default',
     'icon' => 'pencil',
+    'type' => 'link_button',
+    'order' => 90,
 ];
 
 $url = [
@@ -51,6 +53,7 @@ $menu[] = [
     'icon' => 'trash',
     'type' => 'postlink',
     'class' => 'btn btn-default',
+    'order' => 100,
     'confirmMsg' => __('Are you sure you want to delete {0}?', $fhf->renderValue(
         $tableName,
         $displayField,
@@ -61,10 +64,21 @@ $menu[] = [
 
 // broadcast menu event
 $event = new Event('CsvMigrations.View.topMenu.beforeRender', $this, [
+    'menu' => [],
+    'user' => $user
+]);
+$this->eventManager()->dispatch($event);
+
+$result = $event->result;
+
+$menu = array_merge($menu, $result);
+
+$event = new Event('CsvMigrations.Associated.actionsMenu.beforeRender', $this, [
     'menu' => $menu,
     'user' => $user
 ]);
 $this->eventManager()->dispatch($event);
 
 $result = $event->result;
+
 echo $result;

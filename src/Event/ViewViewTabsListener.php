@@ -46,7 +46,7 @@ class ViewViewTabsListener implements EventListenerInterface
     {
         return [
             'CsvMigrations.View.View.TabsList' => 'getTabsList',
-            //'CsvMigrations.View.View.TabContent.beforeContent' => 'getBeforeTabContent',
+            'CsvMigrations.View.View.TabContent.beforeContent' => 'getBeforeTabContent',
             'CsvMigrations.View.View.TabContent' => 'getTabContent',
             'CsvMigrations.View.View.TabContent.afterContent' => 'getAfterTabContent',
         ];

@@ -20,6 +20,7 @@ foreach ($entities as $entity) {
         'label' => __('View'),
         'noLabel' => true,
         'class' => 'btn btn-default',
+        'type' => 'link_button',
     ];
 
     $url = [
@@ -38,6 +39,7 @@ foreach ($entities as $entity) {
         'label' => __('Edit'),
         'noLabel' => true,
         'class' => 'btn btn-default',
+        'type' => 'link_button',
     ];
 
     $url = [
@@ -64,9 +66,8 @@ foreach ($entities as $entity) {
         'url' => $url,
         'icon' => 'trash',
         'label' => __('Delete'),
-        'noLabel' => true,
         'dataType' => 'ajax-delete-record',
-        'class' => 'btn btn-default',
+        'type' => 'link_button',
         'confirmMsg' => __(
             'Are you sure you want to delete {0}?',
             $entity->has($displayField) && !empty($entity->{$displayField}) ?

@@ -23,7 +23,6 @@ $menu[] = [
     ]),
     'url' => $url,
     'label' => __('Edit'),
-    'class' => 'btn btn-default',
     'icon' => 'pencil',
     'type' => 'link_button',
     'order' => 90,
@@ -51,8 +50,7 @@ $menu[] = [
     'url' => $url,
     'label' => __('Delete'),
     'icon' => 'trash',
-    'type' => 'postlink',
-    'class' => 'btn btn-default',
+    'type' => 'postlink_button',
     'order' => 100,
     'confirmMsg' => __('Are you sure you want to delete {0}?', $fhf->renderValue(
         $tableName,

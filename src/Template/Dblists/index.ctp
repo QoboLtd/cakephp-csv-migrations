@@ -64,14 +64,5 @@ echo $this->Html->scriptBlock(
                 </tbody>
             </table>
         </div>
-        <div class="box-footer">
-            <div class="paginator">
-                <ul class="pagination pagination-sm no-margin pull-right">
-                    <?= $this->Paginator->prev('&laquo;', ['escape' => false]) ?>
-                    <?= $this->Paginator->numbers() ?>
-                    <?= $this->Paginator->next('&raquo;', ['escape' => false]) ?>
-                </ul>
-            </div>
-        </div>
     </div>
 </section>

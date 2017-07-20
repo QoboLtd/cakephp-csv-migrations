@@ -316,11 +316,10 @@ class ViewViewTabsListener implements EventListenerInterface
                 $csvFields
             )
         );
+        $primaryKey = $this->_tableInstance->aliasField($this->_tableInstance->getPrimaryKey());
         $query = $this->_tableInstance->find('all', [
-            'conditions' => [$this->_tableInstance->primaryKey() => $request->params['pass'][0]],
-            'contain' => [
-                $assocName
-            ]
+            'conditions' => [$primaryKey => $request->params['pass'][0]],
+            'contain' => [$assocName]
         ]);
         $records = $query->first()->{$assocTableName};
         // store association name

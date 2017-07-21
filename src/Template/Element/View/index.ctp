@@ -30,7 +30,8 @@ echo $this->Html->scriptBlock(
         api_ext: \'json\',
         api_token: ' . json_encode(Configure::read('CsvMigrations.api.token')) . ',
         menus: true,
-        format: \'datatables\'
+        format: \'datatables\',
+        state_duration: ' . (int)(Configure::read('Session.timeout') * 60) . '
     });',
     ['block' => 'scriptBotton']
 );
@@ -64,7 +65,7 @@ if (empty($options['title'])) {
     </div>
 </section>
 <section class="content">
-    <div class="box">
+    <div class="box box-solid">
         <div class="box-body">
             <table class="table table-hover table-condensed table-vertical-align table-datatable" width="100%">
                 <thead>

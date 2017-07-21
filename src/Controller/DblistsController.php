@@ -18,7 +18,7 @@ class DblistsController extends BaseController
      */
     public function index()
     {
-        $dblists = $this->paginate($this->Dblists);
+        $dblists = $this->Dblists->find('all');
 
         $this->set(compact('dblists'));
         $this->set('_serialize', ['dblists']);

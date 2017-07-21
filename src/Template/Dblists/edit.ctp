@@ -8,13 +8,18 @@
 <section class="content">
     <div class="row">
         <div class="col-md-6">
-            <div class="box box-default">
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><?= __d('CsvMigrations', 'Details') ?></h3>
+                </div>
                 <div class="box-body">
-                    <div class="col-xs-12">
-                    <?= $this->Form->create($dblist); ?>
-                        <?= $this->Form->input('name') ?>
-                        <?= $this->Form->button(__d('CsvMigrations', 'Submit'), ['class' => 'btn btn-primary']); ?>
-                    <?= $this->Form->end() ?>
+                    <div class="row">
+                        <div class="col-md-6">
+                        <?= $this->Form->create($dblist); ?>
+                            <?= $this->Form->input('name') ?>
+                            <?= $this->Form->button(__d('CsvMigrations', 'Submit'), ['class' => 'btn btn-primary']); ?>
+                        <?= $this->Form->end() ?>
+                        </div>
                     </div>
                 </div>
             </div>

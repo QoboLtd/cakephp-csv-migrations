@@ -1,4 +1,5 @@
 <?php
+use Cake\Core\Configure;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\Network\Exception\ForbiddenException;
@@ -92,7 +93,7 @@ if (empty($options['title'])) {
                 }
 
         ?>
-        <div class="box box-default">
+        <div class="box box-solid">
             <div class="box-header with-border">
                 <h3 class="box-title"><?= $panelName; ?></h3>
                 <div class="box-tools pull-right">
@@ -332,9 +333,11 @@ echo $this->element('CsvMigrations.common_js_libs');
                         if (!empty($content)) {
                             echo $this->Html->scriptBlock(
                                 '$(".' . $tab['containerId'] . '").DataTable({
-                                        "paging": true,
-                                        "searching": false
-                                    });',
+                                    stateSave: true,
+                                    stateDuration: ' . (int)(Configure::read('Session.timeout') * 60) . ',
+                                    paging: true,
+                                    searching: false
+                                });',
                                 ['block' => 'scriptBotton']
                             );
                         }

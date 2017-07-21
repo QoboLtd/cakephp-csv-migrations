@@ -90,7 +90,7 @@ if (!empty($this->request->query['embedded'])) {
         $embeddedForms = [];
         $embeddedDirty = false;
         foreach ($options['fields'] as $panelName => $panelFields) {
-            echo '<div class="box box-default" data-provide="dynamic-panel">';
+            echo '<div class="box box-solid" data-provide="dynamic-panel">';
             echo '<div class="box-header with-border">';
             echo '<h3 class="box-title" data-title="dynamic-panel-title">' . $panelName . '</h3>';
             echo '</div>';

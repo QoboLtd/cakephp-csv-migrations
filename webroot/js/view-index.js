@@ -21,6 +21,7 @@ var view_index = view_index || {};
         this.table_id = options.hasOwnProperty('table_id') ? options.table_id : null;
         this.menus = options.hasOwnProperty('menus') ? options.menus : false;
         this.format = options.hasOwnProperty('format') ? options.format : {};
+        this.state_duration = options.hasOwnProperty('state_duration') ? options.state_duration : 0;
 
         var table = this.datatable();
         this._handleDeleteLinks(table);
@@ -35,6 +36,8 @@ var view_index = view_index || {};
         var that = this;
 
         var table = $(this.table_id).DataTable({
+            stateSave: true,
+            stateDuration: that.state_duration,
             searching: false,
             processing: true,
             serverSide: true,

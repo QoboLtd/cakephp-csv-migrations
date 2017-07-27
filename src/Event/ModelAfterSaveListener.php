@@ -136,7 +136,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         }
 
         // append link
-        $entityUrl = Router::url(['controller' => $table->table(), 'action' => 'view', $entity->id], true);
+        $entityUrl = Router::url(['prefix' => false, 'controller' => $table->table(), 'action' => 'view', $entity->id], true);
         $emailContent .= "\n\nSee more: " . $entityUrl;
 
         foreach ($emails as $email) {

@@ -372,7 +372,6 @@ trait ImportTrait
                 $result[$key][] = $entity->get($field);
             }
 
-
             $viewButton = '';
             // set view button if model id is set
             if ($entity->get('model_id')) {

@@ -371,20 +371,28 @@ trait ImportTrait
             foreach ($fields as $field) {
                 $result[$key][] = $entity->get($field);
             }
-            $url = [
-                'prefix' => false,
-                'plugin' => $plugin,
-                'controller' => $controller,
-                'action' => 'view',
-                $entity->model_id
-            ];
-            $link = $view->Html->link('<i class="fa fa-eye"></i>', $url, [
-                'title' => __('View'),
-                'class' => 'btn btn-default',
-                'escape' => false
-            ]);
 
-            $result[$key][] = '<div class="btn-group btn-group-xs" role="group">' . $link . '</div>';
+
+            $viewButton = '';
+            // set view button if model id is set
+            if ($entity->get('model_id')) {
+                $url = [
+                    'prefix' => false,
+                    'plugin' => $plugin,
+                    'controller' => $controller,
+                    'action' => 'view',
+                    $entity->model_id
+                ];
+                $link = $view->Html->link('<i class="fa fa-eye"></i>', $url, [
+                    'title' => __('View'),
+                    'class' => 'btn btn-default',
+                    'escape' => false
+                ]);
+
+                $viewButton = '<div class="btn-group btn-group-xs" role="group">' . $link . '</div>';
+            }
+
+            $result[$key][] = $viewButton;
         }
 
         return $result;

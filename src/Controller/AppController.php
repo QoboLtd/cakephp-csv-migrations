@@ -4,10 +4,13 @@ namespace CsvMigrations\Controller;
 use App\Controller\AppController as BaseController;
 use Cake\Http\Response;
 use Cake\ORM\TableRegistry;
+use CsvMigrations\Controller\Traits\ImportTrait;
 use CsvMigrations\FileUploadsUtils;
 
 class AppController extends BaseController
 {
+    use ImportTrait;
+
     protected $_fileUploadsUtils;
 
     /**

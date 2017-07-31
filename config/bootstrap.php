@@ -30,6 +30,19 @@ Configure::write('CsvMigrations', array_replace_recursive(
     $config
 ));
 
+// get app level config
+$config = Configure::read('Importer');
+$config = $config ? $config : [];
+
+// load default plugin config
+Configure::load('CsvMigrations.importer');
+
+// overwrite default plugin config by app level config
+Configure::write('Importer', array_replace_recursive(
+    Configure::read('Importer'),
+    $config
+));
+
 EventManager::instance()->on(new AutoIncrementEventListener());
 EventManager::instance()->on(new AddViewListener());
 EventManager::instance()->on(new EditViewListener());

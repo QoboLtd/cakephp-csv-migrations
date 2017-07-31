@@ -90,19 +90,19 @@ class ImportShell extends Shell
     {
         $result = [];
 
-        $columns = $this->_getUploadColumns($import);
-        if (empty($columns)) {
+        $headers = $this->_getUploadHeaders($import);
+        if (empty($headers)) {
             return $result;
         }
 
         $options = $import->get('options');
-        foreach ($columns as $index => $column) {
-            // skip non-mapped columns
-            if (!array_key_exists($column, $options)) {
+        foreach ($headers as $index => $header) {
+            // skip non-mapped headers
+            if (!array_key_exists($header, $options)) {
                 continue;
             }
 
-            $result[$index] = $column;
+            $result[$index] = $header;
         }
 
         return $result;

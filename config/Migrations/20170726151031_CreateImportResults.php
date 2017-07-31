@@ -32,11 +32,11 @@ class CreateImportResults extends AbstractMigration
         $table->addColumn('model_name', 'string', [
             'default' => null,
             'limit' => 255,
-            'null' => false,
+            'null' => true,
         ]);
         $table->addColumn('model_id', 'uuid', [
             'default' => null,
-            'null' => false,
+            'null' => true,
         ]);
         $table->addColumn('status', 'string', [
             'default' => null,

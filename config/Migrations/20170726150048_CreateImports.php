@@ -29,7 +29,7 @@ class CreateImports extends AbstractMigration
         $table->addColumn('options', 'text', [
             'default' => null,
             'limit' => MysqlAdapter::TEXT_LONG,
-            'null' => false,
+            'null' => true,
         ]);
         $table->addColumn('created', 'datetime', [
             'default' => null,

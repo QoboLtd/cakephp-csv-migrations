@@ -23,6 +23,35 @@ use Cake\Validation\Validator;
  */
 class ImportResultsTable extends Table
 {
+    /**
+     * Success status.
+     */
+    const STATUS_SUCCESS = 'Success';
+
+    /**
+     * Fail status.
+     */
+    const STATUS_FAIL = 'Fail';
+
+    /**
+     * Pending status.
+     */
+    const STATUS_PENDING = 'Pending';
+
+    /**
+     * Success status message.
+     */
+    const STATUS_SUCCESS_MESSAGE = 'Imported successfully';
+
+    /**
+     * Fail status message.
+     */
+    const STATUS_FAIL_MESSAGE = 'Import failed %s';
+
+    /**
+     * Pending status message.
+     */
+    const STATUS_PENDING_MESSAGE = 'Pending import';
 
     /**
      * Initialize method
@@ -92,5 +121,65 @@ class ImportResultsTable extends Table
         $rules->add($rules->existsIn(['import_id'], 'Imports'));
 
         return $rules;
+    }
+
+    /**
+     * Success status getter.
+     *
+     * @return string
+     */
+    public function getStatusSuccess()
+    {
+        return static::STATUS_SUCCESS;
+    }
+
+    /**
+     * Fail status getter.
+     *
+     * @return string
+     */
+    public function getStatusFail()
+    {
+        return static::STATUS_FAIL;
+    }
+
+    /**
+     * Pending status getter.
+     *
+     * @return string
+     */
+    public function getStatusPending()
+    {
+        return static::STATUS_PENDING;
+    }
+
+    /**
+     * Success status message getter.
+     *
+     * @return string
+     */
+    public function getStatusSuccessMessage()
+    {
+        return static::STATUS_SUCCESS_MESSAGE;
+    }
+
+    /**
+     * Fail status message getter.
+     *
+     * @return string
+     */
+    public function getStatusFailMessage()
+    {
+        return static::STATUS_FAIL_MESSAGE;
+    }
+
+    /**
+     * Pending status message getter.
+     *
+     * @return string
+     */
+    public function getStatusPendingMessage()
+    {
+        return static::STATUS_PENDING_MESSAGE;
     }
 }

@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\Model\Table;
 
+use Cake\Database\Schema\TableSchema;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -72,5 +73,15 @@ class ImportsTable extends Table
             ->allowEmpty('trashed');
 
         return $validator;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function _initializeSchema(TableSchema $schema)
+    {
+        $schema->columnType('options', 'json');
+
+        return $schema;
     }
 }

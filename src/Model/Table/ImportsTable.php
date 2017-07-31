@@ -64,8 +64,8 @@ class ImportsTable extends Table
             ->notEmpty('filename');
 
         $validator
-            ->requirePresence('options', 'create')
-            ->notEmpty('options');
+            ->requirePresence('options', 'update')
+            ->notEmpty('options', 'update');
 
         $validator
             ->dateTime('trashed')

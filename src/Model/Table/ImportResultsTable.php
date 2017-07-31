@@ -95,8 +95,12 @@ class ImportResultsTable extends Table
             ->notEmpty('row_number');
 
         $validator
-            ->requirePresence('model_name', 'create')
-            ->notEmpty('model_name');
+            ->requirePresence('model_name', 'update')
+            ->notEmpty('model_name', 'update');
+
+        $validator
+            ->requirePresence('model_id', 'update')
+            ->notEmpty('model_id', 'update');
 
         $validator
             ->requirePresence('status', 'create')

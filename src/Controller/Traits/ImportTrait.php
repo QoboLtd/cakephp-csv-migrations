@@ -84,6 +84,12 @@ trait ImportTrait
                 $this->set('headers', $this->_getUploadHeaders($entity));
                 $this->set('fields', $this->_getModuleFields());
             }
+        } else {
+            $query = $table->find('all')
+                ->where(['model_name' => $this->{$this->name}->getRegistryAlias()])
+                ->order(['created' => 'desc']);
+
+            $this->set('existingImports', $query->all());
         }
 
         $this->set('import', $entity);

@@ -51,7 +51,11 @@ class ImportShell extends Shell
         $this->hr();
 
         $table = TableRegistry::get('CsvMigrations.Imports');
-        $query = $table->find('all');
+        $query = $table->find('all')
+            ->where([
+                'status IN' => [$table->getStatusPending(), $table->getStatusInProgress()],
+                'options IS NOT' => null
+            ]);
 
         if ($query->isEmpty()) {
             $this->abort('No imports found.');

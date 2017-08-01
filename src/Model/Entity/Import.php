@@ -8,10 +8,14 @@ use Cake\ORM\Entity;
  *
  * @property string $id
  * @property string $filename
- * @property string $options
+ * @property $options
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
  * @property \Cake\I18n\Time $trashed
+ * @property string $model_name
+ * @property int $attempts
+ * @property \Cake\I18n\Time $attempted_date
+ * @property string $status
  *
  * @property \CsvMigrations\Model\Entity\ImportResult[] $import_results
  */

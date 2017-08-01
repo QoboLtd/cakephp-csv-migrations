@@ -100,10 +100,6 @@ class ImportsTable extends Table
             ->notEmpty('options', 'update');
 
         $validator
-            ->requirePresence('attempted_date', 'update')
-            ->notEmpty('attempted_date', 'update');
-
-        $validator
             ->dateTime('trashed')
             ->allowEmpty('trashed');
 

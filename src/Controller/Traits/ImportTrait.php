@@ -8,6 +8,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\View\View;
 use CsvMigrations\Model\Entity\Import;
+use CsvMigrations\Model\Table\ImportsTable;
 use League\Csv\Reader;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
@@ -101,11 +102,11 @@ trait ImportTrait
     /**
      * Import file upload logic.
      *
-     * @param \Cake\ORM\Table $table Table instance
+     * @param CsvMigrations\Model\Table\ImportsTable $table Table instance
      * @param \CsvMigrations\Model\Entity\Import $entity Entity object
      * @return bool
      */
-    protected function _upload(Table $table, Import $entity)
+    protected function _upload(ImportsTable $table, Import $entity)
     {
         if (!$this->_validateUpload()) {
             return false;
@@ -116,7 +117,14 @@ trait ImportTrait
             return false;
         }
 
-        $entity = $table->patchEntity($entity, ['filename' => $filename]);
+        $data = [
+            'filename' => $filename,
+            'status' => $table->getStatusPending(),
+            'model_name' => $this->{$this->name}->getRegistryAlias(),
+            'attempts' => 0
+        ];
+
+        $entity = $table->patchEntity($entity, $data);
 
         return $table->save($entity);
     }

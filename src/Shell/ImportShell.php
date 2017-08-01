@@ -11,6 +11,7 @@ use CsvMigrations\Model\Entity\Import;
 use CsvMigrations\Model\Entity\ImportResult;
 use Exception;
 use League\Csv\Reader;
+use Qobo\Utils\Utility\FileLock;
 
 class ImportShell extends Shell
 {
@@ -36,6 +37,16 @@ class ImportShell extends Shell
      */
     public function main()
     {
+        try {
+            $lock = new FileLock('import.lock');
+        } catch (Exception $e) {
+            $this->abort($e->getMessage());
+        }
+
+        if (!$lock->lock()) {
+            $this->abort('Import is already in progress');
+        }
+
         $this->out('Data Importing');
         $this->hr();
 
@@ -76,6 +87,9 @@ class ImportShell extends Shell
                 $progress->draw();
             }
         }
+
+        // unlock file
+        $lock->unlock();
 
         $this->out(null);
     }

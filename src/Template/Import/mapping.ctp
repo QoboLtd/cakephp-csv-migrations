@@ -26,7 +26,7 @@
                 echo $this->Form->create($import);
 
                 foreach ($headers as $header) {
-                    echo $this->Form->input($header, [
+                    echo $this->Form->input('options.' . $header, [
                         'empty' => true,
                         'type' => 'select',
                         'value' => array_key_exists($header, $fields) ? $fields[$header] : false,

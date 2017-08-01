@@ -102,7 +102,7 @@ trait ImportTrait
     /**
      * Import file upload logic.
      *
-     * @param CsvMigrations\Model\Table\ImportsTable $table Table instance
+     * @param \CsvMigrations\Model\Table\ImportsTable $table Table instance
      * @param \CsvMigrations\Model\Entity\Import $entity Entity object
      * @return bool
      */
@@ -117,6 +117,18 @@ trait ImportTrait
             return false;
         }
 
+        return $this->_create($filename);
+    }
+
+    /**
+     * Create import record.
+     *
+     * @param \CsvMigrations\Model\Table\ImportsTable $table Table instance
+     * @param string $filename Uploaded file name
+     * @return bool
+     */
+    protected function _create(ImportsTable $table, $filename)
+    {
         $data = [
             'filename' => $filename,
             'status' => $table->getStatusPending(),

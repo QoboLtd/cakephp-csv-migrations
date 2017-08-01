@@ -50,7 +50,10 @@
                                     <td><?= basename($existingImport->get('filename')) ?></td>
                                     <td><?= $existingImport->get('status') ?></td>
                                     <td><?= $existingImport->get('attempts') ?></td>
-                                    <td><?= $existingImport->get('attempted_date') ?></td>
+                                    <td><?php
+                                    if ($existingImport->get('attempted_date')) {
+                                        echo $existingImport->attempted_date->i18nFormat('yyyy-MM-dd HH:mm');
+                                    } ?></td>
                                     <td class="actions">
                                         <div class="btn-group btn-group-xs" role="group">
                                         <?= $this->Html->link(

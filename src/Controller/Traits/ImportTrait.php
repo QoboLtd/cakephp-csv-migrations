@@ -2,6 +2,7 @@
 namespace CsvMigrations\Controller\Traits;
 
 use Cake\Core\Configure;
+use Cake\Http\ServerRequest;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -42,7 +43,7 @@ trait ImportTrait
         $entity = is_null($id) ? $table->newEntity() : $table->get($id);
 
         // AJAX logic
-        if ($this->request->accepts('application/json')) {
+        if ($this->request->accepts('application/json')) { // Import/progress.ctp
             $columns = ['row_number', 'status', 'status_message'];
             $query = $this->_getImportResults($entity, $columns);
 
@@ -61,15 +62,16 @@ trait ImportTrait
         }
 
         // POST logic
-        if ($this->request->is('post')) {
-            if ($this->_upload($table, $entity)) {
+        if ($this->request->is('post')) { // Import/upload.ctp
+            $filename = $this->_upload($this->request);
+            if (!empty($filename) && $this->_create($table, $entity, $filename)) {
                 return $this->redirect([$entity->id]);
             }
         }
 
         // PUT logic
-        if ($this->request->is('put')) {
-            if ($this->_mapColumns($table, $entity)) {
+        if ($this->request->is('put')) { // Import/mapping.ctp
+            if ($this->_mapColumns($table, $entity, $this->request)) {
                 $this->_setImportResults($entity);
 
                 return $this->redirect([$entity->id]);
@@ -80,11 +82,11 @@ trait ImportTrait
 
         // GET logic
         if (!$entity->isNew()) {
-            if (!$entity->get('options')) {
+            if (!$entity->get('options')) { // Import/mapping.ctp
                 $this->set('headers', $this->_getUploadHeaders($entity));
                 $this->set('fields', $this->_getModuleFields());
             }
-        } else {
+        } else { // Import/upload.ctp
             $query = $table->find('all')
                 ->where(['model_name' => $this->{$this->name}->getRegistryAlias()])
                 ->order(['created' => 'desc']);
@@ -108,32 +110,27 @@ trait ImportTrait
     /**
      * Import file upload logic.
      *
-     * @param \CsvMigrations\Model\Table\ImportsTable $table Table instance
-     * @param \CsvMigrations\Model\Entity\Import $entity Entity object
-     * @return bool
+     * @param \Cake\Http\ServerRequest $request Request object
+     * @return string
      */
-    protected function _upload(ImportsTable $table, Import $entity)
+    protected function _upload(ServerRequest $request)
     {
-        if (!$this->_validateUpload()) {
-            return false;
+        if (!$this->_validateUpload($request)) {
+            return '';
         }
 
-        $filename = $this->_uploadFile();
-        if (empty($filename)) {
-            return false;
-        }
-
-        return $this->_create($filename);
+        return $this->_uploadFile($request);
     }
 
     /**
      * Create import record.
      *
      * @param \CsvMigrations\Model\Table\ImportsTable $table Table instance
+     * @param \CsvMigrations\Model\Entity\Import $entity Entity object
      * @param string $filename Uploaded file name
      * @return bool
      */
-    protected function _create(ImportsTable $table, $filename)
+    protected function _create(ImportsTable $table, Import $entity, $filename)
     {
         $data = [
             'filename' => $filename,
@@ -152,20 +149,12 @@ trait ImportTrait
      *
      * @param \Cake\ORM\Table $table Table instance
      * @param \CsvMigrations\Model\Entity\Import $entity Entity object
+     * @param \Cake\Http\ServerRequest $request Request object
      * @return bool
      */
-    protected function _mapColumns(Table $table, Import $entity)
+    protected function _mapColumns(Table $table, Import $entity, ServerRequest $request)
     {
-        $data = $this->request->data;
-
-        $options = [];
-        foreach ($data as $k => $v) {
-            if (!empty(trim($v))) {
-                $options[$k] = $v;
-            }
-        }
-
-        $entity = $table->patchEntity($entity, ['options' => $options]);
+        $entity = $table->patchEntity($entity, ['options' => $request->data('options')]);
 
         return $table->save($entity);
     }
@@ -238,19 +227,18 @@ trait ImportTrait
     /**
      * Upload file validation.
      *
+     * @param \Cake\Http\ServerRequest $request Request object
      * @return bool
      */
-    protected function _validateUpload()
+    protected function _validateUpload(ServerRequest $request)
     {
-        $data = $this->request->data;
-
-        if (empty($data['file'])) {
+        if (!($request->data('file'))) {
             $this->Flash->error(__('Please choose a file to upload.'));
 
             return false;
         }
 
-        if (!in_array($data['file']['type'], $this->__supportedExtensions)) {
+        if (!in_array($request->data('file.type'), $this->__supportedExtensions)) {
             $this->Flash->error(__('Unable to upload file, unsupported file provided.'));
 
             return false;
@@ -262,21 +250,20 @@ trait ImportTrait
     /**
      * Upload data file.
      *
+     * @param \Cake\Http\ServerRequest $request Request object
      * @return string
      */
-    protected function _uploadFile()
+    protected function _uploadFile(ServerRequest $request)
     {
-        $data = $this->request->data;
-
         $uploadPath = $this->_getUploadPath();
 
         if (empty($uploadPath)) {
             return '';
         }
 
-        $uploadPath .= $data['file']['name'];
+        $uploadPath .= $request->data('file.name');
 
-        if (!move_uploaded_file($data['file']['tmp_name'], $uploadPath)) {
+        if (!move_uploaded_file($request->data('file.tmp_name'), $uploadPath)) {
             $this->Flash->error(__('Unable to upload file to the specified directory.'));
 
             return '';

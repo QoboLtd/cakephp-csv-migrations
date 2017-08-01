@@ -3,13 +3,6 @@
         <div class="col-xs-12 col-md-6">
             <h4><?= __('Import mapping') ?></h4>
         </div>
-        <div class="col-xs-12 col-md-6">
-            <div class="pull-right">
-                <div class="btn-group btn-group-sm" role="group">
-                    <?= $this->element('CsvMigrations.Menu/index_top', ['user' => $user]) ?>
-                </div>
-            </div>
-        </div>
     </div>
 </section>
 <section class="content">
@@ -26,7 +19,7 @@
                 echo $this->Form->create($import);
 
                 foreach ($headers as $header) {
-                    echo $this->Form->input($header, [
+                    echo $this->Form->input('options.' . $header, [
                         'empty' => true,
                         'type' => 'select',
                         'value' => array_key_exists($header, $fields) ? $fields[$header] : false,

@@ -24,6 +24,25 @@ use Cake\Validation\Validator;
  */
 class ImportsTable extends Table
 {
+    /**
+     * Completed status.
+     */
+    const STATUS_COMPLETED = 'Completed';
+
+    /**
+     * Fail status.
+     */
+    const STATUS_FAIL = 'Fail';
+
+    /**
+     * Pending status.
+     */
+    const STATUS_PENDING = 'Pending';
+
+    /**
+     * In progress status.
+     */
+    const STATUS_IN_PROGRESS = 'In progress';
 
     /**
      * Initialize method
@@ -65,8 +84,16 @@ class ImportsTable extends Table
             ->notEmpty('filename');
 
         $validator
-            ->requirePresence('options', 'update')
-            ->notEmpty('options', 'update');
+            ->requirePresence('status', 'create')
+            ->notEmpty('status');
+
+        $validator
+            ->requirePresence('model_name', 'create')
+            ->notEmpty('model_name');
+
+        $validator
+            ->requirePresence('attempts', 'create')
+            ->notEmpty('attempts');
 
         $validator
             ->dateTime('trashed')
@@ -83,5 +110,45 @@ class ImportsTable extends Table
         $schema->columnType('options', 'json');
 
         return $schema;
+    }
+
+    /**
+     * Completed status getter.
+     *
+     * @return string
+     */
+    public function getStatusCompleted()
+    {
+        return static::STATUS_COMPLETED;
+    }
+
+    /**
+     * Fail status getter.
+     *
+     * @return string
+     */
+    public function getStatusFail()
+    {
+        return static::STATUS_FAIL;
+    }
+
+    /**
+     * Pending status getter.
+     *
+     * @return string
+     */
+    public function getStatusPending()
+    {
+        return static::STATUS_PENDING;
+    }
+
+    /**
+     * In progress status getter.
+     *
+     * @return string
+     */
+    public function getStatusInProgress()
+    {
+        return static::STATUS_IN_PROGRESS;
     }
 }

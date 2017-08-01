@@ -13,6 +13,7 @@ use CsvMigrations\Controller\Traits\ImportTrait;
 use CsvMigrations\Model\Entity\Import;
 use CsvMigrations\Model\Entity\ImportResult;
 use CsvMigrations\Model\Table\ImportsTable;
+use CsvMigrations\Utility\Import as ImportUtility;
 use Exception;
 use League\Csv\Reader;
 use Qobo\Utils\Utility\FileLock;
@@ -204,7 +205,7 @@ class ImportShell extends Shell
     {
         $result = [];
 
-        $headers = $this->_getUploadHeaders($import);
+        $headers = ImportUtility::getUploadHeaders($import);
         if (empty($headers)) {
             return $result;
         }

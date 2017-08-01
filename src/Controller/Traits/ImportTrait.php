@@ -1,35 +1,11 @@
 <?php
 namespace CsvMigrations\Controller\Traits;
 
-use Cake\Core\Configure;
-use Cake\Http\ServerRequest;
-use Cake\ORM\ResultSet;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Inflector;
-use Cake\View\View;
-use CsvMigrations\Model\Entity\Import;
-use CsvMigrations\Model\Table\ImportsTable;
-use League\Csv\Reader;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use CsvMigrations\Utility\Import as ImportUtility;
 
 trait ImportTrait
 {
-    private $__supportedExtensions = [
-        'text/csv'
-    ];
-
-    private $__supportedTypes = [
-        'string',
-        'email',
-        'text',
-        'url',
-        'reminder',
-        'datetime',
-        'date',
-        'time'
-    ];
-
     /**
      * Import action.
      *
@@ -44,8 +20,9 @@ trait ImportTrait
 
         // AJAX logic
         if ($this->request->accepts('application/json')) { // Import/progress.ctp
+            $utility = new ImportUtility($this->request, $this->Flash);
             $columns = ['row_number', 'status', 'status_message'];
-            $query = $this->_getImportResults($entity, $columns);
+            $query = $utility->getImportResults($entity, $columns);
 
             $pagination = [
                 'count' => $query->count()
@@ -53,7 +30,7 @@ trait ImportTrait
 
             $this->set([
                 'success' => true,
-                'data' => $this->_toDatatables($this->paginate($query), $columns, $this->{$this->name}),
+                'data' => $utility->toDatatables($this->paginate($query), $columns, $this->{$this->name}),
                 'pagination' => $pagination,
                 '_serialize' => ['success', 'data', 'pagination']
             ]);
@@ -63,16 +40,18 @@ trait ImportTrait
 
         // POST logic
         if ($this->request->is('post')) { // Import/upload.ctp
-            $filename = $this->_upload($this->request);
-            if (!empty($filename) && $this->_create($table, $entity, $filename)) {
+            $utility = new ImportUtility($this->request, $this->Flash);
+            $filename = $utility->upload();
+            if (!empty($filename) && $utility->create($table, $entity, $filename)) {
                 return $this->redirect([$entity->id]);
             }
         }
 
         // PUT logic
         if ($this->request->is('put')) { // Import/mapping.ctp
-            if ($this->_mapColumns($table, $entity, $this->request)) {
-                $this->_setImportResults($entity);
+            $utility = new ImportUtility($this->request, $this->Flash);
+            if ($utility->mapColumns($table, $entity)) {
+                $utility->setImportResults($entity);
 
                 return $this->redirect([$entity->id]);
             } else {
@@ -83,8 +62,9 @@ trait ImportTrait
         // GET logic
         if (!$entity->isNew()) {
             if (!$entity->get('options')) { // Import/mapping.ctp
-                $this->set('headers', $this->_getUploadHeaders($entity));
-                $this->set('fields', $this->_getModuleFields());
+                $utility = new ImportUtility($this->request, $this->Flash);
+                $this->set('headers', ImportUtility::getUploadHeaders($entity));
+                $this->set('fields', $utility->getModuleFields());
             }
         } else { // Import/upload.ctp
             $query = $table->find('all')
@@ -105,308 +85,5 @@ trait ImportTrait
                 $this->render('CsvMigrations.Import/progress');
             }
         }
-    }
-
-    /**
-     * Import file upload logic.
-     *
-     * @param \Cake\Http\ServerRequest $request Request object
-     * @return string
-     */
-    protected function _upload(ServerRequest $request)
-    {
-        if (!$this->_validateUpload($request)) {
-            return '';
-        }
-
-        return $this->_uploadFile($request);
-    }
-
-    /**
-     * Create import record.
-     *
-     * @param \CsvMigrations\Model\Table\ImportsTable $table Table instance
-     * @param \CsvMigrations\Model\Entity\Import $entity Entity object
-     * @param string $filename Uploaded file name
-     * @return bool
-     */
-    protected function _create(ImportsTable $table, Import $entity, $filename)
-    {
-        $data = [
-            'filename' => $filename,
-            'status' => $table->getStatusPending(),
-            'model_name' => $this->{$this->name}->getRegistryAlias(),
-            'attempts' => 0
-        ];
-
-        $entity = $table->patchEntity($entity, $data);
-
-        return $table->save($entity);
-    }
-
-    /**
-     * Map import file columns to database columns.
-     *
-     * @param \Cake\ORM\Table $table Table instance
-     * @param \CsvMigrations\Model\Entity\Import $entity Entity object
-     * @param \Cake\Http\ServerRequest $request Request object
-     * @return bool
-     */
-    protected function _mapColumns(Table $table, Import $entity, ServerRequest $request)
-    {
-        $entity = $table->patchEntity($entity, ['options' => $request->data('options')]);
-
-        return $table->save($entity);
-    }
-
-    /**
-     * Import results getter.
-     *
-     * @param \CsvMigrations\Model\Entity\Import $entity Entity object
-     * @param array $columns Display columns
-     * @return \Cake\ORM\Query
-     */
-    protected function _getImportResults(Import $entity, array $columns)
-    {
-        $sortCol = $this->request->query('order.0.column') ?: 0;
-        $sortCol = array_key_exists($sortCol, $columns) ? $columns[$sortCol] : current($columns);
-
-        $sortDir = $this->request->query('order.0.dir') ?: 'asc';
-        if (!in_array($sortDir, ['asc', 'desc'])) {
-            $sortDir = 'asc';
-        }
-
-        $table = TableRegistry::get('CsvMigrations.ImportResults');
-
-        $query = $table->find('all')
-            ->where([$table->aliasField('import_id') => $entity->id])
-            ->order([$table->aliasField($sortCol) => $sortDir]);
-
-        return $query;
-    }
-
-    /**
-     * Import results setter.
-     *
-     * @param \CsvMigrations\Model\Entity\Import $import Entity object
-     * @return void
-     */
-    protected function _setImportResults(Import $import)
-    {
-        $count = $this->_getRowsCount($import);
-
-        if (0 >= $count) {
-            return;
-        }
-
-        $table = TableRegistry::get('CsvMigrations.ImportResults');
-
-        $modelName = $this->name;
-        if ($this->plugin) {
-            $modelName = $this->plugin . '.' . $modelName;
-        }
-
-        $data = [
-            'import_id' => $import->id,
-            'status' => $table->getStatusPending(),
-            'status_message' => $table->getStatusPendingMessage(),
-            'model_name' => $modelName
-        ];
-
-        // set $i = 1 to skip header row
-        for ($i = 1; $i < $count; $i++) {
-            $data['row_number'] = $i;
-
-            $entity = $table->newEntity();
-            $entity = $table->patchEntity($entity, $data);
-
-            $table->save($entity);
-        }
-    }
-
-    /**
-     * Upload file validation.
-     *
-     * @param \Cake\Http\ServerRequest $request Request object
-     * @return bool
-     */
-    protected function _validateUpload(ServerRequest $request)
-    {
-        if (!($request->data('file'))) {
-            $this->Flash->error(__('Please choose a file to upload.'));
-
-            return false;
-        }
-
-        if (!in_array($request->data('file.type'), $this->__supportedExtensions)) {
-            $this->Flash->error(__('Unable to upload file, unsupported file provided.'));
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Upload data file.
-     *
-     * @param \Cake\Http\ServerRequest $request Request object
-     * @return string
-     */
-    protected function _uploadFile(ServerRequest $request)
-    {
-        $uploadPath = $this->_getUploadPath();
-
-        if (empty($uploadPath)) {
-            return '';
-        }
-
-        $uploadPath .= $request->data('file.name');
-
-        if (!move_uploaded_file($request->data('file.tmp_name'), $uploadPath)) {
-            $this->Flash->error(__('Unable to upload file to the specified directory.'));
-
-            return '';
-        }
-
-        return $uploadPath;
-    }
-
-    /**
-     * Upload path getter.
-     *
-     * @return string
-     */
-    protected function _getUploadPath()
-    {
-        $result = Configure::read('Importer.path');
-
-        // if no path specified, fallback to the default.
-        if (!$result) {
-            $result = WWW_ROOT . 'uploads' . DS;
-        }
-
-        // include trailing directory separator.
-        $result = rtrim($result, DS);
-        $result .= DS;
-
-        if (file_exists($result)) {
-            return $result;
-        }
-
-        // create upload path, recursively.
-        if (!mkdir($result, 0777, true)) {
-            $this->Flash->error(__('Failed to create upload directory.'));
-
-            return '';
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get upload file column headers (first row)
-     * @param Import $entity [description]
-     * @return [type] [description]
-     */
-    protected function _getUploadHeaders(Import $entity)
-    {
-        $reader = Reader::createFromPath($entity->filename, 'r');
-
-        $result = $reader->fetchOne();
-
-        foreach ($result as $k => $v) {
-            $v = str_replace(' ', '', trim($v));
-            $result[$k] = Inflector::underscore($v);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get CSV file rows count.
-     *
-     * @param \CsvMigrations\Model\Entity\Import $entity Entity object
-     * @return int
-     */
-    protected function _getRowsCount(Import $entity)
-    {
-        $reader = Reader::createFromPath($entity->filename, 'r');
-
-        $result = $reader->each(function ($row) {
-            return true;
-        });
-
-        return (int)$result;
-    }
-
-    /**
-     * Get target module fields.
-     *
-     * @return array
-     */
-    protected function _getModuleFields()
-    {
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $this->name);
-
-        $result = [];
-        foreach ($mc->parse() as $field) {
-            if (!in_array($field->type, $this->__supportedTypes)) {
-                continue;
-            }
-
-            $result[$field->name] = $field->name;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Method that re-formats entities to Datatables supported format.
-     *
-     * @param \Cake\ORM\ResultSet $resultSet ResultSet
-     * @param array $fields Display fields
-     * @param \Cake\ORM\Table $table Table instance
-     * @return array
-     */
-    protected function _toDatatables(ResultSet $resultSet, array $fields, Table $table)
-    {
-        $result = [];
-
-        if ($resultSet->isEmpty()) {
-            return $result;
-        }
-
-        $view = new View();
-        list($plugin, $controller) = pluginSplit($this->{$this->name}->getRegistryAlias());
-
-        foreach ($resultSet as $key => $entity) {
-            foreach ($fields as $field) {
-                $result[$key][] = $entity->get($field);
-            }
-
-            $viewButton = '';
-            // set view button if model id is set
-            if ($entity->get('model_id')) {
-                $url = [
-                    'prefix' => false,
-                    'plugin' => $plugin,
-                    'controller' => $controller,
-                    'action' => 'view',
-                    $entity->model_id
-                ];
-                $link = $view->Html->link('<i class="fa fa-eye"></i>', $url, [
-                    'title' => __('View'),
-                    'class' => 'btn btn-default',
-                    'escape' => false
-                ]);
-
-                $viewButton = '<div class="btn-group btn-group-xs" role="group">' . $link . '</div>';
-            }
-
-            $result[$key][] = $viewButton;
-        }
-
-        return $result;
     }
 }

@@ -3,12 +3,16 @@ namespace CsvMigrations\Shell;
 
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
+use Cake\Core\Configure;
+use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
 use Cake\ORM\TableRegistry;
+use Cake\Shell\Helper\ProgressHelper;
 use CsvMigrations\Controller\Traits\ImportTrait;
 use CsvMigrations\Model\Entity\Import;
 use CsvMigrations\Model\Entity\ImportResult;
+use CsvMigrations\Model\Table\ImportsTable;
 use Exception;
 use League\Csv\Reader;
 use Qobo\Utils\Utility\FileLock;
@@ -74,21 +78,16 @@ class ImportShell extends Shell
         }
 
         $this->info('Import in progress ..');
+
         foreach ($query->all() as $import) {
-            $reader = Reader::createFromPath($import->filename, 'r');
+            // new import
+            if ($table->getStatusPending() === $import->get('status')) {
+                $this->_newImport($table, $import, $progress, $progressCount);
+            }
 
-            $columns = $this->_getColumns($import);
-
-            foreach ($reader as $index => $row) {
-                // skip first csv row
-                if (0 === $index) {
-                    continue;
-                }
-
-                $this->_importResult($import->get('id'), $index, $row, $columns);
-
-                $progress->increment(100 / $progressCount);
-                $progress->draw();
+            // in progress import
+            if ($table->getStatusInProgress() === $import->get('status')) {
+                $this->_existingImport($table, $import, $progress, $progressCount);
             }
         }
 
@@ -99,9 +98,106 @@ class ImportShell extends Shell
     }
 
     /**
+     * New import.
+     *
+     * @param \CsvMigrations\Model\Entity\Import $table Table object
+     * @param \CsvMigrations\Model\Entity\Import $import Import entity
+     * @param \Cake\Shell\Helper\ProgressHelper $progress Progress Helper
+     * @param int $count Progress count
+     * @return bool
+     */
+    protected function _newImport(ImportsTable $table, Import $import, ProgressHelper $progress, $count)
+    {
+        $data = [
+            'status' => $table->getStatusInProgress(),
+            'attempts' => 1,
+            'attempted_date' => Time::now()
+        ];
+
+        $import = $table->patchEntity($import, $data);
+        $table->save($import);
+
+        $this->_run($import, $progress, $count);
+
+        // mark import as completed
+        $data = [
+            'status' => $table->getStatusCompleted()
+        ];
+
+        $import = $table->patchEntity($import, $data);
+
+        return $table->save($import);
+    }
+
+    /**
+     * Existing import.
+     *
+     * @param \CsvMigrations\Model\Entity\Import $table Table object
+     * @param \CsvMigrations\Model\Entity\Import $import Import entity
+     * @param \Cake\Shell\Helper\ProgressHelper $progress Progress Helper
+     * @param int $count Progress count
+     * @return bool
+     */
+    protected function _existingImport(ImportsTable $table, Import $import, ProgressHelper $progress, $count)
+    {
+        $result = false;
+
+        $data = ['attempted_date' => Time::now()];
+
+        // max attempts rearched
+        if ($import->get('attempts') >= (int)Configure::read('Importer.max_attempts')) {
+            // set import as failed
+            $data['status'] = $table->getStatusFail();
+            $import = $table->patchEntity($import, $data);
+            $result = $table->save($import);
+        } else {
+            // increase attempts count
+            $data['attempts'] = $import->get('attempts') + 1;
+            $import = $table->patchEntity($import, $data);
+            $table->save($import);
+
+            $this->_run($import, $progress, $count);
+
+            // mark import as completed
+            $data['status'] = $table->getStatusCompleted();
+            $import = $table->patchEntity($import, $data);
+            $result = $table->save($import);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Run data import.
+     *
+     * @param \CsvMigrations\Model\Entity\Import $import Import entity
+     * @param \Cake\Shell\Helper\ProgressHelper $progress Progress Helper
+     * @param int $count Progress count
+     * @return void
+     */
+    protected function _run(Import $import, ProgressHelper $progress, $count)
+    {
+        $reader = Reader::createFromPath($import->filename, 'r');
+
+        $columns = $this->_getColumns($import);
+
+        foreach ($reader as $index => $row) {
+            // skip first csv row
+            if (0 === $index) {
+                continue;
+            }
+
+            $this->_importResult($import->get('id'), $index, $row, $columns);
+
+            $progress->increment(100 / $count);
+            $progress->draw();
+        }
+    }
+
+    /**
      * Get import columns from Import options.
      *
-     * @param \CsvMigrations\Model\Entity\Import $import Entity object
+     * @param \CsvMigrations\Model\Entity\Import $import Import entity
      * @return array
      */
     protected function _getColumns(Import $import)
@@ -170,7 +266,7 @@ class ImportShell extends Shell
     /**
      * Mark import result as failed.
      *
-     * @param \CsvMigrations\Model\Entity\ImportResult $entity Entity object
+     * @param \CsvMigrations\Model\Entity\ImportResult $entity ImportResult entity
      * @param mixed $errors Save errors
      * @return bool
      */
@@ -190,7 +286,7 @@ class ImportShell extends Shell
     /**
      * Mark import result as successful.
      *
-     * @param \CsvMigrations\Model\Entity\ImportResult $importResult Entity object
+     * @param \CsvMigrations\Model\Entity\ImportResult $importResult ImportResult entity
      * @param \Cake\ORM\Entity $entity Newly created Entity
      * @return bool
      */

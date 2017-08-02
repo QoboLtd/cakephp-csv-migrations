@@ -52,8 +52,6 @@ class ImportShell extends Shell
             $this->abort('Import is already in progress');
         }
 
-        $this->out('Data Importing');
-        $this->hr();
 
         $table = TableRegistry::get('CsvMigrations.Imports');
         $query = $table->find('all')
@@ -66,17 +64,8 @@ class ImportShell extends Shell
             $this->abort('No imports found.');
         }
 
-        $progress = $this->helper('Progress');
-        $progress->init();
-        $progressCount = 0;
         foreach ($query->all() as $import) {
-            // exclude first row from count
-            $progressCount -= 1;
-            $reader = Reader::createFromPath($import->filename, 'r');
-            $progressCount += $reader->each(function ($row) {
-                return true;
-            });
-        }
+            $count = ImportUtility::getRowsCount($import);
 
             $this->out('Importing from file: ' . basename($import->get('filename')));
             $this->hr();
@@ -87,15 +76,14 @@ class ImportShell extends Shell
                 continue;
             }
 
-        foreach ($query->all() as $import) {
             // new import
             if ($table->getStatusPending() === $import->get('status')) {
-                $this->_newImport($table, $import, $progress, $progressCount);
+                $this->_newImport($table, $import, $count);
             }
 
             // in progress import
             if ($table->getStatusInProgress() === $import->get('status')) {
-                $this->_existingImport($table, $import, $progress, $progressCount);
+                $this->_existingImport($table, $import, $count);
             }
         }
 
@@ -150,11 +138,10 @@ class ImportShell extends Shell
      *
      * @param \CsvMigrations\Model\Entity\Import $table Table object
      * @param \CsvMigrations\Model\Entity\Import $import Import entity
-     * @param \Cake\Shell\Helper\ProgressHelper $progress Progress Helper
      * @param int $count Progress count
      * @return bool
      */
-    protected function _newImport(ImportsTable $table, Import $import, ProgressHelper $progress, $count)
+    protected function _newImport(ImportsTable $table, Import $import, $count)
     {
         $data = [
             'status' => $table->getStatusInProgress(),
@@ -165,7 +152,7 @@ class ImportShell extends Shell
         $import = $table->patchEntity($import, $data);
         $table->save($import);
 
-        $this->_run($import, $progress, $count);
+        $this->_run($import, $count);
 
         // mark import as completed
         $data = [
@@ -182,11 +169,10 @@ class ImportShell extends Shell
      *
      * @param \CsvMigrations\Model\Entity\Import $table Table object
      * @param \CsvMigrations\Model\Entity\Import $import Import entity
-     * @param \Cake\Shell\Helper\ProgressHelper $progress Progress Helper
      * @param int $count Progress count
      * @return bool
      */
-    protected function _existingImport(ImportsTable $table, Import $import, ProgressHelper $progress, $count)
+    protected function _existingImport(ImportsTable $table, Import $import, $count)
     {
         $result = false;
 
@@ -204,7 +190,7 @@ class ImportShell extends Shell
             $import = $table->patchEntity($import, $data);
             $table->save($import);
 
-            $this->_run($import, $progress, $count);
+            $this->_run($import, $count);
 
             // mark import as completed
             $data['status'] = $table->getStatusCompleted();
@@ -219,16 +205,18 @@ class ImportShell extends Shell
      * Run data import.
      *
      * @param \CsvMigrations\Model\Entity\Import $import Import entity
-     * @param \Cake\Shell\Helper\ProgressHelper $progress Progress Helper
      * @param int $count Progress count
      * @return void
      */
-    protected function _run(Import $import, ProgressHelper $progress, $count)
+    protected function _run(Import $import, $count)
     {
-        $reader = Reader::createFromPath($import->filename, 'r');
+        $progress = $this->helper('Progress');
+        $progress->init();
+
+        $this->info('Importing records ..');
 
         $columns = $this->_getColumns($import);
-
+        $reader = Reader::createFromPath($import->filename, 'r');
         foreach ($reader as $index => $row) {
             // skip first csv row
             if (0 === $index) {
@@ -240,6 +228,7 @@ class ImportShell extends Shell
             $progress->increment(100 / $count);
             $progress->draw();
         }
+        $this->out(null);
     }
 
     /**

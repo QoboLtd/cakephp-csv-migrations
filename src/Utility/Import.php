@@ -51,6 +51,18 @@ class Import
     ];
 
     /**
+     * Ignored fields, by name.
+     *
+     * @var array
+     */
+    private $__ignoreFields = [
+        'id',
+        'created',
+        'modified',
+        'trashed'
+    ];
+
+    /**
      * Constructor method.
      *
      * @param \Cake\Http\ServerRequest $request Request instance
@@ -230,6 +242,10 @@ class Import
         $result = [];
         foreach ($mc->parse() as $field) {
             if (!in_array($field->type, $this->__supportedFieldTypes)) {
+                continue;
+            }
+
+            if (in_array($field->name, $this->__ignoreFields)) {
                 continue;
             }
 

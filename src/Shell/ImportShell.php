@@ -52,7 +52,6 @@ class ImportShell extends Shell
             $this->abort('Import is already in progress');
         }
 
-
         $table = TableRegistry::get('CsvMigrations.Imports');
         $query = $table->find('all')
             ->where([

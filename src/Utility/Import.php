@@ -7,38 +7,63 @@ use Cake\Http\ServerRequest;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Inflector;
 use Cake\View\View;
 use CsvMigrations\Model\Entity\Import as ImportEntity;
 use CsvMigrations\Model\Table\ImportsTable;
 use League\Csv\Reader;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class Import
 {
-    private $__supportedExtensions = [
-        'text/csv'
+    /**
+     * Supported mime types for uploaded import file.
+     *
+     * @var array
+     */
+    private $__supportedMimeTypes = [
+        'application/csv',
+        'application/octet-stream',
+        'application/vnd.ms-excel',
+        'application/x-csv',
+        'text/comma-separated-values',
+        'text/csv',
+        'text/plain',
+        'text/tab-separated-values',
+        'text/x-comma-separated-values',
+        'text/x-csv'
     ];
 
-    private $__supportedTypes = [
-        'string',
-        'email',
-        'text',
-        'url',
-        'reminder',
-        'datetime',
-        'date',
-        'time'
+    /**
+     * Ignored table columns, by name.
+     *
+     * @var array
+     */
+    private $__ignoreColumns = [
+        'id',
+        'created',
+        'modified',
+        'trashed'
+    ];
+
+    /**
+     * Ignored table columns, by type.
+     *
+     * @var array
+     */
+    private $__ignoreColumnTypes = [
+        'uuid',
     ];
 
     /**
      * Constructor method.
      *
+     * @param \Cake\ORM\Table $table Table instance
      * @param \Cake\Http\ServerRequest $request Request instance
      * @param \Cake\Controller\Component\FlashComponent $flash Flash component
+     * @return void
      */
-    public function __construct(ServerRequest $request, FlashComponent $flash)
+    public function __construct(Table $table, ServerRequest $request, FlashComponent $flash)
     {
+        $this->_table = $table;
         $this->_request = $request;
         $this->_flash = $flash;
     }
@@ -85,20 +110,6 @@ class Import
     }
 
     /**
-     * Map import file columns to database columns.
-     *
-     * @param \CsvMigrations\Model\Table\ImportsTable $table Table instance
-     * @param \CsvMigrations\Model\Entity\Import $entity Import entity
-     * @return bool
-     */
-    public function mapColumns(ImportsTable $table, ImportEntity $entity)
-    {
-        $entity = $table->patchEntity($entity, ['options' => $this->_request->data('options')]);
-
-        return $table->save($entity);
-    }
-
-    /**
      * Import results getter.
      *
      * @param \CsvMigrations\Model\Entity\Import $entity Import entity
@@ -125,51 +136,13 @@ class Import
     }
 
     /**
-     * Import results setter.
-     *
-     * @param \CsvMigrations\Model\Entity\Import $import Import entity
-     * @return void
-     */
-    public function setImportResults(ImportEntity $import)
-    {
-        $count = $this->_getRowsCount($import);
-
-        if (0 >= $count) {
-            return;
-        }
-
-        $table = TableRegistry::get('CsvMigrations.ImportResults');
-
-        $modelName = $this->_request->getParam('controller');
-        if ($this->_request->getParam('plugin')) {
-            $modelName = $this->_request->getParam('plugin') . '.' . $modelName;
-        }
-
-        $data = [
-            'import_id' => $import->id,
-            'status' => $table->getStatusPending(),
-            'status_message' => $table->getStatusPendingMessage(),
-            'model_name' => $modelName
-        ];
-
-        // set $i = 1 to skip header row
-        for ($i = 1; $i < $count; $i++) {
-            $data['row_number'] = $i;
-
-            $entity = $table->newEntity();
-            $entity = $table->patchEntity($entity, $data);
-
-            $table->save($entity);
-        }
-    }
-
-    /**
      * Get CSV file rows count.
      *
      * @param \CsvMigrations\Model\Entity\Import $entity Import entity
+     * @param bool $withHeader Include header row into the count
      * @return int
      */
-    protected function _getRowsCount(ImportEntity $entity)
+    public static function getRowsCount(ImportEntity $entity, $withHeader = false)
     {
         $reader = Reader::createFromPath($entity->filename, 'r');
 
@@ -177,7 +150,13 @@ class Import
             return true;
         });
 
-        return (int)$result;
+        $result = (int)$result;
+
+        if (!$withHeader) {
+            $result = $result - 1;
+        }
+
+        return $result;
     }
 
     /**
@@ -190,14 +169,7 @@ class Import
     {
         $reader = Reader::createFromPath($entity->filename, 'r');
 
-        $result = $reader->fetchOne();
-
-        foreach ($result as $k => $v) {
-            $v = str_replace(' ', '', trim($v));
-            $result[$k] = Inflector::underscore($v);
-        }
-
-        return $result;
+        return $reader->fetchOne();
     }
 
     /**
@@ -205,17 +177,21 @@ class Import
      *
      * @return array
      */
-    public function getModuleFields()
+    public function getTableColumns()
     {
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $this->_request->getParam('controller'));
+        $schema = $this->_table->getSchema();
 
         $result = [];
-        foreach ($mc->parse() as $field) {
-            if (!in_array($field->type, $this->__supportedTypes)) {
+        foreach ($schema->columns() as $column) {
+            if (in_array($column, $this->__ignoreColumns)) {
                 continue;
             }
 
-            $result[$field->name] = $field->name;
+            if (in_array($schema->columnType($column), $this->__ignoreColumnTypes)) {
+                continue;
+            }
+
+            $result[] = $column;
         }
 
         return $result;
@@ -284,7 +260,7 @@ class Import
             return false;
         }
 
-        if (!in_array($this->_request->data('file.type'), $this->__supportedExtensions)) {
+        if (!in_array($this->_request->data('file.type'), $this->__supportedMimeTypes)) {
             $this->_flash->error(__('Unable to upload file, unsupported file provided.'));
 
             return false;

@@ -1,35 +1,72 @@
+<?php
+use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+
+$fhf = new FieldHandlerFactory($this);
+
+$tableName = $this->name;
+if ($this->plugin) {
+    $tableName = $this->plugin . '.' . $tableName;
+}
+
+$headerOptions = [];
+foreach ($headers as $header) {
+    $key = Inflector::underscore(str_replace(' ', '', trim($header)));
+    $headerOptions[$key] = $header;
+}
+?>
 <section class="content-header">
     <div class="row">
         <div class="col-xs-12 col-md-6">
-            <h4><?= __('Import mapping') ?></h4>
+            <h4><?= __('Import fields mapping') ?></h4>
         </div>
     </div>
 </section>
 <section class="content">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-10 col-lg-8">
             <div class="box box-solid">
-                <div class="box-header with-border">
-                    <h3 class="box-title">
-                        <?= __('Fields mapping') ?>
-                    </h3>
-                </div>
                 <div class="box-body">
-                <?php
-                echo $this->Form->create($import);
-
-                foreach ($headers as $header) {
-                    echo $this->Form->input('options.' . $header, [
-                        'empty' => true,
-                        'type' => 'select',
-                        'value' => array_key_exists($header, $fields) ? $fields[$header] : false,
-                        'options' => $fields,
-                        'class' => 'form-control'
-                    ]);
-                }
-                echo $this->Form->button(__('Submit'), ['type' => 'submit', 'class' => 'btn btn-primary']);
-                echo $this->Form->end()
-                ?>
+                <?= $this->Form->create($import) ?>
+                <div class="visible-md visible-lg text-center">
+                    <div class="row">
+                        <div class="col-md-3"><h4><?= __('Field') ?></h4></div>
+                        <div class="col-md-4"><h4><?= __('File Column') ?></h4></div>
+                        <div class="col-md-4"><h4><?= __('Default Value') ?></h4></div>
+                    </div>
+                </div>
+                <?php foreach ($columns as $column) : ?>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="visible-md visible-lg text-right">
+                                <?= $this->Form->label($column) ?>
+                            </div>
+                            <div class="visible-xs visible-sm">
+                                <?= $this->Form->label($column) ?>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <?= $this->Form->input('options.fields.' . $column . '.column', [
+                                'empty' => true,
+                                'label' => false,
+                                'type' => 'select',
+                                'value' => array_key_exists($column, $headerOptions) ? $headerOptions[$column] : false,
+                                'options' => array_combine($headers, $headers),
+                                'class' => 'form-control'
+                            ]) ?>
+                        </div>
+                        <div class="col-md-4">
+                            <?= $this->Form->input('options.fields.' . $column . '.default', [
+                                'value' => false,
+                                'label' => false,
+                                'placeholder' => __('Default value'),
+                                'class' => 'form-control'
+                            ]) ?>
+                        </div>
+                    </div>
+                <?php endforeach ?>
+                <?= $this->Form->button(__('Submit'), ['type' => 'submit', 'class' => 'btn btn-primary']) ?>
+                <?= $this->Form->end() ?>
                 </div>
             </div>
         </div>

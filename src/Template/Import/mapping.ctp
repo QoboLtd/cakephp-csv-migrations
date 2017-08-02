@@ -1,34 +1,66 @@
+<?php
+use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+
+$fhf = new FieldHandlerFactory($this);
+
+$tableName = $this->name;
+if ($this->plugin) {
+    $tableName = $this->plugin . '.' . $tableName;
+}
+?>
 <section class="content-header">
     <div class="row">
         <div class="col-xs-12 col-md-6">
-            <h4><?= __('Import mapping') ?></h4>
+            <h4><?= __('Import fields mapping') ?></h4>
         </div>
     </div>
 </section>
 <section class="content">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-10 col-lg-8">
             <div class="box box-solid">
-                <div class="box-header with-border">
-                    <h3 class="box-title">
-                        <?= __('Fields mapping') ?>
-                    </h3>
-                </div>
                 <div class="box-body">
-                <?php
-                echo $this->Form->create($import, ['class' => 'form-horizontal']);
-                foreach ($fields as $field) {
-                    echo $this->Form->input('options.' . $field, [
-                        'empty' => true,
-                        'type' => 'select',
-                        'value' => array_key_exists($field, $headers) ? $field : false,
-                        'options' => $headers,
-                        'class' => 'form-control'
-                    ]);
-                }
-                echo $this->Form->button(__('Submit'), ['type' => 'submit', 'class' => 'btn btn-primary']);
-                echo $this->Form->end()
-                ?>
+                <?= $this->Form->create($import) ?>
+                <div class="visible-md visible-lg text-center">
+                    <div class="row">
+                        <div class="col-md-3"><h4><?= __('Field') ?></h4></div>
+                        <div class="col-md-4"><h4><?= __('File Column') ?></h4></div>
+                        <div class="col-md-4"><h4><?= __('Default Value') ?></h4></div>
+                    </div>
+                </div>
+                <?php foreach ($columns as $column) : ?>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="visible-md visible-lg text-right">
+                                <?= $this->Form->label($column) ?>
+                            </div>
+                            <div class="visible-xs visible-sm">
+                                <?= $this->Form->label($column) ?>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <?= $this->Form->input('options.fields.' . $column . '.column', [
+                                'empty' => true,
+                                'label' => false,
+                                'type' => 'select',
+                                'value' => array_key_exists($column, $headers) ? $headers[$column] : false,
+                                'options' => array_combine($headers, $headers),
+                                'class' => 'form-control'
+                            ]) ?>
+                        </div>
+                        <div class="col-md-4">
+                            <?= $this->Form->input('options.fields.' . $column . '.default', [
+                                'value' => false,
+                                'label' => false,
+                                'placeholder' => __('Default value'),
+                                'class' => 'form-control'
+                            ]) ?>
+                        </div>
+                    </div>
+                <?php endforeach ?>
+                <?= $this->Form->button(__('Submit'), ['type' => 'submit', 'class' => 'btn btn-primary']) ?>
+                <?= $this->Form->end() ?>
                 </div>
             </div>
         </div>

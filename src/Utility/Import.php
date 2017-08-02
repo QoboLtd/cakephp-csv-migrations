@@ -12,7 +12,6 @@ use Cake\View\View;
 use CsvMigrations\Model\Entity\Import as ImportEntity;
 use CsvMigrations\Model\Table\ImportsTable;
 use League\Csv\Reader;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class Import
 {
@@ -235,21 +234,21 @@ class Import
      *
      * @return array
      */
-    public function getModuleFields()
+    public function getTableColumns()
     {
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $this->_request->getParam('controller'));
+        $schema = $this->_table->getSchema();
 
         $result = [];
-        foreach ($mc->parse() as $field) {
-            if (!in_array($field->type, $this->__supportedFieldTypes)) {
+        foreach ($schema->columns() as $column) {
+            if (in_array($column, $this->__ignoreColumns)) {
                 continue;
             }
 
-            if (in_array($field->name, $this->__ignoreFields)) {
+            if (in_array($schema->columnType($column), $this->__ignoreColumnTypes)) {
                 continue;
             }
 
-            $result[] = $field->name;
+            $result[] = $column;
         }
 
         return $result;

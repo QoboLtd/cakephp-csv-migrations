@@ -64,7 +64,7 @@ trait ImportTrait
             if (!$entity->get('options')) { // Import/mapping.ctp
                 $utility = new ImportUtility($this->request, $this->Flash);
                 $this->set('headers', ImportUtility::getUploadHeaders($entity));
-                $this->set('fields', $utility->getModuleFields());
+                $this->set('columns', $utility->getTableColumns());
             }
         } else { // Import/upload.ctp
             $query = $table->find('all')

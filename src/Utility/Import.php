@@ -139,9 +139,10 @@ class Import
      * Get CSV file rows count.
      *
      * @param \CsvMigrations\Model\Entity\Import $entity Import entity
+     * @param bool $withHeader Include header row into the count
      * @return int
      */
-    public static function getRowsCount(ImportEntity $entity)
+    public static function getRowsCount(ImportEntity $entity, $withHeader = false)
     {
         $reader = Reader::createFromPath($entity->filename, 'r');
 
@@ -149,7 +150,13 @@ class Import
             return true;
         });
 
-        return (int)$result;
+        $result = (int)$result;
+
+        if (!$withHeader) {
+            $result = $result - 1;
+        }
+
+        return $result;
     }
 
     /**

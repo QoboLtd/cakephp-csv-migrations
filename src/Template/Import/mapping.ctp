@@ -8,6 +8,12 @@ $tableName = $this->name;
 if ($this->plugin) {
     $tableName = $this->plugin . '.' . $tableName;
 }
+
+$headerOptions = [];
+foreach ($headers as $header) {
+    $key = Inflector::underscore(str_replace(' ', '', trim($header)));
+    $headerOptions[$key] = $header;
+}
 ?>
 <section class="content-header">
     <div class="row">
@@ -44,7 +50,7 @@ if ($this->plugin) {
                                 'empty' => true,
                                 'label' => false,
                                 'type' => 'select',
-                                'value' => array_key_exists($column, $headers) ? $headers[$column] : false,
+                                'value' => array_key_exists($column, $headerOptions) ? $headerOptions[$column] : false,
                                 'options' => array_combine($headers, $headers),
                                 'class' => 'form-control'
                             ]) ?>

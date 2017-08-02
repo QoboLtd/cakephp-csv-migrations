@@ -111,20 +111,6 @@ class Import
     }
 
     /**
-     * Map import file columns to database columns.
-     *
-     * @param \CsvMigrations\Model\Table\ImportsTable $table Table instance
-     * @param \CsvMigrations\Model\Entity\Import $entity Import entity
-     * @return bool
-     */
-    public function mapColumns(ImportsTable $table, ImportEntity $entity)
-    {
-        $entity = $table->patchEntity($entity, ['options' => $this->_request->data('options')]);
-
-        return $table->save($entity);
-    }
-
-    /**
      * Import results getter.
      *
      * @param \CsvMigrations\Model\Entity\Import $entity Import entity

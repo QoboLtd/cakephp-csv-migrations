@@ -49,11 +49,9 @@ trait ImportTrait
 
         // PUT logic
         if ($this->request->is('put')) { // Import/mapping.ctp
-            $utility = new ImportUtility($this->request, $this->Flash);
-            if ($utility->mapColumns($table, $entity)) {
-                $utility->setImportResults($entity);
-
-                return $this->redirect([$entity->id]);
+            $entity = $table->patchEntity($entity, ['options' => $this->request->data('options')]);
+            if ($table->save($entity)) {
+                return $this->redirect($this->request->here);
             } else {
                 $this->Flash->error(__('Unable to set import options.'));
             }

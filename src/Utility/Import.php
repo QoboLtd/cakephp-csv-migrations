@@ -7,7 +7,6 @@ use Cake\Http\ServerRequest;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Inflector;
 use Cake\View\View;
 use CsvMigrations\Model\Entity\Import as ImportEntity;
 use CsvMigrations\Model\Table\ImportsTable;
@@ -163,13 +162,7 @@ class Import
     {
         $reader = Reader::createFromPath($entity->filename, 'r');
 
-        $result = [];
-        foreach ($reader->fetchOne() as $header) {
-            $key = Inflector::underscore(str_replace(' ', '', trim($header)));
-            $result[$key] = $header;
-        }
-
-        return $result;
+        return $reader->fetchOne();
     }
 
     /**

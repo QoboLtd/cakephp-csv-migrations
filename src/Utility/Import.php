@@ -57,11 +57,14 @@ class Import
     /**
      * Constructor method.
      *
+     * @param \Cake\ORM\Table $table Table instance
      * @param \Cake\Http\ServerRequest $request Request instance
      * @param \Cake\Controller\Component\FlashComponent $flash Flash component
+     * @return void
      */
-    public function __construct(ServerRequest $request, FlashComponent $flash)
+    public function __construct(Table $table, ServerRequest $request, FlashComponent $flash)
     {
+        $this->_table = $table;
         $this->_request = $request;
         $this->_flash = $flash;
     }

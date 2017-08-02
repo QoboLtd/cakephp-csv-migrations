@@ -20,7 +20,7 @@ trait ImportTrait
 
         // AJAX logic
         if ($this->request->accepts('application/json')) { // Import/progress.ctp
-            $utility = new ImportUtility($this->request, $this->Flash);
+            $utility = new ImportUtility($this->{$this->name}, $this->request, $this->Flash);
             $columns = ['row_number', 'status', 'status_message'];
             $query = $utility->getImportResults($entity, $columns);
 
@@ -40,7 +40,7 @@ trait ImportTrait
 
         // POST logic
         if ($this->request->is('post')) { // Import/upload.ctp
-            $utility = new ImportUtility($this->request, $this->Flash);
+            $utility = new ImportUtility($this->{$this->name}, $this->request, $this->Flash);
             $filename = $utility->upload();
             if (!empty($filename) && $utility->create($table, $entity, $filename)) {
                 return $this->redirect([$entity->id]);
@@ -61,8 +61,8 @@ trait ImportTrait
 
         // GET logic
         if (!$entity->isNew()) {
+            $utility = new ImportUtility($this->{$this->name}, $this->request, $this->Flash);
             if (!$entity->get('options')) { // Import/mapping.ctp
-                $utility = new ImportUtility($this->request, $this->Flash);
                 $this->set('headers', ImportUtility::getUploadHeaders($entity));
                 $this->set('columns', $utility->getTableColumns());
             }

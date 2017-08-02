@@ -215,15 +215,22 @@ class ImportShell extends Shell
 
         $this->info('Importing records ..');
 
-        $columns = $this->_getColumns($import);
         $reader = Reader::createFromPath($import->filename, 'r');
+
+        $headers = ImportUtility::getUploadHeaders($import);
+
         foreach ($reader as $index => $row) {
             // skip first csv row
             if (0 === $index) {
                 continue;
             }
 
-            $this->_importResult($import->get('id'), $index, $row, $columns);
+            // skip empty row
+            if (empty($row)) {
+                continue;
+            }
+
+            $this->_importResult($import, $headers, $index, $row);
 
             $progress->increment(100 / $count);
             $progress->draw();
@@ -232,46 +239,18 @@ class ImportShell extends Shell
     }
 
     /**
-     * Get import columns from Import options.
-     *
-     * @param \CsvMigrations\Model\Entity\Import $import Import entity
-     * @return array
-     */
-    protected function _getColumns(Import $import)
-    {
-        $result = [];
-
-        $headers = ImportUtility::getUploadHeaders($import);
-        if (empty($headers)) {
-            return $result;
-        }
-
-        $options = $import->get('options');
-        foreach ($headers as $index => $header) {
-            // skip non-mapped headers
-            if (!array_key_exists($header, $options)) {
-                continue;
-            }
-
-            $result[$index] = $header;
-        }
-
-        return $result;
-    }
-
-    /**
      * Import row.
      *
-     * @param string $id Import id
+     * @param \CsvMigrations\Model\Entity\Import $import Import entity
+     * @param array $headers Upload file headers
      * @param int $rowNumber Current row number
      * @param array $data Row data
-     * @param array $columns Import columns
      * @return void
      */
-    protected function _importResult($id, $rowNumber, array $data, array $columns)
+    protected function _importResult(Import $import, array $headers, $rowNumber, array $data)
     {
         $importTable = TableRegistry::get('CsvMigrations.ImportResults');
-        $query = $importTable->find('all')->where(['import_id' => $id, 'row_number' => $rowNumber]);
+        $query = $importTable->find('all')->where(['import_id' => $import->get('id'), 'row_number' => $rowNumber]);
         $importResult = $query->first();
 
         // skip successful imports
@@ -279,9 +258,12 @@ class ImportShell extends Shell
             return;
         }
 
-        $data = array_intersect_key($data, $columns);
-        ksort($data);
-        $data = array_combine($columns, $data);
+        $data = $this->_processData($import, $headers, $data);
+
+        // skip empty processed data
+        if (empty($data)) {
+            continue;
+        }
 
         $table = TableRegistry::get($importResult->get('model_name'));
         $entity = $table->newEntity();
@@ -298,6 +280,43 @@ class ImportShell extends Shell
         } else {
             $this->_importFail($importResult, $entity->getErrors());
         }
+    }
+
+    /**
+     * Get import columns from Import options.
+     *
+     * @param \CsvMigrations\Model\Entity\Import $import Import entity
+     * @param array $headers Upload file headers
+     * @param array $data Row data
+     * @return array
+     */
+    protected function _processData(Import $import, array $headers, array $data)
+    {
+        $result = [];
+
+        $options = $import->get('options');
+
+        $flipped = array_flip($headers);
+
+        foreach ($options['fields'] as $field => $params) {
+            if (empty($params['column']) && empty($params['default'])) {
+                continue;
+            }
+
+            if (array_key_exists($params['column'], $flipped)) {
+                $value = $data[$flipped[$params['column']]];
+                if (!empty($value)) {
+                    $result[$field] = $value;
+                    continue;
+                }
+            }
+
+            if (!empty($params['default'])) {
+                $result[$field] = $params['default'];
+            }
+        }
+
+        return $result;
     }
 
     /**

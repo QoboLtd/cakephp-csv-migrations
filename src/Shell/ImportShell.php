@@ -117,7 +117,7 @@ class ImportShell extends Shell
         ];
 
         // set $i = 1 to skip header row
-        for ($i = 1; $i < $count; $i++) {
+        for ($i = 1; $i <= $count; $i++) {
             $data['row_number'] = $i;
 
             $entity = $table->newEntity();

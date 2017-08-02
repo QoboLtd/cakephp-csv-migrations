@@ -31,7 +31,13 @@ echo $this->Html->scriptBlock(
 <section class="content-header">
     <div class="row">
         <div class="col-xs-12 col-md-6">
-            <h4><?= $this->name ?>  <?= __('import') ?> <?= strtolower($import->get('status')) ?></h4>
+            <h4>
+                <?= basename($import->get('filename')) ?> |
+                <?= __('Status') ?>
+                (<?= strtolower($import->get('status')) ?>) |
+                <?= __('Total') ?>
+                (<?= $importCount ?>)
+            </h4>
         </div>
     </div>
 </section>

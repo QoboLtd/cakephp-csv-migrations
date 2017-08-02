@@ -63,6 +63,8 @@ trait ImportTrait
             if (!$entity->get('options')) { // Import/mapping.ctp
                 $this->set('headers', ImportUtility::getUploadHeaders($entity));
                 $this->set('columns', $utility->getTableColumns());
+            } else { // Import/progress.ctp
+                $this->set('importCount', ImportUtility::getRowsCount($entity));
             }
         } else { // Import/upload.ctp
             $query = $table->find('all')

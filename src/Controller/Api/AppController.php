@@ -49,7 +49,7 @@ class AppController extends Controller
      *
      * @var array
      */
-    protected $_authConfig = [
+    protected $authConfig = [
         // non-persistent storage, for stateless authentication
         'storage' => 'Memory',
         'authenticate' => [
@@ -96,7 +96,7 @@ class AppController extends Controller
      */
     protected function _authentication()
     {
-        $this->loadComponent('Auth', $this->_authConfig);
+        $this->loadComponent('Auth', $this->authConfig);
 
         // set auth user from token
         $user = $this->Auth->getAuthenticate('ADmad/JwtAuth.Jwt')->getUser($this->request);

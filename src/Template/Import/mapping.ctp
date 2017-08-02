@@ -16,14 +16,13 @@
                 </div>
                 <div class="box-body">
                 <?php
-                echo $this->Form->create($import);
-
-                foreach ($headers as $header) {
-                    echo $this->Form->input('options.' . $header, [
+                echo $this->Form->create($import, ['class' => 'form-horizontal']);
+                foreach ($fields as $field) {
+                    echo $this->Form->input('options.' . $field, [
                         'empty' => true,
                         'type' => 'select',
-                        'value' => array_key_exists($header, $fields) ? $fields[$header] : false,
-                        'options' => $fields,
+                        'value' => array_key_exists($field, $headers) ? $field : false,
+                        'options' => $headers,
                         'class' => 'form-control'
                     ]);
                 }

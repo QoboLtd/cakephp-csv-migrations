@@ -209,11 +209,10 @@ class Import
     {
         $reader = Reader::createFromPath($entity->filename, 'r');
 
-        $result = $reader->fetchOne();
-
-        foreach ($result as $k => $v) {
-            $v = str_replace(' ', '', trim($v));
-            $result[$k] = Inflector::underscore($v);
+        $result = [];
+        foreach ($reader->fetchOne() as $header) {
+            $key = Inflector::underscore(str_replace(' ', '', trim($header)));
+            $result[$key] = $header;
         }
 
         return $result;
@@ -230,11 +229,11 @@ class Import
 
         $result = [];
         foreach ($mc->parse() as $field) {
-            if (!in_array($field->type, $this->__supportedMimeTypes)) {
+            if (!in_array($field->type, $this->__supportedFieldTypes)) {
                 continue;
             }
 
-            $result[$field->name] = $field->name;
+            $result[] = $field->name;
         }
 
         return $result;

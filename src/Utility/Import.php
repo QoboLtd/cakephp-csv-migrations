@@ -137,45 +137,6 @@ class Import
     }
 
     /**
-     * Import results setter.
-     *
-     * @param \CsvMigrations\Model\Entity\Import $import Import entity
-     * @return void
-     */
-    public function setImportResults(ImportEntity $import)
-    {
-        $count = $this->_getRowsCount($import);
-
-        if (0 >= $count) {
-            return;
-        }
-
-        $table = TableRegistry::get('CsvMigrations.ImportResults');
-
-        $modelName = $this->_request->getParam('controller');
-        if ($this->_request->getParam('plugin')) {
-            $modelName = $this->_request->getParam('plugin') . '.' . $modelName;
-        }
-
-        $data = [
-            'import_id' => $import->id,
-            'status' => $table->getStatusPending(),
-            'status_message' => $table->getStatusPendingMessage(),
-            'model_name' => $modelName
-        ];
-
-        // set $i = 1 to skip header row
-        for ($i = 1; $i < $count; $i++) {
-            $data['row_number'] = $i;
-
-            $entity = $table->newEntity();
-            $entity = $table->patchEntity($entity, $data);
-
-            $table->save($entity);
-        }
-    }
-
-    /**
      * Get CSV file rows count.
      *
      * @param \CsvMigrations\Model\Entity\Import $entity Import entity

@@ -78,7 +78,14 @@ class ImportShell extends Shell
             });
         }
 
-        $this->info('Import in progress ..');
+            $this->out('Importing from file: ' . basename($import->get('filename')));
+            $this->hr();
+
+            $this->info('Preparing records ..');
+            // skip if failed to generate import results records
+            if (!$this->createImportResults($import, $count)) {
+                continue;
+            }
 
         foreach ($query->all() as $import) {
             // new import
@@ -94,8 +101,48 @@ class ImportShell extends Shell
 
         // unlock file
         $lock->unlock();
+    }
 
+    /**
+     * Import results generator.
+     *
+     * @param \CsvMigrations\Model\Entity\Import $import Import entity
+     * @param int $count Progress count
+     * @return bool
+     */
+    protected function createImportResults(Import $import, $count)
+    {
+        $progress = $this->helper('Progress');
+        $progress->init();
+
+        if (0 >= $count) {
+            return false;
+        }
+
+        $table = TableRegistry::get('CsvMigrations.ImportResults');
+
+        $data = [
+            'import_id' => $import->get('id'),
+            'status' => $table->getStatusPending(),
+            'status_message' => $table->getStatusPendingMessage(),
+            'model_name' => $import->get('model_name')
+        ];
+
+        // set $i = 1 to skip header row
+        for ($i = 1; $i < $count; $i++) {
+            $data['row_number'] = $i;
+
+            $entity = $table->newEntity();
+            $entity = $table->patchEntity($entity, $data);
+
+            $table->save($entity);
+
+            $progress->increment(100 / $count);
+            $progress->draw();
+        }
         $this->out(null);
+
+        return true;
     }
 
     /**

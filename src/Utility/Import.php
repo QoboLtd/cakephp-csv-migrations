@@ -181,7 +181,7 @@ class Import
      * @param \CsvMigrations\Model\Entity\Import $entity Import entity
      * @return int
      */
-    protected function _getRowsCount(ImportEntity $entity)
+    public static function getRowsCount(ImportEntity $entity)
     {
         $reader = Reader::createFromPath($entity->filename, 'r');
 

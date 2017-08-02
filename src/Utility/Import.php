@@ -16,6 +16,11 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class Import
 {
+    /**
+     * Supported mime types for uploaded import file.
+     *
+     * @var array
+     */
     private $__supportedMimeTypes = [
         'application/csv',
         'application/octet-stream',
@@ -29,7 +34,12 @@ class Import
         'text/x-csv'
     ];
 
-    private $__supportedTypes = [
+    /**
+     * Supported field types.
+     *
+     * @var array
+     */
+    private $__supportedFieldTypes = [
         'string',
         'email',
         'text',
@@ -220,7 +230,7 @@ class Import
 
         $result = [];
         foreach ($mc->parse() as $field) {
-            if (!in_array($field->type, $this->__supportedTypes)) {
+            if (!in_array($field->type, $this->__supportedMimeTypes)) {
                 continue;
             }
 

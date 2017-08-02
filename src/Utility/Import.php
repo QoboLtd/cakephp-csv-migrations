@@ -34,31 +34,24 @@ class Import
     ];
 
     /**
-     * Supported field types.
+     * Ignored table columns, by name.
      *
      * @var array
      */
-    private $__supportedFieldTypes = [
-        'string',
-        'email',
-        'text',
-        'url',
-        'reminder',
-        'datetime',
-        'date',
-        'time'
-    ];
-
-    /**
-     * Ignored fields, by name.
-     *
-     * @var array
-     */
-    private $__ignoreFields = [
+    private $__ignoreColumns = [
         'id',
         'created',
         'modified',
         'trashed'
+    ];
+
+    /**
+     * Ignored table columns, by type.
+     *
+     * @var array
+     */
+    private $__ignoreColumnTypes = [
+        'uuid',
     ];
 
     /**

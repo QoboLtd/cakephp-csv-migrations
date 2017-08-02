@@ -16,8 +16,17 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class Import
 {
-    private $__supportedExtensions = [
-        'text/csv'
+    private $__supportedMimeTypes = [
+        'application/csv',
+        'application/octet-stream',
+        'application/vnd.ms-excel',
+        'application/x-csv',
+        'text/comma-separated-values',
+        'text/csv',
+        'text/plain',
+        'text/tab-separated-values',
+        'text/x-comma-separated-values',
+        'text/x-csv'
     ];
 
     private $__supportedTypes = [
@@ -284,7 +293,7 @@ class Import
             return false;
         }
 
-        if (!in_array($this->_request->data('file.type'), $this->__supportedExtensions)) {
+        if (!in_array($this->_request->data('file.type'), $this->__supportedMimeTypes)) {
             $this->_flash->error(__('Unable to upload file, unsupported file provided.'));
 
             return false;

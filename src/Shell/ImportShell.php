@@ -365,7 +365,7 @@ class ImportShell extends Shell
 
             $primaryKey = $targetTable->getPrimaryKey();
 
-            $lookupFields = FieldUtility::getLookupFields($targetTable);
+            $lookupFields = FieldUtility::getLookup($targetTable);
             $lookupFields[] = $primaryKey;
             // alias lookup fields
             foreach ($lookupFields as $k => $v) {

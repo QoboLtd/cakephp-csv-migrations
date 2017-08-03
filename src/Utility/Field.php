@@ -13,7 +13,7 @@ class Field
      * @param \Cake\ORM\Table $table Table instance
      * @return array
      */
-    public static function getLookupFields(Table $table)
+    public static function getLookup(Table $table)
     {
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
 

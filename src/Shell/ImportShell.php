@@ -264,7 +264,8 @@ class ImportShell extends Shell
         $table = TableRegistry::get($importResult->get('model_name'));
 
         $data = $this->_prepareData($import, $headers, $data);
-        $data = $this->_processData($table, $data);
+        $csvFields = FieldUtility::getCsv($table);
+        $data = $this->_processData($table, $csvFields, $data);
 
         // skip empty processed data
         if (empty($data)) {
@@ -328,18 +329,27 @@ class ImportShell extends Shell
      * Process row data.
      *
      * @param \Cake\ORM\Table $table Table instance
+     * @param array $csvFields Table csv fields
      * @param array $data Entity data
      * @return array
      */
-    protected function _processData(Table $table, array $data)
+    protected function _processData(Table $table, array $csvFields, array $data)
     {
         $result = [];
 
         $schema = $table->schema();
 
         foreach ($data as $field => $value) {
-            if ('uuid' === $schema->columnType($field)) {
-                $data[$field] = $this->_findRelatedRecord($table, $field, $value);
+            if (!empty($csvFields)) {
+                switch ($csvFields[$field]->getType()) {
+                    case 'related':
+                        $data[$field] = $this->_findRelatedRecord($table, $field, $value);
+                        break;
+                }
+            } else {
+                if ('uuid' === $schema->columnType($field)) {
+                    $data[$field] = $this->_findRelatedRecord($table, $field, $value);
+                }
             }
         }
 

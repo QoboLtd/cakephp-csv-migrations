@@ -1,8 +1,11 @@
 <?php
 namespace CsvMigrations;
 
+use Cake\Core\App;
 use Cake\ORM\Query;
+use Cake\ORM\Table as TargetTable;
 use CsvMigrations\ConfigurationTrait;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 trait FieldTrait
 {
@@ -32,5 +35,21 @@ trait FieldTrait
         }
 
         return $query;
+    }
+
+    /**
+     * Get Table's lookup fields.
+     *
+     * @param \Cake\ORM\Table $table Table instance
+     * @return array
+     */
+    public function getLookupFields(TargetTable $table)
+    {
+        $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
+
+        $config = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, $moduleName);
+        $parsed = $config->parse();
+
+        return $parsed->table->lookup_fields ?: [];
     }
 }

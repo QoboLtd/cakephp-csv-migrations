@@ -15,6 +15,7 @@ use CsvMigrations\FieldTrait;
 use CsvMigrations\Model\Entity\Import;
 use CsvMigrations\Model\Entity\ImportResult;
 use CsvMigrations\Model\Table\ImportsTable;
+use CsvMigrations\Utility\Field as FieldUtility;
 use CsvMigrations\Utility\Import as ImportUtility;
 use Exception;
 use League\Csv\Reader;
@@ -364,7 +365,7 @@ class ImportShell extends Shell
 
             $primaryKey = $targetTable->getPrimaryKey();
 
-            $lookupFields = $this->getLookupFields($targetTable);
+            $lookupFields = FieldUtility::getLookupFields($targetTable);
             $lookupFields[] = $primaryKey;
             // alias lookup fields
             foreach ($lookupFields as $k => $v) {

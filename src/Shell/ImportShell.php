@@ -7,9 +7,11 @@ use Cake\Core\Configure;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Shell\Helper\ProgressHelper;
 use CsvMigrations\Controller\Traits\ImportTrait;
+use CsvMigrations\FieldTrait;
 use CsvMigrations\Model\Entity\Import;
 use CsvMigrations\Model\Entity\ImportResult;
 use CsvMigrations\Model\Table\ImportsTable;
@@ -20,6 +22,7 @@ use Qobo\Utils\Utility\FileLock;
 
 class ImportShell extends Shell
 {
+    use FieldTrait;
     use ImportTrait;
 
     /**
@@ -257,14 +260,16 @@ class ImportShell extends Shell
             return;
         }
 
-        $data = $this->_processData($import, $headers, $data);
+        $table = TableRegistry::get($importResult->get('model_name'));
+
+        $data = $this->_prepareData($import, $headers, $data);
+        $data = $this->_processData($table, $data);
 
         // skip empty processed data
         if (empty($data)) {
             continue;
         }
 
-        $table = TableRegistry::get($importResult->get('model_name'));
         $entity = $table->newEntity();
         try {
             $entity = $table->patchEntity($entity, $data);
@@ -282,14 +287,14 @@ class ImportShell extends Shell
     }
 
     /**
-     * Get import columns from Import options.
+     * Prepare row data.
      *
      * @param \CsvMigrations\Model\Entity\Import $import Import entity
      * @param array $headers Upload file headers
      * @param array $data Row data
      * @return array
      */
-    protected function _processData(Import $import, array $headers, array $data)
+    protected function _prepareData(Import $import, array $headers, array $data)
     {
         $result = [];
 
@@ -316,6 +321,73 @@ class ImportShell extends Shell
         }
 
         return $result;
+    }
+
+    /**
+     * Process row data.
+     *
+     * @param \Cake\ORM\Table $table Table instance
+     * @param array $data Entity data
+     * @return array
+     */
+    protected function _processData(Table $table, array $data)
+    {
+        $result = [];
+
+        $schema = $table->schema();
+
+        foreach ($data as $field => $value) {
+            if ('uuid' === $schema->columnType($field)) {
+                $data[$field] = $this->_findRelatedRecord($table, $field, $value);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Fetch related record id if found, otherwise return initial value.
+     *
+     * @param \Cake\ORM\Table $table Table instance
+     * @param string $field Field name
+     * @param string $value Field value
+     * @return string
+     */
+    protected function _findRelatedRecord(Table $table, $field, $value)
+    {
+        foreach ($table->associations() as $association) {
+            if ($association->getForeignKey() !== $field) {
+                continue;
+            }
+
+            $targetTable = $association->getTarget();
+
+            $primaryKey = $targetTable->getPrimaryKey();
+
+            $lookupFields = $this->getLookupFields($targetTable);
+            $lookupFields[] = $primaryKey;
+            // alias lookup fields
+            foreach ($lookupFields as $k => $v) {
+                $lookupFields[$k] = $targetTable->aliasField($v);
+            }
+
+            // populate lookup field values
+            $lookupValues = array_fill(0, count($lookupFields), $value);
+
+            $query = $targetTable->find('all')
+                ->select([$targetTable->aliasField($primaryKey)])
+                ->where(['OR' => array_combine($lookupFields, $lookupValues)]);
+
+            if ($query->isEmpty()) {
+                continue;
+            }
+
+            $entity = $query->first();
+
+            return $entity->get($primaryKey);
+        }
+
+        return $value;
     }
 
     /**

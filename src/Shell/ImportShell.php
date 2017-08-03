@@ -7,12 +7,15 @@ use Cake\Core\Configure;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Shell\Helper\ProgressHelper;
 use CsvMigrations\Controller\Traits\ImportTrait;
+use CsvMigrations\FieldTrait;
 use CsvMigrations\Model\Entity\Import;
 use CsvMigrations\Model\Entity\ImportResult;
 use CsvMigrations\Model\Table\ImportsTable;
+use CsvMigrations\Utility\Field as FieldUtility;
 use CsvMigrations\Utility\Import as ImportUtility;
 use Exception;
 use League\Csv\Reader;
@@ -20,6 +23,7 @@ use Qobo\Utils\Utility\FileLock;
 
 class ImportShell extends Shell
 {
+    use FieldTrait;
     use ImportTrait;
 
     /**
@@ -55,7 +59,7 @@ class ImportShell extends Shell
         $table = TableRegistry::get('CsvMigrations.Imports');
         $query = $table->find('all')
             ->where([
-                'status IN' => [$table->getStatusPending(), $table->getStatusInProgress()],
+                'status IN' => [$table::STATUS_PENDING, $table::STATUS_IN_PROGRESS],
                 'options IS NOT' => null
             ]);
 
@@ -76,12 +80,12 @@ class ImportShell extends Shell
             }
 
             // new import
-            if ($table->getStatusPending() === $import->get('status')) {
+            if ($table::STATUS_PENDING === $import->get('status')) {
                 $this->_newImport($table, $import, $count);
             }
 
             // in progress import
-            if ($table->getStatusInProgress() === $import->get('status')) {
+            if ($table::STATUS_IN_PROGRESS === $import->get('status')) {
                 $this->_existingImport($table, $import, $count);
             }
         }
@@ -110,8 +114,8 @@ class ImportShell extends Shell
 
         $data = [
             'import_id' => $import->get('id'),
-            'status' => $table->getStatusPending(),
-            'status_message' => $table->getStatusPendingMessage(),
+            'status' => $table::STATUS_PENDING,
+            'status_message' => $table::STATUS_PENDING_MESSAGE,
             'model_name' => $import->get('model_name')
         ];
 
@@ -143,7 +147,7 @@ class ImportShell extends Shell
     protected function _newImport(ImportsTable $table, Import $import, $count)
     {
         $data = [
-            'status' => $table->getStatusInProgress(),
+            'status' => $table::STATUS_IN_PROGRESS,
             'attempts' => 1,
             'attempted_date' => Time::now()
         ];
@@ -155,7 +159,7 @@ class ImportShell extends Shell
 
         // mark import as completed
         $data = [
-            'status' => $table->getStatusCompleted()
+            'status' => $table::STATUS_COMPLETED
         ];
 
         $import = $table->patchEntity($import, $data);
@@ -180,7 +184,7 @@ class ImportShell extends Shell
         // max attempts rearched
         if ($import->get('attempts') >= (int)Configure::read('Importer.max_attempts')) {
             // set import as failed
-            $data['status'] = $table->getStatusFail();
+            $data['status'] = $table::STATUS_FAIL;
             $import = $table->patchEntity($import, $data);
             $result = $table->save($import);
         } else {
@@ -192,7 +196,7 @@ class ImportShell extends Shell
             $this->_run($import, $count);
 
             // mark import as completed
-            $data['status'] = $table->getStatusCompleted();
+            $data['status'] = $table::STATUS_COMPLETED;
             $import = $table->patchEntity($import, $data);
             $result = $table->save($import);
         }
@@ -257,14 +261,17 @@ class ImportShell extends Shell
             return;
         }
 
-        $data = $this->_processData($import, $headers, $data);
+        $table = TableRegistry::get($importResult->get('model_name'));
+
+        $data = $this->_prepareData($import, $headers, $data);
+        $csvFields = FieldUtility::getCsv($table);
+        $data = $this->_processData($table, $csvFields, $data);
 
         // skip empty processed data
         if (empty($data)) {
             continue;
         }
 
-        $table = TableRegistry::get($importResult->get('model_name'));
         $entity = $table->newEntity();
         try {
             $entity = $table->patchEntity($entity, $data);
@@ -282,14 +289,14 @@ class ImportShell extends Shell
     }
 
     /**
-     * Get import columns from Import options.
+     * Prepare row data.
      *
      * @param \CsvMigrations\Model\Entity\Import $import Import entity
      * @param array $headers Upload file headers
      * @param array $data Row data
      * @return array
      */
-    protected function _processData(Import $import, array $headers, array $data)
+    protected function _prepareData(Import $import, array $headers, array $data)
     {
         $result = [];
 
@@ -319,6 +326,120 @@ class ImportShell extends Shell
     }
 
     /**
+     * Process row data.
+     *
+     * @param \Cake\ORM\Table $table Table instance
+     * @param array $csvFields Table csv fields
+     * @param array $data Entity data
+     * @return array
+     */
+    protected function _processData(Table $table, array $csvFields, array $data)
+    {
+        $result = [];
+
+        $schema = $table->schema();
+
+        foreach ($data as $field => $value) {
+            if (!empty($csvFields)) {
+                switch ($csvFields[$field]->getType()) {
+                    case 'related':
+                        $data[$field] = $this->_findRelatedRecord($table, $field, $value);
+                        break;
+                    case 'list':
+                        $data[$field] = $this->_findListValue($csvFields[$field]->getLimit(), $value);
+                        break;
+                }
+            } else {
+                if ('uuid' === $schema->columnType($field)) {
+                    $data[$field] = $this->_findRelatedRecord($table, $field, $value);
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Fetch related record id if found, otherwise return initial value.
+     *
+     * @param \Cake\ORM\Table $table Table instance
+     * @param string $field Field name
+     * @param string $value Field value
+     * @return string
+     */
+    protected function _findRelatedRecord(Table $table, $field, $value)
+    {
+        foreach ($table->associations() as $association) {
+            if ($association->getForeignKey() !== $field) {
+                continue;
+            }
+
+            $targetTable = $association->getTarget();
+
+            $primaryKey = $targetTable->getPrimaryKey();
+
+            $lookupFields = FieldUtility::getLookup($targetTable);
+            $lookupFields[] = $primaryKey;
+            // alias lookup fields
+            foreach ($lookupFields as $k => $v) {
+                $lookupFields[$k] = $targetTable->aliasField($v);
+            }
+
+            // populate lookup field values
+            $lookupValues = array_fill(0, count($lookupFields), $value);
+
+            $query = $targetTable->find('all')
+                ->select([$targetTable->aliasField($primaryKey)])
+                ->where(['OR' => array_combine($lookupFields, $lookupValues)]);
+
+            if ($query->isEmpty()) {
+                continue;
+            }
+
+            $entity = $query->first();
+
+            return $entity->get($primaryKey);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Fetch list value.
+     *
+     * First will try to find if the row value matches one
+     * of the list options.
+     *
+     * @param string $listName List name
+     * @param string $value Field value
+     * @return string
+     */
+    protected function _findListValue($listName, $value)
+    {
+        $options = FieldUtility::getList($listName, true);
+
+        // check against list options values
+        foreach ($options as $val => $params) {
+            if ($val !== $value) {
+                continue;
+            }
+
+            return $val;
+        }
+
+        // check against list options labels
+        foreach ($options as $val => $params) {
+            if ($params['label'] !== $value) {
+                continue;
+            }
+
+            return $val;
+        }
+
+        return $value;
+    }
+
+    /**
      * Mark import result as failed.
      *
      * @param \CsvMigrations\Model\Entity\ImportResult $entity ImportResult entity
@@ -331,8 +452,8 @@ class ImportShell extends Shell
 
         $errors = json_encode($errors);
 
-        $message = printf($table->getStatusFailMessage(), $errors);
-        $entity->set('status', $table->getStatusFail());
+        $message = printf($table::STATUS_FAIL_MESSAGE, $errors);
+        $entity->set('status', $table::STATUS_FAIL);
         $entity->set('status_message', $message);
 
         return $table->save($entity);
@@ -350,8 +471,8 @@ class ImportShell extends Shell
         $table = TableRegistry::get('CsvMigrations.ImportResults');
 
         $importResult->set('model_id', $entity->get('id'));
-        $importResult->set('status', $table->getStatusSuccess());
-        $importResult->set('status_message', $table->getStatusSuccessMessage());
+        $importResult->set('status', $table::STATUS_SUCCESS);
+        $importResult->set('status_message', $table::STATUS_SUCCESS_MESSAGE);
 
         return $table->save($importResult);
     }

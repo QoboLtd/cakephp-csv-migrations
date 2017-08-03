@@ -63,8 +63,8 @@ trait ConfigurationTrait
      */
     public function setConfig($tableName)
     {
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($tableName));
-        $this->_config = (array)json_decode(json_encode($mc->parse()), true);
+        $config = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($tableName));
+        $this->_config = (array)json_decode(json_encode($config->parse()), true);
 
         // display field from configuration file
         if (isset($this->_config['table']['display_field']) && method_exists($this, 'displayField')) {

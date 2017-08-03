@@ -111,44 +111,4 @@ class ImportsTable extends Table
 
         return $schema;
     }
-
-    /**
-     * Completed status getter.
-     *
-     * @return string
-     */
-    public function getStatusCompleted()
-    {
-        return static::STATUS_COMPLETED;
-    }
-
-    /**
-     * Fail status getter.
-     *
-     * @return string
-     */
-    public function getStatusFail()
-    {
-        return static::STATUS_FAIL;
-    }
-
-    /**
-     * Pending status getter.
-     *
-     * @return string
-     */
-    public function getStatusPending()
-    {
-        return static::STATUS_PENDING;
-    }
-
-    /**
-     * In progress status getter.
-     *
-     * @return string
-     */
-    public function getStatusInProgress()
-    {
-        return static::STATUS_IN_PROGRESS;
-    }
 }

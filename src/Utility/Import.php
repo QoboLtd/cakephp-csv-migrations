@@ -97,7 +97,7 @@ class Import
 
         $data = [
             'filename' => $filename,
-            'status' => $table->getStatusPending(),
+            'status' => $table::STATUS_PENDING,
             'model_name' => $modelName,
             'attempts' => 0
         ];

@@ -59,7 +59,7 @@ class ImportShell extends Shell
         $table = TableRegistry::get('CsvMigrations.Imports');
         $query = $table->find('all')
             ->where([
-                'status IN' => [$table->getStatusPending(), $table->getStatusInProgress()],
+                'status IN' => [$table::STATUS_PENDING, $table::STATUS_IN_PROGRESS],
                 'options IS NOT' => null
             ]);
 
@@ -80,12 +80,12 @@ class ImportShell extends Shell
             }
 
             // new import
-            if ($table->getStatusPending() === $import->get('status')) {
+            if ($table::STATUS_PENDING === $import->get('status')) {
                 $this->_newImport($table, $import, $count);
             }
 
             // in progress import
-            if ($table->getStatusInProgress() === $import->get('status')) {
+            if ($table::STATUS_IN_PROGRESS === $import->get('status')) {
                 $this->_existingImport($table, $import, $count);
             }
         }
@@ -114,8 +114,8 @@ class ImportShell extends Shell
 
         $data = [
             'import_id' => $import->get('id'),
-            'status' => $table->getStatusPending(),
-            'status_message' => $table->getStatusPendingMessage(),
+            'status' => $table::STATUS_PENDING,
+            'status_message' => $table::STATUS_PENDING_MESSAGE,
             'model_name' => $import->get('model_name')
         ];
 
@@ -147,7 +147,7 @@ class ImportShell extends Shell
     protected function _newImport(ImportsTable $table, Import $import, $count)
     {
         $data = [
-            'status' => $table->getStatusInProgress(),
+            'status' => $table::STATUS_IN_PROGRESS,
             'attempts' => 1,
             'attempted_date' => Time::now()
         ];
@@ -159,7 +159,7 @@ class ImportShell extends Shell
 
         // mark import as completed
         $data = [
-            'status' => $table->getStatusCompleted()
+            'status' => $table::STATUS_COMPLETED
         ];
 
         $import = $table->patchEntity($import, $data);
@@ -184,7 +184,7 @@ class ImportShell extends Shell
         // max attempts rearched
         if ($import->get('attempts') >= (int)Configure::read('Importer.max_attempts')) {
             // set import as failed
-            $data['status'] = $table->getStatusFail();
+            $data['status'] = $table::STATUS_FAIL;
             $import = $table->patchEntity($import, $data);
             $result = $table->save($import);
         } else {
@@ -196,7 +196,7 @@ class ImportShell extends Shell
             $this->_run($import, $count);
 
             // mark import as completed
-            $data['status'] = $table->getStatusCompleted();
+            $data['status'] = $table::STATUS_COMPLETED;
             $import = $table->patchEntity($import, $data);
             $result = $table->save($import);
         }
@@ -452,8 +452,8 @@ class ImportShell extends Shell
 
         $errors = json_encode($errors);
 
-        $message = printf($table->getStatusFailMessage(), $errors);
-        $entity->set('status', $table->getStatusFail());
+        $message = printf($table::STATUS_FAIL_MESSAGE, $errors);
+        $entity->set('status', $table::STATUS_FAIL);
         $entity->set('status_message', $message);
 
         return $table->save($entity);
@@ -471,8 +471,8 @@ class ImportShell extends Shell
         $table = TableRegistry::get('CsvMigrations.ImportResults');
 
         $importResult->set('model_id', $entity->get('id'));
-        $importResult->set('status', $table->getStatusSuccess());
-        $importResult->set('status_message', $table->getStatusSuccessMessage());
+        $importResult->set('status', $table::STATUS_SUCCESS);
+        $importResult->set('status_message', $table::STATUS_SUCCESS_MESSAGE);
 
         return $table->save($importResult);
     }

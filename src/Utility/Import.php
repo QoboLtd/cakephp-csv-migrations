@@ -49,9 +49,7 @@ class Import
      *
      * @var array
      */
-    private $__ignoreColumnTypes = [
-        'uuid',
-    ];
+    private $__ignoreColumnTypes = [];
 
     /**
      * Constructor method.

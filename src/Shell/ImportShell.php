@@ -345,6 +345,9 @@ class ImportShell extends Shell
                     case 'related':
                         $data[$field] = $this->_findRelatedRecord($table, $field, $value);
                         break;
+                    case 'list':
+                        $data[$field] = $this->_findListValue($csvFields[$field]->getLimit(), $value);
+                        break;
                 }
             } else {
                 if ('uuid' === $schema->columnType($field)) {
@@ -396,6 +399,41 @@ class ImportShell extends Shell
             $entity = $query->first();
 
             return $entity->get($primaryKey);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Fetch list value.
+     *
+     * First will try to find if the row value matches one
+     * of the list options.
+     *
+     * @param string $listName List name
+     * @param string $value Field value
+     * @return string
+     */
+    protected function _findListValue($listName, $value)
+    {
+        $options = FieldUtility::getList($listName, true);
+
+        // check against list options values
+        foreach ($options as $val => $params) {
+            if ($val !== $value) {
+                continue;
+            }
+
+            return $val;
+        }
+
+        // check against list options labels
+        foreach ($options as $val => $params) {
+            if ($params['label'] !== $value) {
+                continue;
+            }
+
+            return $val;
         }
 
         return $value;

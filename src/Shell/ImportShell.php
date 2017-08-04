@@ -101,18 +101,20 @@ class ImportShell extends Shell
      *
      * @param \CsvMigrations\Model\Entity\Import $import Import entity
      * @param int $count Progress count
-     * @return bool
+     * @return void
      */
     protected function createImportResults(Import $import, $count)
     {
         $progress = $this->helper('Progress');
         $progress->init();
-
-        if (0 >= $count) {
-            return false;
-        }
-
         $table = TableRegistry::get('CsvMigrations.ImportResults');
+
+        $query = $table->find('all')->where(['import_id' => $import->get('id')]);
+        $queryCount = $query->count();
+
+        if ($queryCount >= $count) {
+            return;
+        }
 
         $data = [
             'import_id' => $import->get('id'),

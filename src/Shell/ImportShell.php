@@ -69,8 +69,6 @@ class ImportShell extends Shell
         }
 
         foreach ($query->all() as $import) {
-            $count = ImportUtility::getRowsCount($import);
-
             $this->out('Importing from file: ' . basename($import->get('filename')));
             $this->hr();
 
@@ -80,6 +78,8 @@ class ImportShell extends Shell
                 $this->hr();
                 continue;
             }
+
+            $count = ImportUtility::getRowsCount($import);
 
             // new import
             if ($table::STATUS_PENDING === $import->get('status')) {

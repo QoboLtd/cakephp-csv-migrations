@@ -49,7 +49,8 @@ trait ImportTrait
 
         // PUT logic
         if ($this->request->is('put')) { // Import/mapping.ctp
-            $entity = $table->patchEntity($entity, ['options' => $this->request->data('options')]);
+            $options = ImportUtility::prepareOptions($this->request->data('options'));
+            $entity = $table->patchEntity($entity, ['options' => $options]);
             if ($table->save($entity)) {
                 return $this->redirect($this->request->here);
             } else {

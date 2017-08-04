@@ -7,7 +7,7 @@ use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\Utility\Field;
 
 /**
- * Search\Utility Test Case
+ * CsvMigrations\Utility\Field Test Case
  */
 class FieldTest extends TestCase
 {

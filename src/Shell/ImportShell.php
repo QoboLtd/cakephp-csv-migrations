@@ -60,24 +60,24 @@ class ImportShell extends Shell
         $query = $table->find('all')
             ->where([
                 'status IN' => [$table::STATUS_PENDING, $table::STATUS_IN_PROGRESS],
-                'options IS NOT' => null
+                'options IS NOT' => null,
+                'options !=' => '',
             ]);
 
         if ($query->isEmpty()) {
-            $this->abort('No imports found.');
+            $this->abort('No imports found');
         }
 
         foreach ($query->all() as $import) {
-            $count = ImportUtility::getRowsCount($import);
-
             $this->out('Importing from file: ' . basename($import->get('filename')));
-            $this->hr();
 
-            $this->info('Preparing records ..');
-            // skip if failed to generate import results records
-            if (!$this->createImportResults($import, $count)) {
+            if (empty($import->get('options'))) {
+                $this->warn('Skipping, no mapping found for file:' . basename($import->get('filename')));
+                $this->hr();
                 continue;
             }
+
+            $count = ImportUtility::getRowsCount($import);
 
             // new import
             if ($table::STATUS_PENDING === $import->get('status')) {
@@ -88,7 +88,10 @@ class ImportShell extends Shell
             if ($table::STATUS_IN_PROGRESS === $import->get('status')) {
                 $this->_existingImport($table, $import, $count);
             }
+            $this->hr();
         }
+
+        $this->success('Import Completed');
 
         // unlock file
         $lock->unlock();
@@ -99,18 +102,18 @@ class ImportShell extends Shell
      *
      * @param \CsvMigrations\Model\Entity\Import $import Import entity
      * @param int $count Progress count
-     * @return bool
+     * @return void
      */
     protected function createImportResults(Import $import, $count)
     {
-        $progress = $this->helper('Progress');
-        $progress->init();
-
-        if (0 >= $count) {
-            return false;
-        }
-
         $table = TableRegistry::get('CsvMigrations.ImportResults');
+
+        $query = $table->find('all')->where(['import_id' => $import->get('id')]);
+        $queryCount = $query->count();
+
+        if ($queryCount >= $count) {
+            return;
+        }
 
         $data = [
             'import_id' => $import->get('id'),
@@ -119,8 +122,15 @@ class ImportShell extends Shell
             'model_name' => $import->get('model_name')
         ];
 
+        $progress = $this->helper('Progress');
+        $progress->init();
+
+        $i = $queryCount + 1;
+        $progressCount = $count - $queryCount;
+
+        $this->info('Preparing records ..');
         // set $i = 1 to skip header row
-        for ($i = 1; $i <= $count; $i++) {
+        for ($i; $i <= $count; $i++) {
             $data['row_number'] = $i;
 
             $entity = $table->newEntity();
@@ -128,12 +138,10 @@ class ImportShell extends Shell
 
             $table->save($entity);
 
-            $progress->increment(100 / $count);
+            $progress->increment(100 / $progressCount);
             $progress->draw();
         }
         $this->out(null);
-
-        return true;
     }
 
     /**
@@ -187,19 +195,21 @@ class ImportShell extends Shell
             $data['status'] = $table::STATUS_FAIL;
             $import = $table->patchEntity($import, $data);
             $result = $table->save($import);
-        } else {
-            // increase attempts count
-            $data['attempts'] = $import->get('attempts') + 1;
-            $import = $table->patchEntity($import, $data);
-            $table->save($import);
 
-            $this->_run($import, $count);
-
-            // mark import as completed
-            $data['status'] = $table::STATUS_COMPLETED;
-            $import = $table->patchEntity($import, $data);
-            $result = $table->save($import);
+            return $result;
         }
+
+        // increase attempts count
+        $data['attempts'] = $import->get('attempts') + 1;
+        $import = $table->patchEntity($import, $data);
+        $table->save($import);
+
+        $this->_run($import, $count);
+
+        // mark import as completed
+        $data['status'] = $table::STATUS_COMPLETED;
+        $import = $table->patchEntity($import, $data);
+        $result = $table->save($import);
 
         return $result;
     }
@@ -213,15 +223,17 @@ class ImportShell extends Shell
      */
     protected function _run(Import $import, $count)
     {
-        $progress = $this->helper('Progress');
-        $progress->init();
-
-        $this->info('Importing records ..');
+        // generate import results records
+        $this->createImportResults($import, $count);
 
         $reader = Reader::createFromPath($import->filename, 'r');
 
         $headers = ImportUtility::getUploadHeaders($import);
 
+        $progress = $this->helper('Progress');
+        $progress->init();
+
+        $this->info('Importing records ..');
         foreach ($reader as $index => $row) {
             // skip first csv row
             if (0 === $index) {
@@ -257,7 +269,7 @@ class ImportShell extends Shell
         $importResult = $query->first();
 
         // skip successful imports
-        if ('Success' === $importResult->get('status')) {
+        if ($importTable::STATUS_SUCCESS === $importResult->get('status')) {
             return;
         }
 
@@ -269,7 +281,9 @@ class ImportShell extends Shell
 
         // skip empty processed data
         if (empty($data)) {
-            continue;
+            $this->_importFail($importResult, 'Row has no data');
+
+            return;
         }
 
         $entity = $table->newEntity();
@@ -278,7 +292,7 @@ class ImportShell extends Shell
         } catch (Exception $e) {
             $this->_importFail($importResult, $e->getMessage());
 
-            continue;
+            return;
         }
 
         if ($table->save($entity)) {
@@ -443,7 +457,7 @@ class ImportShell extends Shell
      * Mark import result as failed.
      *
      * @param \CsvMigrations\Model\Entity\ImportResult $entity ImportResult entity
-     * @param mixed $errors Save errors
+     * @param mixed $errors Fail errors
      * @return bool
      */
     protected function _importFail(ImportResult $entity, $errors)
@@ -452,8 +466,8 @@ class ImportShell extends Shell
 
         $errors = json_encode($errors);
 
-        $message = printf($table::STATUS_FAIL_MESSAGE, $errors);
         $entity->set('status', $table::STATUS_FAIL);
+        $message = sprintf($table::STATUS_FAIL_MESSAGE, $errors);
         $entity->set('status_message', $message);
 
         return $table->save($entity);

@@ -134,6 +134,31 @@ class Import
     }
 
     /**
+     * Prepare import options by removing fields with empty mapping parameters.
+     *
+     * @param array $options Import options
+     * @return array
+     */
+    public static function prepareOptions(array $options)
+    {
+        $result = [];
+
+        if (empty($options['fields'])) {
+            return null;
+        }
+
+        foreach ($options['fields'] as $field => $params) {
+            if (empty($params['column']) && empty($params['default'])) {
+                continue;
+            }
+
+            $result['fields'][$field] = $params;
+        }
+
+        return $result;
+    }
+
+    /**
      * Get CSV file rows count.
      *
      * @param \CsvMigrations\Model\Entity\Import $entity Import entity

@@ -266,7 +266,7 @@ class ImportShell extends Shell
         $importResult = $query->first();
 
         // skip successful imports
-        if ('Success' === $importResult->get('status')) {
+        if ($importTable::STATUS_SUCCESS === $importResult->get('status')) {
             return;
         }
 

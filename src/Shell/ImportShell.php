@@ -123,8 +123,11 @@ class ImportShell extends Shell
             'model_name' => $import->get('model_name')
         ];
 
+        $i = $queryCount + 1;
+        $progressCount = $count - $queryCount;
+
         // set $i = 1 to skip header row
-        for ($i = 1; $i <= $count; $i++) {
+        for ($i; $i <= $count; $i++) {
             $data['row_number'] = $i;
 
             $entity = $table->newEntity();
@@ -132,12 +135,10 @@ class ImportShell extends Shell
 
             $table->save($entity);
 
-            $progress->increment(100 / $count);
+            $progress->increment(100 / $progressCount);
             $progress->draw();
         }
         $this->out(null);
-
-        return true;
     }
 
     /**

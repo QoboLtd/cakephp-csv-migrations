@@ -65,14 +65,12 @@ class ImportShell extends Shell
             ]);
 
         if ($query->isEmpty()) {
-            $this->abort('No imports found.');
+            $this->abort('No imports found');
         }
 
         foreach ($query->all() as $import) {
             $this->out('Importing from file: ' . basename($import->get('filename')));
-            $this->hr();
 
-            $this->info('Preparing records ..');
             if (empty($import->get('options'))) {
                 $this->warn('Skipping, no mapping found for file:' . basename($import->get('filename')));
                 $this->hr();
@@ -90,7 +88,10 @@ class ImportShell extends Shell
             if ($table::STATUS_IN_PROGRESS === $import->get('status')) {
                 $this->_existingImport($table, $import, $count);
             }
+            $this->hr();
         }
+
+        $this->success('Import Completed');
 
         // unlock file
         $lock->unlock();
@@ -105,8 +106,6 @@ class ImportShell extends Shell
      */
     protected function createImportResults(Import $import, $count)
     {
-        $progress = $this->helper('Progress');
-        $progress->init();
         $table = TableRegistry::get('CsvMigrations.ImportResults');
 
         $query = $table->find('all')->where(['import_id' => $import->get('id')]);
@@ -123,9 +122,13 @@ class ImportShell extends Shell
             'model_name' => $import->get('model_name')
         ];
 
+        $progress = $this->helper('Progress');
+        $progress->init();
+
         $i = $queryCount + 1;
         $progressCount = $count - $queryCount;
 
+        $this->info('Preparing records ..');
         // set $i = 1 to skip header row
         for ($i; $i <= $count; $i++) {
             $data['row_number'] = $i;
@@ -220,10 +223,6 @@ class ImportShell extends Shell
      */
     protected function _run(Import $import, $count)
     {
-        $progress = $this->helper('Progress');
-        $progress->init();
-
-        $this->info('Importing records ..');
         // generate import results records
         $this->createImportResults($import, $count);
 
@@ -231,6 +230,10 @@ class ImportShell extends Shell
 
         $headers = ImportUtility::getUploadHeaders($import);
 
+        $progress = $this->helper('Progress');
+        $progress->init();
+
+        $this->info('Importing records ..');
         foreach ($reader as $index => $row) {
             // skip first csv row
             if (0 === $index) {

@@ -29,6 +29,7 @@ class ImportResultsFixture extends TestFixture
         'trashed' => ['type' => 'datetime', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
+            'import_id' => ['type' => 'unique', 'columns' => ['import_id', 'row_number'], 'length' => []],
         ],
         '_options' => [
             'engine' => 'InnoDB',

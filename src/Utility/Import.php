@@ -152,7 +152,7 @@ class Import
                 continue;
             }
 
-            $result[$field] = $params;
+            $result['fields'][$field] = $params;
         }
 
         return $result;

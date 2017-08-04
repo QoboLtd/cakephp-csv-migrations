@@ -278,6 +278,8 @@ class ImportShell extends Shell
 
         // skip empty processed data
         if (empty($data)) {
+            $this->_importFail($importResult, 'Row has no data');
+
             return;
         }
 
@@ -452,7 +454,7 @@ class ImportShell extends Shell
      * Mark import result as failed.
      *
      * @param \CsvMigrations\Model\Entity\ImportResult $entity ImportResult entity
-     * @param mixed $errors Save errors
+     * @param mixed $errors Fail errors
      * @return bool
      */
     protected function _importFail(ImportResult $entity, $errors)
@@ -461,8 +463,8 @@ class ImportShell extends Shell
 
         $errors = json_encode($errors);
 
-        $message = printf($table::STATUS_FAIL_MESSAGE, $errors);
         $entity->set('status', $table::STATUS_FAIL);
+        $message = sprintf($table::STATUS_FAIL_MESSAGE, $errors);
         $entity->set('status_message', $message);
 
         return $table->save($entity);

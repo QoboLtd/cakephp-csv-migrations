@@ -60,7 +60,8 @@ class ImportShell extends Shell
         $query = $table->find('all')
             ->where([
                 'status IN' => [$table::STATUS_PENDING, $table::STATUS_IN_PROGRESS],
-                'options IS NOT' => null
+                'options IS NOT' => null,
+                'options !=' => '',
             ]);
 
         if ($query->isEmpty()) {
@@ -74,6 +75,9 @@ class ImportShell extends Shell
             $this->hr();
 
             $this->info('Preparing records ..');
+            if (empty($import->get('options'))) {
+                $this->warn('Skipping, no mapping found for file:' . basename($import->get('filename')));
+                $this->hr();
                 continue;
             }
 

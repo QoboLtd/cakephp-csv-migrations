@@ -192,19 +192,21 @@ class ImportShell extends Shell
             $data['status'] = $table::STATUS_FAIL;
             $import = $table->patchEntity($import, $data);
             $result = $table->save($import);
-        } else {
-            // increase attempts count
-            $data['attempts'] = $import->get('attempts') + 1;
-            $import = $table->patchEntity($import, $data);
-            $table->save($import);
 
-            $this->_run($import, $count);
-
-            // mark import as completed
-            $data['status'] = $table::STATUS_COMPLETED;
-            $import = $table->patchEntity($import, $data);
-            $result = $table->save($import);
+            return $result;
         }
+
+        // increase attempts count
+        $data['attempts'] = $import->get('attempts') + 1;
+        $import = $table->patchEntity($import, $data);
+        $table->save($import);
+
+        $this->_run($import, $count);
+
+        // mark import as completed
+        $data['status'] = $table::STATUS_COMPLETED;
+        $import = $table->patchEntity($import, $data);
+        $result = $table->save($import);
 
         return $result;
     }

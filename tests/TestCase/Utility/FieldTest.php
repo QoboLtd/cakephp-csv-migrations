@@ -1,7 +1,6 @@
 <?php
 namespace CsvMigrations\Test\TestCase\Utility;
 
-use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\FieldHandlers\CsvField;
@@ -20,9 +19,6 @@ class FieldTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-
-        $path = dirname(dirname(__DIR__)) . DS . 'config' . DS . 'Modules' . DS;
-        Configure::write('CsvMigrations.modules.path', $path);
     }
 
     /**

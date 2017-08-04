@@ -74,8 +74,6 @@ class ImportShell extends Shell
             $this->hr();
 
             $this->info('Preparing records ..');
-            // skip if failed to generate import results records
-            if (!$this->createImportResults($import, $count)) {
                 continue;
             }
 
@@ -217,6 +215,8 @@ class ImportShell extends Shell
         $progress->init();
 
         $this->info('Importing records ..');
+        // generate import results records
+        $this->createImportResults($import, $count);
 
         $reader = Reader::createFromPath($import->filename, 'r');
 

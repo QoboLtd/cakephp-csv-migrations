@@ -269,7 +269,7 @@ class ImportShell extends Shell
 
         // skip empty processed data
         if (empty($data)) {
-            continue;
+            return;
         }
 
         $entity = $table->newEntity();
@@ -278,7 +278,7 @@ class ImportShell extends Shell
         } catch (Exception $e) {
             $this->_importFail($importResult, $e->getMessage());
 
-            continue;
+            return;
         }
 
         if ($table->save($entity)) {

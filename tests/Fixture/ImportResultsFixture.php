@@ -50,8 +50,8 @@ class ImportResultsFixture extends TestFixture
             'row_number' => 1,
             'model_name' => 'Lorem ipsum dolor sit amet',
             'model_id' => '8aab326f-59ba-4222-9d76-dbe964a2302d',
-            'status' => 'Lorem ipsum dolor sit amet',
-            'status_message' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+            'status' => 'Success',
+            'status_message' => 'Lorem ipsum dolor sit amet, aliquet feugiat.',
             'created' => '2017-07-31 17:10:39',
             'modified' => '2017-07-31 17:10:39',
             'trashed' => null

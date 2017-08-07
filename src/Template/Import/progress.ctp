@@ -1,5 +1,13 @@
 <?php
 use Cake\Core\Configure;
+use CsvMigrations\Model\Table\ImportsTable;
+
+$statusLabels = [
+    ImportsTable::STATUS_IN_PROGRESS => 'primary',
+    ImportsTable::STATUS_COMPLETED => 'success',
+    ImportsTable::STATUS_PENDING => 'warning',
+    ImportsTable::STATUS_FAIL => 'error'
+];
 
 echo $this->Html->css('AdminLTE./plugins/datatables/dataTables.bootstrap', ['block' => 'css']);
 echo $this->Html->script(
@@ -27,21 +35,57 @@ echo $this->Html->scriptBlock(
     '$("#progress-table").importer(' . json_encode($params) . ');',
     ['block' => 'scriptBotton']
 );
+
+$percent = round(($importCount / $totalCount) * 100, 1);
+$progressClass = 'progress-bar-info active';
+if (100 === (int)$percent) {
+    $progressClass = 'progress-bar-success';
+}
 ?>
 <section class="content-header">
     <div class="row">
         <div class="col-xs-12 col-md-6">
-            <h4>
-                <?= basename($import->get('filename')) ?> |
-                <?= __('Status') ?>
-                (<?= strtolower($import->get('status')) ?>) |
-                <?= __('Total') ?>
-                (<?= $importCount ?>)
-            </h4>
+            <h4><?= basename($import->get('filename')) ?></h4>
         </div>
     </div>
 </section>
 <section class="content">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <h3 class="box-title">
+                        <?= __('Import progress') ?>
+                    </h3>
+                </div>
+                <div class="box-body">
+                    <dl class="dl-horizontal">
+                        <dt><?= __('Filename') ?></dt>
+                        <dd><?= basename($import->get('filename')) ?></dd>
+                        <dt><?= __('Status') ?></dt>
+                        <dd>
+                            <span class="label label-<?= $statusLabels[$import->get('status')] ?>">
+                                <?= $import->get('status') ?>
+                            </span>
+                        </dd>
+                        <dt><?= __('Total records') ?></dt>
+                        <dd><?= $totalCount ?></dd>
+                        <dt><?= __('Imported records') ?></dt>
+                        <dd><?= $importCount ?></dd>
+                        <dt><?= __('Pending records') ?></dt>
+                        <dd><?= 0 === $pendingCount ? $totalCount : $pendingCount ?></dd>
+                        <dt><?= __('Failed records') ?></dt>
+                        <dd><?= $failCount ?></dd>
+                    </dl>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped <?= $progressClass ?>" role="progressbar" aria-valuenow="<?= $percent ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= $percent ?>%;">
+                            <?= $percent ?>%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="box box-solid">
         <div class="box-body">
             <table id="progress-table" class="table table-hover table-condensed table-vertical-align" width="100%">

@@ -1,3 +1,13 @@
+<?php
+use CsvMigrations\Model\Table\ImportsTable;
+
+$statusLabels = [
+    ImportsTable::STATUS_IN_PROGRESS => 'primary',
+    ImportsTable::STATUS_COMPLETED => 'success',
+    ImportsTable::STATUS_PENDING => 'warning',
+    ImportsTable::STATUS_FAIL => 'error'
+];
+?>
 <section class="content-header">
     <div class="row">
         <div class="col-xs-12 col-md-6">
@@ -48,7 +58,11 @@
                             <?php foreach ($existingImports as $existingImport) : ?>
                                 <tr>
                                     <td><?= basename($existingImport->get('filename')) ?></td>
-                                    <td><?= $existingImport->get('status') ?></td>
+                                    <td>
+                                        <span class="label label-<?= $statusLabels[$existingImport->get('status')] ?>">
+                                            <?= $existingImport->get('status') ?>
+                                        </span>
+                                    </td>
                                     <td><?= $existingImport->get('attempts') ?></td>
                                     <td><?php
                                     if ($existingImport->get('attempted_date')) {

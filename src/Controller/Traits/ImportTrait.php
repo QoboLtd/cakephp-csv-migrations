@@ -28,9 +28,16 @@ trait ImportTrait
                 'count' => $query->count()
             ];
 
+            $data = ImportUtility::toDatatables($this->paginate($query), $columns);
+            $data = ImportUtility::actionButtons($this->paginate($query), $this->{$this->name}, $data);
+
+            if (in_array('status', $columns)) {
+                $data = ImportUtility::setStatusLabels($data, array_search('status', $columns));
+            }
+
             $this->set([
                 'success' => true,
-                'data' => $utility->toDatatables($this->paginate($query), $columns, $this->{$this->name}),
+                'data' => $data,
                 'pagination' => $pagination,
                 '_serialize' => ['success', 'data', 'pagination']
             ]);
@@ -65,7 +72,11 @@ trait ImportTrait
                 $this->set('headers', ImportUtility::getUploadHeaders($entity));
                 $this->set('columns', $utility->getTableColumns());
             } else { // Import/progress.ctp
-                $this->set('importCount', ImportUtility::getRowsCount($entity));
+                $resultsTable = TableRegistry::get('CsvMigrations.ImportResults');
+                $this->set('totalCount', ImportUtility::getRowsCount($entity));
+                $this->set('importCount', $resultsTable->find('imported', ['import' => $entity])->count());
+                $this->set('pendingCount', $resultsTable->find('pending', ['import' => $entity])->count());
+                $this->set('failCount', $resultsTable->find('failed', ['import' => $entity])->count());
             }
         } else { // Import/upload.ctp
             $query = $table->find('all')

@@ -4,11 +4,13 @@ namespace CsvMigrations\Utility;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
+use Cake\I18n\Time;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\View\View;
 use CsvMigrations\Model\Entity\Import as ImportEntity;
+use CsvMigrations\Model\Table\ImportResultsTable;
 use CsvMigrations\Model\Table\ImportsTable;
 use League\Csv\Reader;
 
@@ -225,10 +227,9 @@ class Import
      *
      * @param \Cake\ORM\ResultSet $resultSet ResultSet
      * @param array $fields Display fields
-     * @param \Cake\ORM\Table $table Table instance
      * @return array
      */
-    public function toDatatables(ResultSet $resultSet, array $fields, Table $table)
+    public static function toDatatables(ResultSet $resultSet, array $fields)
     {
         $result = [];
 
@@ -236,38 +237,77 @@ class Import
             return $result;
         }
 
-        $view = new View();
-        $plugin = $this->_request->getParam('plugin');
-        $controller = $this->_request->getParam('controller');
-
         foreach ($resultSet as $key => $entity) {
             foreach ($fields as $field) {
                 $result[$key][] = $entity->get($field);
             }
-
-            $viewButton = '';
-            // set view button if model id is set
-            if ($entity->get('model_id')) {
-                $url = [
-                    'prefix' => false,
-                    'plugin' => $plugin,
-                    'controller' => $controller,
-                    'action' => 'view',
-                    $entity->model_id
-                ];
-                $link = $view->Html->link('<i class="fa fa-eye"></i>', $url, [
-                    'title' => __('View'),
-                    'class' => 'btn btn-default',
-                    'escape' => false
-                ]);
-
-                $viewButton = '<div class="btn-group btn-group-xs" role="group">' . $link . '</div>';
-            }
-
-            $result[$key][] = $viewButton;
         }
 
         return $result;
+    }
+
+    /**
+     * Add action buttons to response data.
+     *
+     * @param \Cake\ORM\ResultSet $resultSet ResultSet
+     * @param \Cake\ORM\Table $table Table instance
+     * @param array $data Response data
+     * @return array
+     */
+    public static function actionButtons(ResultSet $resultSet, Table $table, array $data)
+    {
+        $view = new View();
+        list($plugin, $controller) = pluginSplit($table->getRegistryAlias());
+
+        foreach ($resultSet as $key => $entity) {
+            if (!$entity->get('model_id')) {
+                $data[$key][] = '';
+                continue;
+            }
+
+            $url = [
+                'prefix' => false,
+                'plugin' => $plugin,
+                'controller' => $controller,
+                'action' => 'view',
+                $entity->get('model_id')
+            ];
+            $link = $view->Html->link('<i class="fa fa-eye"></i>', $url, [
+                'title' => __('View'),
+                'class' => 'btn btn-default',
+                'escape' => false
+            ]);
+
+            $html = '<div class="btn-group btn-group-xs" role="group">' . $link . '</div>';
+
+            $data[$key][] = $html;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Response data status labels setter.
+     *
+     * @param array $data Response data
+     * @param int $index Status column index
+     * @return array
+     */
+    public static function setStatusLabels(array $data, $index)
+    {
+        $view = new View();
+        $statusLabels = [
+            ImportResultsTable::STATUS_SUCCESS => 'success',
+            ImportResultsTable::STATUS_PENDING => 'warning',
+            ImportResultsTable::STATUS_FAIL => 'error'
+        ];
+        foreach ($data as $key => $value) {
+            $data[$key][$index] = $view->Html->tag('span', $value[$index], [
+                'class' => 'label label-' . $statusLabels[$value[$index]]
+            ]);
+        }
+
+        return $data;
     }
 
     /**
@@ -305,7 +345,16 @@ class Import
             return '';
         }
 
-        $uploadPath .= $this->_request->data('file.name');
+        $pathInfo = pathinfo($this->_request->data('file.name'));
+
+        $filename = $pathInfo['filename'];
+        // add current timestamp
+        $time = new Time();
+        $filename .= ' ' . $time->i18nFormat('yyyy-MM-dd HH:mm:ss');
+        // add extensions
+        $filename .= '.' . $pathInfo['extension'];
+
+        $uploadPath .= $filename;
 
         if (!move_uploaded_file($this->_request->data('file.tmp_name'), $uploadPath)) {
             $this->_flash->error(__('Unable to upload file to the specified directory.'));

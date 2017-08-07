@@ -73,7 +73,7 @@ if (100 === (int)$percent) {
                         <dt><?= __('Imported records') ?></dt>
                         <dd><span class="label label-success"><?= $importCount ?></span></dd>
                         <dt><?= __('Pending records') ?></dt>
-                        <dd><span class="label label-warning"><?= 0 === $pendingCount ? $totalCount : $pendingCount ?></span></dd>
+                        <dd><span class="label label-warning"><?= $pendingCount ?></span></dd>
                         <dt><?= __('Failed records') ?></dt>
                         <dd><span class="label label-danger"><?= $failCount ?></span></dd>
                         <dt><?= __('Created') ?></dt>

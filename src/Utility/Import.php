@@ -10,6 +10,7 @@ use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\View\View;
 use CsvMigrations\Model\Entity\Import as ImportEntity;
+use CsvMigrations\Model\Table\ImportResultsTable;
 use CsvMigrations\Model\Table\ImportsTable;
 use League\Csv\Reader;
 
@@ -237,38 +238,77 @@ class Import
             return $result;
         }
 
+        foreach ($resultSet as $key => $entity) {
+            foreach ($fields as $field) {
+                $result[$key][] = $entity->get($field);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Add action buttons to response data.
+     *
+     * @param \Cake\ORM\ResultSet $resultSet ResultSet
+     * @param array $data Response data
+     * @return array
+     */
+    public function actionButtons(ResultSet $resultSet, array $data)
+    {
         $view = new View();
         $plugin = $this->_request->getParam('plugin');
         $controller = $this->_request->getParam('controller');
 
         foreach ($resultSet as $key => $entity) {
-            foreach ($fields as $field) {
-                $result[$key][] = $entity->get($field);
+            if (!$entity->get('model_id')) {
+                $data[$key][] = '';
+                continue;
             }
 
-            $viewButton = '';
-            // set view button if model id is set
-            if ($entity->get('model_id')) {
-                $url = [
-                    'prefix' => false,
-                    'plugin' => $plugin,
-                    'controller' => $controller,
-                    'action' => 'view',
-                    $entity->model_id
-                ];
-                $link = $view->Html->link('<i class="fa fa-eye"></i>', $url, [
-                    'title' => __('View'),
-                    'class' => 'btn btn-default',
-                    'escape' => false
-                ]);
+            $url = [
+                'prefix' => false,
+                'plugin' => $plugin,
+                'controller' => $controller,
+                'action' => 'view',
+                $entity->get('model_id')
+            ];
+            $link = $view->Html->link('<i class="fa fa-eye"></i>', $url, [
+                'title' => __('View'),
+                'class' => 'btn btn-default',
+                'escape' => false
+            ]);
 
-                $viewButton = '<div class="btn-group btn-group-xs" role="group">' . $link . '</div>';
-            }
+            $html = '<div class="btn-group btn-group-xs" role="group">' . $link . '</div>';
 
-            $result[$key][] = $viewButton;
+            $data[$key][] = $html;
         }
 
-        return $result;
+        return $data;
+    }
+
+    /**
+     * Response data status labels setter.
+     *
+     * @param array $data Response data
+     * @param int $index Status column index
+     * @return array
+     */
+    public function setStatusLabels(array $data, $index)
+    {
+        $view = new View();
+        $statusLabels = [
+            ImportResultsTable::STATUS_SUCCESS => 'success',
+            ImportResultsTable::STATUS_PENDING => 'warning',
+            ImportResultsTable::STATUS_FAIL => 'error'
+        ];
+        foreach ($data as $key => $value) {
+            $data[$key][$index] = $view->Html->tag('span', $value[$index], [
+                'class' => 'label label-' . $statusLabels[$value[$index]]
+            ]);
+        }
+
+        return $data;
     }
 
     /**

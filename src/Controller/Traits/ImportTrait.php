@@ -28,9 +28,16 @@ trait ImportTrait
                 'count' => $query->count()
             ];
 
+            $data = $utility->toDatatables($this->paginate($query), $columns, $this->{$this->name});
+            $data = $utility->actionButtons($this->paginate($query), $data);
+
+            if (in_array('status', $columns)) {
+                $data = $utility->setStatusLabels($data, array_search('status', $columns));
+            }
+
             $this->set([
                 'success' => true,
-                'data' => $utility->toDatatables($this->paginate($query), $columns, $this->{$this->name}),
+                'data' => $data,
                 'pagination' => $pagination,
                 '_serialize' => ['success', 'data', 'pagination']
             ]);

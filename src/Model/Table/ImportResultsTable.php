@@ -126,4 +126,55 @@ class ImportResultsTable extends Table
 
         return $rules;
     }
+
+    /**
+     * Find import results by import id and success status.
+     *
+     * @param \Cake\ORM\Query $query Query object
+     * @param array $options Additional options
+     * @return \Cake\ORM\Query
+     */
+    public function findImported(Query $query, array $options)
+    {
+        $query->where([
+            'import_id' => $options['import']->id,
+            'status' => static::STATUS_SUCCESS
+        ]);
+
+        return $query;
+    }
+
+    /**
+     * Find import results by import id and pending status.
+     *
+     * @param \Cake\ORM\Query $query Query object
+     * @param array $options Additional options
+     * @return \Cake\ORM\Query
+     */
+    public function findPending(Query $query, array $options)
+    {
+        $query->where([
+            'import_id' => $options['import']->id,
+            'status' => static::STATUS_PENDING
+        ]);
+
+        return $query;
+    }
+
+    /**
+     * Find import results by import id and fail status.
+     *
+     * @param \Cake\ORM\Query $query Query object
+     * @param array $options Additional options
+     * @return \Cake\ORM\Query
+     */
+    public function findFailed(Query $query, array $options)
+    {
+        $query->where([
+            'import_id' => $options['import']->id,
+            'status' => static::STATUS_FAIL
+        ]);
+
+        return $query;
+    }
 }

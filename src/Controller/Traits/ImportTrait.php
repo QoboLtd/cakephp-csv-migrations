@@ -28,11 +28,11 @@ trait ImportTrait
                 'count' => $query->count()
             ];
 
-            $data = $utility->toDatatables($this->paginate($query), $columns, $this->{$this->name});
-            $data = $utility->actionButtons($this->paginate($query), $data);
+            $data = ImportUtility::toDatatables($this->paginate($query), $columns);
+            $data = ImportUtility::actionButtons($this->paginate($query), $this->{$this->name}, $data);
 
             if (in_array('status', $columns)) {
-                $data = $utility->setStatusLabels($data, array_search('status', $columns));
+                $data = ImportUtility::setStatusLabels($data, array_search('status', $columns));
             }
 
             $this->set([

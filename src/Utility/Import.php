@@ -227,10 +227,9 @@ class Import
      *
      * @param \Cake\ORM\ResultSet $resultSet ResultSet
      * @param array $fields Display fields
-     * @param \Cake\ORM\Table $table Table instance
      * @return array
      */
-    public function toDatatables(ResultSet $resultSet, array $fields, Table $table)
+    public static function toDatatables(ResultSet $resultSet, array $fields)
     {
         $result = [];
 
@@ -251,14 +250,14 @@ class Import
      * Add action buttons to response data.
      *
      * @param \Cake\ORM\ResultSet $resultSet ResultSet
+     * @param \Cake\ORM\Table $table Table instance
      * @param array $data Response data
      * @return array
      */
-    public function actionButtons(ResultSet $resultSet, array $data)
+    public static function actionButtons(ResultSet $resultSet, Table $table, array $data)
     {
         $view = new View();
-        $plugin = $this->_request->getParam('plugin');
-        $controller = $this->_request->getParam('controller');
+        list($plugin, $controller) = pluginSplit($table->getRegistryAlias());
 
         foreach ($resultSet as $key => $entity) {
             if (!$entity->get('model_id')) {
@@ -294,7 +293,7 @@ class Import
      * @param int $index Status column index
      * @return array
      */
-    public function setStatusLabels(array $data, $index)
+    public static function setStatusLabels(array $data, $index)
     {
         $view = new View();
         $statusLabels = [

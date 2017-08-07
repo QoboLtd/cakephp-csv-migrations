@@ -4,6 +4,7 @@ namespace CsvMigrations\Utility;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
+use Cake\I18n\Time;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -305,7 +306,16 @@ class Import
             return '';
         }
 
-        $uploadPath .= $this->_request->data('file.name');
+        $pathInfo = pathinfo($this->_request->data('file.name'));
+
+        $filename = $pathInfo['filename'];
+        // add current timestamp
+        $time = new Time();
+        $filename .= ' ' . $time->i18nFormat('yyyy-MM-dd HH:mm:ss');
+        // add extensions
+        $filename .= '.' . $pathInfo['extension'];
+
+        $uploadPath .= $filename;
 
         if (!move_uploaded_file($this->_request->data('file.tmp_name'), $uploadPath)) {
             $this->_flash->error(__('Unable to upload file to the specified directory.'));

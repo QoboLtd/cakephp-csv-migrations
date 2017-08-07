@@ -71,11 +71,15 @@ if (100 === (int)$percent) {
                         <dt><?= __('Total records') ?></dt>
                         <dd><?= $totalCount ?></dd>
                         <dt><?= __('Imported records') ?></dt>
-                        <dd><?= $importCount ?></dd>
+                        <dd><span class="label label-success"><?= $importCount ?></span></dd>
                         <dt><?= __('Pending records') ?></dt>
-                        <dd><?= 0 === $pendingCount ? $totalCount : $pendingCount ?></dd>
+                        <dd><span class="label label-warning"><?= 0 === $pendingCount ? $totalCount : $pendingCount ?></span></dd>
                         <dt><?= __('Failed records') ?></dt>
-                        <dd><?= $failCount ?></dd>
+                        <dd><span class="label label-danger"><?= $failCount ?></span></dd>
+                        <dt><?= __('Created') ?></dt>
+                        <dd><?= $import->created->i18nFormat('yyyy-MM-dd HH:mm:ss') ?></dd>
+                        <dt><?= __('Modified') ?></dt>
+                        <dd><?= $import->modified->i18nFormat('yyyy-MM-dd HH:mm:ss') ?></dd>
                     </dl>
                     <div class="progress">
                         <div class="progress-bar progress-bar-striped <?= $progressClass ?>" role="progressbar" aria-valuenow="<?= $percent ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= $percent ?>%;">

@@ -98,53 +98,6 @@ class ImportShell extends Shell
     }
 
     /**
-     * Import results generator.
-     *
-     * @param \CsvMigrations\Model\Entity\Import $import Import entity
-     * @param int $count Progress count
-     * @return void
-     */
-    protected function createImportResults(Import $import, $count)
-    {
-        $table = TableRegistry::get('CsvMigrations.ImportResults');
-
-        $query = $table->find('all')->where(['import_id' => $import->get('id')]);
-        $queryCount = $query->count();
-
-        if ($queryCount >= $count) {
-            return;
-        }
-
-        $data = [
-            'import_id' => $import->get('id'),
-            'status' => $table::STATUS_PENDING,
-            'status_message' => $table::STATUS_PENDING_MESSAGE,
-            'model_name' => $import->get('model_name')
-        ];
-
-        $progress = $this->helper('Progress');
-        $progress->init();
-
-        $i = $queryCount + 1;
-        $progressCount = $count - $queryCount;
-
-        $this->info('Preparing records ..');
-        // set $i = 1 to skip header row
-        for ($i; $i <= $count; $i++) {
-            $data['row_number'] = $i;
-
-            $entity = $table->newEntity();
-            $entity = $table->patchEntity($entity, $data);
-
-            $table->save($entity);
-
-            $progress->increment(100 / $progressCount);
-            $progress->draw();
-        }
-        $this->out(null);
-    }
-
-    /**
      * New import.
      *
      * @param \CsvMigrations\Model\Entity\Import $table Table object
@@ -248,6 +201,53 @@ class ImportShell extends Shell
             $this->_importResult($import, $headers, $index, $row);
 
             $progress->increment(100 / $count);
+            $progress->draw();
+        }
+        $this->out(null);
+    }
+
+    /**
+     * Import results generator.
+     *
+     * @param \CsvMigrations\Model\Entity\Import $import Import entity
+     * @param int $count Progress count
+     * @return void
+     */
+    protected function createImportResults(Import $import, $count)
+    {
+        $table = TableRegistry::get('CsvMigrations.ImportResults');
+
+        $query = $table->find('all')->where(['import_id' => $import->get('id')]);
+        $queryCount = $query->count();
+
+        if ($queryCount >= $count) {
+            return;
+        }
+
+        $data = [
+            'import_id' => $import->get('id'),
+            'status' => $table::STATUS_PENDING,
+            'status_message' => $table::STATUS_PENDING_MESSAGE,
+            'model_name' => $import->get('model_name')
+        ];
+
+        $progress = $this->helper('Progress');
+        $progress->init();
+
+        $i = $queryCount + 1;
+        $progressCount = $count - $queryCount;
+
+        $this->info('Preparing records ..');
+        // set $i = 1 to skip header row
+        for ($i; $i <= $count; $i++) {
+            $data['row_number'] = $i;
+
+            $entity = $table->newEntity();
+            $entity = $table->patchEntity($entity, $data);
+
+            $table->save($entity);
+
+            $progress->increment(100 / $progressCount);
             $progress->draw();
         }
         $this->out(null);

@@ -16,6 +16,8 @@ use League\Csv\Reader;
 
 class Import
 {
+    const PROCESSED_FILE_SUFFIX = '.processed';
+
     /**
      * Supported mime types for uploaded import file.
      *
@@ -66,6 +68,27 @@ class Import
         $this->_table = $table;
         $this->_request = $request;
         $this->_flash = $flash;
+    }
+
+    /**
+     * Processed filename getter.
+     *
+     * @param \CsvMigrations\Model\Entity\Import $import Import entity
+     * @param bool $fullBase Full base flag
+     * @return string
+     */
+    public static function getProcessedFile(ImportEntity $import, $fullBase = true)
+    {
+        $pathInfo = pathinfo($import->get('filename'));
+
+        $result = $pathInfo['filename'] . static::PROCESSED_FILE_SUFFIX . '.' . $pathInfo['extension'];
+        if (!$fullBase) {
+            return $result;
+        }
+
+        $result = $pathInfo['dirname'] . DS . $result;
+
+        return $result;
     }
 
     /**

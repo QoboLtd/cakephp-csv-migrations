@@ -98,17 +98,23 @@ trait ImportTrait
             }
         }
     }
+
     /**
      * Import download action.
      *
      * @param string|null $id Import id
      * @return \Cake\Http\Response
      */
-    public function importDownload($id = null)
+    public function importDownload($id = null, $type = 'original')
     {
         $table = TableRegistry::get('CsvMigrations.Imports');
         $entity = $table->get($id);
 
-        return $this->response->withFile($entity->get('filename'), ['download' => true]);
+        $path = $entity->get('filename');
+        if ('processed' === $type) {
+            $path = ImportUtility::getProcessedFile($entity);
+        }
+
+        return $this->response->withFile($path, ['download' => true]);
     }
 }

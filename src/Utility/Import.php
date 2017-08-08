@@ -186,13 +186,13 @@ class Import
     /**
      * Get CSV file rows count.
      *
-     * @param \CsvMigrations\Model\Entity\Import $entity Import entity
+     * @param string $path File path
      * @param bool $withHeader Include header row into the count
      * @return int
      */
-    public static function getRowsCount(ImportEntity $entity, $withHeader = false)
+    public static function getRowsCount($path, $withHeader = false)
     {
-        $reader = Reader::createFromPath($entity->filename, 'r');
+        $reader = Reader::createFromPath($path, 'r');
 
         $result = $reader->each(function ($row) {
             return true;

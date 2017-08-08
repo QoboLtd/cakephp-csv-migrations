@@ -114,7 +114,6 @@ class ImportShell extends Shell
     {
         $this->info('Processing import file ..');
 
-
         $path = ImportUtility::getProcessedFile($import);
         if (file_exists($path)) {
             return;

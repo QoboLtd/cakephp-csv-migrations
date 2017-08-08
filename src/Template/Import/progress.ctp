@@ -109,7 +109,10 @@ if (100 === (int)$percent) {
                         <dt><?= __('Created') ?></dt>
                         <dd><?= $import->created->i18nFormat('yyyy-MM-dd HH:mm:ss') ?></dd>
                         <dt><?= __('Last Attempt') ?></dt>
-                        <dd><?= $import->attempted_date->i18nFormat('yyyy-MM-dd HH:mm:ss') ?></dd>
+                        <dd><?= $import->get('attempted_date') ?
+                            $import->attempted_date->i18nFormat('yyyy-MM-dd HH:mm:ss') :
+                            '-'
+                        ?></dd>
                         <dt><?= __('Modified') ?></dt>
                         <dd><?= $import->modified->i18nFormat('yyyy-MM-dd HH:mm:ss') ?></dd>
                     </dl>

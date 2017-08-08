@@ -47,7 +47,7 @@ $originalLink = $this->Html->link('Original', [
 ]);
 
 $processedFile = ImportUtility::getProcessedFile($import);
-$totalRecords = '-';
+$totalRecords = 0;
 $processedLink = 'Processed';
 if (file_exists($processedFile)) {
     $totalRecords = ImportUtility::getRowsCount($processedFile);
@@ -95,17 +95,21 @@ if (100 === (int)$percent) {
                             </span>
                         </dd>
                         <dt><?= __('Total rows') ?></dt>
-                        <dd><?= $totalRows ?></dd>
+                        <dd><?= number_format($totalRows) ?></dd>
                         <dt><?= __('Total records') ?></dt>
-                        <dd><?= $totalRecords ?></dd>
+                        <dd><?= number_format($totalRecords) ?></dd>
                         <dt><?= __('Imported records') ?></dt>
-                        <dd><span class="label label-success"><?= $importCount ?></span></dd>
+                        <dd><span class="label label-success"><?= number_format($importCount) ?></span></dd>
                         <dt><?= __('Pending records') ?></dt>
-                        <dd><span class="label label-warning"><?= $pendingCount ?></span></dd>
+                        <dd><span class="label label-warning"><?= number_format($pendingCount) ?></span></dd>
                         <dt><?= __('Failed records') ?></dt>
-                        <dd><span class="label label-danger"><?= $failCount ?></span></dd>
+                        <dd><span class="label label-danger"><?= number_format($failCount) ?></span></dd>
+                        <dt><?= __('Attempts') ?></dt>
+                        <dd><?= $import->attempts ?> / <?= Configure::read('Importer.max_attempts') ?></dd>
                         <dt><?= __('Created') ?></dt>
                         <dd><?= $import->created->i18nFormat('yyyy-MM-dd HH:mm:ss') ?></dd>
+                        <dt><?= __('Last Attempt') ?></dt>
+                        <dd><?= $import->attempted_date->i18nFormat('yyyy-MM-dd HH:mm:ss') ?></dd>
                         <dt><?= __('Modified') ?></dt>
                         <dd><?= $import->modified->i18nFormat('yyyy-MM-dd HH:mm:ss') ?></dd>
                     </dl>

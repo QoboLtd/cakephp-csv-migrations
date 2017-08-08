@@ -61,7 +61,12 @@ if (100 === (int)$percent) {
                 <div class="box-body">
                     <dl class="dl-horizontal">
                         <dt><?= __('Filename') ?></dt>
-                        <dd><?= basename($import->get('filename')) ?></dd>
+                        <dd><?= $this->Html->link(basename($import->get('filename')), [
+                            'plugin' => $this->plugin,
+                            'controller' => $this->name,
+                            'action' => 'importDownload',
+                            $import->get('id')
+                        ]) ?></dd>
                         <dt><?= __('Status') ?></dt>
                         <dd>
                             <span class="label label-<?= $statusLabels[$import->get('status')] ?>">

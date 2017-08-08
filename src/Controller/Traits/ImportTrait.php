@@ -10,7 +10,7 @@ trait ImportTrait
      * Import action.
      *
      * @param string|null $id Import id
-     * @return \Cake\Network\Response|void
+     * @return \Cake\Http\Response|void
      */
     public function import($id = null)
     {
@@ -97,5 +97,18 @@ trait ImportTrait
                 $this->render('CsvMigrations.Import/progress');
             }
         }
+    }
+    /**
+     * Import download action.
+     *
+     * @param string|null $id Import id
+     * @return \Cake\Http\Response
+     */
+    public function importDownload($id = null)
+    {
+        $table = TableRegistry::get('CsvMigrations.Imports');
+        $entity = $table->get($id);
+
+        return $this->response->withFile($entity->get('filename'), ['download' => true]);
     }
 }

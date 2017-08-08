@@ -73,7 +73,6 @@ trait ImportTrait
                 $this->set('columns', $utility->getTableColumns());
             } else { // Import/progress.ctp
                 $resultsTable = TableRegistry::get('CsvMigrations.ImportResults');
-                $this->set('totalCount', ImportUtility::getRowsCount($entity));
                 $this->set('importCount', $resultsTable->find('imported', ['import' => $entity])->count());
                 $this->set('pendingCount', $resultsTable->find('pending', ['import' => $entity])->count());
                 $this->set('failCount', $resultsTable->find('failed', ['import' => $entity])->count());

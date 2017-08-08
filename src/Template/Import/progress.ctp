@@ -1,6 +1,7 @@
 <?php
 use Cake\Core\Configure;
 use CsvMigrations\Model\Table\ImportsTable;
+use CsvMigrations\Utility\Import as ImportUtility;
 
 $statusLabels = [
     ImportsTable::STATUS_IN_PROGRESS => 'primary',
@@ -36,7 +37,30 @@ echo $this->Html->scriptBlock(
     ['block' => 'scriptBotton']
 );
 
-$percent = round(($importCount / $totalCount) * 100, 1);
+$totalRows = ImportUtility::getRowsCount($import->get('filename'));
+$percent = round(($importCount / $totalRows) * 100, 1);
+$originalLink = $this->Html->link('Original', [
+    'plugin' => $this->plugin,
+    'controller' => $this->name,
+    'action' => 'importDownload',
+    $import->get('id')
+]);
+
+$processedFile = ImportUtility::getProcessedFile($import);
+$totalRecords = '-';
+$processedLink = 'Processed';
+if (file_exists($processedFile)) {
+    $totalRecords = ImportUtility::getRowsCount($processedFile);
+    $percent = round(($importCount / $totalRecords) * 100, 1);
+    $processedLink = $this->Html->link('Processed', [
+        'plugin' => $this->plugin,
+        'controller' => $this->name,
+        'action' => 'importDownload',
+        $import->get('id'),
+        'processed'
+    ]);
+}
+
 $progressClass = 'progress-bar-info active';
 if (100 === (int)$percent) {
     $progressClass = 'progress-bar-success';
@@ -61,20 +85,19 @@ if (100 === (int)$percent) {
                 <div class="box-body">
                     <dl class="dl-horizontal">
                         <dt><?= __('Filename') ?></dt>
-                        <dd><?= $this->Html->link(basename($import->get('filename')), [
-                            'plugin' => $this->plugin,
-                            'controller' => $this->name,
-                            'action' => 'importDownload',
-                            $import->get('id')
-                        ]) ?></dd>
+                        <dd><?= basename($import->get('filename')) ?></dd>
+                        <dt><?= __('Download') ?></dt>
+                        <dd><?= $originalLink ?>&emsp;&emsp;<?= $processedLink ?></dd>
                         <dt><?= __('Status') ?></dt>
                         <dd>
                             <span class="label label-<?= $statusLabels[$import->get('status')] ?>">
                                 <?= $import->get('status') ?>
                             </span>
                         </dd>
+                        <dt><?= __('Total rows') ?></dt>
+                        <dd><?= $totalRows ?></dd>
                         <dt><?= __('Total records') ?></dt>
-                        <dd><?= $totalCount ?></dd>
+                        <dd><?= $totalRecords ?></dd>
                         <dt><?= __('Imported records') ?></dt>
                         <dd><span class="label label-success"><?= $importCount ?></span></dd>
                         <dt><?= __('Pending records') ?></dt>

@@ -382,10 +382,13 @@ class Import
         $pathInfo = pathinfo($this->_request->data('file.name'));
 
         $time = new Time();
-        $timestamp = $time->i18nFormat('yyyy-MM-dd HH:mm:ss');
+        $timestamp = $time->i18nFormat('yyyyMMddHHmmss');
 
-        $path = $uploadPath . $timestamp . ' ' . $pathInfo['filename'] . '.' . $pathInfo['extension'];
+        $filename = preg_replace('/\W/', '_', $pathInfo['filename']);
+        $filename = preg_replace('/_+/', '_', $filename);
+        $filename = trim($filename, '_');
 
+        $path = $uploadPath . $timestamp . '_' . $filename . '.' . $pathInfo['extension'];
         if (!move_uploaded_file($this->_request->data('file.tmp_name'), $path)) {
             $this->_flash->error(__('Unable to upload file to the specified directory.'));
 

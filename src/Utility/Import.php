@@ -370,22 +370,18 @@ class Import
 
         $pathInfo = pathinfo($this->_request->data('file.name'));
 
-        $filename = $pathInfo['filename'];
-        // add current timestamp
         $time = new Time();
-        $filename .= ' ' . $time->i18nFormat('yyyy-MM-dd HH:mm:ss');
-        // add extensions
-        $filename .= '.' . $pathInfo['extension'];
+        $timestamp = $time->i18nFormat('yyyy-MM-dd HH:mm:ss');
 
-        $uploadPath .= $filename;
+        $path = $uploadPath . $timestamp . ' ' . $pathInfo['filename'] . '.' . $pathInfo['extension'];
 
-        if (!move_uploaded_file($this->_request->data('file.tmp_name'), $uploadPath)) {
+        if (!move_uploaded_file($this->_request->data('file.tmp_name'), $path)) {
             $this->_flash->error(__('Unable to upload file to the specified directory.'));
 
             return '';
         }
 
-        return $uploadPath;
+        return $path;
     }
 
     /**

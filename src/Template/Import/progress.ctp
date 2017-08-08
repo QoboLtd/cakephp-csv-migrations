@@ -1,6 +1,7 @@
 <?php
 use Cake\Core\Configure;
 use CsvMigrations\Model\Table\ImportsTable;
+use CsvMigrations\Utility\Import as ImportUtility;
 
 $statusLabels = [
     ImportsTable::STATUS_IN_PROGRESS => 'primary',
@@ -36,7 +37,30 @@ echo $this->Html->scriptBlock(
     ['block' => 'scriptBotton']
 );
 
-$percent = round(($importCount / $totalCount) * 100, 1);
+$totalRows = ImportUtility::getRowsCount($import->get('filename'));
+$percent = round(($importCount / $totalRows) * 100, 1);
+$originalLink = $this->Html->link('Original', [
+    'plugin' => $this->plugin,
+    'controller' => $this->name,
+    'action' => 'importDownload',
+    $import->get('id')
+]);
+
+$processedFile = ImportUtility::getProcessedFile($import);
+$totalRecords = 0;
+$processedLink = 'Processed';
+if (file_exists($processedFile)) {
+    $totalRecords = ImportUtility::getRowsCount($processedFile);
+    $percent = round(($importCount / $totalRecords) * 100, 1);
+    $processedLink = $this->Html->link('Processed', [
+        'plugin' => $this->plugin,
+        'controller' => $this->name,
+        'action' => 'importDownload',
+        $import->get('id'),
+        'processed'
+    ]);
+}
+
 $progressClass = 'progress-bar-info active';
 if (100 === (int)$percent) {
     $progressClass = 'progress-bar-success';
@@ -62,22 +86,33 @@ if (100 === (int)$percent) {
                     <dl class="dl-horizontal">
                         <dt><?= __('Filename') ?></dt>
                         <dd><?= basename($import->get('filename')) ?></dd>
+                        <dt><?= __('Download') ?></dt>
+                        <dd><?= $originalLink ?>&emsp;&emsp;<?= $processedLink ?></dd>
                         <dt><?= __('Status') ?></dt>
                         <dd>
                             <span class="label label-<?= $statusLabels[$import->get('status')] ?>">
                                 <?= $import->get('status') ?>
                             </span>
                         </dd>
+                        <dt><?= __('Total rows') ?></dt>
+                        <dd><?= number_format($totalRows) ?></dd>
                         <dt><?= __('Total records') ?></dt>
-                        <dd><?= $totalCount ?></dd>
+                        <dd><?= number_format($totalRecords) ?></dd>
                         <dt><?= __('Imported records') ?></dt>
-                        <dd><span class="label label-success"><?= $importCount ?></span></dd>
+                        <dd><span class="label label-success"><?= number_format($importCount) ?></span></dd>
                         <dt><?= __('Pending records') ?></dt>
-                        <dd><span class="label label-warning"><?= $pendingCount ?></span></dd>
+                        <dd><span class="label label-warning"><?= number_format($pendingCount) ?></span></dd>
                         <dt><?= __('Failed records') ?></dt>
-                        <dd><span class="label label-danger"><?= $failCount ?></span></dd>
+                        <dd><span class="label label-danger"><?= number_format($failCount) ?></span></dd>
+                        <dt><?= __('Attempts') ?></dt>
+                        <dd><?= $import->attempts ?> / <?= Configure::read('Importer.max_attempts') ?></dd>
                         <dt><?= __('Created') ?></dt>
                         <dd><?= $import->created->i18nFormat('yyyy-MM-dd HH:mm:ss') ?></dd>
+                        <dt><?= __('Last Attempt') ?></dt>
+                        <dd><?= $import->get('attempted_date') ?
+                            $import->attempted_date->i18nFormat('yyyy-MM-dd HH:mm:ss') :
+                            '-'
+                        ?></dd>
                         <dt><?= __('Modified') ?></dt>
                         <dd><?= $import->modified->i18nFormat('yyyy-MM-dd HH:mm:ss') ?></dd>
                     </dl>

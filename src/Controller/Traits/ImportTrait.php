@@ -10,7 +10,7 @@ trait ImportTrait
      * Import action.
      *
      * @param string|null $id Import id
-     * @return \Cake\Network\Response|void
+     * @return \Cake\Http\Response|void
      */
     public function import($id = null)
     {
@@ -73,7 +73,6 @@ trait ImportTrait
                 $this->set('columns', $utility->getTableColumns());
             } else { // Import/progress.ctp
                 $resultsTable = TableRegistry::get('CsvMigrations.ImportResults');
-                $this->set('totalCount', ImportUtility::getRowsCount($entity));
                 $this->set('importCount', $resultsTable->find('imported', ['import' => $entity])->count());
                 $this->set('pendingCount', $resultsTable->find('pending', ['import' => $entity])->count());
                 $this->set('failCount', $resultsTable->find('failed', ['import' => $entity])->count());
@@ -97,5 +96,24 @@ trait ImportTrait
                 $this->render('CsvMigrations.Import/progress');
             }
         }
+    }
+
+    /**
+     * Import download action.
+     *
+     * @param string|null $id Import id
+     * @return \Cake\Http\Response
+     */
+    public function importDownload($id = null, $type = 'original')
+    {
+        $table = TableRegistry::get('CsvMigrations.Imports');
+        $entity = $table->get($id);
+
+        $path = $entity->get('filename');
+        if ('processed' === $type) {
+            $path = ImportUtility::getProcessedFile($entity);
+        }
+
+        return $this->response->withFile($path, ['download' => true]);
     }
 }

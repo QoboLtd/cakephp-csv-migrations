@@ -16,6 +16,8 @@ use League\Csv\Reader;
 
 class Import
 {
+    const PROCESSED_FILE_SUFFIX = '.processed';
+
     /**
      * Supported mime types for uploaded import file.
      *
@@ -66,6 +68,27 @@ class Import
         $this->_table = $table;
         $this->_request = $request;
         $this->_flash = $flash;
+    }
+
+    /**
+     * Processed filename getter.
+     *
+     * @param \CsvMigrations\Model\Entity\Import $import Import entity
+     * @param bool $fullBase Full base flag
+     * @return string
+     */
+    public static function getProcessedFile(ImportEntity $import, $fullBase = true)
+    {
+        $pathInfo = pathinfo($import->get('filename'));
+
+        $result = $pathInfo['filename'] . static::PROCESSED_FILE_SUFFIX . '.' . $pathInfo['extension'];
+        if (!$fullBase) {
+            return $result;
+        }
+
+        $result = $pathInfo['dirname'] . DS . $result;
+
+        return $result;
     }
 
     /**
@@ -163,13 +186,24 @@ class Import
     /**
      * Get CSV file rows count.
      *
-     * @param \CsvMigrations\Model\Entity\Import $entity Import entity
+     * @param string $path File path
      * @param bool $withHeader Include header row into the count
      * @return int
      */
-    public static function getRowsCount(ImportEntity $entity, $withHeader = false)
+    public static function getRowsCount($path, $withHeader = false)
     {
-        $reader = Reader::createFromPath($entity->filename, 'r');
+        $result = exec("/usr/bin/env wc -l '" . $path . "'", $output, $return);
+        if (0 === $return) {
+            list($result, ) = explode(' ', $result);
+            $result = (int)$result;
+            if (0 < $result) {
+                $result -= 1;
+            }
+
+            return $result;
+        }
+
+        $reader = Reader::createFromPath($path, 'r');
 
         $result = $reader->each(function ($row) {
             return true;
@@ -347,22 +381,21 @@ class Import
 
         $pathInfo = pathinfo($this->_request->data('file.name'));
 
-        $filename = $pathInfo['filename'];
-        // add current timestamp
         $time = new Time();
-        $filename .= ' ' . $time->i18nFormat('yyyy-MM-dd HH:mm:ss');
-        // add extensions
-        $filename .= '.' . $pathInfo['extension'];
+        $timestamp = $time->i18nFormat('yyyyMMddHHmmss');
 
-        $uploadPath .= $filename;
+        $filename = preg_replace('/\W/', '_', $pathInfo['filename']);
+        $filename = preg_replace('/_+/', '_', $filename);
+        $filename = trim($filename, '_');
 
-        if (!move_uploaded_file($this->_request->data('file.tmp_name'), $uploadPath)) {
+        $path = $uploadPath . $timestamp . '_' . $filename . '.' . $pathInfo['extension'];
+        if (!move_uploaded_file($this->_request->data('file.tmp_name'), $path)) {
             $this->_flash->error(__('Unable to upload file to the specified directory.'));
 
             return '';
         }
 
-        return $uploadPath;
+        return $path;
     }
 
     /**

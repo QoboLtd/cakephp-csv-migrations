@@ -19,6 +19,7 @@ use CsvMigrations\Utility\Field as FieldUtility;
 use CsvMigrations\Utility\Import as ImportUtility;
 use Exception;
 use League\Csv\Reader;
+use League\Csv\Writer;
 use Qobo\Utils\Utility\FileLock;
 
 class ImportShell extends Shell
@@ -69,15 +70,21 @@ class ImportShell extends Shell
         }
 
         foreach ($query->all() as $import) {
-            $this->out('Importing from file: ' . basename($import->get('filename')));
+            $path = ImportUtility::getProcessedFile($import);
+            $filename = ImportUtility::getProcessedFile($import, false);
+
+            $this->out('Importing from file: "' . $filename . '"');
+
+            // process import file
+            $this->processImportFile($import);
 
             if (empty($import->get('options'))) {
-                $this->warn('Skipping, no mapping found for file:' . basename($import->get('filename')));
+                $this->warn('Skipping, no mapping found for file:' . $filename);
                 $this->hr();
                 continue;
             }
 
-            $count = ImportUtility::getRowsCount($import);
+            $count = ImportUtility::getRowsCount($path);
 
             // new import
             if ($table::STATUS_PENDING === $import->get('status')) {
@@ -98,50 +105,33 @@ class ImportShell extends Shell
     }
 
     /**
-     * Import results generator.
+     * Process import file.
      *
      * @param \CsvMigrations\Model\Entity\Import $import Import entity
-     * @param int $count Progress count
      * @return void
      */
-    protected function createImportResults(Import $import, $count)
+    protected function processImportFile(Import $import)
     {
-        $table = TableRegistry::get('CsvMigrations.ImportResults');
+        $this->info('Processing import file ..');
 
-        $query = $table->find('all')->where(['import_id' => $import->get('id')]);
-        $queryCount = $query->count();
-
-        if ($queryCount >= $count) {
+        $path = ImportUtility::getProcessedFile($import);
+        if (file_exists($path)) {
             return;
         }
 
-        $data = [
-            'import_id' => $import->get('id'),
-            'status' => $table::STATUS_PENDING,
-            'status_message' => $table::STATUS_PENDING_MESSAGE,
-            'model_name' => $import->get('model_name')
-        ];
+        // create processed file
+        $writer = Writer::createFromPath($path, 'w+');
 
-        $progress = $this->helper('Progress');
-        $progress->init();
+        $reader = Reader::createFromPath($import->get('filename'), 'r');
 
-        $i = $queryCount + 1;
-        $progressCount = $count - $queryCount;
+        $results = $reader->fetch();
+        foreach ($results as $row) {
+            if (empty(array_filter($row))) {
+                continue;
+            }
 
-        $this->info('Preparing records ..');
-        // set $i = 1 to skip header row
-        for ($i; $i <= $count; $i++) {
-            $data['row_number'] = $i;
-
-            $entity = $table->newEntity();
-            $entity = $table->patchEntity($entity, $data);
-
-            $table->save($entity);
-
-            $progress->increment(100 / $progressCount);
-            $progress->draw();
+            $writer->insertOne($row);
         }
-        $this->out(null);
     }
 
     /**
@@ -226,14 +216,13 @@ class ImportShell extends Shell
         // generate import results records
         $this->createImportResults($import, $count);
 
-        $reader = Reader::createFromPath($import->filename, 'r');
-
-        $headers = ImportUtility::getUploadHeaders($import);
-
+        $this->info('Importing records ..');
         $progress = $this->helper('Progress');
         $progress->init();
 
-        $this->info('Importing records ..');
+        $headers = ImportUtility::getUploadHeaders($import);
+        $filename = ImportUtility::getProcessedFile($import);
+        $reader = Reader::createFromPath($filename, 'r');
         foreach ($reader as $index => $row) {
             // skip first csv row
             if (0 === $index) {
@@ -250,6 +239,54 @@ class ImportShell extends Shell
             $progress->increment(100 / $count);
             $progress->draw();
         }
+        $this->out(null);
+    }
+
+    /**
+     * Import results generator.
+     *
+     * @param \CsvMigrations\Model\Entity\Import $import Import entity
+     * @param int $count Progress count
+     * @return void
+     */
+    protected function createImportResults(Import $import, $count)
+    {
+        $this->info('Preparing records ..');
+
+        $progress = $this->helper('Progress');
+        $progress->init();
+
+        $table = TableRegistry::get('CsvMigrations.ImportResults');
+
+        $query = $table->find('all')->where(['import_id' => $import->get('id')]);
+        $queryCount = $query->count();
+
+        if ($queryCount >= $count) {
+            return;
+        }
+
+        $data = [
+            'import_id' => $import->get('id'),
+            'status' => $table::STATUS_PENDING,
+            'status_message' => $table::STATUS_PENDING_MESSAGE,
+            'model_name' => $import->get('model_name')
+        ];
+
+        $i = $queryCount + 1;
+        $progressCount = $count - $queryCount;
+        // set $i = 1 to skip header row
+        for ($i; $i <= $count; $i++) {
+            $data['row_number'] = $i;
+
+            $entity = $table->newEntity();
+            $entity = $table->patchEntity($entity, $data);
+
+            $table->save($entity);
+
+            $progress->increment(100 / $progressCount);
+            $progress->draw();
+        }
+
         $this->out(null);
     }
 

@@ -337,10 +337,9 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         // remove ignored fields
         foreach ($this->ignoredFields as $field) {
-            if (!array_key_exists($field, $fields)) {
-                continue;
+            if (array_key_exists($field, $fields)) {
+                unset($fields[$field]);
             }
-            unset($fields[$field]);
         }
 
         if (empty($fields)) {

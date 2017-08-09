@@ -66,6 +66,9 @@ class ImportShell extends Shell
             ]);
 
         if ($query->isEmpty()) {
+            // unlock file
+            $lock->unlock();
+
             $this->abort('No imports found');
         }
 

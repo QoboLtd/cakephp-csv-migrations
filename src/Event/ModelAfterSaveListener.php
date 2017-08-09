@@ -12,6 +12,8 @@ use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use DateTimeZone;
+use InvalidArgumentException;
 
 class ModelAfterSaveListener implements EventListenerInterface
 {
@@ -50,10 +52,6 @@ class ModelAfterSaveListener implements EventListenerInterface
     {
         $sent = false;
         $currentUser = null;
-
-        //get applications's timezone
-        $timezone = Time::now()->format('e');
-        $dtz = new \DateTimeZone($timezone);
 
         $table = $event->subject();
 
@@ -139,6 +137,10 @@ class ModelAfterSaveListener implements EventListenerInterface
         $entityUrl = Router::url(['prefix' => false, 'controller' => $table->table(), 'action' => 'view', $entity->id], true);
         $emailContent .= "\n\nSee more: " . $entityUrl;
 
+        // Application timezone
+        $timezone = $this->getAppTimeZone();
+        $dtz = new DateTimeZone($timezone);
+
         foreach ($emails as $email) {
             $vCalendar = new \Eluceo\iCal\Component\Calendar('-//Calendar Events//EN//');
             $vCalendar->setCalendarScale('GREGORIAN');
@@ -146,13 +148,13 @@ class ModelAfterSaveListener implements EventListenerInterface
             $vAttendees = $this->_getEventAttendees($emails);
 
             $vEvent = $this->_getCalendarEvent($entity, [
-                'dtz' => $dtz,
                 'organizer' => $email,
                 'subject' => $emailSubject,
                 'attendees' => $vAttendees,
                 'field' => $reminderField,
+                'url' => $entityUrl,
                 'timezone' => $timezone,
-                'url' => $entityUrl
+                'dtz' => $dtz,
             ]);
 
             if (!$entity->isNew()) {
@@ -415,8 +417,9 @@ class ModelAfterSaveListener implements EventListenerInterface
     {
         $start = $end = $due = null;
         $durationMinutes = 0;
-        $dtz = $options['dtz'];
         $field = $options['field'];
+        $timezone = $options['timezone'];
+        $dtz = $options['dtz'];
 
         if ($entity->$field instanceof Time) {
             $start = new \DateTime($entity->$field->format('Y-m-d H:i:s'), $dtz);
@@ -460,11 +463,10 @@ class ModelAfterSaveListener implements EventListenerInterface
             $end->modify("+ 60 minutes");
         }
 
-        // falling back to UTC in case custom timezone is used for an app.
-        if (!empty($options['timezone']) && $options['timezone'] !== 'UTC') {
+        // Adjust to UTC in case custom timezone is used for an app.
+        if ($timezone !== 'UTC') {
             $epoch = time();
-            $tz = new \DateTimeZone($options['timezone']);
-            $transitions = $tz->getTransitions($epoch, $epoch);
+            $transitions = $dtz->getTransitions($epoch, $epoch);
 
             $offset = $transitions[0]['offset'];
 
@@ -478,5 +480,24 @@ class ModelAfterSaveListener implements EventListenerInterface
         }
 
         return compact('start', 'end');
+    }
+
+    /**
+     * Get application timezone
+     *
+     * If application timezone is not configured,
+     * fallback on UTC.
+     *
+     * @todo Move to Qobo/Utils
+     * @return string Timezone string, like UTC
+     */
+    protected function getAppTimeZone()
+    {
+        $result = Time::now()->format('e');
+        if (empty($result)) {
+            $result = 'UTC';
+        }
+
+        return $result;
     }
 }

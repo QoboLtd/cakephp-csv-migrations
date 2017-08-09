@@ -25,7 +25,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      *
      * @var array
      */
-    protected $_ignoredFields = ['created', 'modified'];
+    protected $ignoredFields = ['created', 'modified'];
 
     /**
      * Implemented Events
@@ -331,7 +331,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         }
 
         // remove ignored fields
-        foreach ($this->_ignoredFields as $field) {
+        foreach ($this->ignoredFields as $field) {
             if (!array_key_exists($field, $fields)) {
                 continue;
             }

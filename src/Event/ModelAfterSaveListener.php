@@ -292,18 +292,20 @@ class ModelAfterSaveListener implements EventListenerInterface
      */
     protected function _getAttendees($table, $entity, $fields)
     {
-        $attendees = [];
+        $result = [];
         $assignedEntities = $this->getAssignedAssociations($table, $entity, $fields);
 
-        if (!empty($assignedEntities)) {
-            $attendees = array_map(function ($item) {
-                if (isset($item['email'])) {
-                    return $item['email'];
-                }
-            }, $assignedEntities);
+        if (empty($assignedEntities)) {
+            return $result;
         }
 
-        return $attendees;
+        $result = array_map(function ($item) {
+            if (isset($item['email'])) {
+                return $item['email'];
+            }
+        }, $assignedEntities);
+
+        return $result;
     }
 
     /**

@@ -59,7 +59,6 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         //get attendees Table for the event
         if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
-            $config = $table->getConfig();
             $remindersTo = $table->getConfig(ConfigurationTrait::$CONFIG_OPTION_ALLOW_REMINDERS);
         }
 

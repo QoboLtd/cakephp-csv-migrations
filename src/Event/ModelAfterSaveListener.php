@@ -12,6 +12,7 @@ use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use DateTime;
 use DateTimeZone;
 use InvalidArgumentException;
 
@@ -28,6 +29,13 @@ class ModelAfterSaveListener implements EventListenerInterface
      * @var array
      */
     protected $ignoredFields = ['created', 'modified'];
+
+    /**
+     * End date fields
+     *
+     * @var array
+     */
+    protected $endDateFields = ['end_date', 'due_date'];
 
     /**
      * Implemented Events
@@ -143,8 +151,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         $emailContent .= "\n\nSee more: " . $entityUrl;
 
         // Application timezone
-        $timezone = $this->getAppTimeZone();
-        $dtz = new DateTimeZone($timezone);
+        $dtz = new DateTimeZone($this->getAppTimeZone());
 
         foreach ($emails as $email) {
             $vCalendar = new \Eluceo\iCal\Component\Calendar('-//Calendar Events//EN//');
@@ -158,7 +165,6 @@ class ModelAfterSaveListener implements EventListenerInterface
                 'attendees' => $vAttendees,
                 'field' => $reminderField,
                 'url' => $entityUrl,
-                'timezone' => $timezone,
                 'dtz' => $dtz,
             ]);
 
@@ -417,69 +423,40 @@ class ModelAfterSaveListener implements EventListenerInterface
      */
     protected function _getEventTime($entity, $options)
     {
-        $start = $end = $due = null;
-        $durationMinutes = 0;
+        $start = null;
+        $end = null;
         $field = $options['field'];
-        $timezone = $options['timezone'];
         $dtz = $options['dtz'];
 
-        if ($entity->$field instanceof Time) {
-            $start = new \DateTime($entity->$field->format('Y-m-d H:i:s'), $dtz);
-        } elseif ($entity->$field instanceof \DateTime) {
-            $start = $entity->$field;
-        } else {
-            $start = new \DateTime(date('Y-m-d H:i:s', strtotime($entity->$field)), $dtz);
+        // FIXME : It is not clear what will/has to happen if start time is empty/null
+        $start = $this->toDateTime($entity->$field, $dtz);
+
+        // Default end time is 1 hour from start
+        $end = $start;
+        $end->modify("+ 60 minutes");
+
+        // If no duration given, check end fields and use value if found
+        if (empty($entity->duration)) {
+            foreach ($this->endDateFields as $endField) {
+                if (!empty($entity->{$endField})) {
+                    $end = $this->toDateTime($entity->{$endField}, $dtz);
+                    break;
+                }
+            }
         }
 
-        // calculate the duration of an event
+        // If duration is given, then calculate the end date
         if (!empty($entity->duration)) {
             $durationParts = date_parse($entity->duration);
             $durationMinutes = $durationParts['hour'] * 60 + $durationParts['minute'];
 
-            $end = new \DateTime($start->format('Y-m-d H:i:s'));
+            $end = $start;
             $end->modify("+ {$durationMinutes} minutes");
-        } else {
-            //if no duration is present use end_date
-            foreach (['end_date', 'due_date'] as $endField) {
-                if (!empty($entity->{$endField})) {
-                    $due = $entity->{$endField};
-                    break;
-                }
-            }
-
-            if (!empty($due)) {
-                // Quick fix for task #3648. We need a more reliable way here though.
-                if (is_string($due)) {
-                    $end = new \DateTime($due, $dtz);
-                } elseif (is_object($due)) {
-                    $end = new \DateTime($due->format('Y-m-d H:i:s'), $dtz);
-                } else {
-                    throw new \RuntimeException("Due date type [" . gettype($due) . "] is unsupported");
-                }
-            }
-        }
-
-        // If all else fails, assume 1 hour duration
-        if (empty($end)) {
-            $end = new \DateTime($start->format('Y-m-d H:i:s'));
-            $end->modify("+ 60 minutes");
         }
 
         // Adjust to UTC in case custom timezone is used for an app.
-        if ($timezone !== 'UTC') {
-            $epoch = time();
-            $transitions = $dtz->getTransitions($epoch, $epoch);
-
-            $offset = $transitions[0]['offset'];
-
-            if (!empty($start)) {
-                $start->modify("-$offset seconds");
-            }
-
-            if (!empty($end)) {
-                $end->modify("-$offset seconds");
-            }
-        }
+        $start = $this->offsetToUtc($start);
+        $end = $this->offsetToUtc($end);
 
         return compact('start', 'end');
     }
@@ -499,6 +476,63 @@ class ModelAfterSaveListener implements EventListenerInterface
         if (empty($result)) {
             $result = 'UTC';
         }
+
+        return $result;
+    }
+
+    /**
+     * Convert a given value to DateTime instance
+     *
+     * @throws \InvalidArgumentException when cannot convert to \DateTime
+     * @param mixed $value Value to convert (string, Time, DateTime, etc)
+     * @param \DateTimeZone $dtz DateTimeZone instance
+     * @return \DateTime
+     */
+    protected function toDateTime($value, DateTimeZone $dtz)
+    {
+        // TODO : Figure out where to move. Can vary for different source objects
+        $format = 'Y-m-d H:i:s';
+
+        if (is_string($value)) {
+            $value = strtotime($value);
+            $value = date($format, $value);
+
+            return new DateTime($value, $timezone);
+        }
+
+        if ($value instanceof Time) {
+            $value = $value->format($format);
+
+            return new DateTime($value, $timezone);
+        }
+
+        if ($value instanceof DateTime) {
+            return $value;
+        }
+
+        throw new InvalidArgumentException("Type [" . gettype($value) . "] is not supported for date/time");
+    }
+
+    /**
+     * Offset DateTime value to UTC
+     *
+     * @param \DateTime $value DateTime value to offset
+     * @return \DateTime
+     */
+    protected function offsetToUtc(DateTime $value)
+    {
+        $result = $value;
+
+        $dtz = $value->getTimezone();
+        if ($dtz->getName() === 'UTC') {
+            return $result;
+        }
+
+        $epoch = time();
+        $transitions = $dtz->getTransitions($epoch, $epoch);
+
+        $offset = $transitions[0]['offset'];
+        $result = $result->modify("-$offset seconds");
 
         return $result;
     }

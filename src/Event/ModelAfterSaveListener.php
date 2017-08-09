@@ -243,11 +243,10 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         // check if any of the required fields was modified and set modified flag to true
         foreach ($requiredFields as $field) {
-            if (!$entity->dirty($field)) {
-                continue;
+            if ($entity->dirty($field)) {
+                $result = true;
+                break;
             }
-            $result = true;
-            break;
         }
 
         return $result;

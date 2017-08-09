@@ -45,11 +45,47 @@ class ImportResultsFixture extends TestFixture
      */
     public $records = [
         [
-            'id' => 'ddf08ba0-21e1-444d-8846-10b960489f05',
+            'id' => '00000000-0000-0000-0000-000000000001',
             'import_id' => '986ad64e-0aa2-497a-9f1f-79113f7e05a4',
             'row_number' => 1,
             'model_name' => 'Lorem ipsum dolor sit amet',
             'model_id' => '8aab326f-59ba-4222-9d76-dbe964a2302d',
+            'status' => 'Success',
+            'status_message' => 'Lorem ipsum dolor sit amet, aliquet feugiat.',
+            'created' => '2017-07-31 17:10:39',
+            'modified' => '2017-07-31 17:10:39',
+            'trashed' => null
+        ],
+        [
+            'id' => '00000000-0000-0000-0000-000000000002',
+            'import_id' => '00000000-0000-0000-0000-000000000002',
+            'row_number' => 1,
+            'model_name' => 'Articles',
+            'model_id' => null,
+            'status' => 'Fail',
+            'status_message' => 'Lorem ipsum dolor sit amet, aliquet feugiat.',
+            'created' => '2017-07-31 17:10:39',
+            'modified' => '2017-07-31 17:10:39',
+            'trashed' => null
+        ],
+        [
+            'id' => '00000000-0000-0000-0000-000000000003',
+            'import_id' => '00000000-0000-0000-0000-000000000002',
+            'row_number' => 2,
+            'model_name' => 'Articles',
+            'model_id' => null,
+            'status' => 'Pending',
+            'status_message' => 'Lorem ipsum dolor sit amet, aliquet feugiat.',
+            'created' => '2017-07-31 17:10:39',
+            'modified' => '2017-07-31 17:10:39',
+            'trashed' => null
+        ],
+        [
+            'id' => '00000000-0000-0000-0000-000000000004',
+            'import_id' => '00000000-0000-0000-0000-000000000002',
+            'row_number' => 3,
+            'model_name' => 'Articles',
+            'model_id' => null,
             'status' => 'Success',
             'status_message' => 'Lorem ipsum dolor sit amet, aliquet feugiat.',
             'created' => '2017-07-31 17:10:39',

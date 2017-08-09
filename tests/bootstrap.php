@@ -117,5 +117,6 @@ Cake\Core\Plugin::load($pluginName, ['path' => ROOT . DS, 'autoload' => true, 'r
 Cake\Routing\DispatcherFactory::add('Routing');
 Cake\Routing\DispatcherFactory::add('ControllerFactory');
 
-// Load configuration file
+// Load configuration file(s)
 include('csv_migrations.php');
+include('importer.php');

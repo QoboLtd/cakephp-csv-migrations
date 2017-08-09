@@ -44,16 +44,28 @@ class ImportsFixture extends TestFixture
      */
     public $records = [
         [
-            'id' => '7a5e1aec-b386-4f02-9f6b-2c56653a5409',
-            'filename' => 'Lorem ipsum dolor sit amet',
-            'options' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+            'id' => '00000000-0000-0000-0000-000000000001',
+            'filename' => TESTS . 'uploads' . DS . 'imports' . DS . 'import.csv',
+            'options' => null,
             'created' => '2017-08-01 11:06:06',
             'modified' => '2017-08-01 11:06:06',
             'trashed' => null,
-            'model_name' => 'Lorem ipsum dolor sit amet',
+            'model_name' => 'Articles',
             'attempts' => 1,
             'attempted_date' => '2017-08-01 11:06:06',
-            'status' => 'Lorem ipsum dolor sit amet'
+            'status' => 'Pending'
+        ],
+        [
+            'id' => '00000000-0000-0000-0000-000000000002',
+            'filename' => TESTS . 'uploads' . DS . 'imports' . DS . 'import.csv',
+            'options' => '{"fields":{"name":{"column":"Name","default":""}}}',
+            'created' => '2017-08-01 11:06:06',
+            'modified' => '2017-08-01 11:06:06',
+            'trashed' => null,
+            'model_name' => 'Articles',
+            'attempts' => 1,
+            'attempted_date' => '2017-08-01 11:06:06',
+            'status' => 'Pending'
         ],
     ];
 }

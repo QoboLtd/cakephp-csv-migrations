@@ -48,7 +48,7 @@ class ImportShell extends Shell
     public function main()
     {
         try {
-            $lock = new FileLock('import.lock');
+            $lock = new FileLock('import_' . md5(__FILE__) . '.lock');
         } catch (Exception $e) {
             $this->abort($e->getMessage());
         }
@@ -66,6 +66,9 @@ class ImportShell extends Shell
             ]);
 
         if ($query->isEmpty()) {
+            // unlock file
+            $lock->unlock();
+
             $this->abort('No imports found');
         }
 

@@ -101,10 +101,11 @@ trait ImportTrait
     /**
      * Import download action.
      *
-     * @param string|null $id Import id
+     * @param string $id Import id
+     * @param string $type Export Type (supported values: 'original', 'processed')
      * @return \Cake\Http\Response
      */
-    public function importDownload($id = null, $type = 'original')
+    public function importDownload($id, $type = 'original')
     {
         $table = TableRegistry::get('CsvMigrations.Imports');
         $entity = $table->get($id);

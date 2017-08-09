@@ -68,14 +68,14 @@ if (100 === (int)$percent) {
 ?>
 <section class="content-header">
     <div class="row">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-xs-12">
             <h4><?= basename($import->get('filename')) ?></h4>
         </div>
     </div>
 </section>
 <section class="content">
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-lg-6">
             <div class="box box-solid">
                 <div class="box-header with-border">
                     <h3 class="box-title">

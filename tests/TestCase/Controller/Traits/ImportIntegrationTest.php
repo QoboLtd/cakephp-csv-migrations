@@ -1,5 +1,5 @@
 <?php
-namespace CsvMigrations\Test\TestCase\Controller;
+namespace CsvMigrations\Test\TestCase\Controller\Traits;
 
 use Cake\Core\Configure;
 use Cake\ORM\ResultSet;
@@ -9,9 +9,9 @@ use CsvMigrations\Model\Entity\Import;
 use CsvMigrations\Utility\Import as ImportUtility;
 
 /**
- * CsvMigrations\Test\App\Controller\ArticlesController Test Case
+ * CsvMigrations\Controller\Traits\ImportTrait Test Case
  */
-class ArticlesControllerTest extends IntegrationTestCase
+class ImportIntegrationTest extends IntegrationTestCase
 {
     /**
      * Fixtures

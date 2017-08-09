@@ -75,6 +75,7 @@ class ModelAfterSaveListener implements EventListenerInterface
             return $sent;
         }
 
+        // FIXME : What happens when there is more than 1 reminder field on the table?
         $reminderField = $reminderField[0];
         if (!is_array($reminderField) || empty($reminderField['name'])) {
             return $sent;

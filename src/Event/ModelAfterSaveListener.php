@@ -204,17 +204,14 @@ class ModelAfterSaveListener implements EventListenerInterface
     {
         $result = [];
 
-        $associations = [];
+        $associations = $table->associations();
         if (!empty($options['tables'])) {
+            $associations = [];
             foreach ($table->associations() as $association) {
                 if (!in_array(Inflector::humanize($association->target()->table()), $options['tables'])) {
-                    continue;
+                    $associations[] = $association;
                 }
-
-                $associations[] = $association;
             }
-        } else {
-            $associations = $table->associations();
         }
 
         if (empty($associations)) {

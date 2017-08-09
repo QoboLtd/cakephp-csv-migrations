@@ -33,9 +33,6 @@ class FieldTest extends TestCase
 
     public function testGetLookup()
     {
-        // find out why this test fails when run from APP level (Test Suite).
-        $this->markTestSkipped();
-
         $table = TableRegistry::get('Articles');
 
         $expected = ['name', 'id'];
@@ -51,9 +48,6 @@ class FieldTest extends TestCase
 
     public function testGetCsv()
     {
-        // find out why this test fails when run from APP level (Test Suite).
-        $this->markTestSkipped();
-
         $table = TableRegistry::get('Articles');
 
         $result = Field::getCsv($table);

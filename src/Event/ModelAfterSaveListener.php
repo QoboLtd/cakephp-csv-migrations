@@ -67,10 +67,14 @@ class ModelAfterSaveListener implements EventListenerInterface
         }
 
         // Figure out which field is a reminder one
-        $reminderField = $table->getReminderFields();
+        $reminderField = null;
+        if (method_exists($table, 'getReminderFields') && is_callable([$table, 'getReminderFields'])) {
+            $reminderField = $table->getReminderFields();
+        }
         if (empty($reminderField) || !is_array($reminderField)) {
             return $sent;
         }
+
         $reminderField = $reminderField[0];
         if (!is_array($reminderField) || empty($reminderField['name'])) {
             return $sent;

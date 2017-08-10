@@ -12,6 +12,7 @@ use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\Utility\ICal\IcEvent;
 use DateTime;
 use DateTimeZone;
 use InvalidArgumentException;
@@ -162,31 +163,37 @@ class ModelAfterSaveListener implements EventListenerInterface
         // Application timezone
         $dtz = new DateTimeZone($this->getAppTimeZone());
 
+        $eventTimes = $this->_getEventTime($entity, $reminderField, $dtz);
+
+        $eventDescription = '';
+        if ($entity->description) {
+            $eventDescription .= $entity->description . "\n\n";
+        }
+        $eventDescription .= $entityUrl;
+
+        $eventOptions = [
+            'id' => $entity->id,
+            'sequence' => $entity->isNew() ? 0 : time(),
+            'summary' => $emailSubject,
+            'description' => $eventDescription,
+            'location' => $entity->location,
+            'startTime' => $eventTimes['start'],
+            'endTime' => $eventTimes['end'],
+            'attendees' => $emails,
+        ];
+
         foreach ($emails as $email) {
-            $vCalendar = new \Eluceo\iCal\Component\Calendar('-//Calendar Events//EN//');
-            $vCalendar->setCalendarScale('GREGORIAN');
+            // New event with current attendee as organizer (WTF?)
+            $eventOptions['organizer'] = $email;
+            $icEvent = new IcEvent($eventOptions);
+            $icEvent = $icEvent->getEvent();
 
-            $vAttendees = $this->_getEventAttendees($emails);
+            // New calendar
+            $icCalendar = new IcCalendar();
+            $icCalendar->addEvent($icEvent);
+            $icCalendar = $icCalendar->getCalendar();
 
-            $vEvent = $this->_getCalendarEvent($entity, [
-                'organizer' => $email,
-                'subject' => $emailSubject,
-                'attendees' => $vAttendees,
-                'field' => $reminderField,
-                'url' => $entityUrl,
-                'dtz' => $dtz,
-            ]);
-
-            if (!$entity->isNew()) {
-                $vEvent->setSequence(time());
-            } else {
-                $vEvent->setSequence(0);
-            }
-
-            $vEvent->setUniqueId($entity->id);
-            $vEvent->setAttendees($vAttendees);
-            $vCalendar->addComponent($vEvent);
-
+            // FIXME: WTF happened to new lines???
             $headers = "Content-Type: text/calendar; charset=utf-8";
             $headers .= 'Content-Disposition: attachment; filename="event.ics"';
 
@@ -198,7 +205,7 @@ class ModelAfterSaveListener implements EventListenerInterface
                     ->attachments(['event.ics' => [
                         'contentDisposition' => true,
                         'mimetype' => 'text/calendar',
-                        'data' => $vCalendar->render()
+                        'data' => $icCalendar->render()
                     ]]);
                 $sent = $emailer->send($emailContent);
             } catch (\Exception $e) {
@@ -370,78 +377,21 @@ class ModelAfterSaveListener implements EventListenerInterface
     }
 
     /**
-     * _getEventAttendees
-     *
-     * @param array $attendees pass
-     * @return \Eluceo\iCal\Property\Event\Attendees
-     */
-    protected function _getEventAttendees($attendees)
-    {
-        $vAttendees = new \Eluceo\iCal\Property\Event\Attendees();
-        foreach ($attendees as $email) {
-            $vAttendees->add("MAILTO:$email", [
-                'ROLE' => 'REQ-PARTICIPANT',
-                'PARTSTAT' => 'NEEDS-ACTION',
-                'RSVP' => 'TRUE',
-            ]);
-        }
-
-        return $vAttendees;
-    }
-
-    /**
-     * _getCalendarEvent
-     *
-     * @param Cake\Entity $entity passed
-     * @param array $options with extra settings
-     * @return \Eluceo\iCal\Component\Event $vEvent
-     */
-    protected function _getCalendarEvent($entity, $options = [])
-    {
-        $vEvent = new \Eluceo\iCal\Component\Event();
-        $vOrganizer = new \Eluceo\iCal\Property\Event\Organizer($options['organizer'], ['MAILTO' => $options['organizer']]);
-        $vEvent->setOrganizer($vOrganizer);
-        $vEvent->setSummary($options['subject']);
-
-        $description = '';
-        if ($entity->description) {
-            $description .= $entity->description . "\n\n";
-        }
-        $description .= $options['url'];
-
-        $vEvent->setDescription($description);
-
-        $dates = $this->_getEventTime($entity, $options);
-        $vEvent->setDtStart($dates['start']);
-        $vEvent->setDtEnd($dates['end']);
-
-        if ($entity->location) {
-            $vEvent->setLocation($entity->location, "Location:");
-        }
-
-        return $vEvent;
-    }
-
-    /**
      * _getEventTime
      *
      * Identify the start/end combination of the event.
      * We either use duration or any of the end fields
      * that might be used in the system.
      *
-     * @param Cake\Entity $entity passed
-     * @param array $options Options
-     * @return array
+     * @param \Cake\Datasource\EntityInterface $entity Saved entity instance
+     * @param string $startField Entity field to use for event start time
+     * @param \DateTimeZone $dtz DateTimeZone instance to use for times
+     * @return array Associative array of DateTimeZone instances for start and end
      */
-    protected function _getEventTime($entity, $options)
+    protected function _getEventTime(EntityInterface $entity, $startField, DateTimeZone $dtz)
     {
-        $start = null;
-        $end = null;
-        $field = $options['field'];
-        $dtz = $options['dtz'];
-
         // We check that the value is always there in sendCalendarReminder()
-        $start = $this->toDateTime($entity->$field, $dtz);
+        $start = $this->toDateTime($entity->$startField, $dtz);
 
         // Default end time is 1 hour from start
         $end = $start;
@@ -470,7 +420,12 @@ class ModelAfterSaveListener implements EventListenerInterface
         $start = $this->offsetToUtc($start);
         $end = $this->offsetToUtc($end);
 
-        return compact('start', 'end');
+        $result = [
+            'start' => $start,
+            'end' => $end,
+        ];
+
+        return $result;
     }
 
     /**

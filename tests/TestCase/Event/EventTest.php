@@ -6,8 +6,8 @@ use Cake\TestSuite\IntegrationTestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RecursiveRegexIterator;
-use RegexIterator;
 use ReflectionClass;
+use RegexIterator;
 
 class EventTest extends IntegrationTestCase
 {

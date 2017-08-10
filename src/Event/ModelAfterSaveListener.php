@@ -1,7 +1,6 @@
 <?php
 namespace CsvMigrations\Event;
 
-use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
@@ -12,6 +11,7 @@ use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\Utility\ICal\IcCalendar;
 use CsvMigrations\Utility\ICal\IcEvent;
 use DateTime;
 use DateTimeZone;

@@ -50,8 +50,17 @@ class ModelAfterSaveListener implements EventListenerInterface
 
     /**
      * sendCalendarReminder method
-     * Notification about the reminder is sent only
-     * when the record belonds to anyone.
+     *
+     * Send reminder notification email for the saved record.  The email
+     * is only sent out, when:
+     *
+     * * There are some changes on the record, in fields except of those in the
+     *   ignore list.
+     * * The notifications are enabled and configured for the module, in which
+     *   the record is being saved.
+     * * The record is assigned to somebody who can be used as a target of the
+     *   notification.
+     *
      * @param Cake\Event $event from the afterSave
      * @param Cake\Datasource\EntityInterface $entity from the afterSave
      * @return array|bool $sent on whether the email was sent
@@ -291,6 +300,7 @@ class ModelAfterSaveListener implements EventListenerInterface
 
     /**
      * _getAttendees
+     *
      * @param Cake\ORM\Table $table passed
      * @param Cake\Entity $entity of the record
      * @param array $fields Attendees fields
@@ -361,6 +371,7 @@ class ModelAfterSaveListener implements EventListenerInterface
 
     /**
      * _getEventAttendees
+     *
      * @param array $attendees pass
      * @return \Eluceo\iCal\Property\Event\Attendees
      */
@@ -380,6 +391,7 @@ class ModelAfterSaveListener implements EventListenerInterface
 
     /**
      * _getCalendarEvent
+     *
      * @param Cake\Entity $entity passed
      * @param array $options with extra settings
      * @return \Eluceo\iCal\Component\Event $vEvent
@@ -412,11 +424,11 @@ class ModelAfterSaveListener implements EventListenerInterface
 
     /**
      * _getEventTime
+     *
      * Identify the start/end combination of the event.
      * We either use duration or any of the end fields
      * that might be used in the system.
      *
-     * @todo Check that entity fields are objects, before calling format() on them
      * @param Cake\Entity $entity passed
      * @param array $options Options
      * @return array
@@ -428,7 +440,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         $field = $options['field'];
         $dtz = $options['dtz'];
 
-        // FIXME : It is not clear what will/has to happen if start time is empty/null
+        // We check that the value is always there in sendCalendarReminder()
         $start = $this->toDateTime($entity->$field, $dtz);
 
         // Default end time is 1 hour from start
@@ -515,6 +527,12 @@ class ModelAfterSaveListener implements EventListenerInterface
 
     /**
      * Offset DateTime value to UTC
+     *
+     * NOTE: This is a temporary work around until we fix our handling of
+     *       the application timezones.  Database values should always be
+     *       stored in UTC no matter what.  Otherwise, you will be riding
+     *       a bike which is on fire, while you are on fire, and everything
+     *       around you is on fire.  See Redmine ticket #4336 for details.
      *
      * @param \DateTime $value DateTime value to offset
      * @return \DateTime

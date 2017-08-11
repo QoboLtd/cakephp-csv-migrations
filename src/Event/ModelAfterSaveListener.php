@@ -11,10 +11,12 @@ use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\Table as CsvTable;
 use CsvMigrations\Utility\ICal\IcCalendar;
 use CsvMigrations\Utility\ICal\IcEvent;
 use DateTime;
 use DateTimeZone;
+use Exception;
 use InvalidArgumentException;
 
 class ModelAfterSaveListener implements EventListenerInterface
@@ -71,48 +73,26 @@ class ModelAfterSaveListener implements EventListenerInterface
         $sent = false;
         $currentUser = null;
 
-        $table = $event->subject();
-
-        //get attendees Table for the event
-        $remindersTo = null;
-        if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
-            $remindersTo = $table->getConfig(ConfigurationTrait::$CONFIG_OPTION_ALLOW_REMINDERS);
-        }
-
-        // skip if attendees Table is not defined
-        if (empty($remindersTo)) {
-            return $sent;
-        }
-
-        // Figure out which field is a reminder one
-        $reminderField = null;
-        if (method_exists($table, 'getReminderFields') && is_callable([$table, 'getReminderFields'])) {
-            $reminderField = $table->getReminderFields();
-        }
-        if (empty($reminderField) || !is_array($reminderField)) {
-            return $sent;
-        }
-
-        // FIXME : What happens when there is more than 1 reminder field on the table?
-        $reminderField = $reminderField[0];
-        if (!is_array($reminderField) || empty($reminderField['name'])) {
-            return $sent;
-        }
-        $reminderField = $reminderField['name'];
-        // Skip sending email if reminder field is empty
-        if (empty($entity->$reminderField)) {
-            return $sent;
-        }
-
-        $attendeesFields = $this->_getAttendeesFields($table, ['tables' => $remindersTo]);
-        // skip if no attendees fields found
-        if (empty($attendeesFields)) {
-            return $sent;
-        }
-
-        // skip if none of the required fields was modified
-        $requiredFields = array_merge((array)$reminderField, $attendeesFields);
-        if (!$this->_requiredFieldsModified($entity, $requiredFields)) {
+        try {
+            // Get Table instance from the event
+            $table = $event->subject();
+            // Make sure it's a CsvTable
+            $this->checkCsvTable($table);
+            //get attendees Table for the event
+            $remindersTo = $this->getRemindersToModules($table);
+            // Figure out which field is a reminder one
+            $reminderField = $this->getReminderField($table);
+            // Skip sending email if reminder field is empty
+            if (empty($entity->$reminderField)) {
+                throw new InvalidArgumentException("Reminder field has no value");
+            }
+            // Find attendee fields
+            $attendeesFields = $this->getAttendeesFields($table, ['tables' => $remindersTo]);
+            // skip if none of the required fields was modified
+            $requiredFields = array_merge((array)$reminderField, $attendeesFields);
+            $this->checkRequiredModified($entity, $requiredFields);
+            $emails = $this->getAttendees($table, $entity, $attendeesFields);
+        } catch (Exception $e) {
             return $sent;
         }
 
@@ -140,8 +120,6 @@ class ModelAfterSaveListener implements EventListenerInterface
         } else {
             $emailContent .= "created";
         }
-
-        $emails = $this->_getAttendees($table, $entity, $attendeesFields);
 
         if (empty($emails)) {
             return $sent;
@@ -210,6 +188,7 @@ class ModelAfterSaveListener implements EventListenerInterface
                 $sent = $emailer->send($emailContent);
             } catch (\Exception $e) {
                 // TODO : Add logging here
+                debug("Failed sending reminder to [$email]: " . $e->getMessage());
             }
         }
 
@@ -217,13 +196,89 @@ class ModelAfterSaveListener implements EventListenerInterface
     }
 
     /**
+     * Check if given table is an instance of CsvTable
+     *
+     * Reminder functionality relies on a number of
+     * methods which are defined in \CsvMigrations\Table.
+     * So instead of checking all those methods one by
+     * one, we simply check if the given table instance
+     * inherits from the \CsvMigrations\Table.
+     *
+     * @throws \InvalidArgumentException If $table is not an instance of CsvTable
+     * @param object $table Instance of a table class
+     */
+    protected function checkCsvTable($table)
+    {
+        if (!$table instanceof CsvTable) {
+            throw new InvalidArgumentException("Table is not an intance of CsvTable");
+        }
+    }
+
+    /**
+     * Get a list of reminder modules
+     *
+     * Check if the given table has reminders configured,
+     * and if so, return the list of modules to which
+     * reminders should be sent (Users, Contacts, etc).
+     *
+     * @throws \InvalidArgumentException when no reminder modules found
+     * @param \CsvTable\Table $table Table to check
+     * @return array List of modules
+     */
+    protected function getRemindersToModules(CsvTable $table)
+    {
+        $result = $table->getConfig(ConfigurationTrait::$CONFIG_OPTION_ALLOW_REMINDERS);
+        if (empty($result) || !is_array($result)) {
+            throw new InvalidArgumentException("Failed to find reminder modules");
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the fist reminder field of the given table
+     *
+     * NOTE: It is not very common to have more than one
+     *       reminder field per table, but it is not
+     *       impossible.  We need to figure out what
+     *       should happen.  Possible scenarios:
+     *
+     *       * Forbid more than one field with validation.
+     *       * Send reminder only to the first/non-empty.
+     *       * Send separate reminder for each.
+     *       * Have more flexible configuration rules.
+     *
+     * @throws \InvalidArgumentException when failed to find reminder field
+     * @param \CsvMigrations\Table $table Table to use
+     * @return string First reminder field name
+     */
+    protected function getReminderField(CsvTable $table)
+    {
+        $fields = $table->getReminderFields();
+        if (empty($fields) || !is_array($fields)) {
+            throw new InvalidArgumentException("Failed to find reminder fields");
+        }
+
+        // FIXME : What should happen when there is more than 1 reminder field on the table?
+        foreach ($fields as $field) {
+            if (!empty($field['name'])) {
+                // Return the first field found
+                return $field['name'];
+            }
+        }
+
+        throw new InvalidArgumentException("Failed to find a reminder field with 'name' key");
+    }
+
+    /**
      * Retrieve attendees fields from current Table's associations.
      *
-     * @param \Cake\ORM\Table $table Table instance
+     * @throws \InvalidArgumentException when failed to find attendee fields
+     * @param \CsvMigrations\Table $table Table instance
      * @param array $options Options
      * @return array
      */
-    protected function _getAttendeesFields(Table $table, $options = [])
+    protected function getAttendeesFields(CsvTable $table, $options = [])
     {
         $result = [];
 
@@ -231,48 +286,54 @@ class ModelAfterSaveListener implements EventListenerInterface
         if (!empty($options['tables'])) {
             $associations = [];
             foreach ($table->associations() as $association) {
-                if (!in_array(Inflector::humanize($association->target()->table()), $options['tables'])) {
+                if (in_array(Inflector::humanize($association->target()->table()), $options['tables'])) {
                     $associations[] = $association;
                 }
             }
-        }
-
-        if (empty($associations)) {
-            return $result;
         }
 
         foreach ($associations as $association) {
             $result[] = $association->foreignKey();
         }
 
+        if (empty($result)) {
+            throw new InvalidArgumentException("Failed to find attendee fields");
+        }
+
         return $result;
     }
 
     /**
-     * Checks if required fields have been modified. Returns true
-     * if any of the fields has been modified, otherwise false.
+     * Check that required entity fields are modified
      *
+     * Entities are modified all the time and we don't always want
+     * to send a notification about these changes.  Instead, here
+     * we check that particular fields were modified (usually the
+     * reminder datetime field or the attendees of the event).
+     *
+     * @throws \InvalidArgumentException when required fields are not modified
      * @param \Cake\Datasource\EntityInterface $entity Entity instance
      * @param array $requiredFields Required fields list
-     * @return bool
+     * @return void
      */
-    protected function _requiredFieldsModified(EntityInterface $entity, array $requiredFields)
+    protected function checkRequiredModified(EntityInterface $entity, array $requiredFields)
     {
-        $result = false;
-
         if (empty($requiredFields)) {
-            return $result;
+            throw new InvalidArgumentException("Required fields not specified");
         }
 
         // check if any of the required fields was modified and set modified flag to true
+        $modified = false;
         foreach ($requiredFields as $field) {
             if ($entity->dirty($field)) {
-                $result = true;
+                $modified = true;
                 break;
             }
         }
 
-        return $result;
+        if (!$modified) {
+            throw new InvalidArgumentException("None of the required fields were modified");
+        }
     }
 
     /**
@@ -306,20 +367,22 @@ class ModelAfterSaveListener implements EventListenerInterface
     }
 
     /**
-     * _getAttendees
+     * getAttendees
      *
-     * @param Cake\ORM\Table $table passed
-     * @param Cake\Entity $entity of the record
+     * Get the list of attendee emails
+     *
+     * @throws \InvalidArgumentException when no attendees found
+     * @param \CsvMigrations\Table $table passed
+     * @param \Cake\ORM\EntityInterface $entity of the record
      * @param array $fields Attendees fields
      * @return array
      */
-    protected function _getAttendees($table, $entity, $fields)
+    protected function getAttendees(CsvTable $table, EntityInterface $entity, array $fields)
     {
-        $result = [];
         $assignedEntities = $this->getAssignedAssociations($table, $entity, $fields);
 
         if (empty($assignedEntities)) {
-            return $result;
+            throw new InvalidArgumentException("Failed to find attendee entities");
         }
 
         $result = array_map(function ($item) {
@@ -327,6 +390,12 @@ class ModelAfterSaveListener implements EventListenerInterface
                 return $item['email'];
             }
         }, $assignedEntities);
+        // Filter out empty items
+        $result = array_filter($result);
+
+        if (empty($result)) {
+            throw new InvalidArgumentException("Failed to find attendee emails");
+        }
 
         return $result;
     }
@@ -439,9 +508,10 @@ class ModelAfterSaveListener implements EventListenerInterface
      */
     protected function getAppTimeZone()
     {
-        $result = Time::now()->format('e');
-        if (empty($result)) {
-            $result = 'UTC';
+        $result = 'UTC';
+        $appTimezone = Time::now()->format('e');
+        if (!empty($appTimezone)) {
+            $result = $appTimezone;
         }
 
         return $result;
@@ -464,13 +534,13 @@ class ModelAfterSaveListener implements EventListenerInterface
             $value = strtotime($value);
             $value = date($format, $value);
 
-            return new DateTime($value, $timezone);
+            return new DateTime($value, $dtz);
         }
 
         if ($value instanceof Time) {
             $value = $value->format($format);
 
-            return new DateTime($value, $timezone);
+            return new DateTime($value, $dtz);
         }
 
         if ($value instanceof DateTime) {

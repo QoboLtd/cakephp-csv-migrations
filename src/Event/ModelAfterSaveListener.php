@@ -85,8 +85,6 @@ class ModelAfterSaveListener implements EventListenerInterface
             // Set same attendees for all
             $eventOptions['attendees'] = $emails;
         } catch (Exception $e) {
-            debug($e->getMessage());
-
             return $result;
         }
 

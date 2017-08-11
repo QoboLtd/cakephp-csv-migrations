@@ -93,6 +93,7 @@ class ModelAfterSaveListener implements EventListenerInterface
             $this->checkRequiredModified($entity, $requiredFields);
             $emails = $this->getAttendees($table, $entity, $attendeesFields);
         } catch (Exception $e) {
+            debug($e->getMessage());
             return $sent;
         }
 

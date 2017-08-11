@@ -71,123 +71,46 @@ class ModelAfterSaveListener implements EventListenerInterface
     public function sendCalendarReminder(Event $event, EntityInterface $entity)
     {
         $sent = false;
-        $currentUser = null;
 
         try {
             // Get Table instance from the event
             $table = $event->subject();
             // Make sure it's a CsvTable
             $this->checkCsvTable($table);
-            //get attendees Table for the event
+            //get attendees Table for the event (example: Users)
             $remindersTo = $this->getRemindersToModules($table);
-            // Figure out which field is a reminder one
+            // Figure out which field is a reminder one (example: start_date)
             $reminderField = $this->getReminderField($table);
             // Skip sending email if reminder field is empty
             if (empty($entity->$reminderField)) {
                 throw new InvalidArgumentException("Reminder field has no value");
             }
-            // Find attendee fields
+            // Find attendee fields (example: assigned_to)
             $attendeesFields = $this->getAttendeesFields($table, ['tables' => $remindersTo]);
             // skip if none of the required fields was modified
             $requiredFields = array_merge((array)$reminderField, $attendeesFields);
             $this->checkRequiredModified($entity, $requiredFields);
+            // get attendee emails
             $emails = $this->getAttendees($table, $entity, $attendeesFields);
+            // get email subject and content
+            $emailSubject = $this->getEmailSubject($table, $entity);
+            $emailContent = $this->getEmailContent($table, $entity);
+            // get common event options
+            $eventOptions = $this->getEventOptions($table, $entity, $reminderField);
+            // Set same attendees for all
+            $eventOptions['attendees'] = $emails;
         } catch (Exception $e) {
             debug($e->getMessage());
 
             return $sent;
         }
 
-        /*
-         * Figure out the subject of the email
-         *
-         * This should happen AFTER the `$table->getConfig()` call,
-         * in case the display field of the table is changed from the
-         * configuration.
-         *
-         * Use singular of the table name and the value of the entity's display field.
-         * For example: "Call: Payment remind" or "Lead: Qobo Ltd".
-         */
-        $fhf = new FieldHandlerFactory();
-
-        $emailSubjectValue = $fhf->renderValue($table, $table->displayField(), $entity->{$table->displayField()}, [ 'renderAs' => 'plain']);
-
-        $eventSubject = $emailSubjectValue ?: 'reminder';
-        $emailSubject = Inflector::singularize($table->alias()) . ": " . $eventSubject;
-        $emailContent = Inflector::singularize($table->alias()) . ' ' . $emailSubjectValue . " information was ";
-        // If the record is being updated, prefix the above subject with "(Updated) ".
-        if (!$entity->isNew()) {
-            $emailSubject = '(Updated) ' . $emailSubject;
-            $emailContent .= "updated";
-        } else {
-            $emailContent .= "created";
-        }
-
-        if (empty($emails)) {
-            return $sent;
-        }
-
-        if (method_exists($table, 'getCurrentUser') && is_callable([$table, 'getCurrentUser'])) {
-            $currentUser = $table->getCurrentUser();
-            $emailContent .= " by " . $currentUser['name'];
-        }
-        // append changelog if entity is not new
-        if (!$entity->isNew()) {
-            $emailContent .= ":\n\n" . $this->_getChangelog($entity);
-        }
-
-        // append link
-        $entityUrl = Router::url(['prefix' => false, 'controller' => $table->table(), 'action' => 'view', $entity->id], true);
-        $emailContent .= "\n\nSee more: " . $entityUrl;
-
-        // Application timezone
-        $dtz = new DateTimeZone($this->getAppTimeZone());
-
-        $eventTimes = $this->_getEventTime($entity, $reminderField, $dtz);
-
-        $eventDescription = '';
-        if ($entity->description) {
-            $eventDescription .= $entity->description . "\n\n";
-        }
-        $eventDescription .= $entityUrl;
-
-        $eventOptions = [
-            'id' => $entity->id,
-            'sequence' => $entity->isNew() ? 0 : time(),
-            'summary' => $emailSubject,
-            'description' => $eventDescription,
-            'location' => $entity->location,
-            'startTime' => $eventTimes['start'],
-            'endTime' => $eventTimes['end'],
-            'attendees' => $emails,
-        ];
-
         foreach ($emails as $email) {
             // New event with current attendee as organizer (WTF?)
             $eventOptions['organizer'] = $email;
-            $icEvent = new IcEvent($eventOptions);
-            $icEvent = $icEvent->getEvent();
-
-            // New calendar
-            $icCalendar = new IcCalendar();
-            $icCalendar->addEvent($icEvent);
-            $icCalendar = $icCalendar->getCalendar();
-
-            // FIXME: WTF happened to new lines???
-            $headers = "Content-Type: text/calendar; charset=utf-8";
-            $headers .= 'Content-Disposition: attachment; filename="event.ics"';
 
             try {
-                $emailer = new Email('default');
-                $emailer->to($email)
-                    ->setHeaders([$headers])
-                    ->subject($emailSubject)
-                    ->attachments(['event.ics' => [
-                        'contentDisposition' => true,
-                        'mimetype' => 'text/calendar',
-                        'data' => $icCalendar->render()
-                    ]]);
-                $sent = $emailer->send($emailContent);
+                $sent = $this->sendCalendarEmail($email, $emailSubject, $emailContent, $eventOptions);
             } catch (\Exception $e) {
                 // TODO : Add logging here
                 debug("Failed sending reminder to [$email]: " . $e->getMessage());
@@ -403,6 +326,183 @@ class ModelAfterSaveListener implements EventListenerInterface
     }
 
     /**
+     * Get email subject
+     *
+     * @param \CsvMigrations\Table $table Table instance
+     * @param \Cake\ORM\EntityInterface $entity Entity instance
+     * @return string
+     */
+    protected function getEmailSubject(CsvTable $table, EntityInterface $entity)
+    {
+        $module = Inflector::singularize($table->alias());
+        $displayValue = $this->getDisplayValue($table, $entity);
+        $result = $module . ": " . $displayValue;
+
+        if (!$entity->isNew()) {
+            $result = "(Updated) " . $result;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get email content
+     *
+     * @param \CsvMigrations\Table $table Table instance
+     * @param \Cake\ORM\EntityInterface $entity Entity instance
+     * @return string
+     */
+    protected function getEmailContent(CsvTable $table, EntityInterface $entity)
+    {
+        $result = '';
+
+        $module = Inflector::singularize($table->alias());
+        $displayValue = $this->getDisplayValue($table, $entity);
+        $user = $this->getUserString($table);
+        $action = $entity->isNew() ? 'created' : 'updated';
+
+        // Example: Lead Foobar created by System
+        $result = sprintf("%s %s %s by %s", $module, $displayValue, $action, $user);
+
+        $changeLog = $this->getChangelog($entity);
+        if (!empty($changeLog)) {
+            $result .= "\n\n";
+            $result .= $changeLog;
+            $result .= "\n";
+        }
+
+        $result .= "\n\n";
+        $result .= "See more: ";
+        $result .= $this->getEntityUrl($table, $entity);
+
+        return $result;
+    }
+
+    /**
+     * Get event subject/summary
+     *
+     * For now this is just an alias for getEmailSubject().
+     *
+     * @param \CsvMigrations\Table $table Table instance
+     * @param \Cake\ORM\EntityInterface $entity Entity instance
+     * @return string
+     */
+    protected function getEventSubject(CsvTable $table, EntityInterface $entity)
+    {
+        return $this->getEmailSubject($table, $entity);
+    }
+
+    /**
+     * Get event content/description
+     *
+     * @param \CsvMigrations\Table $table Table instance
+     * @param \Cake\ORM\EntityInterface $entity Entity instance
+     * @return string
+     */
+    protected function getEventContent(CsvTable $table, EntityInterface $entity)
+    {
+        $result = '';
+
+        $entityFields = [
+            'description',
+            'agenda',
+            'comments',
+            'comment',
+            'notes',
+        ];
+
+        foreach ($entityFields as $field) {
+            if (!empty($entity->$field)) {
+                $result = $entity->$field;
+                break;
+            }
+        }
+
+        $result .= "\n\n";
+        $result .= "See more: ";
+        $result .= $this->getEntityUrl($table, $entity);
+
+        return $result;
+    }
+
+    /**
+     * Get plain value of the entity display field
+     *
+     * @param \CsvMigrations\Table $table Table instance
+     * @param \Cake\ORM\EntityInterface $entity Entity instance
+     * @return string
+     */
+    protected function getDisplayValue(CsvTable $table, EntityInterface $entity)
+    {
+        try {
+            $displayField = $table->displayField();
+            $displayValue = $entity->{$displayField};
+
+            $fhf = new FieldHandlerFactory();
+            $result = $fhf->renderValue($table, $displayField, $displayValue, [ 'renderAs' => 'plain']);
+            if (empty($result) || !is_string($result)) {
+                throw new InvalidArgumentException("Failed to get entity display value");
+            }
+        } catch (Exception $e) {
+            $result = 'reminder';
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get full URL to the entity view
+     *
+     * @param \CsvMigrations\Table $table Table instance
+     * @param \Cake\ORM\EntityInterface $entity Entity instance
+     * @return string
+     */
+    protected function getEntityUrl(CsvTable $table, EntityInterface $entity)
+    {
+        $result = Router::url(
+            [
+                'prefix' => false,
+                'controller' => $table->table(),
+                'action' => 'view',
+                $entity->id
+            ],
+            true
+        );
+
+        return $result;
+    }
+
+    /**
+     * Get plain value of the current user
+     *
+     * @param \CsvMigrations\Table $table Table instance
+     * @return string
+     */
+    protected function getUserString(CsvTable $table)
+    {
+        $result = 'System';
+
+        $userFields = [
+            'name',
+            'username',
+            'email',
+        ];
+
+        $currentUser = $table->getCurrentUser();
+        if (empty($currentUser) || !is_array($currentUser)) {
+            return $result;
+        }
+
+        foreach ($userFields as $field) {
+            if (!empty($currentUser[$field])) {
+                return $currentUser[$field];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Creates changelog report in string format.
      *
      * Example:
@@ -413,7 +513,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      * @param \Cake\Datasource\EntityInterface $entity Entity instance
      * @return string
      */
-    protected function _getChangelog(EntityInterface $entity)
+    protected function getChangelog(EntityInterface $entity)
     {
         $result = '';
 
@@ -448,7 +548,86 @@ class ModelAfterSaveListener implements EventListenerInterface
     }
 
     /**
-     * _getEventTime
+     * Get options for the new event
+     *
+     * @param \CsvMigrations\Table $table Table instance
+     * @param \Cake\ORM\EntityInterface $entity Entity instance
+     * @param string $startField Entity field to use for event start time
+     * @return array
+     */
+    protected function getEventOptions(CsvTable $table, EntityInterface $entity, $startField)
+    {
+        // Event start and end times
+        $eventTimes = $this->getEventTime($entity, $startField);
+
+        $result = [
+            'id' => $entity->id,
+            'sequence' => $entity->isNew() ? 0 : time(),
+            'summary' => $this->getEventSubject($table, $entity),
+            'description' => $this->getEventContent($table, $entity),
+            'location' => $entity->location,
+            'startTime' => $eventTimes['start'],
+            'endTime' => $eventTimes['end'],
+        ];
+
+        return $result;
+    }
+
+    /**
+     * Get iCal calendar with given event
+     *
+     * @param array $eventOptions Options for event creation
+     * @return object Whatever IcCalendar::getCalendar() returns
+     */
+    protected function getEventCalendar(array $eventOptions)
+    {
+        // New iCal event
+        $event = new IcEvent($eventOptions);
+        $event = $event->getEvent();
+
+        // New iCal calendar
+        $calendar = new IcCalendar();
+        $calendar->addEvent($event);
+        $calendar = $calendar->getCalendar();
+
+        return $calendar;
+    }
+
+    /**
+     * Send email with calendar attachment
+     *
+     * @param string $to Destination email address
+     * @param string $subject Email subject
+     * @param string $content Email message content
+     * @param array $eventOptions Event options for calendar attachment
+     * @param string $config Email config to use ('default' if omitted)
+     * @return array Result of Email::send()
+     */
+    protected function sendCalendarEmail($to, $subject, $content, array $eventOptions, $config = 'default')
+    {
+        // Get iCal calendar
+        $calendar = $this->getEventCalendar($eventOptions);
+
+        // FIXME: WTF happened to new lines???
+        $headers = "Content-Type: text/calendar; charset=utf-8";
+        $headers .= 'Content-Disposition: attachment; filename="event.ics"';
+
+        $emailer = new Email($config);
+        $emailer->to($to)
+            ->setHeaders([$headers])
+            ->subject($subject)
+            ->attachments(['event.ics' => [
+                'contentDisposition' => true,
+                'mimetype' => 'text/calendar',
+                'data' => $calendar->render()
+            ]]);
+        $result = $emailer->send($content);
+
+        return $result;
+    }
+
+    /**
+     * getEventTime
      *
      * Identify the start/end combination of the event.
      * We either use duration or any of the end fields
@@ -456,11 +635,13 @@ class ModelAfterSaveListener implements EventListenerInterface
      *
      * @param \Cake\Datasource\EntityInterface $entity Saved entity instance
      * @param string $startField Entity field to use for event start time
-     * @param \DateTimeZone $dtz DateTimeZone instance to use for times
      * @return array Associative array of DateTimeZone instances for start and end
      */
-    protected function _getEventTime(EntityInterface $entity, $startField, DateTimeZone $dtz)
+    protected function getEventTime(EntityInterface $entity, $startField)
     {
+        // Application timezone
+        $dtz = new DateTimeZone($this->getAppTimeZone());
+
         // We check that the value is always there in sendCalendarReminder()
         $start = $this->toDateTime($entity->$startField, $dtz);
 

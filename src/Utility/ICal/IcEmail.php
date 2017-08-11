@@ -111,7 +111,7 @@ class IcEmail
             $displayValue = $this->entity->{$displayField};
 
             $fhf = new FieldHandlerFactory();
-            $result = $fhf->renderValue($table, $displayField, $displayValue, [ 'renderAs' => 'plain']);
+            $result = $fhf->renderValue($this->table, $displayField, $displayValue, [ 'renderAs' => 'plain']);
             if (empty($result) || !is_string($result)) {
                 throw new InvalidArgumentException("Failed to get entity display value");
             }

@@ -94,6 +94,7 @@ class ModelAfterSaveListener implements EventListenerInterface
             $emails = $this->getAttendees($table, $entity, $attendeesFields);
         } catch (Exception $e) {
             debug($e->getMessage());
+
             return $sent;
         }
 

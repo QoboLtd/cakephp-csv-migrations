@@ -72,8 +72,8 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
         $entity = new Entity();
         $listener = new ModelAfterSaveListener();
         $result = $listener->sendCalendarReminder($event, $entity);
-        $this->assertTrue(is_bool($result), "sendCalendarReminder() returned a non-boolean result");
-        $this->assertFalse($result, "sendCalendarReminder() returned a true result");
+        $this->assertTrue(is_array($result), "sendCalendarReminder() returned a non-array result");
+        $this->assertTrue(empty($result), "sendCalendarReminder() returned a non-empty result");
     }
 
     public function testSendCalendarReminderNonCsvTable()
@@ -82,8 +82,8 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
         $entity = $this->Users->find('all')->first();
         $listener = new ModelAfterSaveListener();
         $result = $listener->sendCalendarReminder($event, $entity);
-        $this->assertTrue(is_bool($result), "sendCalendarReminder() returned a non-boolean result");
-        $this->assertFalse($result, "sendCalendarReminder() returned a true result");
+        $this->assertTrue(is_array($result), "sendCalendarReminder() returned a non-array result");
+        $this->assertTrue(empty($result), "sendCalendarReminder() returned a non-empty result");
     }
 
     public function testSendCalendarReminderTableNoConfig()
@@ -92,11 +92,11 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
         $entity = $this->Articles->find('all')->first();
         $listener = new ModelAfterSaveListener();
         $result = $listener->sendCalendarReminder($event, $entity);
-        $this->assertTrue(is_bool($result), "sendCalendarReminder() returned a non-boolean result");
-        $this->assertFalse($result, "sendCalendarReminder() returned a true result");
+        $this->assertTrue(is_array($result), "sendCalendarReminder() returned a non-array result");
+        $this->assertTrue(empty($result), "sendCalendarReminder() returned a non-empty result");
     }
 
-    public function testSendCalendarReminder()
+    public function testSendCalendarReminderGoodAttempt()
     {
         // FIXME : Figure out why this is not loaded from configuration
         $this->Leads->belongsTo('Users', [
@@ -104,15 +104,27 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
             'foreignKey' => 'assigned_to',
         ]);
         $event = new Event('CsvMigrations.Model.afterSave', $this->Leads);
-        $entity = $this->Leads->find('all')->first();
+
+        // Use Leads entity which is assigned to a user who has an email address
+        $entity = $this->Leads->get('00000000-0000-0000-0000-000000000001', [
+            'contain' => ['Users']
+        ]);
+        // Check entity before we rely on it for the rest of the testing
+        $expected = 'user1@example.com';
+        $this->assertEquals('00000000-0000-0000-0000-000000000001', $entity->assigned_to, "Lead without assigned_to user makes no sense for this test");
+        $this->assertEquals($expected, $entity->user->email, "Unexpected email address in assigned user record");
+        // Re-fetch Lead entity without contained User (minimal data)
+        $entity = $this->Leads->get('00000000-0000-0000-0000-000000000001');
 
         // Emulate modified entity after saving
         $entity = $this->Leads->patchEntity($entity, [
             'follow_up_date' => date('Y-m-d H:i:s', time()),
         ]);
+
         $listener = new ModelAfterSaveListener();
         $result = $listener->sendCalendarReminder($event, $entity);
-        $this->assertTrue(is_bool($result), "sendCalendarReminder() returned a non-boolean result");
-        $this->assertFalse($result, "sendCalendarReminder() returned a true result");
+        $this->assertTrue(is_array($result), "sendCalendarReminder() returned a non-array result");
+        $this->assertFalse(empty($result), "sendCalendarReminder() returned an empty result");
+        $this->assertTrue(array_key_exists($expected, $result), "sendCalendarReminder() did not try to email [$expected]");
     }
 }

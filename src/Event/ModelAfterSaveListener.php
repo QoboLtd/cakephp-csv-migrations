@@ -66,11 +66,11 @@ class ModelAfterSaveListener implements EventListenerInterface
      *
      * @param Cake\Event $event from the afterSave
      * @param Cake\Datasource\EntityInterface $entity from the afterSave
-     * @return array|bool $sent on whether the email was sent
+     * @return array Associative array with tried emails as keys and results as values
      */
     public function sendCalendarReminder(Event $event, EntityInterface $entity)
     {
-        $sent = false;
+        $result = [];
 
         try {
             // Get Table instance from the event
@@ -102,7 +102,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         } catch (Exception $e) {
             debug($e->getMessage());
 
-            return $sent;
+            return $result;
         }
 
         foreach ($emails as $email) {
@@ -112,12 +112,12 @@ class ModelAfterSaveListener implements EventListenerInterface
             try {
                 $sent = $this->sendCalendarEmail($email, $emailSubject, $emailContent, $eventOptions);
             } catch (\Exception $e) {
-                // TODO : Add logging here
-                debug("Failed sending reminder to [$email]: " . $e->getMessage());
+                $sent = $e;
             }
+            $result[$email] = $sent;
         }
 
-        return $sent;
+        return $result;
     }
 
     /**

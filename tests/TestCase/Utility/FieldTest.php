@@ -35,7 +35,7 @@ class FieldTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
 
-        $expected = ['name', 'id'];
+        $expected = ['name'];
         $this->assertSame($expected, Field::getLookup($table));
     }
 
@@ -51,7 +51,7 @@ class FieldTest extends TestCase
         $table = TableRegistry::get('Articles');
 
         $result = Field::getCsv($table);
-        $expected = ['id', 'name'];
+        $expected = ['id', 'name', 'status', 'author'];
         $this->assertSame($expected, array_keys($result));
 
         foreach ($result as $csvField) {

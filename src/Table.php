@@ -2,13 +2,13 @@
 namespace CsvMigrations;
 
 use ArrayObject;
+use Cake\Core\App;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table as BaseTable;
-use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldTrait;
@@ -299,13 +299,6 @@ class Table extends BaseTable
      */
     protected function _currentTable()
     {
-        list($namespace, $alias) = namespaceSplit(get_class($this));
-        $alias = substr($alias, 0, -5);
-        list($plugin) = explode('\\', $namespace);
-        if ($plugin === 'App') {
-            return Inflector::camelize($alias);
-        }
-
-        return Inflector::camelize($plugin . '.' . $alias);
+        return App::shortName(get_class($this), 'Model/Table', 'Table');
     }
 }

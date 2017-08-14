@@ -7,11 +7,11 @@ use Cake\Event\EventManager;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestCase;
 use Cake\Utility\Security;
-use CsvMigrations\Event\AddViewListener;
-use CsvMigrations\Event\EditViewListener;
-use CsvMigrations\Event\IndexViewListener;
-use CsvMigrations\Event\LookupListener;
-use CsvMigrations\Event\ViewViewListener;
+use CsvMigrations\Event\Controller\Api\AddActionListener;
+use CsvMigrations\Event\Controller\Api\EditActionListener;
+use CsvMigrations\Event\Controller\Api\IndexActionListener;
+use CsvMigrations\Event\Controller\Api\LookupActionListener;
+use CsvMigrations\Event\Controller\Api\ViewActionListener;
 use Firebase\JWT\JWT;
 
 class ArticlesControllerTest extends IntegrationTestCase
@@ -44,11 +44,11 @@ class ArticlesControllerTest extends IntegrationTestCase
             ]
         ]);
 
-        EventManager::instance()->on(new AddViewListener());
-        EventManager::instance()->on(new EditViewListener());
-        EventManager::instance()->on(new IndexViewListener());
-        EventManager::instance()->on(new LookupListener());
-        EventManager::instance()->on(new ViewViewListener());
+        EventManager::instance()->on(new AddActionListener());
+        EventManager::instance()->on(new EditActionListener());
+        EventManager::instance()->on(new IndexActionListener());
+        EventManager::instance()->on(new LookupActionListener());
+        EventManager::instance()->on(new ViewActionListener());
     }
 
     public function testIndexUnauthenticatedFails()

@@ -5,7 +5,7 @@ use Cake\Event\Event;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestCase;
-use CsvMigrations\Event\ModelAfterSaveListener;
+use CsvMigrations\Event\Model\ModelAfterSaveListener;
 use CsvMigrations\Model\Table\ArticlesTable;
 use CsvMigrations\Model\Table\LeadsTable;
 use CsvMigrations\Model\Table\UsersTable;

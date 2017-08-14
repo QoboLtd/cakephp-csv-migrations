@@ -3,7 +3,7 @@ namespace CsvMigrations\Test\TestCase\Event;
 
 use Cake\Event\Event;
 use Cake\TestSuite\IntegrationTestCase;
-use CsvMigrations\Event\ReportListener;
+use CsvMigrations\Event\Plugin\Search\View\ReportListener;
 
 class ReportListenerTest extends IntegrationTestCase
 {

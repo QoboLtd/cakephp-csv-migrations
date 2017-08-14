@@ -16,13 +16,10 @@ use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\FileUploadsUtils;
-use CsvMigrations\PrettifyTrait;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 abstract class BaseViewListener implements EventListenerInterface
 {
-    use PrettifyTrait;
-
     /**
      * Pretty format identifier
      */
@@ -44,6 +41,13 @@ abstract class BaseViewListener implements EventListenerInterface
      * @var array
      */
     protected $_fileAssociationFields = [];
+
+    /**
+     * An instance of Field Handler Factory
+     *
+     * @var CsvMigrations\FieldHandlers\FieldHandlerFactory
+     */
+    private $__fhf;
 
     /**
      * Wrapper method that checks if Table instance has method 'findByLookupFields'
@@ -344,6 +348,56 @@ abstract class BaseViewListener implements EventListenerInterface
             if (is_resource($entity->{$field})) {
                 $entity->{$field} = stream_get_contents($entity->{$field});
             }
+        }
+    }
+
+    /**
+     * Method that renders Entity values through Field Handler Factory.
+     *
+     * @param  Cake\ORM\Entity       $entity    Entity instance
+     * @param  Cake\ORM\Table|string $table     Table instance
+     * @param  array                 $fields    Fields to prettify
+     * @return void
+     */
+    protected function _prettify(Entity $entity, $table, array $fields = [])
+    {
+        if (!$this->__fhf instanceof FieldHandlerFactory) {
+            $this->__fhf = new FieldHandlerFactory();
+        }
+        if (empty($fields)) {
+            $fields = array_keys($entity->toArray());
+        }
+
+        foreach ($fields as $field) {
+            // handle belongsTo associated data
+            if ($entity->{$field} instanceof Entity) {
+                $tableName = $table->association($entity->{$field}->source())->className();
+                $this->_prettify($entity->{$field}, $tableName);
+            }
+
+            // handle hasMany associated data
+            if (is_array($entity->{$field})) {
+                if (empty($entity->{$field})) {
+                    continue;
+                }
+                foreach ($entity->{$field} as $associatedEntity) {
+                    if (!$associatedEntity instanceof Entity) {
+                        continue;
+                    }
+
+                    list(, $associationName) = pluginSplit($associatedEntity->source());
+                    $tableName = $table->association($associationName)->className();
+                    $this->_prettify($associatedEntity, $tableName);
+                }
+            }
+
+            $renderOptions = ['entity' => $entity];
+            $entity->{$field} = $this->__fhf->renderValue(
+                $table instanceof Table ? $table->registryAlias() : $table,
+                $field,
+                $entity->{$field},
+                $renderOptions
+            );
         }
     }
 }

@@ -1,31 +1,28 @@
 <?php
 namespace CsvMigrations\Event;
 
-use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\I18n\Time;
-use Cake\Mailer\Email;
 use Cake\ORM\Table;
-use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
-use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\Table as CsvTable;
+use CsvMigrations\Utility\DTZone;
+use CsvMigrations\Utility\ICal\IcEmail;
+use DateTimeZone;
+use Exception;
+use InvalidArgumentException;
 
 class ModelAfterSaveListener implements EventListenerInterface
 {
     /**
-     * Changelog template
-     */
-    const CHANGELOG = '* %s: changed from "%s" to "%s".' . "\n";
-
-    /**
-     * Ingored modified fields
+     * End date fields
      *
      * @var array
      */
-    protected $_ignoredFields = ['created', 'modified'];
+    protected $endDateFields = ['end_date', 'due_date'];
 
     /**
      * Implemented Events
@@ -40,214 +37,212 @@ class ModelAfterSaveListener implements EventListenerInterface
 
     /**
      * sendCalendarReminder method
-     * Notification about the reminder is sent only
-     * when the record belonds to anyone.
+     *
+     * Send reminder notification email for the saved record.  The email
+     * is only sent out, when:
+     *
+     * * There are some changes on the record, in fields except of those in the
+     *   ignore list.
+     * * The notifications are enabled and configured for the module, in which
+     *   the record is being saved.
+     * * The record is assigned to somebody who can be used as a target of the
+     *   notification.
+     *
      * @param Cake\Event $event from the afterSave
      * @param Cake\Datasource\EntityInterface $entity from the afterSave
-     * @return array|bool $sent on whether the email was sent
+     * @return array Associative array with tried emails as keys and results as values
      */
     public function sendCalendarReminder(Event $event, EntityInterface $entity)
     {
-        $sent = false;
-        $currentUser = null;
+        $result = [];
 
-        //get applications's timezone
-        $timezone = Time::now()->format('e');
-        $dtz = new \DateTimeZone($timezone);
-
-        $table = $event->subject();
-
-        //get attendees Table for the event
-        if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
-            $config = $table->getConfig();
-            $remindersTo = $table->getConfig(ConfigurationTrait::$CONFIG_OPTION_ALLOW_REMINDERS);
+        try {
+            // Get Table instance from the event
+            $table = $event->subject();
+            // Make sure it's a CsvTable
+            $this->checkCsvTable($table);
+            //get attendees Table for the event (example: Users)
+            $remindersTo = $this->getRemindersToModules($table);
+            // Figure out which field is a reminder one (example: start_date)
+            $reminderField = $this->getReminderField($table);
+            // Skip sending email if reminder field is empty
+            if (empty($entity->$reminderField)) {
+                throw new InvalidArgumentException("Reminder field has no value");
+            }
+            // Find attendee fields (example: assigned_to)
+            $attendeesFields = $this->getAttendeesFields($table, ['tables' => $remindersTo]);
+            // skip if none of the required fields was modified
+            $requiredFields = array_merge((array)$reminderField, $attendeesFields);
+            $this->checkRequiredModified($entity, $requiredFields);
+            // get attendee emails
+            $emails = $this->getAttendees($table, $entity, $attendeesFields);
+            // get email subject and content
+            $mailer = new IcEmail($table, $entity);
+            $emailSubject = $mailer->getEmailSubject();
+            $emailContent = $mailer->getEmailContent();
+            // get common event options
+            $eventOptions = $this->getEventOptions($table, $entity, $reminderField);
+            // Set same attendees for all
+            $eventOptions['attendees'] = $emails;
+        } catch (Exception $e) {
+            return $result;
         }
-
-        // skip if attendees Table is not defined
-        if (empty($remindersTo)) {
-            return $sent;
-        }
-
-        // Figure out which field is a reminder one
-        $reminderField = $table->getReminderFields();
-        if (empty($reminderField) || !is_array($reminderField)) {
-            return $sent;
-        }
-        $reminderField = $reminderField[0];
-        if (!is_array($reminderField) || empty($reminderField['name'])) {
-            return $sent;
-        }
-        $reminderField = $reminderField['name'];
-        // Skip sending email if reminder field is empty
-        if (empty($entity->$reminderField)) {
-            return $sent;
-        }
-
-        $attendeesFields = $this->_getAttendeesFields($table, ['tables' => $remindersTo]);
-        // skip if no attendees fields found
-        if (empty($attendeesFields)) {
-            return $sent;
-        }
-
-        // skip if none of the required fields was modified
-        $requiredFields = array_merge((array)$reminderField, $attendeesFields);
-        if (!$this->_requiredFieldsModified($entity, $requiredFields)) {
-            return $sent;
-        }
-
-        /*
-         * Figure out the subject of the email
-         *
-         * This should happen AFTER the `$table->getConfig()` call,
-         * in case the display field of the table is changed from the
-         * configuration.
-         *
-         * Use singular of the table name and the value of the entity's display field.
-         * For example: "Call: Payment remind" or "Lead: Qobo Ltd".
-         */
-        $fhf = new FieldHandlerFactory();
-
-        $emailSubjectValue = $fhf->renderValue($table, $table->displayField(), $entity->{$table->displayField()}, [ 'renderAs' => 'plain']);
-
-        $eventSubject = $emailSubjectValue ?: 'reminder';
-        $emailSubject = Inflector::singularize($table->alias()) . ": " . $eventSubject;
-        $emailContent = Inflector::singularize($table->alias()) . ' ' . $emailSubjectValue . " information was ";
-        // If the record is being updated, prefix the above subject with "(Updated) ".
-        if (!$entity->isNew()) {
-            $emailSubject = '(Updated) ' . $emailSubject;
-            $emailContent .= "updated";
-        } else {
-            $emailContent .= "created";
-        }
-
-        $emails = $this->_getAttendees($table, $entity, $attendeesFields);
-
-        if (empty($emails)) {
-            return $sent;
-        }
-
-        if (method_exists($table, 'getCurrentUser') && is_callable([$table, 'getCurrentUser'])) {
-            $currentUser = $table->getCurrentUser();
-            $emailContent .= " by " . $currentUser['name'];
-        }
-        // append changelog if entity is not new
-        if (!$entity->isNew()) {
-            $emailContent .= ":\n\n" . $this->_getChangelog($entity);
-        }
-
-        // append link
-        $entityUrl = Router::url(['prefix' => false, 'controller' => $table->table(), 'action' => 'view', $entity->id], true);
-        $emailContent .= "\n\nSee more: " . $entityUrl;
 
         foreach ($emails as $email) {
-            $vCalendar = new \Eluceo\iCal\Component\Calendar('-//Calendar Events//EN//');
-            $vCalendar->setCalendarScale('GREGORIAN');
-
-            $vAttendees = $this->_getEventAttendees($emails);
-
-            $vEvent = $this->_getCalendarEvent($entity, [
-                'dtz' => $dtz,
-                'organizer' => $email,
-                'subject' => $emailSubject,
-                'attendees' => $vAttendees,
-                'field' => $reminderField,
-                'timezone' => $timezone,
-                'url' => $entityUrl
-            ]);
-
-            if (!$entity->isNew()) {
-                $vEvent->setSequence(time());
-            } else {
-                $vEvent->setSequence(0);
-            }
-
-            $vEvent->setUniqueId($entity->id);
-            $vEvent->setAttendees($vAttendees);
-            $vCalendar->addComponent($vEvent);
-
-            $headers = "Content-Type: text/calendar; charset=utf-8";
-            $headers .= 'Content-Disposition: attachment; filename="event.ics"';
+            // New event with current attendee as organizer (WTF?)
+            $eventOptions['organizer'] = $email;
 
             try {
-                $emailer = new Email('default');
-                $emailer->to($email)
-                    ->setHeaders([$headers])
-                    ->subject($emailSubject)
-                    ->attachments(['event.ics' => [
-                        'contentDisposition' => true,
-                        'mimetype' => 'text/calendar',
-                        'data' => $vCalendar->render()
-                    ]]);
-                $sent = $emailer->send($emailContent);
+                $sent = $mailer->sendCalendarEmail($email, $emailSubject, $emailContent, $eventOptions);
             } catch (\Exception $e) {
-                // TODO : Add logging here
+                $sent = $e;
+            }
+            $result[$email] = $sent;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Check if given table is an instance of CsvTable
+     *
+     * Reminder functionality relies on a number of
+     * methods which are defined in \CsvMigrations\Table.
+     * So instead of checking all those methods one by
+     * one, we simply check if the given table instance
+     * inherits from the \CsvMigrations\Table.
+     *
+     * @throws \InvalidArgumentException If $table is not an instance of CsvTable
+     * @param object $table Instance of a table class
+     * @return void
+     */
+    protected function checkCsvTable($table)
+    {
+        if (!$table instanceof CsvTable) {
+            throw new InvalidArgumentException("Table is not an intance of CsvTable");
+        }
+    }
+
+    /**
+     * Get a list of reminder modules
+     *
+     * Check if the given table has reminders configured,
+     * and if so, return the list of modules to which
+     * reminders should be sent (Users, Contacts, etc).
+     *
+     * @throws \InvalidArgumentException when no reminder modules found
+     * @param \CsvTable\Table $table Table to check
+     * @return array List of modules
+     */
+    protected function getRemindersToModules(CsvTable $table)
+    {
+        $result = $table->getConfig(ConfigurationTrait::$CONFIG_OPTION_ALLOW_REMINDERS);
+        if (empty($result) || !is_array($result)) {
+            throw new InvalidArgumentException("Failed to find reminder modules");
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the fist reminder field of the given table
+     *
+     * NOTE: It is not very common to have more than one
+     *       reminder field per table, but it is not
+     *       impossible.  We need to figure out what
+     *       should happen.  Possible scenarios:
+     *
+     *       * Forbid more than one field with validation.
+     *       * Send reminder only to the first/non-empty.
+     *       * Send separate reminder for each.
+     *       * Have more flexible configuration rules.
+     *
+     * @throws \InvalidArgumentException when failed to find reminder field
+     * @param \CsvMigrations\Table $table Table to use
+     * @return string First reminder field name
+     */
+    protected function getReminderField(CsvTable $table)
+    {
+        $fields = $table->getReminderFields();
+        if (empty($fields) || !is_array($fields)) {
+            throw new InvalidArgumentException("Failed to find reminder fields");
+        }
+
+        // FIXME : What should happen when there is more than 1 reminder field on the table?
+        foreach ($fields as $field) {
+            if (!empty($field['name'])) {
+                // Return the first field found
+                return $field['name'];
             }
         }
 
-        return $sent;
+        throw new InvalidArgumentException("Failed to find a reminder field with 'name' key");
     }
 
     /**
      * Retrieve attendees fields from current Table's associations.
      *
-     * @param \Cake\ORM\Table $table Table instance
+     * @throws \InvalidArgumentException when failed to find attendee fields
+     * @param \CsvMigrations\Table $table Table instance
      * @param array $options Options
      * @return array
      */
-    protected function _getAttendeesFields(Table $table, $options = [])
+    protected function getAttendeesFields(CsvTable $table, $options = [])
     {
         $result = [];
 
-        $associations = [];
+        $associations = $table->associations();
         if (!empty($options['tables'])) {
+            $associations = [];
             foreach ($table->associations() as $association) {
-                if (!in_array(Inflector::humanize($association->target()->table()), $options['tables'])) {
-                    continue;
+                if (in_array(Inflector::humanize($association->target()->table()), $options['tables'])) {
+                    $associations[] = $association;
                 }
-
-                $associations[] = $association;
             }
-        } else {
-            $associations = $table->associations();
-        }
-
-        if (empty($associations)) {
-            return $result;
         }
 
         foreach ($associations as $association) {
             $result[] = $association->foreignKey();
         }
 
+        if (empty($result)) {
+            throw new InvalidArgumentException("Failed to find attendee fields");
+        }
+
         return $result;
     }
 
     /**
-     * Checks if required fields have been modified. Returns true
-     * if any of the fields has been modified, otherwise false.
+     * Check that required entity fields are modified
      *
+     * Entities are modified all the time and we don't always want
+     * to send a notification about these changes.  Instead, here
+     * we check that particular fields were modified (usually the
+     * reminder datetime field or the attendees of the event).
+     *
+     * @throws \InvalidArgumentException when required fields are not modified
      * @param \Cake\Datasource\EntityInterface $entity Entity instance
      * @param array $requiredFields Required fields list
-     * @return bool
+     * @return void
      */
-    protected function _requiredFieldsModified(EntityInterface $entity, array $requiredFields)
+    protected function checkRequiredModified(EntityInterface $entity, array $requiredFields)
     {
-        $result = false;
-
         if (empty($requiredFields)) {
-            return $result;
+            throw new InvalidArgumentException("Required fields not specified");
         }
 
         // check if any of the required fields was modified and set modified flag to true
+        $modified = false;
         foreach ($requiredFields as $field) {
-            if (!$entity->dirty($field)) {
-                continue;
+            if ($entity->dirty($field)) {
+                $modified = true;
+                break;
             }
-            $result = true;
-            break;
         }
 
-        return $result;
+        if (!$modified) {
+            throw new InvalidArgumentException("None of the required fields were modified");
+        }
     }
 
     /**
@@ -281,202 +276,118 @@ class ModelAfterSaveListener implements EventListenerInterface
     }
 
     /**
-     * _getAttendees
-     * @param Cake\ORM\Table $table passed
-     * @param Cake\Entity $entity of the record
+     * getAttendees
+     *
+     * Get the list of attendee emails
+     *
+     * @throws \InvalidArgumentException when no attendees found
+     * @param \CsvMigrations\Table $table passed
+     * @param \Cake\ORM\EntityInterface $entity of the record
      * @param array $fields Attendees fields
      * @return array
      */
-    protected function _getAttendees($table, $entity, $fields)
+    protected function getAttendees(CsvTable $table, EntityInterface $entity, array $fields)
     {
-        $attendees = [];
         $assignedEntities = $this->getAssignedAssociations($table, $entity, $fields);
 
-        if (!empty($assignedEntities)) {
-            $attendees = array_map(function ($item) {
-                if (isset($item['email'])) {
-                    return $item['email'];
-                }
-            }, $assignedEntities);
+        if (empty($assignedEntities)) {
+            throw new InvalidArgumentException("Failed to find attendee entities");
         }
 
-        return $attendees;
-    }
-
-    /**
-     * Creates changelog report in string format.
-     *
-     * Example:
-     *
-     * Subject: changed from 'Foo' to 'Bar'.
-     * Content: changed from 'Hello world' to 'Hi there'.
-     *
-     * @param \Cake\Datasource\EntityInterface $entity Entity instance
-     * @return string
-     */
-    protected function _getChangelog(EntityInterface $entity)
-    {
-        $result = '';
-
-        // plain changelog if entity is new
-        if ($entity->isNew()) {
-            return $result;
-        }
-
-        // get entity's modified fields
-        $fields = $entity->extractOriginalChanged($entity->visibleProperties());
-
-        if (empty($fields)) {
-            return $result;
-        }
-
-        // remove ignored fields
-        foreach ($this->_ignoredFields as $field) {
-            if (!array_key_exists($field, $fields)) {
-                continue;
+        $result = array_map(function ($item) {
+            if (isset($item['email'])) {
+                return $item['email'];
             }
-            unset($fields[$field]);
-        }
+        }, $assignedEntities);
+        // Filter out empty items
+        $result = array_filter($result);
 
-        if (empty($fields)) {
-            return $result;
-        }
-
-        foreach ($fields as $k => $v) {
-            $result .= sprintf(static::CHANGELOG, Inflector::humanize($k), $v, $entity->{$k});
+        if (empty($result)) {
+            throw new InvalidArgumentException("Failed to find attendee emails");
         }
 
         return $result;
     }
 
     /**
-     * _getEventAttendees
-     * @param array $attendees pass
-     * @return \Eluceo\iCal\Property\Event\Attendees
+     * Get options for the new event
+     *
+     * @param \CsvMigrations\Table $table Table instance
+     * @param \Cake\ORM\EntityInterface $entity Entity instance
+     * @param string $startField Entity field to use for event start time
+     * @return array
      */
-    protected function _getEventAttendees($attendees)
+    protected function getEventOptions(CsvTable $table, EntityInterface $entity, $startField)
     {
-        $vAttendees = new \Eluceo\iCal\Property\Event\Attendees();
-        foreach ($attendees as $email) {
-            $vAttendees->add("MAILTO:$email", [
-                'ROLE' => 'REQ-PARTICIPANT',
-                'PARTSTAT' => 'NEEDS-ACTION',
-                'RSVP' => 'TRUE',
-            ]);
-        }
+        // Event start and end times
+        $eventTimes = $this->getEventTime($entity, $startField);
 
-        return $vAttendees;
+        $mailer = new IcEmail($table, $entity);
+
+        $result = [
+            'id' => $entity->id,
+            'sequence' => $entity->isNew() ? 0 : time(),
+            'summary' => $mailer->getEventSubject(),
+            'description' => $mailer->getEventContent(),
+            'location' => $entity->location,
+            'startTime' => $eventTimes['start'],
+            'endTime' => $eventTimes['end'],
+        ];
+
+        return $result;
     }
 
     /**
-     * _getCalendarEvent
-     * @param Cake\Entity $entity passed
-     * @param array $options with extra settings
-     * @return \Eluceo\iCal\Component\Event $vEvent
-     */
-    protected function _getCalendarEvent($entity, $options = [])
-    {
-        $vEvent = new \Eluceo\iCal\Component\Event();
-        $vOrganizer = new \Eluceo\iCal\Property\Event\Organizer($options['organizer'], ['MAILTO' => $options['organizer']]);
-        $vEvent->setOrganizer($vOrganizer);
-        $vEvent->setSummary($options['subject']);
-
-        $description = '';
-        if ($entity->description) {
-            $description .= $entity->description . "\n\n";
-        }
-        $description .= $options['url'];
-
-        $vEvent->setDescription($description);
-
-        $dates = $this->_getEventTime($entity, $options);
-        $vEvent->setDtStart($dates['start']);
-        $vEvent->setDtEnd($dates['end']);
-
-        if ($entity->location) {
-            $vEvent->setLocation($entity->location, "Location:");
-        }
-
-        return $vEvent;
-    }
-
-    /**
-     * _getEventTime
+     * getEventTime
+     *
      * Identify the start/end combination of the event.
      * We either use duration or any of the end fields
      * that might be used in the system.
      *
-     * @todo Check that entity fields are objects, before calling format() on them
-     * @param Cake\Entity $entity passed
-     * @param array $options Options
-     * @return array
+     * @param \Cake\Datasource\EntityInterface $entity Saved entity instance
+     * @param string $startField Entity field to use for event start time
+     * @return array Associative array of DateTimeZone instances for start and end
      */
-    protected function _getEventTime($entity, $options)
+    protected function getEventTime(EntityInterface $entity, $startField)
     {
-        $start = $end = $due = null;
-        $durationMinutes = 0;
-        $dtz = $options['dtz'];
-        $field = $options['field'];
+        // Application timezone
+        $dtz = new DateTimeZone(DTZone::getAppTimeZone());
 
-        if ($entity->$field instanceof Time) {
-            $start = new \DateTime($entity->$field->format('Y-m-d H:i:s'), $dtz);
-        } elseif ($entity->$field instanceof \DateTime) {
-            $start = $entity->$field;
-        } else {
-            $start = new \DateTime(date('Y-m-d H:i:s', strtotime($entity->$field)), $dtz);
+        // We check that the value is always there in sendCalendarReminder()
+        $start = DTZone::toDateTime($entity->$startField, $dtz);
+
+        // Default end time is 1 hour from start
+        $end = $start;
+        $end->modify("+ 60 minutes");
+
+        // If no duration given, check end fields and use value if found
+        if (empty($entity->duration)) {
+            foreach ($this->endDateFields as $endField) {
+                if (!empty($entity->{$endField})) {
+                    $end = DTZone::toDateTime($entity->{$endField}, $dtz);
+                    break;
+                }
+            }
         }
 
-        // calculate the duration of an event
+        // If duration is given, then calculate the end date
         if (!empty($entity->duration)) {
             $durationParts = date_parse($entity->duration);
             $durationMinutes = $durationParts['hour'] * 60 + $durationParts['minute'];
 
-            $end = new \DateTime($start->format('Y-m-d H:i:s'));
+            $end = $start;
             $end->modify("+ {$durationMinutes} minutes");
-        } else {
-            //if no duration is present use end_date
-            foreach (['end_date', 'due_date'] as $endField) {
-                if (!empty($entity->{$endField})) {
-                    $due = $entity->{$endField};
-                    break;
-                }
-            }
-
-            if (!empty($due)) {
-                // Quick fix for task #3648. We need a more reliable way here though.
-                if (is_string($due)) {
-                    $end = new \DateTime($due, $dtz);
-                } elseif (is_object($due)) {
-                    $end = new \DateTime($due->format('Y-m-d H:i:s'), $dtz);
-                } else {
-                    throw new \RuntimeException("Due date type [" . gettype($due) . "] is unsupported");
-                }
-            }
         }
 
-        // If all else fails, assume 1 hour duration
-        if (empty($end)) {
-            $end = new \DateTime($start->format('Y-m-d H:i:s'));
-            $end->modify("+ 60 minutes");
-        }
+        // Adjust to UTC in case custom timezone is used for an app.
+        $start = DTZone::offsetToUtc($start);
+        $end = DTZone::offsetToUtc($end);
 
-        // falling back to UTC in case custom timezone is used for an app.
-        if (!empty($options['timezone']) && $options['timezone'] !== 'UTC') {
-            $epoch = time();
-            $tz = new \DateTimeZone($options['timezone']);
-            $transitions = $tz->getTransitions($epoch, $epoch);
+        $result = [
+            'start' => $start,
+            'end' => $end,
+        ];
 
-            $offset = $transitions[0]['offset'];
-
-            if (!empty($start)) {
-                $start->modify("-$offset seconds");
-            }
-
-            if (!empty($end)) {
-                $end->modify("-$offset seconds");
-            }
-        }
-
-        return compact('start', 'end');
+        return $result;
     }
 }

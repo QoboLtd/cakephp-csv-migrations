@@ -1,5 +1,5 @@
 <?php
-namespace CsvMigrations\Event;
+namespace CsvMigrations\Event\View;
 
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;

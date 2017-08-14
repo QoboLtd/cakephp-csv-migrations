@@ -1,5 +1,5 @@
 <?php
-namespace CsvMigrations\Event;
+namespace CsvMigrations\Event\Controller\Api;
 
 use Cake\Event\Event;
 use Cake\Event\EventManager;
@@ -8,9 +8,8 @@ use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\View\View;
 use CsvMigrations\ConfigurationTrait;
-use CsvMigrations\Event\BaseViewListener;
 
-class IndexViewListener extends BaseViewListener
+class IndexActionListener extends BaseActionListener
 {
     /**
      * Include menus identifier

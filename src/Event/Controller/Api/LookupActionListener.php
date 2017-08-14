@@ -1,5 +1,5 @@
 <?php
-namespace CsvMigrations\Event;
+namespace CsvMigrations\Event\Controller\Api;
 
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
@@ -8,14 +8,13 @@ use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use CsvMigrations\ConfigurationTrait;
-use CsvMigrations\Event\BaseViewListener;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\FieldHandlers\RelatedFieldHandler;
 use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 use RuntimeException;
 
-class LookupListener extends BaseViewListener
+class LookupActionListener extends BaseActionListener
 {
     use RelatedFieldTrait;
 

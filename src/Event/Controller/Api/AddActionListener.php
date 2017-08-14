@@ -1,11 +1,10 @@
 <?php
-namespace CsvMigrations\Event;
+namespace CsvMigrations\Event\Controller\Api;
 
 use Cake\Event\Event;
 use Cake\ORM\Entity;
-use CsvMigrations\Event\BaseViewListener;
 
-class AddViewListener extends BaseViewListener
+class AddActionListener extends BaseActionListener
 {
     /**
      * {@inheritDoc}

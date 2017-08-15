@@ -3,16 +3,15 @@ use Burzum\FileStorage\Storage\Listener\BaseListener;
 use Burzum\FileStorage\Storage\StorageManager;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
-use CsvMigrations\Event\AddViewListener;
-use CsvMigrations\Event\EditViewListener;
-use CsvMigrations\Event\IndexViewListener;
-use CsvMigrations\Event\LayoutListener;
-use CsvMigrations\Event\LookupListener;
-use CsvMigrations\Event\ModelAfterSaveListener;
+use CsvMigrations\Event\Controller\Api\AddActionListener;
+use CsvMigrations\Event\Controller\Api\EditActionListener;
+use CsvMigrations\Event\Controller\Api\IndexActionListener;
+use CsvMigrations\Event\Controller\Api\LookupActionListener;
+use CsvMigrations\Event\Controller\Api\ViewActionListener;
 use CsvMigrations\Event\Model\AutoIncrementEventListener;
-use CsvMigrations\Event\ReportListener;
-use CsvMigrations\Event\ViewViewListener;
-use CsvMigrations\Event\ViewViewTabsListener;
+use CsvMigrations\Event\Model\ModelAfterSaveListener;
+use CsvMigrations\Event\Plugin\Search\View\ReportListener;
+use CsvMigrations\Event\View\ViewViewTabsListener;
 
 /**
  * Plugin configuration
@@ -43,13 +42,12 @@ Configure::write('Importer', array_replace_recursive(
     $config
 ));
 
+EventManager::instance()->on(new AddActionListener());
 EventManager::instance()->on(new AutoIncrementEventListener());
-EventManager::instance()->on(new AddViewListener());
-EventManager::instance()->on(new EditViewListener());
-EventManager::instance()->on(new IndexViewListener());
-EventManager::instance()->on(new LayoutListener());
-EventManager::instance()->on(new LookupListener());
-EventManager::instance()->on(new ViewViewListener());
-EventManager::instance()->on(new ReportListener());
-EventManager::instance()->on(new ViewViewTabsListener());
+EventManager::instance()->on(new EditActionListener());
+EventManager::instance()->on(new IndexActionListener());
+EventManager::instance()->on(new LookupActionListener());
 EventManager::instance()->on(new ModelAfterSaveListener());
+EventManager::instance()->on(new ReportListener());
+EventManager::instance()->on(new ViewActionListener());
+EventManager::instance()->on(new ViewViewTabsListener());

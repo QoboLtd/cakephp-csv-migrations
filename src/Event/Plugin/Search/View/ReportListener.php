@@ -1,5 +1,5 @@
 <?php
-namespace CsvMigrations\Event;
+namespace CsvMigrations\Event\Plugin\Search\View;
 
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;

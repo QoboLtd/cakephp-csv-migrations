@@ -1,5 +1,5 @@
 <?php
-namespace CsvMigrations\Event;
+namespace CsvMigrations\Event\Controller\Api;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
@@ -18,7 +18,7 @@ use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\FileUploadsUtils;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
-abstract class BaseViewListener implements EventListenerInterface
+abstract class BaseActionListener implements EventListenerInterface
 {
     /**
      * Pretty format identifier

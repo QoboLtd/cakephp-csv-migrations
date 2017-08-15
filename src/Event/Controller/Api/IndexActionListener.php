@@ -1,16 +1,15 @@
 <?php
-namespace CsvMigrations\Event;
+namespace CsvMigrations\Event\Controller\Api;
 
-use App\View\AppView;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\Network\Request;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
+use Cake\View\View;
 use CsvMigrations\ConfigurationTrait;
-use CsvMigrations\Event\BaseViewListener;
 
-class IndexViewListener extends BaseViewListener
+class IndexActionListener extends BaseActionListener
 {
     /**
      * Include menus identifier
@@ -212,7 +211,7 @@ class IndexViewListener extends BaseViewListener
             return;
         }
 
-        $appView = new AppView();
+        $appView = new View();
         $plugin = $event->subject()->request->plugin;
         $controller = $event->subject()->request->controller;
         $displayField = $event->subject()->{$event->subject()->name}->displayField();

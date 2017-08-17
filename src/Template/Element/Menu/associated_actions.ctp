@@ -86,7 +86,7 @@ if (isset($options['associated']['type']) && in_array($options['associated']['ty
 }
 
 // broadcast menu event
-$event = new Event(EventName::MENU_ACTIONS_ASSOCIATED()->getValue(), $this, [
+$event = new Event((string)EventName::MENU_ACTIONS_ASSOCIATED(), $this, [
     'menu' => $menu,
     'user' => $user
 ]);

@@ -13,8 +13,8 @@ class AddActionListener extends BaseActionListener
     public function implementedEvents()
     {
         return [
-            EventName::API_ADD_BEFORE_SAVE()->getValue() => 'beforeSave',
-            EventName::API_ADD_AFTER_SAVE()->getValue() => 'afterSave'
+            (string)EventName::API_ADD_BEFORE_SAVE() => 'beforeSave',
+            (string)EventName::API_ADD_AFTER_SAVE() => 'afterSave'
         ];
     }
 

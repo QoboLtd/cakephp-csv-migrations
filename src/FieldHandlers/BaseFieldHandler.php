@@ -210,7 +210,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         // If we have a default value from configuration, pass it through
         // processing for magic/dynamic values like dates and usernames.
         if (!empty($this->defaultOptions['default'])) {
-            $eventName = EventName::FIELD_HANDLER_DEFAULT_VALUE()->getValue();
+            $eventName = (string)EventName::FIELD_HANDLER_DEFAULT_VALUE();
             $event = new Event($eventName, $this, [
                 'default' => $this->defaultOptions['default']
             ]);

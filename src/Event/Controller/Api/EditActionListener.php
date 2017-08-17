@@ -14,10 +14,10 @@ class EditActionListener extends BaseActionListener
     public function implementedEvents()
     {
         return [
-            EventName::API_EDIT_BEFORE_FIND()->getValue() => 'beforeFind',
-            EventName::API_EDIT_AFTER_FIND()->getValue() => 'afterFind',
-            EventName::API_EDIT_BEFORE_SAVE()->getValue() => 'beforeSave',
-            EventName::API_EDIT_AFTER_SAVE()->getValue() => 'afterSave'
+            (string)EventName::API_EDIT_BEFORE_FIND() => 'beforeFind',
+            (string)EventName::API_EDIT_AFTER_FIND() => 'afterFind',
+            (string)EventName::API_EDIT_BEFORE_SAVE() => 'beforeSave',
+            (string)EventName::API_EDIT_AFTER_SAVE() => 'afterSave'
         ];
     }
 

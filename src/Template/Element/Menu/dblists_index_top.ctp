@@ -15,7 +15,7 @@ $menu = [
 ];
 
 // broadcast menu event
-$event = new Event(EventName::MENU_TOP_DB_LISTS_INDEX()->getValue(), $this, [
+$event = new Event((string)EventName::MENU_TOP_DB_LISTS_INDEX(), $this, [
     'menu' => $menu,
     'user' => $user
 ]);

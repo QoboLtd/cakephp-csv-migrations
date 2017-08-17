@@ -145,7 +145,7 @@ if (empty($options['title'])) {
                                 $renderOptions
                             );
                             $fieldName = $field['name'];
-                            $event = new Event(EventName::VIEW_TRANSLATION_BUTTON()->getValue(), $this, [
+                            $event = new Event((string)EventName::VIEW_TRANSLATION_BUTTON(), $this, [
                                 'model' => $tableName,
                                 'options' => [
                                     'record_id' => $options['entity']->id,
@@ -231,7 +231,7 @@ echo $this->element('CsvMigrations.common_js_libs');
 <div class="row associated-records">
     <div class="col-xs-12">
     <?php
-        $event = new Event(EventName::VIEW_TABS_LIST()->getValue(), $this, [
+        $event = new Event((string)EventName::VIEW_TABS_LIST(), $this, [
             'request' => $this->request,
             'entity' => $options['entity'],
             'user' => $user,
@@ -281,7 +281,7 @@ echo $this->element('CsvMigrations.common_js_libs');
                 <?php foreach ($tabs as $tab) : ?>
                     <div role="tabpanel" class="tab-pane <?= $active ? 'active' : ''?>" id="<?= $tab['containerId']?>">
                         <?php
-                        $beforeTabContentEvent = new Event(EventName::VIEW_TAB_AFTER_CONTENT()->getValue(), $this, [
+                        $beforeTabContentEvent = new Event((string)EventName::VIEW_TAB_AFTER_CONTENT(), $this, [
                             'request' => $this->request,
                             'entity' => $options['entity'],
                             'options' => [
@@ -304,7 +304,7 @@ echo $this->element('CsvMigrations.common_js_libs');
                             ]);
                         }
 
-                        $tabContentEvent = new Event(EventName::VIEW_TAB_CONTENT()->getValue(), $this, [
+                        $tabContentEvent = new Event((string)EventName::VIEW_TAB_CONTENT(), $this, [
                             'request' => $this->request,
                             'entity' => $options['entity'],
                             'options' => [
@@ -358,7 +358,7 @@ echo $this->element('CsvMigrations.common_js_libs');
 <?php
 // Event dispatcher for bottom section
 $event = new Event(
-    EventName::VIEW_BODY_BOTTOM()->getValue(),
+    (string)EventName::VIEW_BODY_BOTTOM(),
     $this,
     ['request' => $this->request, 'options' => $options]
 );

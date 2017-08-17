@@ -46,10 +46,10 @@ class ViewViewTabsListener implements EventListenerInterface
     public function implementedEvents()
     {
         return [
-            EventName::VIEW_TABS_LIST()->getValue() => 'getTabsList',
-            EventName::VIEW_TAB_CONTENT()->getValue() => 'getTabContent',
-            EventName::VIEW_TAB_AFTER_CONTENT()->getValue() => 'getAfterTabContent',
-            // EventName::VIEW_TAB_BEFORE_CONTENT()->getValue() => 'getBeforeTabContent',
+            (string)EventName::VIEW_TABS_LIST() => 'getTabsList',
+            (string)EventName::VIEW_TAB_CONTENT() => 'getTabContent',
+            (string)EventName::VIEW_TAB_AFTER_CONTENT() => 'getAfterTabContent',
+            // (string)EventName::VIEW_TAB_BEFORE_CONTENT() => 'getBeforeTabContent',
         ];
     }
 

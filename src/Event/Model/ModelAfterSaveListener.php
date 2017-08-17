@@ -32,7 +32,7 @@ class ModelAfterSaveListener implements EventListenerInterface
     public function implementedEvents()
     {
         return [
-            EventName::MODEL_BEFORE_SAVE()->getValue() => 'sendCalendarReminder'
+            (string)EventName::MODEL_BEFORE_SAVE() => 'sendCalendarReminder'
         ];
     }
 

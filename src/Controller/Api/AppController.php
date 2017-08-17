@@ -164,14 +164,14 @@ class AppController extends Controller
     public function view()
     {
         $this->Crud->on('beforeFind', function (Event $event) {
-            $ev = new Event(EventName::API_VIEW_BEFORE_FIND()->getValue(), $this, [
+            $ev = new Event((string)EventName::API_VIEW_BEFORE_FIND(), $this, [
                 'query' => $event->subject()->query
             ]);
             $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('afterFind', function (Event $event) {
-            $ev = new Event(EventName::API_VIEW_AFTER_FIND()->getValue(), $this, [
+            $ev = new Event((string)EventName::API_VIEW_AFTER_FIND(), $this, [
                 'entity' => $event->subject()->entity
             ]);
             $this->eventManager()->dispatch($ev);
@@ -188,21 +188,21 @@ class AppController extends Controller
     public function index()
     {
         $this->Crud->on('beforePaginate', function (Event $event) {
-            $ev = new Event(EventName::API_INDEX_BEFORE_PAGINATE()->getValue(), $this, [
+            $ev = new Event((string)EventName::API_INDEX_BEFORE_PAGINATE(), $this, [
                 'query' => $event->subject()->query
             ]);
             $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('afterPaginate', function (Event $event) {
-            $ev = new Event(EventName::API_INDEX_AFTER_PAGINATE()->getValue(), $this, [
+            $ev = new Event((string)EventName::API_INDEX_AFTER_PAGINATE(), $this, [
                 'entities' => $event->subject()->entities
             ]);
             $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('beforeRender', function (Event $event) {
-            $ev = new Event(EventName::API_INDEX_BEFORE_RENDER()->getValue(), $this, [
+            $ev = new Event((string)EventName::API_INDEX_BEFORE_RENDER(), $this, [
                 'entities' => $event->subject()->entities
             ]);
             $this->eventManager()->dispatch($ev);
@@ -219,7 +219,7 @@ class AppController extends Controller
     public function add()
     {
         $this->Crud->on('beforeSave', function (Event $event) {
-            $ev = new Event(EventName::API_ADD_BEFORE_SAVE()->getValue(), $this, [
+            $ev = new Event((string)EventName::API_ADD_BEFORE_SAVE(), $this, [
                 'entity' => $event->subject()->entity
             ]);
             $this->eventManager()->dispatch($ev);
@@ -229,7 +229,7 @@ class AppController extends Controller
             // handle file uploads if found in the request data
             $linked = $this->_fileUploadsUtils->linkFilesToEntity($event->subject()->entity, $this->{$this->name}, $this->request->data);
 
-            $ev = new Event(EventName::API_ADD_AFTER_SAVE()->getValue(), $this, [
+            $ev = new Event((string)EventName::API_ADD_AFTER_SAVE(), $this, [
                 'entity' => $event->subject()->entity
             ]);
             $this->eventManager()->dispatch($ev);
@@ -246,21 +246,21 @@ class AppController extends Controller
     public function edit()
     {
         $this->Crud->on('beforeFind', function (Event $event) {
-            $ev = new Event(EventName::API_EDIT_BEFORE_FIND()->getValue(), $this, [
+            $ev = new Event((string)EventName::API_EDIT_BEFORE_FIND(), $this, [
                 'query' => $event->subject()->query
             ]);
             $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('afterFind', function (Event $event) {
-            $ev = new Event(EventName::API_EDIT_AFTER_FIND()->getValue(), $this, [
+            $ev = new Event((string)EventName::API_EDIT_AFTER_FIND(), $this, [
                 'entity' => $event->subject()->entity
             ]);
             $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('beforeSave', function (Event $event) {
-            $ev = new Event(EventName::API_EDIT_BEFORE_SAVE()->getValue(), $this, [
+            $ev = new Event((string)EventName::API_EDIT_BEFORE_SAVE(), $this, [
                 'entity' => $event->subject()->entity
             ]);
             $this->eventManager()->dispatch($ev);
@@ -331,14 +331,14 @@ class AppController extends Controller
     public function lookup()
     {
         $this->Crud->on('beforeLookup', function (Event $event) {
-            $ev = new Event(EventName::API_LOOKUP_BEFORE_FIND()->getValue(), $this, [
+            $ev = new Event((string)EventName::API_LOOKUP_BEFORE_FIND(), $this, [
                 'query' => $event->subject()->query
             ]);
             $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('afterLookup', function (Event $event) {
-            $ev = new Event(EventName::API_LOOKUP_AFTER_FIND()->getValue(), $this, [
+            $ev = new Event((string)EventName::API_LOOKUP_AFTER_FIND(), $this, [
                 'entities' => $event->subject()->entities
             ]);
             $this->eventManager()->dispatch($ev);

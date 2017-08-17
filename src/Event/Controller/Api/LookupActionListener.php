@@ -25,8 +25,8 @@ class LookupActionListener extends BaseActionListener
     public function implementedEvents()
     {
         return [
-            EventName::API_LOOKUP_BEFORE_FIND()->getValue() => 'beforeLookup',
-            EventName::API_LOOKUP_AFTER_FIND()->getValue() => 'afterLookup'
+            (string)EventName::API_LOOKUP_BEFORE_FIND() => 'beforeLookup',
+            (string)EventName::API_LOOKUP_AFTER_FIND() => 'afterLookup'
         ];
     }
 

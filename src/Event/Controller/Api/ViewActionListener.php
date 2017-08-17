@@ -16,8 +16,8 @@ class ViewActionListener extends BaseActionListener
     public function implementedEvents()
     {
         return [
-            EventName::API_VIEW_BEFORE_FIND()->getValue() => 'beforeFind',
-            EventName::API_VIEW_AFTER_FIND()->getValue() => 'afterFind'
+            (string)EventName::API_VIEW_BEFORE_FIND() => 'beforeFind',
+            (string)EventName::API_VIEW_AFTER_FIND() => 'afterFind'
         ];
     }
 

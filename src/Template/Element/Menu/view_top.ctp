@@ -47,7 +47,7 @@ $menu[] = [
 ];
 
 // broadcast menu event
-$event = new Event(EventName::MENU_TOP_VIEW()->getValue(), $this, [
+$event = new Event((string)EventName::MENU_TOP_VIEW(), $this, [
     'menu' => $menu,
     'user' => $user
 ]);

@@ -46,6 +46,9 @@ class EventTest extends IntegrationTestCase
         $regex = new RegexIterator($iterator, '/^.+\.php$/', RecursiveRegexIterator::GET_MATCH);
         foreach ($regex as $file) {
             $file = $file[0];
+            if ('EventName' === pathinfo($file, PATHINFO_FILENAME)) {
+                continue;
+            }
             // Remove file extension
             $file = pathinfo($file, PATHINFO_DIRNAME) . DS . pathinfo($file, PATHINFO_FILENAME);
             // Remove path prefix

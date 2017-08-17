@@ -8,6 +8,7 @@ use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use CsvMigrations\ConfigurationTrait;
+use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\FieldHandlers\RelatedFieldHandler;
@@ -24,8 +25,8 @@ class LookupActionListener extends BaseActionListener
     public function implementedEvents()
     {
         return [
-            'CsvMigrations.beforeLookup' => 'beforeLookup',
-            'CsvMigrations.afterLookup' => 'afterLookup'
+            (string)EventName::API_LOOKUP_BEFORE_FIND() => 'beforeLookup',
+            (string)EventName::API_LOOKUP_AFTER_FIND() => 'afterLookup'
         ];
     }
 

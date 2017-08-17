@@ -8,6 +8,7 @@ use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\View\View;
 use CsvMigrations\ConfigurationTrait;
+use CsvMigrations\Event\EventName;
 
 class IndexActionListener extends BaseActionListener
 {
@@ -27,9 +28,9 @@ class IndexActionListener extends BaseActionListener
     public function implementedEvents()
     {
         return [
-            'CsvMigrations.Index.beforePaginate' => 'beforePaginate',
-            'CsvMigrations.Index.afterPaginate' => 'afterPaginate',
-            'CsvMigrations.Index.beforeRender' => 'beforeRender'
+            (string)EventName::API_INDEX_BEFORE_PAGINATE() => 'beforePaginate',
+            (string)EventName::API_INDEX_AFTER_PAGINATE() => 'afterPaginate',
+            (string)EventName::API_INDEX_BEFORE_RENDER() => 'beforeRender'
         ];
     }
 

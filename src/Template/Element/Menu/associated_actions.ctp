@@ -1,6 +1,7 @@
 <?php
 use Cake\Event\Event;
 use Cake\Utility\Hash;
+use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 $fhf = new FieldHandlerFactory($this);
@@ -85,7 +86,7 @@ if (isset($options['associated']['type']) && in_array($options['associated']['ty
 }
 
 // broadcast menu event
-$event = new Event('CsvMigrations.Associated.actionsMenu.beforeRender', $this, [
+$event = new Event((string)EventName::MENU_ACTIONS_ASSOCIATED(), $this, [
     'menu' => $menu,
     'user' => $user
 ]);

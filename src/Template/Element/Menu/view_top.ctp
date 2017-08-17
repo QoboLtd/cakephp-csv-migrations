@@ -1,5 +1,6 @@
 <?php
 use Cake\Event\Event;
+use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 $fhf = new FieldHandlerFactory($this);
@@ -46,7 +47,7 @@ $menu[] = [
 ];
 
 // broadcast menu event
-$event = new Event('CsvMigrations.View.topMenu.beforeRender', $this, [
+$event = new Event((string)EventName::MENU_TOP_VIEW(), $this, [
     'menu' => $menu,
     'user' => $user
 ]);

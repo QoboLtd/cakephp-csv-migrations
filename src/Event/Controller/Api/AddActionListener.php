@@ -3,6 +3,7 @@ namespace CsvMigrations\Event\Controller\Api;
 
 use Cake\Event\Event;
 use Cake\ORM\Entity;
+use CsvMigrations\Event\EventName;
 
 class AddActionListener extends BaseActionListener
 {
@@ -12,8 +13,8 @@ class AddActionListener extends BaseActionListener
     public function implementedEvents()
     {
         return [
-            'CsvMigrations.Add.beforeSave' => 'beforeSave',
-            'CsvMigrations.Add.afterSave' => 'afterSave'
+            (string)EventName::API_ADD_BEFORE_SAVE() => 'beforeSave',
+            (string)EventName::API_ADD_AFTER_SAVE() => 'afterSave'
         ];
     }
 

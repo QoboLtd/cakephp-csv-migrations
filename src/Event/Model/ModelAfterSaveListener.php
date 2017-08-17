@@ -8,6 +8,7 @@ use Cake\I18n\Time;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
+use CsvMigrations\Event\EventName;
 use CsvMigrations\Table as CsvTable;
 use CsvMigrations\Utility\DTZone;
 use CsvMigrations\Utility\ICal\IcEmail;
@@ -31,7 +32,7 @@ class ModelAfterSaveListener implements EventListenerInterface
     public function implementedEvents()
     {
         return [
-            'CsvMigrations.Model.afterSave' => 'sendCalendarReminder'
+            (string)EventName::MODEL_BEFORE_SAVE() => 'sendCalendarReminder'
         ];
     }
 

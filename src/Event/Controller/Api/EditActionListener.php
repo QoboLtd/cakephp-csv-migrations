@@ -4,6 +4,7 @@ namespace CsvMigrations\Event\Controller\Api;
 use Cake\Event\Event;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
+use CsvMigrations\Event\EventName;
 
 class EditActionListener extends BaseActionListener
 {
@@ -13,10 +14,10 @@ class EditActionListener extends BaseActionListener
     public function implementedEvents()
     {
         return [
-            'CsvMigrations.Edit.beforeFind' => 'beforeFind',
-            'CsvMigrations.Edit.afterFind' => 'afterFind',
-            'CsvMigrations.Edit.beforeSave' => 'beforeSave',
-            'CsvMigrations.Edit.afterSave' => 'afterSave'
+            (string)EventName::API_EDIT_BEFORE_FIND() => 'beforeFind',
+            (string)EventName::API_EDIT_AFTER_FIND() => 'afterFind',
+            (string)EventName::API_EDIT_BEFORE_SAVE() => 'beforeSave',
+            (string)EventName::API_EDIT_AFTER_SAVE() => 'afterSave'
         ];
     }
 

@@ -5,6 +5,9 @@ use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use CsvMigrations\MigrationTrait;
 
+/**
+ * @todo This Listener needs to be moved to the Application level to remove plugins coupling
+ */
 class ReportListener implements EventListenerInterface
 {
     use MigrationTrait;

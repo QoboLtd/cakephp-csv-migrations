@@ -6,6 +6,7 @@ use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
+use CsvMigrations\Event\EventName;
 
 class ViewActionListener extends BaseActionListener
 {
@@ -15,8 +16,8 @@ class ViewActionListener extends BaseActionListener
     public function implementedEvents()
     {
         return [
-            'CsvMigrations.View.beforeFind' => 'beforeFind',
-            'CsvMigrations.View.afterFind' => 'afterFind'
+            EventName::API_VIEW_BEFORE_FIND()->getValue() => 'beforeFind',
+            EventName::API_VIEW_AFTER_FIND()->getValue() => 'afterFind'
         ];
     }
 

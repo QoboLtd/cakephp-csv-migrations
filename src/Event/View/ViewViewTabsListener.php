@@ -10,6 +10,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
+use CsvMigrations\Event\EventName;
 use CsvMigrations\MigrationTrait;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
@@ -45,10 +46,10 @@ class ViewViewTabsListener implements EventListenerInterface
     public function implementedEvents()
     {
         return [
-            'CsvMigrations.View.View.TabsList' => 'getTabsList',
-            //'CsvMigrations.View.View.TabContent.beforeContent' => 'getBeforeTabContent',
-            'CsvMigrations.View.View.TabContent' => 'getTabContent',
-            'CsvMigrations.View.View.TabContent.afterContent' => 'getAfterTabContent',
+            EventName::VIEW_TABS_LIST()->getValue() => 'getTabsList',
+            EventName::VIEW_TAB_CONTENT()->getValue() => 'getTabContent',
+            EventName::VIEW_TAB_AFTER_CONTENT()->getValue() => 'getAfterTabContent',
+            // EventName::VIEW_TAB_BEFORE_CONTENT()->getValue() => 'getBeforeTabContent',
         ];
     }
 

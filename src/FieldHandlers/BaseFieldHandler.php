@@ -7,6 +7,7 @@ use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
@@ -209,7 +210,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         // If we have a default value from configuration, pass it through
         // processing for magic/dynamic values like dates and usernames.
         if (!empty($this->defaultOptions['default'])) {
-            $eventName = 'CsvMigrations.FieldHandler.DefaultValue';
+            $eventName = EventName::FIELD_HANDLER_DEFAULT_VALUE()->getValue();
             $event = new Event($eventName, $this, [
                 'default' => $this->defaultOptions['default']
             ]);

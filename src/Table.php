@@ -10,6 +10,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table as BaseTable;
 use CsvMigrations\ConfigurationTrait;
+use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldTrait;
 use CsvMigrations\MigrationTrait;
@@ -84,7 +85,7 @@ class Table extends BaseTable
     public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options)
     {
         $ev = new Event(
-            'CsvMigrations.Model.afterSave',
+            EventName::MODEL_BEFORE_SAVE()->getValue(),
             $this,
             ['entity' => $entity, 'options' => $options]
         );

@@ -1,5 +1,6 @@
 <?php
 use Cake\Event\Event;
+use CsvMigrations\Event\EventName;
 
 $menu = [];
 
@@ -14,7 +15,7 @@ $menu[] = [
 ];
 
 // broadcast menu event
-$event = new Event('CsvMigrations.DblistItems.Index.topMenu.beforeRender', $this, [
+$event = new Event(EventName::MENU_TOP_DB_LIST_ITEMS_INDEX()->getValue(), $this, [
     'menu' => $menu,
     'user' => $user
 ]);

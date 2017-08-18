@@ -281,7 +281,7 @@ echo $this->element('CsvMigrations.common_js_libs');
                 <?php foreach ($tabs as $tab) : ?>
                     <div role="tabpanel" class="tab-pane <?= $active ? 'active' : ''?>" id="<?= $tab['containerId']?>">
                         <?php
-                        $beforeTabContentEvent = new Event((string)EventName::VIEW_TAB_AFTER_CONTENT(), $this, [
+                        $beforeTabContentEvent = new Event((string)EventName::VIEW_TAB_BEFORE_CONTENT(), $this, [
                             'request' => $this->request,
                             'entity' => $options['entity'],
                             'options' => [

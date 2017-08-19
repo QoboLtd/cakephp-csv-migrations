@@ -1,5 +1,6 @@
 <?php
 use Cake\Event\Event;
+use CsvMigrations\Event\EventName;
 
 foreach ($entities as $entity) {
     $menu = [];
@@ -78,7 +79,7 @@ foreach ($entities as $entity) {
     ];
 
     // broadcast menu event
-    $event = new Event('CsvMigrations.Index.actionsMenu.beforeRender', $this, [
+    $event = new Event((string)EventName::MENU_ACTIONS_ASSOCIATED(), $this, [
         'menu' => $menu,
         'user' => $user,
         'type' => 'actions',

@@ -1,0 +1,7 @@
+FIELD NAME,FIELD TYPE,REQUIRED,NOT SEARCHABLE,UNIQUE
+id,uuid
+name,string,1
+follow_up_date,reminder
+assigned_to,related(Users)
+created,datetime
+modified,datetime

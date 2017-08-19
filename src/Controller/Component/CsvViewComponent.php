@@ -130,8 +130,8 @@ class CsvViewComponent extends Component
     {
         $result = [];
 
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $this->request->controller, $this->request->action);
-        $result = $mc->parse()->items;
+        $config = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $this->request->controller, $this->request->action);
+        $result = $config->parse()->items;
 
         list($plugin, $model) = pluginSplit($this->_tableInstance->registryAlias());
         /*

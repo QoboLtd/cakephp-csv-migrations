@@ -1,3 +1,6 @@
 FIELD NAME,FIELD TYPE,REQUIRED,NOT SEARCHABLE,UNIQUE
 id,uuid
 name,string,1
+status,list(article_statuses)
+author,related(Users)
+category,related(Categories)

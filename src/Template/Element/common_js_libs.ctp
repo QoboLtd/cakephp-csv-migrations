@@ -1,7 +1,6 @@
 <?php
 use Cake\Core\Configure;
 
-//@TODO: merge the stuff in one scriptBlock, not dozens;
 echo $this->Html->css(
     [
         'AdminLTE./plugins/iCheck/all',

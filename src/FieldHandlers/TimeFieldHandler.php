@@ -78,7 +78,7 @@ class TimeFieldHandler extends BaseTimeFieldHandler
                         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
                         'CsvMigrations.timepicker.init'
                     ],
-                    'block' => 'scriptBotton'
+                    'block' => 'scriptBottom'
                 ],
                 [
                     'type' => 'css',

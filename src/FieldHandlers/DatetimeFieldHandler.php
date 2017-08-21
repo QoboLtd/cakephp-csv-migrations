@@ -74,7 +74,7 @@ class DatetimeFieldHandler extends BaseTimeFieldHandler
                         'AdminLTE./plugins/daterangepicker/daterangepicker',
                         'CsvMigrations.datetimepicker.init'
                     ],
-                    'block' => 'scriptBotton'
+                    'block' => 'scriptBottom'
                 ],
                 [
                     'type' => 'css',

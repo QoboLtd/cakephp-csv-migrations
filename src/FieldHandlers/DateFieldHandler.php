@@ -80,7 +80,7 @@ class DateFieldHandler extends BaseTimeFieldHandler
                 [
                     'type' => 'script',
                     'content' => 'AdminLTE./plugins/datepicker/bootstrap-datepicker',
-                    'block' => 'scriptBotton'
+                    'block' => 'scriptBottom'
                 ],
                 [
                     'type' => 'css',

@@ -20,13 +20,13 @@ echo $this->Html->css(
 
 echo $this->Html->scriptBlock(
     'api_options = ' . json_encode(Configure::read('CsvMigrations.api')) . ';',
-    ['block' => 'scriptBotton']
+    ['block' => 'scriptBottom']
 );
 
 $fileInputOptions = Configure::read('CsvMigrations.BootstrapFileInput');
 echo $this->Html->scriptBlock(
     'fileInputOptions = ' . json_encode($fileInputOptions) . ';',
-    ['block' => 'scriptBotton']
+    ['block' => 'scriptBottom']
 );
 
 echo $this->Html->script(
@@ -52,7 +52,7 @@ echo $this->Html->script(
         'CsvMigrations.plugin',
     ],
     [
-        'block' => 'scriptBotton'
+        'block' => 'scriptBottom'
     ]
 );
 
@@ -63,5 +63,5 @@ echo $this->Html->scriptBlock(
             Configure::read('CsvMigrations.api')
         )
     ) . ');',
-    ['block' => 'scriptBotton']
+    ['block' => 'scriptBottom']
 );

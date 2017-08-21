@@ -18,7 +18,7 @@ echo $this->Html->script(
         'CsvMigrations.importer'
     ],
     [
-        'block' => 'scriptBotton'
+        'block' => 'scriptBottom'
     ]
 );
 
@@ -34,7 +34,7 @@ $params = [
 ];
 echo $this->Html->scriptBlock(
     '$("#progress-table").importer(' . json_encode($params) . ');',
-    ['block' => 'scriptBotton']
+    ['block' => 'scriptBottom']
 );
 
 $totalRows = ImportUtility::getRowsCount($import->get('filename'));

@@ -15,7 +15,7 @@ echo $this->Html->script(
         'CsvMigrations.view-index'
     ],
     [
-        'block' => 'scriptBotton'
+        'block' => 'scriptBottom'
     ]
 );
 echo $this->Html->scriptBlock(
@@ -33,7 +33,7 @@ echo $this->Html->scriptBlock(
         format: \'datatables\',
         state_duration: ' . (int)(Configure::read('Session.timeout') * 60) . '
     });',
-    ['block' => 'scriptBotton']
+    ['block' => 'scriptBottom']
 );
 
 $defaultOptions = [

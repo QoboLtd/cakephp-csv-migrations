@@ -15,7 +15,7 @@ echo $this->Html->script(
         'Translations.translation'
     ],
     [
-        'block' => 'scriptBotton'
+        'block' => 'scriptBottom'
     ]
 );
 
@@ -248,7 +248,7 @@ echo $this->element('CsvMigrations.common_js_libs');
                 'AdminLTE./plugins/datatables/dataTables.bootstrap.min',
             ],
             [
-                'block' => 'scriptBotton'
+                'block' => 'scriptBottom'
             ]
         );
         echo $this->Html->scriptBlock(
@@ -260,7 +260,7 @@ echo $this->element('CsvMigrations.common_js_libs');
                 }
             ',
             [
-                'block' => 'scriptBotton'
+                'block' => 'scriptBottom'
             ]
         );
     ?>
@@ -339,7 +339,7 @@ echo $this->element('CsvMigrations.common_js_libs');
                                     paging: true,
                                     searching: false
                                 });',
-                                ['block' => 'scriptBotton']
+                                ['block' => 'scriptBottom']
                             );
                         }
                         ?>

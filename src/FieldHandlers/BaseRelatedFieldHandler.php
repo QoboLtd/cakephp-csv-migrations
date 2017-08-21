@@ -214,7 +214,7 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
                         'AdminLTE./plugins/select2/select2.full.min',
                         'CsvMigrations.select2.init'
                     ],
-                    'block' => 'scriptBotton'
+                    'block' => 'scriptBottom'
                 ],
                 [
                     'type' => 'scriptBlock',
@@ -224,7 +224,7 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
                             Configure::read('CsvMigrations.api')
                         )
                     ) . ');',
-                    'block' => 'scriptBotton'
+                    'block' => 'scriptBottom'
                 ],
                 [
                     'type' => 'css',

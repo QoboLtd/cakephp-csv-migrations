@@ -5,7 +5,7 @@ use Cake\Core\Configure;
 echo $this->Html->css(
     [
         'AdminLTE./plugins/iCheck/all',
-        'AdminLTE./plugins/daterangepicker/daterangepicker-bs3',
+        'AdminLTE./plugins/daterangepicker/daterangepicker',
         'AdminLTE./plugins/datepicker/datepicker3',
         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
         'AdminLTE./plugins/select2/select2.min',

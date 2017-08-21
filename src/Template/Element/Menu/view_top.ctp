@@ -61,17 +61,6 @@ $menu[] = [
     ))
 ];
 
-// broadcast menu event
-$event = new Event('CsvMigrations.View.topMenu.beforeRender', $this, [
-    'menu' => [],
-    'user' => $user
-]);
-$this->eventManager()->dispatch($event);
-
-$result = $event->result;
-
-$menu = array_merge($menu, $result);
-
 $event = new Event((string)EventName::MENU_TOP_VIEW(), $this, [
     'menu' => $menu,
     'user' => $user

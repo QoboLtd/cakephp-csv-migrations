@@ -1,17 +1,17 @@
 <?php
 use Cake\Core\Configure;
 
-//@TODO: merge the stuff in one scriptBlock, not dozens;
 echo $this->Html->css(
     [
         'AdminLTE./plugins/iCheck/all',
-        'AdminLTE./plugins/daterangepicker/daterangepicker-bs3',
+        'AdminLTE./plugins/daterangepicker/daterangepicker',
         'AdminLTE./plugins/datepicker/datepicker3',
         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
         'AdminLTE./plugins/select2/select2.min',
         'CsvMigrations.fileinput.min',
-        'CsvMigrations.select2-bootstrap.min',
-        'CsvMigrations.style'
+        'CsvMigrations.style',
+        'Qobo/Utils.select2-bootstrap.min',
+        'Qobo/Utils.select2-style'
     ],
     [
         'block' => 'css'

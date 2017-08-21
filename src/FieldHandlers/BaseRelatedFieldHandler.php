@@ -230,8 +230,8 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
                     'type' => 'css',
                     'content' => [
                         'AdminLTE./plugins/select2/select2.min',
-                        'CsvMigrations.select2-bootstrap.min',
-                        'CsvMigrations.style'
+                        'Qobo/Utils.select2-bootstrap.min',
+                        'Qobo/Utils.select2-style'
                     ],
                     'block' => 'css'
                 ]

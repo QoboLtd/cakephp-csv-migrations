@@ -78,7 +78,7 @@ class DatetimeFieldHandler extends BaseTimeFieldHandler
                 ],
                 [
                     'type' => 'css',
-                    'content' => 'AdminLTE./plugins/daterangepicker/daterangepicker-bs3',
+                    'content' => 'AdminLTE./plugins/daterangepicker/daterangepicker',
                     'block' => 'css'
                 ]
             ]

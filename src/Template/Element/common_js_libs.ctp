@@ -10,8 +10,9 @@ echo $this->Html->css(
         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
         'AdminLTE./plugins/select2/select2.min',
         'CsvMigrations.fileinput.min',
-        'CsvMigrations.select2-bootstrap.min',
-        'CsvMigrations.style'
+        'CsvMigrations.style',
+        'Qobo/Utils.select2-bootstrap.min',
+        'Qobo/Utils.select2-style'
     ],
     [
         'block' => 'css'

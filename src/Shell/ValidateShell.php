@@ -182,7 +182,7 @@ class ValidateShell extends Shell
         }
         $listItems = [];
         try {
-            $mc = new ModuleConfig(ConfigType::LIST(), $module, $list);
+            $mc = new ModuleConfig(ConfigType::LISTS(), $module, $list);
             $listItems = $mc->parse()->items;
         } catch (Exception $e) {
             // We don't care about the specifics of the failure

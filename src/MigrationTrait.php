@@ -5,6 +5,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\FieldHandlers\CsvField;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility;
 
@@ -69,7 +70,7 @@ trait MigrationTrait
             $moduleName = App::shortName(get_class($this), 'Model/Table', 'Table');
             list(, $moduleName) = pluginSplit($moduleName);
 
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $moduleName);
+            $mc = new ModuleConfig(ConfigType::MIGRATION(), $moduleName);
             $result = (array)json_decode(json_encode($mc->parse()), true);
             if (!empty($result)) {
                 $this->_fieldDefinitions = $result;
@@ -255,7 +256,7 @@ trait MigrationTrait
             return $result;
         }
         foreach ($modules as $module) {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
+            $mc = new ModuleConfig(ConfigType::MIGRATION(), $module);
             $config = (array)json_decode(json_encode($mc->parse()), true);
 
             if (empty($config)) {
@@ -305,7 +306,7 @@ trait MigrationTrait
             return $result;
         }
         foreach ($modules as $module) {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_REPORTS, $module);
+            $mc = new ModuleConfig(ConfigType::REPORTS(), $module);
             $report = (array)json_decode(json_encode($mc->parse()), true);
 
             if (empty($report)) {

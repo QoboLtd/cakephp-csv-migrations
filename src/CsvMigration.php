@@ -11,6 +11,7 @@ use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use Exception;
 use Migrations\AbstractMigration;
 use Migrations\Table;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 /**
@@ -97,7 +98,7 @@ class CsvMigration extends AbstractMigration
     protected function _handleCsv()
     {
         $tableName = Inflector::pluralize(Inflector::classify($this->_table->getName()));
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $tableName);
+        $mc = new ModuleConfig(ConfigType::MIGRATION(), $tableName);
         $csvData = (array)json_decode(json_encode($mc->parse()), true);
         $csvData = array_merge($csvData, $this->_requiredFields);
 

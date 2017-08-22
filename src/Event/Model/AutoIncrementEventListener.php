@@ -7,6 +7,7 @@ use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Utility\Inflector;
 use CsvMigrations\Table;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class AutoIncrementEventListener implements EventListenerInterface
@@ -85,7 +86,7 @@ class AutoIncrementEventListener implements EventListenerInterface
         $result = [];
 
         $moduleName = Inflector::camelize($table->table());
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, $moduleName);
+        $mc = new ModuleConfig(ConfigType::FIELDS(), $moduleName);
         $config = (array)json_decode(json_encode($mc->parse()), true);
 
         if (empty($config)) {

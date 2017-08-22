@@ -14,6 +14,7 @@ use CsvMigrations\Event\EventName;
 use CsvMigrations\MigrationTrait;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class ViewViewTabsListener implements EventListenerInterface
@@ -424,7 +425,7 @@ class ViewViewTabsListener implements EventListenerInterface
             return $result;
         }
 
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $tableName, $action);
+        $mc = new ModuleConfig(ConfigType::VIEW(), $tableName, $action);
         $csvFields = $mc->parse()->items;
 
         if (empty($csvFields)) {

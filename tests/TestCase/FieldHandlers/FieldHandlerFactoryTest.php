@@ -7,6 +7,7 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 /**
@@ -81,7 +82,7 @@ class FieldHandlerFactoryTest extends TestCase
         $dir = dirname(__DIR__) . DS . '..' . DS . 'data' . DS . 'Modules' . DS;
         Configure::write('CsvMigrations.modules.path', $dir);
 
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $this->tableName);
+        $mc = new ModuleConfig(ConfigType::MIGRATION(), $this->tableName);
         $this->csvData = (array)json_decode(json_encode($mc->parse()), true);
 
         $config = TableRegistry::exists($this->tableName)

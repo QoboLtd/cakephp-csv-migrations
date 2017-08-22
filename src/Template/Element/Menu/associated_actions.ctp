@@ -45,7 +45,8 @@ $menu[] = [
     ]),
     'url' => $url,
     'label' => __('Edit'),
-    'label' => 'pencil',
+    'icon' => 'pencil',
+    'type' => 'link_button',
     'order' => 20,
 ];
 
@@ -108,7 +109,8 @@ if (isset($options['associated']['type']) && in_array($options['associated']['ty
 // broadcast menu event
 $event = new Event((string)EventName::MENU_ACTIONS_ASSOCIATED(), $this, [
     'menu' => $menu,
-    'user' => $user
+    'user' => $user,
+    'type' => 'actions',
 ]);
 $this->eventManager()->dispatch($event);
 

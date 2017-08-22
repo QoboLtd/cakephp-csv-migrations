@@ -20,7 +20,7 @@ $menu[] = [
     'url' => $url,
     'label' => __('Move up'),
     'icon' => 'arrow-up',
-    'type' => 'link_button',
+    'type' => 'postlink_button',
     'order' => 10,
 ];
 
@@ -40,7 +40,7 @@ $menu[] = [
     'url' => $url,
     'label' => __('Move down'),
     'icon' => 'arrow-down',
-    'type' => 'link_button',
+    'type' => 'postlink_button',
     'order' => 20,
 ];
 
@@ -56,7 +56,8 @@ $menu[] = [
     ]),
     'url' => $url,
     'label' => __('Edit'),
-    'label' => 'pencil',
+    'icon' => 'pencil',
+    'type' => 'link_button',
     'order' => 30,
 ];
 
@@ -84,7 +85,8 @@ $menu[] = [
 // broadcast menu event
 $event = new Event((string)EventName::MENU_ACTIONS_DB_LIST_ITEMS_INDEX(), $this, [
     'menu' => $menu,
-    'user' => $user
+    'user' => $user,
+    'type' => 'actions',
 ]);
 $this->EventManager()->dispatch($event);
 

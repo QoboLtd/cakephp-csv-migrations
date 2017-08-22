@@ -16,6 +16,7 @@ use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\FileUploadsUtils;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 abstract class BaseActionListener implements EventListenerInterface
@@ -96,7 +97,7 @@ abstract class BaseActionListener implements EventListenerInterface
      */
     protected function _getMigrationFields(Request $request)
     {
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $request->controller);
+        $mc = new ModuleConfig(ConfigType::MIGRATION(), $request->controller);
         $result = json_decode(json_encode($mc->parse()), true);
 
         return $result;
@@ -117,7 +118,7 @@ abstract class BaseActionListener implements EventListenerInterface
             $action = $request->action;
         }
 
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $controller, $action);
+        $mc = new ModuleConfig(ConfigType::VIEW(), $controller, $action);
         $result = $mc->parse()->items;
 
         return $result;

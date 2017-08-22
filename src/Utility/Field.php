@@ -5,6 +5,7 @@ use Cake\Core\App;
 use Cake\ORM\Table;
 use CsvMigrations\FieldHandlers\CsvField;
 use Exception;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class Field
@@ -19,7 +20,7 @@ class Field
     {
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
-        $config = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, $moduleName);
+        $config = new ModuleConfig(ConfigType::MODULE(), $moduleName);
         $parsed = $config->parse();
 
         return $parsed->table->lookup_fields ?: [];
@@ -35,7 +36,7 @@ class Field
     {
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
-        $config = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $moduleName);
+        $config = new ModuleConfig(ConfigType::MIGRATION(), $moduleName);
         $parsed = json_decode(json_encode($config->parse()), true);
 
         if (empty($parsed)) {
@@ -65,7 +66,7 @@ class Field
             list($moduleName, $listName) = explode('.', $listName, 2);
         }
 
-        $config = new ModuleConfig(ModuleConfig::CONFIG_TYPE_LIST, $moduleName, $listName);
+        $config = new ModuleConfig(ConfigType::LISTS(), $moduleName, $listName);
         try {
             $items = $config->parse()->items;
         } catch (Exception $e) {

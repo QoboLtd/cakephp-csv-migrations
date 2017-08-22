@@ -4,6 +4,7 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\SublistFieldHandler;
 use PHPUnit_Framework_TestCase;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class SublistFieldHandlerTest extends PHPUnit_Framework_TestCase
@@ -42,7 +43,7 @@ class SublistFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertContains('data-option-values', $result);
         $this->assertContains('data-selectors', $result);
 
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_LIST, null, 'countries');
+        $mc = new ModuleConfig(ConfigType::LISTS(), null, 'countries');
         foreach ($mc->parse()->items as $item) {
             if ((bool)$item->inactive) {
                 $this->assertNotContains(h('"' . $item->value . '"'), $result);

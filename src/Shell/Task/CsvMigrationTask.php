@@ -6,6 +6,7 @@ use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
 use Migrations\Shell\Task\MigrationTask;
 use Phinx\Util\Util;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 /**
@@ -126,7 +127,7 @@ class CsvMigrationTask extends MigrationTask
     {
         $tableName = Inflector::camelize($tableName);
 
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $tableName);
+        $mc = new ModuleConfig(ConfigType::MIGRATION(), $tableName);
         $path = $mc->find();
 
         // Unit time stamp to YYYYMMDDhhmmss

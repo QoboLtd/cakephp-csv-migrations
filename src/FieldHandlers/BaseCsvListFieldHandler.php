@@ -6,6 +6,7 @@ use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\BaseListFieldHandler;
 use Exception;
 use InvalidArgumentException;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 /**
@@ -131,7 +132,7 @@ abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
         }
         $listData = [];
         try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_LIST, $module, $listName);
+            $mc = new ModuleConfig(ConfigType::LISTS(), $module, $listName);
             $listData = $mc->parse()->items;
         } catch (Exception $e) {
             /* Do nothing.

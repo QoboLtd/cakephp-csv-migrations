@@ -6,6 +6,7 @@ echo $this->Form->input($name, [
     'autocomplete' => 'off',
     'data-date-format' => 'yyyy-mm-dd',
     'data-date-autoclose' => true,
+    'data-date-week-start' => 1,
     'required' => (bool)$required,
     'value' => $value,
     'templates' => [

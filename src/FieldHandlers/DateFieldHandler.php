@@ -64,6 +64,7 @@ class DateFieldHandler extends BaseTimeFieldHandler
                 'autocomplete' => 'off',
                 'data-date-format' => static::JS_DATE_FORMAT,
                 'data-date-autoclose' => true,
+                'data-date-week-start' => 1,
                 'label' => false,
                 'templates' => [
                     'input' => vsprintf($this->_templates['input'], [

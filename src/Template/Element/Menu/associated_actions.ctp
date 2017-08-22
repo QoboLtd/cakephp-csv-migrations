@@ -25,7 +25,11 @@ $menu[] = [
     'html' => $this->Html->link('<i class="fa fa-eye"></i>', $url, [
         'title' => __('View'), 'class' => 'btn btn-default btn-sm', 'escape' => false
     ]),
-    'url' => $url
+    'url' => $url,
+    'label' => __('View'),
+    'icon' => 'eye',
+    'type' => 'link_button',
+    'order' => 10,
 ];
 
 $url = [
@@ -39,7 +43,10 @@ $menu[] = [
     'html' => $this->Html->link('<i class="fa fa-pencil"></i>', $url, [
         'title' => __('Edit'), 'class' => 'btn btn-default btn-sm', 'escape' => false
     ]),
-    'url' => $url
+    'url' => $url,
+    'label' => __('Edit'),
+    'label' => 'pencil',
+    'order' => 20,
 ];
 
 $url = [
@@ -65,7 +72,20 @@ $menu[] = [
         'class' => 'btn btn-default btn-sm',
         'escape' => false
     ]),
-    'url' => $url
+    'url' => $url,
+    'label' => __('Delete'),
+    'icon' => 'trash',
+    'type' => 'postlink_button',
+    'order' => 30,
+    'confirmMsg' => __(
+        'Are you sure you want to delete {0}?',
+        $fhf->renderValue(
+            $options['associated']['className'],
+            $options['associated']['displayField'],
+            $options['associated']['entity']->{$options['associated']['displayField']},
+            ['renderAs' => 'plain']
+        )
+    ),
 ];
 
 if (isset($options['associated']['type']) && in_array($options['associated']['type'], ['manyToMany'])) {

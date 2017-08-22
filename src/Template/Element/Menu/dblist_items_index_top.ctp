@@ -11,7 +11,10 @@ $menu[] = [
         $url,
         ['title' => __d('CsvMigrations', 'Add'), 'escape' => false, 'class' => 'btn btn-default']
     ),
-    'url' => $url
+    'url' => $url,
+    'label' => __d('CsvMigrations', 'Add'),
+    'label' => 'plus',
+    'order' => 10,
 ];
 
 // broadcast menu event

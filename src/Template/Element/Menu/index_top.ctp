@@ -9,7 +9,11 @@ $menu = [
             ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'import'],
             ['escape' => false, 'title' => __('Import Data'), 'class' => 'btn btn-default']
         ),
-        'url' => ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'import']
+        'url' => ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'import'],
+        'icon' => 'upload',
+        'label' => __('Import'),
+        'type' => 'link_button',
+        'order' => 10,
     ],
     [
         'html' => $this->Html->link(
@@ -17,7 +21,11 @@ $menu = [
             ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'add'],
             ['escape' => false, 'title' => __('Add'), 'class' => 'btn btn-default']
         ),
-        'url' => ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'add']
+        'url' => ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'add'],
+        'icon' => 'plus',
+        'label' => __('Add'),
+        'type' => 'link_button',
+        'order' => 20,
     ]
 ];
 

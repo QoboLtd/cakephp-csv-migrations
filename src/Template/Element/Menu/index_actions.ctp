@@ -19,9 +19,8 @@ foreach ($entities as $entity) {
         'url' => $url,
         'icon' => 'eye',
         'label' => __('View'),
-        'noLabel' => true,
-        'class' => 'btn btn-default',
         'type' => 'link_button',
+        'order' => 10,
     ];
 
     $url = [
@@ -38,9 +37,8 @@ foreach ($entities as $entity) {
         'url' => $url,
         'icon' => 'pencil',
         'label' => __('Edit'),
-        'noLabel' => true,
-        'class' => 'btn btn-default',
         'type' => 'link_button',
+        'order' => 20,
     ];
 
     $url = [
@@ -74,7 +72,8 @@ foreach ($entities as $entity) {
             $entity->has($displayField) && !empty($entity->{$displayField}) ?
                     strip_tags($entity->{$displayField}) :
                     'this record'
-        )
+        ),
+        'order' => 30,
 
     ];
 

@@ -15,9 +15,10 @@ $menu[] = [
         'title' => __('View'), 'class' => 'btn btn-default', 'escape' => false
     ]),
     'url' => $url,
+    'icon' => 'list-alt',
     'label' => __('View'),
-    'label' => 'list-alt',
-    'order' => 10,
+    'type' => 'link_button',
+    'order' => 10
 ];
 
 $url = [
@@ -31,9 +32,10 @@ $menu[] = [
         'title' => __('Edit'), 'class' => 'btn btn-default', 'escape' => false
     ]),
     'url' => $url,
+    'icon' => 'pencil',
     'label' => __('Edit'),
-    'label' => 'pencil',
-    'order' => 20,
+    'type' => 'link_button',
+    'order' => 20
 ];
 
 $url = [
@@ -60,7 +62,8 @@ $menu[] = [
 // broadcast menu event
 $event = new Event((string)EventName::MENU_ACTIONS_DB_LISTS_INDEX(), $this, [
     'menu' => $menu,
-    'user' => $user
+    'user' => $user,
+    'type' => 'actions',
 ]);
 $this->EventManager()->dispatch($event);
 

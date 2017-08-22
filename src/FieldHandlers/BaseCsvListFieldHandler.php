@@ -79,6 +79,7 @@ abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
             '{{name}}',
             $this->_getSelectOptions($options['fieldDefinitions']->getLimit()),
             [
+                'class' => 'form-control',
                 'label' => false
             ]
         );

@@ -38,6 +38,11 @@ echo $this->Html->scriptBlock(
 );
 
 $totalRows = ImportUtility::getRowsCount($import->get('filename'));
+// Fix the possible division by zero on empty files
+// or files with just the header
+if ($totalRows <= 0) {
+    $totalRows = 1;
+}
 $percent = round(($importCount / $totalRows) * 100, 1);
 $originalLink = $this->Html->link('Original', [
     'plugin' => $this->plugin,
@@ -51,6 +56,10 @@ $totalRecords = 0;
 $processedLink = 'Processed';
 if (file_exists($processedFile)) {
     $totalRecords = ImportUtility::getRowsCount($processedFile);
+    // Avoid division by zero errors
+    if ($totalRecords <= 0) {
+        $totalRecords = 1;
+    }
     $percent = round(($importCount / $totalRecords) * 100, 1);
     $processedLink = $this->Html->link('Processed', [
         'plugin' => $this->plugin,

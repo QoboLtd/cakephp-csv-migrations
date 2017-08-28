@@ -20,6 +20,7 @@ trait ImportTrait
 
         // AJAX logic
         if ($this->request->accepts('application/json')) { // Import/progress.ctp
+            $this->viewBuilder()->className('Json');
             $utility = new ImportUtility($this->{$this->name}, $this->request, $this->Flash);
             $columns = ['row_number', 'status', 'status_message'];
             $query = $utility->getImportResults($entity, $columns);

@@ -4,10 +4,7 @@
     "type": "cakephp-plugin",
     "license": "GPL-2.0",
     "require": {
-        "admad/cakephp-jwt-auth": "^2.0",
-        "alt3/cakephp-swagger": "^1.0",
         "eluceo/ical": "^0.11.0",
-        "friendsofcake/crud": "^4.3",
         "qobo/cakephp-translations": "^6.0",
         "qobo/cakephp-utils": "^5.0",
         "symfony/expression-language": "^3.1"

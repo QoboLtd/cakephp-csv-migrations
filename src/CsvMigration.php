@@ -68,14 +68,14 @@ class CsvMigration extends AbstractMigration
         'created_by' => [
             'name' => 'created_by',
             'type' => 'related(Users)',
-            'required' => true,
+            'required' => false,
             'non-searchable' => false,
             'unique' => false
         ],
         'modified_by' => [
             'name' => 'modified_by',
             'type' => 'related(Users)',
-            'required' => true,
+            'required' => false,
             'non-searchable' => false,
             'unique' => false
         ],

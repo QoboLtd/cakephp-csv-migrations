@@ -75,6 +75,19 @@ class Table extends BaseTable
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
+    {
+        $user = $this->getCurrentUser();
+
+        $entity->set('modified_by', $user['id']);
+        if ($entity->isNew()) {
+            $entity->set('created_by', $user['id']);
+        }
+    }
+
+    /**
      * afterSave hook
      *
      * @param Cake\Event $event from the parent afterSave

@@ -34,7 +34,7 @@ class EventName extends Enum
     const MENU_TOP_INDEX = 'CsvMigrations.Index.topMenu.beforeRender';
     const MENU_TOP_VIEW = 'CsvMigrations.View.topMenu.beforeRender';
     // CsvMigrations Table events
-    const MODEL_BEFORE_SAVE = 'CsvMigrations.Model.afterSave';
+    const MODEL_AFTER_SAVE = 'CsvMigrations.Model.afterSave';
     // CsvMigrations Views events
     const VIEW_BODY_BOTTOM = 'View.View.Body.Bottom';
     const VIEW_TABS_LIST = 'CsvMigrations.View.View.TabsList';

@@ -85,7 +85,7 @@ class Table extends BaseTable
     public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options)
     {
         $ev = new Event(
-            (string)EventName::MODEL_BEFORE_SAVE(),
+            (string)EventName::MODEL_AFTER_SAVE(),
             $this,
             ['entity' => $entity, 'options' => $options]
         );

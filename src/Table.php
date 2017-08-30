@@ -81,6 +81,10 @@ class Table extends BaseTable
     {
         $user = $this->getCurrentUser();
 
+        if (empty($user['id'])) {
+            return;
+        }
+
         $entity->set('modified_by', $user['id']);
         if ($entity->isNew()) {
             $entity->set('created_by', $user['id']);

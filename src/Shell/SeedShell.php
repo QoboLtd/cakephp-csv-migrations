@@ -59,7 +59,7 @@ class SeedShell extends Shell
         $parser->addOption('numberofrecords', [
             'short' => 'n',
             'help' => 'Number of fake records to create.',
-            'default' => 5
+            'default' => 20
         ]);
 
         return $parser;
@@ -167,20 +167,17 @@ class SeedShell extends Shell
                 $value = $faker->unique()->phoneNumber;
                 break;
             case 'decimal':
-            case 'money':
                 $value = $faker->unique()->randomFloat();
                 break;
             case 'integer':
                 $value = $faker->unique()->numberBetween();
                 break;
-            case 'image':
-                $value = $faker->unique()->imageUrl();
-                break;
             case 'email':
                 $value = $faker->unique()->email;
                 break;
             case 'datetime':
-                $value = $faker->unique()->dateTime;
+            case 'reminder':
+                $value = $faker->unique()->dateTime('yyyy-MM-dd HH:mm:ss');
                 break;
             case 'date':
                 $value = $faker->unique()->date('yyyy-MM-dd');

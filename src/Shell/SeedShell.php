@@ -7,6 +7,7 @@ use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use CsvMigrations\MigrationTrait;
 use Faker\Factory;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class SeedShell extends Shell
@@ -242,7 +243,7 @@ class SeedShell extends Shell
     {
         $listData = [];
         try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_LIST, $module, $listName);
+            $mc = new ModuleConfig( ConfigType::LISTS(), $module, $listName);
             $listData = $mc->parse()->items;
         } catch (\Exception $e) {
         }
@@ -308,7 +309,7 @@ class SeedShell extends Shell
         $csvFiles = [];
 
         foreach ($modules as $module) {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
+            $mc = new ModuleConfig( ConfigType::MIGRATION(), $module);
             $config = (array)json_decode(json_encode($mc->parse()), true);
 
             if (empty($config)) {

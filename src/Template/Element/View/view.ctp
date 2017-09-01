@@ -270,7 +270,7 @@ echo $this->element('CsvMigrations.common_js_libs');
             <?php $active = true; ?>
             <?php foreach ($tabs as $tab) : ?>
                 <li role="presentation" class="<?= $active ? 'active' : ''?>">
-                    <a href="#<?= $tab['containerId']?>" role="tab" data-toggle="tab"><?= $tab['label']?></a>
+                    <?= $this->Html->link($tab['label'], "#{$tab['containerId']}", ['role' => 'tab', 'data-toggle' => "tab", 'escape' => false]);?>
                 </li>
                 <?php $active = false; ?>
             <?php endforeach; ?>
@@ -363,32 +363,6 @@ $event = new Event(
     ['request' => $this->request, 'options' => $options]
 );
 $this->eventManager()->dispatch($event);
-echo $event->result;
 
-$modalBody = $this->requestAction([
-            'plugin' => 'Translations',
-            'controller' => 'Translations',
-            'action' => 'add'
-        ], [
-            'query' => [
-                'embedded' => 'Translations',
-                'foreign_key' => 'object_foreign_key',
-                'modal_id' => 'translations_translate_id_modal',
-            ]
-        ]);
+echo $event->result;
 ?>
-<div id="translations_translate_id_modal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h2 class="modal-title"><?= __('Manage Translations') ?></h2>
-            </div> <!-- modal-header -->
-            <div class="modal-body">
-                <?= $modalBody ?>
-            </div>
-        </div> <!-- modal-content -->
-    </div> <!-- modal-dialog -->
-</div> <!-- modal window -->

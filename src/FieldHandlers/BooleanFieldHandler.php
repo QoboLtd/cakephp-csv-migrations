@@ -105,7 +105,7 @@ class BooleanFieldHandler extends BaseSimpleFieldHandler
                         'AdminLTE./plugins/iCheck/icheck.min',
                         'CsvMigrations.icheck.init'
                     ],
-                    'block' => 'scriptBotton'
+                    'block' => 'scriptBottom'
                 ],
                 [
                     'type' => 'css',

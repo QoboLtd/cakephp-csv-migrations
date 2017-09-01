@@ -1,5 +1,6 @@
 <?php
 use Cake\Event\Event;
+use CsvMigrations\Event\EventName;
 
 $menu = [];
 
@@ -16,7 +17,11 @@ $menu[] = [
         'class' => 'btn btn-default',
         'escape' => false
     ]),
-    'url' => $url
+    'url' => $url,
+    'label' => __('Move up'),
+    'icon' => 'arrow-up',
+    'type' => 'postlink_button',
+    'order' => 10,
 ];
 
 $url = [
@@ -32,7 +37,11 @@ $menu[] = [
         'class' => 'btn btn-default',
         'escape' => false
     ]),
-    'url' => $url
+    'url' => $url,
+    'label' => __('Move down'),
+    'icon' => 'arrow-down',
+    'type' => 'postlink_button',
+    'order' => 20,
 ];
 
 $url = [
@@ -45,7 +54,11 @@ $menu[] = [
     'html' => $this->Html->link('<i class="fa fa-pencil"></i>', $url, [
         'title' => __('Edit'), 'class' => 'btn btn-default', 'escape' => false
     ]),
-    'url' => $url
+    'url' => $url,
+    'label' => __('Edit'),
+    'icon' => 'pencil',
+    'type' => 'link_button',
+    'order' => 30,
 ];
 
 $url = [
@@ -61,13 +74,19 @@ $menu[] = [
         'escape' => false,
         'confirm' => __d('CsvMigrations', 'Are you sure you want to delete {0}?', $entity->name)
     ]),
-    'url' => $url
+    'url' => $url,
+    'label' => __('Delete'),
+    'icon' => 'trash',
+    'type' => 'postlink_button',
+    'order' => 40,
+    'confirmMsg' => __d('CsvMigrations', 'Are you sure you want to delete {0}?', $entity->name)
 ];
 
 // broadcast menu event
-$event = new Event('CsvMigrations.Dblists.Index.actionsMenu.beforeRender', $this, [
+$event = new Event((string)EventName::MENU_ACTIONS_DB_LIST_ITEMS_INDEX(), $this, [
     'menu' => $menu,
-    'user' => $user
+    'user' => $user,
+    'type' => 'actions',
 ]);
 $this->EventManager()->dispatch($event);
 

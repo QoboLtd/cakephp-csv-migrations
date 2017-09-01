@@ -4,6 +4,7 @@ namespace CsvMigrations;
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 trait ConfigurationTrait
@@ -63,8 +64,8 @@ trait ConfigurationTrait
      */
     public function setConfig($tableName)
     {
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, Inflector::camelize($tableName));
-        $this->_config = (array)json_decode(json_encode($mc->parse()), true);
+        $config = new ModuleConfig(ConfigType::MODULE(), Inflector::camelize($tableName));
+        $this->_config = (array)json_decode(json_encode($config->parse()), true);
 
         // display field from configuration file
         if (isset($this->_config['table']['display_field']) && method_exists($this, 'displayField')) {

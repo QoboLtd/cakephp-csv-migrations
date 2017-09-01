@@ -1,10 +1,12 @@
 <?php
+use Cake\Core\Configure;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\CsvMigrationsUtils;
+use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 $fhf = new FieldHandlerFactory($this);
@@ -13,7 +15,7 @@ echo $this->Html->script(
         'Translations.translation'
     ],
     [
-        'block' => 'scriptBotton'
+        'block' => 'scriptBottom'
     ]
 );
 
@@ -92,7 +94,7 @@ if (empty($options['title'])) {
                 }
 
         ?>
-        <div class="box box-default">
+        <div class="box box-solid">
             <div class="box-header with-border">
                 <h3 class="box-title"><?= $panelName; ?></h3>
                 <div class="box-tools pull-right">
@@ -143,7 +145,7 @@ if (empty($options['title'])) {
                                 $renderOptions
                             );
                             $fieldName = $field['name'];
-                            $event = new Event('CsvMigrations.View.View.TranslationButton', $this, [
+                            $event = new Event((string)EventName::VIEW_TRANSLATION_BUTTON(), $this, [
                                 'model' => $tableName,
                                 'options' => [
                                     'record_id' => $options['entity']->id,
@@ -229,7 +231,7 @@ echo $this->element('CsvMigrations.common_js_libs');
 <div class="row associated-records">
     <div class="col-xs-12">
     <?php
-        $event = new Event('CsvMigrations.View.View.TabsList', $this, [
+        $event = new Event((string)EventName::VIEW_TABS_LIST(), $this, [
             'request' => $this->request,
             'entity' => $options['entity'],
             'user' => $user,
@@ -246,7 +248,7 @@ echo $this->element('CsvMigrations.common_js_libs');
                 'AdminLTE./plugins/datatables/dataTables.bootstrap.min',
             ],
             [
-                'block' => 'scriptBotton'
+                'block' => 'scriptBottom'
             ]
         );
         echo $this->Html->scriptBlock(
@@ -258,25 +260,28 @@ echo $this->element('CsvMigrations.common_js_libs');
                 }
             ',
             [
-                'block' => 'scriptBotton'
+                'block' => 'scriptBottom'
             ]
         );
     ?>
         <?php if (!empty($tabs)) : ?>
         <div class="nav-tabs-custom">
             <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
-            <?php foreach ($tabs as $k => $tab) :?>
-                <li role="presentation" class="<?= ($k == 0) ? 'active' : ''?>">
+            <?php $active = true; ?>
+            <?php foreach ($tabs as $tab) : ?>
+                <li role="presentation" class="<?= $active ? 'active' : ''?>">
                     <a href="#<?= $tab['containerId']?>" role="tab" data-toggle="tab"><?= $tab['label']?></a>
                 </li>
+                <?php $active = false; ?>
             <?php endforeach; ?>
             </ul>
 
             <div class="tab-content">
-                <?php foreach ($tabs as $k => $tab) :?>
-                    <div role="tabpanel" class="tab-pane <?= ($k == 0) ? 'active' : ''?>" id="<?= $tab['containerId']?>">
+                <?php $active = true; ?>
+                <?php foreach ($tabs as $tab) : ?>
+                    <div role="tabpanel" class="tab-pane <?= $active ? 'active' : ''?>" id="<?= $tab['containerId']?>">
                         <?php
-                        $beforeTabContentEvent = new Event('CsvMigrations.View.View.TabContent.beforeContent', $this, [
+                        $beforeTabContentEvent = new Event((string)EventName::VIEW_TAB_BEFORE_CONTENT(), $this, [
                             'request' => $this->request,
                             'entity' => $options['entity'],
                             'options' => [
@@ -299,7 +304,7 @@ echo $this->element('CsvMigrations.common_js_libs');
                             ]);
                         }
 
-                        $tabContentEvent = new Event('CsvMigrations.View.View.TabContent', $this, [
+                        $tabContentEvent = new Event((string)EventName::VIEW_TAB_CONTENT(), $this, [
                             'request' => $this->request,
                             'entity' => $options['entity'],
                             'options' => [
@@ -329,14 +334,17 @@ echo $this->element('CsvMigrations.common_js_libs');
                         if (!empty($content)) {
                             echo $this->Html->scriptBlock(
                                 '$(".' . $tab['containerId'] . '").DataTable({
-                                        "paging": true,
-                                        "searching": false
-                                    });',
-                                ['block' => 'scriptBotton']
+                                    stateSave: true,
+                                    stateDuration: ' . (int)(Configure::read('Session.timeout') * 60) . ',
+                                    paging: true,
+                                    searching: false
+                                });',
+                                ['block' => 'scriptBottom']
                             );
                         }
                         ?>
                     </div>
+                    <?php $active = false; ?>
                 <?php endforeach; ?>
             </div> <!-- .tab-content -->
         </div> <!-- .nav-tabs-custom -->
@@ -349,7 +357,11 @@ echo $this->element('CsvMigrations.common_js_libs');
 <?php endif;?>
 <?php
 // Event dispatcher for bottom section
-$event = new Event('View.View.Body.Bottom', $this, ['request' => $this->request, 'options' => $options]);
+$event = new Event(
+    (string)EventName::VIEW_BODY_BOTTOM(),
+    $this,
+    ['request' => $this->request, 'options' => $options]
+);
 $this->eventManager()->dispatch($event);
 echo $event->result;
 

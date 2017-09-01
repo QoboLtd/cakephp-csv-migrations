@@ -2,6 +2,11 @@
     padding-bottom: 10px;
 }
 
-.select2-container--bootstrap .select2-selection--single .select2-selection__rendered {
-    margin: 0;
+/*
+    Fix for datepicker hidding behind modals.
+    We can use zIndexOffset option, once cakephp-adminlte-theme plugin updates to the latest version of the library
+    @link http://bootstrap-datepicker.readthedocs.io/en/stable/options.html#zindexoffset
+*/
+.datepicker {
+    z-index: 1060 !important;
 }

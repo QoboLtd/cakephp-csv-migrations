@@ -27,16 +27,26 @@
          * @return {undefined}
          */
         init: function () {
-            // date range picker (used for datetime pickers)
-            $('[data-provide="datetimepicker"]').daterangepicker({
-                singleDatePicker: true,
-                showDropdowns: true,
-                timePicker: true,
-                drops: "down",
-                timePicker12Hour: false,
-                timePickerIncrement: 5,
-                format: "YYYY-MM-DD HH:mm",
-                startDate: moment().format("YYYY-MM-DD 10:00")
+            $('[data-provide="datetimepicker"]').each(function () {
+                var startDate = this.value;
+                if (!startDate) {
+                    startDate = moment().format("YYYY-MM-DD 10:00");
+                }
+
+                // date range picker (used for datetime pickers)
+                $(this).daterangepicker({
+                    singleDatePicker: true,
+                    showDropdowns: true,
+                    timePicker: true,
+                    drops: "down",
+                    timePicker24Hour: true,
+                    timePickerIncrement: 5,
+                    locale: {
+                        format: "YYYY-MM-DD HH:mm",
+                        firstDay: 1
+                    },
+                    startDate: startDate
+                });
             });
         }
     };

@@ -2,14 +2,15 @@
 namespace CsvMigrations;
 
 use ArrayObject;
+use Cake\Core\App;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table as BaseTable;
-use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
+use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldTrait;
 use CsvMigrations\MigrationTrait;
@@ -74,6 +75,23 @@ class Table extends BaseTable
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
+    {
+        $user = $this->getCurrentUser();
+
+        if (empty($user['id'])) {
+            return;
+        }
+
+        $entity->set('modified_by', $user['id']);
+        if ($entity->isNew()) {
+            $entity->set('created_by', $user['id']);
+        }
+    }
+
+    /**
      * afterSave hook
      *
      * @param Cake\Event $event from the parent afterSave
@@ -84,7 +102,7 @@ class Table extends BaseTable
     public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options)
     {
         $ev = new Event(
-            'CsvMigrations.Model.afterSave',
+            (string)EventName::MODEL_AFTER_SAVE(),
             $this,
             ['entity' => $entity, 'options' => $options]
         );
@@ -299,13 +317,6 @@ class Table extends BaseTable
      */
     protected function _currentTable()
     {
-        list($namespace, $alias) = namespaceSplit(get_class($this));
-        $alias = substr($alias, 0, -5);
-        list($plugin) = explode('\\', $namespace);
-        if ($plugin === 'App') {
-            return Inflector::camelize($alias);
-        }
-
-        return Inflector::camelize($plugin . '.' . $alias);
+        return App::shortName(get_class($this), 'Model/Table', 'Table');
     }
 }

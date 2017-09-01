@@ -16,6 +16,7 @@ Router::prefix('api', function ($routes) {
     $routes->extensions(['json']);
 
     $routes->resources('Articles');
+    $routes->resources('Leads');
 
     $routes->fallbacks('DashedRoute');
 });

@@ -7,6 +7,7 @@ use CsvMigrations\FieldHandlers\DecimalFieldHandler;
 use CsvMigrations\FieldHandlers\ListFieldHandler;
 use CsvMigrations\FieldHandlers\MoneyFieldHandler;
 use PHPUnit_Framework_TestCase;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class MoneyFieldHandlerTest extends PHPUnit_Framework_TestCase
@@ -55,7 +56,7 @@ class MoneyFieldHandlerTest extends PHPUnit_Framework_TestCase
 
         $result = $this->fh->renderInput(null, $options);
 
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_LIST, null, 'countries');
+        $mc = new ModuleConfig(ConfigType::LISTS(), null, 'countries');
         foreach ($mc->parse()->items as $item) {
             if ((bool)$item->inactive) {
                 $this->assertNotContains('value="' . $item->value . '"', $result);

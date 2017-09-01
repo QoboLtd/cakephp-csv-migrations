@@ -8,6 +8,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Crud\Controller\ControllerTrait;
 use CsvMigrations\CsvMigrationsUtils;
+use CsvMigrations\Event\EventName;
 use CsvMigrations\FileUploadsUtils;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
@@ -49,7 +50,7 @@ class AppController extends Controller
      *
      * @var array
      */
-    protected $_authConfig = [
+    protected $authConfig = [
         // non-persistent storage, for stateless authentication
         'storage' => 'Memory',
         'authenticate' => [
@@ -96,7 +97,7 @@ class AppController extends Controller
      */
     protected function _authentication()
     {
-        $this->loadComponent('Auth', $this->_authConfig);
+        $this->loadComponent('Auth', $this->authConfig);
 
         // set auth user from token
         $user = $this->Auth->getAuthenticate('ADmad/JwtAuth.Jwt')->getUser($this->request);
@@ -163,14 +164,14 @@ class AppController extends Controller
     public function view()
     {
         $this->Crud->on('beforeFind', function (Event $event) {
-            $ev = new Event('CsvMigrations.View.beforeFind', $this, [
+            $ev = new Event((string)EventName::API_VIEW_BEFORE_FIND(), $this, [
                 'query' => $event->subject()->query
             ]);
             $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('afterFind', function (Event $event) {
-            $ev = new Event('CsvMigrations.View.afterFind', $this, [
+            $ev = new Event((string)EventName::API_VIEW_AFTER_FIND(), $this, [
                 'entity' => $event->subject()->entity
             ]);
             $this->eventManager()->dispatch($ev);
@@ -187,21 +188,21 @@ class AppController extends Controller
     public function index()
     {
         $this->Crud->on('beforePaginate', function (Event $event) {
-            $ev = new Event('CsvMigrations.Index.beforePaginate', $this, [
+            $ev = new Event((string)EventName::API_INDEX_BEFORE_PAGINATE(), $this, [
                 'query' => $event->subject()->query
             ]);
             $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('afterPaginate', function (Event $event) {
-            $ev = new Event('CsvMigrations.Index.afterPaginate', $this, [
+            $ev = new Event((string)EventName::API_INDEX_AFTER_PAGINATE(), $this, [
                 'entities' => $event->subject()->entities
             ]);
             $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('beforeRender', function (Event $event) {
-            $ev = new Event('CsvMigrations.Index.beforeRender', $this, [
+            $ev = new Event((string)EventName::API_INDEX_BEFORE_RENDER(), $this, [
                 'entities' => $event->subject()->entities
             ]);
             $this->eventManager()->dispatch($ev);
@@ -218,7 +219,7 @@ class AppController extends Controller
     public function add()
     {
         $this->Crud->on('beforeSave', function (Event $event) {
-            $ev = new Event('CsvMigrations.Add.beforeSave', $this, [
+            $ev = new Event((string)EventName::API_ADD_BEFORE_SAVE(), $this, [
                 'entity' => $event->subject()->entity
             ]);
             $this->eventManager()->dispatch($ev);
@@ -228,7 +229,7 @@ class AppController extends Controller
             // handle file uploads if found in the request data
             $linked = $this->_fileUploadsUtils->linkFilesToEntity($event->subject()->entity, $this->{$this->name}, $this->request->data);
 
-            $ev = new Event('CsvMigrations.Add.afterSave', $this, [
+            $ev = new Event((string)EventName::API_ADD_AFTER_SAVE(), $this, [
                 'entity' => $event->subject()->entity
             ]);
             $this->eventManager()->dispatch($ev);
@@ -245,21 +246,21 @@ class AppController extends Controller
     public function edit()
     {
         $this->Crud->on('beforeFind', function (Event $event) {
-            $ev = new Event('CsvMigrations.Edit.beforeFind', $this, [
+            $ev = new Event((string)EventName::API_EDIT_BEFORE_FIND(), $this, [
                 'query' => $event->subject()->query
             ]);
             $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('afterFind', function (Event $event) {
-            $ev = new Event('CsvMigrations.Edit.afterFind', $this, [
+            $ev = new Event((string)EventName::API_EDIT_AFTER_FIND(), $this, [
                 'entity' => $event->subject()->entity
             ]);
             $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('beforeSave', function (Event $event) {
-            $ev = new Event('CsvMigrations.Edit.beforeSave', $this, [
+            $ev = new Event((string)EventName::API_EDIT_BEFORE_SAVE(), $this, [
                 'entity' => $event->subject()->entity
             ]);
             $this->eventManager()->dispatch($ev);
@@ -330,14 +331,14 @@ class AppController extends Controller
     public function lookup()
     {
         $this->Crud->on('beforeLookup', function (Event $event) {
-            $ev = new Event('CsvMigrations.beforeLookup', $this, [
+            $ev = new Event((string)EventName::API_LOOKUP_BEFORE_FIND(), $this, [
                 'query' => $event->subject()->query
             ]);
             $this->eventManager()->dispatch($ev);
         });
 
         $this->Crud->on('afterLookup', function (Event $event) {
-            $ev = new Event('CsvMigrations.afterLookup', $this, [
+            $ev = new Event((string)EventName::API_LOOKUP_AFTER_FIND(), $this, [
                 'entities' => $event->subject()->entities
             ]);
             $this->eventManager()->dispatch($ev);

@@ -1,4 +1,6 @@
 FIELD NAME
 name
+status
+author
 created
 modified

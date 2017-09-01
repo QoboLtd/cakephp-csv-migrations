@@ -17,27 +17,29 @@ we don't do the linkage - they would have hidden ID by default
 <?php if (in_array($data['tab']['associationType'], ['manyToMany'])) : ?>
     <?php
     try {
-        $emField = $content['class_name'] . '.' . $content['foreign_key'];
-        $emFieldName = substr($emField, strrpos($emField, '.') + 1);
+        if (!empty($content['class_name']) && !empty($content['foreign_key'])) {
+            $emField = $content['class_name'] . '.' . $content['foreign_key'];
+            $emFieldName = substr($emField, strrpos($emField, '.') + 1);
 
-        $emDataTarget = Inflector::underscore(str_replace('.', '_', $emField));
-        $emModal = sprintf("%s_modal", $emDataTarget);
+            $emDataTarget = Inflector::underscore(str_replace('.', '_', $emField));
+            $emModal = sprintf("%s_modal", $emDataTarget);
 
-        list($emPlugin, $emController) = pluginSplit(substr($emField, 0, strrpos($emField, '.')));
+            list($emPlugin, $emController) = pluginSplit(substr($emField, 0, strrpos($emField, '.')));
 
-        $modalBody = $this->requestAction([
-            'plugin' => $emPlugin,
-            'controller' => $emController,
-            'action' => 'add'
-        ], [
-            'query' => [
-                'embedded' => $emController,
-                'foreign_key' => $emFieldName,
-                'modal_id' => $emModal,
-                'related_model' => Inflector::delimit($this->request->controller, '-'),
-                'related_id' => $this->request->pass[0],
-            ]
-        ]);
+            $modalBody = $this->requestAction([
+                'plugin' => $emPlugin,
+                'controller' => $emController,
+                'action' => 'add'
+            ], [
+                'query' => [
+                    'embedded' => $emController,
+                    'foreign_key' => $emFieldName,
+                    'modal_id' => $emModal,
+                    'related_model' => Inflector::delimit($this->request->controller, '-'),
+                    'related_id' => $this->request->pass[0],
+                ]
+            ]);
+        }
     } catch (ForbiddenException $e) {
         // just don't display anything if current user has no access to embedded module
     }
@@ -111,7 +113,7 @@ we don't do the linkage - they would have hidden ID by default
     //@NOTE: if no records were found Query returns null, so we're fixing the count!
     $content['length'] = (!is_null($content['records'])) ?: 0;
 ?>
-<?php if ($content['length']) : ?>
+<?php if ($content['length'] && !empty($content['fields'])) : ?>
     <table class="table table-hover table-condensed table-vertical-align <?= $data['tab']['containerId']?>">
         <thead>
             <tr>

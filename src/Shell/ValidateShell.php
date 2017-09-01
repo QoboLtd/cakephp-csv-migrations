@@ -6,6 +6,7 @@ use Cake\Console\Shell;
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use Exception;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility;
 
@@ -181,7 +182,7 @@ class ValidateShell extends Shell
         }
         $listItems = [];
         try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_LIST, $module, $list);
+            $mc = new ModuleConfig(ConfigType::LISTS(), $module, $list);
             $listItems = $mc->parse()->items;
         } catch (Exception $e) {
             // We don't care about the specifics of the failure
@@ -233,7 +234,7 @@ class ValidateShell extends Shell
 
         $moduleFields = [];
         try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
+            $mc = new ModuleConfig(ConfigType::MIGRATION(), $module);
             $moduleFields = json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             // We already report issues with migration in _checkMigrationPresence()
@@ -272,7 +273,7 @@ class ValidateShell extends Shell
 
         $config = [];
         try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, $module);
+            $mc = new ModuleConfig(ConfigType::MODULE(), $module);
             $config = (array)json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             return $result;
@@ -333,7 +334,7 @@ class ValidateShell extends Shell
         $this->out(' - Module config ... ', 0);
         $config = [];
         try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MODULE, $module);
+            $mc = new ModuleConfig(ConfigType::MODULE(), $module);
             $config = json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             // We need errors and warnings irrelevant of the exception
@@ -500,7 +501,7 @@ class ValidateShell extends Shell
         $this->out(' - Fields config ... ', 0);
         $config = [];
         try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, $module);
+            $mc = new ModuleConfig(ConfigType::FIELDS(), $module);
             $config = json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             // We need errors and warnings irrelevant of the exception
@@ -533,7 +534,7 @@ class ValidateShell extends Shell
         $this->out(' - Menus config ... ', 0);
         $config = [];
         try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MENUS, $module);
+            $mc = new ModuleConfig(ConfigType::MENUS(), $module);
             $config = json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             // We need errors and warnings irrelevant of the exception
@@ -566,7 +567,7 @@ class ValidateShell extends Shell
         $this->out(' - Reports config ... ', 0);
         $config = [];
         try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_REPORTS, $module);
+            $mc = new ModuleConfig(ConfigType::REPORTS(), $module);
             $config = json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             // We need errors and warnings irrelevant of the exception
@@ -599,7 +600,7 @@ class ValidateShell extends Shell
         $this->out(' - Migration ... ', 0);
         $fields = [];
         try {
-            $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_MIGRATION, $module);
+            $mc = new ModuleConfig(ConfigType::MIGRATION(), $module);
             $fields = json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             // We need errors and warnings irrelevant of the exception
@@ -712,7 +713,7 @@ class ValidateShell extends Shell
         foreach ($views as $view) {
             $path = '';
             try {
-                $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $module, $view);
+                $mc = new ModuleConfig(ConfigType::VIEW(), $module, $view);
                 $path = $mc->find();
             } catch (Exception $e) {
                 // It's OK for view files to be missing.

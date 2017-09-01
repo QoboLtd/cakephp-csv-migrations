@@ -1,5 +1,6 @@
 <?php
 use Cake\Event\Event;
+use CsvMigrations\Event\EventName;
 
 $menu = [];
 
@@ -10,11 +11,15 @@ $menu[] = [
         $url,
         ['title' => __d('CsvMigrations', 'Add'), 'escape' => false, 'class' => 'btn btn-default']
     ),
-    'url' => $url
+    'url' => $url,
+    'label' => __('Add'),
+    'icon' => 'plus',
+    'type' => 'link_button',
+    'order' => 10
 ];
 
 // broadcast menu event
-$event = new Event('CsvMigrations.DblistItems.Index.topMenu.beforeRender', $this, [
+$event = new Event((string)EventName::MENU_TOP_DB_LIST_ITEMS_INDEX(), $this, [
     'menu' => $menu,
     'user' => $user
 ]);

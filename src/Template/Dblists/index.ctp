@@ -1,3 +1,27 @@
+<?php
+use Cake\Core\Configure;
+use CsvMigrations\FieldHandlers\Renderer\DateTimeRenderer;
+
+$renderer = new DateTimeRenderer($this);
+
+echo $this->Html->css('AdminLTE./plugins/datatables/dataTables.bootstrap', ['block' => 'css']);
+echo $this->Html->script(
+    [
+        'AdminLTE./plugins/datatables/jquery.dataTables.min',
+        'AdminLTE./plugins/datatables/dataTables.bootstrap.min'
+    ],
+    [
+        'block' => 'scriptBottom'
+    ]
+);
+echo $this->Html->scriptBlock(
+    '$(".table-datatable").DataTable({
+        stateSave: true,
+        stateDuration: ' . (int)(Configure::read('Session.timeout') * 60) . '
+    });',
+    ['block' => 'scriptBottom']
+);
+?>
 <section class="content-header">
     <div class="row">
         <div class="col-xs-12 col-md-6">
@@ -13,14 +37,14 @@
     </div>
 </section>
 <section class="content">
-    <div class="box">
-        <div class="box-body table-responsive">
-            <table class="table table-condensed table-vertical-align">
+    <div class="box box-solid">
+        <div class="box-body">
+            <table class="table table-hover table-condensed table-vertical-align table-datatable">
                 <thead>
                     <tr>
-                        <th><?= $this->Paginator->sort('name'); ?></th>
-                        <th><?= $this->Paginator->sort('created'); ?></th>
-                        <th><?= $this->Paginator->sort('modified'); ?></th>
+                        <th><?= __('Name'); ?></th>
+                        <th><?= __('Created'); ?></th>
+                        <th><?= __('Modified'); ?></th>
                         <th class="actions"><?= __d('CsvMigrations', 'Actions'); ?></th>
                     </tr>
                 </thead>
@@ -28,8 +52,8 @@
                     <?php foreach ($dblists as $dblist) : ?>
                     <tr>
                         <td><?= h($dblist->name) ?></td>
-                        <td><?= h($dblist->created) ?></td>
-                        <td><?= h($dblist->modified) ?></td>
+                        <td><?= $renderer->renderValue($dblist->created) ?></td>
+                        <td><?= $renderer->renderValue($dblist->modified) ?></td>
                         <td class="actions">
                             <?= $this->element('CsvMigrations.Menu/dblists_index_actions', [
                                 'entity' => $dblist
@@ -39,15 +63,6 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        </div>
-        <div class="box-footer">
-            <div class="paginator">
-                <ul class="pagination pagination-sm no-margin pull-right">
-                    <?= $this->Paginator->prev('&laquo;', ['escape' => false]) ?>
-                    <?= $this->Paginator->numbers() ?>
-                    <?= $this->Paginator->next('&raquo;', ['escape' => false]) ?>
-                </ul>
-            </div>
         </div>
     </div>
 </section>

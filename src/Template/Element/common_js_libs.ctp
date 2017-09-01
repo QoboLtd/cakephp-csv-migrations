@@ -1,17 +1,17 @@
 <?php
 use Cake\Core\Configure;
 
-//@TODO: merge the stuff in one scriptBlock, not dozens;
 echo $this->Html->css(
     [
         'AdminLTE./plugins/iCheck/all',
-        'AdminLTE./plugins/daterangepicker/daterangepicker-bs3',
+        'AdminLTE./plugins/daterangepicker/daterangepicker',
         'AdminLTE./plugins/datepicker/datepicker3',
         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
         'AdminLTE./plugins/select2/select2.min',
         'CsvMigrations.fileinput.min',
-        'CsvMigrations.select2-bootstrap.min',
-        'CsvMigrations.style'
+        'CsvMigrations.style',
+        'Qobo/Utils.select2-bootstrap.min',
+        'Qobo/Utils.select2-style'
     ],
     [
         'block' => 'css'
@@ -20,13 +20,13 @@ echo $this->Html->css(
 
 echo $this->Html->scriptBlock(
     'api_options = ' . json_encode(Configure::read('CsvMigrations.api')) . ';',
-    ['block' => 'scriptBotton']
+    ['block' => 'scriptBottom']
 );
 
 $fileInputOptions = Configure::read('CsvMigrations.BootstrapFileInput');
 echo $this->Html->scriptBlock(
     'fileInputOptions = ' . json_encode($fileInputOptions) . ';',
-    ['block' => 'scriptBotton']
+    ['block' => 'scriptBottom']
 );
 
 echo $this->Html->script(
@@ -52,7 +52,7 @@ echo $this->Html->script(
         'CsvMigrations.plugin',
     ],
     [
-        'block' => 'scriptBotton'
+        'block' => 'scriptBottom'
     ]
 );
 
@@ -63,5 +63,5 @@ echo $this->Html->scriptBlock(
             Configure::read('CsvMigrations.api')
         )
     ) . ');',
-    ['block' => 'scriptBotton']
+    ['block' => 'scriptBottom']
 );

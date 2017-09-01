@@ -13,6 +13,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 /**
@@ -130,8 +131,8 @@ class CsvViewComponent extends Component
     {
         $result = [];
 
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_VIEW, $this->request->controller, $this->request->action);
-        $result = $mc->parse()->items;
+        $config = new ModuleConfig(ConfigType::VIEW(), $this->request->controller, $this->request->action);
+        $result = $config->parse()->items;
 
         list($plugin, $model) = pluginSplit($this->_tableInstance->registryAlias());
         /*

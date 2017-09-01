@@ -7,11 +7,13 @@ use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
 use CsvMigrations\View\AppView;
 use InvalidArgumentException;
+use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use RuntimeException;
 
@@ -180,7 +182,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     protected function setDefaultOptions()
     {
         // Populate default options from the fields.ini
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
+        $mc = new ModuleConfig(ConfigType::FIELDS(), Inflector::camelize($this->table->table()));
         $config = (array)json_decode(json_encode($mc->parse()), true);
         if (!empty($config[$this->field])) {
             $this->defaultOptions = array_replace_recursive($this->defaultOptions, $config[$this->field]);
@@ -209,7 +211,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         // If we have a default value from configuration, pass it through
         // processing for magic/dynamic values like dates and usernames.
         if (!empty($this->defaultOptions['default'])) {
-            $eventName = 'CsvMigrations.FieldHandler.DefaultValue';
+            $eventName = (string)EventName::FIELD_HANDLER_DEFAULT_VALUE();
             $event = new Event($eventName, $this, [
                 'default' => $this->defaultOptions['default']
             ]);
@@ -408,7 +410,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $text = $this->field;
 
-        $mc = new ModuleConfig(ModuleConfig::CONFIG_TYPE_FIELDS, Inflector::camelize($this->table->table()));
+        $mc = new ModuleConfig(ConfigType::FIELDS(), Inflector::camelize($this->table->table()));
         $config = (array)json_decode(json_encode($mc->parse()), true);
         $label = empty($config[$text]['label']) ? '' : $config[$text]['label'];
 

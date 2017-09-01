@@ -18,7 +18,7 @@ class SeedShell extends Shell
      * Number of records to be added for each Module.
      * @var int
      */
-    protected $numberOfRecords = 5;
+    protected $numberOfRecords = 20;
 
     /**
      * Array storing all the csv Modules.

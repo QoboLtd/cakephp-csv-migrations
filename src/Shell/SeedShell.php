@@ -141,7 +141,7 @@ class SeedShell extends Shell
      * @param string $moduleName module name.
      * @return null|string
      */
-    protected function getFieldValueBasedOnType($type = '', $moduleName = '')
+    protected function getFieldValueBasedOnType($type = '', $moduleName = '', $listName = '')
     {
         $faker = Factory::create();
 
@@ -186,9 +186,11 @@ class SeedShell extends Shell
                 $value = $faker->unique()->boolean();
                 break;
             default:
-                if (strpos($type, 'list') !== false) {
+                if (strpos($type, 'list') !== false || strpos($type, 'money') !== false || strpos($type, 'metric') !== false) {
                     //get list values
-                    $listName = $this->getStringEnclosedInParenthesis($type);
+                    if (empty($listName)){
+                        $listName = $this->getStringEnclosedInParenthesis($type);
+                    }
                     $list = $this->getListData($moduleName, $listName);
                     if (empty($list) || count($list) == 0) {
                         $value = null;
@@ -212,6 +214,31 @@ class SeedShell extends Shell
     }
 
     /**
+     * if the type is money,metric will return the multifield values based on the type.
+     *
+     * @param string $type type.
+     * @param string $moduleName moduleName.
+     * @param string $fieldName fieldName.
+     * @return array
+     */
+    protected function getCombinedFieldValueBasedOnType($type = '', $moduleName = '', $fieldName = '')
+    {
+        $values = [];
+
+        if (strpos($type, 'money') !== false){
+            $values[$fieldName . '_amount'] = $this->getFieldValueBasedOnType('decimal',$moduleName);
+            $values[$fieldName . '_currency'] = $this->getFieldValueBasedOnType($type,$moduleName);
+
+        }
+        if (strpos($type, 'metric') !== false){
+            $values[$fieldName . '_amount'] = $this->getFieldValueBasedOnType('decimal',$moduleName);
+            $values[$fieldName . '_unit'] = $this->getFieldValueBasedOnType($type,$moduleName);
+
+        }
+        return $values;
+    }
+
+    /**
      * Get Module ids in an array.
      *
      * @param string $moduleName module name
@@ -231,7 +258,7 @@ class SeedShell extends Shell
     }
 
     /**
-     * Get List (csv list) data.
+     * Get Active List (csv list) data.
      * @param string $module module name.
      * @param string $listName list name.
      * @return array
@@ -250,6 +277,9 @@ class SeedShell extends Shell
 
         $keysArray = [];
         foreach ($listData as $data) {
+            if ($data->inactive == '1'){
+                continue;
+            }
             $keysArray[] = $data->value;
         }
 
@@ -348,8 +378,17 @@ class SeedShell extends Shell
         for ($count = 0; $count < $this->numberOfRecords; $count++) {
             $entity = $table->newEntity();
 
+            $data = [];
             foreach ($module as $fieldName => $fieldData) {
                 if (empty($fieldData['type'])) {
+                    continue;
+                }
+
+                if ($this->isCombinedField($fieldData['type'])){
+                    $fields = $this->getCombinedFieldValueBasedOnType($fieldData['type'],'',$fieldName);
+                    foreach ($fields as $field => $value){
+                        $data[$field] = $value;
+                    }
                     continue;
                 }
 
@@ -357,15 +396,31 @@ class SeedShell extends Shell
                 if (empty($fieldValue)) {
                     continue;
                 }
-                $entity->$fieldName = $fieldValue;
+                $data[$fieldName] = $fieldValue;
             }
-
+            $entity = $table->patchEntity($entity,$data);
             if ($table->save($entity)) {
                 $id = $entity->id;
             }
         }
         $this->modulesPolpulatedWithData[] = $moduleName;
         $this->out($moduleName);
+    }
+
+    /**
+     * Checks if the type is money or metric.
+     *
+     * @param string $type type.
+     * @return bool
+     */
+    public function isCombinedField($type = ''){
+        $result = false;
+
+        if (strpos($type, 'money') !== false || strpos($type, 'metric') !== false){
+            $result = true;
+        }
+
+        return $result;
     }
 
     /**

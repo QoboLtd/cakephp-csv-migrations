@@ -139,6 +139,7 @@ class SeedShell extends Shell
      *
      * @param string $type type.
      * @param string $moduleName module name.
+     * @param string $listName listName.
      * @return null|string
      */
     protected function getFieldValueBasedOnType($type = '', $moduleName = '', $listName = '')
@@ -188,7 +189,7 @@ class SeedShell extends Shell
             default:
                 if (strpos($type, 'list') !== false || strpos($type, 'money') !== false || strpos($type, 'metric') !== false) {
                     //get list values
-                    if (empty($listName)){
+                    if (empty($listName)) {
                         $listName = $this->getStringEnclosedInParenthesis($type);
                     }
                     $list = $this->getListData($moduleName, $listName);
@@ -225,16 +226,15 @@ class SeedShell extends Shell
     {
         $values = [];
 
-        if (strpos($type, 'money') !== false){
-            $values[$fieldName . '_amount'] = $this->getFieldValueBasedOnType('decimal',$moduleName);
-            $values[$fieldName . '_currency'] = $this->getFieldValueBasedOnType($type,$moduleName);
-
+        if (strpos($type, 'money') !== false) {
+            $values[$fieldName . '_amount'] = $this->getFieldValueBasedOnType('decimal', $moduleName);
+            $values[$fieldName . '_currency'] = $this->getFieldValueBasedOnType($type, $moduleName);
         }
-        if (strpos($type, 'metric') !== false){
-            $values[$fieldName . '_amount'] = $this->getFieldValueBasedOnType('decimal',$moduleName);
-            $values[$fieldName . '_unit'] = $this->getFieldValueBasedOnType($type,$moduleName);
-
+        if (strpos($type, 'metric') !== false) {
+            $values[$fieldName . '_amount'] = $this->getFieldValueBasedOnType('decimal', $moduleName);
+            $values[$fieldName . '_unit'] = $this->getFieldValueBasedOnType($type, $moduleName);
         }
+
         return $values;
     }
 
@@ -267,7 +267,7 @@ class SeedShell extends Shell
     {
         $listData = [];
         try {
-            $mc = new ModuleConfig( ConfigType::LISTS(), $module, $listName);
+            $mc = new ModuleConfig(ConfigType::LISTS(), $module, $listName);
             $listData = $mc->parse()->items;
         } catch (\Exception $e) {
         }
@@ -277,7 +277,7 @@ class SeedShell extends Shell
 
         $keysArray = [];
         foreach ($listData as $data) {
-            if ($data->inactive == '1'){
+            if ($data->inactive == '1') {
                 continue;
             }
             $keysArray[] = $data->value;
@@ -336,7 +336,7 @@ class SeedShell extends Shell
         $csvFiles = [];
 
         foreach ($modules as $module) {
-            $mc = new ModuleConfig( ConfigType::MIGRATION(), $module);
+            $mc = new ModuleConfig(ConfigType::MIGRATION(), $module);
             $config = (array)json_decode(json_encode($mc->parse()), true);
 
             if (empty($config)) {
@@ -384,9 +384,9 @@ class SeedShell extends Shell
                     continue;
                 }
 
-                if ($this->isCombinedField($fieldData['type'])){
-                    $fields = $this->getCombinedFieldValueBasedOnType($fieldData['type'],'',$fieldName);
-                    foreach ($fields as $field => $value){
+                if ($this->isCombinedField($fieldData['type'])) {
+                    $fields = $this->getCombinedFieldValueBasedOnType($fieldData['type'], '', $fieldName);
+                    foreach ($fields as $field => $value) {
                         $data[$field] = $value;
                     }
                     continue;
@@ -398,7 +398,7 @@ class SeedShell extends Shell
                 }
                 $data[$fieldName] = $fieldValue;
             }
-            $entity = $table->patchEntity($entity,$data);
+            $entity = $table->patchEntity($entity, $data);
             if ($table->save($entity)) {
                 $id = $entity->id;
             }
@@ -413,10 +413,11 @@ class SeedShell extends Shell
      * @param string $type type.
      * @return bool
      */
-    public function isCombinedField($type = ''){
+    public function isCombinedField($type = '')
+    {
         $result = false;
 
-        if (strpos($type, 'money') !== false || strpos($type, 'metric') !== false){
+        if (strpos($type, 'money') !== false || strpos($type, 'metric') !== false) {
             $result = true;
         }
 

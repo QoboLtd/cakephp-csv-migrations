@@ -111,7 +111,6 @@ class ViewViewTabsListener implements EventListenerInterface
         }
 
         $this->_tableInstance = TableRegistry::get($table);
-
         $hiddenAssociations = $this->_tableInstance->getConfig(ConfigurationTrait::$CONFIG_OPTION_HIDDEN_ASSOCIATIONS);
 
         $tabLabels = $this->_getTabLabels($this->_tableInstance);
@@ -142,7 +141,17 @@ class ViewViewTabsListener implements EventListenerInterface
                 'associationType' => $association->type(),
                 'associationObject' => $class,
                 'targetClass' => $association->className(),
+                'originTable' => $this->_tableInstance->table(),
             ];
+
+            if ('manyToMany' != $association->type()) {
+                $tab['url'] = $event->subject()->Url->build([
+                    'prefix' => 'api',
+                    'controller' => $association->table(),
+                    'action' => 'related/',
+                    '_ext' => 'json',
+                ]);
+            }
 
             if (empty($tab['targetClass'])) {
                 continue;

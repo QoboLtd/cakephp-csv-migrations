@@ -314,33 +314,76 @@ echo $this->element('CsvMigrations.common_js_libs');
 
                         $this->eventManager()->dispatch($tabContentEvent);
                         $content = $tabContentEvent->result;
+                        $jsColumns = [];
 
-                        if (!empty($content) && !isset($content['rawOutput'])) {
-                            echo $this->cell('CsvMigrations.TabContent', [
-                            [
-                                'request' => $this->request,
-                                'content' => $content,
-                                'tab' => $tab,
-                                'options' => ['order' => 'tabContent'],
-                                'entity' => $options['entity'],
-                            ]
-                            ]);
-                        }
-
-                        if (!empty($content['rawOutput'])) {
-                            echo $content['rawOutput'];
-                        }
-
-                        if (!empty($content)) {
+                        if (!empty($tab['url'])) { ?>
+                            <div class="">
+                                <table class="table table-hover table-condensed table-vertical-align table-datatable table-<?= $tab['containerId'];?>">
+                                    <thead>
+                                        <tr>
+                                        <?php foreach ($content['fields'] as $k => $field) :?>
+                                        <?php $jsColumns[] = ['data' => $field]; ?>
+                                            <th><?= Inflector::humanize($field);?></th>
+                                        <?php endforeach; ?>
+                                            <th><?= __('Actions');?></th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        <?php
                             echo $this->Html->scriptBlock(
-                                '$(".' . $tab['containerId'] . '").DataTable({
-                                    stateSave: true,
-                                    stateDuration: ' . (int)(Configure::read('Session.timeout') * 60) . ',
+                                '$(".table-' . $tab['containerId'] . '").DataTable({
                                     paging: true,
-                                    searching: false
+                                    searching: false,
+                                    processing:true,
+                                    serverSide: true,
+                                    ajax: {
+                                        type: "GET",
+                                        url: "'. $tab['url'] .'",
+                                        headers: {
+                                            "Authorization": "Bearer " + "'.Configure::read('CsvMigrations.api.token').'"
+                                        },
+                                        data: function(d) {
+                                            return $.extend({}, d, {
+                                                format: "datatables",
+                                                menus: true,
+                                                id: "'. $this->request->params['pass'][0].'",
+                                                controller: "'.$this->request->params['controller'].'"
+                                            }, '.json_encode($tab).');
+                                        },
+                                        //columns: '.json_encode($jsColumns). '
+                                    },
                                 });',
                                 ['block' => 'scriptBottom']
                             );
+                        } else {
+                            if (!empty($content) && !isset($content['rawOutput'])) {
+                                echo $this->cell('CsvMigrations.TabContent', [
+                                [
+                                    'request' => $this->request,
+                                    'content' => $content,
+                                    'tab' => $tab,
+                                    'options' => ['order' => 'tabContent'],
+                                    'entity' => $options['entity'],
+                                ]
+                                ]);
+                            }
+
+                            if (!empty($content['rawOutput'])) {
+                                echo $content['rawOutput'];
+                            }
+
+                            if (!empty($content)) {
+                                echo $this->Html->scriptBlock(
+                                    '$(".' . $tab['containerId'] . '").DataTable({
+                                        stateSave: true,
+                                        stateDuration: ' . (int)(Configure::read('Session.timeout') * 60) . ',
+                                        paging: true,
+                                        searching: false
+                                    });',
+                                    ['block' => 'scriptBottom']
+                                );
+                            }
                         }
                         ?>
                     </div>

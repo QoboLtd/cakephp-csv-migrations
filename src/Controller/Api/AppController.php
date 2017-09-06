@@ -14,6 +14,9 @@ use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
 use CsvMigrations\Swagger\Annotation;
 use ReflectionMethod;
+use Cake\ORM\Association;
+use Cake\ORM\Entity;
+use Cake\Utility\Inflector;
 
 class AppController extends Controller
 {
@@ -178,6 +181,15 @@ class AppController extends Controller
         });
 
         return $this->Crud->execute();
+    }
+
+    /**
+     * Related API request for View Tabs
+     *
+     * @return \Cake\Network\Response
+     */
+    public function related()
+    {
     }
 
     /**

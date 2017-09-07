@@ -72,6 +72,17 @@ class SeedShell extends Shell
      */
     public function main()
     {
+        // If outgoing emails are not disabled, creating numerous records
+        // can cause a potential email flood due to 'assigned_to' and
+        // similar associations.
+        $emailTransport = Configure::read('EmailTransport.default.className');
+        if (empty($emailTransport)) {
+            $this->abort("Could read class name of the 'default' email transport. Cannot determine if ougoing emails are enabled or not.");
+        }
+        if ($emailTransport <> 'Debug') {
+            $this->abort("Outgoing emails are not disabled. Aborting to avoid email flooding.  Set default email transport class name to 'Debug'");
+        }
+
         $numberOfRecords = $this->param('numberofrecords');
         $numberOfRecords = intval($numberOfRecords);
         if ($numberOfRecords > 0) {

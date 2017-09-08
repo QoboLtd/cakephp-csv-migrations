@@ -19,6 +19,14 @@ use InvalidArgumentException;
 class ModelAfterSaveListener implements EventListenerInterface
 {
     /**
+     * Skip attendees in fields
+     *
+     * @todo This should move into the configuration
+     * @var array
+     */
+    protected $skipAttendeesIn = ['created_by', 'modified_by'];
+
+    /**
      * End date fields
      *
      * @var array
@@ -203,7 +211,11 @@ class ModelAfterSaveListener implements EventListenerInterface
         }
 
         foreach ($associations as $association) {
-            $result[] = $association->foreignKey();
+            $field = $association->foreignKey();
+            if (in_array($field, $this->skipAttendeesIn)) {
+                continue;
+            }
+            $result[] = $field;
         }
 
         if (empty($result)) {
@@ -302,6 +314,8 @@ class ModelAfterSaveListener implements EventListenerInterface
         }, $assignedEntities);
         // Filter out empty items
         $result = array_filter($result);
+        // Filter out duplicates
+        $result = array_unique($result, SORT_STRING);
 
         if (empty($result)) {
             throw new InvalidArgumentException("Failed to find attendee emails");

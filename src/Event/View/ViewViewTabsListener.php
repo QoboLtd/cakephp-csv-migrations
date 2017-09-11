@@ -49,45 +49,7 @@ class ViewViewTabsListener implements EventListenerInterface
         return [
             (string)EventName::VIEW_TABS_LIST() => 'getTabsList',
             (string)EventName::VIEW_TAB_CONTENT() => 'getTabContent',
-            (string)EventName::VIEW_TAB_AFTER_CONTENT() => 'getAfterTabContent',
-            (string)EventName::VIEW_TAB_BEFORE_CONTENT() => 'getBeforeTabContent',
         ];
-    }
-
-    /**
-     * getBeforeTabContent
-     * @param Cake\Event $event passed
-     * @param Cake\Network\Request $request - containing tab content
-     * @param Cake\ORM\Entity $entity Entity
-     * @param array $options Options
-     * @return array
-     */
-    public function getBeforeTabContent(Event $event, Request $request, $entity, $options)
-    {
-        $result = [
-          'title' => __('beforeTab Title'),
-          'content' => [
-            'records' => [],
-            'length' => 0,
-          ],
-          'options' => [
-            'displayTemplate' => 'panel_table',
-            'order' => 'beforeTabContent',
-            ],
-        ];
-
-        return $result;
-    }
-
-    /**
-     * getAfterTabContent
-     * @param Cake\Event $event passed
-     * @param array $data containing tab content
-     * @return null
-     */
-    public function getAfterTabContent(Event $event, array $data)
-    {
-        return null;
     }
 
     /**

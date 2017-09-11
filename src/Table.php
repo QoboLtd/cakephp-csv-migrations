@@ -6,14 +6,20 @@ use Cake\Core\App;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\ORM\Association;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table as BaseTable;
+use Cake\ORM\TableRegistry;
+use Cake\Utility\Inflector;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\CsvField;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\FieldTrait;
 use CsvMigrations\MigrationTrait;
+use Qobo\Utils\ModuleConfig\ConfigType;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 /**
  * CsvMigrations Table
@@ -29,6 +35,16 @@ class Table extends BaseTable
 
     /* @var array $_currentUser to store user session */
     protected $_currentUser;
+
+    /**
+     * Mapping of association name to method name
+     *
+     * @var array
+     */
+    protected $_associationsMap = [
+        'manyToMany' => 'getManyToManyAssociatedRecords',
+        'oneToMany' => 'getOneToManyAssociatedRecords'
+    ];
 
     /**
      * setCurrentUser
@@ -176,6 +192,374 @@ class Table extends BaseTable
                 $result[] = $field;
             }
         }
+
+        return $result;
+    }
+
+    /**
+     * Get Related entities for record view
+     *
+     * Fetch entities in the view.ctp
+     *
+     *
+     * @param \Cake\ORM\Table $originTable entity of associated table
+     * @param array $data with the association configs
+     *
+     * @return array $response containing data for DataTables AJAX call
+     */
+    public function getRelatedEntities($originTable, array $data = [])
+    {
+        $response = [];
+        $tableName = Inflector::camelize($data['originTable']);
+
+        $association = $this->getAssociationObject($tableName, $data['associationName']);
+
+        if (!in_array($association->type(), array_keys($this->_associationsMap))) {
+            return $response;
+        }
+
+        $fh = new FieldHandlerFactory();
+        $entities = $this->{$this->_associationsMap[$association->type()]}($originTable, $association, $data);
+
+        if (empty($entities['records'])) {
+            return $response;
+        }
+
+        if ($data['format'] == 'datatables') {
+            $responseData = [];
+            $assocTable = TableRegistry::get($entities['table_name']);
+
+            foreach ($entities['records'] as $record) {
+                $item = [];
+                foreach ($entities['fields'] as $fieldName) {
+                    $item[] = $fh->renderValue($assocTable, $fieldName, $record->$fieldName, [
+                        'entity' => $record,
+                    ]);
+                }
+
+                array_push($responseData, $item);
+            }
+        }
+
+        $response['data'] = $responseData;
+
+        $response = array_merge($response, $entities['pagination']);
+
+        return $response;
+    }
+
+    /**
+     * Method that retrieves many to many associated records
+     *
+     * @param \Cake\ORM\Table $table object for Query Object
+     * @param \Cake\ORM\Association $association Association object
+     * @param array $data with request configs
+     *
+     * @return array associated records
+     */
+    public function getManyToManyAssociatedRecords($table, Association $association, array $data = [])
+    {
+        $result = [];
+        $assocName = $association->name();
+        $assocTableName = $association->table();
+        $assocForeignKey = $association->foreignKey();
+
+        $csvFields = $this->_getAssociationCsvFields($association, 'index');
+
+        if (empty($csvFields)) {
+            return $result;
+        }
+        // get associated index View csv fields
+        $fields = array_unique(
+            array_merge(
+                [$association->displayField()],
+                $csvFields
+            )
+        );
+
+        $assocTableName = Inflector::camelize($assocTableName);
+        $assocTableObject = TableRegistry::get($assocTableName);
+
+        // @NOTE: fields should be properly indexed
+        // to collide with 'columns' indexes
+        $fields = array_values($fields);
+        $conditions = $this->getRelatedEntitiesOrder($assocTableObject, $fields, $data);
+
+        $id = $data['id'];
+        $primaryKey = $table->aliasField($table->getPrimaryKey());
+
+        $limit = (!empty($data['limit']) ? $data['limit'] : 10);
+        $offset = (!empty($data['start']) ? $data['start'] : 0);
+
+        $countQuery = $assocTableObject->find();
+        $countQuery->select(['count' => $countQuery->func()->count('*')]);
+        $countQuery->matching($table->alias(), function ($q) use ($primaryKey, $id) {
+            return $q->where([$primaryKey => $id]);
+        });
+
+        $count = $countQuery->first();
+
+        $query = $assocTableObject->find();
+        $query->order($conditions);
+        $query->limit($limit);
+
+        if (!empty($offset)) {
+            $query->offset($offset);
+        }
+
+        $query->matching($table->alias(), function ($q) use ($primaryKey, $id) {
+            return $q->where([$primaryKey => $id]);
+        });
+
+        $result = $this->getAssociationFields($association);
+
+        $result['pagination']['recordsFiltered'] = $query->count();
+        $result['pagination']['recordsTotal'] = $count->count;
+        $result['pagination']['count'] = $query->count();
+        $result['records'] = $query->all();
+
+        return $result;
+    }
+
+    /**
+     * Method that retrieves one to many associated records
+     *
+     * @param  \Cake\ORM\Association $association Association object
+     * @param \Cake\Network\Request $request passed
+     * @return array associated records
+     */
+    protected function getOneToManyAssociatedRecords($table, Association $association, array $data = [])
+    {
+        $result = [];
+        $assocName = $association->name();
+        $assocTableName = $association->table();
+        $assocForeignKey = $association->foreignKey();
+        $recordId = $data['id'];
+
+        $csvFields = $this->_getAssociationCsvFields($association, 'index');
+        if (empty($csvFields)) {
+            return $result;
+        }
+
+        // get associated index View csv fields
+        $fields = array_unique(
+            array_merge(
+                [$association->displayField()],
+                $csvFields
+            )
+        );
+
+        // @NOTE: fields should be properly indexed
+        // to collide with 'columns' indexes
+        $fields = array_values($fields);
+        $conditions = $this->getRelatedEntitiesOrder($association->target(), $fields, $data);
+
+        $limit = (!empty($data['limit']) ? $data['limit'] : 10);
+        $offset = (!empty($data['start']) ? $data['start'] : 0);
+
+        $countQuery = $association->target()->find();
+        $countQuery->select(['count' => $countQuery->func()->count('*')]);
+        $countQuery->where([$assocForeignKey => $recordId]);
+        $count = $countQuery->first();
+
+        $query = $association->target()->find();
+        $query->where([$assocForeignKey => $recordId]);
+        $query->limit($limit);
+        $query->order($conditions);
+
+        if (!empty($offset)) {
+            $query->offset($offset);
+        }
+
+        $result = $this->getAssociationFields($association);
+
+        $result['pagination']['recordsTotal'] = $count->count;
+        $result['pagination']['recordsFiltered'] = $query->count();
+        $result['pagination']['count'] = $query->count();
+        $result['records'] = $query->all();
+
+        return $result;
+    }
+
+    /**
+     * Get Association Object
+     *
+     * Get the object based on the association's name
+     *
+     * @param string $tableName of the instance
+     * @param string $associationName associations name
+     *
+     * @return \Cake\ORM\Association $result object
+     */
+    public function getAssociationObject(string $tableName, string $associationName)
+    {
+        $result = null;
+        $tableName = Inflector::camelize($tableName);
+
+        $table = TableRegistry::get($tableName);
+
+        foreach ($table->associations() as $association) {
+            if ($association->name() != $associationName) {
+                continue;
+            }
+
+            $result = $association;
+            break;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get Related Entities order array
+     *
+     * Based on the fields and data construct conditions array
+     *
+     * @param \Cake\ORM\Table $table instance to which conditions built
+     * @param array $fields list used for the view
+     * @param array $data received from the request
+     *
+     * @return array $conditions for the Query Object to order the results.
+     */
+    public function getRelatedEntitiesOrder($table, array $fields = [], array $data = [])
+    {
+        $conditions = [];
+
+        $fieldOrder = $data['order'][0]['column'];
+
+        $sortCol = $fields[$fieldOrder];
+        $sortDir = $data['order'][0]['dir'];
+
+        $sortCols = null;
+        // handle virtual field
+        if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
+            $virtualFields = $table->getConfig(ConfigurationTrait::$CONFIG_OPTION_VIRTUAL_FIELDS);
+            if (!empty($virtualFields) && isset($virtualFields[$sortCol])) {
+                $sortCols = $virtualFields[$sortCol];
+            }
+        }
+
+        // in case no virtual fields for sorting,
+        // use the given one.
+        if (empty($sortCols)) {
+            $sortCols = $sortCol;
+        }
+
+        $sortCols = (array)$sortCols;
+        // prefix table name
+        foreach ($sortCols as &$v) {
+            $v = $table->aliasField($v);
+        }
+
+        // add sort direction to all columns
+        $conditions = array_fill_keys($sortCols, $sortDir);
+
+        return $conditions;
+    }
+
+    /**
+     * Get Association Fields
+     *
+     * Pick association fields for index action
+     *
+     * @param \Cake\ORM\Association $association object
+     * @param array $options to config fields
+     *
+     * @return array $result of the fields for action.
+     */
+    public function getAssociationFields(Association $association, array $options = [])
+    {
+        $result = [];
+
+        $assocName = $association->name();
+        $assocTableName = $association->table();
+
+        $csvFields = $this->_getAssociationCsvFields($association, 'index');
+
+        // get associated index View csv fields
+        $fields = array_unique(
+            array_merge(
+                [$association->displayField()],
+                $csvFields
+            )
+        );
+
+        $result['assoc_name'] = $assocName;
+        $result['table_name'] = $assocTableName;
+
+        $result['class_name'] = $association->className();
+        $result['display_field'] = $association->displayField();
+        $result['primary_key'] = $association->primaryKey();
+
+        if (!in_array($association->type(), ['manyToMany'])) {
+            $result['foreign_key'] = $association->foreignKey();
+        } else {
+            $result['foreign_key'] = Inflector::singularize($assocTableName) . '_' . $association->primaryKey();
+        }
+
+        $result['fields'] = $fields;
+
+        return $result;
+    }
+
+    /**
+     * Get association CSV fields
+     * @param Cake\ORM\Associations $association ORM association
+     * @param object $action action passed
+     * @return array
+     */
+    protected function _getAssociationCsvFields(Association $association, $action)
+    {
+        list($plugin, $controller) = pluginSplit($association->className());
+        $fields = $this->_getCsvFields($controller, $action);
+
+        return $fields;
+    }
+
+    /**
+     * Method that fetches action fields from the corresponding csv file.
+     *
+     * @param  \Cake\Network\Request $request Request object
+     * @param  string                $action  Action name
+     * @return array
+     */
+    protected function _getActionFields($controller, $action = null)
+    {
+        if (is_null($action)) {
+            $action = 'index';
+        }
+
+        $mc = new ModuleConfig(ConfigType::VIEW(), $controller, $action);
+        $result = $mc->parse()->items;
+
+        return $result;
+    }
+
+    /**
+     * Method that retrieves table csv fields, by specified action.
+     *
+     * @param  string $tableName Table name
+     * @param  string $action    Action name
+     * @return array             table fields
+     */
+    protected function _getCsvFields($tableName, $action)
+    {
+        $result = [];
+
+        if (empty($tableName) || empty($action)) {
+            return $result;
+        }
+
+        $mc = new ModuleConfig(ConfigType::VIEW(), $tableName, $action);
+        $csvFields = $mc->parse()->items;
+
+        if (empty($csvFields)) {
+            return $result;
+        }
+
+        $result = array_map(function ($v) {
+            return $v[0];
+        }, $csvFields);
 
         return $result;
     }

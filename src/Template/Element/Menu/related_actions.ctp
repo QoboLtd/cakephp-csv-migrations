@@ -12,7 +12,7 @@ if (empty($user) && !empty($_SESSION)) {
 
 $menu = [];
 
-list($plugin, $controller) = pluginSplit($options['class_name']);
+list($plugin, $controller) = pluginSplit($options['associationName']);
 
 $url = [
     'prefix' => false,
@@ -91,10 +91,11 @@ $menu[] = [
 
 if (isset($options['associationType']) && in_array($options['associationType'], ['manyToMany'])) {
     $url = [
+        'prefix' => false,
         'plugin' => $this->request->plugin,
         'controller' => $this->request->controller,
         'action' => 'unlink',
-        $entity->id,
+        $options['id'],
         $options['assoc_name'],
         $entity->id
     ];

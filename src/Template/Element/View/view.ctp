@@ -281,29 +281,6 @@ echo $this->element('CsvMigrations.common_js_libs');
                 <?php foreach ($tabs as $tab) : ?>
                     <div role="tabpanel" class="tab-pane <?= $active ? 'active' : ''?>" id="<?= $tab['containerId']?>">
                         <?php
-                        $beforeTabContentEvent = new Event((string)EventName::VIEW_TAB_BEFORE_CONTENT(), $this, [
-                            'request' => $this->request,
-                            'entity' => $options['entity'],
-                            'options' => [
-                                    'tab' => $tab
-                                ]
-                        ]);
-
-                        $this->eventManager()->dispatch($beforeTabContentEvent);
-                        $beforeTab = $beforeTabContentEvent->result;
-
-                        if (isset($beforeTab['content']['length']) && count($beforeTab['content']['length']) > 0) {
-                            echo $this->cell('CsvMigrations.TabContent', [
-                            [
-                                'request' => $this->request,
-                                'content' => $beforeTab['content'],
-                                'tab' => $tab,
-                                'options' => ['order' => 'beforeContent', 'title' => $beforeTab['title']],
-                                'entity' => $options['entity'],
-                            ]
-                            ]);
-                        }
-
                         $tabContentEvent = new Event((string)EventName::VIEW_TAB_CONTENT(), $this, [
                             'request' => $this->request,
                             'entity' => $options['entity'],
@@ -314,77 +291,14 @@ echo $this->element('CsvMigrations.common_js_libs');
 
                         $this->eventManager()->dispatch($tabContentEvent);
                         $content = $tabContentEvent->result;
-                        $jsColumns = [];
 
-                        if (!empty($tab['url'])) { ?>
-                            <div class="">
-                                <table class="table table-hover table-condensed table-vertical-align table-datatable table-<?= $tab['containerId'];?>">
-                                    <thead>
-                                        <tr>
-                                        <?php foreach ($content['fields'] as $k => $field) :?>
-                                        <?php $jsColumns[] = ['data' => $field]; ?>
-                                            <th><?= Inflector::humanize($field);?></th>
-                                        <?php endforeach; ?>
-                                            <th><?= __('Actions');?></th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                        <?php
-                            echo $this->Html->scriptBlock(
-                                '$(".table-' . $tab['containerId'] . '").DataTable({
-                                    paging: true,
-                                    searching: false,
-                                    processing:true,
-                                    serverSide: true,
-                                    ajax: {
-                                        type: "GET",
-                                        url: "'. $tab['url'] .'",
-                                        headers: {
-                                            "Authorization": "Bearer " + "'.Configure::read('CsvMigrations.api.token').'"
-                                        },
-                                        data: function(d) {
-                                            return $.extend({}, d, {
-                                                format: "datatables",
-                                                menus: true,
-                                                id: "'. $this->request->params['pass'][0].'",
-                                                controller: "'.$this->request->params['controller'].'"
-                                            }, '.json_encode($tab).');
-                                        },
-                                        //columns: '.json_encode($jsColumns). '
-                                    },
-                                });',
-                                ['block' => 'scriptBottom']
-                            );
-                        } else {
-                            if (!empty($content) && !isset($content['rawOutput'])) {
-                                echo $this->cell('CsvMigrations.TabContent', [
-                                [
-                                    'request' => $this->request,
-                                    'content' => $content,
-                                    'tab' => $tab,
-                                    'options' => ['order' => 'tabContent'],
-                                    'entity' => $options['entity'],
-                                ]
-                                ]);
-                            }
-
-                            if (!empty($content['rawOutput'])) {
-                                echo $content['rawOutput'];
-                            }
-
-                            if (!empty($content)) {
-                                echo $this->Html->scriptBlock(
-                                    '$(".' . $tab['containerId'] . '").DataTable({
-                                        stateSave: true,
-                                        stateDuration: ' . (int)(Configure::read('Session.timeout') * 60) . ',
-                                        paging: true,
-                                        searching: false
-                                    });',
-                                    ['block' => 'scriptBottom']
-                                );
-                            }
+                        if (in_array($tab['associationType'], ['manyToMany'])) {
+                            echo $this->element('CsvMigrations.View/embedded_lookup', ['data' => [
+                                'tab' => $tab,
+                            ]]);
                         }
+
+                        echo $content;
                         ?>
                     </div>
                     <?php $active = false; ?>

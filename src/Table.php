@@ -203,11 +203,13 @@ class Table extends BaseTable
      *
      *
      * @param \Cake\ORM\Table $originTable entity of associated table
+     * @param \Cake\Network\Request $request from the controller
      * @param array $data with the association configs
+     * @param array $user with the user session
      *
      * @return array $response containing data for DataTables AJAX call
      */
-    public function getRelatedEntities($originTable, array $data = [])
+    public function getRelatedEntities($originTable, $request, array $data = [], array $user = [])
     {
         $response = [];
         $tableName = Inflector::camelize($data['originTable']);
@@ -229,12 +231,29 @@ class Table extends BaseTable
             $responseData = [];
             $assocTable = TableRegistry::get($entities['table_name']);
 
+            if ($data['menus'] == true) {
+                $appView = new \Cake\View\View();
+
+                $appView->element('CsvMigrations.Menu/index_actions', [
+                    'plugin' => $request->plugin,
+                    'controller' => $data['targetClass'],
+                    'displayField' => $association->displayField(),
+                    'entities' => $entities['records'],
+                    'user' => $user,
+                    'propertyName' => '_Menus',
+                ]);
+            }
+
             foreach ($entities['records'] as $record) {
                 $item = [];
                 foreach ($entities['fields'] as $fieldName) {
                     $item[] = $fh->renderValue($assocTable, $fieldName, $record->$fieldName, [
                         'entity' => $record,
                     ]);
+                }
+
+                if ($data['menus'] == true && isset($record->_Menus)) {
+                    $item[] = $record->_Menus;
                 }
 
                 array_push($responseData, $item);
@@ -324,7 +343,8 @@ class Table extends BaseTable
     /**
      * Method that retrieves one to many associated records
      *
-     * @param  \Cake\ORM\Association $association Association object
+     * @param \Cake\ORM\Table $table instance of the association.
+     * @param \Cake\ORM\Association $association Association object
      * @param \Cake\Network\Request $request passed
      * @return array associated records
      */
@@ -519,8 +539,8 @@ class Table extends BaseTable
     /**
      * Method that fetches action fields from the corresponding csv file.
      *
-     * @param  \Cake\Network\Request $request Request object
-     * @param  string                $action  Action name
+     * @param  string $controller name of request's controller
+     * @param  string $action  Action name
      * @return array
      */
     protected function _getActionFields($controller, $action = null)

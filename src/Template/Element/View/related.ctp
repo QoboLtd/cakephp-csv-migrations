@@ -4,15 +4,13 @@ use Cake\Utility\Inflector;
 ?>
 <?php if (!empty($tab['url'])) : ?>
 <div class="">
-    <table class="table table-hover table-condensed table-vertical-align" id="table-<?= $tab['containerId'];?>">
+    <table class="table table-hover table-condensed table-vertical-align table-datatable" id="table-<?= $tab['containerId'];?>">
         <thead>
             <tr>
             <?php foreach ($tab['fields'] as $k => $field) :?>
                 <th><?= Inflector::humanize($field);?></th>
             <?php endforeach; ?>
-            <!--
                 <th><?= __('Actions');?></th>
-            -->
             </tr>
         </thead>
     </table>

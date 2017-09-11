@@ -6,6 +6,7 @@ use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 use Crud\Controller\ControllerTrait;
 use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\Event\EventName;
@@ -14,14 +15,21 @@ use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
 use CsvMigrations\Swagger\Annotation;
 use ReflectionMethod;
-use Cake\ORM\Association;
-use Cake\ORM\Entity;
-use Cake\Utility\Inflector;
 
 class AppController extends Controller
 {
     use ControllerTrait;
     use PanelUtilTrait;
+
+    /**
+     * Include menus identifier
+     */
+    const FLAG_INCLUDE_MENUS = 'menus';
+
+    /**
+     * Property name for menu items
+     */
+    const MENU_PROPERTY_NAME = '_Menus';
 
     public $components = [
         'RequestHandler',
@@ -190,6 +198,19 @@ class AppController extends Controller
      */
     public function related()
     {
+        $result = [];
+
+        $this->request->allowMethod(['get']);
+
+        $data = $this->request->query();
+
+        $table = Inflector::camelize($data['originTable']);
+        $tableInstance = TableRegistry::get($table);
+
+        $result = $tableInstance->getRelatedEntities($tableInstance, $data);
+
+        $this->set(compact('result'));
+        $this->set('_serialize', 'result');
     }
 
     /**

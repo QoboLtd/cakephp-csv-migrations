@@ -89,7 +89,6 @@ $menu[] = [
     ),
 ];
 
-
 if (isset($options['associationType']) && in_array($options['associationType'], ['manyToMany'])) {
     $url = [
         'plugin' => $this->request->plugin,

@@ -1,6 +1,6 @@
 <?php
-use Cake\Utility\Inflector;
 use Cake\Core\Configure;
+use Cake\Utility\Inflector;
 ?>
 <?php if (!empty($tab['url'])) : ?>
 <div class="">
@@ -18,33 +18,34 @@ use Cake\Core\Configure;
     </table>
 </div>
 <?php
+    // @codingStandardsIgnoreStart
     echo $this->Html->scriptBlock(
-        '$("#table-'.$tab['containerId'].'").dataTable({
+        '$("#table-' . $tab['containerId'] . '").dataTable({
             searching: false,
             processing:true,
             serverSide:true,
             paging:true,
             ajax: {
                 type: "GET",
-                url: "'.$tab['url'].'",
+                url: "' . $tab['url'] . '",
                 headers: {
-                    "Authorization": "Bearer " + "'.Configure::read('CsvMigrations.api.token').'"
+                    "Authorization": "Bearer " + "' . Configure::read('CsvMigrations.api.token') . '"
                 },
                 data: function (d) {
-                    return $.extend( {}, d, '.json_encode(
-                        array_merge(
-                            $tab, [
-                                'format' => 'datatables',
-                                'id' => $this->request->params['pass'][0],
-                                'controller' => $this->request->params['controller'],
-                                'menus' => false
-                            ]
-                        )
-                    ).');
+
+                    return $.extend( {}, d, ' . json_encode(array_merge($tab,
+                    [
+                        'format' => 'datatables',
+                        'id' => $this->request->params['pass'][0],
+                        'controller' => $this->request->params['controller'],
+                        'menus' => true,
+                    ])) . ');
                 }
             },
         });',
         ['block' => 'scriptBottom']
-    );?>
+    );
+    // @codingStandardsIgnoreEnd
+?>
 <?php endif; ?>
 

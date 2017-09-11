@@ -6,7 +6,6 @@ use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 $fhf = new FieldHandlerFactory($this);
-//$content = $data['content'];
 $content = $data['tab'];
 
 /*

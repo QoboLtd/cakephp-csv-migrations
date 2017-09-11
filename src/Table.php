@@ -231,19 +231,6 @@ class Table extends BaseTable
             $responseData = [];
             $assocTable = TableRegistry::get($entities['table_name']);
 
-            if ($data['menus'] == true) {
-                $appView = new \Cake\View\View();
-
-                $appView->element('CsvMigrations.Menu/index_actions', [
-                    'plugin' => $request->plugin,
-                    'controller' => $data['targetClass'],
-                    'displayField' => $association->displayField(),
-                    'entities' => $entities['records'],
-                    'user' => $user,
-                    'propertyName' => '_Menus',
-                ]);
-            }
-
             foreach ($entities['records'] as $record) {
                 $item = [];
                 foreach ($entities['fields'] as $fieldName) {
@@ -252,8 +239,13 @@ class Table extends BaseTable
                     ]);
                 }
 
-                if ($data['menus'] == true && isset($record->_Menus)) {
-                    $item[] = $record->_Menus;
+                if ($data['menus'] == true) {
+                    $appView = new \Cake\View\View();
+                    $item[] = $appView->element('CsvMigrations.Menu/related_actions', [
+                        'options' => $data,
+                        'entity' => $record,
+                        'user' => $user,
+                    ]);
                 }
 
                 array_push($responseData, $item);

@@ -21,16 +21,6 @@ class AppController extends Controller
     use ControllerTrait;
     use PanelUtilTrait;
 
-    /**
-     * Include menus identifier
-     */
-    const FLAG_INCLUDE_MENUS = 'menus';
-
-    /**
-     * Property name for menu items
-     */
-    const MENU_PROPERTY_NAME = '_Menus';
-
     public $components = [
         'RequestHandler',
         'Crud.Crud' => [

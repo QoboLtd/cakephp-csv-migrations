@@ -1,0 +1,6 @@
+FIELD NAME,FIELD TYPE,REQUIRED,NOT SEARCHABLE,UNIQUE
+id,uuid
+name,string
+description,text
+created,datetime
+modified,datetime

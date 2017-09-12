@@ -1,0 +1,8 @@
+FIELD NAME,FIELD TYPE,REQUIRED,NOT SEARCHABLE,UNIQUE
+id,uuid
+name,string,1,,1
+description,text,,1
+owner,related(Authors)
+trashed,datetime
+created,datetime
+modified,datetime

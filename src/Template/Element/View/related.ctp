@@ -4,13 +4,13 @@ use Cake\Utility\Inflector;
 ?>
 <?php if (!empty($tab['url'])) : ?>
 <?php
-    if (in_array($tab['associationType'], ['manyToMany'])) {
-        if (isset($tab['permission_allow_link']) && true === $tab['permission_allow_link']) {
-            echo $this->element('CsvMigrations.View/embedded_lookup', ['data' => [
-                'tab' => $tab,
-            ]]);
-        }
+if (in_array($tab['associationType'], ['manyToMany'])) {
+    if (isset($tab['permission_allow_link']) && true === $tab['permission_allow_link']) {
+        echo $this->element('CsvMigrations.View/embedded_lookup', ['data' => [
+            'tab' => $tab,
+        ]]);
     }
+}
 ?>
 <div class="">
     <table class="table table-hover table-condensed table-vertical-align table-datatable" id="table-<?= $tab['containerId'];?>">

@@ -234,12 +234,6 @@ class ViewViewTabsListener implements EventListenerInterface
     {
         $content = [];
 
-        // In case the application modified tab configuration,
-        // merging it down and passing to the element.
-        if (isset($event->result['tab']) && !empty($event->result['tab'])) {
-            $options['tab'] = array_merge($options['tab'], $event->result['tab']);
-        }
-
         $params = $request->params;
         $table = $params['controller'];
 

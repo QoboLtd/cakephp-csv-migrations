@@ -284,6 +284,7 @@ echo $this->element('CsvMigrations.common_js_libs');
                         $tabContentEvent = new Event((string)EventName::VIEW_TAB_CONTENT(), $this, [
                             'request' => $this->request,
                             'entity' => $options['entity'],
+                            'user' => $user,
                             'options' => [
                                     'tab' => $tab
                                 ]
@@ -291,12 +292,6 @@ echo $this->element('CsvMigrations.common_js_libs');
 
                         $this->eventManager()->dispatch($tabContentEvent);
                         $content = $tabContentEvent->result;
-
-                        if (in_array($tab['associationType'], ['manyToMany'])) {
-                            echo $this->element('CsvMigrations.View/embedded_lookup', ['data' => [
-                                'tab' => $tab,
-                            ]]);
-                        }
 
                         echo $content;
                         ?>

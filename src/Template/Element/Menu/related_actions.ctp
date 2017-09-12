@@ -12,7 +12,7 @@ if (empty($user) && !empty($_SESSION)) {
 
 $menu = [];
 
-list($plugin, $controller) = pluginSplit($options['associationName']);
+list($plugin, $controller) = pluginSplit($options['targetClass']);
 
 $url = [
     'prefix' => false,
@@ -96,7 +96,7 @@ if (isset($options['associationType']) && in_array($options['associationType'], 
         'controller' => $this->request->controller,
         'action' => 'unlink',
         $options['id'],
-        $options['assoc_name'],
+        $options['associationName'],
         $entity->id
     ];
     $menu[] = [

@@ -227,8 +227,9 @@ class Table extends BaseTable
             return $response;
         }
 
-        if ($data['format'] == 'datatables') {
-            $responseData = [];
+        $responseData = [];
+
+        if ($data['format'] == 'datatables' && !empty($entities['records'])) {
             $assocTable = TableRegistry::get($entities['table_name']);
 
             foreach ($entities['records'] as $record) {
@@ -302,9 +303,11 @@ class Table extends BaseTable
         $limit = (!empty($data['limit']) ? $data['limit'] : 10);
         $offset = (!empty($data['start']) ? $data['start'] : 0);
 
+        $tableAlias = $table->registryAlias();
+
         $countQuery = $assocTableObject->find();
         $countQuery->select(['count' => $countQuery->func()->count('*')]);
-        $countQuery->matching($table->alias(), function ($q) use ($primaryKey, $id) {
+        $countQuery->matching($tableAlias, function ($q) use ($primaryKey, $id) {
             return $q->where([$primaryKey => $id]);
         });
 
@@ -318,7 +321,7 @@ class Table extends BaseTable
             $query->offset($offset);
         }
 
-        $query->matching($table->alias(), function ($q) use ($primaryKey, $id) {
+        $query->matching($tableAlias, function ($q) use ($primaryKey, $id) {
             return $q->where([$primaryKey => $id]);
         });
 
@@ -343,10 +346,6 @@ class Table extends BaseTable
     protected function getOneToManyAssociatedRecords($table, Association $association, array $data = [])
     {
         $result = [];
-        $assocName = $association->name();
-        $assocTableName = $association->table();
-        $assocForeignKey = $association->foreignKey();
-        $recordId = $data['id'];
 
         $csvFields = $this->_getAssociationCsvFields($association, 'index');
         if (empty($csvFields)) {
@@ -361,21 +360,26 @@ class Table extends BaseTable
             )
         );
 
-        // @NOTE: fields should be properly indexed
-        // to collide with 'columns' indexes
         $fields = array_values($fields);
-        $conditions = $this->getRelatedEntitiesOrder($association->target(), $fields, $data);
+
+        $assocTable = $association->target();
+
+        $conditions = $this->getRelatedEntitiesOrder($assocTable, $fields, $data);
 
         $limit = (!empty($data['limit']) ? $data['limit'] : 10);
         $offset = (!empty($data['start']) ? $data['start'] : 0);
 
-        $countQuery = $association->target()->find();
+        $recordId = $data['id'];
+        $assocForeignKey = $association->foreignKey();
+        $aliasedForeignKey = $assocTable->aliasField($assocForeignKey);
+
+        $countQuery = $assocTable->find();
         $countQuery->select(['count' => $countQuery->func()->count('*')]);
-        $countQuery->where([$assocForeignKey => $recordId]);
+        $countQuery->where([$aliasedForeignKey => $recordId]);
         $count = $countQuery->first();
 
-        $query = $association->target()->find();
-        $query->where([$assocForeignKey => $recordId]);
+        $query = $assocTable->find();
+        $query->where([$aliasedForeignKey => $recordId]);
         $query->limit($limit);
         $query->order($conditions);
 
@@ -496,7 +500,6 @@ class Table extends BaseTable
             )
         );
 
-        $result['assoc_name'] = $assocName;
         $result['table_name'] = $assocTableName;
 
         $result['class_name'] = $association->className();

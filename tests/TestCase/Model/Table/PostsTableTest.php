@@ -5,14 +5,11 @@ use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\ConfigurationTrait;
-use CsvMigrations\MigrationTrait;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Table;
 
 class PostsTable extends Table
 {
-    use MigrationTrait;
-
     public function initialize(array $config)
     {
         parent::initialize($config);
@@ -28,8 +25,6 @@ class PostsTable extends Table
 
 class PostsTableTest extends TestCase
 {
-
-
     /**
      * Test subject
      *
@@ -66,7 +61,7 @@ class PostsTableTest extends TestCase
             if ('OwnerAuthors' == $association->name()) {
                 $this->assertNotEmpty($result);
                 $expectedFields = array_values($result['fields']);
-                $this->assertEquals($expectedFields, ['name','description','created','modified']);
+                $this->assertEquals($expectedFields, ['name', 'description', 'created', 'modified']);
             }
 
             if ('Tags' == $association->name()) {
@@ -80,5 +75,4 @@ class PostsTableTest extends TestCase
         $result = $this->PostsTable->getAssociationObject('Posts', 'OwnerAuthors');
         $this->assertEquals('OwnerAuthors', $result->name());
     }
-
 }

@@ -5,14 +5,11 @@ use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\ConfigurationTrait;
-use CsvMigrations\MigrationTrait;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Table;
 
 class AuthorsTable extends Table
 {
-    use MigrationTrait;
-
     public function initialize(array $config)
     {
         parent::initialize($config);
@@ -54,6 +51,5 @@ class AuthorsTableTest extends TestCase
 
         $config = TableRegistry::exists('Authors') ? [] : ['className' => 'CsvMigrations\Test\TestCase\Model\Table\AuthorsTable'];
         $this->AuthorsTable = TableRegistry::get('Authors', $config);
-
     }
 }

@@ -212,7 +212,13 @@ class AppController extends BaseController
             $this->Flash->error(__('The record could not be deleted. Please, try again.'));
         }
 
-        return $this->redirect(['action' => 'index']);
+        if (!empty($this->referer())) {
+            $url = $this->referer();
+        } else {
+            $url = ['action' => 'index'];
+        }
+
+        return $this->redirect($url);
     }
 
     /**
@@ -235,6 +241,44 @@ class AppController extends BaseController
         $model->{$assocName}->unlink($entity, [$assocEntity]);
 
         $this->Flash->success(__('The record has been unlinked.'));
+
+        return $this->redirect($this->referer());
+    }
+
+    /**
+     * Link Method
+     *
+     * Embedded linking form for many-to-many records,
+     * link the associations without calling direct edit() action
+     * on the origin entity - it prevents overwritting the associations
+     *
+     * @return \Cake\Network\Response|null Redirects to referer.
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
+    public function link()
+    {
+        $this->request->allowMethod(['post']);
+
+        $data = $this->request->getData();
+        $assocEntities = [];
+        $assocName = $data['assocName'];
+
+        $model = $this->{$this->name};
+        $entity = $model->get($data['id']);
+
+        if (!empty($data[$assocName]) && isset($data[$assocName]['_ids'])) {
+            foreach ($data[$assocName]['_ids'] as $assocId) {
+                $assocEntity = $model->{$assocName}->get($assocId);
+                if (!empty($assocEntity)) {
+                    array_push($assocEntities, $assocEntity);
+                }
+            }
+        }
+
+        if (!empty($assocEntities)) {
+            $model->{$assocName}->link($entity, $assocEntities);
+            $this->Flash->success(__('The record has been unlinked.'));
+        }
 
         return $this->redirect($this->referer());
     }

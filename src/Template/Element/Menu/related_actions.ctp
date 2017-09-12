@@ -4,7 +4,7 @@ use Cake\Utility\Hash;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
-$fhf = new FieldHandlerFactory($this);
+$fhf = new FieldHandlerFactory();
 
 if (empty($user) && !empty($_SESSION)) {
     $user = Hash::get($_SESSION, 'Auth.User');
@@ -12,14 +12,14 @@ if (empty($user) && !empty($_SESSION)) {
 
 $menu = [];
 
-list($plugin, $controller) = pluginSplit($options['associated']['className']);
+list($plugin, $controller) = pluginSplit($options['targetClass']);
 
 $url = [
     'prefix' => false,
     'plugin' => $plugin,
     'controller' => $controller,
     'action' => 'view',
-    $options['associated']['entity']->id
+    $entity->id
 ];
 $menu[] = [
     'html' => $this->Html->link('<i class="fa fa-eye"></i>', $url, [
@@ -37,7 +37,7 @@ $url = [
     'plugin' => $plugin,
     'controller' => $controller,
     'action' => 'edit',
-    $options['associated']['entity']->id
+    $entity->id
 ];
 $menu[] = [
     'html' => $this->Html->link('<i class="fa fa-pencil"></i>', $url, [
@@ -55,7 +55,7 @@ $url = [
     'plugin' => $plugin,
     'controller' => $controller,
     'action' => 'delete',
-    $options['associated']['entity']->id,
+    $entity->id,
 ];
 
 $menu[] = [
@@ -63,9 +63,9 @@ $menu[] = [
         'confirm' => __(
             'Are you sure you want to delete {0}?',
             $fhf->renderValue(
-                $options['associated']['className'],
-                $options['associated']['displayField'],
-                $options['associated']['entity']->{$options['associated']['displayField']},
+                $options['class_name'],
+                $options['display_field'],
+                $entity->{$options['display_field']},
                 ['renderAs' => 'plain']
             )
         ),
@@ -77,32 +77,37 @@ $menu[] = [
     'label' => __('Delete'),
     'icon' => 'trash',
     'type' => 'postlink_button',
-    'order' => 30,
+    'order' => 40,
     'confirmMsg' => __(
         'Are you sure you want to delete {0}?',
         $fhf->renderValue(
-            $options['associated']['className'],
-            $options['associated']['displayField'],
-            $options['associated']['entity']->{$options['associated']['displayField']},
+            $options['class_name'],
+            $options['display_field'],
+            $entity->{$options['display_field']},
             ['renderAs' => 'plain']
         )
     ),
 ];
 
-if (isset($options['associated']['type']) && in_array($options['associated']['type'], ['manyToMany'])) {
+if (isset($options['associationType']) && in_array($options['associationType'], ['manyToMany'])) {
     $url = [
+        'prefix' => false,
         'plugin' => $this->request->plugin,
         'controller' => $this->request->controller,
         'action' => 'unlink',
-        $options['entity']->id,
-        $options['associated']['name'],
-        $options['associated']['entity']->id
+        $options['id'],
+        $options['associationName'],
+        $entity->id
     ];
     $menu[] = [
         'html' => $this->Form->postLink('<i class="fa fa-chain-broken"></i>', $url, [
             'title' => __('Unlink'), 'class' => 'btn btn-default btn-sm', 'escape' => false
         ]),
-        'url' => $url
+        'url' => $url,
+        'label' => __('Unlink'),
+        'icon' => 'unlink',
+        'type' => 'postlink_button',
+        'order' => 30,
     ];
 }
 

@@ -281,32 +281,10 @@ echo $this->element('CsvMigrations.common_js_libs');
                 <?php foreach ($tabs as $tab) : ?>
                     <div role="tabpanel" class="tab-pane <?= $active ? 'active' : ''?>" id="<?= $tab['containerId']?>">
                         <?php
-                        $beforeTabContentEvent = new Event((string)EventName::VIEW_TAB_BEFORE_CONTENT(), $this, [
-                            'request' => $this->request,
-                            'entity' => $options['entity'],
-                            'options' => [
-                                    'tab' => $tab
-                                ]
-                        ]);
-
-                        $this->eventManager()->dispatch($beforeTabContentEvent);
-                        $beforeTab = $beforeTabContentEvent->result;
-
-                        if (isset($beforeTab['content']['length']) && count($beforeTab['content']['length']) > 0) {
-                            echo $this->cell('CsvMigrations.TabContent', [
-                            [
-                                'request' => $this->request,
-                                'content' => $beforeTab['content'],
-                                'tab' => $tab,
-                                'options' => ['order' => 'beforeContent', 'title' => $beforeTab['title']],
-                                'entity' => $options['entity'],
-                            ]
-                            ]);
-                        }
-
                         $tabContentEvent = new Event((string)EventName::VIEW_TAB_CONTENT(), $this, [
                             'request' => $this->request,
                             'entity' => $options['entity'],
+                            'user' => $user,
                             'options' => [
                                     'tab' => $tab
                                 ]
@@ -315,33 +293,7 @@ echo $this->element('CsvMigrations.common_js_libs');
                         $this->eventManager()->dispatch($tabContentEvent);
                         $content = $tabContentEvent->result;
 
-                        if (!empty($content) && !isset($content['rawOutput'])) {
-                            echo $this->cell('CsvMigrations.TabContent', [
-                            [
-                                'request' => $this->request,
-                                'content' => $content,
-                                'tab' => $tab,
-                                'options' => ['order' => 'tabContent'],
-                                'entity' => $options['entity'],
-                            ]
-                            ]);
-                        }
-
-                        if (!empty($content['rawOutput'])) {
-                            echo $content['rawOutput'];
-                        }
-
-                        if (!empty($content)) {
-                            echo $this->Html->scriptBlock(
-                                '$(".' . $tab['containerId'] . '").DataTable({
-                                    stateSave: true,
-                                    stateDuration: ' . (int)(Configure::read('Session.timeout') * 60) . ',
-                                    paging: true,
-                                    searching: false
-                                });',
-                                ['block' => 'scriptBottom']
-                            );
-                        }
+                        echo $content;
                         ?>
                     </div>
                     <?php $active = false; ?>

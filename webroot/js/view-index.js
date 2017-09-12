@@ -21,6 +21,7 @@ var view_index = view_index || {};
         this.table_id = options.hasOwnProperty('table_id') ? options.table_id : null;
         this.menus = options.hasOwnProperty('menus') ? options.menus : false;
         this.format = options.hasOwnProperty('format') ? options.format : {};
+        this.extras = options.hasOwnProperty('extras') ? options.extras : {};
         this.state_duration = options.hasOwnProperty('state_duration') ? options.state_duration : 0;
 
         var table = this.datatable();
@@ -53,6 +54,11 @@ var view_index = view_index || {};
                     if (!jQuery.isEmptyObject(that.format)) {
                         d.format = that.format;
                     }
+
+                    if (that.extras) {
+                        d = $.extend({}, d, that.extras);
+                    }
+
                     d.limit = d.length;
                     d.page = 1 + d.start / d.length;
 

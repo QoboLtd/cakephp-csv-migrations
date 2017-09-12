@@ -230,9 +230,16 @@ class ViewViewTabsListener implements EventListenerInterface
      * @param array $options for extra setup
      * @return array $content returned
      */
-    public function getTabContent(Event $event, $request, $entity, $options)
+    public function getTabContent(Event $event, $request, $entity, array $user, array $options)
     {
         $content = [];
+
+        // In case the application modified tab configuration,
+        // merging it down and passing to the element.
+        if (isset($event->result['tab']) && !empty($event->result['tab'])) {
+            $options['tab'] = array_merge($options['tab'], $event->result['tab']);
+        }
+
         $params = $request->params;
         $table = $params['controller'];
 

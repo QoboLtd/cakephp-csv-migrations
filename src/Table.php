@@ -407,7 +407,7 @@ class Table extends BaseTable
      *
      * @return \Cake\ORM\Association $result object
      */
-    public function getAssociationObject(string $tableName, string $associationName)
+    public function getAssociationObject($tableName, $associationName)
     {
         $result = null;
         $tableName = Inflector::camelize($tableName);

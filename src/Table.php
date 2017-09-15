@@ -526,7 +526,7 @@ class Table extends BaseTable
     protected function _getAssociationCsvFields(Association $association, $action)
     {
         list($plugin, $controller) = pluginSplit($association->className());
-        $fields = $this->_getCsvFields($controller, $action);
+        $fields = $this->getCsvFields($controller, $action);
 
         return $fields;
     }
@@ -557,7 +557,7 @@ class Table extends BaseTable
      * @param  string $action    Action name
      * @return array             table fields
      */
-    protected function _getCsvFields($tableName, $action)
+    public function getCsvFields($tableName, $action)
     {
         $result = [];
 

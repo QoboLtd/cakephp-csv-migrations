@@ -557,7 +557,7 @@ class Table extends BaseTable
      * @param  string $action    Action name
      * @return array             table fields
      */
-    protected function _getCsvFields($tableName, $action)
+    public function _getCsvFields($tableName, $action)
     {
         $result = [];
 

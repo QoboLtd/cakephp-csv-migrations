@@ -55,6 +55,7 @@ class Table extends BaseTable
     public function setCurrentUser($user)
     {
         $this->_currentUser = $user;
+        error_log('Set current user: ' . print_r($this->_currentUser, true) . "\n", 3, '/tmp/sync.log');
 
         return $this->_currentUser;
     }
@@ -117,6 +118,9 @@ class Table extends BaseTable
      */
     public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options)
     {
+        $user = $this->getCurrentUser();
+        $options['current_user'] = $user['id'];
+
         $ev = new Event(
             (string)EventName::MODEL_AFTER_SAVE(),
             $this,
@@ -340,7 +344,7 @@ class Table extends BaseTable
      *
      * @param \Cake\ORM\Table $table instance of the association.
      * @param \Cake\ORM\Association $association Association object
-     * @param \Cake\Network\Request $request passed
+     * @param \Cake\Network\Request $data passed
      * @return array associated records
      */
     protected function getOneToManyAssociatedRecords($table, Association $association, array $data = [])

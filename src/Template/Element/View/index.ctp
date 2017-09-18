@@ -7,30 +7,35 @@ use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 $fhf = new FieldHandlerFactory($this);
 
 // Setup Index View js logic
-echo $this->Html->css('AdminLTE./plugins/datatables/dataTables.bootstrap', ['block' => 'css']);
+echo $this->Html->css(
+    [
+        'Qobo/Utils./plugins/datatables/css/dataTables.bootstrap.min',
+        'Qobo/Utils./plugins/datatables/extensions/Select/css/select.bootstrap.min'
+    ],
+    ['block' => 'css']
+);
 echo $this->Html->script(
     [
-        'AdminLTE./plugins/datatables/jquery.dataTables.min',
-        'AdminLTE./plugins/datatables/dataTables.bootstrap.min',
+        'Qobo/Utils./plugins/datatables/datatables.min',
+        'Qobo/Utils./plugins/datatables/js/dataTables.bootstrap.min',
+        'Qobo/Utils./plugins/datatables/extensions/Select/js/dataTables.select.min',
         'CsvMigrations.view-index'
     ],
-    [
-        'block' => 'scriptBottom'
-    ]
+    ['block' => 'scriptBottom']
 );
 echo $this->Html->scriptBlock(
     'view_index.init({
-        table_id: \'.table-datatable\',
-        api_url: \'' . $this->Url->build([
+        table_id: ".table-datatable",
+        api_url: "' . $this->Url->build([
             'prefix' => 'api',
             'plugin' => $this->request->plugin,
             'controller' => $this->request->controller,
             'action' => $this->request->action
-        ]) . '\',
-        api_ext: \'json\',
+        ]) . '",
+        api_ext: "json",
         api_token: ' . json_encode(Configure::read('CsvMigrations.api.token')) . ',
         menus: true,
-        format: \'datatables\',
+        format: "datatables",
         state_duration: ' . (int)(Configure::read('Session.timeout') * 60) . '
     });',
     ['block' => 'scriptBottom']

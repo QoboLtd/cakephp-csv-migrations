@@ -230,7 +230,7 @@ class Table extends BaseTable
         $responseData = [];
 
         if ($data['format'] == 'datatables' && !empty($entities['records'])) {
-            $assocTable = TableRegistry::get($entities['table_name']);
+            $assocTable = TableRegistry::get($entities['table']);
 
             foreach ($entities['records'] as $record) {
                 $item = [];
@@ -508,8 +508,6 @@ class Table extends BaseTable
         } else {
             $result['foreign_key'] = Inflector::singularize($association->table()) . '_' . $association->primaryKey();
         }
-
-        $result['table_name'] = $association->table();
 
         return $result;
     }

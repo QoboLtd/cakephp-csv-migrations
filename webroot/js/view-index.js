@@ -15,6 +15,7 @@ var view_index = view_index || {};
      * @return {undefined}
      */
     ViewIndex.prototype.init = function (options) {
+        this.options = options;
         this.api_url = options.hasOwnProperty('api_url') ? options.api_url : null;
         this.api_ext = options.hasOwnProperty('api_ext') ? options.api_ext : null;
         this.api_token = options.hasOwnProperty('api_token') ? options.api_token : null;
@@ -26,6 +27,35 @@ var view_index = view_index || {};
 
         var table = this.datatable();
         this._handleDeleteLinks(table);
+        this._batchActions();
+    };
+
+    ViewIndex.prototype._batchActions = function () {
+        var that = this;
+        $(this.options.batch.delete_id).click(function (e) {
+            e.preventDefault();
+            if (!confirm('Are you sure you want to delete the selected records?')) {
+                return;
+            }
+
+            that._createAndSubmitBatchForm('delete');
+        });
+        $(this.options.batch.edit_id).click(function (e) {
+            e.preventDefault();
+
+            that._createAndSubmitBatchForm('post');
+        });
+    };
+
+    ViewIndex.prototype._createAndSubmitBatchForm = function (type) {
+        var $form = $('<form method="post" action="' + this.options.batch.url + '"></form>');
+
+        $form.append('<input type="hidden" name="_method" value="' + type.toUpperCase() + '" />');
+        $(this.options.table_id + ' tr.selected').each(function () {
+            $form.append('<input type="text" name="batch[ids][]" value="' + $(this).attr('data-id') + '">');
+        });
+
+        $form.submit();
     };
 
     /**

@@ -44,5 +44,5 @@ for ($i = 0; $i <= $levels; $i++) {
         $options['data-value'] = implode('.', array_slice($value, 0, $i + 1));
     }
 
-    echo $this->Form->input($name, $options);
+    echo $this->Form->input($name, array_merge($options, $attributes));
 }

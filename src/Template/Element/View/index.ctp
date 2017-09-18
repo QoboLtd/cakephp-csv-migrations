@@ -36,7 +36,12 @@ echo $this->Html->scriptBlock(
         api_token: ' . json_encode(Configure::read('CsvMigrations.api.token')) . ',
         menus: true,
         format: "datatables",
-        state_duration: ' . (int)(Configure::read('Session.timeout') * 60) . '
+        state_duration: ' . (int)(Configure::read('Session.timeout') * 60) . ',
+        batch: {
+            url: "' . $this->Url->build(['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'batch']) . '",
+            delete_id: "#batch-delete-button",
+            edit_id: "#batch-edit-button"
+        }
     });',
     ['block' => 'scriptBottom']
 );

@@ -1,5 +1,5 @@
 (function ($) {
-    'use strict'
+    'use strict';
 
     var Panel = function (form) {
         this.form = form;

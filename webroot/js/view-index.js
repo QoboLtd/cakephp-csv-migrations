@@ -57,6 +57,7 @@ var view_index = view_index || {};
                 $(row).attr('data-id', data[0]);
                 $('td', row).eq(0).text('');
             },
+            deferRender: true,
             ajax: {
                 url: that.api_url + '.' + that.api_ext,
                 headers: {

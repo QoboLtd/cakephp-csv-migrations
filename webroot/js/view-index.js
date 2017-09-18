@@ -53,6 +53,10 @@ var view_index = view_index || {};
                 style: 'multi',
                 selector: 'td:first-child'
             },
+            createdRow: function ( row, data, index ) {
+                $(row).attr('data-id', data[0]);
+                $('td', row).eq(0).text('');
+            },
             ajax: {
                 url: that.api_url + '.' + that.api_ext,
                 headers: {

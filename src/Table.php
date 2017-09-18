@@ -55,7 +55,6 @@ class Table extends BaseTable
     public function setCurrentUser($user)
     {
         $this->_currentUser = $user;
-        error_log('Set current user: ' . print_r($this->_currentUser, true) . "\n", 3, '/tmp/sync.log');
 
         return $this->_currentUser;
     }

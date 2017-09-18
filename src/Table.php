@@ -297,21 +297,18 @@ class Table extends BaseTable
         $fields = array_values($fields);
         $conditions = $this->getRelatedEntitiesOrder($assocTableObject, $fields, $data);
 
-        $id = $data['id'];
-        $primaryKey = $table->aliasField($table->getPrimaryKey());
-
         $limit = (!empty($data['limit']) ? $data['limit'] : 10);
         $offset = (!empty($data['start']) ? $data['start'] : 0);
 
+        $id = $data['id'];
         $tableAlias = $table->registryAlias();
+        $primaryKey = $table->aliasField($table->getPrimaryKey());
 
-        $countQuery = $assocTableObject->find();
-        $countQuery->select(['count' => $countQuery->func()->count('*')]);
-        $countQuery->matching($tableAlias, function ($q) use ($primaryKey, $id) {
-            return $q->where([$primaryKey => $id]);
-        });
-
-        $count = $countQuery->first();
+        $count = $this->getManyToManyCount($assocTableObject->find(), [
+            'alias' => $tableAlias,
+            'primary_key' => $primaryKey,
+            'id' => $id,
+        ]);
 
         $query = $assocTableObject->find();
         $query->order($conditions);
@@ -328,7 +325,7 @@ class Table extends BaseTable
         $result = $this->getAssociationFields($association);
 
         $result['pagination']['recordsFiltered'] = $query->count();
-        $result['pagination']['recordsTotal'] = $count->count;
+        $result['pagination']['recordsTotal'] = $count;
         $result['pagination']['count'] = $query->count();
         $result['records'] = $query->all();
 
@@ -373,10 +370,10 @@ class Table extends BaseTable
         $assocForeignKey = $association->foreignKey();
         $aliasedForeignKey = $assocTable->aliasField($assocForeignKey);
 
-        $countQuery = $assocTable->find();
-        $countQuery->select(['count' => $countQuery->func()->count('*')]);
-        $countQuery->where([$aliasedForeignKey => $recordId]);
-        $count = $countQuery->first();
+        $count = $this->getOneToManyCount($assocTable->find(), [
+            'foreign_key' => $aliasedForeignKey,
+            'record_id' => $recordId,
+        ]);
 
         $query = $assocTable->find();
         $query->where([$aliasedForeignKey => $recordId]);
@@ -389,7 +386,7 @@ class Table extends BaseTable
 
         $result = $this->getAssociationFields($association);
 
-        $result['pagination']['recordsTotal'] = $count->count;
+        $result['pagination']['recordsTotal'] = $count;
         $result['pagination']['recordsFiltered'] = $query->count();
         $result['pagination']['count'] = $query->count();
         $result['records'] = $query->all();
@@ -717,5 +714,53 @@ class Table extends BaseTable
     protected function _currentTable()
     {
         return App::shortName(get_class($this), 'Model/Table', 'Table');
+    }
+
+    /**
+     * Get One-to-Many Records count
+     *
+     * Used for DataTables records count based on associations
+     *
+     * @param \Cake\ORM\Query $query instance of target table
+     * @param array $options with conditions.
+     *
+     * @return int $count containing records counted.
+     */
+    public function getOneToManyCount(Query $query, array $options = [])
+    {
+        $recordId = $options['record_id'];
+        $aliasedForeignKey = $options['foreign_key'];
+
+        $query->select(['count' => $query->func()->count('*')]);
+        $query->where([$aliasedForeignKey => $recordId]);
+        $count = $query->first();
+
+        return $count->count;
+    }
+
+    /**
+     * Get Many-to-Many Records count
+     *
+     * Used for DataTables records count based on associations
+     *
+     * @param \Cake\ORM\Query $query instance of target table
+     * @param array $options with conditions.
+     *
+     * @return int $count containing records counted.
+     */
+    public function getManyToManyCount(Query $query, array $options = [])
+    {
+        $primaryKey = $options['primary_key'];
+        $id = $options['id'];
+        $tableAlias = $options['alias'];
+
+        $query->select(['count' => $query->func()->count('*')]);
+        $query->matching($tableAlias, function ($q) use ($primaryKey, $id) {
+            return $q->where([$primaryKey => $id]);
+        });
+
+        $count = $query->first();
+
+        return $count->count;
     }
 }

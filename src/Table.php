@@ -272,30 +272,16 @@ class Table extends BaseTable
     public function getManyToManyAssociatedRecords($table, Association $association, array $data = [])
     {
         $result = [];
-        $assocName = $association->name();
-        $assocTableName = $association->table();
-        $assocForeignKey = $association->foreignKey();
 
-        $csvFields = $this->getAssociationCsvFields($association, 'index');
+        $result = $this->getAssociationFields($association, ['action' => 'index']);
 
-        if (empty($csvFields)) {
-            return $result;
+        if (empty($result['fields'])) {
+            return [];
         }
-        // get associated index View csv fields
-        $fields = array_unique(
-            array_merge(
-                [$association->displayField()],
-                $csvFields
-            )
-        );
 
-        $assocTableName = Inflector::camelize($assocTableName);
-        $assocTableObject = TableRegistry::get($assocTableName);
+        $assocTable = TableRegistry::get(Inflector::camelize($association->table()));
 
-        // @NOTE: fields should be properly indexed
-        // to collide with 'columns' indexes
-        $fields = array_values($fields);
-        $conditions = $this->getRelatedEntitiesOrder($assocTableObject, $fields, $data);
+        $conditions = $this->getRelatedEntitiesOrder($assocTable, $result['fields'], $data);
 
         $limit = (!empty($data['limit']) ? $data['limit'] : 10);
         $offset = (!empty($data['start']) ? $data['start'] : 0);
@@ -304,25 +290,24 @@ class Table extends BaseTable
         $tableAlias = $table->registryAlias();
         $primaryKey = $table->aliasField($table->getPrimaryKey());
 
-        $count = $this->getManyToManyCount($assocTableObject->find(), [
+        $count = $this->getManyToManyCount($assocTable->find(), [
             'alias' => $tableAlias,
-            'primary_key' => $primaryKey,
-            'id' => $id,
+            'conditions' => [
+                $primaryKey => $id,
+            ],
         ]);
 
-        $query = $assocTableObject->find();
+        $query = $assocTable->find();
+        $query->matching($tableAlias, function ($q) use ($primaryKey, $id) {
+            return $q->where([$primaryKey => $id]);
+        });
+
         $query->order($conditions);
         $query->limit($limit);
 
         if (!empty($offset)) {
             $query->offset($offset);
         }
-
-        $query->matching($tableAlias, function ($q) use ($primaryKey, $id) {
-            return $q->where([$primaryKey => $id]);
-        });
-
-        $result = $this->getAssociationFields($association);
 
         $result['pagination']['recordsFiltered'] = $query->count();
         $result['pagination']['recordsTotal'] = $count;
@@ -337,54 +322,44 @@ class Table extends BaseTable
      *
      * @param \Cake\ORM\Table $table instance of the association.
      * @param \Cake\ORM\Association $association Association object
-     * @param \Cake\Network\Request $request passed
+     * @param array $data passed
      * @return array associated records
      */
     protected function getOneToManyAssociatedRecords($table, Association $association, array $data = [])
     {
         $result = [];
 
-        $csvFields = $this->getAssociationCsvFields($association, 'index');
-        if (empty($csvFields)) {
-            return $result;
+        $result = $this->getAssociationFields($association, ['action' => 'index']);
+
+        if (empty($result['fields'])) {
+            return [];
         }
-
-        // get associated index View csv fields
-        $fields = array_unique(
-            array_merge(
-                [$association->displayField()],
-                $csvFields
-            )
-        );
-
-        $fields = array_values($fields);
 
         $assocTable = $association->target();
 
-        $conditions = $this->getRelatedEntitiesOrder($assocTable, $fields, $data);
+        $conditions = $this->getRelatedEntitiesOrder($assocTable, $result['fields'], $data);
 
         $limit = (!empty($data['limit']) ? $data['limit'] : 10);
         $offset = (!empty($data['start']) ? $data['start'] : 0);
 
-        $recordId = $data['id'];
-        $assocForeignKey = $association->foreignKey();
-        $aliasedForeignKey = $assocTable->aliasField($assocForeignKey);
+        $id = $data['id'];
+        $foreignKey = $assocTable->aliasField($association->foreignKey());
 
         $count = $this->getOneToManyCount($assocTable->find(), [
-            'foreign_key' => $aliasedForeignKey,
-            'record_id' => $recordId,
+            'conditions' => [
+                $foreignKey => $id,
+            ],
         ]);
 
         $query = $assocTable->find();
-        $query->where([$aliasedForeignKey => $recordId]);
-        $query->limit($limit);
+        $query->where([$foreignKey => $id]);
+
         $query->order($conditions);
+        $query->limit($limit);
 
         if (!empty($offset)) {
             $query->offset($offset);
         }
-
-        $result = $this->getAssociationFields($association);
 
         $result['pagination']['recordsTotal'] = $count;
         $result['pagination']['recordsFiltered'] = $query->count();
@@ -483,15 +458,23 @@ class Table extends BaseTable
     public function getAssociationFields(Association $association, array $options = [])
     {
         $result = [];
-        $csvFields = $this->getAssociationCsvFields($association, 'index');
+        $action = (!empty($options['action']) ? $options['action'] : 'index');
+
+        $csvFields = $this->getAssociationCsvFields($association, $action);
 
         // get associated index View csv fields
-        $fields = array_unique(
-            array_merge(
-                [$association->displayField()],
-                $csvFields
-            )
-        );
+        if ('index' == $action) {
+            $fields = array_unique(
+                array_merge(
+                    [$association->displayField()],
+                    $csvFields
+                )
+            );
+        }
+
+        // @NOTE: fields should be properly indexed
+        // to collide with 'columns' indexes
+        $fields = array_values($fields);
 
         $result['fields'] = $fields;
 
@@ -726,11 +709,10 @@ class Table extends BaseTable
      */
     public function getOneToManyCount(Query $query, array $options = [])
     {
-        $recordId = $options['record_id'];
-        $aliasedForeignKey = $options['foreign_key'];
-
         $query->select(['count' => $query->func()->count('*')]);
-        $query->where([$aliasedForeignKey => $recordId]);
+
+        $query->where($options['conditions']);
+
         $count = $query->first();
 
         return $count->count;
@@ -748,13 +730,13 @@ class Table extends BaseTable
      */
     public function getManyToManyCount(Query $query, array $options = [])
     {
-        $primaryKey = $options['primary_key'];
-        $id = $options['id'];
         $tableAlias = $options['alias'];
+        $conditions = $options['conditions'];
 
         $query->select(['count' => $query->func()->count('*')]);
-        $query->matching($tableAlias, function ($q) use ($primaryKey, $id) {
-            return $q->where([$primaryKey => $id]);
+
+        $query->matching($tableAlias, function ($q) use ($conditions) {
+            return $q->where($conditions);
         });
 
         $count = $query->first();

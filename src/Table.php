@@ -276,7 +276,7 @@ class Table extends BaseTable
         $assocTableName = $association->table();
         $assocForeignKey = $association->foreignKey();
 
-        $csvFields = $this->_getAssociationCsvFields($association, 'index');
+        $csvFields = $this->getAssociationCsvFields($association, 'index');
 
         if (empty($csvFields)) {
             return $result;
@@ -344,7 +344,7 @@ class Table extends BaseTable
     {
         $result = [];
 
-        $csvFields = $this->_getAssociationCsvFields($association, 'index');
+        $csvFields = $this->getAssociationCsvFields($association, 'index');
         if (empty($csvFields)) {
             return $result;
         }
@@ -483,11 +483,7 @@ class Table extends BaseTable
     public function getAssociationFields(Association $association, array $options = [])
     {
         $result = [];
-
-        $assocName = $association->name();
-        $assocTableName = $association->table();
-
-        $csvFields = $this->_getAssociationCsvFields($association, 'index');
+        $csvFields = $this->getAssociationCsvFields($association, 'index');
 
         // get associated index View csv fields
         $fields = array_unique(
@@ -497,19 +493,23 @@ class Table extends BaseTable
             )
         );
 
-        $result['table_name'] = $assocTableName;
+        $result['fields'] = $fields;
 
-        $result['class_name'] = $association->className();
-        $result['display_field'] = $association->displayField();
-        $result['primary_key'] = $association->primaryKey();
+        $params = [
+            'table', 'className', 'displayField', 'primaryKey',
+        ];
 
+        foreach ($params as $param) {
+            $underscored = Inflector::underscore($param);
+            $result[$underscored] = $association->{$param}();
+        }
         if (!in_array($association->type(), ['manyToMany'])) {
             $result['foreign_key'] = $association->foreignKey();
         } else {
-            $result['foreign_key'] = Inflector::singularize($assocTableName) . '_' . $association->primaryKey();
+            $result['foreign_key'] = Inflector::singularize($association->table()) . '_' . $association->primaryKey();
         }
 
-        $result['fields'] = $fields;
+        $result['table_name'] = $association->table();
 
         return $result;
     }
@@ -520,7 +520,7 @@ class Table extends BaseTable
      * @param object $action action passed
      * @return array
      */
-    protected function _getAssociationCsvFields(Association $association, $action)
+    public function getAssociationCsvFields(Association $association, $action)
     {
         list($plugin, $controller) = pluginSplit($association->className());
         $fields = $this->getCsvFields($controller, $action);

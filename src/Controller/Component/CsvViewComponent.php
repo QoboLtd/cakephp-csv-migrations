@@ -54,12 +54,6 @@ class CsvViewComponent extends Component
     protected $_assocTypes = ['oneToMany', 'manyToOne', 'manyToMany'];
 
     /**
-     * Actions to arrange fields into panels.
-     * @var array
-     */
-    protected $_panelActions = ['add', 'edit', 'view'];
-
-    /**
      * Called before the controller action. You can use this method to configure and customize components
      * or perform logic that needs to happen before each controller action.
      *
@@ -135,15 +129,11 @@ class CsvViewComponent extends Component
         $result = $config->parse()->items;
 
         list($plugin, $model) = pluginSplit($this->_tableInstance->registryAlias());
-        /*
-        add plugin and model names to each of the fields
-         */
+        // add plugin and model names to each of the fields
         $result = $this->_setFieldPluginAndModel($result, $model, $plugin);
 
-        /*
-        If action requires panels, arrange the fields into the panels
-         */
-        if (in_array($this->request->action, $this->_panelActions)) {
+        // if action requires panels, arrange the fields into the panels
+        if (in_array($this->request->action, (array)Configure::read('CsvMigrations.panels.actions'))) {
             $result = $this->_arrangePanels($result);
         }
         $this->_controllerInstance->set('fields', $result);

@@ -15,6 +15,10 @@ return [
             'component' => null
         ],
         'actions' => ['add', 'batch', 'edit', 'index', 'view'],
+        'panels' => [
+            // actions to arrange fields into panels
+            'actions' => ['add', 'batch', 'edit', 'view']
+        ],
         'modules' => [
             'path' => CONFIG . 'Modules' . DS
         ],

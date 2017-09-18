@@ -14,7 +14,7 @@ return [
             'method' => null,
             'component' => null
         ],
-        'actions' => ['index', 'view', 'add', 'edit'],
+        'actions' => ['add', 'batch', 'edit', 'index', 'view'],
         'modules' => [
             'path' => CONFIG . 'Modules' . DS
         ],

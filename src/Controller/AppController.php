@@ -282,4 +282,50 @@ class AppController extends BaseController
 
         return $this->redirect($this->referer());
     }
+
+    /**
+     * Batch operations action.
+     *
+     * @return \Cake\Network\Response|void Redirects to referer.
+     */
+    public function batch()
+    {
+        $this->request->allowMethod(['post', 'delete', 'put']);
+
+        if ($this->request->is('delete')) {
+            $conditions = [
+                $this->{$this->name}->getPrimaryKey() . ' IN' => (array)$this->request->data('batch.ids')
+            ];
+
+            // execute batch delete
+            if ($this->{$this->name}->deleteAll($conditions)) {
+                $this->Flash->success(__('Selected records have been deleted.'));
+            } else {
+                $this->Flash->error(__('Selected records could not be deleted. Please, try again.'));
+            }
+
+            return $this->redirect($this->request->referer());
+        }
+
+        if ($this->request->is('post')) {
+            if ((bool)$this->request->data('batch.execute')) {
+                $fields = (array)$this->request->data($this->name);
+                $conditions = [
+                    $this->{$this->name}->getPrimaryKey() . ' IN' => (array)$this->request->data('batch.ids')
+                ];
+
+                // execute batch edit
+                if ($this->{$this->name}->updateAll($fields, $conditions)) {
+                    $this->Flash->success(__('Selected records have been updated.'));
+                } else {
+                    $this->Flash->error(__('Selected records could not be updated. Please, try again.'));
+                }
+
+                return $this->redirect(['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index']);
+            }
+        }
+
+        $this->set('entity', $this->{$this->name}->newEntity());
+        $this->render('CsvMigrations.Common/batch');
+    }
 }

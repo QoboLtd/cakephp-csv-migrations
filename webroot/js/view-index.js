@@ -42,6 +42,9 @@ var view_index = view_index || {};
             searching: false,
             processing: true,
             serverSide: true,
+            order: [
+                [1, "asc"]
+            ],
             ajax: {
                 url: that.api_url + '.' + that.api_ext,
                 headers: {

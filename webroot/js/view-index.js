@@ -73,6 +73,8 @@ var view_index = view_index || {};
                     d.limit = d.length;
                     d.page = 1 + d.start / d.length;
 
+                    d.order[0].column -= 1;
+
                     return d;
                 },
                 dataFilter: function (d) {

@@ -78,6 +78,7 @@ if (empty($options['title'])) {
             <table class="table table-hover table-condensed table-vertical-align table-datatable" width="100%">
                 <thead>
                     <tr>
+                    <th class="dt-select-column"></th>
                     <?php foreach ($options['fields'] as $field) : ?>
                     <?php
 

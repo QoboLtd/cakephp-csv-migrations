@@ -46,6 +46,7 @@ var view_index = view_index || {};
                 [1, "asc"]
             ],
             columnDefs: [
+                {targets: [-1, 0], orderable: false},
                 {targets: [0], className: 'select-checkbox'}
             ],
             select: {

@@ -67,9 +67,7 @@ if (empty($options['title'])) {
         </div>
         <div class="col-xs-12 col-md-6">
             <div class="pull-right">
-                <div class="btn-group btn-group-sm" role="group">
-                    <?= $this->element('CsvMigrations.Menu/index_top', ['user' => $user]) ?>
-                </div>
+                <?= $this->element('CsvMigrations.Menu/index_top', ['user' => $user]) ?>
             </div>
         </div>
     </div>

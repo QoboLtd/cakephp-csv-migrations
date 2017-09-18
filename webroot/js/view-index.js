@@ -45,6 +45,13 @@ var view_index = view_index || {};
             order: [
                 [1, "asc"]
             ],
+            columnDefs: [
+                {targets: [0], className: 'select-checkbox'}
+            ],
+            select: {
+                style: 'multi',
+                selector: 'td:first-child'
+            },
             ajax: {
                 url: that.api_url + '.' + that.api_ext,
                 headers: {

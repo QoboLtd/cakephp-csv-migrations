@@ -17,7 +17,9 @@ return [
         'actions' => ['add', 'batch', 'edit', 'index', 'view'],
         'panels' => [
             // actions to arrange fields into panels
-            'actions' => ['add', 'batch', 'edit', 'view']
+            'actions' => ['add', 'batch', 'edit', 'view'],
+            // actions that require dynamic panel functionality
+            'dynamic_actions' => ['add', 'edit']
         ],
         'modules' => [
             'path' => CONFIG . 'Modules' . DS

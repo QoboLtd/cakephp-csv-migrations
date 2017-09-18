@@ -75,27 +75,43 @@ class CsvViewComponent extends Component
     /**
      * Check/do things before rendering the output.
      *
-     * @param  Event  $event [description]
+     * @param \Cake\Event\Event $event Event instance
      * @return void
      */
     public function beforeRender(Event $event)
     {
-        $tableConfig = [];
-        if (method_exists($this->_tableInstance, 'getConfig')) {
-            $tableConfig = $this->_tableInstance->getConfig();
+        $this->filterFields($event);
+    }
+
+    /**
+     * Filter csv fields.
+     *
+     * @param \Cake\Event\Event $event Event instance
+     * @return void
+     */
+    protected function filterFields(Event $event)
+    {
+        $panelActions = (array)Configure::read('CsvMigrations.panels.actions');
+        $dynamicPanelActions = (array)Configure::read('CsvMigrations.panels.dynamic_actions');
+        if (!in_array($this->request->action, array_diff($panelActions, $dynamicPanelActions))) {
+            return;
         }
-        $controller = $event->subject();
-        if (!empty($tableConfig) &&
-            !empty($controller->viewVars['fields']) &&
-            !empty($controller->viewVars['entity']) &&
-            $this->request->action === 'view') {
-            $panelFields = $controller->viewVars['fields'];
-            $entity = $controller->viewVars['entity'];
-            $evalPanels = $this->getEvalPanels($tableConfig, $entity->toArray());
-            if (!empty($evalPanels['fail'])) {
-                $controller->viewVars['fields'] = array_diff_key($panelFields, array_flip($evalPanels['fail']));
-            }
+
+        if (!method_exists($this->_tableInstance, 'getConfig')) {
+            return;
         }
+
+        $tableConfig = $this->_tableInstance->getConfig();
+        $evalPanels = $this->getEvalPanels($tableConfig, $event->subject()->viewVars['entity']->toArray());
+        if (empty($evalPanels['fail'])) {
+            return;
+        }
+
+        // filter out fields of hidden panels
+        $event->subject()->viewVars['fields'] = array_diff_key(
+            $event->subject()->viewVars['fields'],
+            array_flip($evalPanels['fail'])
+        );
     }
 
     /**

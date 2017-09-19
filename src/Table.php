@@ -460,32 +460,16 @@ class Table extends BaseTable
         $result = [];
         $action = (!empty($options['action']) ? $options['action'] : 'index');
 
-        $csvFields = $this->getAssociationCsvFields($association, $action);
-
-        // get associated index View csv fields
-        if ('index' == $action) {
-            $fields = array_unique(
-                array_merge(
-                    [$association->displayField()],
-                    $csvFields
-                )
-            );
-        }
-
-        // @NOTE: fields should be properly indexed
-        // to collide with 'columns' indexes
-        $fields = array_values($fields);
+        $fields = $this->getAssociationCsvFields($association, $action);
 
         $result['fields'] = $fields;
-
-        $params = [
-            'table', 'className', 'displayField', 'primaryKey',
-        ];
+        $params = ['table', 'className', 'displayField', 'primaryKey'];
 
         foreach ($params as $param) {
             $underscored = Inflector::underscore($param);
             $result[$underscored] = $association->{$param}();
         }
+
         if (!in_array($association->type(), ['manyToMany'])) {
             $result['foreign_key'] = $association->foreignKey();
         } else {
@@ -504,28 +488,25 @@ class Table extends BaseTable
     public function getAssociationCsvFields(Association $association, $action)
     {
         list($plugin, $controller) = pluginSplit($association->className());
-        $fields = $this->getCsvFields($controller, $action);
+        $csvFields = $this->getCsvFields($controller, $action);
 
-        return $fields;
-    }
-
-    /**
-     * Method that fetches action fields from the corresponding csv file.
-     *
-     * @param  string $controller name of request's controller
-     * @param  string $action  Action name
-     * @return array
-     */
-    protected function _getActionFields($controller, $action = null)
-    {
-        if (is_null($action)) {
-            $action = 'index';
+        // get associated index View csv fields
+        if ('index' == $action) {
+            $fields = array_unique(
+                array_merge(
+                    [$association->displayField()],
+                    $csvFields
+                )
+            );
+        } else {
+            $fields = $csvFields;
         }
 
-        $mc = new ModuleConfig(ConfigType::VIEW(), $controller, $action);
-        $result = $mc->parse()->items;
+        // @NOTE: fields should be properly indexed
+        // to collide with 'columns' indexes
+        $fields = array_values($fields);
 
-        return $result;
+        return $fields;
     }
 
     /**

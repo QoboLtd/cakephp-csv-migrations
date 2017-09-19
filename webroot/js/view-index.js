@@ -122,6 +122,16 @@ var view_index = view_index || {};
             }
         });
 
+        table.on('select', function () {
+            $('#batch-button').attr('disabled', false);
+        });
+
+        table.on('deselect', function (e, dt, type, indexes) {
+            if (0 === table.rows('.selected').count()) {
+                $('#batch-button').attr('disabled', true);
+            }
+        });
+
         return table;
     };
 

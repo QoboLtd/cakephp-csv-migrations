@@ -34,7 +34,8 @@ echo $this->Html->scriptBlock(
         ]) . '",
         api_ext: "json",
         api_token: ' . json_encode(Configure::read('CsvMigrations.api.token')) . ',
-        menus: true,
+        menus: 1,
+        primary_key: 1,
         format: "datatables",
         state_duration: ' . (int)(Configure::read('Session.timeout') * 60) . ',
         batch: {

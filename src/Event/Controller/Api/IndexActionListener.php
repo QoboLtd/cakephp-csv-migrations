@@ -18,6 +18,11 @@ class IndexActionListener extends BaseActionListener
     const FLAG_INCLUDE_MENUS = 'menus';
 
     /**
+     * Include primary key
+     */
+    const FLAG_INCLUDE_PRIMARY_KEY = 'primary_key';
+
+    /**
      * Property name for menu items
      */
     const MENU_PROPERTY_NAME = '_Menus';
@@ -80,7 +85,10 @@ class IndexActionListener extends BaseActionListener
                 $this->_restructureFiles($entity, $table);
             }
         }
-        $this->_includeMenus($entities, $event);
+
+        if ((bool)$event->subject()->request->query(static::FLAG_INCLUDE_MENUS)) {
+            $this->_includeMenus($entities, $event);
+        }
     }
 
     /**
@@ -208,10 +216,6 @@ class IndexActionListener extends BaseActionListener
      */
     protected function _includeMenus(ResultSet $entities, Event $event)
     {
-        if (!$event->subject()->request->query(static::FLAG_INCLUDE_MENUS)) {
-            return;
-        }
-
         $appView = new View();
         $plugin = $event->subject()->request->plugin;
         $controller = $event->subject()->request->controller;
@@ -246,7 +250,15 @@ class IndexActionListener extends BaseActionListener
             return;
         }
 
-        $fields[] = static::MENU_PROPERTY_NAME;
+        // include primary key to the response fields
+        if ((bool)$event->subject()->request->query(static::FLAG_INCLUDE_PRIMARY_KEY)) {
+            array_unshift($fields, $event->subject()->{$event->subject()->name}->primaryKey());
+        }
+
+        // include actions menu to the response fields
+        if ((bool)$event->subject()->request->query(static::FLAG_INCLUDE_MENUS)) {
+            $fields[] = static::MENU_PROPERTY_NAME;
+        }
 
         foreach ($entities as $entity) {
             $savedEntity = $entity->toArray();

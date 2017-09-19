@@ -124,7 +124,7 @@ if (!empty($this->request->query['embedded'])) {
                             $field['name'] = substr($field['name'], strrpos($field['name'], '.') + 1);
                         }
 
-                        echo '<div class="col-xs-12 col-md-6">';
+                        echo '<div class="col-xs-12 col-md-6 field-wrapper">';
                         /*
                         non-embedded field
                          */

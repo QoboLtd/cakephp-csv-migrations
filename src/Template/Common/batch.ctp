@@ -19,4 +19,12 @@ echo $this->element('CsvMigrations.View/add', [
 ]);
 
 echo $this->Html->script('CsvMigrations.view-batch', ['block' => 'scriptBottom']);
-echo $this->Html->scriptBlock('$(document).viewBatch()', ['block' => 'scriptBottom']);
+echo $this->Html->scriptBlock(
+    '$(document).viewBatch({
+        target_id: "*[data-batch=\'field\']",
+        disable_id: "*[data-batch=\'disable\']",
+        enable_id: "*[data-batch=\'enable\']",
+        wrapper_id: ".field-wrapper"
+    })',
+    ['block' => 'scriptBottom']
+);

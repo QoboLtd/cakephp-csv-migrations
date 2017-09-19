@@ -27,35 +27,35 @@
         init: function () {
             var that = this;
 
-            $('*[data-batch="field"]').each(function () {
+            $(that.options.target_id).each(function () {
                 $(this).attr('disabled', true);
                 var msg = that.helper.msg
                     .replace('{{id}}', that.helper.enable_id)
                     .replace('{{icon}}', 'check-circle')
                     .replace('{{action}}', 'Click to edit');
-                $(this).after(msg);
+                $(this).parents(that.options.wrapper_id).append(msg);
             });
 
-            $(document).on('click', '*[data-batch="disable"]', function () {
-                var field = $(this).parent().find('*[data-batch="field"]');
+            $(document).on('click', that.options.disable_id, function () {
+                var field = $(this).parent().find(that.options.target_id);
                 var msg = that.helper.msg
                     .replace('{{id}}', that.helper.enable_id)
                     .replace('{{icon}}', 'check-circle')
                     .replace('{{action}}', 'Click to edit');
-                $(field).after(msg);
+                $(field).parents(that.options.wrapper_id).append(msg);
                 if (!$(field).attr('disabled')) {
                     $(field).attr('disabled', true);
                 }
                 $(this).remove();
             });
 
-            $(document).on('click', '*[data-batch="enable"]', function () {
-                var field = $(this).parent().find('*[data-batch="field"]');
+            $(document).on('click', that.options.enable_id, function () {
+                var field = $(this).parent().find(that.options.target_id);
                 var msg = that.helper.msg
                     .replace('{{id}}', that.helper.disable_id)
                     .replace('{{icon}}', 'times-circle')
                     .replace('{{action}}', 'Do not change');
-                $(field).after(msg);
+                $(field).parents(that.options.wrapper_id).append(msg);
                 if ($(field).attr('disabled')) {
                     $(field).attr('disabled', false);
                     $(field).focus();

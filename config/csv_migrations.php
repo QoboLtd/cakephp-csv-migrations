@@ -15,6 +15,10 @@ return [
             'component' => null
         ],
         'actions' => ['add', 'batch', 'edit', 'index', 'view'],
+        'batch' => [
+            'action' => 'batch',
+            'types' => ['datetime', 'time', 'date', 'reminder', 'string', 'text', 'list', 'email', 'phone', 'url', 'boolean', 'related']
+        ],
         'panels' => [
             // actions to arrange fields into panels
             'actions' => ['add', 'batch', 'edit', 'view'],

@@ -94,6 +94,7 @@ var view_index = view_index || {};
                     'Authorization': 'Bearer ' + that.api_token
                 },
                 data: function (d) {
+                    d.primary_key = that.options.primary_key;
                     if (that.menus) {
                         d.menus = that.menus;
                     }

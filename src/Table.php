@@ -461,7 +461,9 @@ class Table extends BaseTable
 
         foreach ($params as $param) {
             $underscored = Inflector::underscore($param);
-            $result[$underscored] = $association->{$param}();
+            if (method_exists($association, $param) && is_callable([$association, $param])) {
+                $result[$underscored] = $association->{$param}();
+            }
         }
 
         if (!in_array($association->type(), ['manyToMany'])) {

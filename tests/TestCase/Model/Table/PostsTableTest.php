@@ -116,4 +116,18 @@ class PostsTableTest extends TestCase
         $result = $this->PostsTable->getRelatedEntitiesOrder($this->PostsTable, $fields, $data);
         $this->assertEquals($result, ['Posts.name' => 'asc']);
     }
+
+    public function testGetOneToManyCount()
+    {
+        $query = $this->PostsTable->find();
+
+        $result = $this->PostsTable->getOneToManyCount($query, [
+            'conditions' => [
+                'id' => '00000000-0000-0000-0000-000000000001',
+            ],
+        ]);
+
+        $this->assertEquals($result, 1);
+        $this->assertTrue(is_numeric($result));
+    }
 }

@@ -11,6 +11,8 @@ use Cake\ORM\Association;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\CsvField;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
 use Qobo\Utils\ModuleConfig\ConfigType;
@@ -112,6 +114,55 @@ class CsvViewComponent extends Component
             $event->subject()->viewVars['fields'],
             array_flip($evalPanels['fail'])
         );
+
+        if ((string)Configure::read('CsvMigrations.batch.action') !== $this->request->action) {
+            return;
+        }
+
+        $this->filterBatchFields($event);
+    }
+
+    /**
+     * Filter batch fields.
+     *
+     * @param \Cake\Event\Event $event Event instance
+     * @return void
+     */
+    protected function filterBatchFields(Event $event)
+    {
+        $config = new ModuleConfig(ConfigType::MIGRATION(), $this->request->controller);
+        $fields = json_decode(json_encode($config->parse()), true);
+
+        $batchFields = (array)Configure::read('CsvMigrations.batch.types');
+
+        $nonBatchFields = [];
+        foreach ($fields as $field) {
+            $csvField = new CsvField($field);
+            if (in_array($csvField->getType(), $batchFields)) {
+                continue;
+            }
+
+            $nonBatchFields[] = $csvField->getName();
+        }
+
+        if (empty($nonBatchFields)) {
+            return;
+        }
+
+        $fields = $event->subject()->viewVars['fields'];
+        foreach ($fields as $panel => $panelFields) {
+            foreach ($panelFields as $section => $sectionFields) {
+                foreach ($sectionFields as $key => $field) {
+                    if (!in_array($field['name'], $nonBatchFields)) {
+                        continue;
+                    }
+
+                    $fields[$panel][$section][$key]['name'] = '';
+                }
+            }
+        }
+
+        $event->subject()->viewVars['fields'] = $fields;
     }
 
     /**

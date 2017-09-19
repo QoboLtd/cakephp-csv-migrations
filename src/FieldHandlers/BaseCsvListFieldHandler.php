@@ -135,6 +135,7 @@ abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
         try {
             $mc = new ModuleConfig(ConfigType::LISTS(), $module, $listName);
             $listData = $mc->parse()->items;
+            $result = json_decode(json_encode($listData), true);
         } catch (Exception $e) {
             /* Do nothing.
              *
@@ -148,10 +149,7 @@ abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
              * world.
              */
         }
-
-        if (!empty($listData)) {
-            $result = $this->__prepareListOptions($listData, $listName, $prefix);
-        }
+        $result = $this->__prepareListOptions($result);
 
         return $result;
     }
@@ -188,27 +186,24 @@ abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
      * Method that restructures list options csv data for better handling.
      *
      * @param  array  $data     csv data
-     * @param  string $listName list name
      * @param  string $prefix   nested option prefix
      * @return array
      */
-    private function __prepareListOptions($data, $listName, $prefix = null)
+    private function __prepareListOptions($data, $prefix = null)
     {
         $result = [];
 
-        foreach ($data as $field) {
-            $result[$prefix . $field->value] = [
-                'label' => $field->label,
-                'inactive' => (bool)$field->inactive
-            ];
+        if ($prefix) {
+            $prefix .= '.';
+        }
 
-            /*
-            get child options
-             */
-            $children = $this->__getListFieldOptions($listName . DS . $field->value, $prefix . $field->value . '.');
-            if (!empty($children)) {
-                $result[$prefix . $field->value]['children'] = $children;
+        foreach ($data as $item) {
+            $fixedItem = $item;
+            $fixedItem['inactive'] = (bool)$item['inactive'];
+            if (!empty($item['children'])) {
+                $fixedItem['children'] = $this->__prepareListOptions($item['children'], $prefix . $item['value']);
             }
+            $result[$prefix . $item['value']] = $fixedItem;
         }
 
         return $result;

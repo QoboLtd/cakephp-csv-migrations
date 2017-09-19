@@ -119,5 +119,5 @@ Cake\Routing\DispatcherFactory::add('Routing');
 Cake\Routing\DispatcherFactory::add('ControllerFactory');
 
 // Load configuration file(s)
-include('csv_migrations.php');
-include('importer.php');
+Configure::load('CsvMigrations.csv_migrations');
+Configure::load('CsvMigrations.importer');

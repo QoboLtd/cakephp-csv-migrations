@@ -304,10 +304,7 @@ class Table extends BaseTable
 
         $query->order($conditions);
         $query->limit($limit);
-
-        if (!empty($offset)) {
-            $query->offset($offset);
-        }
+        $query->offset($offset);
 
         $result['pagination']['recordsFiltered'] = $query->count();
         $result['pagination']['recordsTotal'] = $count;
@@ -356,10 +353,7 @@ class Table extends BaseTable
 
         $query->order($conditions);
         $query->limit($limit);
-
-        if (!empty($offset)) {
-            $query->offset($offset);
-        }
+        $query->offset($offset);
 
         $result['pagination']['recordsTotal'] = $count;
         $result['pagination']['recordsFiltered'] = $query->count();

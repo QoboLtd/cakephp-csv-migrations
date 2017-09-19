@@ -310,6 +310,11 @@ class AppController extends BaseController
         if ($this->request->is('post')) {
             if ((bool)$this->request->data('batch.execute')) {
                 $fields = (array)$this->request->data($this->name);
+                if (empty($fields)) {
+                    $this->Flash->error(__('Selected records could not be updated. No changes provided.'));
+
+                    return $this->redirect(['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index']);
+                }
                 $conditions = [
                     $this->{$this->name}->getPrimaryKey() . ' IN' => (array)$this->request->data('batch.ids')
                 ];

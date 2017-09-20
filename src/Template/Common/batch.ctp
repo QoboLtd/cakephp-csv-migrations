@@ -19,8 +19,14 @@ echo $this->element('CsvMigrations.View/add', [
 ]);
 
 echo $this->Html->script('CsvMigrations.view-batch', ['block' => 'scriptBottom']);
+
+$formUrl = $this->Url->build([
+    'plugin' => $this->request->plugin,
+    'controller' => $this->request->controller,
+    'action' => $this->request->action
+]);
 echo $this->Html->scriptBlock(
-    '$(document).viewBatch({
+    '$("form[action=\'' . $formUrl . '\']").viewBatch({
         target_id: "*[data-batch=\'field\']",
         disable_id: "*[data-batch=\'disable\']",
         enable_id: "*[data-batch=\'enable\']",

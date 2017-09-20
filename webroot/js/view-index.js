@@ -15,6 +15,7 @@ var view_index = view_index || {};
      * @return {undefined}
      */
     ViewIndex.prototype.init = function (options) {
+        this.options = options;
         this.api_url = options.hasOwnProperty('api_url') ? options.api_url : null;
         this.api_ext = options.hasOwnProperty('api_ext') ? options.api_ext : null;
         this.api_token = options.hasOwnProperty('api_token') ? options.api_token : null;
@@ -26,6 +27,34 @@ var view_index = view_index || {};
 
         var table = this.datatable();
         this._handleDeleteLinks(table);
+        this._batchActions();
+    };
+
+    ViewIndex.prototype._batchActions = function () {
+        var that = this;
+        $(this.options.batch.delete_id).click(function (e) {
+            e.preventDefault();
+            if (!confirm('Are you sure you want to delete the selected records?')) {
+                return;
+            }
+
+            that._createAndSubmitBatchForm('delete');
+        });
+        $(this.options.batch.edit_id).click(function (e) {
+            e.preventDefault();
+
+            that._createAndSubmitBatchForm('edit');
+        });
+    };
+
+    ViewIndex.prototype._createAndSubmitBatchForm = function (type) {
+        var $form = $('<form method="post" action="' + this.options.batch.url + '/' + type + '"></form>');
+
+        $(this.options.table_id + ' tr.selected').each(function () {
+            $form.append('<input type="text" name="batch[ids][]" value="' + $(this).attr('data-id') + '">');
+        });
+
+        $form.submit();
     };
 
     /**
@@ -42,12 +71,29 @@ var view_index = view_index || {};
             searching: false,
             processing: true,
             serverSide: true,
+            order: [
+                [1, "asc"]
+            ],
+            columnDefs: [
+                {targets: [-1, 0], orderable: false},
+                {targets: [0], className: 'select-checkbox'}
+            ],
+            select: {
+                style: 'multi',
+                selector: 'td:first-child'
+            },
+            createdRow: function ( row, data, index ) {
+                $(row).attr('data-id', data[0]);
+                $('td', row).eq(0).text('');
+            },
+            deferRender: true,
             ajax: {
                 url: that.api_url + '.' + that.api_ext,
                 headers: {
                     'Authorization': 'Bearer ' + that.api_token
                 },
                 data: function (d) {
+                    d.primary_key = that.options.primary_key;
                     if (that.menus) {
                         d.menus = that.menus;
                     }
@@ -62,6 +108,8 @@ var view_index = view_index || {};
                     d.limit = d.length;
                     d.page = 1 + d.start / d.length;
 
+                    d.order[0].column -= 1;
+
                     return d;
                 },
                 dataFilter: function (d) {
@@ -71,6 +119,16 @@ var view_index = view_index || {};
 
                     return JSON.stringify(d);
                 }
+            }
+        });
+
+        table.on('select', function () {
+            $('#batch-button').attr('disabled', false);
+        });
+
+        table.on('deselect', function (e, dt, type, indexes) {
+            if (0 === table.rows('.selected').count()) {
+                $('#batch-button').attr('disabled', true);
             }
         });
 

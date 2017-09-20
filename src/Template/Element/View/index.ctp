@@ -7,31 +7,42 @@ use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 $fhf = new FieldHandlerFactory($this);
 
 // Setup Index View js logic
-echo $this->Html->css('AdminLTE./plugins/datatables/dataTables.bootstrap', ['block' => 'css']);
+echo $this->Html->css(
+    [
+        'Qobo/Utils./plugins/datatables/css/dataTables.bootstrap.min',
+        'Qobo/Utils./plugins/datatables/extensions/Select/css/select.bootstrap.min'
+    ],
+    ['block' => 'css']
+);
 echo $this->Html->script(
     [
-        'AdminLTE./plugins/datatables/jquery.dataTables.min',
-        'AdminLTE./plugins/datatables/dataTables.bootstrap.min',
+        'Qobo/Utils./plugins/datatables/datatables.min',
+        'Qobo/Utils./plugins/datatables/js/dataTables.bootstrap.min',
+        'Qobo/Utils./plugins/datatables/extensions/Select/js/dataTables.select.min',
         'CsvMigrations.view-index'
     ],
-    [
-        'block' => 'scriptBottom'
-    ]
+    ['block' => 'scriptBottom']
 );
 echo $this->Html->scriptBlock(
     'view_index.init({
-        table_id: \'.table-datatable\',
-        api_url: \'' . $this->Url->build([
+        table_id: ".table-datatable",
+        api_url: "' . $this->Url->build([
             'prefix' => 'api',
             'plugin' => $this->request->plugin,
             'controller' => $this->request->controller,
             'action' => $this->request->action
-        ]) . '\',
-        api_ext: \'json\',
+        ]) . '",
+        api_ext: "json",
         api_token: ' . json_encode(Configure::read('CsvMigrations.api.token')) . ',
-        menus: true,
-        format: \'datatables\',
-        state_duration: ' . (int)(Configure::read('Session.timeout') * 60) . '
+        menus: 1,
+        primary_key: 1,
+        format: "datatables",
+        state_duration: ' . (int)(Configure::read('Session.timeout') * 60) . ',
+        batch: {
+            url: "' . $this->Url->build(['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'batch']) . '",
+            delete_id: "#batch-delete-button",
+            edit_id: "#batch-edit-button"
+        }
     });',
     ['block' => 'scriptBottom']
 );
@@ -57,9 +68,7 @@ if (empty($options['title'])) {
         </div>
         <div class="col-xs-12 col-md-6">
             <div class="pull-right">
-                <div class="btn-group btn-group-sm" role="group">
-                    <?= $this->element('CsvMigrations.Menu/index_top', ['user' => $user]) ?>
-                </div>
+                <?= $this->element('CsvMigrations.Menu/index_top', ['user' => $user]) ?>
             </div>
         </div>
     </div>
@@ -70,6 +79,7 @@ if (empty($options['title'])) {
             <table class="table table-hover table-condensed table-vertical-align table-datatable" width="100%">
                 <thead>
                     <tr>
+                    <th class="dt-select-column"></th>
                     <?php foreach ($options['fields'] as $field) : ?>
                     <?php
 

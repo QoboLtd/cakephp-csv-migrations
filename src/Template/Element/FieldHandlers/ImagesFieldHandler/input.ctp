@@ -17,10 +17,12 @@ if ($value && $entities && $entities->count()) {
     //passed to generate previews
     $options['data-files'] = json_encode($files);
 }
+
+$attributes += $options;
 ?>
 <div class="form-group<?= $required ? ' required' : '' ?>">
 <?= $this->Form->label($name . '[]', $label) ?>
-<?= $this->Form->{$type}($name . '[]', $options); ?>
+<?= $this->Form->{$type}($name . '[]', $attributes); ?>
 <?php if ($entities && $entities->count()) : ?>
     <?php foreach ($entities as $entity) : ?>
         <?= $this->Form->hidden(

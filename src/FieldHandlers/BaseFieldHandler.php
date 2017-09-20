@@ -335,6 +335,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected function _renderElement($method, array $params, array $options = [])
     {
+        $params += ['attributes' => empty($options['attributes']) ? [] : $options['attributes']];
+
         // render custom element
         if (!empty($options['element']) && $this->cakeView->elementExists($options['element'])) {
             return $this->cakeView->element($options['element'], $params);

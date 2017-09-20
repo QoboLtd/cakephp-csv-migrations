@@ -11,7 +11,7 @@ $batch['button'] = $this->Form->button('<i class="fa fa-bars"></i> Batch', [
     'aria-expanded' => 'false',
     'disabled' => true
 ]);
-$batch['edit'] = $this->Form->postLink(
+$batch['edit'] = $this->Html->link(
     '<i class="fa fa-pencil"></i> ' . __('Edit'),
     ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'batch'],
     [

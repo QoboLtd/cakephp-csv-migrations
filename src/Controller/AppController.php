@@ -291,7 +291,7 @@ class AppController extends BaseController
      */
     public function batch($operation)
     {
-        $this->request->allowMethod(['post', 'delete']);
+        $this->request->allowMethod(['post']);
 
         if ($this->request->is('delete')) {
             $conditions = [

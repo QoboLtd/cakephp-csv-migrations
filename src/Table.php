@@ -340,7 +340,7 @@ class Table extends BaseTable
      *
      * @param \Cake\ORM\Table $table instance of the association.
      * @param \Cake\ORM\Association $association Association object
-     * @param \Cake\Network\Request $request passed
+     * @param array $data Data
      * @return array associated records
      */
     protected function getOneToManyAssociatedRecords($table, Association $association, array $data = [])

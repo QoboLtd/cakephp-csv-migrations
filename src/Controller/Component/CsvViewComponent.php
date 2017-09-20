@@ -12,7 +12,6 @@ use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
 use Qobo\Utils\ModuleConfig\ConfigType;

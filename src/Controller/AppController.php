@@ -293,6 +293,8 @@ class AppController extends BaseController
     {
         $this->request->allowMethod(['post']);
 
+        $redirectUrl = ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index'];
+
         if ($this->request->is('delete')) {
             $conditions = [
                 $this->{$this->name}->getPrimaryKey() . ' IN' => (array)$this->request->data('batch.ids')
@@ -305,7 +307,7 @@ class AppController extends BaseController
                 $this->Flash->error(__('Selected records could not be deleted. Please, try again.'));
             }
 
-            return $this->redirect($this->request->referer());
+            return $this->redirect($redirectUrl);
         }
 
         if ($this->request->is('post')) {
@@ -314,7 +316,7 @@ class AppController extends BaseController
                 if (empty($fields)) {
                     $this->Flash->error(__('Selected records could not be updated. No changes provided.'));
 
-                    return $this->redirect(['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index']);
+                    return $this->redirect($redirectUrl);
                 }
                 $conditions = [
                     $this->{$this->name}->getPrimaryKey() . ' IN' => (array)$this->request->data('batch.ids')
@@ -327,7 +329,7 @@ class AppController extends BaseController
                     $this->Flash->error(__('Selected records could not be updated. Please, try again.'));
                 }
 
-                return $this->redirect(['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index']);
+                return $this->redirect($redirectUrl);
             }
         }
 

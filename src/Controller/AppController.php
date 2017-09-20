@@ -296,10 +296,14 @@ class AppController extends BaseController
         $redirectUrl = ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index'];
 
         if ('delete' === $operation) {
-            $conditions = [
-                $this->{$this->name}->getPrimaryKey() . ' IN' => (array)$this->request->data('batch.ids')
-            ];
+            $batchIds = (array)$this->request->data('batch.ids');
+            if (empty($batchIds)) {
+                $this->Flash->error(__('No records selected.'));
 
+                return $this->redirect($redirectUrl);
+            }
+
+            $conditions = [$this->{$this->name}->getPrimaryKey() . ' IN' => $batchIds];
             // execute batch delete
             if ($this->{$this->name}->deleteAll($conditions)) {
                 $this->Flash->success(__('Selected records have been deleted.'));
@@ -312,16 +316,21 @@ class AppController extends BaseController
 
         if ('edit' === $operation) {
             if ((bool)$this->request->data('batch.execute')) {
+                $batchIds = (array)$this->request->data('batch.ids');
+                if (empty($batchIds)) {
+                    $this->Flash->error(__('No records selected.'));
+
+                    return $this->redirect($redirectUrl);
+                }
+
                 $fields = (array)$this->request->data($this->name);
                 if (empty($fields)) {
                     $this->Flash->error(__('Selected records could not be updated. No changes provided.'));
 
                     return $this->redirect($redirectUrl);
                 }
-                $conditions = [
-                    $this->{$this->name}->getPrimaryKey() . ' IN' => (array)$this->request->data('batch.ids')
-                ];
 
+                $conditions = [$this->{$this->name}->getPrimaryKey() . ' IN' => $batchIds];
                 // execute batch edit
                 if ($this->{$this->name}->updateAll($fields, $conditions)) {
                     $this->Flash->success(__('Selected records have been updated.'));

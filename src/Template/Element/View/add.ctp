@@ -83,14 +83,6 @@ if (!empty($this->request->query['embedded'])) {
             echo $this->Form->hidden('related_model', ['value' => $relatedModel]);
             echo $this->Form->hidden('related_id', ['value' => $relatedId]);
         }
-
-        // Add batch operation ids
-        if (!empty($this->request->data('batch.ids'))) {
-            foreach ($this->request->data('batch.ids') as $batchId) {
-                echo $this->Form->hidden('batch[ids][]', ['value' => $batchId]);
-            }
-            echo $this->Form->hidden('batch[execute]', ['value' => true]);
-        }
     }
     ?>
     <?php

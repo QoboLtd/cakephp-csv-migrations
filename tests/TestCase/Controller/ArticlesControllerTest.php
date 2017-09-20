@@ -212,13 +212,11 @@ class ArticlesControllerTest extends IntegrationTestCase
 
     public function testBatchGetRequest()
     {
-        $id = '00000000-0000-0000-0000-000000000001';
-
-        $this->get('/articles/batch');
+        $this->get('/articles/batch/edit');
         $this->assertResponseError();
     }
 
-    public function testBatchDeleteRequest()
+    public function testBatchDelete()
     {
         $data = [
             'batch' => [
@@ -229,14 +227,32 @@ class ArticlesControllerTest extends IntegrationTestCase
             ]
         ];
 
-        $this->_sendRequest('/articles/batch', 'DELETE', $data);
+        $this->post('/articles/batch/delete', $data);
         $this->assertResponseSuccess();
 
         $query = TableRegistry::get('Articles')->find('all');
         $this->assertTrue($query->isEmpty());
     }
 
-    public function testBatchPostRequestExecute()
+    public function testBatchDeleteNoIds()
+    {
+        $this->post('/articles/batch/delete');
+        $this->assertRedirect('/articles');
+        $this->assertSession('No records selected.', 'Flash.flash.0.message');
+    }
+
+    public function testBatchEdit()
+    {
+        $this->post('/articles/batch/edit');
+        $this->assertResponseSuccess();
+
+        $entity = $this->viewVariable('entity');
+
+        $this->assertInstanceOf(Article::class, $entity);
+        $this->assertTrue($entity->isNew());
+    }
+
+    public function testBatchEditExecute()
     {
         $data = [
             'batch' => [
@@ -251,7 +267,7 @@ class ArticlesControllerTest extends IntegrationTestCase
             ]
         ];
 
-        $this->post('/articles/batch', $data);
+        $this->post('/articles/batch/edit', $data);
         $this->assertRedirect('/articles');
         $this->assertSession('Selected records have been updated.', 'Flash.flash.0.message');
 
@@ -261,7 +277,7 @@ class ArticlesControllerTest extends IntegrationTestCase
         }
     }
 
-    public function testBatchPostRequestExecuteNoData()
+    public function testBatchEditExecuteNoIds()
     {
         $data = [
             'batch' => [
@@ -269,19 +285,25 @@ class ArticlesControllerTest extends IntegrationTestCase
             ]
         ];
 
-        $this->post('/articles/batch', $data);
-        $this->assertResponseSuccess();
-        $this->assertSession('Selected records could not be updated. No changes provided.', 'Flash.flash.0.message');
+        $this->post('/articles/batch/edit', $data);
+        $this->assertRedirect('/articles');
+        $this->assertSession('No records selected.', 'Flash.flash.0.message');
     }
 
-    public function testBatchPostRequestNoExecute()
+    public function testBatchEditExecuteNoData()
     {
-        $this->post('/articles/batch');
+        $data = [
+            'batch' => [
+                'execute' => true,
+                'ids' => [
+                    '00000000-0000-0000-0000-000000000001',
+                    '00000000-0000-0000-0000-000000000002'
+                ]
+            ]
+        ];
+
+        $this->post('/articles/batch/edit', $data);
         $this->assertResponseSuccess();
-
-        $entity = $this->viewVariable('entity');
-
-        $this->assertInstanceOf(Article::class, $entity);
-        $this->assertTrue($entity->isNew());
+        $this->assertSession('Selected records could not be updated. No changes provided.', 'Flash.flash.0.message');
     }
 }

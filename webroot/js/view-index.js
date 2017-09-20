@@ -43,12 +43,12 @@ var view_index = view_index || {};
         $(this.options.batch.edit_id).click(function (e) {
             e.preventDefault();
 
-            that._createAndSubmitBatchForm('post');
+            that._createAndSubmitBatchForm('edit');
         });
     };
 
     ViewIndex.prototype._createAndSubmitBatchForm = function (type) {
-        var $form = $('<form method="post" action="' + this.options.batch.url + '"></form>');
+        var $form = $('<form method="post" action="' + this.options.batch.url + '/' + type + '"></form>');
 
         $form.append('<input type="hidden" name="_method" value="' + type.toUpperCase() + '" />');
         $(this.options.table_id + ' tr.selected').each(function () {

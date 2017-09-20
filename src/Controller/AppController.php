@@ -295,7 +295,7 @@ class AppController extends BaseController
 
         $redirectUrl = ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index'];
 
-        if ($this->request->is('delete')) {
+        if ('delete' === $operation) {
             $conditions = [
                 $this->{$this->name}->getPrimaryKey() . ' IN' => (array)$this->request->data('batch.ids')
             ];
@@ -310,7 +310,7 @@ class AppController extends BaseController
             return $this->redirect($redirectUrl);
         }
 
-        if ($this->request->is('post')) {
+        if ('edit' === $operation) {
             if ((bool)$this->request->data('batch.execute')) {
                 $fields = (array)$this->request->data($this->name);
                 if (empty($fields)) {

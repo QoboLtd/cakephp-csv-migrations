@@ -264,7 +264,6 @@ echo $this->element('CsvMigrations.common_js_libs');
                 <?php foreach ($tabs as $tab) : ?>
                     <div role="tabpanel" class="tab-pane <?= $active ? 'active' : ''?>" id="<?= $tab['containerId']?>">
                         <?php
-                        /*
                         $tabContentEvent = new Event((string)EventName::VIEW_TAB_CONTENT(), $this, [
                             'request' => $this->request,
                             'entity' => $options['entity'],
@@ -278,7 +277,6 @@ echo $this->element('CsvMigrations.common_js_libs');
                         $content = $tabContentEvent->result;
 
                         echo $content;
-                        */
                         ?>
                     </div>
                     <?php $active = false; ?>

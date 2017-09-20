@@ -286,9 +286,10 @@ class AppController extends BaseController
     /**
      * Batch operations action.
      *
+     * @param string $operation Batch operation.
      * @return \Cake\Network\Response|void Redirects to referer.
      */
-    public function batch()
+    public function batch($operation)
     {
         $this->request->allowMethod(['post', 'delete']);
 

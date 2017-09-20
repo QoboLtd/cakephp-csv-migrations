@@ -14,6 +14,7 @@
             'disable_id': 'data-batch="disable"'
         };
 
+        this.updateForm();
         this.init();
     }
 
@@ -62,6 +63,21 @@
                 }
                 $(this).remove();
             });
+        },
+
+        updateForm: function () {
+            var that = this;
+
+            // update form action
+            $(this.element).attr('action', $(this.element).attr('action') + '/edit');
+
+            // add batch ids to the form as hidden inputs
+            $(this.options.batch_ids).each(function () {
+                $(that.element).append('<input type="hidden" name="batch[ids][]" value="' + this + '">');
+            });
+
+            // add batch execute flag
+            $(that.element).append('<input type="hidden" name="batch[execute]" value="1">');
         }
     };
 

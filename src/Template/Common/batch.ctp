@@ -27,6 +27,7 @@ $formUrl = $this->Url->build([
 ]);
 echo $this->Html->scriptBlock(
     '$("form[action=\'' . $formUrl . '\']").viewBatch({
+        batch_ids: ' . json_encode($this->request->data('batch.ids')) . ',
         target_id: "*[data-batch=\'field\']",
         disable_id: "*[data-batch=\'disable\']",
         enable_id: "*[data-batch=\'enable\']",

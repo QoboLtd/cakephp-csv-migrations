@@ -201,35 +201,35 @@ class Table extends BaseTable
      *
      * Fetch entities in the view.ctp
      *
-     *
      * @param \Cake\ORM\Table $originTable entity of associated table
-     * @param \Cake\Network\Request $request from the controller
      * @param array $data with the association configs
      * @param array $user with the user session
      *
      * @return array $response containing data for DataTables AJAX call
      */
-    public function getRelatedEntities($originTable, $request, array $data = [], array $user = [])
+    public function getRelatedEntities($originTable, array $data = [], array $user = [])
     {
-        $response = [];
+        $response = $responseData = [];
+
+        if (empty($data['originTable'])) {
+            return $response;
+        }
+
         $tableName = Inflector::camelize($data['originTable']);
 
         $association = $this->getAssociationObject($tableName, $data['associationName']);
-
         if (!in_array($association->type(), array_keys($this->_associationsMap))) {
             return $response;
         }
 
-        $fh = new FieldHandlerFactory();
         $entities = $this->{$this->_associationsMap[$association->type()]}($originTable, $association, $data);
 
         if (empty($entities['records'])) {
             return $response;
         }
 
-        $responseData = [];
-
         if ($data['format'] == 'datatables' && !empty($entities['records'])) {
+            $fh = new FieldHandlerFactory();
             $assocTable = TableRegistry::get($entities['table']);
 
             foreach ($entities['records'] as $record) {
@@ -254,7 +254,6 @@ class Table extends BaseTable
         }
 
         $response['data'] = $responseData;
-
         $response = array_merge($response, $entities['pagination']);
 
         return $response;
@@ -278,7 +277,6 @@ class Table extends BaseTable
         if (empty($result['fields'])) {
             return [];
         }
-
         $assocTable = TableRegistry::get(Inflector::camelize($association->table()));
 
         $conditions = $this->getRelatedEntitiesOrder($assocTable, $result['fields'], $data);

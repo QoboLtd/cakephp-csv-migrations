@@ -11,6 +11,7 @@ use Cake\ORM\Association;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
 use Qobo\Utils\ModuleConfig\ConfigType;
@@ -54,12 +55,6 @@ class CsvViewComponent extends Component
     protected $_assocTypes = ['oneToMany', 'manyToOne', 'manyToMany'];
 
     /**
-     * Actions to arrange fields into panels.
-     * @var array
-     */
-    protected $_panelActions = ['add', 'edit', 'view'];
-
-    /**
      * Called before the controller action. You can use this method to configure and customize components
      * or perform logic that needs to happen before each controller action.
      *
@@ -81,27 +76,92 @@ class CsvViewComponent extends Component
     /**
      * Check/do things before rendering the output.
      *
-     * @param  Event  $event [description]
+     * @param \Cake\Event\Event $event Event instance
      * @return void
      */
     public function beforeRender(Event $event)
     {
-        $tableConfig = [];
-        if (method_exists($this->_tableInstance, 'getConfig')) {
-            $tableConfig = $this->_tableInstance->getConfig();
+        $this->filterFields($event);
+    }
+
+    /**
+     * Filter csv fields.
+     *
+     * @param \Cake\Event\Event $event Event instance
+     * @return void
+     */
+    protected function filterFields(Event $event)
+    {
+        $panelActions = (array)Configure::read('CsvMigrations.panels.actions');
+        $dynamicPanelActions = (array)Configure::read('CsvMigrations.panels.dynamic_actions');
+        if (!in_array($this->request->action, array_diff($panelActions, $dynamicPanelActions))) {
+            return;
         }
-        $controller = $event->subject();
-        if (!empty($tableConfig) &&
-            !empty($controller->viewVars['fields']) &&
-            !empty($controller->viewVars['entity']) &&
-            $this->request->action === 'view') {
-            $panelFields = $controller->viewVars['fields'];
-            $entity = $controller->viewVars['entity'];
-            $evalPanels = $this->getEvalPanels($tableConfig, $entity->toArray());
-            if (!empty($evalPanels['fail'])) {
-                $controller->viewVars['fields'] = array_diff_key($panelFields, array_flip($evalPanels['fail']));
+
+        if (!method_exists($this->_tableInstance, 'getConfig')) {
+            return;
+        }
+
+        $tableConfig = $this->_tableInstance->getConfig();
+        $evalPanels = $this->getEvalPanels($tableConfig, $event->subject()->viewVars['entity']->toArray());
+        if (empty($evalPanels['fail'])) {
+            return;
+        }
+
+        // filter out fields of hidden panels
+        $event->subject()->viewVars['fields'] = array_diff_key(
+            $event->subject()->viewVars['fields'],
+            array_flip($evalPanels['fail'])
+        );
+
+        if ((string)Configure::read('CsvMigrations.batch.action') !== $this->request->action) {
+            return;
+        }
+
+        $this->filterBatchFields($event);
+    }
+
+    /**
+     * Filter batch fields.
+     *
+     * @param \Cake\Event\Event $event Event instance
+     * @return void
+     */
+    protected function filterBatchFields(Event $event)
+    {
+        $config = new ModuleConfig(ConfigType::MIGRATION(), $this->request->controller);
+        $fields = json_decode(json_encode($config->parse()), true);
+
+        $batchFields = (array)Configure::read('CsvMigrations.batch.types');
+
+        $nonBatchFields = [];
+        foreach ($fields as $field) {
+            $csvField = new CsvField($field);
+            if (in_array($csvField->getType(), $batchFields)) {
+                continue;
+            }
+
+            $nonBatchFields[] = $csvField->getName();
+        }
+
+        if (empty($nonBatchFields)) {
+            return;
+        }
+
+        $fields = $event->subject()->viewVars['fields'];
+        foreach ($fields as $panel => $panelFields) {
+            foreach ($panelFields as $section => $sectionFields) {
+                foreach ($sectionFields as $key => $field) {
+                    if (!in_array($field['name'], $nonBatchFields)) {
+                        continue;
+                    }
+
+                    $fields[$panel][$section][$key]['name'] = '';
+                }
             }
         }
+
+        $event->subject()->viewVars['fields'] = $fields;
     }
 
     /**
@@ -135,15 +195,11 @@ class CsvViewComponent extends Component
         $result = $config->parse()->items;
 
         list($plugin, $model) = pluginSplit($this->_tableInstance->registryAlias());
-        /*
-        add plugin and model names to each of the fields
-         */
+        // add plugin and model names to each of the fields
         $result = $this->_setFieldPluginAndModel($result, $model, $plugin);
 
-        /*
-        If action requires panels, arrange the fields into the panels
-         */
-        if (in_array($this->request->action, $this->_panelActions)) {
+        // if action requires panels, arrange the fields into the panels
+        if (in_array($this->request->action, (array)Configure::read('CsvMigrations.panels.actions'))) {
             $result = $this->_arrangePanels($result);
         }
         $this->_controllerInstance->set('fields', $result);

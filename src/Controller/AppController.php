@@ -282,4 +282,65 @@ class AppController extends BaseController
 
         return $this->redirect($this->referer());
     }
+
+    /**
+     * Batch operations action.
+     *
+     * @param string $operation Batch operation.
+     * @return \Cake\Network\Response|void Redirects to referer.
+     */
+    public function batch($operation)
+    {
+        $this->request->allowMethod(['post']);
+
+        $redirectUrl = ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index'];
+
+        if ('delete' === $operation) {
+            $batchIds = (array)$this->request->data('batch.ids');
+            if (empty($batchIds)) {
+                $this->Flash->error(__('No records selected.'));
+
+                return $this->redirect($redirectUrl);
+            }
+
+            $conditions = [$this->{$this->name}->getPrimaryKey() . ' IN' => $batchIds];
+            // execute batch delete
+            if ($this->{$this->name}->deleteAll($conditions)) {
+                $this->Flash->success(__('Selected records have been deleted.'));
+            } else {
+                $this->Flash->error(__('Selected records could not be deleted. Please, try again.'));
+            }
+
+            return $this->redirect($redirectUrl);
+        }
+
+        if ('edit' === $operation && (bool)$this->request->data('batch.execute')) {
+            $batchIds = (array)$this->request->data('batch.ids');
+            if (empty($batchIds)) {
+                $this->Flash->error(__('No records selected.'));
+
+                return $this->redirect($redirectUrl);
+            }
+
+            $fields = (array)$this->request->data($this->name);
+            if (empty($fields)) {
+                $this->Flash->error(__('Selected records could not be updated. No changes provided.'));
+
+                return $this->redirect($redirectUrl);
+            }
+
+            $conditions = [$this->{$this->name}->getPrimaryKey() . ' IN' => $batchIds];
+            // execute batch edit
+            if ($this->{$this->name}->updateAll($fields, $conditions)) {
+                $this->Flash->success(__('Selected records have been updated.'));
+            } else {
+                $this->Flash->error(__('Selected records could not be updated. Please, try again.'));
+            }
+
+            return $this->redirect($redirectUrl);
+        }
+
+        $this->set('entity', $this->{$this->name}->newEntity());
+        $this->render('CsvMigrations.Common/batch');
+    }
 }

@@ -1,5 +1,5 @@
 <?php
-echo $this->Form->input($name, [
+$attributes += [
     'type' => 'text',
     'label' => $label,
     'data-provide' => 'datepicker',
@@ -17,4 +17,6 @@ echo $this->Form->input($name, [
             <input type="{{type}}" name="{{name}}"{{attrs}}/>
         </div>'
     ]
-]);
+];
+
+echo $this->Form->input($name, $attributes);

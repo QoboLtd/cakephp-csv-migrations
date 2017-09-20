@@ -50,7 +50,6 @@ var view_index = view_index || {};
     ViewIndex.prototype._createAndSubmitBatchForm = function (type) {
         var $form = $('<form method="post" action="' + this.options.batch.url + '/' + type + '"></form>');
 
-        $form.append('<input type="hidden" name="_method" value="' + type.toUpperCase() + '" />');
         $(this.options.table_id + ' tr.selected').each(function () {
             $form.append('<input type="text" name="batch[ids][]" value="' + $(this).attr('data-id') + '">');
         });

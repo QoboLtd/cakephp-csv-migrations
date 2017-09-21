@@ -27,7 +27,7 @@ trait PanelUtilTrait
         $panels = Panel::getPanelNames($config) ?: [];
         foreach ($panels as $name) {
             $panel = new Panel($name, $config);
-            if ($panel->evalExpression($data)) {
+            if (!empty($data) && $panel->evalExpression($data)) {
                 $result['success'][] = $panel->getName();
             } else {
                 $result['fail'][] = $panel->getName();

@@ -224,9 +224,11 @@ class ViewViewTabsListener implements EventListenerInterface
 
     /**
      * getTabContent method
+     *
      * @param Cake\Event $event passed from AppView
      * @param Cake\Request $request from the view
      * @param Cake\ORM\Entity $entity of the record
+     * @param array $user User
      * @param array $options for extra setup
      * @return array $content returned
      */

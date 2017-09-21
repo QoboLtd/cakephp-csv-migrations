@@ -6,6 +6,7 @@ use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 $fhf = new FieldHandlerFactory($this);
 $defaultOptions = [
+    'handlerOptions' => [],
     'title' => null,
     'entity' => null,
     'fields' => [],
@@ -92,9 +93,9 @@ if (!empty($this->request->query['embedded'])) {
                             continue;
                         }
 
-                        $handlerOptions = [
+                        $handlerOptions = array_merge($options['handlerOptions'], [
                             'entity' => $options['entity']
-                        ];
+                        ]);
 
                         if ($embeddedDirty) {
                             $embeddedFields[] = $field;
@@ -102,7 +103,7 @@ if (!empty($this->request->query['embedded'])) {
                             $field['name'] = substr($field['name'], strrpos($field['name'], '.') + 1);
                         }
 
-                        echo '<div class="col-xs-12 col-md-6">';
+                        echo '<div class="col-xs-12 col-md-6 field-wrapper">';
                         /*
                         non-embedded field
                          */

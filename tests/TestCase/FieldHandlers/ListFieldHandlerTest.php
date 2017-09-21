@@ -65,6 +65,21 @@ class ListFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testRenderValueNested()
+    {
+        $options['fieldDefinitions'] = new CsvField([
+            'name' => $this->field,
+            'type' => 'list(nested)',
+            'required' => false,
+            'non-searchable' => false,
+            'unique' => false
+        ]);
+
+        $result = $this->fh->renderValue('first_level_1.second_level_1.third_level_1', $options);
+
+        $this->assertEquals('First level 1 - Second level 1 -  - Third level 1', $result);
+    }
+
     public function testRenderValueWithWrongValue()
     {
         $options['fieldDefinitions'] = new CsvField([

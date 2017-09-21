@@ -343,7 +343,7 @@ class Table extends BaseTable
      *
      * @param \Cake\ORM\Table $table instance of the association.
      * @param \Cake\ORM\Association $association Association object
-     * @param \Cake\Network\Request $data passed
+     * @param array $data Data
      * @return array associated records
      */
     protected function getOneToManyAssociatedRecords($table, Association $association, array $data = [])
@@ -529,7 +529,7 @@ class Table extends BaseTable
     protected function _getAssociationCsvFields(Association $association, $action)
     {
         list($plugin, $controller) = pluginSplit($association->className());
-        $fields = $this->_getCsvFields($controller, $action);
+        $fields = $this->getCsvFields($controller, $action);
 
         return $fields;
     }
@@ -560,7 +560,7 @@ class Table extends BaseTable
      * @param  string $action    Action name
      * @return array             table fields
      */
-    protected function _getCsvFields($tableName, $action)
+    public function getCsvFields($tableName, $action)
     {
         $result = [];
 

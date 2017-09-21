@@ -2,9 +2,12 @@
 namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
+use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Inflector;
 use CsvMigrations\Controller\Traits\ImportTrait;
+use CsvMigrations\Event\EventName;
 use CsvMigrations\FileUploadsUtils;
 
 class AppController extends BaseController
@@ -295,18 +298,39 @@ class AppController extends BaseController
 
         $redirectUrl = ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index'];
 
+        $batchIds = (array)$this->request->data('batch.ids');
+        if (empty($batchIds)) {
+            $this->Flash->error(__('No records selected.'));
+
+            return $this->redirect($redirectUrl);
+        }
+
+        $batchIdsCount = count($batchIds);
+
+        // broadcast batch ids event
+        $event = new Event((string)EventName::BATCH_IDS(), $this, [
+            $batchIds,
+            $operation,
+            $this->Auth->user()
+        ]);
+        $this->eventManager()->dispatch($event);
+
+        $batchIds = is_array($event->result) ? $event->result : $batchIds;
+
+        if (empty($batchIds)) {
+            $operation = strtolower(Inflector::humanize($operation));
+            $this->Flash->error(__('Insufficient permissions to ' . $operation . ' the selected records.'));
+
+            return $this->redirect($redirectUrl);
+        }
+
         if ('delete' === $operation) {
-            $batchIds = (array)$this->request->data('batch.ids');
-            if (empty($batchIds)) {
-                $this->Flash->error(__('No records selected.'));
-
-                return $this->redirect($redirectUrl);
-            }
-
             $conditions = [$this->{$this->name}->getPrimaryKey() . ' IN' => $batchIds];
             // execute batch delete
             if ($this->{$this->name}->deleteAll($conditions)) {
-                $this->Flash->success(__('Selected records have been deleted.'));
+                $this->Flash->success(
+                    __(count($batchIds) . ' of ' . $batchIdsCount . ' selected records have been deleted.')
+                );
             } else {
                 $this->Flash->error(__('Selected records could not be deleted. Please, try again.'));
             }
@@ -315,13 +339,6 @@ class AppController extends BaseController
         }
 
         if ('edit' === $operation && (bool)$this->request->data('batch.execute')) {
-            $batchIds = (array)$this->request->data('batch.ids');
-            if (empty($batchIds)) {
-                $this->Flash->error(__('No records selected.'));
-
-                return $this->redirect($redirectUrl);
-            }
-
             $fields = (array)$this->request->data($this->name);
             if (empty($fields)) {
                 $this->Flash->error(__('Selected records could not be updated. No changes provided.'));
@@ -332,7 +349,9 @@ class AppController extends BaseController
             $conditions = [$this->{$this->name}->getPrimaryKey() . ' IN' => $batchIds];
             // execute batch edit
             if ($this->{$this->name}->updateAll($fields, $conditions)) {
-                $this->Flash->success(__('Selected records have been updated.'));
+                $this->Flash->success(
+                    __(count($batchIds) . ' of ' . $batchIdsCount . ' selected records have been updated.')
+                );
             } else {
                 $this->Flash->error(__('Selected records could not be updated. Please, try again.'));
             }

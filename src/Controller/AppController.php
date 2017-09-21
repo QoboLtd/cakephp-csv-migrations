@@ -295,14 +295,14 @@ class AppController extends BaseController
 
         $redirectUrl = ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index'];
 
+        $batchIds = (array)$this->request->data('batch.ids');
+        if (empty($batchIds)) {
+            $this->Flash->error(__('No records selected.'));
+
+            return $this->redirect($redirectUrl);
+        }
+
         if ('delete' === $operation) {
-            $batchIds = (array)$this->request->data('batch.ids');
-            if (empty($batchIds)) {
-                $this->Flash->error(__('No records selected.'));
-
-                return $this->redirect($redirectUrl);
-            }
-
             $conditions = [$this->{$this->name}->getPrimaryKey() . ' IN' => $batchIds];
             // execute batch delete
             if ($this->{$this->name}->deleteAll($conditions)) {
@@ -315,13 +315,6 @@ class AppController extends BaseController
         }
 
         if ('edit' === $operation && (bool)$this->request->data('batch.execute')) {
-            $batchIds = (array)$this->request->data('batch.ids');
-            if (empty($batchIds)) {
-                $this->Flash->error(__('No records selected.'));
-
-                return $this->redirect($redirectUrl);
-            }
-
             $fields = (array)$this->request->data($this->name);
             if (empty($fields)) {
                 $this->Flash->error(__('Selected records could not be updated. No changes provided.'));

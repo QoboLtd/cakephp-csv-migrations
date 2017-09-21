@@ -117,8 +117,7 @@ class Table extends BaseTable
      */
     public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options)
     {
-        $user = $this->getCurrentUser();
-        $options['current_user'] = $user['id'];
+        $options['current_user'] = $this->getCurrentUser();
 
         $ev = new Event(
             (string)EventName::MODEL_AFTER_SAVE(),

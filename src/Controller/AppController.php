@@ -2,9 +2,12 @@
 namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
+use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Inflector;
 use CsvMigrations\Controller\Traits\ImportTrait;
+use CsvMigrations\Event\EventName;
 use CsvMigrations\FileUploadsUtils;
 
 class AppController extends BaseController
@@ -298,6 +301,25 @@ class AppController extends BaseController
         $batchIds = (array)$this->request->data('batch.ids');
         if (empty($batchIds)) {
             $this->Flash->error(__('No records selected.'));
+
+            return $this->redirect($redirectUrl);
+        }
+
+        $batchIdsCount = count($batchIds);
+
+        // broadcast batch ids event
+        $event = new Event((string)EventName::BATCH_IDS(), $this, [
+            $batchIds,
+            $operation,
+            $this->Auth->user()
+        ]);
+        $this->eventManager()->dispatch($event);
+
+        $batchIds = is_array($event->result) ? $event->result : $batchIds;
+
+        if (empty($batchIds)) {
+            $operation = strtolower(Inflector::humanize($operation));
+            $this->Flash->error(__('Insufficient permissions to ' . $operation . ' the selected records.'));
 
             return $this->redirect($redirectUrl);
         }

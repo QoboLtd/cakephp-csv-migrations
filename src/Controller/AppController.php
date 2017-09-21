@@ -306,7 +306,9 @@ class AppController extends BaseController
             $conditions = [$this->{$this->name}->getPrimaryKey() . ' IN' => $batchIds];
             // execute batch delete
             if ($this->{$this->name}->deleteAll($conditions)) {
-                $this->Flash->success(__('Selected records have been deleted.'));
+                $this->Flash->success(
+                    __(count($batchIds) . ' of ' . $batchIdsCount . ' selected records have been deleted.')
+                );
             } else {
                 $this->Flash->error(__('Selected records could not be deleted. Please, try again.'));
             }
@@ -325,7 +327,9 @@ class AppController extends BaseController
             $conditions = [$this->{$this->name}->getPrimaryKey() . ' IN' => $batchIds];
             // execute batch edit
             if ($this->{$this->name}->updateAll($fields, $conditions)) {
-                $this->Flash->success(__('Selected records have been updated.'));
+                $this->Flash->success(
+                    __(count($batchIds) . ' of ' . $batchIdsCount . ' selected records have been updated.')
+                );
             } else {
                 $this->Flash->error(__('Selected records could not be updated. Please, try again.'));
             }

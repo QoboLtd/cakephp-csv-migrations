@@ -283,7 +283,7 @@ echo $this->element('CsvMigrations.common_js_libs');
                 <?php endforeach; ?>
             </div> <!-- .tab-content -->
         </div> <!-- .nav-tabs-custom -->
-        <?php } ?>
+    <?php } ?>
     </div>
 </div> <!-- .associated-records -->
 <?php endif;?>

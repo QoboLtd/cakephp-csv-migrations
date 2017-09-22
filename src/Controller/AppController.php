@@ -9,6 +9,7 @@ use Cake\Utility\Inflector;
 use CsvMigrations\Controller\Traits\ImportTrait;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\FileUploadsUtils;
+use CsvMigrations\Utility\Field;
 
 class AppController extends BaseController
 {
@@ -360,6 +361,7 @@ class AppController extends BaseController
         }
 
         $this->set('entity', $this->{$this->name}->newEntity());
+        $this->set('fields', Field::getCsvView($this->{$this->name}, $operation, true, true));
         $this->render('CsvMigrations.Common/batch');
     }
 }

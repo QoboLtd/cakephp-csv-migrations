@@ -70,7 +70,12 @@ class CsvViewComponent extends Component
 
         // skip passing table fields if action is not supported by the plugin
         if (in_array($this->request->action, Configure::readOrFail('CsvMigrations.actions'))) {
-            $this->_setTableFields();
+            // if action requires panels, arrange the fields into the panels
+            $panels = in_array($this->request->action, (array)Configure::read('CsvMigrations.panels.actions'));
+            $fields = Field::getCsvView($this->_tableInstance, $this->request->action, true, $panels);
+
+            $this->_controllerInstance->set('fields', $fields);
+            $this->_controllerInstance->set('_serialize', ['fields']);
         }
     }
 
@@ -181,20 +186,5 @@ class CsvViewComponent extends Component
         $this->_tableInstance = TableRegistry::get($table);
 
         return $this->_tableInstance;
-    }
-
-    /**
-     * Method that passes csv defined Table fields to the View
-     *
-     * @return void
-     */
-    protected function _setTableFields()
-    {
-        // if action requires panels, arrange the fields into the panels
-        $panels = in_array($this->request->action, (array)Configure::read('CsvMigrations.panels.actions'));
-        $fields = Field::getCsvView($this->_tableInstance, $this->request->action, true, $panels);
-
-        $this->_controllerInstance->set('fields', $fields);
-        $this->_controllerInstance->set('_serialize', ['fields']);
     }
 }

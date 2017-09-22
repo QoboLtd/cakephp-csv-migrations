@@ -69,6 +69,9 @@ var view_index = view_index || {};
             stateSave: true,
             stateDuration: that.state_duration,
             searching: false,
+            language: {
+                "processing": "<img src='/img/loading.gif' alt='...'/> Processing..."
+            },
             processing: true,
             serverSide: true,
             order: [

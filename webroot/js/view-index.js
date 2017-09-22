@@ -54,7 +54,7 @@ var view_index = view_index || {};
             $form.append('<input type="text" name="batch[ids][]" value="' + $(this).attr('data-id') + '">');
         });
 
-        $form.submit();
+        $form.appendTo('body').submit();
     };
 
     /**

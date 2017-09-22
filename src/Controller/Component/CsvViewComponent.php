@@ -14,6 +14,7 @@ use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
+use CsvMigrations\Utility\Field;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
@@ -189,61 +190,11 @@ class CsvViewComponent extends Component
      */
     protected function _setTableFields()
     {
-        $result = [];
-
-        $config = new ModuleConfig(ConfigType::VIEW(), $this->request->controller, $this->request->action);
-        $result = $config->parse()->items;
-
-        list($plugin, $model) = pluginSplit($this->_tableInstance->registryAlias());
-        // add plugin and model names to each of the fields
-        $result = $this->_setFieldPluginAndModel($result, $model, $plugin);
-
         // if action requires panels, arrange the fields into the panels
-        if (in_array($this->request->action, (array)Configure::read('CsvMigrations.panels.actions'))) {
-            $result = $this->_arrangePanels($result);
-        }
-        $this->_controllerInstance->set('fields', $result);
+        $panels = in_array($this->request->action, (array)Configure::read('CsvMigrations.panels.actions'));
+        $fields = Field::getCsvView($this->_tableInstance, $this->request->action, true, $panels);
+
+        $this->_controllerInstance->set('fields', $fields);
         $this->_controllerInstance->set('_serialize', ['fields']);
-    }
-
-    /**
-     * Add plugin and model name for each of the csv fields.
-     *
-     * @param array  $data   csv data
-     * @param string $model  model name
-     * @param string $plugin plugin name
-     * @return array         csv data
-     */
-    protected function _setFieldPluginAndModel($data, $model = null, $plugin = null)
-    {
-        foreach ($data as &$row) {
-            foreach ($row as &$col) {
-                $col = [
-                    'plugin' => $plugin,
-                    'model' => $model,
-                    'name' => $col
-                ];
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * Method that arranges csv fetched fields into panels.
-     *
-     * @param  array  $data fields
-     * @return array        fields arranged in panels
-     */
-    protected function _arrangePanels(array $data)
-    {
-        $result = [];
-
-        foreach ($data as $fields) {
-            $panel = array_shift($fields);
-            $result[$panel['name']][] = $fields;
-        }
-
-        return $result;
     }
 }

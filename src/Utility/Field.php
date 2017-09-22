@@ -52,6 +52,33 @@ class Field
     }
 
     /**
+     * Get View's csv fields.
+     *
+     * @param \Cake\ORM\Table $table Table instance
+     * @param string $action Controller action
+     * @param bool $includeModel Include model flag
+     * @param bool $panels Arrange panels flag
+     * @return array
+     */
+    public static function getCsvView(Table $table, $action, $includeModel = false, $panels = false)
+    {
+        $tableName = App::shortName(get_class($table), 'Model/Table', 'Table');
+
+        $config = new ModuleConfig(ConfigType::VIEW(), $tableName, $action);
+        $result = $config->parse()->items;
+
+        if ((bool)$panels) {
+            $result = static::arrangePanels($result);
+        }
+
+        if ((bool)$includeModel) {
+            $result = static::setFieldPluginAndModel($tableName, $result, $panels);
+        }
+
+        return $result;
+    }
+
+    /**
      * Get list's options.
      *
      * @param string $listName List name
@@ -125,5 +152,49 @@ class Field
         }
 
         return $result;
+    }
+
+    /**
+     * Method that arranges csv fields into panels.
+     *
+     * @param array $fields csv fields
+     * @return array
+     */
+    protected static function arrangePanels(array $fields)
+    {
+        $result = [];
+
+        foreach ($fields as $row) {
+            $panelName = array_shift($row);
+            $result[$panelName][] = $row;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Add plugin and model name for each of the csv fields.
+     *
+     * @param string $tableName Table name
+     * @param array $fields View csv fields
+     * @return array
+     */
+    protected static function setFieldPluginAndModel($tableName, array $fields)
+    {
+        list($plugin, $model) = pluginSplit($tableName);
+
+        $callback = function (&$value, $key) use ($plugin, $model, &$callback) {
+            if (is_array($value)) {
+                array_walk_recursive($value, $foobar);
+            }
+
+            $value = ['plugin' => $plugin, 'model' => $model, 'name' => $value];
+
+            return $value;
+        };
+
+        array_walk_recursive($fields, $callback);
+
+        return $fields;
     }
 }

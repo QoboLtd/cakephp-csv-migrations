@@ -191,47 +191,13 @@ if (!empty($this->request->query['embedded'])) {
         echo $this->Form->button(__('Cancel'), $cancelBtnOptions);
         echo $this->Form->end();
     }
-    ?>
-    <?php
+
     // Fetch embedded module(s) using CakePHP's requestAction() method, if request is not coming from requestAction()
-    if (!empty($embeddedFields) && !$this->request->param('pass.conversion')) :
-        foreach ($embeddedFields as $embeddedField) :
-            $embeddedFieldName = substr($embeddedField['name'], strrpos($embeddedField['name'], '.') + 1);
-            list($embeddedPlugin, $embeddedController) = pluginSplit(
-                substr($embeddedField['name'], 0, strrpos($embeddedField['name'], '.'))
-            );
-        ?>
-        <!-- Modal -->
-        <div id="<?= $embeddedFieldName ?>_modal" class="modal fade" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                    <?php echo $this->requestAction(
-                        [
-                            'plugin' => $embeddedPlugin,
-                            'controller' => $embeddedController,
-                            'action' => 'add'
-                        ],
-                        [
-                            'environment' => ['REQUEST_METHOD' => 'GET'],
-                            'query' => [
-                                'embedded' => $embeddedController,
-                                'foreign_key' => $embeddedFieldName
-                            ]
-                        ]
-                    ); ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <?php
-        endforeach;
-    endif;
+    if (!empty($embeddedFields) && !$this->request->param('pass.conversion')) {
+        echo $this->element('CsvMigrations.Embedded/modals', [
+            'fields' => $embeddedFields
+        ]);
+    }
 
     // print embedded forms
     if (!empty($embeddedForms)) {

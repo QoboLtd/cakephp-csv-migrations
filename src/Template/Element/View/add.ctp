@@ -215,9 +215,10 @@ if (!empty($this->request->query['embedded'])) {
                         [
                             'plugin' => $embeddedPlugin,
                             'controller' => $embeddedController,
-                            'action' => $this->request->action
+                            'action' => 'add'
                         ],
                         [
+                            'environment' => ['REQUEST_METHOD' => 'GET'],
                             'query' => [
                                 'embedded' => $embeddedController,
                                 'foreign_key' => $embeddedFieldName

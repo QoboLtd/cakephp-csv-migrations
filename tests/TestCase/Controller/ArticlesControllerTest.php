@@ -229,6 +229,7 @@ class ArticlesControllerTest extends IntegrationTestCase
 
         $this->post('/articles/batch/delete', $data);
         $this->assertResponseSuccess();
+        $this->assertSession('2 of 2 selected records have been deleted.', 'Flash.flash.0.message');
 
         $query = TableRegistry::get('Articles')->find('all');
         $this->assertTrue($query->isEmpty());
@@ -243,13 +244,28 @@ class ArticlesControllerTest extends IntegrationTestCase
 
     public function testBatchEdit()
     {
-        $this->post('/articles/batch/edit');
+        $data = [
+            'batch' => [
+                'ids' => [
+                    '00000000-0000-0000-0000-000000000001',
+                    '00000000-0000-0000-0000-000000000002'
+                ]
+            ]
+        ];
+        $this->post('/articles/batch/edit', $data);
         $this->assertResponseSuccess();
 
         $entity = $this->viewVariable('entity');
 
         $this->assertInstanceOf(Article::class, $entity);
         $this->assertTrue($entity->isNew());
+    }
+
+    public function testBatchEditNoIds()
+    {
+        $this->post('/articles/batch/edit');
+        $this->assertRedirect('/articles');
+        $this->assertSession('No records selected.', 'Flash.flash.0.message');
     }
 
     public function testBatchEditExecute()
@@ -269,7 +285,7 @@ class ArticlesControllerTest extends IntegrationTestCase
 
         $this->post('/articles/batch/edit', $data);
         $this->assertRedirect('/articles');
-        $this->assertSession('Selected records have been updated.', 'Flash.flash.0.message');
+        $this->assertSession('2 of 2 selected records have been updated.', 'Flash.flash.0.message');
 
         $query = TableRegistry::get('Articles')->find()->where(['id IN' => $data['batch']['ids']]);
         foreach ($query->all() as $entity) {

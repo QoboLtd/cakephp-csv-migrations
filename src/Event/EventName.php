@@ -22,6 +22,8 @@ class EventName extends Enum
     const API_LOOKUP_BEFORE_FIND = 'CsvMigrations.beforeLookup';
     const API_VIEW_AFTER_FIND = 'CsvMigrations.View.afterFind';
     const API_VIEW_BEFORE_FIND = 'CsvMigrations.View.beforeFind';
+    // Controller events
+    const BATCH_IDS = 'CsvMigrations.Batch.ids';
     // Field Handlers events
     const FIELD_HANDLER_DEFAULT_VALUE = 'CsvMigrations.FieldHandler.DefaultValue';
     // Menu elements events

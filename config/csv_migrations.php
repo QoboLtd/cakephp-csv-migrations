@@ -14,7 +14,7 @@ return [
             'method' => null,
             'component' => null
         ],
-        'actions' => ['add', 'batch', 'edit', 'index', 'view'],
+        'actions' => ['add', 'edit', 'index', 'view'],
         'batch' => [
             'action' => 'batch',
             'types' => ['datetime', 'time', 'date', 'reminder', 'string', 'text', 'list', 'email', 'phone', 'url', 'boolean', 'related']

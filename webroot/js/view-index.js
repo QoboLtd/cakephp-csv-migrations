@@ -54,7 +54,7 @@ var view_index = view_index || {};
             $form.append('<input type="text" name="batch[ids][]" value="' + $(this).attr('data-id') + '">');
         });
 
-        $form.submit();
+        $form.appendTo('body').submit();
     };
 
     /**
@@ -69,6 +69,9 @@ var view_index = view_index || {};
             stateSave: true,
             stateDuration: that.state_duration,
             searching: false,
+            language: {
+                "processing": "<img src='/img/loading.gif' alt='...'/> Processing..."
+            },
             processing: true,
             serverSide: true,
             order: [

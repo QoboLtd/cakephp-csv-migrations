@@ -27,7 +27,10 @@ var view_index = view_index || {};
 
         var table = this.datatable();
         this._handleDeleteLinks(table);
-        this._batchActions();
+
+        if (this.options.hasOwnProperty('batch')) {
+            this._batchActions();
+        }
     };
 
     ViewIndex.prototype._batchActions = function () {

@@ -125,16 +125,9 @@ if (empty($options['title'])) {
                                 'entity' => $options['entity'],
                                 'imageSize' => 'small',
                             ];
-
-                            $label = $fhf->renderName(
-                                $tableName,
-                                $field['name'],
-                                $renderOptions
-                            );
-
                             ?>
                             <div class="col-xs-4 col-md-2 text-right">
-                                <strong><?= $label?>:</strong>
+                                <strong><?= $fhf->renderName($tableName, $field['name'], $renderOptions); ?>:</strong>
                             </div>
                             <div class="col-xs-8 col-md-4">
                             <?php
@@ -241,16 +234,7 @@ echo $this->element('CsvMigrations.common_js_libs');
         $this->eventManager()->dispatch($event);
         $tabs = $event->result['tabs'];
 
-        echo $this->Html->css('AdminLTE./plugins/datatables/dataTables.bootstrap', ['block' => 'css']);
-        echo $this->Html->script(
-            [
-                'AdminLTE./plugins/datatables/jquery.dataTables.min',
-                'AdminLTE./plugins/datatables/dataTables.bootstrap.min',
-            ],
-            [
-                'block' => 'scriptBottom'
-            ]
-        );
+    if (!empty($tabs)) {
         echo $this->Html->scriptBlock(
             '
                 var url = document.location.toString();
@@ -264,7 +248,6 @@ echo $this->element('CsvMigrations.common_js_libs');
             ]
         );
     ?>
-        <?php if (!empty($tabs)) : ?>
         <div class="nav-tabs-custom">
             <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
             <?php $active = true; ?>
@@ -300,7 +283,7 @@ echo $this->element('CsvMigrations.common_js_libs');
                 <?php endforeach; ?>
             </div> <!-- .tab-content -->
         </div> <!-- .nav-tabs-custom -->
-        <?php endif; ?>
+    <?php } ?>
     </div>
 </div> <!-- .associated-records -->
 <?php endif;?>

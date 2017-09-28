@@ -62,7 +62,7 @@ try {
     ];
     $handlerOptions = [];
     // set associated table name to be used on input field's name
-    $handlerOptions['associated_table_name'] = $content['table_name'];
+    $handlerOptions['associated_table_name'] = $content['table'];
     $handlerOptions['emDataTarget'] = $emDataTarget;
     $handlerOptions['emAssociationType'] = $data['tab']['associationType'];
     // set field type to 'has_many' and default parameters
@@ -80,7 +80,7 @@ try {
         null,
         $handlerOptions
     );
-    echo $this->Form->hidden('assocName', ['value' => $content['table_name']]);
+    echo $this->Form->hidden('assocName', ['value' => $content['table']]);
     echo $this->Form->hidden('id', ['value' => $this->request->pass[0]]);
     echo $this->Form->end();
     ?>

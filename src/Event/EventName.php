@@ -36,15 +36,6 @@ class EventName extends Enum
     const BATCH_IDS = 'CsvMigrations.Batch.ids';
     // Field Handlers events
     const FIELD_HANDLER_DEFAULT_VALUE = 'CsvMigrations.FieldHandler.DefaultValue';
-    // Menu elements events
-    const MENU_ACTIONS_ASSOCIATED = 'CsvMigrations.Associated.actionsMenu.beforeRender';
-    const MENU_ACTIONS_DB_LISTS_INDEX = 'CsvMigrations.Dblists.Index.actionsMenu.beforeRender';
-    const MENU_ACTIONS_DB_LIST_ITEMS_INDEX = 'CsvMigrations.DblistItems.Index.actionsMenu.beforeRender';
-    const MENU_ACTIONS_INDEX = 'CsvMigrations.Index.actionsMenu.beforeRender';
-    const MENU_TOP_DB_LISTS_INDEX = 'CsvMigrations.Dblists.Index.topMenu.beforeRender';
-    const MENU_TOP_DB_LIST_ITEMS_INDEX = 'CsvMigrations.DblistItems.Index.topMenu.beforeRender';
-    const MENU_TOP_INDEX = 'CsvMigrations.Index.topMenu.beforeRender';
-    const MENU_TOP_VIEW = 'CsvMigrations.View.topMenu.beforeRender';
     // CsvMigrations Table events
     const MODEL_AFTER_SAVE = 'CsvMigrations.Model.afterSave';
     // CsvMigrations Views events

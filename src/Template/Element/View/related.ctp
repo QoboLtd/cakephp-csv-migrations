@@ -36,34 +36,32 @@ if (in_array($tab['associationType'], ['manyToMany'])) {
     </table>
 </div>
 <?php
-    // @codingStandardsIgnoreStart
-    echo $this->Html->scriptBlock(
-        '$("#table-' . $tab['containerId'] . '").dataTable({
-            searching: false,
-            processing:true,
-            serverSide:true,
-            paging:true,
-            ajax: {
-                type: "GET",
-                url: "' . $tab['url'] . '",
-                headers: {
-                    "Authorization": "Bearer " + "' . Configure::read('CsvMigrations.api.token') . '"
-                },
-                data: function (d) {
+$extraProperties = array_merge($tab, [
+    'format' => 'datatables',
+    'id' => $this->request->param('pass.0'),
+    'controller' => $this->request->param('controller'),
+    'menus' => true
+]);
 
-                    return $.extend( {}, d, ' . json_encode(array_merge($tab,
-                    [
-                        'format' => 'datatables',
-                        'id' => $this->request->params['pass'][0],
-                        'controller' => $this->request->params['controller'],
-                        'menus' => true,
-                    ])) . ');
-                }
+echo $this->Html->scriptBlock(
+    '$("#table-' . $tab['containerId'] . '").dataTable({
+        searching: false,
+        processing:true,
+        serverSide:true,
+        paging:true,
+        ajax: {
+            type: "GET",
+            url: "' . $tab['url'] . '",
+            headers: {
+                "Authorization": "Bearer " + "' . Configure::read('CsvMigrations.api.token') . '"
             },
-        });',
-        ['block' => 'scriptBottom']
-    );
-    // @codingStandardsIgnoreEnd
+            data: function (d) {
+                return $.extend( {}, d, ' . json_encode($extraProperties) . ');
+            }
+        },
+    });',
+    ['block' => 'scriptBottom']
+);
 ?>
 <?php endif; ?>
 

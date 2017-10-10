@@ -231,14 +231,15 @@ class IndexActionListener extends BaseActionListener
         $controller = $event->subject()->request->controller;
         $displayField = $event->subject()->{$event->subject()->name}->displayField();
 
-        $appView->element('CsvMigrations.Menu/index_actions', [
-            'plugin' => $event->subject()->request->plugin,
-            'controller' => $event->subject()->request->controller,
-            'displayField' => $displayField,
-            'entities' => $entities,
-            'user' => $event->subject()->Auth->user(),
-            'propertyName' => static::MENU_PROPERTY_NAME
-        ]);
+        foreach ($entities as $entity) {
+            $entity->{static::MENU_PROPERTY_NAME} = $appView->element('CsvMigrations.Menu/index_actions', [
+                'plugin' => $event->subject()->request->plugin,
+                'controller' => $event->subject()->request->controller,
+                'displayField' => $displayField,
+                'entity' => $entity,
+                'user' => $event->subject()->Auth->user()
+            ]);
+        }
     }
 
     /**

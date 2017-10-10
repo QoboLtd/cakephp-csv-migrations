@@ -36,12 +36,17 @@ echo $this->Html->scriptBlock(
 <section class="content-header">
     <div class="row">
         <div class="col-xs-12 col-md-6">
-            <h4><?= __d('CsvMigrations', 'Database Lists') ?></h4>
+            <h4><?= __('Database Lists') ?></h4>
         </div>
         <div class="col-xs-12 col-md-6">
             <div class="pull-right">
                 <div class="btn-group btn-group-sm" role="group">
-                    <?= $this->element('CsvMigrations.Menu/dblists_index_top', ['user' => $user]) ?>
+                    <?php
+                    $url = ['plugin' => 'CsvMigrations', 'controller' => 'Dblists', 'action' => 'add'];
+                    echo $this->Html->link('<i class="fa fa-plus"></i> ' . __('Add'), $url, [
+                        'title' => __d('CsvMigrations', 'Add'), 'escape' => false, 'class' => 'btn btn-default'
+                    ]);
+                    ?>
                 </div>
             </div>
         </div>
@@ -56,7 +61,7 @@ echo $this->Html->scriptBlock(
                         <th><?= __('Name'); ?></th>
                         <th><?= __('Created'); ?></th>
                         <th><?= __('Modified'); ?></th>
-                        <th class="actions"><?= __d('CsvMigrations', 'Actions'); ?></th>
+                        <th class="actions"><?= __('Actions'); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,9 +71,42 @@ echo $this->Html->scriptBlock(
                         <td><?= $renderer->renderValue($dblist->created) ?></td>
                         <td><?= $renderer->renderValue($dblist->modified) ?></td>
                         <td class="actions">
-                            <?= $this->element('CsvMigrations.Menu/dblists_index_actions', [
-                                'entity' => $dblist
-                            ]) ?>
+                            <div class="btn-group btn-group-xs" role="group">
+                            <?php
+                            $url = [
+                                'plugin' => 'CsvMigrations',
+                                'controller' => 'DblistItems',
+                                'action' => 'index',
+                                $dblist->id
+                            ];
+                            echo $this->Html->link('<i class="fa fa-list-alt"></i>', $url, [
+                                'title' => __('View'), 'class' => 'btn btn-default', 'escape' => false
+                            ]);
+
+                            $url = [
+                                'plugin' => 'CsvMigrations',
+                                'controller' => 'Dblists',
+                                'action' => 'edit',
+                                $dblist->id
+                            ];
+                            echo $this->Html->link('<i class="fa fa-pencil"></i>', $url, [
+                                'title' => __('Edit'), 'class' => 'btn btn-default', 'escape' => false
+                            ]);
+
+                            $url = [
+                                'plugin' => 'CsvMigrations',
+                                'controller' => 'Dblists',
+                                'action' => 'delete',
+                                $dblist->id
+                            ];
+                            echo $this->Form->postLink('<i class="fa fa-trash"></i>', $url, [
+                                'title' => __('Delete'),
+                                'class' => 'btn btn-default btn-sm',
+                                'escape' => false,
+                                'confirm' => __d('CsvMigrations', 'Are you sure you want to delete {0}?', $dblist->name)
+                            ]);
+                            ?>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; ?>

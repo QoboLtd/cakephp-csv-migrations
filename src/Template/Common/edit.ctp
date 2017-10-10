@@ -10,10 +10,15 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\Utility\Inflector;
+
+// Get title from the entity
+$title = Inflector::singularize(Inflector::humanize(Inflector::underscore($moduleAlias)));
+
 $options = [
     'entity' => $entity,
-    'fields' => $fields
+    'fields' => $fields,
+    'title' => __('Edit {0}', $title),
+    'handlerOptions' => ['entity' => $entity]
 ];
-echo $this->element('CsvMigrations.View/edit', [
-    'options' => $options
-]);
+echo $this->element('CsvMigrations.View/post', ['options' => $options]);

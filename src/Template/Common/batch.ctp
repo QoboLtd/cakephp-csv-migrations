@@ -25,9 +25,7 @@ $options = [
         ]
     ]
 ];
-echo $this->element('CsvMigrations.View/add', [
-    'options' => $options,
-]);
+echo $this->element('CsvMigrations.View/post', ['options' => $options]);
 
 echo $this->Html->script('CsvMigrations.view-batch', ['block' => 'scriptBottom']);
 

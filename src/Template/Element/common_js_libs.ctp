@@ -1,4 +1,15 @@
 <?php
+/**
+ * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
+
 use Cake\Core\Configure;
 
 echo $this->Html->css(
@@ -7,6 +18,7 @@ echo $this->Html->css(
         'AdminLTE./plugins/daterangepicker/daterangepicker',
         'AdminLTE./plugins/datepicker/datepicker3',
         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
+        'AdminLTE./plugins/datatables/dataTables.bootstrap',
         'AdminLTE./plugins/select2/select2.min',
         'CsvMigrations.fileinput.min',
         'CsvMigrations.style',
@@ -46,6 +58,8 @@ echo $this->Html->script(
         'CsvMigrations.datetimepicker.init',
         'AdminLTE./plugins/datepicker/bootstrap-datepicker',
         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
+        'AdminLTE./plugins/datatables/jquery.dataTables.min',
+        'AdminLTE./plugins/datatables/dataTables.bootstrap.min',
         'CsvMigrations.timepicker.init',
         'AdminLTE./plugins/select2/select2.full.min',
         'CsvMigrations.select2.init',

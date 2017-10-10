@@ -1,4 +1,15 @@
 <?php
+/**
+ * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
+
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Network\Exception\ForbiddenException;
@@ -62,7 +73,7 @@ try {
     ];
     $handlerOptions = [];
     // set associated table name to be used on input field's name
-    $handlerOptions['associated_table_name'] = $content['table_name'];
+    $handlerOptions['associated_table_name'] = $content['table'];
     $handlerOptions['emDataTarget'] = $emDataTarget;
     $handlerOptions['emAssociationType'] = $data['tab']['associationType'];
     // set field type to 'has_many' and default parameters
@@ -80,7 +91,7 @@ try {
         null,
         $handlerOptions
     );
-    echo $this->Form->hidden('assocName', ['value' => $content['table_name']]);
+    echo $this->Form->hidden('assocName', ['value' => $content['table']]);
     echo $this->Form->hidden('id', ['value' => $this->request->pass[0]]);
     echo $this->Form->end();
     ?>

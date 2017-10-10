@@ -1,4 +1,14 @@
 <?php
+/**
+ * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
 namespace CsvMigrations;
 
 use ArrayObject;
@@ -203,36 +213,36 @@ class Table extends BaseTable
      *
      * Fetch entities in the view.ctp
      *
-     *
      * @param \Cake\ORM\Table $originTable entity of associated table
-     * @param \Cake\Network\Request $request from the controller
      * @param array $data with the association configs
      * @param array $user with the user session
      *
      * @return array $response containing data for DataTables AJAX call
      */
-    public function getRelatedEntities($originTable, $request, array $data = [], array $user = [])
+    public function getRelatedEntities($originTable, array $data = [], array $user = [])
     {
-        $response = [];
+        $response = $responseData = [];
+
+        if (empty($data['originTable'])) {
+            return $response;
+        }
+
         $tableName = Inflector::camelize($data['originTable']);
 
         $association = $this->getAssociationObject($tableName, $data['associationName']);
-
         if (!in_array($association->type(), array_keys($this->_associationsMap))) {
             return $response;
         }
 
-        $fh = new FieldHandlerFactory();
         $entities = $this->{$this->_associationsMap[$association->type()]}($originTable, $association, $data);
 
         if (empty($entities['records'])) {
             return $response;
         }
 
-        $responseData = [];
-
         if ($data['format'] == 'datatables' && !empty($entities['records'])) {
-            $assocTable = TableRegistry::get($entities['table_name']);
+            $fh = new FieldHandlerFactory();
+            $assocTable = TableRegistry::get($entities['table']);
 
             foreach ($entities['records'] as $record) {
                 $item = [];
@@ -256,7 +266,6 @@ class Table extends BaseTable
         }
 
         $response['data'] = $responseData;
-
         $response = array_merge($response, $entities['pagination']);
 
         return $response;
@@ -274,63 +283,41 @@ class Table extends BaseTable
     public function getManyToManyAssociatedRecords($table, Association $association, array $data = [])
     {
         $result = [];
-        $assocName = $association->name();
-        $assocTableName = $association->table();
-        $assocForeignKey = $association->foreignKey();
 
-        $csvFields = $this->_getAssociationCsvFields($association, 'index');
+        $result = $this->getAssociationFields($association, ['action' => 'index']);
 
-        if (empty($csvFields)) {
-            return $result;
+        if (empty($result['fields'])) {
+            return [];
         }
-        // get associated index View csv fields
-        $fields = array_unique(
-            array_merge(
-                [$association->displayField()],
-                $csvFields
-            )
-        );
+        $assocTable = TableRegistry::get(Inflector::camelize($association->table()));
 
-        $assocTableName = Inflector::camelize($assocTableName);
-        $assocTableObject = TableRegistry::get($assocTableName);
-
-        // @NOTE: fields should be properly indexed
-        // to collide with 'columns' indexes
-        $fields = array_values($fields);
-        $conditions = $this->getRelatedEntitiesOrder($assocTableObject, $fields, $data);
-
-        $id = $data['id'];
-        $primaryKey = $table->aliasField($table->getPrimaryKey());
+        $conditions = $this->getRelatedEntitiesOrder($assocTable, $result['fields'], $data);
 
         $limit = (!empty($data['limit']) ? $data['limit'] : 10);
         $offset = (!empty($data['start']) ? $data['start'] : 0);
 
+        $id = $data['id'];
         $tableAlias = $table->registryAlias();
+        $primaryKey = $table->aliasField($table->getPrimaryKey());
 
-        $countQuery = $assocTableObject->find();
-        $countQuery->select(['count' => $countQuery->func()->count('*')]);
-        $countQuery->matching($tableAlias, function ($q) use ($primaryKey, $id) {
-            return $q->where([$primaryKey => $id]);
-        });
+        $count = $this->getManyToManyCount($assocTable->find(), [
+            'alias' => $tableAlias,
+            'conditions' => [
+                $primaryKey => $id,
+            ],
+        ]);
 
-        $count = $countQuery->first();
-
-        $query = $assocTableObject->find();
-        $query->order($conditions);
-        $query->limit($limit);
-
-        if (!empty($offset)) {
-            $query->offset($offset);
-        }
-
+        $query = $assocTable->find();
         $query->matching($tableAlias, function ($q) use ($primaryKey, $id) {
             return $q->where([$primaryKey => $id]);
         });
 
-        $result = $this->getAssociationFields($association);
+        $query->order($conditions);
+        $query->limit($limit);
+        $query->offset($offset);
 
         $result['pagination']['recordsFiltered'] = $query->count();
-        $result['pagination']['recordsTotal'] = $count->count;
+        $result['pagination']['recordsTotal'] = $count;
         $result['pagination']['count'] = $query->count();
         $result['records'] = $query->all();
 
@@ -343,55 +330,43 @@ class Table extends BaseTable
      * @param \Cake\ORM\Table $table instance of the association.
      * @param \Cake\ORM\Association $association Association object
      * @param array $data Data
+     *
      * @return array associated records
      */
     protected function getOneToManyAssociatedRecords($table, Association $association, array $data = [])
     {
         $result = [];
 
-        $csvFields = $this->_getAssociationCsvFields($association, 'index');
-        if (empty($csvFields)) {
-            return $result;
+        $result = $this->getAssociationFields($association, ['action' => 'index']);
+
+        if (empty($result['fields'])) {
+            return [];
         }
-
-        // get associated index View csv fields
-        $fields = array_unique(
-            array_merge(
-                [$association->displayField()],
-                $csvFields
-            )
-        );
-
-        $fields = array_values($fields);
 
         $assocTable = $association->target();
 
-        $conditions = $this->getRelatedEntitiesOrder($assocTable, $fields, $data);
+        $conditions = $this->getRelatedEntitiesOrder($assocTable, $result['fields'], $data);
 
         $limit = (!empty($data['limit']) ? $data['limit'] : 10);
         $offset = (!empty($data['start']) ? $data['start'] : 0);
 
-        $recordId = $data['id'];
-        $assocForeignKey = $association->foreignKey();
-        $aliasedForeignKey = $assocTable->aliasField($assocForeignKey);
+        $id = $data['id'];
+        $foreignKey = $assocTable->aliasField($association->foreignKey());
 
-        $countQuery = $assocTable->find();
-        $countQuery->select(['count' => $countQuery->func()->count('*')]);
-        $countQuery->where([$aliasedForeignKey => $recordId]);
-        $count = $countQuery->first();
+        $count = $this->getOneToManyCount($assocTable->find(), [
+            'conditions' => [
+                $foreignKey => $id,
+            ],
+        ]);
 
         $query = $assocTable->find();
-        $query->where([$aliasedForeignKey => $recordId]);
-        $query->limit($limit);
+        $query->where([$foreignKey => $id]);
+
         $query->order($conditions);
+        $query->limit($limit);
+        $query->offset($offset);
 
-        if (!empty($offset)) {
-            $query->offset($offset);
-        }
-
-        $result = $this->getAssociationFields($association);
-
-        $result['pagination']['recordsTotal'] = $count->count;
+        $result['pagination']['recordsTotal'] = $count;
         $result['pagination']['recordsFiltered'] = $query->count();
         $result['pagination']['count'] = $query->count();
         $result['records'] = $query->all();
@@ -488,33 +463,26 @@ class Table extends BaseTable
     public function getAssociationFields(Association $association, array $options = [])
     {
         $result = [];
+        $action = (!empty($options['action']) ? $options['action'] : 'index');
 
-        $assocName = $association->name();
-        $assocTableName = $association->table();
+        $fields = $this->getAssociationCsvFields($association, $action);
 
-        $csvFields = $this->_getAssociationCsvFields($association, 'index');
+        $result['fields'] = $fields;
+        $params = ['table', 'className', 'displayField', 'primaryKey'];
 
-        // get associated index View csv fields
-        $fields = array_unique(
-            array_merge(
-                [$association->displayField()],
-                $csvFields
-            )
-        );
+        foreach ($params as $param) {
+            $underscored = Inflector::underscore($param);
 
-        $result['table_name'] = $assocTableName;
-
-        $result['class_name'] = $association->className();
-        $result['display_field'] = $association->displayField();
-        $result['primary_key'] = $association->primaryKey();
+            if (is_callable([$association, $param])) {
+                $result[$underscored] = $association->{$param}();
+            }
+        }
 
         if (!in_array($association->type(), ['manyToMany'])) {
             $result['foreign_key'] = $association->foreignKey();
         } else {
-            $result['foreign_key'] = Inflector::singularize($assocTableName) . '_' . $association->primaryKey();
+            $result['foreign_key'] = Inflector::singularize($association->table()) . '_' . $association->primaryKey();
         }
-
-        $result['fields'] = $fields;
 
         return $result;
     }
@@ -525,31 +493,28 @@ class Table extends BaseTable
      * @param object $action action passed
      * @return array
      */
-    protected function _getAssociationCsvFields(Association $association, $action)
+    public function getAssociationCsvFields(Association $association, $action)
     {
         list($plugin, $controller) = pluginSplit($association->className());
-        $fields = $this->getCsvFields($controller, $action);
+        $csvFields = $this->getCsvFields($controller, $action);
 
-        return $fields;
-    }
-
-    /**
-     * Method that fetches action fields from the corresponding csv file.
-     *
-     * @param  string $controller name of request's controller
-     * @param  string $action  Action name
-     * @return array
-     */
-    protected function _getActionFields($controller, $action = null)
-    {
-        if (is_null($action)) {
-            $action = 'index';
+        // get associated index View csv fields
+        if ('index' == $action) {
+            $fields = array_unique(
+                array_merge(
+                    [$association->displayField()],
+                    $csvFields
+                )
+            );
+        } else {
+            $fields = $csvFields;
         }
 
-        $mc = new ModuleConfig(ConfigType::VIEW(), $controller, $action);
-        $result = $mc->parse()->items;
+        // @NOTE: fields should be properly indexed
+        // to collide with 'columns' indexes
+        $fields = array_values($fields);
 
-        return $result;
+        return $fields;
     }
 
     /**
@@ -719,5 +684,52 @@ class Table extends BaseTable
     protected function _currentTable()
     {
         return App::shortName(get_class($this), 'Model/Table', 'Table');
+    }
+
+    /**
+     * Get One-to-Many Records count
+     *
+     * Used for DataTables records count based on associations
+     *
+     * @param \Cake\ORM\Query $query instance of target table
+     * @param array $options with conditions.
+     *
+     * @return int $count containing records counted.
+     */
+    public function getOneToManyCount(Query $query, array $options = [])
+    {
+        $query->select(['count' => $query->func()->count('*')]);
+
+        $query->where($options['conditions']);
+
+        $count = $query->first();
+
+        return $count->count;
+    }
+
+    /**
+     * Get Many-to-Many Records count
+     *
+     * Used for DataTables records count based on associations
+     *
+     * @param \Cake\ORM\Query $query instance of target table
+     * @param array $options with conditions.
+     *
+     * @return int $count containing records counted.
+     */
+    public function getManyToManyCount(Query $query, array $options = [])
+    {
+        $tableAlias = $options['alias'];
+        $conditions = $options['conditions'];
+
+        $query->select(['count' => $query->func()->count('*')]);
+
+        $query->matching($tableAlias, function ($q) use ($conditions) {
+            return $q->where($conditions);
+        });
+
+        $count = $query->first();
+
+        return $count->count;
     }
 }

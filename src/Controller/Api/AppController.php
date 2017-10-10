@@ -1,4 +1,14 @@
 <?php
+/**
+ * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
 namespace CsvMigrations\Controller\Api;
 
 use Cake\Controller\Controller;
@@ -197,7 +207,7 @@ class AppController extends Controller
         $table = Inflector::camelize($data['originTable']);
         $tableInstance = TableRegistry::get($table);
 
-        $result = $tableInstance->getRelatedEntities($tableInstance, $this->request, $data, $this->Auth->user());
+        $result = $tableInstance->getRelatedEntities($tableInstance, $data, $this->Auth->user());
 
         $this->set(compact('result'));
         $this->set('_serialize', 'result');

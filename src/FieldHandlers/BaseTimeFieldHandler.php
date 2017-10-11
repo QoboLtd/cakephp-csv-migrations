@@ -34,38 +34,38 @@ abstract class BaseTimeFieldHandler extends BaseStringFieldHandler
      * @var array
      */
     public $searchOperators = [
-            'is' => [
-                'label' => 'is',
-                'operator' => 'IN',
-                'emptyCriteria' => [
-                    'aggregator' => 'OR',
-                    'values' => ['IS NULL', '= ""', '= "0000-00-00 00:00:00"']
-                ]
-            ],
-            'is_not' => [
-                'label' => 'is not',
-                'operator' => 'NOT IN',
-                'emptyCriteria' => [
-                    'aggregator' => 'AND',
-                    'values' => ['IS NOT NULL', '!= ""', '!= "0000-00-00 00:00:00"']
-                ]
-            ],
-            'greater' => [
-                'label' => 'from',
-                'operator' => '>',
-                'emptyCriteria' => [
-                    'aggregator' => 'AND',
-                    'values' => ['IS NOT NULL', '!= ""', '!= "0000-00-00 00:00:00"']
-                ]
-            ],
-            'less' => [
-                'label' => 'to',
-                'operator' => '<',
-                'emptyCriteria' => [
-                    'aggregator' => 'AND',
-                    'values' => ['IS NOT NULL', '!= ""', '!= "0000-00-00 00:00:00"']
-                ]
-            ],
+        'is' => [
+            'label' => 'is',
+            'operator' => 'IN',
+            'emptyCriteria' => [
+                'aggregator' => 'OR',
+                'values' => ['IS NULL', '= ""', '= "0000-00-00 00:00:00"']
+            ]
+        ],
+        'is_not' => [
+            'label' => 'is not',
+            'operator' => 'NOT IN',
+            'emptyCriteria' => [
+                'aggregator' => 'AND',
+                'values' => ['IS NOT NULL', '!= ""', '!= "0000-00-00 00:00:00"']
+            ]
+        ],
+        'greater' => [
+            'label' => 'from',
+            'operator' => '>',
+            'emptyCriteria' => [
+                'aggregator' => 'AND',
+                'values' => ['IS NOT NULL', '!= ""', '!= "0000-00-00 00:00:00"']
+            ]
+        ],
+        'less' => [
+            'label' => 'to',
+            'operator' => '<',
+            'emptyCriteria' => [
+                'aggregator' => 'AND',
+                'values' => ['IS NOT NULL', '!= ""', '!= "0000-00-00 00:00:00"']
+            ]
+        ],
     ];
 
     /**

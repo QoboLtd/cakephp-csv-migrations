@@ -85,14 +85,13 @@ abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
             return $result;
         }
 
-        $content = $this->cakeView->Form->select(
-            '{{name}}',
-            $this->_getSelectOptions($options['fieldDefinitions']->getLimit()),
-            [
-                'class' => 'form-control',
-                'label' => false
-            ]
-        );
+        $selectOptions = ['' => static::EMPTY_OPTION_LABEL];
+        $selectOptions += $this->_getSelectOptions($options['fieldDefinitions']->getLimit());
+
+        $content = $this->cakeView->Form->select('{{name}}', $selectOptions, [
+            'class' => 'form-control',
+            'label' => false
+        ]);
 
         $result[$this->field]['input'] = [
             'content' => $content

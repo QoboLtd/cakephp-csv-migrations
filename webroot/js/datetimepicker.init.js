@@ -42,10 +42,15 @@
                     timePicker24Hour: true,
                     timePickerIncrement: 5,
                     locale: {
+                        cancelLabel: "Clear",
                         format: "YYYY-MM-DD HH:mm",
                         firstDay: 1
                     },
                     startDate: startDate
+                });
+
+                $(this).on('cancel.daterangepicker', function (ev, picker) {
+                    $(this).val('');
                 });
             });
         }

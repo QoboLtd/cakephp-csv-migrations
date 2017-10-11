@@ -27,25 +27,38 @@
          * @return {undefined}
          */
         init: function () {
+            var format = 'YYYY-MM-DD HH:mm';
             $('[data-provide="datetimepicker"]').each(function () {
-                var startDate = this.value;
-                if (!startDate) {
-                    startDate = moment().format("YYYY-MM-DD 10:00");
-                }
-
-                // date range picker (used for datetime pickers)
-                $(this).daterangepicker({
+                var options = {
                     singleDatePicker: true,
                     showDropdowns: true,
                     timePicker: true,
-                    drops: "down",
+                    drops: 'down',
                     timePicker24Hour: true,
                     timePickerIncrement: 5,
                     locale: {
-                        format: "YYYY-MM-DD HH:mm",
+                        cancelLabel: 'Clear',
+                        format: format,
                         firstDay: 1
-                    },
-                    startDate: startDate
+                    }
+                };
+
+                var defaultValue = $(this).data('default-value');
+                if (!this.value && undefined !== defaultValue) {
+                    options.startDate = moment().format(defaultValue);
+                } else {
+                    options.autoUpdateInput = false;
+                }
+
+                // date range picker (used for datetime fields)
+                $(this).daterangepicker(options);
+
+                $(this).on('apply.daterangepicker', function (ev, picker) {
+                    $(this).val(picker.startDate.format(format));
+                });
+
+                $(this).on('cancel.daterangepicker', function (ev, picker) {
+                    $(this).val('');
                 });
             });
         }

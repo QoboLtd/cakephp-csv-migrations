@@ -50,10 +50,18 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
         'is' => [
             'label' => 'is',
             'operator' => 'IN',
+            'emptyCriteria' => [
+                'aggregator' => 'OR',
+                'values' => ['IS NULL', '= ""']
+            ]
         ],
         'is_not' => [
             'label' => 'is not',
             'operator' => 'NOT IN',
+            'emptyCriteria' => [
+                'aggregator' => 'AND',
+                'values' => ['IS NOT NULL', '!= ""']
+            ]
         ],
     ];
 

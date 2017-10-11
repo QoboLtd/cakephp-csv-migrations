@@ -100,21 +100,37 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             'label' => 'contains',
             'operator' => 'LIKE',
             'pattern' => '%{{value}}%',
+            'emptyCriteria' => [
+                'aggregator' => 'OR',
+                'values' => ['IS NULL', '= ""']
+            ]
         ],
         'not_contains' => [
             'label' => 'does not contain',
             'operator' => 'NOT LIKE',
             'pattern' => '%{{value}}%',
+            'emptyCriteria' => [
+                'aggregator' => 'AND',
+                'values' => ['IS NOT NULL', '!= ""']
+            ]
         ],
         'starts_with' => [
             'label' => 'starts with',
             'operator' => 'LIKE',
             'pattern' => '{{value}}%',
+            'emptyCriteria' => [
+                'aggregator' => 'AND',
+                'values' => ['IS NOT NULL', '!= ""']
+            ]
         ],
         'ends_with' => [
             'label' => 'ends with',
             'operator' => 'LIKE',
             'pattern' => '%{{value}}',
+            'emptyCriteria' => [
+                'aggregator' => 'AND',
+                'values' => ['IS NOT NULL', '!= ""']
+            ]
         ],
     ];
 

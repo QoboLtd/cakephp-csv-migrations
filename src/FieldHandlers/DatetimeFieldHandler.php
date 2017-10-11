@@ -11,6 +11,8 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\ORM\Entity;
+
 class DatetimeFieldHandler extends BaseTimeFieldHandler
 {
     /**
@@ -95,5 +97,19 @@ class DatetimeFieldHandler extends BaseTimeFieldHandler
         ];
 
         return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function renderInput($data = '', array $options = [])
+    {
+        // set datetimepicker default value when creating new record
+        // @todo this should be handled through fields.ini default parameter
+        if (!empty($options['entity']) && (!$options['entity'] instanceof Entity || $options['entity']->isNew())) {
+            $options['attributes']['data-default-value'] = 'YYYY-MM-DD 10:00';
+        }
+
+        return parent::renderInput($data, $options);
     }
 }

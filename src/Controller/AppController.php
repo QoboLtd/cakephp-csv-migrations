@@ -226,9 +226,9 @@ class AppController extends BaseController
             $this->Flash->error(__('The record could not be deleted. Please, try again.'));
         }
 
-        if (!empty($this->referer())) {
-            $url = $this->referer();
-        } else {
+        $url = $this->referer();
+
+        if (false !== strpos($url, $id)) {
             $url = ['action' => 'index'];
         }
 

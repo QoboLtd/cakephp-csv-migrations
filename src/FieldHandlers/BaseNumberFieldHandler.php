@@ -47,18 +47,34 @@ abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
         'is' => [
             'label' => 'is',
             'operator' => 'IN',
+            'emptyCriteria' => [
+                'aggregator' => 'OR',
+                'values' => ['IS NULL', '= 0']
+            ]
         ],
         'is_not' => [
             'label' => 'is not',
             'operator' => 'NOT IN',
+            'emptyCriteria' => [
+                'aggregator' => 'AND',
+                'values' => ['IS NOT NULL', '!= 0']
+            ]
         ],
         'greater' => [
             'label' => 'greater',
             'operator' => '>',
+            'emptyCriteria' => [
+                'aggregator' => 'AND',
+                'values' => ['IS NOT NULL', '> 0']
+            ]
         ],
         'less' => [
             'label' => 'less',
             'operator' => '<',
+            'emptyCriteria' => [
+                'aggregator' => 'AND',
+                'values' => ['IS NOT NULL', '< 0']
+            ]
         ],
     ];
 

@@ -96,4 +96,14 @@ class DatetimeFieldHandler extends BaseTimeFieldHandler
 
         return $result;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function renderInput($data = '', array $options = [])
+    {
+        $options['attributes']['data-default-value'] = 'YYYY-MM-DD 10:00';
+
+        return parent::renderInput($data, $options);
+    }
 }

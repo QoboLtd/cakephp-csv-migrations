@@ -106,7 +106,7 @@ class DatetimeFieldHandler extends BaseTimeFieldHandler
     {
         // set datetimepicker default value when creating new record
         // @todo this should be handled through fields.ini default parameter
-        if (!$options['entity'] instanceof Entity || $options['entity']->isNew()) {
+        if (!empty($options['entity']) && (!$options['entity'] instanceof Entity || $options['entity']->isNew())) {
             $options['attributes']['data-default-value'] = 'YYYY-MM-DD 10:00';
         }
 

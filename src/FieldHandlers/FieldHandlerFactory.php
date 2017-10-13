@@ -17,7 +17,9 @@ use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\ForeignKeysHandler;
 use DirectoryIterator;
+use InvalidArgumentException;
 use RegexIterator;
+use RuntimeException;
 
 class FieldHandlerFactory
 {
@@ -139,7 +141,7 @@ class FieldHandlerFactory
     public function fieldToDb(CsvField $csvField, $table, $field = null)
     {
         if (!static::hasFieldHandler($csvField->getType())) {
-            throw new \RuntimeException("No field handler for type [" . $csvField->getType . "]");
+            throw new RuntimeException("No field handler for type [" . $csvField->getType . "]");
         }
         $handlerName = static::_getHandlerClassName($csvField->getType(), true);
 
@@ -192,7 +194,7 @@ class FieldHandlerFactory
 
         // Avoid ambiguity
         if (!is_string($table)) {
-            throw new \InvalidArgumentException("Table must be a name or instance object");
+            throw new InvalidArgumentException("Table must be a name or instance object");
         }
 
         // Return a cached instance if we have one
@@ -221,7 +223,7 @@ class FieldHandlerFactory
     protected function _getHandler(Table $table, $field, array $options = [])
     {
         if (empty($field)) {
-            throw new \InvalidArgumentException("Field parameter is empty");
+            throw new InvalidArgumentException("Field parameter is empty");
         }
 
         // Save field name
@@ -246,7 +248,7 @@ class FieldHandlerFactory
         }
 
         if (empty($stubFields)) {
-            throw new \InvalidArgumentException("Field can be either a string or an associative array");
+            throw new InvalidArgumentException("Field can be either a string or an associative array");
         }
 
         $fieldDefinitions = $stubFields;
@@ -255,7 +257,7 @@ class FieldHandlerFactory
         }
 
         if (empty($fieldDefinitions[$fieldName])) {
-            throw new \RuntimeException("Failed to get definition for field '$fieldName'");
+            throw new RuntimeException("Failed to get definition for field '$fieldName'");
         }
 
         $field = new CsvField($fieldDefinitions[$fieldName]);
@@ -265,10 +267,10 @@ class FieldHandlerFactory
 
         $handlerName = static::_getHandlerClassName($fieldType, true);
         if (!class_exists($handlerName)) {
-            throw new \RuntimeException("Field handler class [$handlerName] for field type [$fieldType] does not exist");
+            throw new RuntimeException("Field handler class [$handlerName] for field type [$fieldType] does not exist");
         }
         if (!in_array($interface, class_implements($handlerName))) {
-            throw new \RuntimeException("Field handler class [$handlerName] does not implement interface [$interface]");
+            throw new RuntimeException("Field handler class [$handlerName] does not implement interface [$interface]");
         }
 
         return new $handlerName($table, $fieldName, $this->cakeView);
@@ -295,7 +297,7 @@ class FieldHandlerFactory
     /**
      * Get stub fields from a field array
      *
-     * @throws InvalidArgumentException when field name or type are missing
+     * @throws \InvalidArgumentException when field name or type are missing
      * @param string $fieldName Field name
      * @param array $field Field array
      * @return array Stub fields
@@ -308,10 +310,10 @@ class FieldHandlerFactory
         }
 
         if (empty($field['name'])) {
-            throw new \InvalidArgumentException("Field array is missing 'name' key");
+            throw new InvalidArgumentException("Field array is missing 'name' key");
         }
         if (empty($field['type'])) {
-            throw new \InvalidArgumentException("Field array is missing 'type' key");
+            throw new InvalidArgumentException("Field array is missing 'type' key");
         }
         $fieldName = $field['name'];
         $result = [

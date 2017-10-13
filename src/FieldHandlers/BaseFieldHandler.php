@@ -86,9 +86,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      *
      * @var array
      */
-    public $defaultOptions = [
-        'showTranslateButton' => false
-    ];
+    public $defaultOptions = [];
 
     /**
      * Search operators

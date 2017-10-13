@@ -206,7 +206,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     protected function setDefaultOptions()
     {
         $this->setDefaultFieldOptions();
-        $this->setDefaultFieldDefinitionOptions();
+        $this->setDefaultFieldDefinitions();
         $this->setDefaultLabel();
         $this->setDefaultValue();
     }
@@ -264,7 +264,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      *
      * @return void
      */
-    protected function setDefaultFieldDefinitionOptions()
+    protected function setDefaultFieldDefinitions()
     {
         // set $options['fieldDefinitions']
         $stubFields = [

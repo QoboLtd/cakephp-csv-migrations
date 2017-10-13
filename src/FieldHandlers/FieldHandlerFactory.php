@@ -181,29 +181,29 @@ class FieldHandlerFactory
     protected function _getTableInstance($table)
     {
         $tableName = '';
+
         if (is_object($table)) {
             $tableName = $table->alias();
             // Update instance cache with the freshest copy and exist
             $this->_tableInstances[$tableName] = $table;
 
             return $table;
-        } elseif (is_string($table)) {
-            // Will need to do some work later
-            $tableName = $table;
-        } else {
-            // Avoid ambiguity
+        }
+
+        // Avoid ambiguity
+        if (!is_string($table)) {
             throw new \InvalidArgumentException("Table must be a name or instance object");
         }
 
         // Return a cached instance if we have one
-        if (in_array($tableName, array_keys($this->_tableInstances))) {
-            return $this->_tableInstances[$tableName];
+        if (in_array($table, array_keys($this->_tableInstances))) {
+            return $this->_tableInstances[$table];
         }
 
         // Populate cache
-        $this->_tableInstances[$tableName] = TableRegistry::get($tableName);
+        $this->_tableInstances[$table] = TableRegistry::get($table);
 
-        return $this->_tableInstances[$tableName];
+        return $this->_tableInstances[$table];
     }
 
     /**

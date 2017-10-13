@@ -209,10 +209,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $this->setDefaultFieldOptions();
         $this->setDefaultFieldDefinitionOptions();
-
-        // set $options['label']
-        $this->defaultOptions['label'] = $this->renderName();
-
+        $this->setDefaultLabel();
         $this->setDefaultValue();
     }
 
@@ -231,6 +228,37 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         if (!empty($config[$this->field])) {
             $this->defaultOptions = array_replace_recursive($this->defaultOptions, $config[$this->field]);
         }
+    }
+
+    /**
+     * Set default field label
+     *
+     * NOTE: This should only be called AFTER the setDefaultFieldOptions()
+     *       which reads fields.ini values, which might include the label
+     *       option.
+     *
+     * @return void
+     */
+    protected function setDefaultLabel()
+    {
+        if (!empty($this->defaultOptions['label'])) {
+            return;
+        }
+
+        $text = $this->field;
+        // Borrowed from FormHelper::label()
+        if (substr($text, -5) === '._ids') {
+            $text = substr($text, 0, -5);
+        }
+        if (strpos($text, '.') !== false) {
+            $fieldElements = explode('.', $text);
+            $text = array_pop($fieldElements);
+        }
+        if (substr($text, -3) === '_id') {
+            $text = substr($text, 0, -3);
+        }
+        $text = __(Inflector::humanize(Inflector::underscore($text)));
+        $this->defaultOptions['label'] = $text;
     }
 
     /**
@@ -472,30 +500,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function renderName()
     {
-        $text = $this->field;
-
-        $mc = new ModuleConfig(ConfigType::FIELDS(), Inflector::camelize($this->table->table()));
-        $config = (array)json_decode(json_encode($mc->parse()), true);
-        $label = empty($config[$text]['label']) ? '' : $config[$text]['label'];
-
-        if ($label) {
-            return $label;
-        }
-
-        // Borrowed from FormHelper::label()
-        if (substr($text, -5) === '._ids') {
-            $text = substr($text, 0, -5);
-        }
-        if (strpos($text, '.') !== false) {
-            $fieldElements = explode('.', $text);
-            $text = array_pop($fieldElements);
-        }
-        if (substr($text, -3) === '_id') {
-            $text = substr($text, 0, -3);
-        }
-        $text = __(Inflector::humanize(Inflector::underscore($text)));
-
-        return $text;
+        return $this->defaultOptions['label'];
     }
 
     /**

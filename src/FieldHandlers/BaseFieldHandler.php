@@ -207,13 +207,39 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected function setDefaultOptions()
     {
-        // Populate default options from the fields.ini
+        $this->setDefaultFieldOptions();
+        $this->setDefaultFieldDefinitionOptions();
+
+        // set $options['label']
+        $this->defaultOptions['label'] = $this->renderName();
+
+        $this->setDefaultValue();
+    }
+
+    /**
+     * Set default field options from config
+     *
+     * Read fields.ini configuration file and if there are any
+     * options defined for the current field, use them as defaults.
+     *
+     * @return void
+     */
+    protected function setDefaultFieldOptions()
+    {
         $mc = new ModuleConfig(ConfigType::FIELDS(), Inflector::camelize($this->table->table()));
         $config = (array)json_decode(json_encode($mc->parse()), true);
         if (!empty($config[$this->field])) {
             $this->defaultOptions = array_replace_recursive($this->defaultOptions, $config[$this->field]);
         }
+    }
 
+    /**
+     * Set default field definitions
+     *
+     * @return void
+     */
+    protected function setDefaultFieldDefinitionOptions()
+    {
         // set $options['fieldDefinitions']
         $stubFields = [
             $this->field => [
@@ -224,31 +250,41 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         if (method_exists($this->table, 'getFieldsDefinitions') && is_callable([$this->table, 'getFieldsDefinitions'])) {
             $fieldDefinitions = $this->table->getFieldsDefinitions($stubFields);
             $this->defaultOptions['fieldDefinitions'] = new CsvField($fieldDefinitions[$this->field]);
-        } else {
-            // This should never be the case, except, maybe
-            // for some unit test runs or custom non-CSV
-            // modules.
-            $this->defaultOptions['fieldDefinitions'] = new CsvField($stubFields[$this->field]);
         }
 
-        // set $options['label']
-        $this->defaultOptions['label'] = $this->renderName();
+        // This should never be the case, except, maybe
+        // for some unit test runs or custom non-CSV
+        // modules.
+        if (empty($this->defaultOptions['fieldDefinitions'])) {
+            $this->defaultOptions['fieldDefinitions'] = new CsvField($stubFields[$this->field]);
+        }
+    }
+
+    /**
+     * Set default field value
+     *
+     * @return void
+     */
+    protected function setDefaultValue()
+    {
+        if (empty($this->defaultOptions['default'])) {
+            return;
+        }
 
         // If we have a default value from configuration, pass it through
         // processing for magic/dynamic values like dates and usernames.
-        if (!empty($this->defaultOptions['default'])) {
-            $eventName = (string)EventName::FIELD_HANDLER_DEFAULT_VALUE();
-            $event = new Event($eventName, $this, [
-                'default' => $this->defaultOptions['default']
-            ]);
-            $this->cakeView->eventManager()->dispatch($event);
+        $eventName = (string)EventName::FIELD_HANDLER_DEFAULT_VALUE();
+        $event = new Event($eventName, $this, [
+            'default' => $this->defaultOptions['default']
+        ]);
+        $this->cakeView->eventManager()->dispatch($event);
 
-            // Only overwrite the default if any events were triggered
-            $listeners = $this->cakeView->eventManager()->listeners($eventName);
-            if (!empty($listeners)) {
-                $this->defaultOptions['default'] = $event->result;
-            }
+        // Only overwrite the default if any events were triggered
+        $listeners = $this->cakeView->eventManager()->listeners($eventName);
+        if (empty($listeners)) {
+            return;
         }
+        $this->defaultOptions['default'] = $event->result;
     }
 
     /**

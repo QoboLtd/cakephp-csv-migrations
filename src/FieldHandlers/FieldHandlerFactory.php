@@ -237,38 +237,21 @@ class FieldHandlerFactory
 
         // Prepare the stub field
         $stubFields = [];
-        if (is_string($field)) {
-            $stubFields = [
-                $fieldName => [
-                    'name' => $fieldName,
-                    'type' => 'string',
-                ],
-            ];
-        } elseif (is_array($field)) {
-            // Try our best to find the field name
-            if (empty($field['name']) && !empty($fieldName)) {
-                $field['name'] = $fieldName;
-            }
 
-            if (empty($field['name'])) {
-                throw new \InvalidArgumentException("Field array is missing 'name' key");
-            }
-            if (empty($field['type'])) {
-                throw new \InvalidArgumentException("Field array is missing 'type' key");
-            }
-            $fieldName = $field['name'];
-            $stubFields = [
-                $fieldName => $field,
-            ];
-        } else {
+        if (is_string($field)) {
+            $stubFields = $this->getStubFromString($fieldName);
+        }
+        if (is_array($field)) {
+            $stubFields = $this->getStubFromArray($fieldName, $field);
+        }
+
+        if (empty($stubFields)) {
             throw new \InvalidArgumentException("Field can be either a string or an associative array");
         }
 
-        $fieldDefinitions = [];
+        $fieldDefinitions = $stubFields;
         if (method_exists($table, 'getFieldsDefinitions') && is_callable([$table, 'getFieldsDefinitions'])) {
             $fieldDefinitions = $table->getFieldsDefinitions($stubFields);
-        } else {
-            $fieldDefinitions = $stubFields;
         }
 
         if (empty($fieldDefinitions[$fieldName])) {
@@ -281,11 +264,61 @@ class FieldHandlerFactory
         $interface = __NAMESPACE__ . '\\' . static::FIELD_HANDLER_INTERFACE;
 
         $handlerName = static::_getHandlerClassName($fieldType, true);
-        if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
-            return new $handlerName($table, $fieldName, $this->cakeView);
+        if (!class_exists($handlerName)) {
+            throw new \RuntimeException("Field handler class [$handlerName] for field type [$fieldType] does not exist");
+        }
+        if (!in_array($interface, class_implements($handlerName))) {
+            throw new \RuntimeException("Field handler class [$handlerName] does not implement interface [$interface]");
         }
 
-        throw new \RuntimeException("No field handler defined for field type [$fieldType]");
+        return new $handlerName($table, $fieldName, $this->cakeView);
+    }
+
+    /**
+     * Get stub fields from a field name string
+     *
+     * @param string $fieldName Field name
+     * @return array Stub fields
+     */
+    protected function getStubFromString($fieldName)
+    {
+        $result = [
+            $fieldName => [
+                'name' => $fieldName,
+                'type' => 'string',
+            ],
+        ];
+
+        return $result;
+    }
+
+    /**
+     * Get stub fields from a field array
+     *
+     * @throws InvalidArgumentException when field name or type are missing
+     * @param string $fieldName Field name
+     * @param array $field Field array
+     * @return array Stub fields
+     */
+    protected function getStubFromArray($fieldName, array $field)
+    {
+        // Try our best to find the field name
+        if (empty($field['name']) && !empty($fieldName)) {
+            $field['name'] = $fieldName;
+        }
+
+        if (empty($field['name'])) {
+            throw new \InvalidArgumentException("Field array is missing 'name' key");
+        }
+        if (empty($field['type'])) {
+            throw new \InvalidArgumentException("Field array is missing 'type' key");
+        }
+        $fieldName = $field['name'];
+        $result = [
+            $fieldName => $field,
+        ];
+
+        return $result;
     }
 
     /**

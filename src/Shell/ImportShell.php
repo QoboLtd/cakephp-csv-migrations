@@ -45,7 +45,7 @@ class ImportShell extends Shell
     public function getOptionParser()
     {
         $parser = new ConsoleOptionParser('console');
-        $parser->description('Validate CSV and configuration files of all CSV modules');
+        $parser->description('Process all import jobs');
 
         return $parser;
     }

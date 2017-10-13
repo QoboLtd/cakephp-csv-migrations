@@ -330,19 +330,26 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             return $result;
         }
 
+        if (empty($result['fieldDefinitions'])) {
+            return $result;
+        }
+
+        if (!is_array($result['fieldDefinitions'])) {
+            return $result;
+        }
+
+        // Sometimes, when setting fieldDefinitions manually to render a particular
+        // type, the name is omitted.  This works for an array, but doesn't work for
+        // the CsvField instance, as the name is required.  Gladly, we know the name
+        // and can fix it easily.
+        if (empty($result['fieldDefinitions']['name'])) {
+            $result['fieldDefinitions']['name'] = $this->field;
+        }
+
         // Previously, fieldDefinitions could be either an array or a CsvField instance.
         // Now we expect it to always be a CsvField instance.  So, if we have a non-empty
         // array, then instantiate CsvField with the values from it.
-        if (!empty($result['fieldDefinitions']) && is_array($result['fieldDefinitions'])) {
-            // Sometimes, when setting fieldDefinitions manually to render a particular
-            // type, the name is omitted.  This works for an array, but doesn't work for
-            // the CsvField instance, as the name is required.  Gladly, we know the name
-            // and can fix it easily.
-            if (empty($result['fieldDefinitions']['name'])) {
-                $result['fieldDefinitions']['name'] = $this->field;
-            }
-            $result['fieldDefinitions'] = new CsvField($result['fieldDefinitions']);
-        }
+        $result['fieldDefinitions'] = new CsvField($result['fieldDefinitions']);
 
         return $result;
     }

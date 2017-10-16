@@ -44,5 +44,4 @@ class EventName extends Enum
     const VIEW_TAB_AFTER_CONTENT = 'CsvMigrations.View.View.TabContent.afterContent';
     const VIEW_TAB_BEFORE_CONTENT = 'CsvMigrations.View.View.TabContent.beforeContent';
     const VIEW_TAB_CONTENT = 'CsvMigrations.View.View.TabContent';
-    const VIEW_TRANSLATION_BUTTON = 'CsvMigrations.View.View.TranslationButton';
 }

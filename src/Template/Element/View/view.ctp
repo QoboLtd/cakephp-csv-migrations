@@ -126,46 +126,9 @@ if (empty($options['title'])) {
                         }
                         ?>
                         <?php if (!$embeddedDirty) : // non-embedded field ?>
-                            <?php
-
-                            $tableName = $field['model'];
-                            if (!is_null($field['plugin'])) {
-                                $tableName = $field['plugin'] . '.' . $tableName;
-                            }
-                            $renderOptions = [
-                                'entity' => $options['entity'],
-                                'imageSize' => 'small',
-                            ];
-                            ?>
-                            <div class="col-xs-4 col-md-2 text-right">
-                                <strong><?= $fhf->renderName($tableName, $field['name'], $renderOptions); ?>:</strong>
-                            </div>
-                            <div class="col-xs-8 col-md-4">
-                            <?php
-                            $value = $fhf->renderValue(
-                                $tableName,
-                                $field['name'],
-                                $options['entity'], //->{$field['name']},
-                                $renderOptions
-                            );
-                            $fieldName = $field['name'];
-                            $event = new Event((string)EventName::VIEW_TRANSLATION_BUTTON(), $this, [
-                                'model' => $tableName,
-                                'options' => [
-                                    'record_id' => $options['entity']->id,
-                                    'field_name' => $fieldName,
-                                    'field_value' => $options['entity']->$fieldName,
-                                    'user' => $user,
-                                ]
-                            ]);
-
-                            $this->eventManager()->dispatch($event);
-                            $translationButton = $event->result;
-
-                            echo $translationButton . $value;
-                            echo empty($value) ? '&nbsp;' : '';
-                            ?>
-                            </div>
+                            <?= $this->element('CsvMigrations.Field/value', [
+                                'factory' => $fhf, 'field' => $field, 'options' => $options, 'user' => $user
+                            ]) ?>
                         <?php endif; ?>
                     <?php elseif ('' !== trim($field['name'])) : ?>
                             <?php

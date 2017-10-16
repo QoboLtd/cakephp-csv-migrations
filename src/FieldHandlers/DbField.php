@@ -21,28 +21,28 @@ class DbField
      *
      * @var string
      */
-    protected $_name;
+    protected $name;
 
     /**
      * field type
      *
      * @var string
      */
-    protected $_type;
+    protected $type;
 
     /**
      * field non-searchable flag
      *
      * @var bool
      */
-    protected $_nonSearchable;
+    protected $nonSearchable;
 
     /**
      * field unique flag
      *
      * @var bool
      */
-    protected $_unique;
+    protected $unique;
 
     /**
      * Column options
@@ -52,14 +52,14 @@ class DbField
      *
      * @var array
      */
-    protected $_options;
+    protected $options;
 
     /**
      * Supported field types and their default options
      *
      * @var array
      */
-    protected $_defaultOptions = [
+    protected $defaultOptions = [
         'uuid' => [],
         'string' => ['limit' => 255],
         'integer' => [],
@@ -120,8 +120,8 @@ class DbField
     protected function setDefaultOptions()
     {
         $type = $this->getType();
-        if (!empty($this->_defaultOptions[$type])) {
-            $this->_options = $this->_defaultOptions[$type];
+        if (!empty($this->defaultOptions[$type])) {
+            $this->options = $this->defaultOptions[$type];
         }
     }
 
@@ -133,7 +133,7 @@ class DbField
      */
     public function setOptions(array $options = [])
     {
-        $this->_options = $options;
+        $this->options = $options;
     }
 
     /**
@@ -143,7 +143,7 @@ class DbField
      */
     public function getOptions()
     {
-        return $this->_options;
+        return $this->options;
     }
 
     /**
@@ -158,7 +158,7 @@ class DbField
             throw new InvalidArgumentException('Empty field name is not allowed');
         }
 
-        $this->_name = $name;
+        $this->name = $name;
     }
 
     /**
@@ -168,7 +168,7 @@ class DbField
      */
     public function getName()
     {
-        return $this->_name;
+        return $this->name;
     }
 
     /**
@@ -183,11 +183,11 @@ class DbField
             throw new InvalidArgumentException(__CLASS__ . ': Empty field type is not allowed');
         }
 
-        if (!in_array($type, array_keys($this->_defaultOptions))) {
+        if (!in_array($type, array_keys($this->defaultOptions))) {
             throw new InvalidArgumentException(__CLASS__ . ': Unsupported field type: ' . $type);
         }
 
-        $this->_type = $type;
+        $this->type = $type;
     }
 
     /**
@@ -197,7 +197,7 @@ class DbField
      */
     public function getType()
     {
-        return $this->_type;
+        return $this->type;
     }
 
     /**
@@ -209,7 +209,7 @@ class DbField
     public function setLimit($limit = null)
     {
         if ($limit !== null) {
-            $this->_options['limit'] = $limit;
+            $this->options['limit'] = $limit;
         }
     }
 
@@ -221,8 +221,8 @@ class DbField
     public function getLimit()
     {
         $result = null;
-        if (isset($this->_options['limit'])) {
-            $result = $this->_options['limit'];
+        if (isset($this->options['limit'])) {
+            $result = $this->options['limit'];
         }
 
         return $result;
@@ -238,7 +238,7 @@ class DbField
     {
         if ($required !== null) {
             // Flip $required into allow null flag
-            $this->_options['null'] = !$required;
+            $this->options['null'] = !$required;
         }
     }
 
@@ -250,9 +250,9 @@ class DbField
     public function getRequired()
     {
         $result = null;
-        if (isset($this->_options['null'])) {
+        if (isset($this->options['null'])) {
             // Flip allow null flag into $required
-            $result = !$this->_options['null'];
+            $result = !$this->options['null'];
         }
 
         return $result;
@@ -266,7 +266,7 @@ class DbField
      */
     public function setNonSearchable($nonSearchable)
     {
-        $this->_nonSearchable = $nonSearchable;
+        $this->nonSearchable = $nonSearchable;
     }
 
     /**
@@ -276,7 +276,7 @@ class DbField
      */
     public function getNonSearchable()
     {
-        return $this->_nonSearchable;
+        return $this->nonSearchable;
     }
 
     /**
@@ -287,7 +287,7 @@ class DbField
      */
     public function setUnique($unique)
     {
-        $this->_unique = $unique;
+        $this->unique = $unique;
     }
 
     /**
@@ -297,6 +297,6 @@ class DbField
      */
     public function getUnique()
     {
-        return $this->_unique;
+        return $this->unique;
     }
 }

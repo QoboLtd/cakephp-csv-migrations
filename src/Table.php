@@ -241,7 +241,6 @@ class Table extends BaseTable
             return $result;
         }
 
-
         $cakeView = new AppView();
         $factory = new FieldHandlerFactory($cakeView);
         $table = TableRegistry::get($association->className());

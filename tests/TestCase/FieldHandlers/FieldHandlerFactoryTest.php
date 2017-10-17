@@ -103,6 +103,15 @@ class FieldHandlerFactoryTest extends TestCase
     {
         $result = $this->fhf->renderName($this->table, 'testField');
         $this->assertEquals('Test Field', $result);
+
+        $result = $this->fhf->renderName($this->table, 'related_files._ids');
+        $this->assertEquals('Related Files', $result);
+
+        $result = $this->fhf->renderName($this->table, 'some.related.field_name');
+        $this->assertEquals('Field Name', $result);
+
+        $result = $this->fhf->renderName($this->table, 'related_field_id');
+        $this->assertEquals('Related Field', $result);
     }
 
     public function testRenderValue()

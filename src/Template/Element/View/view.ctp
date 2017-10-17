@@ -20,15 +20,8 @@ use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
-$fhf = new FieldHandlerFactory($this);
-echo $this->Html->script(
-    [
-        'Translations.translation'
-    ],
-    [
-        'block' => 'scriptBottom'
-    ]
-);
+$factory = new FieldHandlerFactory($this);
+echo $this->Html->script(['Translations.translation'], ['block' => 'scriptBottom']);
 
 $defaultOptions = [
     'title' => null,
@@ -40,39 +33,26 @@ if (empty($options)) {
 }
 $options = array_merge($defaultOptions, $options);
 
-// Get plugin name
-if (empty($options['plugin'])) {
-    $options['plugin'] = $this->request->plugin;
+// get table name
+$tableName = $this->name;
+if (!empty($this->plugin)) {
+    $tableName = $this->plugin . '.' . $tableName;
 }
 
-// Get controller name
-if (empty($options['controller'])) {
-    $options['controller'] = $this->request->controller;
-}
-// Get full controller name, including plugin prefix
-$controllerName = $options['controller'];
-if (!empty($options['plugin'])) {
-    $controllerName = $options['plugin'] . '.' . $controllerName;
-}
-// Get display field
-$displayField = TableRegistry::get($controllerName)->displayField();
-// Get title
-if (empty($options['title'])) {
-    $options['title'] = $this->Html->link(
-        Inflector::humanize(Inflector::underscore($moduleAlias)),
-        ['plugin' => $options['plugin'], 'controller' => $options['controller'], 'action' => 'index']
-    );
-    $options['title'] .= ' &raquo; ';
-    $value = $fhf->renderValue(
-        !is_null($options['plugin']) ? $options['plugin'] . '.' . $options['controller'] : $options['controller'],
-        $displayField,
-        $options['entity']->$displayField,
-        ['entity' => $options['entity']]
-    );
-    $options['title'] .= $value;
-}
-?>
-<?php if (empty($this->request->query['embedded'])) : ?>
+// get table instance
+$table = TableRegistry::get($tableName);
+
+// get display field
+$displayField = $table->getDisplayField();
+
+$handlerOptions = ['entity' => $options['entity']];
+
+// append to title
+$options['title'] .= ' &raquo; ';
+$displayValue = $options['entity']->get($displayField);
+$options['title'] .= $factory->renderValue($tableName, $displayField, $displayValue, $handlerOptions);
+
+if (!$this->request->query('embedded')) : ?>
 <section class="content-header">
     <div class="row">
         <div class="col-xs-12 col-md-6">
@@ -127,7 +107,7 @@ if (empty($options['title'])) {
                         ?>
                         <?php if (!$embeddedDirty) : // non-embedded field ?>
                             <?= $this->element('CsvMigrations.Field/value', [
-                                'factory' => $fhf, 'field' => $field, 'options' => $options, 'user' => $user
+                                'factory' => $factory, 'field' => $field, 'options' => $options, 'user' => $user
                             ]) ?>
                         <?php endif; ?>
                     <?php elseif ('' !== trim($field['name'])) : ?>
@@ -197,67 +177,9 @@ echo $this->element('CsvMigrations.common_js_libs');
 <hr />
 <div class="row associated-records">
     <div class="col-xs-12">
-    <?php
-        $event = new Event((string)EventName::VIEW_TABS_LIST(), $this, [
-            'request' => $this->request,
-            'entity' => $options['entity'],
-            'user' => $user,
-            'options' => []
-        ]);
-
-        $this->eventManager()->dispatch($event);
-        $tabs = $event->result['tabs'];
-
-    if (!empty($tabs)) {
-        echo $this->Html->scriptBlock(
-            '
-                var url = document.location.toString();
-                if (matches = url.match(/(.*)(#.*)/)) {
-                    $(".nav-tabs a[href=\'" + matches["2"] + "\']").tab("show");
-                    history.pushState("", document.title, window.location.pathname + window.location.search);
-                }
-            ',
-            [
-                'block' => 'scriptBottom'
-            ]
-        );
-    ?>
-        <div class="nav-tabs-custom">
-            <ul id="relatedTabs" class="nav nav-tabs" role="tablist">
-            <?php $active = true; ?>
-            <?php foreach ($tabs as $tab) : ?>
-                <li role="presentation" class="<?= $active ? 'active' : ''?>">
-                    <?= $this->Html->link($tab['label'], "#{$tab['containerId']}", ['role' => 'tab', 'data-toggle' => "tab", 'escape' => false]);?>
-                </li>
-                <?php $active = false; ?>
-            <?php endforeach; ?>
-            </ul>
-
-            <div class="tab-content">
-                <?php $active = true; ?>
-                <?php foreach ($tabs as $tab) : ?>
-                    <div role="tabpanel" class="tab-pane <?= $active ? 'active' : ''?>" id="<?= $tab['containerId']?>">
-                        <?php
-                        $tabContentEvent = new Event((string)EventName::VIEW_TAB_CONTENT(), $this, [
-                            'request' => $this->request,
-                            'entity' => $options['entity'],
-                            'user' => $user,
-                            'options' => [
-                                    'tab' => $tab
-                                ]
-                        ]);
-
-                        $this->eventManager()->dispatch($tabContentEvent);
-                        $content = $tabContentEvent->result;
-
-                        echo $content;
-                        ?>
-                    </div>
-                    <?php $active = false; ?>
-                <?php endforeach; ?>
-            </div> <!-- .tab-content -->
-        </div> <!-- .nav-tabs-custom -->
-    <?php } ?>
+        <?= $this->element('CsvMigrations.View/associated', [
+            'user' => $user, 'options' => $options, 'table' => $table
+        ]) ?>
     </div>
 </div> <!-- .associated-records -->
 <?php endif;?>

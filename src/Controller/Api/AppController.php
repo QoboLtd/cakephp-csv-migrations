@@ -204,10 +204,7 @@ class AppController extends Controller
 
         $data = $this->request->query();
 
-        $table = Inflector::camelize($data['originTable']);
-        $tableInstance = TableRegistry::get($table);
-
-        $result = $tableInstance->getRelatedEntities($tableInstance, $data, $this->Auth->user());
+        $result = $this->{$this->name}->getRelatedEntities($data, $this->Auth->user());
 
         $this->set(compact('result'));
         $this->set('_serialize', 'result');

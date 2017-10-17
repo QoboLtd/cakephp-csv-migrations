@@ -15,10 +15,6 @@ use Cake\Utility\Inflector;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
-if (in_array($association->type(), ['manyToMany'])) {
-    echo $this->element('CsvMigrations.Embedded/lookup', ['association' => $association]);
-}
-
 list(, $module) = pluginSplit($association->className());
 $mc = new ModuleConfig(ConfigType::VIEW(), $module, 'index');
 $config = $mc->parse()->items;

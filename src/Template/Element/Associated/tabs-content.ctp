@@ -23,6 +23,10 @@ $url = $this->Url->build([
     <?php foreach ($associations as $association) : ?>
         <?php $containerId = Inflector::underscore($association->getAlias()); ?>
         <div role="tabpanel" class="tab-pane <?= $active ?>" id="<?= $containerId ?>">
+            <?php
+            if (in_array($association->type(), ['manyToMany'])) {
+                echo $this->element('CsvMigrations.Embedded/lookup', ['association' => $association]);
+            } ?>
             <?= $this->element('CsvMigrations.Associated/tab-content', [
                 'association' => $association, 'table' => $table, 'url' => $url
             ]) ?>

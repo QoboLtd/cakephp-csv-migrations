@@ -40,8 +40,6 @@ class EventName extends Enum
     const MODEL_AFTER_SAVE = 'CsvMigrations.Model.afterSave';
     // CsvMigrations Views events
     const VIEW_BODY_BOTTOM = 'View.View.Body.Bottom';
-    const VIEW_TABS_LIST = 'CsvMigrations.View.View.TabsList';
     const VIEW_TAB_AFTER_CONTENT = 'CsvMigrations.View.View.TabContent.afterContent';
     const VIEW_TAB_BEFORE_CONTENT = 'CsvMigrations.View.View.TabContent.beforeContent';
-    const VIEW_TAB_CONTENT = 'CsvMigrations.View.View.TabContent';
 }

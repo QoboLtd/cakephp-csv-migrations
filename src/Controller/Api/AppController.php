@@ -96,8 +96,6 @@ class AppController extends Controller
         $this->_fileUploadsUtils = new FileUploadsUtils($this->{$this->name});
 
         $this->_authentication();
-
-        $this->_acl();
     }
 
     /**
@@ -122,48 +120,6 @@ class AppController extends Controller
         // authentication is always forced.
         if (!Configure::read('CsvMigrations.api.auth')) {
             $this->Auth->allow();
-        }
-    }
-
-    /**
-     * Method that handles ACL checks from third party libraries,
-     * if the associated parameters are set in the plugin's configuration.
-     *
-     * @return void
-     * @todo currently only copes with Table class instances. Probably there is better way to handle this.
-     */
-    protected function _acl()
-    {
-        $className = Configure::read('CsvMigrations.acl.class');
-        $methodName = Configure::read('CsvMigrations.acl.method');
-        $componentName = Configure::read('CsvMigrations.acl.component');
-
-        if ($componentName) {
-            $this->loadComponent($componentName, [
-                'currentRequest' => $this->request->params
-            ]);
-        }
-
-        if (!$className || !$methodName) {
-            return;
-        }
-
-        $class = TableRegistry::get($className);
-
-        if (!method_exists($class, $methodName)) {
-            return;
-        }
-
-        $method = new ReflectionMethod($class, $methodName);
-
-        if (!$method->isPublic()) {
-            return;
-        }
-
-        if ($method->isStatic()) {
-            $class::{$methodName}($this->request->params, $this->Auth->user());
-        } else {
-            $class->{$methodName}($this->request->params, $this->Auth->user());
         }
     }
 

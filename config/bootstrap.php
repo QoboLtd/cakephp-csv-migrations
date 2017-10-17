@@ -10,8 +10,6 @@ use CsvMigrations\Event\Controller\Api\LookupActionListener;
 use CsvMigrations\Event\Controller\Api\ViewActionListener;
 use CsvMigrations\Event\Model\AutoIncrementEventListener;
 use CsvMigrations\Event\Model\ModelAfterSaveListener;
-use CsvMigrations\Event\Plugin\Search\View\ReportListener;
-use CsvMigrations\Event\View\ViewViewTabsListener;
 
 /**
  * Plugin configuration
@@ -48,6 +46,4 @@ EventManager::instance()->on(new EditActionListener());
 EventManager::instance()->on(new IndexActionListener());
 EventManager::instance()->on(new LookupActionListener());
 EventManager::instance()->on(new ModelAfterSaveListener());
-EventManager::instance()->on(new ReportListener());
 EventManager::instance()->on(new ViewActionListener());
-EventManager::instance()->on(new ViewViewTabsListener());

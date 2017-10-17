@@ -233,14 +233,6 @@ class FooTableTest extends TestCase
         $this->assertEquals($expected, $actual, "Incorrect value returned from moduleAlias");
     }
 
-    public function testGetReports()
-    {
-        $result = $this->FooTable->getReports();
-
-        $this->assertNotEmpty($result);
-        $this->assertArrayHasKey('Foo', $result);
-    }
-
     /**
      * @dataProvider csvProvider
      */

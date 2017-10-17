@@ -28,6 +28,7 @@ use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\FieldTrait;
 use CsvMigrations\MigrationTrait;
+use CsvMigrations\View\AppView;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
@@ -213,74 +214,67 @@ class Table extends BaseTable
      *
      * Fetch entities in the view.ctp
      *
-     * @param \Cake\ORM\Table $originTable entity of associated table
      * @param array $data with the association configs
      * @param array $user with the user session
      *
      * @return array $response containing data for DataTables AJAX call
      */
-    public function getRelatedEntities($originTable, array $data = [], array $user = [])
+    public function getRelatedEntities(array $data = [], array $user = [])
     {
-        $response = $responseData = [];
-
-        if (empty($data['originTable'])) {
-            return $response;
+        $association = $this->getAssociationObject($data['associationName']);
+        if (!$association) {
+            return [];
         }
 
-        $tableName = Inflector::camelize($data['originTable']);
-
-        $association = $this->getAssociationObject($tableName, $data['associationName']);
         if (!in_array($association->type(), array_keys($this->_associationsMap))) {
-            return $response;
+            return [];
         }
 
-        $entities = $this->{$this->_associationsMap[$association->type()]}($originTable, $association, $data);
-
+        $entities = $this->{$this->_associationsMap[$association->type()]}($association, $data);
         if (empty($entities['records'])) {
-            return $response;
+            return [];
         }
 
-        if ($data['format'] == 'datatables' && !empty($entities['records'])) {
-            $fh = new FieldHandlerFactory();
-            $assocTable = TableRegistry::get($entities['table']);
+        if ('datatables' !== $data['format']) {
+            $result = array_merge(['data' => $entities['records']], $entities['pagination']);
 
-            foreach ($entities['records'] as $record) {
-                $item = [];
-                foreach ($entities['fields'] as $fieldName) {
-                    $item[] = $fh->renderValue($assocTable, $fieldName, $record->$fieldName, [
-                        'entity' => $record,
-                    ]);
-                }
+            return $result;
+        }
 
-                if ($data['menus'] == true) {
-                    $appView = new \Cake\View\View();
-                    $item[] = $appView->element('CsvMigrations.Menu/related_actions', [
-                        'options' => $data,
-                        'entity' => $record,
-                        'user' => $user,
-                    ]);
-                }
+        $cakeView = new AppView();
+        $factory = new FieldHandlerFactory($cakeView);
+        $table = TableRegistry::get($association->className());
 
-                array_push($responseData, $item);
+        $result = [];
+        foreach ($entities['records'] as $k => $entity) {
+            foreach ($entities['fields'] as $field) {
+                $result[$k][] = $factory->renderValue($table, $field, $entity->get($field), ['entity' => $entity]);
+            }
+
+            if ((bool)$data['menus']) {
+                $result[$k][] = $cakeView->element('CsvMigrations.Menu/related_actions', [
+                    'association' => $association,
+                    'entity' => $entity,
+                    'options' => $data,
+                    'table' => $table,
+                    'user' => $user
+                ]);
             }
         }
+        $result = array_merge(['data' => $result], $entities['pagination']);
 
-        $response['data'] = $responseData;
-        $response = array_merge($response, $entities['pagination']);
-
-        return $response;
+        return $result;
     }
 
     /**
      * Method that retrieves many to many associated records
      *
-     * @param \Cake\ORM\Table $table object for Query Object
      * @param \Cake\ORM\Association $association Association object
      * @param array $data with request configs
      *
      * @return array associated records
      */
-    public function getManyToManyAssociatedRecords($table, Association $association, array $data = [])
+    public function getManyToManyAssociatedRecords(Association $association, array $data = [])
     {
         $result = [];
 
@@ -297,8 +291,8 @@ class Table extends BaseTable
         $offset = (!empty($data['start']) ? $data['start'] : 0);
 
         $id = $data['id'];
-        $tableAlias = $table->registryAlias();
-        $primaryKey = $table->aliasField($table->getPrimaryKey());
+        $tableAlias = $this->getRegistryAlias();
+        $primaryKey = $this->aliasField($this->getPrimaryKey());
 
         $count = $this->getManyToManyCount($assocTable->find(), [
             'alias' => $tableAlias,
@@ -327,13 +321,12 @@ class Table extends BaseTable
     /**
      * Method that retrieves one to many associated records
      *
-     * @param \Cake\ORM\Table $table instance of the association.
      * @param \Cake\ORM\Association $association Association object
      * @param array $data Data
      *
      * @return array associated records
      */
-    protected function getOneToManyAssociatedRecords($table, Association $association, array $data = [])
+    protected function getOneToManyAssociatedRecords(Association $association, array $data = [])
     {
         $result = [];
 
@@ -379,20 +372,16 @@ class Table extends BaseTable
      *
      * Get the object based on the association's name
      *
-     * @param string $tableName of the instance
      * @param string $associationName associations name
      *
-     * @return \Cake\ORM\Association $result object
+     * @return \Cake\ORM\Association|null $result object
      */
-    public function getAssociationObject($tableName, $associationName)
+    public function getAssociationObject($associationName)
     {
         $result = null;
-        $tableName = Inflector::camelize($tableName);
 
-        $table = TableRegistry::get($tableName);
-
-        foreach ($table->associations() as $association) {
-            if ($association->name() != $associationName) {
+        foreach ($this->associations() as $association) {
+            if ($association->name() !== $associationName) {
                 continue;
             }
 

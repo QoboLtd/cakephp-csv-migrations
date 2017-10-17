@@ -10,9 +10,12 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\Utility\Inflector;
+
 $options = [
     'entity' => $entity,
-    'fields' => $fields
+    'fields' => $fields,
+    'title' => null
 ];
 echo $this->element('CsvMigrations.View/view', [
     'options' => $options

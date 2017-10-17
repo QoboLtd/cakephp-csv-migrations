@@ -72,7 +72,7 @@ class PostsTableTest extends TestCase
 
     public function testGetAssociationObject()
     {
-        $result = $this->PostsTable->getAssociationObject('Posts', 'OwnerAuthors');
+        $result = $this->PostsTable->getAssociationObject('OwnerAuthors');
         $this->assertEquals('OwnerAuthors', $result->name());
     }
 

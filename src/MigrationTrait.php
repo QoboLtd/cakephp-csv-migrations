@@ -298,38 +298,6 @@ trait MigrationTrait
     }
 
     /**
-     * Get all reports configurations
-     *
-     * Used in <model>/report/<slug> method
-     * to get reports from the ini file on the dynamic
-     * model/table.
-     *
-     * @return array $config containing all reports from ini files
-     */
-    public function getReports()
-    {
-        $result = $config = [];
-
-        $path = Configure::readOrFail('CsvMigrations.modules.path');
-        $modules = $this->_getAllModules($path);
-        if (empty($modules)) {
-            return $result;
-        }
-        foreach ($modules as $module) {
-            $mc = new ModuleConfig(ConfigType::REPORTS(), $module);
-            $report = (array)json_decode(json_encode($mc->parse()), true);
-
-            if (empty($report)) {
-                continue;
-            }
-
-            $result[$module] = $report;
-        }
-
-        return $result;
-    }
-
-    /**
      * Get the name of the plugin from its path
      *
      * @param  string $path Path of the plugin.

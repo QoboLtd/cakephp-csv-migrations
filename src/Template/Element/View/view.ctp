@@ -10,12 +10,9 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
-use Cake\Network\Exception\ForbiddenException;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
-use CsvMigrations\CsvMigrationsUtils;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
@@ -123,64 +120,28 @@ if (!$this->request->query('embedded')) : ?>
             <?php endforeach; ?>
             </div>
         </div>
-            <?php
-            if (empty($embeddedFields)) {
-                continue;
-            }
-
-            // Fetch embedded module(s) using CakePHP's requestAction() method
-            foreach ($embeddedFields as $embeddedField) {
-                $embeddedFieldName = substr($embeddedField, strrpos($embeddedField, '.') + 1);
-                list($embeddedPlugin, $embeddedController) = pluginSplit(
-                    substr($embeddedField, 0, strrpos($embeddedField, '.'))
-                );
-
-                $embeddedAssocName = CsvMigrationsUtils::createAssociationName(
-                    $embeddedPlugin . $embeddedController,
-                    $embeddedFieldName
-                );
-
-                // @note this only works for belongsTo for now.
-                $embeddedAssocName = Inflector::underscore(Inflector::singularize($embeddedAssocName));
-
-                if (!empty($options['entity']->$embeddedFieldName)) {
-                    try {
-                        echo $this->requestAction(
-                            [
-                                'plugin' => $embeddedPlugin,
-                                'controller' => $embeddedController,
-                                'action' => $this->request->action
-                            ],
-                            [
-                                'query' => ['embedded' => $this->request->controller . '.' . $embeddedAssocName],
-                                'pass' => [$options['entity']->$embeddedFieldName]
-                            ]
-                        );
-                    } catch (RecordNotFoundException $e) {
-                        // just don't display anything if embedded record was not found
-                    } catch (ForbiddenException $e) {
-                        // just don't display anything if current user has no access to embedded record
-                    }
-                }
-            }
-            $embeddedFields = [];
-            endforeach;
-        endif;
-?>
-<?php if (empty($this->request->query['embedded'])) : ?>
-<?php
-// loading common setup for typeahead/panel/etc libs for tabs
-echo $this->element('CsvMigrations.common_js_libs');
-?>
-<hr />
-<div class="row associated-records">
-    <div class="col-xs-12">
-        <?= $this->element('CsvMigrations.View/associated', [
-            'user' => $user, 'options' => $options, 'table' => $table
-        ]) ?>
     </div>
-</div> <!-- .associated-records -->
-<?php endif;?>
-<?php if (empty($this->request->query['embedded'])) : ?>
+    <?php
+    if (empty($embeddedFields)) {
+        continue;
+    }
+
+    echo $this->element('CsvMigrations.Embedded/fields', [
+        'fields' => $embeddedFields, 'table' => $table, 'options' => $options
+    ]);
+
+    $embeddedFields = [];
+    ?>
+<?php endforeach; ?>
+<?php if (!$this->request->query('embedded')) : ?>
+    <?= $this->element('CsvMigrations.common_js_libs'); // loading common setup for typeahead/panel/etc libs ?>
+    <hr />
+    <div class="row associated-records">
+        <div class="col-xs-12">
+            <?= $this->element('CsvMigrations.View/associated', [
+                'user' => $user, 'options' => $options, 'table' => $table
+            ]) ?>
+        </div>
+    </div>
 </section>
-<?php endif;?>
+<?php endif; ?>

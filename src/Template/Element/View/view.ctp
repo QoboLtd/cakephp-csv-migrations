@@ -185,14 +185,3 @@ echo $this->element('CsvMigrations.common_js_libs');
 <?php if (empty($this->request->query['embedded'])) : ?>
 </section>
 <?php endif;?>
-<?php
-// Event dispatcher for bottom section
-$event = new Event(
-    (string)EventName::VIEW_BODY_BOTTOM(),
-    $this,
-    ['request' => $this->request, 'options' => $options]
-);
-$this->eventManager()->dispatch($event);
-
-echo $event->result;
-?>

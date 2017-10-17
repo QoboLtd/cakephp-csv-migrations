@@ -38,8 +38,4 @@ class EventName extends Enum
     const FIELD_HANDLER_DEFAULT_VALUE = 'CsvMigrations.FieldHandler.DefaultValue';
     // CsvMigrations Table events
     const MODEL_AFTER_SAVE = 'CsvMigrations.Model.afterSave';
-    // CsvMigrations Views events
-    const VIEW_BODY_BOTTOM = 'View.View.Body.Bottom';
-    const VIEW_TAB_AFTER_CONTENT = 'CsvMigrations.View.View.TabContent.afterContent';
-    const VIEW_TAB_BEFORE_CONTENT = 'CsvMigrations.View.View.TabContent.beforeContent';
 }

@@ -20,7 +20,6 @@ use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 $factory = new FieldHandlerFactory($this);
-echo $this->Html->script(['Translations.translation'], ['block' => 'scriptBottom']);
 
 $defaultOptions = [
     'title' => null,

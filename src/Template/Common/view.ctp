@@ -12,13 +12,10 @@
 
 use Cake\Utility\Inflector;
 
-$url = ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index'];
-$title = $this->Html->link(Inflector::humanize(Inflector::underscore($moduleAlias)), $url);
-
 $options = [
     'entity' => $entity,
     'fields' => $fields,
-    'title' => $title
+    'title' => null
 ];
 echo $this->element('CsvMigrations.View/view', [
     'options' => $options

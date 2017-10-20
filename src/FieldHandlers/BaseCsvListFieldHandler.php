@@ -49,7 +49,7 @@ abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $result = $this->_getFieldValueFromData($data);
 
-        if (empty($result)) {
+        if ('' === trim($result)) {
             return $result;
         }
 

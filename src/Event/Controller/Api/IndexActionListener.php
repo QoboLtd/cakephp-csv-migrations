@@ -183,11 +183,11 @@ class IndexActionListener extends BaseActionListener
 
         $table = $event->subject()->{$event->subject()->name};
 
-        $sortCol = $event->subject()->request->query('order.0.column') ?: 0;
+        $column = $event->subject()->request->query('order.0.column') ?: 0;
 
-        $sortDir = $event->subject()->request->query('order.0.dir') ?: 'asc';
-        if (!in_array($sortDir, ['asc', 'desc'])) {
-            $sortDir = 'asc';
+        $direction = $event->subject()->request->query('order.0.dir') ?: 'asc';
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'asc';
         }
 
         $fields = $this->_getActionFields($event->subject()->request);
@@ -196,48 +196,48 @@ class IndexActionListener extends BaseActionListener
         }
 
         // skip if sort column is not found in the action fields
-        if (!isset($fields[$sortCol])) {
+        if (!isset($fields[$column])) {
             return;
         }
 
-        $sortCols = $fields[$sortCol];
+        $column = $fields[$column];
 
         $schema = $table->getSchema();
         // virtual or combined field
-        if (!in_array($sortCols, $schema->columns())) {
+        if (!in_array($column, $schema->columns())) {
             $mc = new ModuleConfig(ConfigType::MODULE(), $event->subject()->name);
             $config = $mc->parse();
             $virtualFields = (array)$config->virtualFields;
             // handle virtual field
-            if (isset($virtualFields[$sortCols])) {
-                $sortCols = $virtualFields[$sortCols];
+            if (isset($virtualFields[$column])) {
+                $column = $virtualFields[$column];
             }
 
             // handle combined field
-            if (!isset($virtualFields[$sortCols])) {
+            if (!isset($virtualFields[$column])) {
                 $factory = new FieldHandlerFactory();
                 $mc = new ModuleConfig(ConfigType::MIGRATION(), $event->subject()->name);
                 $config = $mc->parse();
-                $csvField = new CsvField((array)$config->{$sortCols});
+                $csvField = new CsvField((array)$config->{$column});
 
-                $combinedCols = [];
-                foreach ($factory->fieldToDb($csvField, $table, $sortCols) as $dbField) {
-                    $combinedCols[] = $dbField->getName();
+                $combined = [];
+                foreach ($factory->fieldToDb($csvField, $table, $column) as $dbField) {
+                    $combined[] = $dbField->getName();
                 }
 
-                $sortCols = $combinedCols;
+                $column = $combined;
             }
         }
 
-        $sortCols = (array)$sortCols;
+        $columns = (array)$column;
 
         // prefix table name
-        foreach ($sortCols as &$v) {
+        foreach ($columns as &$v) {
             $v = $table->aliasField($v);
         }
 
         // add sort direction to all columns
-        $conditions = array_fill_keys($sortCols, $sortDir);
+        $conditions = array_fill_keys($columns, $direction);
 
         $query->order($conditions);
     }

@@ -19,6 +19,10 @@ use Cake\ORM\ResultSet;
 use Cake\View\View;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\Event\EventName;
+use CsvMigrations\FieldHandlers\CsvField;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use Qobo\Utils\ModuleConfig\ConfigType;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class IndexActionListener extends BaseActionListener
 {
@@ -197,13 +201,34 @@ class IndexActionListener extends BaseActionListener
         }
 
         $sortCols = $fields[$sortCol];
-        // handle virtual field
-        if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
-            $virtualFields = $table->getConfig(ConfigurationTrait::$CONFIG_OPTION_VIRTUAL_FIELDS);
-            if (!empty($virtualFields) && isset($virtualFields[$sortCols])) {
+
+        $schema = $table->getSchema();
+        // virtual or combined field
+        if (!in_array($sortCols, $schema->columns())) {
+            $mc = new ModuleConfig(ConfigType::MODULE(), $event->subject()->name);
+            $config = $mc->parse();
+            $virtualFields = (array)$config->virtualFields;
+            // handle virtual field
+            if (isset($virtualFields[$sortCols])) {
                 $sortCols = $virtualFields[$sortCols];
             }
+
+            // handle combined field
+            if (!isset($virtualFields[$sortCols])) {
+                $factory = new FieldHandlerFactory();
+                $mc = new ModuleConfig(ConfigType::MIGRATION(), $event->subject()->name);
+                $config = $mc->parse();
+                $csvField = new CsvField((array)$config->{$sortCols});
+
+                $combinedCols = [];
+                foreach ($factory->fieldToDb($csvField, $table, $sortCols) as $dbField) {
+                    $combinedCols[] = $dbField->getName();
+                }
+
+                $sortCols = $combinedCols;
+            }
         }
+
         $sortCols = (array)$sortCols;
 
         // prefix table name

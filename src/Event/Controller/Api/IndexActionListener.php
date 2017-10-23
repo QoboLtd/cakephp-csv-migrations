@@ -66,7 +66,9 @@ class IndexActionListener extends BaseActionListener
         }
         $this->_filterByConditions($query, $event);
         $this->_selectActionFields($query, $event);
-        $this->_handleDtSorting($query, $event);
+
+        $order = $this->_handleDtSorting($event);
+        $query->order($order);
     }
 
     /**
@@ -167,18 +169,17 @@ class IndexActionListener extends BaseActionListener
     /**
      * Handle datatables sorting parameters to match Query order() accepted parameters.
      *
-     * @param  \Cake\ORM\Query   $query Query object
      * @param  \Cake\Event\Event $event The event
-     * @return void
+     * @return array
      */
-    protected function _handleDtSorting(Query $query, Event $event)
+    protected function _handleDtSorting(Event $event)
     {
         if (!in_array($event->subject()->request->query('format'), [static::FORMAT_DATATABLES])) {
-            return;
+            return [];
         }
 
         if (!$event->subject()->request->query('order')) {
-            return;
+            return [];
         }
 
         $table = $event->subject()->{$event->subject()->name};
@@ -192,12 +193,12 @@ class IndexActionListener extends BaseActionListener
 
         $fields = $this->_getActionFields($event->subject()->request);
         if (empty($fields)) {
-            return;
+            return [];
         }
 
         // skip if sort column is not found in the action fields
         if (!isset($fields[$column])) {
-            return;
+            return [];
         }
 
         $column = $fields[$column];
@@ -239,7 +240,7 @@ class IndexActionListener extends BaseActionListener
         // add sort direction to all columns
         $conditions = array_fill_keys($columns, $direction);
 
-        $query->order($conditions);
+        return $conditions;
     }
 
     /**

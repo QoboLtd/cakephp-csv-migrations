@@ -19,6 +19,10 @@ use Cake\ORM\ResultSet;
 use Cake\View\View;
 use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\Event\EventName;
+use CsvMigrations\FieldHandlers\CsvField;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use Qobo\Utils\ModuleConfig\ConfigType;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class IndexActionListener extends BaseActionListener
 {
@@ -62,7 +66,9 @@ class IndexActionListener extends BaseActionListener
         }
         $this->_filterByConditions($query, $event);
         $this->_selectActionFields($query, $event);
-        $this->_handleDtSorting($query, $event);
+
+        $order = $this->_handleDtSorting($event);
+        $query->order($order);
     }
 
     /**
@@ -163,58 +169,80 @@ class IndexActionListener extends BaseActionListener
     /**
      * Handle datatables sorting parameters to match Query order() accepted parameters.
      *
-     * @param  \Cake\ORM\Query   $query Query object
      * @param  \Cake\Event\Event $event The event
-     * @return void
+     * @return array
      */
-    protected function _handleDtSorting(Query $query, Event $event)
+    protected function _handleDtSorting(Event $event)
     {
         if (!in_array($event->subject()->request->query('format'), [static::FORMAT_DATATABLES])) {
-            return;
+            return [];
         }
 
         if (!$event->subject()->request->query('order')) {
-            return;
+            return [];
         }
 
         $table = $event->subject()->{$event->subject()->name};
 
-        $sortCol = $event->subject()->request->query('order.0.column') ?: 0;
+        $column = $event->subject()->request->query('order.0.column') ?: 0;
 
-        $sortDir = $event->subject()->request->query('order.0.dir') ?: 'asc';
-        if (!in_array($sortDir, ['asc', 'desc'])) {
-            $sortDir = 'asc';
+        $direction = $event->subject()->request->query('order.0.dir') ?: 'asc';
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'asc';
         }
 
         $fields = $this->_getActionFields($event->subject()->request);
         if (empty($fields)) {
-            return;
+            return [];
         }
 
         // skip if sort column is not found in the action fields
-        if (!isset($fields[$sortCol])) {
-            return;
+        if (!isset($fields[$column])) {
+            return [];
         }
 
-        $sortCols = $fields[$sortCol];
-        // handle virtual field
-        if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
-            $virtualFields = $table->getConfig(ConfigurationTrait::$CONFIG_OPTION_VIRTUAL_FIELDS);
-            if (!empty($virtualFields) && isset($virtualFields[$sortCols])) {
-                $sortCols = $virtualFields[$sortCols];
+        $column = $fields[$column];
+
+        $schema = $table->getSchema();
+        // virtual or combined field
+        if (!in_array($column, $schema->columns())) {
+            $mc = new ModuleConfig(ConfigType::MODULE(), $event->subject()->name);
+            $config = $mc->parse();
+            $virtualFields = (array)$config->virtualFields;
+            $virtual = false;
+            // handle virtual field
+            if (isset($virtualFields[$column])) {
+                $virtual = true;
+                $column = $virtualFields[$column];
+            }
+
+            // handle combined field
+            if (!$virtual) {
+                $factory = new FieldHandlerFactory();
+                $mc = new ModuleConfig(ConfigType::MIGRATION(), $event->subject()->name);
+                $config = $mc->parse();
+                $csvField = new CsvField((array)$config->{$column});
+
+                $combined = [];
+                foreach ($factory->fieldToDb($csvField, $table, $column) as $dbField) {
+                    $combined[] = $dbField->getName();
+                }
+
+                $column = $combined;
             }
         }
-        $sortCols = (array)$sortCols;
+
+        $columns = (array)$column;
 
         // prefix table name
-        foreach ($sortCols as &$v) {
+        foreach ($columns as &$v) {
             $v = $table->aliasField($v);
         }
 
         // add sort direction to all columns
-        $conditions = array_fill_keys($sortCols, $sortDir);
+        $conditions = array_fill_keys($columns, $direction);
 
-        $query->order($conditions);
+        return $conditions;
     }
 
     /**

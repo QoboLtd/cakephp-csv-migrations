@@ -209,13 +209,15 @@ class IndexActionListener extends BaseActionListener
             $mc = new ModuleConfig(ConfigType::MODULE(), $event->subject()->name);
             $config = $mc->parse();
             $virtualFields = (array)$config->virtualFields;
+            $virtual = false;
             // handle virtual field
             if (isset($virtualFields[$column])) {
+                $virtual = true;
                 $column = $virtualFields[$column];
             }
 
             // handle combined field
-            if (!isset($virtualFields[$column])) {
+            if (!$virtual) {
                 $factory = new FieldHandlerFactory();
                 $mc = new ModuleConfig(ConfigType::MIGRATION(), $event->subject()->name);
                 $config = $mc->parse();

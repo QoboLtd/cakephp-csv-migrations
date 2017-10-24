@@ -138,6 +138,30 @@ var view_index = view_index || {};
             }
         });
 
+        // select/deselect all table rows
+        // @link https://stackoverflow.com/questions/42570465/datatables-select-all-checkbox?answertab=active#tab-top
+        table.on('click', 'th.select-checkbox', function () {
+            if ($('th.select-checkbox').hasClass('selected')) {
+                table.rows().deselect();
+                $('th.select-checkbox').removeClass('selected');
+            } else {
+                table.rows().select();
+                $('th.select-checkbox').addClass('selected');
+            }
+        });
+
+        // check/uncheck select-all checkbox based on rows select/deselect triggering
+        // @link https://stackoverflow.com/questions/42570465/datatables-select-all-checkbox?answertab=active#tab-top
+        table.on('select deselect', function () {
+            if (table.rows({
+                selected: true
+            }).count() !== table.rows().count()) {
+                $('th.select-checkbox').removeClass('selected');
+            } else {
+                $('th.select-checkbox').addClass('selected');
+            }
+        });
+
         return table;
     };
 

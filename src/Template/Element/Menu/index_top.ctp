@@ -24,7 +24,8 @@ use Cake\Core\Configure;
         'disabled' => true
     ]) ?>
     <ul class="dropdown-menu">
-        <li><?= $this->Html->link(
+        <li>
+        <?= $this->Html->link(
             '<i class="fa fa-pencil"></i> ' . __('Edit'),
             ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'batch'],
             [
@@ -36,7 +37,8 @@ use Cake\Core\Configure;
                 'escape' => false
             ]
         ) ?></li>
-        <li><?= $this->Html->link(
+        <li>
+        <?= $this->Html->link(
             '<i class="fa fa-trash"></i> ' . __('Delete'),
             ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'batch'],
             [

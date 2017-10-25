@@ -26,6 +26,10 @@
             ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'batch'],
             [
                 'id' => 'batch-edit-button',
+                'data-batch' => true,
+                'data-batch-url' => $this->Url->build([
+                    'plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'batch', 'edit'
+                ]),
                 'escape' => false
             ]
         ) ?></li>
@@ -34,6 +38,11 @@
             ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'batch'],
             [
                 'id' => 'batch-delete-button',
+                'data-batch' => true,
+                'data-batch-url' => $this->Url->build([
+                    'plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'batch', 'delete'
+                ]),
+                'data-batch-confirm' => 'Are you sure you want to delete the selected records?',
                 'escape' => false
             ]
         ) ?></li>

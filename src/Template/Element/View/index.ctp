@@ -31,31 +31,36 @@ echo $this->Html->script(
         'Qobo/Utils./plugins/datatables/datatables.min',
         'Qobo/Utils./plugins/datatables/js/dataTables.bootstrap.min',
         'Qobo/Utils./plugins/datatables/extensions/Select/js/dataTables.select.min',
+        'Qobo/Utils.dataTables.init',
         'CsvMigrations.view-index'
     ],
     ['block' => 'scriptBottom']
 );
 echo $this->Html->scriptBlock(
-    'view_index.init({
-        table_id: ".table-datatable",
-        api_url: "' . $this->Url->build([
-            'prefix' => 'api',
-            'plugin' => $this->request->plugin,
-            'controller' => $this->request->controller,
-            'action' => $this->request->action
-        ]) . '",
-        api_ext: "json",
-        api_token: ' . json_encode(Configure::read('CsvMigrations.api.token')) . ',
-        menus: 1,
-        primary_key: 1,
-        format: "datatables",
-        state_duration: ' . (int)(Configure::read('Session.timeout') * 60) . ',
-        batch: {
-            url: "' . $this->Url->build(['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'batch']) . '",
-            delete_id: "#batch-delete-button",
-            edit_id: "#batch-edit-button"
-        }
+    '// initialize index view functionality
+    view_index.init({
+        token: ' . json_encode(Configure::read('CsvMigrations.api.token')) . ',
+        // initialize dataTable
+        datatable: datatables_init.init({
+            table_id: ".table-datatable",
+            state: {duration: ' . (int)(Configure::read('Session.timeout') * 60) . '},
+            batch: {id: "#batch-button"},
+            ajax: {
+                token: ' . json_encode(Configure::read('CsvMigrations.api.token')) . ',
+                url: "' . $this->Url->build([
+                    'prefix' => 'api',
+                    'plugin' => $this->request->plugin,
+                    'controller' => $this->request->controller,
+                    'action' => $this->request->action
+                ]) . '.json",
+                extras: {format: "datatables", menus: 1}
+            },
+        })
     });',
+    ['block' => 'scriptBottom']
+);
+echo $this->Html->scriptBlock(
+    '',
     ['block' => 'scriptBottom']
 );
 

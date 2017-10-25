@@ -37,26 +37,31 @@ echo $this->Html->script(
     ],
     ['block' => 'scriptBottom']
 );
+
+$dataTableOptions = [
+    'table_id' => '.table-datatable',
+    'state' => ['duration' => (int)(Configure::read('Session.timeout') * 60)],
+    'ajax' => [
+        'token' => Configure::read('CsvMigrations.api.token'),
+        'url' => $this->Url->build([
+            'prefix' => 'api',
+            'plugin' => $this->request->plugin,
+            'controller' => $this->request->controller,
+            'action' => $this->request->action
+        ]) . '.json',
+        'extras' => ['format' => 'datatables', 'menus' => 1]
+    ],
+];
+if (Configure::read('CsvMigrations.batch.active')) {
+    $dataTableOptions['batch'] = ['id' => Configure::read('CsvMigrations.batch.button_id')];
+}
+
 echo $this->Html->scriptBlock(
     '// initialize index view functionality
     view_index.init({
-        token: ' . json_encode(Configure::read('CsvMigrations.api.token')) . ',
+        token: "' . Configure::read('CsvMigrations.api.token') . '",
         // initialize dataTable
-        datatable: datatables_init.init({
-            table_id: ".table-datatable",
-            state: {duration: ' . (int)(Configure::read('Session.timeout') * 60) . '},
-            batch: {id: "#batch-button"},
-            ajax: {
-                token: ' . json_encode(Configure::read('CsvMigrations.api.token')) . ',
-                url: "' . $this->Url->build([
-                    'prefix' => 'api',
-                    'plugin' => $this->request->plugin,
-                    'controller' => $this->request->controller,
-                    'action' => $this->request->action
-                ]) . '.json",
-                extras: {format: "datatables", menus: 1}
-            },
-        })
+        datatable: datatables_init.init(' . json_encode($dataTableOptions) . ')
     });',
     ['block' => 'scriptBottom']
 );
@@ -97,7 +102,9 @@ if (empty($options['title'])) {
             <table class="table table-hover table-condensed table-vertical-align table-datatable" width="100%">
                 <thead>
                     <tr>
-                    <th class="dt-select-column"></th>
+                    <?php if (Configure::read('CsvMigrations.batch.active')) : ?>
+                        <th class="dt-select-column"></th>
+                    <?php endif; ?>
                     <?php foreach ($options['fields'] as $field) : ?>
                     <?php
 

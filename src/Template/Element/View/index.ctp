@@ -20,8 +20,10 @@ $fhf = new FieldHandlerFactory($this);
 // Setup Index View js logic
 echo $this->Html->css(
     [
+        'CsvMigrations.style',
         'Qobo/Utils./plugins/datatables/css/dataTables.bootstrap.min',
-        'Qobo/Utils./plugins/datatables/extensions/Select/css/select.bootstrap.min'
+        'Qobo/Utils./plugins/datatables/extensions/Select/css/select.bootstrap.min',
+        'Qobo/Utils./css/dataTables.batch'
     ],
     ['block' => 'css']
 );
@@ -30,31 +32,41 @@ echo $this->Html->script(
         'Qobo/Utils./plugins/datatables/datatables.min',
         'Qobo/Utils./plugins/datatables/js/dataTables.bootstrap.min',
         'Qobo/Utils./plugins/datatables/extensions/Select/js/dataTables.select.min',
+        'Qobo/Utils.dataTables.init',
         'CsvMigrations.view-index'
     ],
     ['block' => 'scriptBottom']
 );
-echo $this->Html->scriptBlock(
-    'view_index.init({
-        table_id: ".table-datatable",
-        api_url: "' . $this->Url->build([
+
+$dataTableOptions = [
+    'table_id' => '.table-datatable',
+    'state' => ['duration' => (int)(Configure::read('Session.timeout') * 60)],
+    'ajax' => [
+        'token' => Configure::read('CsvMigrations.api.token'),
+        'url' => $this->Url->build([
             'prefix' => 'api',
             'plugin' => $this->request->plugin,
             'controller' => $this->request->controller,
             'action' => $this->request->action
-        ]) . '",
-        api_ext: "json",
-        api_token: ' . json_encode(Configure::read('CsvMigrations.api.token')) . ',
-        menus: 1,
-        primary_key: 1,
-        format: "datatables",
-        state_duration: ' . (int)(Configure::read('Session.timeout') * 60) . ',
-        batch: {
-            url: "' . $this->Url->build(['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'batch']) . '",
-            delete_id: "#batch-delete-button",
-            edit_id: "#batch-edit-button"
-        }
+        ]) . '.json',
+        'extras' => ['format' => 'datatables', 'menus' => 1]
+    ],
+];
+if (Configure::read('CsvMigrations.batch.active')) {
+    $dataTableOptions['batch'] = ['id' => Configure::read('CsvMigrations.batch.button_id')];
+}
+
+echo $this->Html->scriptBlock(
+    '// initialize index view functionality
+    view_index.init({
+        token: "' . Configure::read('CsvMigrations.api.token') . '",
+        // initialize dataTable
+        datatable: datatables_init.init(' . json_encode($dataTableOptions) . ')
     });',
+    ['block' => 'scriptBottom']
+);
+echo $this->Html->scriptBlock(
+    '',
     ['block' => 'scriptBottom']
 );
 
@@ -90,7 +102,9 @@ if (empty($options['title'])) {
             <table class="table table-hover table-condensed table-vertical-align table-datatable" width="100%">
                 <thead>
                     <tr>
-                    <th class="dt-select-column"></th>
+                    <?php if (Configure::read('CsvMigrations.batch.active')) : ?>
+                        <th class="dt-select-column"></th>
+                    <?php endif; ?>
                     <?php foreach ($options['fields'] as $field) : ?>
                     <?php
 

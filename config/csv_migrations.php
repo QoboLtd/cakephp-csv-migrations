@@ -11,6 +11,8 @@ return [
         ],
         'actions' => ['add', 'edit', 'index', 'view'],
         'batch' => [
+            'active' => true,
+            'button_id' => '#batch-button',
             'action' => 'batch',
             'types' => ['datetime', 'time', 'date', 'reminder', 'string', 'text', 'list', 'email', 'phone', 'url', 'boolean', 'related']
         ],

@@ -95,25 +95,27 @@ if (empty($options['title'])) {
 <section class="content">
     <div class="box box-solid">
         <div class="box-body">
-            <table class="table table-hover table-condensed table-vertical-align table-datatable" width="100%">
-                <thead>
-                    <tr>
-                    <?php if (Configure::read('CsvMigrations.batch.active')) : ?>
-                        <th class="dt-select-column"></th>
-                    <?php endif; ?>
-                    <?php foreach ($options['fields'] as $field) : ?>
-                    <?php
-                    $tableName = $field[0]['model'];
-                    if (!is_null($field[0]['plugin'])) {
-                        $tableName = $field[0]['plugin'] . '.' . $tableName;
-                    }
-                    ?>
-                        <th><?= $fhf->renderName($tableName, $field[0]['name']) ?></th>
-                    <?php endforeach; ?>
-                    <th><?= __('Actions'); ?></th>
-                    </tr>
-                </thead>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-hover table-condensed table-vertical-align table-datatable" width="100%">
+                    <thead>
+                        <tr>
+                        <?php if (Configure::read('CsvMigrations.batch.active')) : ?>
+                            <th class="dt-select-column"></th>
+                        <?php endif; ?>
+                        <?php foreach ($options['fields'] as $field) : ?>
+                        <?php
+                        $tableName = $field[0]['model'];
+                        if (!is_null($field[0]['plugin'])) {
+                            $tableName = $field[0]['plugin'] . '.' . $tableName;
+                        }
+                        ?>
+                            <th><?= $fhf->renderName($tableName, $field[0]['name']) ?></th>
+                        <?php endforeach; ?>
+                        <th><?= __('Actions'); ?></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         </div>
     </div>
 </section>

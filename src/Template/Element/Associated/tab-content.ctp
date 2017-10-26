@@ -50,13 +50,15 @@ echo $this->Html->scriptBlock(
     ['block' => 'scriptBottom']
 );
 ?>
-<table class="table table-hover table-condensed table-vertical-align table-datatable" id="table-<?= $containerId; ?>">
-    <thead>
-        <tr>
-        <?php foreach ($fields as $field) : ?>
-            <th><?= Inflector::humanize($field); ?></th>
-        <?php endforeach; ?>
-            <th><?= __('Actions');?></th>
-        </tr>
-    </thead>
-</table>
+<div class="table-responsive">
+    <table id="table-<?= $containerId; ?>" class="table table-hover table-condensed table-vertical-align" width="100%">
+        <thead>
+            <tr>
+            <?php foreach ($fields as $field) : ?>
+                <th><?= Inflector::humanize($field); ?></th>
+            <?php endforeach; ?>
+                <th><?= __('Actions');?></th>
+            </tr>
+        </thead>
+    </table>
+</div>

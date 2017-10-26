@@ -36,6 +36,9 @@ echo $this->Html->scriptBlock(
         processing: true,
         serverSide: true,
         paging: true,
+        columnDefs: [
+            {targets: [-1], orderable: false}
+        ],
         ajax: {
             type: "GET",
             url: "' . $url . '",

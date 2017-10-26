@@ -103,21 +103,12 @@ if (empty($options['title'])) {
                     <?php endif; ?>
                     <?php foreach ($options['fields'] as $field) : ?>
                     <?php
-
                     $tableName = $field[0]['model'];
                     if (!is_null($field[0]['plugin'])) {
                         $tableName = $field[0]['plugin'] . '.' . $tableName;
                     }
-                    $renderOptions = [];
-
-                    $label = $fhf->renderName(
-                        $tableName,
-                        $field[0]['name'],
-                        $renderOptions
-                    );
-
                     ?>
-                        <th><?= $label ?></th>
+                        <th><?= $fhf->renderName($tableName, $field[0]['name']) ?></th>
                     <?php endforeach; ?>
                     <th><?= __('Actions'); ?></th>
                     </tr>

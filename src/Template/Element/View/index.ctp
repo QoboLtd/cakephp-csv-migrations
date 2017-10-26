@@ -65,10 +65,6 @@ echo $this->Html->scriptBlock(
     });',
     ['block' => 'scriptBottom']
 );
-echo $this->Html->scriptBlock(
-    '',
-    ['block' => 'scriptBottom']
-);
 
 $defaultOptions = [
     'title' => null,

@@ -78,6 +78,11 @@
 
             // add batch execute flag
             $(that.element).append('<input type="hidden" name="batch[execute]" value="1">');
+
+            // add referer url, for redirect purposes
+            $(that.element).append(
+                '<input type="hidden" name="batch[redirect_url]" value="' + this.options.redirect_url + '">'
+            );
         }
     };
 

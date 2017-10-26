@@ -238,7 +238,7 @@ class ArticlesControllerTest extends IntegrationTestCase
     public function testBatchDeleteNoIds()
     {
         $this->post('/articles/batch/delete');
-        $this->assertRedirect('/articles');
+        $this->assertRedirect('/');
         $this->assertSession('No records selected.', 'Flash.flash.0.message');
     }
 
@@ -264,7 +264,7 @@ class ArticlesControllerTest extends IntegrationTestCase
     public function testBatchEditNoIds()
     {
         $this->post('/articles/batch/edit');
-        $this->assertRedirect('/articles');
+        $this->assertRedirect('/');
         $this->assertSession('No records selected.', 'Flash.flash.0.message');
     }
 
@@ -284,7 +284,7 @@ class ArticlesControllerTest extends IntegrationTestCase
         ];
 
         $this->post('/articles/batch/edit', $data);
-        $this->assertRedirect('/articles');
+        $this->assertRedirect('/');
         $this->assertSession('2 of 2 selected records have been updated.', 'Flash.flash.0.message');
 
         $query = TableRegistry::get('Articles')->find()->where(['id IN' => $data['batch']['ids']]);
@@ -302,7 +302,7 @@ class ArticlesControllerTest extends IntegrationTestCase
         ];
 
         $this->post('/articles/batch/edit', $data);
-        $this->assertRedirect('/articles');
+        $this->assertRedirect('/');
         $this->assertSession('No records selected.', 'Flash.flash.0.message');
     }
 

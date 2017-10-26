@@ -307,7 +307,7 @@ class AppController extends BaseController
     {
         $this->request->allowMethod(['post']);
 
-        $redirectUrl = ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index'];
+        $redirectUrl = $this->getBatchRedirectUrl();
 
         $batchIds = (array)$this->request->data('batch.ids');
         if (empty($batchIds)) {
@@ -373,5 +373,29 @@ class AppController extends BaseController
         $this->set('entity', $this->{$this->name}->newEntity());
         $this->set('fields', Field::getCsvView($this->{$this->name}, $operation, true, true));
         $this->render('CsvMigrations.Common/batch');
+    }
+
+    /**
+     * Fetch batch redirect url.
+     *
+     * @return string
+     */
+    protected function getBatchRedirectUrl()
+    {
+        // default url
+        $result = ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index'];
+
+        $currentUrl = $this->request->env('HTTP_ORIGIN') . $this->request->getRequestTarget();
+        // if referer does not match current url, redirect to referer (delete action)
+        if (false === strpos($this->referer(), $currentUrl)) {
+            $result = $this->referer();
+        }
+
+        // use batch redirect url if provided (edit action)
+        if ($this->request->data('batch.redirect_url')) {
+            $result = $this->request->data('batch.redirect_url');
+        }
+
+        return $result;
     }
 }

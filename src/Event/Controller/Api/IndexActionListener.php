@@ -66,7 +66,10 @@ class IndexActionListener extends BaseActionListener
         }
         $this->_filterByConditions($query, $event);
 
-        $query->select($this->getSelectClause($event), true);
+        $select = $this->getSelectClause($event);
+        if (!empty($select)) {
+            $query->select($select, true);
+        }
 
         $order = $this->_handleDtSorting($event);
         $query->order($order);
@@ -139,22 +142,22 @@ class IndexActionListener extends BaseActionListener
     }
 
     /**
-     * Method that adds SELECT clause to the Query to only include
+     * Method that returns SELECT clause for the Query to only include
      * action fields (as defined in the csv file).
      *
      * @param  \Cake\Event\Event $event The event
-     * @return void
+     * @return array
      */
     protected function getSelectClause(Event $event)
     {
         if (!in_array($event->subject()->request->query('format'), [static::FORMAT_DATATABLES])) {
-            return;
+            return [];
         }
 
         $fields = $this->_getActionFields($event->subject()->request);
 
         if (empty($fields)) {
-            return;
+            return [];
         }
 
         $primaryKey = $event->subject()->{$event->subject()->name}->primaryKey();

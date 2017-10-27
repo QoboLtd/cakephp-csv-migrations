@@ -58,7 +58,7 @@ abstract class BaseActionListener implements EventListenerInterface
      *
      * @var CsvMigrations\FieldHandlers\FieldHandlerFactory
      */
-    private $__fhf;
+    private $factory;
 
     /**
      * Wrapper method that checks if Table instance has method 'findByLookupFields'
@@ -372,8 +372,8 @@ abstract class BaseActionListener implements EventListenerInterface
      */
     protected function _prettify(Entity $entity, $table, array $fields = [])
     {
-        if (!$this->__fhf instanceof FieldHandlerFactory) {
-            $this->__fhf = new FieldHandlerFactory();
+        if (!$this->factory instanceof FieldHandlerFactory) {
+            $this->factory = new FieldHandlerFactory();
         }
         if (empty($fields)) {
             $fields = array_keys($entity->toArray());
@@ -402,13 +402,7 @@ abstract class BaseActionListener implements EventListenerInterface
                 }
             }
 
-            $renderOptions = ['entity' => $entity];
-            $entity->{$field} = $this->__fhf->renderValue(
-                $table instanceof Table ? $table->registryAlias() : $table,
-                $field,
-                $entity->{$field},
-                $renderOptions
-            );
+            $entity->{$field} = $this->factory->renderValue($table, $field, $entity->{$field}, ['entity' => $entity]);
         }
     }
 }

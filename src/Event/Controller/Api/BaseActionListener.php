@@ -100,20 +100,6 @@ abstract class BaseActionListener implements EventListenerInterface
     }
 
     /**
-     * Method that retrieves and returns csv migration fields.
-     *
-     * @param  Request $request Request object
-     * @return array
-     */
-    protected function _getMigrationFields(Request $request)
-    {
-        $mc = new ModuleConfig(ConfigType::MIGRATION(), $request->controller);
-        $result = json_decode(json_encode($mc->parse()), true);
-
-        return $result;
-    }
-
-    /**
      * Method that fetches action fields from the corresponding csv file.
      *
      * @param  \Cake\Network\Request $request Request object
@@ -147,7 +133,10 @@ abstract class BaseActionListener implements EventListenerInterface
 
         $table = $event->subject()->{$event->subject()->name};
 
-        $migrationFields = $this->_getMigrationFields($event->subject()->request);
+        $mc = new ModuleConfig(ConfigType::MIGRATION(), $event->subject()->name);
+        $config = $mc->parse();
+
+        $migrationFields = json_decode(json_encode($config), true);
         if (empty($migrationFields)) {
             return $result;
         }

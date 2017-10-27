@@ -28,33 +28,22 @@ $options = [
     'menus' => true
 ];
 
-$containerId = Inflector::underscore($association->getAlias());
+$tableId = 'table-' . Inflector::underscore($association->getAlias());
 
-echo $this->Html->scriptBlock(
-    '$("#table-' . $containerId . '").dataTable({
-        searching: false,
-        processing: true,
-        serverSide: true,
-        paging: true,
-        columnDefs: [
-            {targets: [-1], orderable: false}
-        ],
-        ajax: {
-            type: "GET",
-            url: "' . $url . '",
-            headers: {
-                "Authorization": "Bearer " + "' . Configure::read('CsvMigrations.api.token') . '"
-            },
-            data: function (d) {
-                return $.extend( {}, d, ' . json_encode($options) . ');
-            }
-        },
-    });',
-    ['block' => 'scriptBottom']
-);
+$dtOptions = [
+    'table_id' => '#' . $tableId,
+    'state' => ['duration' => (int)(Configure::read('Session.timeout') * 60)],
+    'ajax' => [
+        'token' => Configure::read('CsvMigrations.api.token'),
+        'url' => $url,
+        'extras' => $options
+    ],
+];
+
+echo $this->Html->scriptBlock('new DataTablesInit(' . json_encode($dtOptions) . ');', ['block' => 'scriptBottom']);
 ?>
 <div class="table-responsive">
-    <table id="table-<?= $containerId; ?>" class="table table-hover table-condensed table-vertical-align" width="100%">
+    <table id="<?= $tableId ?>" class="table table-hover table-condensed table-vertical-align" width="100%">
         <thead>
             <tr>
             <?php foreach ($fields as $field) : ?>

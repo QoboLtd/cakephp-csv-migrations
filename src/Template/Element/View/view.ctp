@@ -134,6 +134,7 @@ foreach ($options['fields'] as $panelName => $panelFields) : ?>
 <?php endforeach; ?>
 <?php if (!$this->request->query('embedded')) : ?>
     <?= $this->element('CsvMigrations.common_js_libs'); // loading common setup for typeahead/panel/etc libs ?>
+    <?= $this->Html->script('Qobo/Utils.dataTables.init', ['block' => 'scriptBottom']) ?>
     <hr />
     <div class="row associated-records">
         <div class="col-xs-12">

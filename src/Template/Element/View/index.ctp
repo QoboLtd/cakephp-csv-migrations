@@ -38,7 +38,7 @@ echo $this->Html->script(
     ['block' => 'scriptBottom']
 );
 
-$dataTableOptions = [
+$dtOptions = [
     'table_id' => '.table-datatable',
     'state' => ['duration' => (int)(Configure::read('Session.timeout') * 60)],
     'ajax' => [
@@ -53,7 +53,7 @@ $dataTableOptions = [
     ],
 ];
 if (Configure::read('CsvMigrations.batch.active')) {
-    $dataTableOptions['batch'] = ['id' => Configure::read('CsvMigrations.batch.button_id')];
+    $dtOptions['batch'] = ['id' => Configure::read('CsvMigrations.batch.button_id')];
 }
 
 echo $this->Html->scriptBlock(
@@ -61,7 +61,7 @@ echo $this->Html->scriptBlock(
     view_index.init({
         token: "' . Configure::read('CsvMigrations.api.token') . '",
         // initialize dataTable
-        datatable: datatables_init.init(' . json_encode($dataTableOptions) . ')
+        datatable: new DataTablesInit(' . json_encode($dtOptions) . ')
     });',
     ['block' => 'scriptBottom']
 );

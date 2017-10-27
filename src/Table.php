@@ -236,7 +236,7 @@ class Table extends BaseTable
         }
 
         if ('datatables' !== $data['format']) {
-            $result = array_merge(['data' => $entities['records']], $entities['pagination']);
+            $result = array_merge(['data' => $entities['records']], ['pagination' => $entities['pagination']]);
 
             return $result;
         }
@@ -261,7 +261,8 @@ class Table extends BaseTable
                 ]);
             }
         }
-        $result = array_merge(['data' => $result], $entities['pagination']);
+
+        $result = array_merge(['data' => $result], ['pagination' => $entities['pagination']]);
 
         return $result;
     }

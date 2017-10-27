@@ -166,7 +166,6 @@ class IndexActionListener extends BaseActionListener
             array_push($fields, $primaryKey);
         }
 
-
         $table = $event->subject()->{$event->subject()->name};
 
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $event->subject()->name);

@@ -58,7 +58,7 @@ abstract class BaseActionListener implements EventListenerInterface
      *
      * @var CsvMigrations\FieldHandlers\FieldHandlerFactory
      */
-    private $__fhf;
+    private $factory;
 
     /**
      * Wrapper method that checks if Table instance has method 'findByLookupFields'
@@ -100,20 +100,6 @@ abstract class BaseActionListener implements EventListenerInterface
     }
 
     /**
-     * Method that retrieves and returns csv migration fields.
-     *
-     * @param  Request $request Request object
-     * @return array
-     */
-    protected function _getMigrationFields(Request $request)
-    {
-        $mc = new ModuleConfig(ConfigType::MIGRATION(), $request->controller);
-        $result = json_decode(json_encode($mc->parse()), true);
-
-        return $result;
-    }
-
-    /**
      * Method that fetches action fields from the corresponding csv file.
      *
      * @param  \Cake\Network\Request $request Request object
@@ -130,58 +116,6 @@ abstract class BaseActionListener implements EventListenerInterface
 
         $mc = new ModuleConfig(ConfigType::VIEW(), $controller, $action);
         $result = $mc->parse()->items;
-
-        return $result;
-    }
-
-    /**
-     * Method that converts csv action fields to database fields and returns their names.
-     *
-     * @param  array  $fields action fields
-     * @param  Event  $event  Event instance
-     * @return array
-     */
-    protected function _databaseFields(array $fields, Event $event)
-    {
-        $result = [];
-
-        $table = $event->subject()->{$event->subject()->name};
-
-        $migrationFields = $this->_getMigrationFields($event->subject()->request);
-        if (empty($migrationFields)) {
-            return $result;
-        }
-
-        $fhf = new FieldHandlerFactory();
-        foreach ($fields as $field) {
-            if (!array_key_exists($field, $migrationFields)) {
-                $result[] = $field;
-                continue;
-            }
-
-            $csvField = new CsvField($migrationFields[$field]);
-            foreach ($fhf->fieldToDb($csvField, $table, $field) as $dbField) {
-                $result[] = $dbField->getName();
-            }
-        }
-
-        $virtualFields = $table->getConfig(ConfigurationTrait::$CONFIG_OPTION_VIRTUAL_FIELDS);
-
-        if (empty($virtualFields)) {
-            return $result;
-        }
-
-        // handle virtual fields
-        foreach ($fields as $k => $field) {
-            if (!isset($virtualFields[$field])) {
-                continue;
-            }
-            // remove virtual field
-            unset($result[$k]);
-
-            // add db fields
-            $result = array_merge($result, $virtualFields[$field]);
-        }
 
         return $result;
     }
@@ -372,8 +306,8 @@ abstract class BaseActionListener implements EventListenerInterface
      */
     protected function _prettify(Entity $entity, $table, array $fields = [])
     {
-        if (!$this->__fhf instanceof FieldHandlerFactory) {
-            $this->__fhf = new FieldHandlerFactory();
+        if (!$this->factory instanceof FieldHandlerFactory) {
+            $this->factory = new FieldHandlerFactory();
         }
         if (empty($fields)) {
             $fields = array_keys($entity->toArray());
@@ -402,13 +336,7 @@ abstract class BaseActionListener implements EventListenerInterface
                 }
             }
 
-            $renderOptions = ['entity' => $entity];
-            $entity->{$field} = $this->__fhf->renderValue(
-                $table instanceof Table ? $table->registryAlias() : $table,
-                $field,
-                $entity->{$field},
-                $renderOptions
-            );
+            $entity->{$field} = $this->factory->renderValue($table, $field, $entity->{$field}, ['entity' => $entity]);
         }
     }
 }

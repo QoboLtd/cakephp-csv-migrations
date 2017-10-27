@@ -65,7 +65,11 @@ class IndexActionListener extends BaseActionListener
             $query->contain($this->_getFileAssociations($table));
         }
         $this->_filterByConditions($query, $event);
-        $this->_selectActionFields($query, $event);
+
+        $select = $this->getSelectClause($event);
+        if (!empty($select)) {
+            $query->select($select, true);
+        }
 
         $order = $this->_handleDtSorting($event);
         $query->order($order);
@@ -138,23 +142,22 @@ class IndexActionListener extends BaseActionListener
     }
 
     /**
-     * Method that adds SELECT clause to the Query to only include
+     * Method that returns SELECT clause for the Query to only include
      * action fields (as defined in the csv file).
      *
-     * @param  \Cake\ORM\Query   $query Query object
      * @param  \Cake\Event\Event $event The event
-     * @return void
+     * @return array
      */
-    protected function _selectActionFields(Query $query, Event $event)
+    protected function getSelectClause(Event $event)
     {
         if (!in_array($event->subject()->request->query('format'), [static::FORMAT_DATATABLES])) {
-            return;
+            return [];
         }
 
         $fields = $this->_getActionFields($event->subject()->request);
 
         if (empty($fields)) {
-            return;
+            return [];
         }
 
         $primaryKey = $event->subject()->{$event->subject()->name}->primaryKey();
@@ -163,7 +166,45 @@ class IndexActionListener extends BaseActionListener
             array_push($fields, $primaryKey);
         }
 
-        $query->select($this->_databaseFields($fields, $event), true);
+        $table = $event->subject()->{$event->subject()->name};
+
+        $mc = new ModuleConfig(ConfigType::MIGRATION(), $event->subject()->name);
+        $config = $mc->parse();
+
+        $migrationFields = json_decode(json_encode($config), true);
+        if (empty($migrationFields)) {
+            return [];
+        }
+
+        $mc = new ModuleConfig(ConfigType::MODULE(), $event->subject()->name);
+        $config = $mc->parse();
+        $virtualFields = (array)$config->virtualFields;
+
+        $factory = new FieldHandlerFactory();
+
+        $result = [];
+        foreach ($fields as $field) {
+            // skip non-existing fields
+            if (!isset($migrationFields[$field]) && !isset($virtualFields[$field])) {
+                continue;
+            }
+
+            // convert virtual field
+            if (isset($virtualFields[$field])) {
+                $result = array_merge($result, $virtualFields[$field]);
+                continue;
+            }
+
+            $csvField = new CsvField($migrationFields[$field]);
+            // convert combined field into relevant db fields
+            foreach ($factory->fieldToDb($csvField, $table, $field) as $dbField) {
+                $result[] = $dbField->getName();
+            }
+        }
+
+        $result = array_unique($result);
+
+        return $result;
     }
 
     /**

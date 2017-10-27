@@ -129,8 +129,6 @@ abstract class BaseActionListener implements EventListenerInterface
      */
     protected function _databaseFields(array $fields, Event $event)
     {
-        $result = [];
-
         $table = $event->subject()->{$event->subject()->name};
 
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $event->subject()->name);
@@ -138,39 +136,36 @@ abstract class BaseActionListener implements EventListenerInterface
 
         $migrationFields = json_decode(json_encode($config), true);
         if (empty($migrationFields)) {
-            return $result;
+            return [];
         }
 
-        $fhf = new FieldHandlerFactory();
+        $mc = new ModuleConfig(ConfigType::MODULE(), $event->subject()->name);
+        $config = $mc->parse();
+        $virtualFields = (array)$config->virtualFields;
+
+        $factory = new FieldHandlerFactory();
+
+        $result = [];
         foreach ($fields as $field) {
-            if (!array_key_exists($field, $migrationFields)) {
-                $result[] = $field;
+            // skip non-existing fields
+            if (!isset($migrationFields[$field]) && !isset($virtualFields[$field])) {
+                continue;
+            }
+
+            // convert virtual field
+            if (isset($virtualFields[$field])) {
+                $result = array_merge($result, $virtualFields[$field]);
                 continue;
             }
 
             $csvField = new CsvField($migrationFields[$field]);
-            foreach ($fhf->fieldToDb($csvField, $table, $field) as $dbField) {
+            // convert combined field into relevant db fields
+            foreach ($factory->fieldToDb($csvField, $table, $field) as $dbField) {
                 $result[] = $dbField->getName();
             }
         }
 
-        $virtualFields = $table->getConfig(ConfigurationTrait::$CONFIG_OPTION_VIRTUAL_FIELDS);
-
-        if (empty($virtualFields)) {
-            return $result;
-        }
-
-        // handle virtual fields
-        foreach ($fields as $k => $field) {
-            if (!isset($virtualFields[$field])) {
-                continue;
-            }
-            // remove virtual field
-            unset($result[$k]);
-
-            // add db fields
-            $result = array_merge($result, $virtualFields[$field]);
-        }
+        $result = array_unique($result);
 
         return $result;
     }

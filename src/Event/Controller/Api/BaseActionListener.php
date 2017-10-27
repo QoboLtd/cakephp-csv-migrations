@@ -121,56 +121,6 @@ abstract class BaseActionListener implements EventListenerInterface
     }
 
     /**
-     * Method that converts csv action fields to database fields and returns their names.
-     *
-     * @param  array  $fields action fields
-     * @param  Event  $event  Event instance
-     * @return array
-     */
-    protected function _databaseFields(array $fields, Event $event)
-    {
-        $table = $event->subject()->{$event->subject()->name};
-
-        $mc = new ModuleConfig(ConfigType::MIGRATION(), $event->subject()->name);
-        $config = $mc->parse();
-
-        $migrationFields = json_decode(json_encode($config), true);
-        if (empty($migrationFields)) {
-            return [];
-        }
-
-        $mc = new ModuleConfig(ConfigType::MODULE(), $event->subject()->name);
-        $config = $mc->parse();
-        $virtualFields = (array)$config->virtualFields;
-
-        $factory = new FieldHandlerFactory();
-
-        $result = [];
-        foreach ($fields as $field) {
-            // skip non-existing fields
-            if (!isset($migrationFields[$field]) && !isset($virtualFields[$field])) {
-                continue;
-            }
-
-            // convert virtual field
-            if (isset($virtualFields[$field])) {
-                $result = array_merge($result, $virtualFields[$field]);
-                continue;
-            }
-
-            $csvField = new CsvField($migrationFields[$field]);
-            // convert combined field into relevant db fields
-            foreach ($factory->fieldToDb($csvField, $table, $field) as $dbField) {
-                $result[] = $dbField->getName();
-            }
-        }
-
-        $result = array_unique($result);
-
-        return $result;
-    }
-
-    /**
      * Move associated files under the corresponding entity property
      * and unset association property.
      *

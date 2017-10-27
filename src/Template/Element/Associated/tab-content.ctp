@@ -47,7 +47,7 @@ echo $this->Html->scriptBlock('new DataTablesInit(' . json_encode($dtOptions) . 
         <thead>
             <tr>
             <?php foreach ($fields as $field) : ?>
-                <th><?= Inflector::humanize($field); ?></th>
+                <th><?= $factory->renderName($association->className(), $field) ?></th>
             <?php endforeach; ?>
                 <th><?= __('Actions');?></th>
             </tr>

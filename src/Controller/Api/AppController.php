@@ -23,7 +23,6 @@ use CsvMigrations\Event\EventName;
 use CsvMigrations\FileUploadsUtils;
 use CsvMigrations\Panel;
 use CsvMigrations\PanelUtilTrait;
-use CsvMigrations\Swagger\Annotation;
 use ReflectionMethod;
 
 class AppController extends Controller
@@ -421,21 +420,5 @@ class AppController extends Controller
         }
 
         return $result;
-    }
-
-    /**
-     * Generates Swagger annotations
-     *
-     * Instantiates CsvAnnotation with required parameters
-     * and returns its generated swagger annotation content.
-     *
-     * @param string $path File path
-     * @return string
-     */
-    public static function generateSwaggerAnnotations($path)
-    {
-        $csvAnnotation = new Annotation(get_called_class(), $path);
-
-        return $csvAnnotation->getContent();
     }
 }

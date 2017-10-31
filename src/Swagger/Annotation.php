@@ -55,16 +55,6 @@ class Annotation
      * @var array
      */
     protected $_annotations = [
-        'info' => '/**
-            @SWG\Swagger(
-                @SWG\Info(
-                    title="API Documentation",
-                    description="Interactive API documentation powered by Swagger.io",
-                    termsOfService="http://swagger.io/terms/",
-                    version="1.0.0"
-                )
-            )
-         */',
         'definition' => '/**
             @SWG\Definition(
                 definition="{{definition}}",
@@ -244,14 +234,6 @@ class Annotation
     protected function _generateContent()
     {
         $result = file_get_contents($this->_path);
-
-        // if App class then use info annotation and exit
-        if ('App' === $this->_className) {
-            $result = preg_replace('/(^class\s)/im', $this->_annotations['info'] . "\n$1", $result);
-            $this->setContent(trim($result));
-
-            return;
-        }
 
         $properties = $this->_getProperties();
 

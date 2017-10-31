@@ -47,7 +47,7 @@ class Annotation
      *
      * @var string
      */
-    protected $_pathName = '';
+    protected $_path = '';
 
     /**
      * Swagger annotations.

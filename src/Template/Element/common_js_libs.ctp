@@ -46,7 +46,6 @@ echo $this->Html->script(
         'CsvMigrations.dom-observer',
         'CsvMigrations.embedded',
         'CsvMigrations.panels',
-        'CsvMigrations.canvas-to-blob.min',
         'CsvMigrations.fileinput.min',
         'CsvMigrations.fileinput-load',
         'CsvMigrations.jquery.dynamicSelect',

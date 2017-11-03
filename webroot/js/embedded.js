@@ -134,17 +134,16 @@ var embedded = embedded || {};
      */
     Embedded.prototype._setRelations = function (related, id, model) {
         var that = this;
-        url = '/' + related.related_model + '/edit/' + related.related_id;
+        url = '/' + related.related_model + '/link/' + related.related_id;
         data = {
+            assocName: model,
+            id:related.related_id,
             [model] : {
                 '_ids' : [
                     id
                 ]
             }
         };
-        $("input[name='" + model + "[_ids][]']").each(function () {
-            data[model]['_ids'].push($(this).val());
-        });
         data = JSON.stringify(data);
         $.ajax({
             url: url,

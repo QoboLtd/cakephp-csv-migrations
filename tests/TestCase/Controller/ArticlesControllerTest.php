@@ -59,9 +59,6 @@ class ArticlesControllerTest extends IntegrationTestCase
 
     public function testView()
     {
-        // @todo view.ctp always assumes that Translations plugin is loaded, this needs fixing
-        $this->markTestSkipped();
-
         $this->get('/articles/view/00000000-0000-0000-0000-000000000001');
         $this->assertResponseOk();
         $this->assertResponseContains('Name:');

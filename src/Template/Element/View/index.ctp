@@ -54,6 +54,7 @@ $dtOptions = [
 ];
 if (Configure::read('CsvMigrations.batch.active')) {
     $dtOptions['batch'] = ['id' => Configure::read('CsvMigrations.batch.button_id')];
+    $dtOptions['order'] = [1, 'asc'];
 }
 
 echo $this->Html->scriptBlock(
@@ -87,7 +88,7 @@ if (empty($options['title'])) {
         </div>
         <div class="col-xs-12 col-md-6">
             <div class="pull-right">
-                <?= $this->element('CsvMigrations.Menu/index_top', ['user' => $user]) ?>
+                <?= $this->element('CsvMigrations.Menu/index_top') ?>
             </div>
         </div>
     </div>

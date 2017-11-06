@@ -60,7 +60,7 @@ if (!$this->request->query('embedded')) : ?>
             <div class="pull-right">
             <div class="btn-group btn-group-sm" role="group">
                 <?= $this->element('CsvMigrations.Menu/view_top', [
-                    'options' => $options, 'user' => $user, 'displayField' => $table->getDisplayField()
+                    'options' => $options, 'displayField' => $table->getDisplayField()
                 ]); ?>
             </div>
             </div>
@@ -102,7 +102,7 @@ foreach ($options['fields'] as $panelName => $panelFields) : ?>
 
                         if (!$embeddedDirty) { // non-embedded field
                             echo $this->element('CsvMigrations.Field/value', [
-                                'factory' => $factory, 'field' => $field, 'options' => $options, 'user' => $user
+                                'factory' => $factory, 'field' => $field, 'options' => $options
                             ]);
                         }
                     } else {
@@ -139,7 +139,7 @@ foreach ($options['fields'] as $panelName => $panelFields) : ?>
     <div class="row associated-records">
         <div class="col-xs-12">
             <?= $this->element('CsvMigrations.View/associated', [
-                'user' => $user, 'options' => $options, 'table' => $table, 'factory' => $factory
+                'options' => $options, 'table' => $table, 'factory' => $factory
             ]) ?>
         </div>
     </div>

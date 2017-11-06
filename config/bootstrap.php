@@ -3,11 +3,6 @@ use Burzum\FileStorage\Storage\Listener\BaseListener;
 use Burzum\FileStorage\Storage\StorageManager;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
-use CsvMigrations\Event\Controller\Api\AddActionListener;
-use CsvMigrations\Event\Controller\Api\EditActionListener;
-use CsvMigrations\Event\Controller\Api\IndexActionListener;
-use CsvMigrations\Event\Controller\Api\LookupActionListener;
-use CsvMigrations\Event\Controller\Api\ViewActionListener;
 use CsvMigrations\Event\Model\AutoIncrementEventListener;
 use CsvMigrations\Event\Model\ModelAfterSaveListener;
 
@@ -40,10 +35,5 @@ Configure::write('Importer', array_replace_recursive(
     $config
 ));
 
-EventManager::instance()->on(new AddActionListener());
 EventManager::instance()->on(new AutoIncrementEventListener());
-EventManager::instance()->on(new EditActionListener());
-EventManager::instance()->on(new IndexActionListener());
-EventManager::instance()->on(new LookupActionListener());
 EventManager::instance()->on(new ModelAfterSaveListener());
-EventManager::instance()->on(new ViewActionListener());

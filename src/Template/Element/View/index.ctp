@@ -54,6 +54,7 @@ $dtOptions = [
 ];
 if (Configure::read('CsvMigrations.batch.active')) {
     $dtOptions['batch'] = ['id' => Configure::read('CsvMigrations.batch.button_id')];
+    $dtOptions['order'] = [1, 'asc'];
 }
 
 echo $this->Html->scriptBlock(

@@ -192,17 +192,17 @@ trait MigrationTrait
 
         foreach ($data as $module => $fields) {
             foreach ($fields as $field) {
+                // belongs-to association of the current module.
                 if ($module === $config['table']) {
                     $name = CsvMigrationsUtils::createAssociationName($field->getAssocCsvModule(), $field->getName());
-                    //Belongs to association of the curren running module.
                     $this->belongsTo($name, [
                         'className' => $field->getAssocCsvModule(),
                         'foreignKey' => $field->getName()
                     ]);
                 }
 
+                // foreign key found in a related module.
                 if ($field->getAssocCsvModule() === $config['table']) {
-                    //Foreignkey found in other module
                     $name = CsvMigrationsUtils::createAssociationName($module, $field->getName());
                     $this->hasMany($name, [
                         'className' => $module,

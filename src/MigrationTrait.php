@@ -155,28 +155,26 @@ trait MigrationTrait
     /**
      * Set associations with FileStorage table.
      *
-     * @param array $data Current module csv fields.
+     * @param array $fields Current module csv fields.
      * @return void
      */
-    protected function setFileAssociations(array $data)
+    protected function setFileAssociations(array $fields)
     {
-        foreach ($data as $fields) {
-            foreach ($fields as $field) {
-                // skip non file or image types
-                if (!in_array($field->getType(), ['files', 'images'])) {
-                    continue;
-                }
-
-                $name = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field->getName());
-                $this->hasMany($name, [
-                    'className' => 'Burzum/FileStorage.FileStorage',
-                    'foreignKey' => 'foreign_key',
-                    'conditions' => [
-                        'model' => $this->table(),
-                        'model_field' => $field->getName(),
-                    ]
-                ]);
+        foreach ($fields as $field) {
+            // skip non file or image types
+            if (!in_array($field->getType(), ['files', 'images'])) {
+                continue;
             }
+
+            $name = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field->getName());
+            $this->hasMany($name, [
+                'className' => 'Burzum/FileStorage.FileStorage',
+                'foreignKey' => 'foreign_key',
+                'conditions' => [
+                    'model' => $this->table(),
+                    'model_field' => $field->getName(),
+                ]
+            ]);
         }
     }
     /**

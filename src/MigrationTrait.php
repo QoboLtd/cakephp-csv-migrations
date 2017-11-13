@@ -121,12 +121,14 @@ trait MigrationTrait
      */
     protected function _setAssociationsFromConfig(array $config)
     {
-        $manyToMany = (array)$this->getConfig(ConfigurationTrait::$CONFIG_OPTION_MANY_TO_MANY_MODULES);
-        if (empty($manyToMany)) {
+        $mc = new ModuleConfig(ConfigType::MODULE(), $this->getRegistryAlias());
+        $config = $mc->parse();
+        $modules = $config->manyToMany->modules;
+        if (empty($modules)) {
             return;
         }
 
-        foreach ($manyToMany as $module) {
+        foreach ($modules as $module) {
             $this->belongsToMany($module, [
                 'className' => $module
             ]);
@@ -141,52 +143,73 @@ trait MigrationTrait
      */
     protected function _setAssociationsFromCsv(array $config)
     {
-        $csvData = $this->_csvData(true);
-        $csvObjData = $this->_csvDataToCsvObj($csvData);
-        $csvFilteredData = $this->_csvDataFilter($csvObjData, $this->__assocIdentifiers);
+        $data = $this->_csvDataToCsvObj($this->_csvData(true));
 
-        //setting up files associations for FileStorage relation
-        foreach ($csvObjData as $csvModule => $fields) {
-            foreach ($fields as $csvObjField) {
-                if (!in_array($csvObjField->getType(), ['files', 'images'])) {
+        if (!empty($data[$config['table']])) {
+            $this->setFileAssociations($data[$config['table']]);
+        }
+
+        $this->setFieldAssociations($config, $data);
+    }
+
+    /**
+     * Set associations with FileStorage table.
+     *
+     * @param array $data Current module csv fields.
+     * @return void
+     */
+    protected function setFileAssociations(array $data)
+    {
+        foreach ($data as $fields) {
+            foreach ($fields as $field) {
+                // skip non file or image types
+                if (!in_array($field->getType(), ['files', 'images'])) {
                     continue;
                 }
-                if ($csvModule <> $config['table']) {
-                    continue;
-                }
-                $fieldName = $csvObjField->getName();
-                $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $fieldName);
-                $this->hasMany($assocName, [
+
+                $name = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field->getName());
+                $this->hasMany($name, [
                     'className' => 'Burzum/FileStorage.FileStorage',
                     'foreignKey' => 'foreign_key',
                     'conditions' => [
                         'model' => $this->table(),
-                        'model_field' => $fieldName,
+                        'model_field' => $field->getName(),
                     ]
                 ]);
             }
         }
+    }
+    /**
+     * Set associations based on migration.csv related type fields.
+     *
+     * @param array $config The configuration for the Table.
+     * @param array $data All modules csv fields.
+     * @return void
+     */
+    protected function setFieldAssociations(array $config, array $data)
+    {
+        foreach ($data as $module => $fields) {
+            foreach ($fields as $field) {
+                // skip non related type
+                if (!in_array($field->getType(), ['related'])) {
+                    continue;
+                }
 
-        foreach ($csvFilteredData as $csvModule => $fields) {
-            foreach ($fields as $csvObjField) {
-                $assoccsvModule = $csvObjField->getAssocCsvModule();
-                $fieldName = $csvObjField->getName();
-
-                if ($config['table'] === $csvModule) {
-                    $assocName = CsvMigrationsUtils::createAssociationName($assoccsvModule, $fieldName);
-                    //Belongs to association of the curren running module.
-                    $this->belongsTo($assocName, [
-                        'className' => $assoccsvModule,
-                        'foreignKey' => $fieldName
+                // belongs-to association of the current module.
+                if ($module === $config['table']) {
+                    $name = CsvMigrationsUtils::createAssociationName($field->getAssocCsvModule(), $field->getName());
+                    $this->belongsTo($name, [
+                        'className' => $field->getAssocCsvModule(),
+                        'foreignKey' => $field->getName()
                     ]);
                 }
 
-                if ($config['table'] === $assoccsvModule) {
-                    //Foreignkey found in other module
-                    $assocName = CsvMigrationsUtils::createAssociationName($csvModule, $fieldName);
-                    $this->hasMany($assocName, [
-                        'className' => $csvModule,
-                        'foreignKey' => $fieldName
+                // foreign key found in a related module.
+                if ($field->getAssocCsvModule() === $config['table']) {
+                    $name = CsvMigrationsUtils::createAssociationName($module, $field->getName());
+                    $this->hasMany($name, [
+                        'className' => $module,
+                        'foreignKey' => $field->getName()
                     ]);
                 }
             }

@@ -188,11 +188,13 @@ trait MigrationTrait
      */
     protected function setFieldAssociations(array $config, array $data)
     {
-        // filter data to include only related type fields.
-        $data = $this->_csvDataFilter($data, $this->__assocIdentifiers);
-
         foreach ($data as $module => $fields) {
             foreach ($fields as $field) {
+                // skip non related type
+                if (!in_array($field->getType(), ['related'])) {
+                    continue;
+                }
+
                 // belongs-to association of the current module.
                 if ($module === $config['table']) {
                     $name = CsvMigrationsUtils::createAssociationName($field->getAssocCsvModule(), $field->getName());

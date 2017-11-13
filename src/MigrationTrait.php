@@ -145,7 +145,9 @@ trait MigrationTrait
     {
         $data = $this->_csvDataToCsvObj($this->_csvData(true));
 
-        $this->setFileAssociations($config, $data);
+        if (!empty($data[$config['table']])) {
+            $this->setFileAssociations($data[$config['table']]);
+        }
 
         $this->setFieldAssociations($config, $data);
     }
@@ -153,13 +155,12 @@ trait MigrationTrait
     /**
      * Set associations with FileStorage table.
      *
-     * @param array $config The configuration for the Table.
-     * @param array $data All modules csv fields.
+     * @param array $data Current module csv fields.
      * @return void
      */
-    protected function setFileAssociations(array $config, array $data)
+    protected function setFileAssociations(array $data)
     {
-        foreach ($data[$config['table']] as $fields) {
+        foreach ($data as $fields) {
             foreach ($fields as $field) {
                 // skip non file or image types
                 if (!in_array($field->getType(), ['files', 'images'])) {

@@ -121,12 +121,14 @@ trait MigrationTrait
      */
     protected function _setAssociationsFromConfig(array $config)
     {
-        $manyToMany = (array)$this->getConfig(ConfigurationTrait::$CONFIG_OPTION_MANY_TO_MANY_MODULES);
-        if (empty($manyToMany)) {
+        $mc = new ModuleConfig(ConfigType::MODULE(), $this->getRegistryAlias());
+        $config = $mc->parse();
+        $modules = $config->manyToMany->modules;
+        if (empty($modules)) {
             return;
         }
 
-        foreach ($manyToMany as $module) {
+        foreach ($modules as $module) {
             $this->belongsToMany($module, [
                 'className' => $module
             ]);

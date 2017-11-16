@@ -48,6 +48,14 @@ abstract class BaseListFieldHandler extends BaseFieldHandler
                 'values' => ['IS NOT NULL', '!= ""']
             ]
         ],
+        'in' => [
+            'label' => 'in',
+            'operator' => 'IN',
+            'emptyCriteria' => [
+                'aggregator' => 'OR',
+                'values' => ['IS NULL', '= ""']
+            ]
+        ],
     ];
 
     /**

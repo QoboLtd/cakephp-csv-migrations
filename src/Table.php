@@ -488,23 +488,8 @@ class Table extends BaseTable
         list($plugin, $controller) = pluginSplit($association->className());
         $csvFields = $this->getCsvFields($controller, $action);
 
-        // get associated index View csv fields
-        if ('index' == $action) {
-            $fields = array_unique(
-                array_merge(
-                    [$association->displayField()],
-                    $csvFields
-                )
-            );
-        } else {
-            $fields = $csvFields;
-        }
-
-        // @NOTE: fields should be properly indexed
-        // to collide with 'columns' indexes
-        $fields = array_values($fields);
-
-        return $fields;
+        // NOTE: fields should be properly indexed to collide with 'columns' indexes
+        return array_values($csvFields);
     }
 
     /**

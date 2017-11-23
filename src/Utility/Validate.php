@@ -13,6 +13,11 @@ namespace CsvMigrations\Utility;
 
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\Utility\Validate\RealModuleFieldCheck;
+use CsvMigrations\Utility\Validate\ValidListCheck;
+use CsvMigrations\Utility\Validate\ValidModuleCheck;
+use CsvMigrations\Utility\Validate\ValidModuleFieldCheck;
+use CsvMigrations\Utility\Validate\VirtualModuleFieldCheck;
 use Exception;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
@@ -42,18 +47,11 @@ class Validate
     public static function isValidModule($module)
     {
         $result = false;
-
-        $module = trim($module);
-        if (empty($module)) {
+        try {
+            $result = ValidModuleCheck::isOk(['module' => $module]);
+        } catch (Exception $e) {
             return $result;
         }
-
-        $modules = static::getModules();
-        if (empty($modules)) {
-            return $result;
-        }
-
-        $result = in_array($module, $modules);
 
         return $result;
     }
@@ -72,22 +70,10 @@ class Validate
     public static function isValidList($list)
     {
         $result = false;
-
-        $module = null;
-        if (strpos($list, '.') !== false) {
-            list($module, $list) = explode('.', $list, 2);
-        }
-
-        $listItems = [];
         try {
-            $mc = new ModuleConfig(ConfigType::LISTS(), $module, $list);
-            $listItems = $mc->parse()->items;
+            $result = ValidListCheck::isOk(['list' => $list]);
         } catch (Exception $e) {
             return $result;
-        }
-
-        if (!empty($listItems)) {
-            $result = true;
         }
 
         return $result;
@@ -105,13 +91,10 @@ class Validate
     public static function isValidModuleField($module, $field)
     {
         $result = false;
-
-        if (static::isRealModuleField($module, $field)) {
-            $result = true;
-        }
-
-        if (static::isVirtualModuleField($module, $field)) {
-            $result = true;
+        try {
+            $result = ValidModuleFieldCheck::isOk(['module' => $module, 'field' => $field]);
+        } catch (Exception $e) {
+            return $result;
         }
 
         return $result;
@@ -132,27 +115,12 @@ class Validate
      */
     public static function isRealModuleField($module, $field)
     {
-        $result = true;
-
-        $moduleFields = [];
+        $result = false;
         try {
-            $mc = new ModuleConfig(ConfigType::MIGRATION(), $module);
-            $moduleFields = json_decode(json_encode($mc->parse()), true);
+            $result = RealModuleFieldCheck::isOk(['module' => $module, 'field' => $field]);
         } catch (Exception $e) {
             return $result;
         }
-
-        if (empty($moduleFields)) {
-            return $result;
-        }
-
-        foreach ($moduleFields as $moduleField) {
-            if ($field == $moduleField['name']) {
-                return $result;
-            }
-        }
-
-        $result = false;
 
         return $result;
     }
@@ -171,20 +139,11 @@ class Validate
     public static function isVirtualModuleField($module, $field)
     {
         $result = false;
-
-        $config = [];
         try {
-            $mc = new ModuleConfig(ConfigType::MODULE(), $module);
-            $config = json_decode(json_encode($mc->parse()), true);
+            $result = VirtualModuleFieldCheck::isOk(['module' => $module, 'field' => $field]);
         } catch (Exception $e) {
             return $result;
         }
-
-        if (empty($config) || empty($config['virtualFields'])) {
-            return $result;
-        }
-
-        $result = in_array($field, array_keys($config['virtualFields']));
 
         return $result;
     }

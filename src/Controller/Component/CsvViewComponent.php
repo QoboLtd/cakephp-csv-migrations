@@ -36,36 +36,6 @@ class CsvViewComponent extends Component
     use PanelUtilTrait;
 
     /**
-     * Default configuration.
-     * @var array
-     */
-    protected $_defaultConfig = [];
-
-    /**
-     * Current request's table instance.
-     * @var \Cake\ORM\Table
-     */
-    protected $_tableInstance;
-
-    /**
-     * Current request's controller instance.
-     * @var \Cake\Controller\Controller
-     */
-    protected $_controllerInstance;
-
-    /**
-     * Actions to pass associated records to.
-     * @var array
-     */
-    protected $_assocActions = ['view'];
-
-    /**
-     * Supported association types.
-     * @var array
-     */
-    protected $_assocTypes = ['oneToMany', 'manyToOne', 'manyToMany'];
-
-    /**
      * Called before the controller action. You can use this method to configure and customize components
      * or perform logic that needs to happen before each controller action.
      *
@@ -75,17 +45,16 @@ class CsvViewComponent extends Component
      */
     public function beforeFilter(Event $event)
     {
-        $this->_controllerInstance = $event->subject();
-        $this->_setTableInstance($this->_controllerInstance->request->params);
+        $table = $event->subject()->{$event->subject()->name};
 
         // skip passing table fields if action is not supported by the plugin
         if (in_array($this->request->action, Configure::readOrFail('CsvMigrations.actions'))) {
             // if action requires panels, arrange the fields into the panels
             $panels = in_array($this->request->action, (array)Configure::read('CsvMigrations.panels.actions'));
-            $fields = Field::getCsvView($this->_tableInstance, $this->request->action, true, $panels);
+            $fields = Field::getCsvView($table, $this->request->action, true, $panels);
 
-            $this->_controllerInstance->set('fields', $fields);
-            $this->_controllerInstance->set('_serialize', ['fields']);
+            $event->subject()->set('fields', $fields);
+            $event->subject()->set('_serialize', ['fields']);
         }
     }
 
@@ -114,11 +83,9 @@ class CsvViewComponent extends Component
             return;
         }
 
-        if (!method_exists($this->_tableInstance, 'getConfig')) {
-            return;
-        }
+        $config = new ModuleConfig(ConfigType::MODULE(), $event->subject()->name);
+        $tableConfig = json_decode(json_encode($config->parse()), true);
 
-        $tableConfig = $this->_tableInstance->getConfig();
         $evalPanels = $this->getEvalPanels($tableConfig, $event->subject()->viewVars['entity']->toArray());
         if (empty($evalPanels['fail'])) {
             return;
@@ -178,23 +145,5 @@ class CsvViewComponent extends Component
         }
 
         $event->subject()->viewVars['fields'] = $fields;
-    }
-
-    /**
-     * Method that instantiates Table based on request parameters.
-     *
-     * @param  array  $params  Request parameters
-     * @return \Cake\ORM\Table
-     */
-    protected function _setTableInstance(array $params)
-    {
-        $table = $params['controller'];
-        if (!is_null($params['plugin'])) {
-            $table = $params['plugin'] . '.' . $table;
-        }
-
-        $this->_tableInstance = TableRegistry::get($table);
-
-        return $this->_tableInstance;
     }
 }

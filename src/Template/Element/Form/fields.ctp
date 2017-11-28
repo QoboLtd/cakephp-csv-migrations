@@ -55,8 +55,12 @@ foreach ($options['fields'] as $panelName => $panelFields) : ?>
             $value = $options['entity']->get($field['name']);
             if (!$value) {
                 // allowing query params to define field values.
-                $value = $this->request->query($field['name']);
-                $value = $this->request->data($field['name']);
+                if ($this->request->query($field['name'])) {
+                    $value = $this->request->query($field['name']);
+                }
+                if ($this->request->data($field['name'])) {
+                    $value = $this->request->data($field['name']);
+                }
             }
 
             $input = $factory->renderInput($tableName, $field['name'], $value, $handlerOptions);

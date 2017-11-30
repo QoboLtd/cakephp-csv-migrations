@@ -479,7 +479,7 @@ class Table extends BaseTable
 
     /**
      * Get association CSV fields
-     * @param \Cake\ORM\Associations $association ORM association
+     * @param \Cake\ORM\Association $association ORM association
      * @param object $action action passed
      * @return array
      */

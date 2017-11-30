@@ -67,7 +67,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      * * The record is assigned to somebody who can be used as a target of the
      *   notification.
      *
-     * @param \Cake\Event $event from the afterSave
+     * @param \Cake\Event\Event $event from the afterSave
      * @param \Cake\Datasource\EntityInterface $entity from the afterSave
      * @return array Associative array with tried emails as keys and results as values
      */
@@ -305,7 +305,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      *
      * @throws \InvalidArgumentException when no attendees found
      * @param \CsvMigrations\Table $table passed
-     * @param \Cake\ORM\EntityInterface $entity of the record
+     * @param \Cake\Datasource\EntityInterface $entity of the record
      * @param array $fields Attendees fields
      * @return array
      */
@@ -338,7 +338,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      * Get options for the new event
      *
      * @param \CsvMigrations\Table $table Table instance
-     * @param \Cake\ORM\EntityInterface $entity Entity instance
+     * @param \Cake\Datasource\EntityInterface $entity Entity instance
      * @param string $startField Entity field to use for event start time
      * @return array
      */

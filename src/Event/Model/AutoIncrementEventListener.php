@@ -37,9 +37,9 @@ class AutoIncrementEventListener implements EventListenerInterface
     /**
      * Auto-increment reference number.
      *
-     * @param  Cake\Event\Event $event Event object
-     * @param  Cake\Datasource\EntityInterface $entity Translation entity
-     * @param  ArrayObject $options entity options
+     * @param  \Cake\Event\Event $event Event object
+     * @param  \Cake\Datasource\EntityInterface $entity Translation entity
+     * @param  \ArrayObject $options entity options
      * @return void
      */
     public function autoIncrementFieldValue(Event $event, EntityInterface $entity, ArrayObject $options)

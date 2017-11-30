@@ -134,7 +134,7 @@ class FileUploadsUtils
      * Actual save() clone, but with optional entity, as we
      * don't have it saved yet, and saving files first.
      *
-     * @param Cake\ORM\Table $table Table instance
+     * @param \Cake\ORM\Table $table Table instance
      * @param string $field name of the association
      * @param array $files passed via file upload input field
      * @param array $options specifying if its AJAX call or not
@@ -262,8 +262,8 @@ class FileUploadsUtils
      * and stored FileStorage files, upon saving the entity,
      * the items should be linked with 'foreign_key' field.
      *
-     * @param Cake\ORM\Entity $entity of the record
-     * @param Cake\ORM\Table $tableInstance of the entity
+     * @param \Cake\ORM\Entity $entity of the record
+     * @param \Cake\ORM\Table $tableInstance of the entity
      * @param array $data of this->request->data containing ids.
      * @param array $options Options
      * @return mixed $result of saved/updated file entities.

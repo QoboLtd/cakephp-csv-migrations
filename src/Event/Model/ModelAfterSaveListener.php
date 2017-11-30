@@ -67,8 +67,8 @@ class ModelAfterSaveListener implements EventListenerInterface
      * * The record is assigned to somebody who can be used as a target of the
      *   notification.
      *
-     * @param Cake\Event $event from the afterSave
-     * @param Cake\Datasource\EntityInterface $entity from the afterSave
+     * @param \Cake\Event $event from the afterSave
+     * @param \Cake\Datasource\EntityInterface $entity from the afterSave
      * @return array Associative array with tried emails as keys and results as values
      */
     public function sendCalendarReminder(Event $event, EntityInterface $entity)

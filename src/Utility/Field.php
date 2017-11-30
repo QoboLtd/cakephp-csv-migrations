@@ -82,7 +82,7 @@ class Field
         }
 
         if ((bool)$includeModel) {
-            $result = static::setFieldPluginAndModel($tableName, $result, $panels);
+            $result = static::setFieldPluginAndModel($tableName, $result);
         }
 
         return $result;

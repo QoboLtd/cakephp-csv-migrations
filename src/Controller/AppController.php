@@ -291,7 +291,7 @@ class AppController extends BaseController
 
         if (!empty($assocEntities)) {
             $model->{$assocName}->link($entity, $assocEntities);
-            $this->Flash->success(__('The record has been unlinked.'));
+            $this->Flash->success(__('The record has been linked.'));
         }
 
         return $this->redirect($this->referer());

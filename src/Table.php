@@ -121,9 +121,9 @@ class Table extends BaseTable
     /**
      * afterSave hook
      *
-     * @param Cake\Event $event from the parent afterSave
-     * @param EntityInterface $entity from the parent afterSave
-     * @param ArrayObject $options from the parent afterSave
+     * @param \Cake\Event\Event $event from the parent afterSave
+     * @param \Cake\Datasource\EntityInterface $entity from the parent afterSave
+     * @param \ArrayObject $options from the parent afterSave
      * @return void
      */
     public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options)
@@ -144,8 +144,8 @@ class Table extends BaseTable
      *
      * Uses [parent] section of tables config.ini to define
      * where to redirect after the entity was added/edited.
-     * @param Cake\ORM\Table $table of the entity table
-     * @param Cake\ORM\Entity $entity of the actual table.
+     * @param \Cake\ORM\Table $table of the entity table
+     * @param \Cake\ORM\Entity $entity of the actual table.
      *
      * @return array $result containing Cake-standard array for redirect.
      */
@@ -479,7 +479,7 @@ class Table extends BaseTable
 
     /**
      * Get association CSV fields
-     * @param Cake\ORM\Associations $association ORM association
+     * @param \Cake\ORM\Association $association ORM association
      * @param object $action action passed
      * @return array
      */

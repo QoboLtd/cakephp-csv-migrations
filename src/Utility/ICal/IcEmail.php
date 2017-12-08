@@ -47,7 +47,7 @@ class IcEmail
      * Constructor
      *
      * @param \CsvMigrations\Table $table Table instance
-     * @param \Cake\ORM\EntityInterface $entity Entity instance
+     * @param \Cake\Datasource\EntityInterface $entity Entity instance
      * @return void
      */
     public function __construct(Table $table, EntityInterface $entity)

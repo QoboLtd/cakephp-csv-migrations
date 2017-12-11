@@ -194,10 +194,6 @@ class Field
         list($plugin, $model) = pluginSplit($tableName);
 
         $callback = function (&$value, $key) use ($plugin, $model, &$callback) {
-            if (is_array($value)) {
-                array_walk_recursive($value, $foobar);
-            }
-
             $value = ['plugin' => $plugin, 'model' => $model, 'name' => $value];
 
             return $value;

@@ -13,6 +13,7 @@ namespace CsvMigrations\FieldHandlers;
 
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\Provider\Config\RelatedConfig;
 
 abstract class BaseRelatedFieldHandler extends BaseFieldHandler
 {
@@ -42,28 +43,14 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
         </div>';
 
     /**
-     * Search operators
+     * Set field handler config
      *
-     * @var array
+     * @return void
      */
-    public $searchOperators = [
-        'is' => [
-            'label' => 'is',
-            'operator' => 'IN',
-            'emptyCriteria' => [
-                'aggregator' => 'OR',
-                'values' => ['IS NULL', '= ""']
-            ]
-        ],
-        'is_not' => [
-            'label' => 'is not',
-            'operator' => 'NOT IN',
-            'emptyCriteria' => [
-                'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""']
-            ]
-        ],
-    ];
+    protected function setConfig()
+    {
+        $this->config = new RelatedConfig();
+    }
 
     /**
      * Render field input

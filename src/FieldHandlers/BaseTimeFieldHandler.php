@@ -14,6 +14,7 @@ namespace CsvMigrations\FieldHandlers;
 use Cake\I18n\Date;
 use Cake\I18n\Time;
 use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
+use CsvMigrations\FieldHandlers\Provider\Config\TimeConfig;
 
 /**
  * BaseTimeFieldHandler
@@ -29,44 +30,14 @@ abstract class BaseTimeFieldHandler extends BaseStringFieldHandler
     const RENDERER = 'dateTime';
 
     /**
-     * Search operators
+     * Set field handler config
      *
-     * @var array
+     * @return void
      */
-    public $searchOperators = [
-        'is' => [
-            'label' => 'is',
-            'operator' => 'IN',
-            'emptyCriteria' => [
-                'aggregator' => 'OR',
-                'values' => ['IS NULL', '= ""', '= "0000-00-00 00:00:00"']
-            ]
-        ],
-        'is_not' => [
-            'label' => 'is not',
-            'operator' => 'NOT IN',
-            'emptyCriteria' => [
-                'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""', '!= "0000-00-00 00:00:00"']
-            ]
-        ],
-        'greater' => [
-            'label' => 'from',
-            'operator' => '>',
-            'emptyCriteria' => [
-                'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""', '!= "0000-00-00 00:00:00"']
-            ]
-        ],
-        'less' => [
-            'label' => 'to',
-            'operator' => '<',
-            'emptyCriteria' => [
-                'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""', '!= "0000-00-00 00:00:00"']
-            ]
-        ],
-    ];
+    protected function setConfig()
+    {
+        $this->config = new TimeConfig();
+    }
 
     /**
      * Render field input

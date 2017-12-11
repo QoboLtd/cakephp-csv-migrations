@@ -11,6 +11,8 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
+use CsvMigrations\FieldHandlers\Provider\Config\NumberConfig;
+
 abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
 {
     /**
@@ -39,44 +41,14 @@ abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
     const MAX_VALUE = '99999999999';
 
     /**
-     * Search operators
+     * Set field handler config
      *
-     * @var array
+     * @return void
      */
-    public $searchOperators = [
-        'is' => [
-            'label' => 'is',
-            'operator' => 'IN',
-            'emptyCriteria' => [
-                'aggregator' => 'OR',
-                'values' => ['IS NULL', '= 0']
-            ]
-        ],
-        'is_not' => [
-            'label' => 'is not',
-            'operator' => 'NOT IN',
-            'emptyCriteria' => [
-                'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= 0']
-            ]
-        ],
-        'greater' => [
-            'label' => 'greater',
-            'operator' => '>',
-            'emptyCriteria' => [
-                'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '> 0']
-            ]
-        ],
-        'less' => [
-            'label' => 'less',
-            'operator' => '<',
-            'emptyCriteria' => [
-                'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '< 0']
-            ]
-        ],
-    ];
+    protected function setConfig()
+    {
+        $this->config = new NumberConfig();
+    }
 
     /**
      * Render field input

@@ -12,6 +12,7 @@
 namespace CsvMigrations\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
+use CsvMigrations\FieldHandlers\Provider\Config\ListConfig;
 
 /**
  * BaseListFieldHandler
@@ -27,36 +28,14 @@ abstract class BaseListFieldHandler extends BaseFieldHandler
     const EMPTY_OPTION_LABEL = ' -- Please choose -- ';
 
     /**
-     * Search operators
+     * Set field handler config
      *
-     * @var array
+     * @return void
      */
-    public $searchOperators = [
-        'is' => [
-            'label' => 'is',
-            'operator' => 'IN',
-            'emptyCriteria' => [
-                'aggregator' => 'OR',
-                'values' => ['IS NULL', '= ""']
-            ]
-        ],
-        'is_not' => [
-            'label' => 'is not',
-            'operator' => 'NOT IN',
-            'emptyCriteria' => [
-                'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""']
-            ]
-        ],
-        'in' => [
-            'label' => 'in',
-            'operator' => 'IN',
-            'emptyCriteria' => [
-                'aggregator' => 'OR',
-                'values' => ['IS NULL', '= ""']
-            ]
-        ],
-    ];
+    protected function setConfig()
+    {
+        $this->config = new ListConfig();
+    }
 
     /**
      * Convert CsvField to one or more DbField instances

@@ -21,6 +21,7 @@ use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
+use CsvMigrations\FieldHandlers\Provider\Config\StringConfig;
 use CsvMigrations\View\AppView;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
@@ -89,50 +90,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public $defaultOptions = [];
 
     /**
-     * Search operators
-     *
-     * @var array
-     */
-    public $searchOperators = [
-        'contains' => [
-            'label' => 'contains',
-            'operator' => 'LIKE',
-            'pattern' => '%{{value}}%',
-            'emptyCriteria' => [
-                'aggregator' => 'OR',
-                'values' => ['IS NULL', '= ""']
-            ]
-        ],
-        'not_contains' => [
-            'label' => 'does not contain',
-            'operator' => 'NOT LIKE',
-            'pattern' => '%{{value}}%',
-            'emptyCriteria' => [
-                'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""']
-            ]
-        ],
-        'starts_with' => [
-            'label' => 'starts with',
-            'operator' => 'LIKE',
-            'pattern' => '{{value}}%',
-            'emptyCriteria' => [
-                'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""']
-            ]
-        ],
-        'ends_with' => [
-            'label' => 'ends with',
-            'operator' => 'LIKE',
-            'pattern' => '%{{value}}',
-            'emptyCriteria' => [
-                'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""']
-            ]
-        ],
-    ];
-
-    /**
      * Custom form input templates.
      *
      * @var array Associative array of templates
@@ -147,6 +104,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     ];
 
     /**
+     * @var $config \CsvMigrations\FieldHandlers\Provider\Config\ConfigInterface Configuration
+     */
+    protected $config;
+
+    /**
      * Constructor
      *
      * @param mixed  $table    Name or instance of the Table
@@ -155,10 +117,21 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function __construct($table, $field, $cakeView = null)
     {
+        $this->setConfig();
         $this->setTable($table);
         $this->setField($field);
         $this->setView($cakeView);
         $this->setDefaultOptions();
+    }
+
+    /**
+     * Set field handler config
+     *
+     * @return void
+     */
+    protected function setConfig()
+    {
+        $this->config = new StringConfig();
     }
 
     /**
@@ -486,10 +459,12 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             'label' => false
         ]);
 
+        $config = $this->config->getConfig();
+        $searchOperators = new $config['searchOperators']();
         $result[$this->field] = [
             'type' => $options['fieldDefinitions']->getType(),
             'label' => $this->renderName(),
-            'operators' => $this->searchOperators,
+            'operators' => $searchOperators->provide(),
             'input' => [
                 'content' => $content,
             ],

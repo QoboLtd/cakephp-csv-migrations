@@ -235,7 +235,7 @@ class Table extends BaseTable
             return [];
         }
 
-        if ('datatables' !== $data['format']) {
+        if ('pretty' !== $data['format']) {
             $result = array_merge(['data' => $entities['records']], ['pagination' => $entities['pagination']]);
 
             return $result;
@@ -248,11 +248,11 @@ class Table extends BaseTable
         $result = [];
         foreach ($entities['records'] as $k => $entity) {
             foreach ($entities['fields'] as $field) {
-                $result[$k][] = $factory->renderValue($table, $field, $entity->get($field), ['entity' => $entity]);
+                $result[$k][$field] = $factory->renderValue($table, $field, $entity->get($field), ['entity' => $entity]);
             }
 
             if ((bool)$data['menus']) {
-                $result[$k][] = $cakeView->element('CsvMigrations.Menu/related_actions', [
+                $result[$k]['_Menus'] = $cakeView->element('CsvMigrations.Menu/related_actions', [
                     'association' => $association,
                     'entity' => $entity,
                     'options' => $data,

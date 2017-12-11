@@ -87,21 +87,17 @@ class CsvViewComponent extends Component
         $tableConfig = json_decode(json_encode($config->parse()), true);
 
         $evalPanels = $this->getEvalPanels($tableConfig, $event->subject()->viewVars['entity']->toArray());
-        if (empty($evalPanels['fail'])) {
-            return;
+        if (!empty($evalPanels['fail'])) {
+            // filter out fields of hidden panels
+            $event->subject()->viewVars['fields'] = array_diff_key(
+                $event->subject()->viewVars['fields'],
+                array_flip($evalPanels['fail'])
+            );
         }
 
-        // filter out fields of hidden panels
-        $event->subject()->viewVars['fields'] = array_diff_key(
-            $event->subject()->viewVars['fields'],
-            array_flip($evalPanels['fail'])
-        );
-
-        if ((string)Configure::read('CsvMigrations.batch.action') !== $this->request->action) {
-            return;
+        if ((string)Configure::read('CsvMigrations.batch.action') === $this->request->action) {
+            $this->filterBatchFields($event);
         }
-
-        $this->filterBatchFields($event);
     }
 
     /**

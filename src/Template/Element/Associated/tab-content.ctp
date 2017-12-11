@@ -12,6 +12,7 @@
 
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\CsvField;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
@@ -24,7 +25,7 @@ $options = [
     'associationName' => $association->getName(),
     'originTable' => $table->getTable(),
     'id' => $this->request->param('pass.0'),
-    'format' => 'datatables',
+    'format' => 'pretty',
     'menus' => true
 ];
 
@@ -36,7 +37,43 @@ $dtOptions = [
     'ajax' => [
         'token' => Configure::read('CsvMigrations.api.token'),
         'url' => $url,
-        'extras' => $options
+        'extras' => $options,
+        'columns' => call_user_func(function () use ($fields) {
+            $fields[] = '_Menus';
+
+            return $fields;
+        }),
+        'virtualColumns' => call_user_func(function () use ($module) {
+            $mc = new ModuleConfig(ConfigType::MODULE(), $module);
+            $config = $mc->parse();
+
+            return (array)$config->virtualFields;
+        }),
+        'combinedColumns' => call_user_func(function () use ($fields, $factory, $module) {
+            $mc = new ModuleConfig(ConfigType::MIGRATION(), $module);
+            $config = $mc->parse();
+
+            $result = [];
+            foreach ($fields as $field) {
+                if (!property_exists($config, $field)) {
+                    continue;
+                }
+
+                $csvField = new CsvField((array)$config->{$field});
+                // convert CSV field to DB field(s)
+                $dbFields = $factory->fieldToDb($csvField, $module, $field);
+                // non-combined field
+                if (isset($dbFields[$field])) {
+                    continue;
+                }
+
+                foreach ($factory->fieldToDb($csvField, $module, $field) as $dbField) {
+                    $result[$field][] = $dbField->getName();
+                }
+            }
+
+            return $result;
+        }),
     ],
 ];
 

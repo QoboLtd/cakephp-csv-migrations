@@ -66,6 +66,7 @@ $dtOptions = [
             foreach ($options['fields'] as $field) {
                 $result[] = $field[0]['name'];
             }
+            $result[] = '_Menus';
 
             return $result;
         }),

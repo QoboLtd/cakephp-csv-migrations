@@ -77,8 +77,8 @@ class PanelTest extends TestCase
 
         $data = [];
         $actual = $panel->getFieldValues($data);
-        $expected = [];
-        $this->assertEquals($actual, $expected, 'When data is empty the the field values should be empty.');
+        $expected = ['type' => null, 'name' => null];
+        $this->assertEquals($actual, $expected, 'When data is empty the the field values should be null.');
     }
 
     /**

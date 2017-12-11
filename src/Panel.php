@@ -153,6 +153,7 @@ class Panel
     {
         $result = [];
         foreach ($this->getFields() as $f) {
+            $result[$f] = null;
             if (array_key_exists($f, $data)) {
                 $result[$f] = $data[$f];
             }

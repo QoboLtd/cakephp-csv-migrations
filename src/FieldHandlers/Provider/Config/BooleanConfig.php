@@ -25,5 +25,6 @@ class BooleanConfig extends FixedConfig
     protected $config = [
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\BooleanSearchOperators',
         'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\BooleanYesNoRenderer',
+        'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Name\\DefaultRenderer',
     ];
 }

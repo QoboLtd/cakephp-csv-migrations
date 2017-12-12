@@ -40,6 +40,12 @@ class Config implements ConfigInterface
             'type' => 'string',
             'implements' => 'CsvMigrations\\FieldHandlers\\Renderer\\Value\\RendererInterface',
         ],
+        'nameRenderAs' => [
+            'required' => true,
+            'type' => 'string',
+            'implements' => 'CsvMigrations\\FieldHandlers\\Renderer\\Name\\RendererInterface',
+        ],
+
     ];
 
     /**

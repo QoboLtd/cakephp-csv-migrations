@@ -216,24 +216,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected function setDefaultLabel()
     {
-        if (!empty($this->defaultOptions['label'])) {
-            return;
-        }
-
-        $text = $this->field;
-        // Borrowed from FormHelper::label()
-        if (substr($text, -5) === '._ids') {
-            $text = substr($text, 0, -5);
-        }
-        if (strpos($text, '.') !== false) {
-            $fieldElements = explode('.', $text);
-            $text = array_pop($fieldElements);
-        }
-        if (substr($text, -3) === '_id') {
-            $text = substr($text, 0, -3);
-        }
-        $text = __(Inflector::humanize(Inflector::underscore($text)));
-        $this->defaultOptions['label'] = $text;
+        $this->defaultOptions['label'] = $this->renderName();
     }
 
     /**
@@ -484,7 +467,13 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function renderName()
     {
-        return $this->defaultOptions['label'];
+        $label = !empty($this->defaultOptions['label']) ? $this->defaultOptions['label'] : '';
+
+        $config = $this->config->getConfig();
+        $renderer = new $config['nameRenderAs']();
+        $result = $renderer->render($label, ['default' => $this->field]);
+
+        return $result;
     }
 
     /**

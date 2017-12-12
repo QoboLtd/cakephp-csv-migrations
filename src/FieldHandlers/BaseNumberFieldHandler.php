@@ -11,7 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
+abstract class BaseNumberFieldHandler extends BaseFieldHandler
 {
     /**
      * HTML form field type

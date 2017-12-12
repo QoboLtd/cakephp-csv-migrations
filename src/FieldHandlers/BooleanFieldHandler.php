@@ -11,7 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-class BooleanFieldHandler extends BaseSimpleFieldHandler
+class BooleanFieldHandler extends BaseFieldHandler
 {
     /**
      * Database field type

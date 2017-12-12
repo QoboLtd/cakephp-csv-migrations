@@ -13,7 +13,7 @@ namespace CsvMigrations\FieldHandlers;
 
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class TextFieldHandler extends BaseSimpleFieldHandler
+class TextFieldHandler extends BaseFieldHandler
 {
     /**
      * Database field type

@@ -20,7 +20,7 @@ use Cake\I18n\Time;
  * This class provides the fallback functionality that
  * is common to date and time field handlers.
  */
-abstract class BaseTimeFieldHandler extends BaseSimpleFieldHandler
+abstract class BaseTimeFieldHandler extends BaseFieldHandler
 {
     /**
      * Render field input

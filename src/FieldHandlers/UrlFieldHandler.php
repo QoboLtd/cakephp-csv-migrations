@@ -11,7 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-class UrlFieldHandler extends BaseSimpleFieldHandler
+class UrlFieldHandler extends BaseFieldHandler
 {
     /**
      * HTML form field type

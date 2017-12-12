@@ -511,7 +511,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $renderer = $options['renderAs'];
         }
 
-        $rendererClass = __NAMESPACE__ . '\\Renderer\\' . ucfirst($renderer) . 'Renderer';
+        $rendererClass = __NAMESPACE__ . '\\Renderer\\Value\\' . ucfirst($renderer) . 'Renderer';
         if (!class_exists($rendererClass)) {
             throw new InvalidArgumentException("Renderer [$renderer] is not supporter");
         }

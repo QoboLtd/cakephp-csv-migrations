@@ -21,7 +21,7 @@ class IntegerFieldHandler extends BaseNumberFieldHandler
     const DB_FIELD_TYPE = 'integer';
 
     /**
-     * Renderer to use
+     * @var string $defaultConfigClass Config class to use as default
      */
-    const RENDERER = 'integer';
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\IntegerConfig';
 }

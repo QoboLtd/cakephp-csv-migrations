@@ -24,11 +24,6 @@ abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
     const INPUT_FIELD_STEP = 1;
 
     /**
-     * Renderer to use
-     */
-    const RENDERER = 'number';
-
-    /**
      * Max value
      *
      * Temporary setting for maximum value, until

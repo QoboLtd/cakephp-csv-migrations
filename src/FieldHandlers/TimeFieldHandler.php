@@ -24,14 +24,14 @@ class TimeFieldHandler extends BaseTimeFieldHandler
     const INPUT_FIELD_TYPE = 'timepicker';
 
     /**
-     * Renderer to use
-     */
-    const RENDERER = 'time';
-
-    /**
      * Date/time format
      */
     const FORMAT = 'HH:mm';
+
+    /**
+     * @var string $defaultConfigClass Config class to use as default
+     */
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\TimeConfig';
 
     /**
      * Get options for field search

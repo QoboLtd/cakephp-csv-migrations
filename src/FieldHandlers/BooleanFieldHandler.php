@@ -26,11 +26,6 @@ class BooleanFieldHandler extends BaseSimpleFieldHandler
     const INPUT_FIELD_TYPE = 'checkbox';
 
     /**
-     * Renderer to use
-     */
-    const RENDERER = 'booleanYesNo';
-
-    /**
      * @var string $defaultConfigClass Config class to use as default
      */
     protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\BooleanConfig';

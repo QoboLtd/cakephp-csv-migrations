@@ -14,12 +14,12 @@ namespace CsvMigrations\FieldHandlers\Provider\Config;
 use InvalidArgumentException;
 
 /**
- * ListConfig
+ * DateConfig
  *
  * This class provides the predefined configuration
- * for list field handlers.
+ * for date field handlers.
  */
-class ListConfig extends FixedConfig
+class DateConfig extends FixedConfig
 {
     /**
      * Constructor
@@ -27,8 +27,8 @@ class ListConfig extends FixedConfig
     public function __construct()
     {
         $this->config = [
-            'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\ListSearchOperators',
-            'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\ListRenderer',
+            'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\TimeSearchOperators',
+            'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\DateRenderer',
         ];
     }
 }

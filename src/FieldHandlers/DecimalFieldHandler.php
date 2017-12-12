@@ -27,11 +27,6 @@ class DecimalFieldHandler extends BaseNumberFieldHandler
     const INPUT_FIELD_STEP = 'any';
 
     /**
-     * Renderer to use
-     */
-    const RENDERER = 'decimal';
-
-    /**
      * Max value
      *
      * Temporary setting for maximum value, until
@@ -40,6 +35,11 @@ class DecimalFieldHandler extends BaseNumberFieldHandler
      * @todo Replace with configuration from fields.ini
      */
     const MAX_VALUE = '99999999.99';
+
+    /**
+     * @var string $defaultConfigClass Config class to use as default
+     */
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\DecimalConfig';
 
     /**
      * Convert CsvField to one or more DbField instances

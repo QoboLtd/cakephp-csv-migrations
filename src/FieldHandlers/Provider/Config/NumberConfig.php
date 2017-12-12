@@ -28,6 +28,7 @@ class NumberConfig extends FixedConfig
     {
         $this->config = [
             'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\NumberSearchOperators',
+            'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\NumberRenderer',
         ];
     }
 }

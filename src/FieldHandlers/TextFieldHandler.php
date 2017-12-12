@@ -27,9 +27,9 @@ class TextFieldHandler extends BaseStringFieldHandler
     const INPUT_FIELD_TYPE = 'textarea';
 
     /**
-     * Renderer to use
+     * @var string $defaultConfigClass Config class to use as default
      */
-    const RENDERER = 'text';
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\TextConfig';
 
     /**
      * Convert CsvField to one or more DbField instances

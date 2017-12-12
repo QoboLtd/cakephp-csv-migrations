@@ -17,7 +17,7 @@ use InvalidArgumentException;
  * TimeConfig
  *
  * This class provides the predefined configuration
- * for date and time field handlers.
+ * for time field handlers.
  */
 class TimeConfig extends FixedConfig
 {
@@ -28,6 +28,7 @@ class TimeConfig extends FixedConfig
     {
         $this->config = [
             'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\TimeSearchOperators',
+            'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\TimeRenderer',
         ];
     }
 }

@@ -28,6 +28,7 @@ class RelatedConfig extends FixedConfig
     {
         $this->config = [
             'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\RelatedSearchOperators',
+            'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\PlainRenderer',
         ];
     }
 }

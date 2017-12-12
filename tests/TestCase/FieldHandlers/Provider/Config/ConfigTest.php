@@ -24,7 +24,12 @@ class ConfigTest extends PHPUnit_Framework_TestCase
     public function validConfigProvider()
     {
         return [
-            [['searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators']],
+            [
+                [
+                    'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
+                    'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\StringRenderer',
+                ],
+            ],
         ];
     }
 

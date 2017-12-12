@@ -29,11 +29,6 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
 abstract class BaseCsvListFieldHandler extends BaseListFieldHandler
 {
     /**
-     * Renderer to use
-     */
-    const RENDERER = 'list';
-
-    /**
      * Render field value
      *
      * This method prepares the output of the value for the given

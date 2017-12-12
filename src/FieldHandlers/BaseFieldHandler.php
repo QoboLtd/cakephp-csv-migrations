@@ -510,22 +510,18 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $result = stream_get_contents($result);
         }
 
-        $renderer = static::RENDERER;
+        $config = $this->config->getConfig();
+        $rendererClass = $config['valueRenderAs'];
         if (!empty($options['renderAs'])) {
-            $renderer = $options['renderAs'];
+            $rendererClass = __NAMESPACE__ . '\\Renderer\\Value\\' . ucfirst($options['renderAs']) . 'Renderer';
         }
 
-        $rendererClass = __NAMESPACE__ . '\\Renderer\\Value\\' . ucfirst($renderer) . 'Renderer';
         if (!class_exists($rendererClass)) {
-            throw new InvalidArgumentException("Renderer [$renderer] is not supporter");
+            throw new InvalidArgumentException("Renderer class [$rendererClass] does not exist");
         }
 
         $rendererClass = new $rendererClass($this->cakeView);
         $result = (string)$rendererClass->renderValue($result, $options);
-
-        if ($renderer === static::RENDER_PLAIN_VALUE) {
-            return $result;
-        }
 
         return $result;
     }

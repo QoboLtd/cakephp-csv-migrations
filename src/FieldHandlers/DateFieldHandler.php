@@ -24,11 +24,6 @@ class DateFieldHandler extends BaseTimeFieldHandler
     const INPUT_FIELD_TYPE = 'datepicker';
 
     /**
-     * Renderer to use
-     */
-    const RENDERER = 'date';
-
-    /**
      * Date/time format
      */
     const FORMAT = 'yyyy-MM-dd';
@@ -37,6 +32,11 @@ class DateFieldHandler extends BaseTimeFieldHandler
      * Javascript date format
      */
     const JS_DATE_FORMAT = 'yyyy-mm-dd';
+
+    /**
+     * @var string $defaultConfigClass Config class to use as default
+     */
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\DateConfig';
 
     /**
      * Get options for field search

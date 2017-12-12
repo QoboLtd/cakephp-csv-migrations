@@ -14,12 +14,12 @@ namespace CsvMigrations\FieldHandlers\Provider\Config;
 use InvalidArgumentException;
 
 /**
- * ListConfig
+ * SublistConfig
  *
  * This class provides the predefined configuration
- * for list field handlers.
+ * for Sublist field handlers.
  */
-class ListConfig extends FixedConfig
+class SublistConfig extends FixedConfig
 {
     /**
      * Constructor

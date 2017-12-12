@@ -24,16 +24,6 @@ use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
 abstract class BaseTimeFieldHandler extends BaseStringFieldHandler
 {
     /**
-     * Renderer to use
-     */
-    const RENDERER = 'dateTime';
-
-    /**
-     * @var string $defaultConfigClass Config class to use as default
-     */
-    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\TimeConfig';
-
-    /**
      * Render field input
      *
      * This method prepares the form input for the given field,

@@ -28,6 +28,7 @@ class StringConfig extends FixedConfig
     {
         $this->config = [
             'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
+            'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\StringRenderer',
         ];
     }
 }

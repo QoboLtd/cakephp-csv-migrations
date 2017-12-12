@@ -21,6 +21,11 @@ class ListFieldHandler extends BaseCsvListFieldHandler
     const INPUT_FIELD_TYPE = 'select';
 
     /**
+     * @var string $defaultConfigClass Config class to use as default
+     */
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\ListConfig';
+
+    /**
      * Render field input
      *
      * This method prepares the form input for the given field,

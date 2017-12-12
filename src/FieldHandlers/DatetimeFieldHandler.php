@@ -31,6 +31,11 @@ class DatetimeFieldHandler extends BaseTimeFieldHandler
     const FORMAT = 'yyyy-MM-dd HH:mm';
 
     /**
+     * @var string $defaultConfigClass Config class to use as default
+     */
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\DatetimeConfig';
+
+    /**
      * Get options for field search
      *
      * This method prepares an array of search options, which includes

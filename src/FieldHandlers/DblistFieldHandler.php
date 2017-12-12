@@ -23,9 +23,9 @@ class DblistFieldHandler extends BaseListFieldHandler
     const INPUT_FIELD_TYPE = 'select';
 
     /**
-     * Renderer to use
+     * @var string $defaultConfigClass Config class to use as default
      */
-    const RENDERER = 'dblist';
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\DblistConfig';
 
     /**
      * Render field value

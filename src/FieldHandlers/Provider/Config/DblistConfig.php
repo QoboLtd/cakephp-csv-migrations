@@ -14,12 +14,12 @@ namespace CsvMigrations\FieldHandlers\Provider\Config;
 use InvalidArgumentException;
 
 /**
- * ListConfig
+ * DblistConfig
  *
  * This class provides the predefined configuration
- * for list field handlers.
+ * for Dblist field handlers.
  */
-class ListConfig extends FixedConfig
+class DblistConfig extends FixedConfig
 {
     /**
      * Constructor
@@ -28,7 +28,7 @@ class ListConfig extends FixedConfig
     {
         $this->config = [
             'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\ListSearchOperators',
-            'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\ListRenderer',
+            'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\DblistRenderer',
         ];
     }
 }

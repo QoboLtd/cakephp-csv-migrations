@@ -21,7 +21,7 @@ class EmailFieldHandler extends BaseStringFieldHandler
     const INPUT_FIELD_TYPE = 'email';
 
     /**
-     * Renderer to use
+     * @var string $defaultConfigClass Config class to use as default
      */
-    const RENDERER = 'email';
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\EmailConfig';
 }

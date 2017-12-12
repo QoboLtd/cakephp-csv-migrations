@@ -21,7 +21,7 @@ class UrlFieldHandler extends BaseStringFieldHandler
     const INPUT_FIELD_TYPE = 'url';
 
     /**
-     * Renderer to use
+     * @var string $defaultConfigClass Config class to use as default
      */
-    const RENDERER = 'url';
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\UrlConfig';
 }

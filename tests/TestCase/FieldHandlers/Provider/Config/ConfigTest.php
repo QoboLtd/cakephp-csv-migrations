@@ -18,6 +18,34 @@ class ConfigTest extends PHPUnit_Framework_TestCase
             [['searchOperators' => '\\Foo\\Bar\\No\\Exist']],
             // class missing interface searchOperators
             [['searchOperators' => '\\stdClass' ]],
+            // all but FieldValue type is OK
+            [
+                [
+                    'fieldValue' => true,
+                    'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
+                    'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\StringRenderer',
+                    'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Name\\DefaultRenderer',
+                ],
+            ],
+            // all but FieldValue interface is OK
+            [
+                [
+                    'fieldValue' => '\\stdClass',
+                    'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
+                    'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\StringRenderer',
+                    'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Name\\DefaultRenderer',
+                ],
+            ],
+            // all but FieldValue class existing is OK
+            [
+                [
+                    'fieldValue' => '\\Foo\\Bar\\No\\Exist',
+                    'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
+                    'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\StringRenderer',
+                    'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Name\\DefaultRenderer',
+                ],
+            ],
+
         ];
     }
 

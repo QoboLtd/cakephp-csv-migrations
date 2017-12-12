@@ -26,33 +26,56 @@ class MixedFieldValue implements FieldValueInterface
     /**
      * Get field value
      *
-     * @param mixed $data Data to look for field value in (Request, Entity, array, etc)
+     * @param mixed $data Data to look for field value in (Request, Entity, etc)
      * @param string $field Field name
      * @return mixed Field value
      */
     public function provide($data, $field)
     {
-        // Use data as is
-        $result = $data;
-
-        // Use $data->$field if available as Entity
         if ($data instanceof Entity) {
-            $result = null;
-            if (isset($data->$field)) {
-                $result = $data->$field;
-            }
-
-            return $result;
+            return $this->provideFromEntity($data, $field);
         }
 
-        // Use $data->data[$field] if available as Request
         if ($data instanceof Request) {
-            $result = null;
-            if (is_array($data->data) && array_key_exists($field, $data->data)) {
-                $result = $data->data[$field];
-            }
+            return $this->provideFromRequest($data, $field);
+        }
 
-            return $result;
+        return $data;
+    }
+
+    /**
+     * Get field value from Entity
+     *
+     * Use $entity->$field if available.
+     *
+     * @param \Cake\ORM\Entity $entity Entity to look for field value in
+     * @param string $field Field name
+     * @return mixed Field value
+     */
+    protected function provideFromEntity(Entity $entity, $field)
+    {
+        $result = null;
+        if (isset($entity->$field)) {
+            $result = $entity->$field;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get field value from Request
+     *
+     * Use $request->data[$field] if available.
+     *
+     * @param \Cake\Network\Request $request Request to look for field value in
+     * @param string $field Field name
+     * @return mixed Field value
+     */
+    protected function provideFromRequest(Request $request, $field)
+    {
+        $result = null;
+        if (is_array($request->data) && array_key_exists($field, $request->data)) {
+            $result = $request->data[$field];
         }
 
         return $result;

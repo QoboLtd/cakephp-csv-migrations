@@ -13,7 +13,7 @@ namespace CsvMigrations\FieldHandlers;
 
 use Cake\I18n\Date;
 use Cake\I18n\Time;
-use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
+use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 
 /**
  * BaseTimeFieldHandler
@@ -21,7 +21,7 @@ use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
  * This class provides the fallback functionality that
  * is common to date and time field handlers.
  */
-abstract class BaseTimeFieldHandler extends BaseStringFieldHandler
+abstract class BaseTimeFieldHandler extends BaseSimpleFieldHandler
 {
     /**
      * Render field input

@@ -11,10 +11,10 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
+use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class TextFieldHandler extends BaseStringFieldHandler
+class TextFieldHandler extends BaseSimpleFieldHandler
 {
     /**
      * Database field type

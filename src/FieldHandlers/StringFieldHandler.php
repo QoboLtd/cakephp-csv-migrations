@@ -11,8 +11,8 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
+use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 
-class StringFieldHandler extends BaseStringFieldHandler
+class StringFieldHandler extends BaseSimpleFieldHandler
 {
 }

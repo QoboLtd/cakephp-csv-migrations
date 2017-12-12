@@ -11,9 +11,9 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
+use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 
-class UuidFieldHandler extends BaseStringFieldHandler
+class UuidFieldHandler extends BaseSimpleFieldHandler
 {
     /**
      * Field type

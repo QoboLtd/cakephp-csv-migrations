@@ -11,9 +11,9 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
+use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 
-class PhoneFieldHandler extends BaseStringFieldHandler
+class PhoneFieldHandler extends BaseSimpleFieldHandler
 {
     /**
      * HTML form field type

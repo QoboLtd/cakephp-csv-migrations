@@ -13,7 +13,6 @@ namespace CsvMigrations\FieldHandlers;
 
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
-use CsvMigrations\FieldHandlers\Provider\Config\RelatedConfig;
 
 abstract class BaseRelatedFieldHandler extends BaseFieldHandler
 {
@@ -43,14 +42,9 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
         </div>';
 
     /**
-     * Set field handler config
-     *
-     * @return void
+     * @var string $defaultConfigClass Config class to use as default
      */
-    protected function setConfig()
-    {
-        $this->config = new RelatedConfig();
-    }
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\RelatedConfig';
 
     /**
      * Render field input

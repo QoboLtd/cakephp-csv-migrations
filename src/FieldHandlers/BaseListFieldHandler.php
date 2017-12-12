@@ -12,7 +12,6 @@
 namespace CsvMigrations\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\BaseFieldHandler;
-use CsvMigrations\FieldHandlers\Provider\Config\ListConfig;
 
 /**
  * BaseListFieldHandler
@@ -28,14 +27,9 @@ abstract class BaseListFieldHandler extends BaseFieldHandler
     const EMPTY_OPTION_LABEL = ' -- Please choose -- ';
 
     /**
-     * Set field handler config
-     *
-     * @return void
+     * @var string $defaultConfigClass Config class to use as default
      */
-    protected function setConfig()
-    {
-        $this->config = new ListConfig();
-    }
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\ListConfig';
 
     /**
      * Convert CsvField to one or more DbField instances

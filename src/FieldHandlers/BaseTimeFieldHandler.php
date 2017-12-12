@@ -14,7 +14,6 @@ namespace CsvMigrations\FieldHandlers;
 use Cake\I18n\Date;
 use Cake\I18n\Time;
 use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
-use CsvMigrations\FieldHandlers\Provider\Config\TimeConfig;
 
 /**
  * BaseTimeFieldHandler
@@ -30,14 +29,9 @@ abstract class BaseTimeFieldHandler extends BaseStringFieldHandler
     const RENDERER = 'dateTime';
 
     /**
-     * Set field handler config
-     *
-     * @return void
+     * @var string $defaultConfigClass Config class to use as default
      */
-    protected function setConfig()
-    {
-        $this->config = new TimeConfig();
-    }
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\TimeConfig';
 
     /**
      * Render field input

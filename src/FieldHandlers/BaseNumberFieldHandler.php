@@ -11,8 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\Provider\Config\NumberConfig;
-
 abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
 {
     /**
@@ -41,14 +39,9 @@ abstract class BaseNumberFieldHandler extends BaseSimpleFieldHandler
     const MAX_VALUE = '99999999999';
 
     /**
-     * Set field handler config
-     *
-     * @return void
+     * @var string $defaultConfigClass Config class to use as default
      */
-    protected function setConfig()
-    {
-        $this->config = new NumberConfig();
-    }
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\NumberConfig';
 
     /**
      * Render field input

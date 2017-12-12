@@ -21,7 +21,6 @@ use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
-use CsvMigrations\FieldHandlers\Provider\Config\StringConfig;
 use CsvMigrations\View\AppView;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
@@ -104,6 +103,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     ];
 
     /**
+     * @var string $defaultConfigClass Config class to use as default
+     */
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\StringConfig';
+
+    /**
      * @var $config \CsvMigrations\FieldHandlers\Provider\Config\ConfigInterface Configuration
      */
     protected $config;
@@ -131,7 +135,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected function setConfig()
     {
-        $this->config = new StringConfig();
+        $this->config = new $this->defaultConfigClass;
     }
 
     /**

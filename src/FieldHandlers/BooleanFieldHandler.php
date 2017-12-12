@@ -12,7 +12,6 @@
 namespace CsvMigrations\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
-use CsvMigrations\FieldHandlers\Provider\Config\BooleanConfig;
 
 class BooleanFieldHandler extends BaseSimpleFieldHandler
 {
@@ -32,14 +31,9 @@ class BooleanFieldHandler extends BaseSimpleFieldHandler
     const RENDERER = 'booleanYesNo';
 
     /**
-     * Set field handler config
-     *
-     * @return void
+     * @var string $defaultConfigClass Config class to use as default
      */
-    protected function setConfig()
-    {
-        $this->config = new BooleanConfig();
-    }
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\BooleanConfig';
 
     /**
      * Render field input

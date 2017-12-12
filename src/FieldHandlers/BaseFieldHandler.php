@@ -344,7 +344,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public function renderInput($data = '', array $options = [])
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $data = (string)$this->_getFieldValueFromData($data);
+        $data = (string)$this->_getFieldValueFromData($data, $this->field);
         if (empty($data) && !empty($options['default'])) {
             $data = $options['default'];
         }
@@ -487,7 +487,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public function renderValue($data, array $options = [])
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $result = $this->_getFieldValueFromData($data);
+        $result = $this->_getFieldValueFromData($data, $this->field);
 
         // Currently needed for blobs from the database, but might be handy later
         // for network data and such.
@@ -545,15 +545,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * * Otherwise assume the variable is the data already
      *
      * @param mixed  $data  Variable to extract value from
-     * @param string $field Optional field name
+     * @param string $field Field name
      * @return mixed
      */
-    protected function _getFieldValueFromData($data, $field = null)
+    protected function _getFieldValueFromData($data, $field)
     {
-        if (empty($field)) {
-            $field = $this->field;
-        }
-
         $config = $this->config->getConfig();
         $fieldValue = new $config['fieldValue']();
         $result = $fieldValue->provide($data, $field);

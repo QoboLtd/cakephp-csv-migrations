@@ -61,7 +61,7 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
     public function renderInput($data = '', array $options = [])
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $data = $this->_getFieldValueFromData($data);
+        $data = $this->_getFieldValueFromData($data, $this->field);
         if (empty($data) && !empty($options['default'])) {
             $data = $options['default'];
         }
@@ -111,7 +111,7 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
     {
         $result = null;
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $data = $this->_getFieldValueFromData($data);
+        $data = $this->_getFieldValueFromData($data, $this->field);
 
         if (empty($data)) {
             return $result;

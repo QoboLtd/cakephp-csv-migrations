@@ -65,7 +65,7 @@ class BlobFieldHandler extends BaseSimpleFieldHandler
     public function renderInput($data = '', array $options = [])
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $data = $this->_getFieldValueFromData($data);
+        $data = $this->_getFieldValueFromData($data, $this->field);
         if (is_resource($data)) {
             $data = stream_get_contents($data);
         }

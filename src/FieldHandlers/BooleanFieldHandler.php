@@ -45,7 +45,7 @@ class BooleanFieldHandler extends BaseSimpleFieldHandler
     public function renderInput($data = '', array $options = [])
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $data = $this->_getFieldValueFromData($data);
+        $data = $this->_getFieldValueFromData($data, $this->field);
         if (!is_bool($data) && !empty($options['default'])) {
             $data = (bool)$options['default'];
         }

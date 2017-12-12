@@ -73,7 +73,7 @@ class FilesFieldHandler extends BaseFileFieldHandler
         $result = null;
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
 
-        $data = $this->_getFieldValueFromData($data);
+        $data = $this->_getFieldValueFromData($data, $this->field);
         if (empty($data) && !empty($options['entity'])) {
             $data = $this->_getFieldValueFromData($options['entity'], 'id');
         }

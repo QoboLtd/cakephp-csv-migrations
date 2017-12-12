@@ -30,6 +30,11 @@ class Config implements ConfigInterface
      * @var array $validateRules Validation rules
      */
     protected $validateRules = [
+        'fieldValue' => [
+            'required' => true,
+            'type' => 'string',
+            'implements' => 'CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\FieldValueInterface',
+        ],
         'searchOperators' => [
             'required' => true,
             'type' => 'string',
@@ -45,7 +50,6 @@ class Config implements ConfigInterface
             'type' => 'string',
             'implements' => 'CsvMigrations\\FieldHandlers\\Renderer\\Name\\RendererInterface',
         ],
-
     ];
 
     /**

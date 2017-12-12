@@ -11,10 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use Cake\Core\App;
 use Cake\Event\Event;
-use Cake\Network\Request;
-use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\Event\EventName;
@@ -547,8 +544,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      * * Request, use Request->data() with the key of the field name
      * * Otherwise assume the variable is the data already
      *
-     * @param Entity|Request|mixed $data  Variable to extract value from
-     * @param string               $field Optional field name
+     * @param mixed  $data  Variable to extract value from
+     * @param string $field Optional field name
      * @return mixed
      */
     protected function _getFieldValueFromData($data, $field = null)
@@ -557,28 +554,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $field = $this->field;
         }
 
-        // Use data as is
-        $result = $data;
-
-        // Use $data->$field if available as Entity
-        if ($data instanceof Entity) {
-            $result = null;
-            if (isset($data->$field)) {
-                $result = $data->$field;
-            }
-
-            return $result;
-        }
-
-        // Use $data->data[$field] if available as Request
-        if ($data instanceof Request) {
-            $result = null;
-            if (is_array($data->data) && array_key_exists($field, $data->data)) {
-                $result = $data->data[$field];
-            }
-
-            return $result;
-        }
+        $config = $this->config->getConfig();
+        $fieldValue = new $config['fieldValue']();
+        $result = $fieldValue->provide($data, $field);
 
         return $result;
     }

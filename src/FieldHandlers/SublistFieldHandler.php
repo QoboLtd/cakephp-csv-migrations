@@ -11,8 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseCsvListFieldHandler;
-
 class SublistFieldHandler extends BaseCsvListFieldHandler
 {
     /**

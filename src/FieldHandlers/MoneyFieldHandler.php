@@ -11,8 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseCombinedFieldHandler;
-
 class MoneyFieldHandler extends BaseCombinedFieldHandler
 {
     /**

@@ -11,9 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use Cake\ORM\Table;
-use CsvMigrations\FieldHandlers\BaseNumberFieldHandler;
-
 class DecimalFieldHandler extends BaseNumberFieldHandler
 {
     /**

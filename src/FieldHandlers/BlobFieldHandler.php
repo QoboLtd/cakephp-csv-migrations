@@ -11,7 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 use Phinx\Db\Adapter\MysqlAdapter;
 
 class BlobFieldHandler extends BaseSimpleFieldHandler

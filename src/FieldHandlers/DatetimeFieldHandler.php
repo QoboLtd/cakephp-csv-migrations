@@ -11,8 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use Cake\ORM\Entity;
-
 class DatetimeFieldHandler extends BaseTimeFieldHandler
 {
     /**

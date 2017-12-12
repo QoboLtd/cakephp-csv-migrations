@@ -11,8 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
-
 class EmailFieldHandler extends BaseSimpleFieldHandler
 {
     /**

@@ -11,8 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseCombinedFieldHandler;
-
 class MetricFieldHandler extends BaseCombinedFieldHandler
 {
     /**

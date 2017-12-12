@@ -13,7 +13,6 @@ namespace CsvMigrations\FieldHandlers;
 
 use Cake\I18n\Date;
 use Cake\I18n\Time;
-use CsvMigrations\FieldHandlers\BaseSimpleFieldHandler;
 
 /**
  * BaseTimeFieldHandler

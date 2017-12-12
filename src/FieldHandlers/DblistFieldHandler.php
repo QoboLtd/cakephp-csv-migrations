@@ -11,9 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
-use CsvMigrations\FieldHandlers\BaseListFieldHandler;
 
 class DblistFieldHandler extends BaseListFieldHandler
 {

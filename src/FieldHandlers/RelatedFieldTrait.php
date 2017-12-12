@@ -14,9 +14,6 @@ namespace CsvMigrations\FieldHandlers;
 use BadMethodCallException;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Inflector;
-use Cake\View\Helper\IdGeneratorTrait;
-use CsvMigrations\FieldHandlers\BaseFieldHandler;
 use CsvMigrations\FieldHandlers\RelatedFieldHandler;
 
 trait RelatedFieldTrait

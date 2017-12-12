@@ -11,8 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseNumberFieldHandler;
-
 class IntegerFieldHandler extends BaseNumberFieldHandler
 {
     /**

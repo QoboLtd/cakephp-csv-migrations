@@ -11,8 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\Config;
 
-use InvalidArgumentException;
-
 /**
  * EmailConfig
  *
@@ -22,13 +20,10 @@ use InvalidArgumentException;
 class EmailConfig extends FixedConfig
 {
     /**
-     * Constructor
+     * @var array $config Field handler configuration
      */
-    public function __construct()
-    {
-        $this->config = [
-            'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
-            'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\EmailRenderer',
-        ];
-    }
+    protected $config = [
+        'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
+        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\EmailRenderer',
+    ];
 }

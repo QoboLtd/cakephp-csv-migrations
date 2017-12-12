@@ -11,8 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\Config;
 
-use InvalidArgumentException;
-
 /**
  * SublistConfig
  *
@@ -22,13 +20,10 @@ use InvalidArgumentException;
 class SublistConfig extends FixedConfig
 {
     /**
-     * Constructor
+     * @var array $config Field handler configuration
      */
-    public function __construct()
-    {
-        $this->config = [
-            'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\ListSearchOperators',
-            'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\ListRenderer',
-        ];
-    }
+    protected $config = [
+        'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\ListSearchOperators',
+        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\ListRenderer',
+    ];
 }

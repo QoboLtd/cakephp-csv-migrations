@@ -11,8 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\Config;
 
-use InvalidArgumentException;
-
 /**
  * DateConfig
  *
@@ -22,13 +20,10 @@ use InvalidArgumentException;
 class DateConfig extends FixedConfig
 {
     /**
-     * Constructor
+     * @var array $config Field handler configuration
      */
-    public function __construct()
-    {
-        $this->config = [
-            'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\TimeSearchOperators',
-            'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\DateRenderer',
-        ];
-    }
+    protected $config = [
+        'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\TimeSearchOperators',
+        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\DateRenderer',
+    ];
 }

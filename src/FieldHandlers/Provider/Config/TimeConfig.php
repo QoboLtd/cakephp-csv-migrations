@@ -11,8 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\Config;
 
-use InvalidArgumentException;
-
 /**
  * TimeConfig
  *
@@ -22,13 +20,10 @@ use InvalidArgumentException;
 class TimeConfig extends FixedConfig
 {
     /**
-     * Constructor
+     * @var array $config Field handler configuration
      */
-    public function __construct()
-    {
-        $this->config = [
-            'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\TimeSearchOperators',
-            'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\TimeRenderer',
-        ];
-    }
+    protected $config = [
+        'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\TimeSearchOperators',
+        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\TimeRenderer',
+    ];
 }

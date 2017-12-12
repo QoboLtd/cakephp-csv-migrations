@@ -11,8 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\Config;
 
-use InvalidArgumentException;
-
 /**
  * UrlConfig
  *
@@ -22,13 +20,10 @@ use InvalidArgumentException;
 class UrlConfig extends FixedConfig
 {
     /**
-     * Constructor
+     * @var array $config Field handler configuration
      */
-    public function __construct()
-    {
-        $this->config = [
-            'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
-            'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\UrlRenderer',
-        ];
-    }
+    protected $config = [
+        'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
+        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\UrlRenderer',
+    ];
 }

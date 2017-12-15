@@ -171,12 +171,12 @@ class FileUploadsUtils
      * File save method.
      *
      * @param  \Cake\ORM\Entity $entity Associated Entity
+     * @param string $field name of the association
      * @param  array            $files  Uploaded files
      * @param  array            $options for ajax call if any
      * @return bool
-     * @deprecated v10.0.0 No longer used by internal code and not recommended.
      */
-    public function save(Entity $entity, array $files = [], $options = [])
+    public function save(Entity $entity, $field, array $files = [], $options = [])
     {
         $result = false;
 
@@ -190,7 +190,7 @@ class FileUploadsUtils
                 continue;
             }
 
-            $result = $this->_storeFileStorage($entity, ['file' => $file], $options);
+            $result = $this->_storeFileStorage($entity, $field, ['file' => $file], $options);
         }
 
         return $result;

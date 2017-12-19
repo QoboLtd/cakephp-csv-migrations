@@ -1,9 +1,11 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\Config;
 
+use Cake\ORM\Table;
 use CsvMigrations\FieldHandlers\Provider\Config\Config;
 use CsvMigrations\FieldHandlers\Provider\Config\ConfigInterface;
 use PHPUnit_Framework_TestCase;
+use stdClass;
 
 class ConfigTest extends PHPUnit_Framework_TestCase
 {
@@ -99,5 +101,36 @@ class ConfigTest extends PHPUnit_Framework_TestCase
         $configInstance->setConfig($config);
         $actualConfig = $configInstance->getConfig();
         $this->assertEquals($config, $actualConfig, "Config did not return provided config");
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetFieldExceptionNotString()
+    {
+        $configInstance = new Config([]);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetFieldExceptionEmptyString()
+    {
+        $configInstance = new Config('   ');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetTableExceptionNotTable()
+    {
+        $configInstance = new Config('field', new stdClass());
+    }
+
+    public function testGettable()
+    {
+        $configInstance = new Config('field');
+        $result = $configInstance->getTable();
+        $this->assertTrue($result instanceof Table, "Config table returned a non-valid instance");
     }
 }

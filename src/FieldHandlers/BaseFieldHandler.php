@@ -499,15 +499,15 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         $config = $this->config->getConfig();
         $rendererClass = $config['valueRenderAs'];
         if (!empty($options['renderAs'])) {
-            $rendererClass = __NAMESPACE__ . '\\Renderer\\Value\\' . ucfirst($options['renderAs']) . 'Renderer';
+            $rendererClass = __NAMESPACE__ . '\\Provider\\RenderValue\\' . ucfirst($options['renderAs']) . 'Renderer';
         }
 
         if (!class_exists($rendererClass)) {
             throw new InvalidArgumentException("Renderer class [$rendererClass] does not exist");
         }
 
-        $rendererClass = new $rendererClass($this->cakeView);
-        $result = (string)$rendererClass->renderValue($result, $options);
+        $rendererClass = new $rendererClass($this->config);
+        $result = (string)$rendererClass->provide($result, $options);
 
         return $result;
     }

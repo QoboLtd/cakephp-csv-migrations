@@ -61,7 +61,7 @@ class Config implements ConfigInterface
         'valueRenderAs' => [
             'required' => true,
             'type' => 'string',
-            'implements' => 'CsvMigrations\\FieldHandlers\\Renderer\\Value\\RendererInterface',
+            'implements' => 'CsvMigrations\\FieldHandlers\\Provider\\ProviderInterface',
         ],
         'nameRenderAs' => [
             'required' => true,

@@ -9,31 +9,31 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers\Provider\SearchOperators;
+namespace CsvMigrations\FieldHandlers\Provider;
 
-use CsvMigrations\FieldHandlers\Provider\BaseProvider;
+use CsvMigrations\FieldHandlers\Provider\Config\ConfigInterface;
 
 /**
- * BaseSearchOperators
+ * ProviderInterface
  *
- * Abstract base class extending BaseProvider
+ * ProviderInterface defines the contract
+ * for all providers, except Config providers
  */
-abstract class BaseSearchOperators extends BaseProvider
+interface ProviderInterface
 {
     /**
-     * @var array $operators Search operators
+     * Constructor
+     *
+     * @param ConfigInterface $config Configuration
      */
-    protected $operators = [];
+    public function __construct(ConfigInterface $config);
 
     /**
-     * Provide search operators
+     * Provide
      *
      * @param mixed $data Data to use for provision
      * @param array $options Options to use for provision
      * @return mixed
      */
-    public function provide($data = null, array $options = [])
-    {
-        return $this->operators;
-    }
+    public function provide($data = null, array $options = []);
 }

@@ -35,7 +35,7 @@ class StringConfigTest extends PHPUnit_Framework_TestCase
      */
     public function testSetConfigException($config)
     {
-        $configInstance = new StringConfig();
+        $configInstance = new StringConfig('foo');
         $configInstance->setConfig($config);
     }
 
@@ -45,20 +45,20 @@ class StringConfigTest extends PHPUnit_Framework_TestCase
      */
     public function testValidateConfigException($config)
     {
-        $configInstance = new StringConfig();
+        $configInstance = new StringConfig('foo');
         $configInstance->validateConfig($config);
     }
 
     public function testConstruct()
     {
-        $configInstance = new StringConfig();
+        $configInstance = new StringConfig('foo');
         $this->assertTrue(is_object($configInstance), "Failed to instantiate StringConfig object");
         $this->assertTrue($configInstance instanceof ConfigInterface, "StringConfig instance does not implement ConfigInterface");
     }
 
     public function testGetConfig()
     {
-        $configInstance = new StringConfig();
+        $configInstance = new StringConfig('foo');
         $actualConfig = $configInstance->getConfig();
         $this->assertTrue(is_array($actualConfig), "StringConfig did not return an array config");
         $this->assertFalse(empty($actualConfig), "StringConfig return an empty config");

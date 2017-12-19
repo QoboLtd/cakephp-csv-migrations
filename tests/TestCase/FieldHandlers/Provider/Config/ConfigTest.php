@@ -69,7 +69,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
      */
     public function testSetConfigException($config)
     {
-        $configInstance = new Config();
+        $configInstance = new Config('foo');
         $configInstance->setConfig($config);
     }
 
@@ -79,13 +79,13 @@ class ConfigTest extends PHPUnit_Framework_TestCase
      */
     public function testValidateConfigException($config)
     {
-        $configInstance = new Config();
+        $configInstance = new Config('foo');
         $configInstance->validateConfig($config);
     }
 
     public function testConstruct()
     {
-        $configInstance = new Config();
+        $configInstance = new Config('foo');
         $this->assertTrue(is_object($configInstance), "Failed to instantiate Config object");
         $this->assertTrue($configInstance instanceof ConfigInterface, "Config instance does not implement ConfigInterface");
     }
@@ -95,7 +95,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
      */
     public function testGetConfig($config)
     {
-        $configInstance = new Config();
+        $configInstance = new Config('foo');
         $configInstance->setConfig($config);
         $actualConfig = $configInstance->getConfig();
         $this->assertEquals($config, $actualConfig, "Config did not return provided config");

@@ -13,6 +13,7 @@ namespace CsvMigrations\FieldHandlers\Provider\FieldValue;
 
 use Cake\Network\Request;
 use Cake\ORM\Entity;
+use CsvMigrations\FieldHandlers\Provider\BaseProvider;
 
 /**
  * MixedFieldValue
@@ -21,23 +22,23 @@ use Cake\ORM\Entity;
  * of looking for field value in a variety of
  * (mixed) data.
  */
-class MixedFieldValue implements FieldValueInterface
+class MixedFieldValue extends BaseProvider
 {
     /**
-     * Get field value
+     * Provide field value
      *
      * @param mixed $data Data to look for field value in (Request, Entity, etc)
-     * @param string $field Field name
+     * @param array $options Options to use for provision
      * @return mixed Field value
      */
-    public function provide($data, $field)
+    public function provide($data = null, array $options = [])
     {
         if ($data instanceof Entity) {
-            return $this->provideFromEntity($data, $field);
+            return $this->provideFromEntity($data, $this->config->getField());
         }
 
         if ($data instanceof Request) {
-            return $this->provideFromRequest($data, $field);
+            return $this->provideFromRequest($data, $this->config->getField());
         }
 
         return $data;

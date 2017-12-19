@@ -20,6 +20,61 @@ namespace CsvMigrations\FieldHandlers\Provider\Config;
 interface ConfigInterface
 {
     /**
+     * Constructor
+     *
+     * @param string $field Field name
+     * @param mixed $table Table name or instance
+     * @param array $options Options
+     */
+    public function __construct($field, $table = null, array $options = []);
+
+    /**
+     * Set field
+     *
+     * @throws \InvalidArgumentException when field is empty or not a string
+     * @param string $field Field name
+     * @return void
+     */
+    public function setField($field);
+
+    /**
+     * Get field
+     *
+     * @return string
+     */
+    public function getField();
+
+    /**
+     * Set table
+     *
+     * @param mixed $table Table name or instance
+     * @return void
+     */
+    public function setTable($table = null);
+
+    /**
+     * Get table
+     *
+     * @return object
+     */
+    public function getTable();
+
+    /**
+     * Set options
+     *
+     * @param array $options Options
+     * @return void
+     */
+    public function setOptions(array $options = []);
+
+    /**
+     * Get options
+     *
+     * @return array
+     */
+    public function getOptions();
+
+    /**
      * Set config
      *
      * @throws \InvalidArgumentException for invalid configuration

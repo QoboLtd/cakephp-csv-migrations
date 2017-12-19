@@ -115,7 +115,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function __construct($table, $field, $cakeView = null)
     {
-        $this->setConfig();
+        $this->setConfig($table, $field, $cakeView);
         $this->setTable($table);
         $this->setField($field);
         $this->setView($cakeView);
@@ -125,11 +125,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * Set field handler config
      *
+     * @param mixed  $table    Name or instance of the Table
+     * @param string $field    Field name
+     * @param object $cakeView Optional instance of the AppView
      * @return void
      */
-    protected function setConfig()
+    protected function setConfig($table, $field, $cakeView = null)
     {
-        $this->config = new $this->defaultConfigClass;
+        $this->config = new $this->defaultConfigClass($field, $table, ['view' => $cakeView]);
     }
 
     /**
@@ -441,7 +444,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         ]);
 
         $config = $this->config->getConfig();
-        $searchOperators = new $config['searchOperators']();
+        $searchOperators = new $config['searchOperators']($this->config);
         $result[$this->field] = [
             'type' => $options['fieldDefinitions']->getType(),
             'label' => $this->renderName(),
@@ -547,9 +550,15 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected function _getFieldValueFromData($data, $field)
     {
-        $config = $this->config->getConfig();
-        $fieldValue = new $config['fieldValue']();
-        $result = $fieldValue->provide($data, $field);
+        $currentConfig = $this->config->getConfig();
+
+        // Occasionally, we have data in a different field
+        // (files, combined fields, etc)
+        $runtimeConfig = $this->config;
+        $runtimeConfig->setField($field);
+
+        $fieldValue = new $currentConfig['fieldValue']($runtimeConfig);
+        $result = $fieldValue->provide($data);
 
         return $result;
     }

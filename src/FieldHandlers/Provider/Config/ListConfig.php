@@ -26,6 +26,6 @@ class ListConfig extends FixedConfig
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\ListSearchOperators',
         'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\ListRenderer',
-        'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Name\\DefaultRenderer',
+        'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
     ];
 }

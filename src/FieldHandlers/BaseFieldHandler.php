@@ -467,8 +467,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         $label = !empty($this->defaultOptions['label']) ? $this->defaultOptions['label'] : '';
 
         $config = $this->config->getConfig();
-        $renderer = new $config['nameRenderAs']();
-        $result = $renderer->render($label, ['default' => $this->field]);
+        $renderer = new $config['nameRenderAs']($this->config);
+        $result = $renderer->provide($label);
 
         return $result;
     }

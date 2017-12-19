@@ -26,6 +26,6 @@ class IntegerConfig extends FixedConfig
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\NumberSearchOperators',
         'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\IntegerRenderer',
-        'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Name\\DefaultRenderer',
+        'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
     ];
 }

@@ -26,6 +26,6 @@ class BooleanConfig extends FixedConfig
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\BooleanSearchOperators',
         'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Value\\BooleanYesNoRenderer',
-        'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Renderer\\Name\\DefaultRenderer',
+        'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
     ];
 }

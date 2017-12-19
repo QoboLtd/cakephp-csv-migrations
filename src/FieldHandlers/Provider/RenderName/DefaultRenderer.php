@@ -9,9 +9,10 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers\Renderer\Name;
+namespace CsvMigrations\FieldHandlers\Provider\RenderName;
 
 use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\Provider\BaseProvider;
 
 /**
  * DefaultRenderer
@@ -19,33 +20,26 @@ use Cake\Utility\Inflector;
  * This class provides the default renderer
  * for the field name.
  */
-class DefaultRenderer implements RendererInterface
+class DefaultRenderer extends BaseProvider
 {
     /**
-     * Render name
+     * Provide rendered name
      *
-     * @param string $name Name to render
-     * @param array $options Rendering options
-     * @return string Text, HTML or other string result
+     * @param mixed $data Data to use for provision
+     * @param array $options Options to use for provision
+     * @return mixed
      */
-    public function render($name, array $options = [])
+    public function provide($data = null, array $options = [])
     {
         $result = '';
 
         // Return as is, if not empty
-        if (!empty($name)) {
-            return $name;
+        if (!empty($data)) {
+            return $data;
         }
 
-        // Fallback on the default
-        if (!empty($options['default'])) {
-            $result = $options['default'];
-        }
-
-        // Return empty string unless default provided
-        if (empty($result)) {
-            return $result;
-        }
+        // Fallback on the field name
+        $result = $this->config->getField();
 
         $result = $this->cleanName($result);
 

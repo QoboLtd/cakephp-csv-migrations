@@ -344,24 +344,24 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public function renderInput($data = '', array $options = [])
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+
+        // Workaround for BLOBs
+        if (is_resource($data)) {
+            $data = stream_get_contents($data);
+        }
         $data = (string)$this->_getFieldValueFromData($data, $this->field);
+
         if (empty($data) && !empty($options['default'])) {
             $data = $options['default'];
         }
 
-        $fieldName = $this->table->aliasField($this->field);
+        $options['label'] = empty($options['label']) ? $this->renderName() : $options['label'];
 
-        $params = [
-            'field' => $this->field,
-            'name' => $fieldName,
-            'type' => static::INPUT_FIELD_TYPE,
-            'label' => $options['label'],
-            'required' => $options['fieldDefinitions']->getRequired(),
-            'value' => $data,
-            'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
-        ];
+        $config = $this->config->getConfig();
+        $searchOptions = new $config['inputRenderAs']($this->config);
+        $result = $searchOptions->provide($data, $options);
 
-        return $this->_renderElement(__FUNCTION__, $params, $options);
+        return $result;
     }
 
     /**
@@ -437,22 +437,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             return $result;
         }
 
-        $content = $this->cakeView->Form->input('{{name}}', [
-            'value' => '{{value}}',
-            'type' => static::INPUT_FIELD_TYPE,
-            'label' => false
-        ]);
+        $options['label'] = empty($options['label']) ? $this->renderName() : $options['label'];
 
         $config = $this->config->getConfig();
-        $searchOperators = new $config['searchOperators']($this->config);
-        $result[$this->field] = [
-            'type' => $options['fieldDefinitions']->getType(),
-            'label' => $this->renderName(),
-            'operators' => $searchOperators->provide(),
-            'input' => [
-                'content' => $content,
-            ],
-        ];
+        $searchOptions = new $config['searchOptions']($this->config);
+        $result = $searchOptions->provide(null, $options);
 
         return $result;
     }

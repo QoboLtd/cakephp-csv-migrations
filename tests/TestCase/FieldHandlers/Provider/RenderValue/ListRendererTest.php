@@ -35,7 +35,7 @@ class ListRendererTest extends PHPUnit_Framework_TestCase
      */
     public function testRenderValueBasic($value, $expected, $description)
     {
-        $result = $this->renderer->provide($value);
+        $result = $this->renderer->provide($value, ['listItems' => [ $expected => $description ] ]);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 

@@ -12,8 +12,10 @@
 namespace CsvMigrations\FieldHandlers;
 
 use BadMethodCallException;
+use Cake\Core\Configure;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\RelatedFieldHandler;
 
 trait RelatedFieldTrait
@@ -145,5 +147,49 @@ trait RelatedFieldTrait
         }
 
         return $query->first();
+    }
+
+    /**
+     * Generate input help string
+     *
+     * Can be used as a value for placeholder or title attributes.
+     *
+     * @param array $properties Input properties
+     * @return string
+     */
+    protected function _getInputHelp($properties)
+    {
+        $result = '';
+        // use typeahead fields
+        if (!empty($properties['config']['table']['typeahead_fields'])) {
+            $result = $properties['config']['table']['typeahead_fields'];
+            if (!empty($result)) {
+                $result = implode(', or ', array_map(function ($value) {
+                    return Inflector::humanize($value);
+                }, $result));
+            }
+        }
+        // if typeahead fields were not defined, use display field
+        if (empty($result)) {
+            $result = Inflector::humanize($properties['displayField']);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get input field associated icon
+     *
+     * @param array $properties Input properties
+     * @return string
+     */
+    protected function _getInputIcon($properties)
+    {
+        // return default icon if none is defined
+        if (empty($properties['config']['table']['icon'])) {
+            return Configure::read('CsvMigrations.default_icon');
+        }
+
+        return $properties['config']['table']['icon'];
     }
 }

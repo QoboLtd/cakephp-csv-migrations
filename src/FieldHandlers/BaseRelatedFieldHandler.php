@@ -11,9 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use Cake\Core\Configure;
-use Cake\Utility\Inflector;
-
 abstract class BaseRelatedFieldHandler extends BaseFieldHandler
 {
     use RelatedFieldTrait;
@@ -158,89 +155,6 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
     }
 
     /**
-     * Get options for field search
-     *
-     * This method prepares an array of search options, which includes
-     * label, form input, supported search operators, etc.  The result
-     * can be controlled with a variety of options.
-     *
-     * @param  array  $options Field options
-     * @return array           Array of field input HTML, pre and post CSS, JS, etc
-     */
-    public function getSearchOptions(array $options = [])
-    {
-        // Fix options as early as possible
-        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $result = parent::getSearchOptions($options);
-        if (empty($result[$this->field]['input'])) {
-            return $result;
-        }
-
-        $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), null);
-
-        $content = sprintf(
-            static::HTML_INPUT,
-            $relatedProperties['controller'],
-            $this->_getInputIcon($relatedProperties),
-            $this->cakeView->Form->input($this->field, [
-                'label' => false,
-                'options' => ['{{value}}' => ''],
-                'name' => '{{name}}',
-                'id' => $this->field,
-                'type' => 'select',
-                'title' => $this->_getInputHelp($relatedProperties),
-                'data-type' => 'select2',
-                'data-display-field' => $relatedProperties['displayField'],
-                'escape' => false,
-                'autocomplete' => 'off',
-                'data-url' => $this->cakeView->Url->build([
-                    'prefix' => 'api',
-                    'plugin' => $relatedProperties['plugin'],
-                    'controller' => $relatedProperties['controller'],
-                    'action' => 'lookup.json'
-                ])
-            ])
-        );
-
-        $result[$this->field]['source'] = $options['fieldDefinitions']->getLimit();
-        $result[$this->field]['input'] = [
-            'content' => $content,
-            'post' => [
-                [
-                    'type' => 'script',
-                    'content' => [
-                        'CsvMigrations.dom-observer',
-                        'AdminLTE./plugins/select2/select2.full.min',
-                        'CsvMigrations.select2.init'
-                    ],
-                    'block' => 'scriptBottom'
-                ],
-                [
-                    'type' => 'scriptBlock',
-                    'content' => 'csv_migrations_select2.setup(' . json_encode(
-                        array_merge(
-                            Configure::read('CsvMigrations.select2'),
-                            Configure::read('CsvMigrations.api')
-                        )
-                    ) . ');',
-                    'block' => 'scriptBottom'
-                ],
-                [
-                    'type' => 'css',
-                    'content' => [
-                        'AdminLTE./plugins/select2/select2.min',
-                        'Qobo/Utils.select2-bootstrap.min',
-                        'Qobo/Utils.select2-style'
-                    ],
-                    'block' => 'css'
-                ]
-            ]
-        ];
-
-        return $result;
-    }
-
-    /**
      * Convert CsvField to one or more DbField instances
      *
      * Simple fields from migrations CSV map one-to-one to
@@ -263,47 +177,4 @@ abstract class BaseRelatedFieldHandler extends BaseFieldHandler
         return $result;
     }
 
-    /**
-     * Generate input help string
-     *
-     * Can be used as a value for placeholder or title attributes.
-     *
-     * @param array $properties Input properties
-     * @return string
-     */
-    protected function _getInputHelp($properties)
-    {
-        $result = '';
-        // use typeahead fields
-        if (!empty($properties['config']['table']['typeahead_fields'])) {
-            $result = $properties['config']['table']['typeahead_fields'];
-            if (!empty($result)) {
-                $result = implode(', or ', array_map(function ($value) {
-                    return Inflector::humanize($value);
-                }, $result));
-            }
-        }
-        // if typeahead fields were not defined, use display field
-        if (empty($result)) {
-            $result = Inflector::humanize($properties['displayField']);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get input field associated icon
-     *
-     * @param array $properties Input properties
-     * @return string
-     */
-    protected function _getInputIcon($properties)
-    {
-        // return default icon if none is defined
-        if (empty($properties['config']['table']['icon'])) {
-            return Configure::read('CsvMigrations.default_icon');
-        }
-
-        return $properties['config']['table']['icon'];
-    }
 }

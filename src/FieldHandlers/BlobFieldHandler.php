@@ -21,9 +21,9 @@ class BlobFieldHandler extends BaseFieldHandler
     const DB_FIELD_TYPE = 'blob';
 
     /**
-     * HTML form field type
+     * @var string $defaultConfigClass Config class to use as default
      */
-    const INPUT_FIELD_TYPE = 'textarea';
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\BlobConfig';
 
     /**
      * Convert CsvField to one or more DbField instances
@@ -44,65 +44,6 @@ class BlobFieldHandler extends BaseFieldHandler
         $dbField = DbField::fromCsvField($csvField);
         $result = [
             $csvField->getName() => $dbField,
-        ];
-
-        return $result;
-    }
-
-    /**
-     * Render field input
-     *
-     * This method prepares the form input for the given field,
-     * including the input itself, label, pre-populated value,
-     * and so on.  The result can be controlled via the variety
-     * of options.
-     *
-     * @param  string $data    Field data
-     * @param  array  $options Field options
-     * @return string          Field input HTML
-     */
-    public function renderInput($data = '', array $options = [])
-    {
-        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $data = $this->_getFieldValueFromData($data, $this->field);
-        if (is_resource($data)) {
-            $data = stream_get_contents($data);
-        }
-
-        if (empty($data) && !empty($options['default'])) {
-            $data = $options['default'];
-        }
-
-        return parent::renderInput($data, $options);
-    }
-
-    /**
-     * Get options for field search
-     *
-     * This method prepares an array of search options, which includes
-     * label, form input, supported search operators, etc.  The result
-     * can be controlled with a variety of options.
-     *
-     * @param  array  $options Field options
-     * @return array           Array of field input HTML, pre and post CSS, JS, etc
-     */
-    public function getSearchOptions(array $options = [])
-    {
-        // Fix options as early as possible
-        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $result = parent::getSearchOptions($options);
-        if (empty($result[$this->field]['input'])) {
-            return $result;
-        }
-
-        $content = $this->cakeView->Form->input('{{name}}', [
-            'value' => '{{value}}',
-            'type' => 'text',
-            'label' => false
-        ]);
-
-        $result[$this->field]['input'] = [
-            'content' => $content,
         ];
 
         return $result;

@@ -14,7 +14,7 @@ namespace CsvMigrations\FieldHandlers;
 class PhoneFieldHandler extends BaseFieldHandler
 {
     /**
-     * HTML form field type
+     * @var string $defaultConfigClass Config class to use as default
      */
-    const INPUT_FIELD_TYPE = 'tel';
+    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\PhoneConfig';
 }

@@ -11,27 +11,12 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-class DecimalFieldHandler extends BaseNumberFieldHandler
+class DecimalFieldHandler extends BaseFieldHandler
 {
     /**
      * Database field type
      */
     const DB_FIELD_TYPE = 'decimal';
-
-    /**
-     * Step size to use for number field
-     */
-    const INPUT_FIELD_STEP = 'any';
-
-    /**
-     * Max value
-     *
-     * Temporary setting for maximum value, until
-     * we learn to read it from the fields.ini.
-     *
-     * @todo Replace with configuration from fields.ini
-     */
-    const MAX_VALUE = '99999999.99';
 
     /**
      * @var string $defaultConfigClass Config class to use as default

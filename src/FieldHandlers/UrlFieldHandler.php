@@ -14,11 +14,6 @@ namespace CsvMigrations\FieldHandlers;
 class UrlFieldHandler extends BaseFieldHandler
 {
     /**
-     * HTML form field type
-     */
-    const INPUT_FIELD_TYPE = 'url';
-
-    /**
      * @var string $defaultConfigClass Config class to use as default
      */
     protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\UrlConfig';

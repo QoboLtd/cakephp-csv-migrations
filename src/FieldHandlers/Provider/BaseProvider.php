@@ -35,4 +35,19 @@ abstract class BaseProvider implements ProviderInterface
     {
         $this->config = $config;
     }
+
+    /**
+     * Render element
+     *
+     * @param string $name Element name
+     * @param array $options Options to pass to the element
+     * @return string
+     */
+    protected function renderElement($name, array $options = [])
+    {
+        $view = $this->config->getOptions()['view'];
+        $result = $view->element($name, $options);
+
+        return $result;
+    }
 }

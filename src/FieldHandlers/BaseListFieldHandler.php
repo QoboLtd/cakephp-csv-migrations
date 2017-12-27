@@ -20,11 +20,6 @@ namespace CsvMigrations\FieldHandlers;
 abstract class BaseListFieldHandler extends BaseFieldHandler
 {
     /**
-     * Empty option label for select inputs
-     */
-    const EMPTY_OPTION_LABEL = ' -- Please choose -- ';
-
-    /**
      * @var string $defaultConfigClass Config class to use as default
      */
     protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\ListConfig';

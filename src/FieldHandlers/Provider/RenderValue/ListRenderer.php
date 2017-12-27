@@ -37,14 +37,21 @@ class ListRenderer extends BaseRenderer
         $result = '';
         $data = (string)$data;
 
-        // No known list items, so render value as safe string
-        if (!isset($options['listItems'])) {
-            return parent::provide($data, $options);
+        if (empty($data)) {
+            return $result;
         }
 
-        // TODO : Change to iterator check instead for more flexibility
-        if (!is_array($options['listItems'])) {
-            throw new InvalidArgumentException("Provided list items are not an array");
+        if (empty($options['listItems']) && empty($options['fieldDefinitions'])) {
+            throw new InvalidArgumentException("No listItems or fieldDefinitions options provided");
+        }
+
+        if (empty($options['listItems'])) {
+            $config = $this->config->getConfig();
+            $selectListItems = new $config['selectOptions']($this->config);
+            $listName = $options['fieldDefinitions']->getLimit();
+            $listOptions = [];
+
+            $options['listItems'] = $selectListItems->provide($listName, $listOptions);
         }
 
         $listItems = $options['listItems'];

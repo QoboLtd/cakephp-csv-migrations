@@ -21,5 +21,5 @@ class TimeFieldHandler extends BaseFieldHandler
     /**
      * @var string $defaultConfigClass Config class to use as default
      */
-    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\TimeConfig';
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\TimeConfig';
 }

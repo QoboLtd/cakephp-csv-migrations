@@ -99,7 +99,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * @var string $defaultConfigClass Config class to use as default
      */
-    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\StringConfig';
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\StringConfig';
 
     /**
      * @var $config \CsvMigrations\FieldHandlers\Provider\Config\ConfigInterface Configuration
@@ -132,7 +132,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected function setConfig($table, $field, $cakeView = null)
     {
-        $this->config = new $this->defaultConfigClass($field, $table, ['view' => $cakeView]);
+        $this->config = new static::$defaultConfigClass($field, $table, ['view' => $cakeView]);
     }
 
     /**

@@ -16,5 +16,5 @@ class EmailFieldHandler extends BaseFieldHandler
     /**
      * @var string $defaultConfigClass Config class to use as default
      */
-    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\EmailConfig';
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\EmailConfig';
 }

@@ -16,5 +16,5 @@ class SublistFieldHandler extends BaseListFieldHandler
     /**
      * @var string $defaultConfigClass Config class to use as default
      */
-    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\SublistConfig';
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\SublistConfig';
 }

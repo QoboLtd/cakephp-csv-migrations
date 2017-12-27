@@ -23,7 +23,7 @@ class DblistFieldHandler extends BaseListFieldHandler
     /**
      * @var string $defaultConfigClass Config class to use as default
      */
-    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\DblistConfig';
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\DblistConfig';
 
     /**
      * Render field value

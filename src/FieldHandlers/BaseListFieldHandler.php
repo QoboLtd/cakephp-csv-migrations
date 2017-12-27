@@ -22,7 +22,7 @@ abstract class BaseListFieldHandler extends BaseFieldHandler
     /**
      * @var string $defaultConfigClass Config class to use as default
      */
-    protected $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\ListConfig';
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\ListConfig';
 
     /**
      * Convert CsvField to one or more DbField instances

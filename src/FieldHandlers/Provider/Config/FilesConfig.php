@@ -28,7 +28,8 @@ class FilesConfig extends FixedConfig
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\NullSearchOperators',
         'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\NullSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
-        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\PlainRenderer',
+        'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\FilesRenderer',
+        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\FilesRenderer',
         'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
     ];
 }

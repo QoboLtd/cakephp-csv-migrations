@@ -24,6 +24,7 @@ class DecimalConfig extends FixedConfig
      */
     protected $config = [
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
+        'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\DecimalFieldToDb',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\NumberSearchOperators',
         'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\DecimalSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',

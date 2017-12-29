@@ -17,6 +17,11 @@ use CsvMigrations\FileUploadsUtils;
 class ImagesFieldHandler extends BaseFileFieldHandler
 {
     /**
+     * @var string $defaultConfigClass Config class to use as default
+     */
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\ImagesConfig';
+
+    /**
      * Set default options
      *
      * Set default options from the upstream classes and

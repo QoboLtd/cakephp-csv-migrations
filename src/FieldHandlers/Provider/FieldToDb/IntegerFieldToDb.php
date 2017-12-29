@@ -9,12 +9,18 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers;
+namespace CsvMigrations\FieldHandlers\Provider\FieldToDb;
 
-class RelatedFieldHandler extends BaseFieldHandler
+/**
+ * IntegerFieldToDb
+ *
+ * Integer FieldToDb provides the conversion functionality
+ * for integer fields.
+ */
+class IntegerFieldToDb extends BaseFieldToDb
 {
     /**
-     * @var string $defaultConfigClass Config class to use as default
+     * @var string $dbFieldType Database field type
      */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\RelatedConfig';
+    protected $dbFieldType = 'integer';
 }

@@ -24,6 +24,7 @@ class ListConfig extends FixedConfig
      */
     protected $config = [
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
+        'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\ListFieldToDb',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\ListSearchOperators',
         'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\ListSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\ListSelectOptions',

@@ -24,6 +24,7 @@ class DateConfig extends FixedConfig
      */
     protected $config = [
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
+        'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\DateFieldToDb',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\TimeSearchOperators',
         'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\DateSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',

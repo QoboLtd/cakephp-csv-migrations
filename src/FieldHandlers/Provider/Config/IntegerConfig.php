@@ -24,6 +24,7 @@ class IntegerConfig extends FixedConfig
      */
     protected $config = [
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
+        'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\IntegerFieldToDb',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\NumberSearchOperators',
         'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\IntegerSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',

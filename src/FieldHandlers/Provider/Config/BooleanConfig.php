@@ -24,6 +24,7 @@ class BooleanConfig extends FixedConfig
      */
     protected $config = [
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
+        'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\BooleanFieldToDb',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\BooleanSearchOperators',
         'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\BooleanSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',

@@ -24,10 +24,12 @@ class RelatedConfig extends FixedConfig
      */
     protected $config = [
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
+        'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\RelatedFieldToDb',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\RelatedSearchOperators',
         'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\RelatedSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
-        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\PlainRenderer',
+        'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\RelatedRenderer',
+        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\RelatedRenderer',
         'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
     ];
 }

@@ -13,7 +13,7 @@ namespace CsvMigrations\FieldHandlers;
 
 use Cake\ORM\TableRegistry;
 
-class DblistFieldHandler extends BaseListFieldHandler
+class DblistFieldHandler extends BaseFieldHandler
 {
     /**
      * Field type

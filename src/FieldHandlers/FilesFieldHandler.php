@@ -16,6 +16,11 @@ use CsvMigrations\FileUploadsUtils;
 class FilesFieldHandler extends BaseFileFieldHandler
 {
     /**
+     * @var string $defaultConfigClass Config class to use as default
+     */
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\FilesConfig';
+
+    /**
      * Generates file icons markup
      *
      * @param \Cake\ORM\ResultSet $entities File Entities

@@ -24,28 +24,4 @@ class BlobFieldHandler extends BaseFieldHandler
      * @var string $defaultConfigClass Config class to use as default
      */
     protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\BlobConfig';
-
-    /**
-     * Convert CsvField to one or more DbField instances
-     *
-     * Simple fields from migrations CSV map one-to-one to
-     * the database fields.  More complex fields can combine
-     * multiple database fields for a single CSV entry.
-     *
-     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @return array                                           DbField instances
-     */
-    public static function fieldToDb(CsvField $csvField)
-    {
-        $csvField->setType(self::DB_FIELD_TYPE);
-        // Set the limit to Phinx\Db\Adapter\MysqlAdapter::BLOB_LONG
-        $csvField->setLimit(MysqlAdapter::BLOB_LONG);
-
-        $dbField = DbField::fromCsvField($csvField);
-        $result = [
-            $csvField->getName() => $dbField,
-        ];
-
-        return $result;
-    }
 }

@@ -513,12 +513,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public static function fieldToDb(CsvField $csvField)
     {
-        $csvField->setType(static::DB_FIELD_TYPE);
-
-        $dbField = DbField::fromCsvField($csvField);
-        $result = [
-            $csvField->getName() => $dbField,
-        ];
+        // Temporary dummy configuration
+        $config = new static::$defaultConfigClass('dummy_field');
+        $fieldToDb = $config->getConfig()['fieldToDb'];
+        $fieldToDb = new $fieldToDb($config);
+        $result = $fieldToDb->provide($csvField);
 
         return $result;
     }

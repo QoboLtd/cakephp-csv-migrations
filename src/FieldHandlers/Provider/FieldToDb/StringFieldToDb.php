@@ -9,12 +9,14 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers;
+namespace CsvMigrations\FieldHandlers\Provider\FieldToDb;
 
-class RelatedFieldHandler extends BaseFieldHandler
+/**
+ * StringFieldToDb
+ *
+ * String FieldToDb provides the conversion functionality
+ * for string fields.
+ */
+class StringFieldToDb extends BaseFieldToDb
 {
-    /**
-     * @var string $defaultConfigClass Config class to use as default
-     */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\RelatedConfig';
 }

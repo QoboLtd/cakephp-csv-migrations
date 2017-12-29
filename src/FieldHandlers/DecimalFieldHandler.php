@@ -22,39 +22,4 @@ class DecimalFieldHandler extends BaseFieldHandler
      * @var string $defaultConfigClass Config class to use as default
      */
     protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\DecimalConfig';
-
-    /**
-     * Convert CsvField to one or more DbField instances
-     *
-     * Simple fields from migrations CSV map one-to-one to
-     * the database fields.  More complex fields can combine
-     * multiple database fields for a single CSV entry.
-     *
-     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @return array                                           DbField instances
-     */
-    public static function fieldToDb(CsvField $csvField)
-    {
-        $dbFields = parent::fieldToDb($csvField);
-
-        // set precision and scale provided by csv migration decimal field type definition
-        foreach ($dbFields as &$dbField) {
-            // skip if scale and precision are not defined
-            if (empty($dbField->getLimit())) {
-                continue;
-            }
-            // skip if scale and precision are not defined correctly
-            if (false === strpos($dbField->getLimit(), '.')) {
-                continue;
-            }
-
-            list($precision, $scale) = explode('.', $dbField->getLimit());
-            $options = $dbField->getOptions();
-            $options['precision'] = $precision;
-            $options['scale'] = $scale;
-            $dbField->setOptions($options);
-        }
-
-        return $dbFields;
-    }
 }

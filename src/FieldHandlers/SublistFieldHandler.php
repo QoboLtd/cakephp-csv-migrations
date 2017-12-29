@@ -11,7 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-class SublistFieldHandler extends BaseListFieldHandler
+class SublistFieldHandler extends BaseFieldHandler
 {
     /**
      * @var string $defaultConfigClass Config class to use as default

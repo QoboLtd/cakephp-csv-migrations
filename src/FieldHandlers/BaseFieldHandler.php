@@ -83,20 +83,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public $defaultOptions = [];
 
     /**
-     * Custom form input templates.
-     *
-     * @var array Associative array of templates
-     */
-    protected $_templates = [
-        'input' => '<div class="input-group %s">
-            <div class="input-group-addon">
-                <i class="fa fa-%s"></i>
-            </div>
-            <input type="{{type}}" name="{{name}}"{{attrs}}/>
-        </div>'
-    ];
-
-    /**
      * @var string $defaultConfigClass Config class to use as default
      */
     protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\StringConfig';

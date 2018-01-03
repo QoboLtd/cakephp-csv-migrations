@@ -53,19 +53,16 @@ class Config implements ConfigInterface
             'type' => 'string',
             'implements' => 'CsvMigrations\\FieldHandlers\\Provider\\ProviderInterface',
         ],
-        /*
         'fieldToDb' => [
             'required' => true,
             'type' => 'string',
             'implements' => 'CsvMigrations\\FieldHandlers\\Provider\\ProviderInterface',
         ],
-         */
         'searchOperators' => [
             'required' => true,
             'type' => 'string',
             'implements' => 'CsvMigrations\\FieldHandlers\\Provider\\ProviderInterface',
         ],
-        /*
         'searchOptions' => [
             'required' => true,
             'type' => 'string',
@@ -81,7 +78,6 @@ class Config implements ConfigInterface
             'type' => 'string',
             'implements' => 'CsvMigrations\\FieldHandlers\\Provider\\ProviderInterface',
         ],
-         */
         'valueRenderAs' => [
             'required' => true,
             'type' => 'string',

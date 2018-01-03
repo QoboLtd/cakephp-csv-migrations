@@ -28,6 +28,7 @@ class DblistConfig extends FixedConfig
         'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\ListFieldToDb',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\ListSearchOperators',
         'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\DblistSearchOptions',
+        'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
         'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\DblistRenderer',
         'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\DblistRenderer',
         'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',

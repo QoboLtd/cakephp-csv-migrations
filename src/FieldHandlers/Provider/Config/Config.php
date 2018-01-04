@@ -25,6 +25,11 @@ use InvalidArgumentException;
 class Config implements ConfigInterface
 {
     /**
+     * Interface for provider classes
+     */
+    const PROVIDER_INTERFACE = 'CsvMigrations\\FieldHandlers\\Provider\\ProviderInterface';
+
+    /**
      * @var string $field Field name
      */
     protected $field;
@@ -45,49 +50,17 @@ class Config implements ConfigInterface
     protected $config = [];
 
     /**
-     * @var array $validateRules Validation rules
+     * @var array $requiredProviders List of required providers
      */
-    protected $validateRules = [
-        'fieldValue' => [
-            'required' => true,
-            'type' => 'string',
-            'implements' => 'CsvMigrations\\FieldHandlers\\Provider\\ProviderInterface',
-        ],
-        'fieldToDb' => [
-            'required' => true,
-            'type' => 'string',
-            'implements' => 'CsvMigrations\\FieldHandlers\\Provider\\ProviderInterface',
-        ],
-        'searchOperators' => [
-            'required' => true,
-            'type' => 'string',
-            'implements' => 'CsvMigrations\\FieldHandlers\\Provider\\ProviderInterface',
-        ],
-        'searchOptions' => [
-            'required' => true,
-            'type' => 'string',
-            'implements' => 'CsvMigrations\\FieldHandlers\\Provider\\ProviderInterface',
-        ],
-        'selectOptions' => [
-            'required' => true,
-            'type' => 'string',
-            'implements' => 'CsvMigrations\\FieldHandlers\\Provider\\ProviderInterface',
-        ],
-        'inputRenderAs' => [
-            'required' => true,
-            'type' => 'string',
-            'implements' => 'CsvMigrations\\FieldHandlers\\Provider\\ProviderInterface',
-        ],
-        'valueRenderAs' => [
-            'required' => true,
-            'type' => 'string',
-            'implements' => 'CsvMigrations\\FieldHandlers\\Provider\\ProviderInterface',
-        ],
-        'nameRenderAs' => [
-            'required' => true,
-            'type' => 'string',
-            'implements' => 'CsvMigrations\\FieldHandlers\\Provider\\ProviderInterface',
-        ],
+    protected $requiredProviders = [
+        'fieldValue',
+        'fieldToDb',
+        'searchOperators',
+        'searchOptions',
+        'selectOptions',
+        'inputRenderAs',
+        'valueRenderAs',
+        'nameRenderAs',
     ];
 
     /**
@@ -227,26 +200,28 @@ class Config implements ConfigInterface
      */
     public function validateConfig(array $config)
     {
-        foreach ($this->validateRules as $option => $params) {
-            if ($params['required'] && empty($config[$option])) {
-                throw new InvalidArgumentException("Required configuration option [$option] is missing");
+        foreach ($config as $name => $class) {
+            if (!is_string($class)) {
+                throw new InvalidArgumentException("Provider class for [$name] is not a string");
             }
 
-            $type = gettype($config[$option]);
-            if ($type <> $params['type']) {
-                throw new InvalidArgumentException("Configuration option [$option] is of wrong type [$type].  Expecting [" . $params['type'] . "]");
+            $class = trim($class);
+            if (empty($class)) {
+                throw new InvalidArgumentException("Provider class for [$name] is an empty string");
             }
 
-            switch ($type) {
-                case 'string':
-                    if (!class_exists($config[$option])) {
-                        throw new InvalidArgumentException("Configuration option [$option] refers to non-existing class [" . $config[$option] . "]");
-                    }
-                    $requiredInterface = !empty($params['implements']) ? $params['implements'] : '';
-                    if ($requiredInterface && !in_array($requiredInterface, class_implements($config[$option]))) {
-                        throw new InvalidArgumentException("Configuration option [$option] class [" . $config[$option] . "] does not implement required interface [$requiredInterface]");
-                    }
-                    break;
+            if (!class_exists($class)) {
+                throw new InvalidArgumentException("Provider class [$class] for [$name] does not exist");
+            }
+
+            if (!in_array(self::PROVIDER_INTERFACE, class_implements($class))) {
+                throw new InvalidArgumentException("Provider class [$class] for [$name] does not implement [" . self::PROVIDER_INTERFACE . "] interface");
+            }
+        }
+
+        foreach ($this->requiredProviders as $name) {
+            if (!in_array($name, array_keys($config))) {
+                throw new InvalidArgumentException("Configuration is missing a required provider for [$name]");
             }
         }
     }

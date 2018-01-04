@@ -31,7 +31,7 @@ class CombinedRenderer extends BaseRenderer
         $combinedFields = new $config['combinedFields']($this->config);
         $combinedFields = $combinedFields->provide($data, $options);
 
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
         foreach ($combinedFields as $suffix => $fieldOptions) {
             $fieldName = $this->config->getField() . '_' . $suffix;
 

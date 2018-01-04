@@ -50,7 +50,7 @@ class RelatedSearchOptions extends BaseSearchOptions
 
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), null);
 
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
 
         $content = sprintf(
             static::HTML_INPUT,

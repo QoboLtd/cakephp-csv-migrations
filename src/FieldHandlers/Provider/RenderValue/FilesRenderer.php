@@ -103,7 +103,7 @@ class FilesRenderer extends BaseRenderer
         $colWidth = static::GRID_COUNT / static::THUMBNAIL_LIMIT;
         $thumbnailUrl = 'CsvMigrations.thumbnails/' . static::NO_THUMBNAIL_FILE;
 
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
         foreach ($entities as $k => $entity) {
             if ($k >= static::THUMBNAIL_LIMIT) {
                 break;
@@ -148,7 +148,7 @@ class FilesRenderer extends BaseRenderer
             $file = '_blank';
         }
 
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
 
         return $view->Url->image(
             'CsvMigrations.icons/files/' . static::ICON_SIZE . 'px/' . $file . '.' . static::ICON_EXTENSION

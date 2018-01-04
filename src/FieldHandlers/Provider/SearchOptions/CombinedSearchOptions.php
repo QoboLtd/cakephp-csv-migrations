@@ -33,7 +33,7 @@ class CombinedSearchOptions extends BaseSearchOptions
         $combinedFields = new $config['combinedFields']($this->config);
         $combinedFields = $combinedFields->provide($data, $options);
 
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
         foreach ($combinedFields as $suffix => $fieldOptions) {
             $options['fieldDefinitions']->setType($fieldOptions['handler']::DB_FIELD_TYPE);
             $fieldName = $this->config->getField() . '_' . $suffix;

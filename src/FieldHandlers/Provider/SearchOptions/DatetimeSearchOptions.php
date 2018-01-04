@@ -43,7 +43,7 @@ class DatetimeSearchOptions extends BaseSearchOptions
     {
         $defaultOptions = $this->getDefaultOptions($data, $options);
 
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
         if (isset($options['element'])) {
             $template = $view->element($options['element'], [
                 'options' => [

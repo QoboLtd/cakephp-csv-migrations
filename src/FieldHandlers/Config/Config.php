@@ -13,6 +13,7 @@ namespace CsvMigrations\FieldHandlers\Config;
 
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\View\View;
 use CsvMigrations\View\AppView;
 use InvalidArgumentException;
 
@@ -43,6 +44,11 @@ class Config implements ConfigInterface
      * @var array $options Options
      */
     protected $options;
+
+    /**
+     * @var \Cake\View\View $view View
+     */
+    protected $view;
 
     /**
      * @var array $config Field handler configuration
@@ -149,10 +155,6 @@ class Config implements ConfigInterface
      */
     public function setOptions(array $options = [])
     {
-        if (empty($options['view'])) {
-            $options['view'] = new AppView();
-        }
-
         $this->options = $options;
     }
 
@@ -164,6 +166,31 @@ class Config implements ConfigInterface
     public function getOptions()
     {
         return $this->options;
+    }
+
+    /**
+     * Set view
+     *
+     * @param \Cake\View\View $view View instance
+     * @return void
+     */
+    public function setView(View $view)
+    {
+        $this->view = $view;
+    }
+
+    /**
+     * Get view
+     *
+     * @return \Cake\View\View
+     */
+    public function getView()
+    {
+        if (empty($this->view)) {
+            $this->setView(new AppView());
+        }
+
+        return $this->view;
     }
 
     /**

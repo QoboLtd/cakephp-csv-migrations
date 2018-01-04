@@ -64,7 +64,7 @@ class UrlRenderer extends BaseRenderer
             return $result;
         }
 
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
         $result = $view->Html->link($result, $result, ['target' => $options['linkTarget']]);
 
         return $result;

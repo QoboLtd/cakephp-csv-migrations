@@ -63,7 +63,7 @@ abstract class BaseSearchOptions extends BaseProvider
      */
     protected function getBasicTemplate($type)
     {
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
         $result = $view->Form->input('{{name}}', [
             'value' => '{{value}}',
             'type' => $type,

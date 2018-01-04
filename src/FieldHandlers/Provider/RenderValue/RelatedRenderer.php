@@ -47,7 +47,7 @@ class RelatedRenderer extends BaseRenderer
             );
         }
 
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
         $inputs = [];
         foreach ($relatedProperties as $properties) {
             if (empty($properties)) {

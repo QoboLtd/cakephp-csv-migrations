@@ -80,7 +80,7 @@ class LinkRenderer extends BaseRenderer
             return $result;
         }
 
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
         $result = $view->Html->link($data, $options['linkTo'], ['target' => $options['linkTarget']]);
 
         return $result;

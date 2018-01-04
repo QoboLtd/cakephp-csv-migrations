@@ -101,10 +101,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public function __construct($table, $field, $cakeView = null)
     {
-        $this->setConfig($table, $field, $cakeView);
+        $this->setView($cakeView);
+        $this->setConfig($table, $field, $this->cakeView);
         $this->setTable($table);
         $this->setField($field);
-        $this->setView($cakeView);
         $this->setDefaultOptions();
     }
 
@@ -113,12 +113,13 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      *
      * @param mixed  $table    Name or instance of the Table
      * @param string $field    Field name
-     * @param object $cakeView Optional instance of the AppView
+     * @param object $view Instance of the AppView
      * @return void
      */
-    protected function setConfig($table, $field, $cakeView = null)
+    protected function setConfig($table, $field, $view)
     {
-        $this->config = new static::$defaultConfigClass($field, $table, ['view' => $cakeView]);
+        $this->config = new static::$defaultConfigClass($field, $table);
+        $this->config->setView($view);
     }
 
     /**

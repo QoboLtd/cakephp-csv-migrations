@@ -133,7 +133,7 @@ class ImagesRenderer extends BaseRenderer
                 }
             }
 
-            $view = $this->config->getOptions()['view'];
+            $view = $this->config->getView();
             $thumbnail = sprintf(
                 static::THUMBNAIL_HTML,
                 $view->Html->image($thumbnailUrl, ['title' => $entity->filename])

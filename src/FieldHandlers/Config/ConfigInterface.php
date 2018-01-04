@@ -11,6 +11,8 @@
  */
 namespace CsvMigrations\FieldHandlers\Config;
 
+use Cake\View\View;
+
 /**
  * ConfigInterface
  *
@@ -73,6 +75,21 @@ interface ConfigInterface
      * @return array
      */
     public function getOptions();
+
+    /**
+     * Set view
+     *
+     * @param \Cake\View\View $view View instance
+     * @return void
+     */
+    public function setView(View $view);
+
+    /**
+     * Get view
+     *
+     * @return \Cake\View\View
+     */
+    public function getView();
 
     /**
      * Set config

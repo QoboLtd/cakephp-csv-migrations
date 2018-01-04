@@ -38,7 +38,7 @@ class DblistRenderer extends BaseRenderer
         }
 
         $listName = (string)$options['listName'];
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
         $result = (string)$view->cell('CsvMigrations.Dblist::renderValue', [$data, $listName])->render('renderValue');
 
         return $result;

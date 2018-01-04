@@ -31,7 +31,7 @@ class IntegerSearchOptions extends BaseSearchOptions
         $defaultOptions = $this->getDefaultOptions($data, $options);
         $defaultOptions['input'] = ['content' => $template];
 
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
         $content = $view->Form->input('', [
             'name' => '{{name}}',
             'value' => '{{value}}',

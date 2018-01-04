@@ -34,7 +34,7 @@ class TextRenderer extends BaseRenderer
         }
 
         // Auto-paragraph
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
         $result = $view->Text->autoParagraph($result);
 
         return $result;

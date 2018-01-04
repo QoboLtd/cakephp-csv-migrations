@@ -29,7 +29,7 @@ class BooleanSearchOptions extends BaseSearchOptions
     {
         $defaultOptions = $this->getDefaultOptions($data, $options);
 
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
         $template = $view->Form->input('{{name}}', [
             'type' => 'checkbox',
             'class' => 'square',

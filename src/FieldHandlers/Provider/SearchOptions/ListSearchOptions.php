@@ -43,7 +43,7 @@ class ListSearchOptions extends BaseSearchOptions
 
         $options['listItems'] = $selectOptions;
 
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
         $content = $view->Form->select('{{name}}', $selectOptions, [
             'class' => 'form-control',
             'label' => false

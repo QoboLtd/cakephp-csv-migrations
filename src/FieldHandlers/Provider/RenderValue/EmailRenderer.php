@@ -50,7 +50,7 @@ class EmailRenderer extends BaseRenderer
             return $result;
         }
 
-        $view = $this->config->getOptions()['view'];
+        $view = $this->config->getView();
         $result = $view->Html->link($result, 'mailto:' . $result, ['target' => '_blank']);
 
         return $result;

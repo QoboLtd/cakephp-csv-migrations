@@ -37,8 +37,8 @@ class ListRenderer extends BaseRenderer
 
         // if select options are not pre-defined
         if (empty($options['selectOptions'])) {
-            $config = $this->config->getConfig();
-            $selectListItems = new $config['selectOptions']($this->config);
+            $selectListItems = $this->config->getProvider('selectOptions');
+            $selectListItems = new $selectListItems($this->config);
             $listName = $options['fieldDefinitions']->getLimit();
             $listOptions = [];
             $selectOptions += $selectListItems->provide($listName, $listOptions);

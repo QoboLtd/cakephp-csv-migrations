@@ -51,9 +51,9 @@ class Config implements ConfigInterface
     protected $view;
 
     /**
-     * @var array $config Field handler configuration
+     * @var array $providers List of provider names and classes
      */
-    protected $config = [];
+    protected $providers = [];
 
     /**
      * @var array $requiredProviders List of required providers
@@ -194,40 +194,57 @@ class Config implements ConfigInterface
     }
 
     /**
-     * Set config
+     * Set providers
      *
-     * @throws \InvalidArgumentException for invalid configuration
-     * @param array $config Field Handler configuration
+     * @throws \InvalidArgumentException for invalid providers
+     * @param array $providers List of provider names and classes
      * @return void
      */
-    public function setConfig(array $config)
+    public function setProviders(array $providers)
     {
-        $this->validateConfig($config);
-        $this->config = $config;
+        $this->validateProviders($providers);
+        $this->providers = $providers;
     }
 
     /**
-     * Get config
+     * Get providers
      *
+     * @throws \InvalidArgumentException for invalid provider
      * @return array
      */
-    public function getConfig()
+    public function getProviders()
     {
-        $this->validateConfig($this->config);
+        $this->validateProviders($this->providers);
 
-        return $this->config;
+        return $this->providers;
     }
 
     /**
-     * Validate config
+     * Get provider by name
      *
-     * @throws \InvalidArgumentException for invalid configuration
-     * @param array $config Field Handler configuration
+     * @throws \InvalidArgumentException for invalid provider
+     * @return array
+     */
+    public function getProvider($name)
+    {
+        $providers = $this->getProviders();
+        if (!in_array($name, array_keys($providers))) {
+            throw new InvalidArgumentException("Provider for [$name] is not configured");
+        }
+
+        return $providers[$name];
+    }
+
+    /**
+     * Validate providers
+     *
+     * @throws \InvalidArgumentException for invalid providers
+     * @param array $providers List of provider names and classes
      * @return void
      */
-    public function validateConfig(array $config)
+    public function validateProviders(array $providers)
     {
-        foreach ($config as $name => $class) {
+        foreach ($providers as $name => $class) {
             if (!is_string($class)) {
                 throw new InvalidArgumentException("Provider class for [$name] is not a string");
             }
@@ -247,7 +264,7 @@ class Config implements ConfigInterface
         }
 
         foreach ($this->requiredProviders as $name) {
-            if (!in_array($name, array_keys($config))) {
+            if (!in_array($name, array_keys($providers))) {
                 throw new InvalidArgumentException("Configuration is missing a required provider for [$name]");
             }
         }

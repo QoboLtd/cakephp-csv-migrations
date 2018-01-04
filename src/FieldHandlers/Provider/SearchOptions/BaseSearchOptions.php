@@ -27,7 +27,7 @@ abstract class BaseSearchOptions extends BaseProvider
      */
     protected function getSearchOperators()
     {
-        $result = $this->config->getConfig()['searchOperators'];
+        $result = $this->config->getProvider('searchOperators');
         $result = new $result($this->config);
         $result = $result->provide();
 

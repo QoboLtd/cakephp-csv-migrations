@@ -92,28 +92,36 @@ interface ConfigInterface
     public function getView();
 
     /**
-     * Set config
+     * Set providers
      *
-     * @throws \InvalidArgumentException for invalid configuration
-     * @param array $config Field Handler configuration
+     * @throws \InvalidArgumentException for invalid providers
+     * @param array $providers List of provider names and classes
      * @return void
      */
-    public function setConfig(array $config);
+    public function setProviders(array $providers);
 
     /**
-     * Get config
+     * Get providers
      *
-     * @throws \InvalidArgumentException for invalid configuration
+     * @throws \InvalidArgumentException for invalid providers
      * @return array
      */
-    public function getConfig();
+    public function getProviders();
 
     /**
-     * Validate config
+     * Get provider by name
      *
-     * @throws \InvalidArgumentException for invalid configuration
-     * @param array $config Field Handler configuration
+     * @throws \InvalidArgumentException for invalid provider
+     * @return array
+     */
+    public function getProvider($name);
+
+    /**
+     * Validate providers
+     *
+     * @throws \InvalidArgumentException for invalid providers
+     * @param array $providers List of provider names and classes
      * @return void
      */
-    public function validateConfig(array $config);
+    public function validateProviders(array $providers);
 }

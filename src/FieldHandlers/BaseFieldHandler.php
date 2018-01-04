@@ -344,8 +344,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         $options['label'] = empty($options['label']) ? $this->renderName() : $options['label'];
 
-        $config = $this->config->getConfig();
-        $searchOptions = new $config['inputRenderAs']($this->config);
+        $searchOptions = $this->config->getProvider('inputRenderAs');
+        $searchOptions = new $searchOptions($this->config);
         $result = $searchOptions->provide($data, $options);
 
         return $result;
@@ -373,8 +373,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         $options['label'] = empty($options['label']) ? $this->renderName() : $options['label'];
 
-        $config = $this->config->getConfig();
-        $searchOptions = new $config['searchOptions']($this->config);
+        $searchOptions = $this->config->getProvider('searchOptions');
+        $searchOptions = new $searchOptions($this->config);
         $result = $searchOptions->provide(null, $options);
 
         return $result;
@@ -389,8 +389,8 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $label = !empty($this->defaultOptions['label']) ? $this->defaultOptions['label'] : '';
 
-        $config = $this->config->getConfig();
-        $renderer = new $config['nameRenderAs']($this->config);
+        $renderer = $this->config->getProvider('nameRenderAs');
+        $renderer = new $renderer($this->config);
         $result = $renderer->provide($label);
 
         return $result;
@@ -419,8 +419,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $result = stream_get_contents($result);
         }
 
-        $config = $this->config->getConfig();
-        $rendererClass = $config['valueRenderAs'];
+        $rendererClass = $this->config->getProvider('valueRenderAs');
         if (!empty($options['renderAs'])) {
             $rendererClass = __NAMESPACE__ . '\\Provider\\RenderValue\\' . ucfirst($options['renderAs']) . 'Renderer';
         }
@@ -449,7 +448,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         // Temporary dummy configuration
         $config = new static::$defaultConfigClass('dummy_field');
-        $fieldToDb = $config->getConfig()['fieldToDb'];
+        $fieldToDb = $config->getProvider('fieldToDb');
         $fieldToDb = new $fieldToDb($config);
         $result = $fieldToDb->provide($csvField);
 
@@ -472,14 +471,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected function _getFieldValueFromData($data, $field)
     {
-        $currentConfig = $this->config->getConfig();
+        $fieldValue = $this->config->getProvider('fieldValue');
 
         // Occasionally, we have data in a different field
         // (files, combined fields, etc)
         $runtimeConfig = $this->config;
         $runtimeConfig->setField($field);
 
-        $fieldValue = new $currentConfig['fieldValue']($runtimeConfig);
+        $fieldValue = new $fieldValue($runtimeConfig);
         $result = $fieldValue->provide($data);
 
         return $result;

@@ -37,8 +37,8 @@ class CombinedFieldToDb extends BaseFieldToDb
             throw new InvalidArgumentException("Given data is not an instance of CsvField");
         }
 
-        $config = $this->config->getConfig();
-        $combinedFields = new $config['combinedFields']($this->config);
+        $combinedFields = $this->config->getProvider('combinedFields');
+        $combinedFields = new $combinedFields($this->config);
         $combinedFields = $combinedFields->provide($data, $options);
 
         $dbFields = [];

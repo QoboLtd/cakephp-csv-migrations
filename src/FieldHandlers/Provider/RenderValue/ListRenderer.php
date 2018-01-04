@@ -46,8 +46,8 @@ class ListRenderer extends BaseRenderer
         }
 
         if (empty($options['listItems'])) {
-            $config = $this->config->getConfig();
-            $selectListItems = new $config['selectOptions']($this->config);
+            $selectListItems = $this->config->getProvider('selectOptions');
+            $selectListItems = new $selectListItems($this->config);
             $listName = $options['fieldDefinitions']->getLimit();
             $listOptions = [];
 

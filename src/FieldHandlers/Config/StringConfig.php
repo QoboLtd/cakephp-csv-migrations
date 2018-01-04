@@ -20,9 +20,9 @@ namespace CsvMigrations\FieldHandlers\Config;
 class StringConfig extends FixedConfig
 {
     /**
-     * @var array $config Field handler configuration
+     * @var array $providers List of provider names and classes
      */
-    protected $config = [
+    protected $providers = [
         'combinedFields' => '\\CsvMigrations\\FieldHandlers\\Provider\\CombinedFields\\NullCombinedFields',
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
         'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\StringFieldToDb',

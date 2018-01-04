@@ -33,8 +33,8 @@ class SublistRenderer extends BaseRenderer
 
         $fieldName = $table->aliasField($field);
 
-        $config = $this->config->getConfig();
-        $selectListItems = new $config['selectOptions']($this->config);
+        $selectListItems = $this->config->getProvider('selectOptions');
+        $selectListItems = new $selectListItems($this->config);
         $listName = $options['fieldDefinitions']->getLimit();
         $listOptions = ['spacer' => null, 'flatten' => false];
         $fieldOptions = $selectListItems->provide($listName, $listOptions);

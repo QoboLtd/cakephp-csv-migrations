@@ -22,26 +22,14 @@ use InvalidArgumentException;
 abstract class FixedConfig extends Config
 {
     /**
-     * Set config
+     * Set providers
      *
-     * @throws \InvalidArgumentException for invalid configuration
-     * @param array $config Field Handler configuration
+     * @throws \InvalidArgumentException for invalid providers
+     * @param array $providers List of provider names and classes
      * @return void
      */
-    public function setConfig(array $config)
+    public function setProviders(array $providers)
     {
-        throw new InvalidArgumentException("Setting predefined configuration is not allowed");
-    }
-
-    /**
-     * Get config
-     *
-     * @return array
-     */
-    public function getConfig()
-    {
-        $this->validateConfig($this->config);
-
-        return $this->config;
+        throw new InvalidArgumentException("Setting predefined providers is not allowed");
     }
 }

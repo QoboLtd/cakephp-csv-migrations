@@ -9,7 +9,7 @@ use stdClass;
 
 class ConfigTest extends PHPUnit_Framework_TestCase
 {
-    public function invalidConfigProvider()
+    public function invalidProvidersProvider()
     {
         return [
             // empty config
@@ -51,7 +51,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    public function validConfigProvider()
+    public function validProvidersProvider()
     {
         return [
             [
@@ -71,23 +71,23 @@ class ConfigTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider invalidConfigProvider
+     * @dataProvider invalidProvidersProvider
      * @expectedException \InvalidArgumentException
      */
-    public function testSetConfigException($config)
+    public function testSetProvidersException($providers)
     {
         $configInstance = new Config('foo');
-        $configInstance->setConfig($config);
+        $configInstance->setProviders($providers);
     }
 
     /**
-     * @dataProvider invalidConfigProvider
+     * @dataProvider invalidProvidersProvider
      * @expectedException \InvalidArgumentException
      */
-    public function testValidateConfigException($config)
+    public function testValidateProvidersException($providers)
     {
         $configInstance = new Config('foo');
-        $configInstance->validateConfig($config);
+        $configInstance->validateProviders($providers);
     }
 
     public function testConstruct()
@@ -98,14 +98,14 @@ class ConfigTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider validConfigProvider
+     * @dataProvider validProvidersProvider
      */
-    public function testGetConfig($config)
+    public function testGetProviders($providers)
     {
         $configInstance = new Config('foo');
-        $configInstance->setConfig($config);
-        $actualConfig = $configInstance->getConfig();
-        $this->assertEquals($config, $actualConfig, "Config did not return provided config");
+        $configInstance->setProviders($providers);
+        $actualProviders = $configInstance->getProviders();
+        $this->assertEquals($providers, $actualProviders, "Providers did not return provided list");
     }
 
     /**

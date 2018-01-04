@@ -27,8 +27,8 @@ class CombinedRenderer extends BaseRenderer
      */
     public function provide($data = null, array $options = [])
     {
-        $config = $this->config->getConfig();
-        $combinedFields = new $config['combinedFields']($this->config);
+        $combinedFields = $this->config->getProvider('combinedFields');
+        $combinedFields = new $combinedFields($this->config);
         $combinedFields = $combinedFields->provide($data, $options);
 
         $view = $this->config->getView();

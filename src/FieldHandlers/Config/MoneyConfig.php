@@ -20,9 +20,9 @@ namespace CsvMigrations\FieldHandlers\Config;
 class MoneyConfig extends FixedConfig
 {
     /**
-     * @var array $config Field handler configuration
+     * @var array $providers List of provider names and classes
      */
-    protected $config = [
+    protected $providers = [
         'combinedFields' => '\\CsvMigrations\\FieldHandlers\\Provider\\CombinedFields\\MoneyCombinedFields',
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
         'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\CombinedFieldToDb',

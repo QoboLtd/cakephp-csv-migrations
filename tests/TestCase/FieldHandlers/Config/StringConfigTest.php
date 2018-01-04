@@ -8,7 +8,7 @@ use PHPUnit_Framework_TestCase;
 
 class StringConfigTest extends PHPUnit_Framework_TestCase
 {
-    public function invalidConfigProvider()
+    public function invalidProvidersProvider()
     {
         return [
             // empty config
@@ -22,7 +22,7 @@ class StringConfigTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    public function validConfigProvider()
+    public function validProvidersProvider()
     {
         return [
             [['searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators']],
@@ -30,23 +30,23 @@ class StringConfigTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider validConfigProvider
+     * @dataProvider validProvidersProvider
      * @expectedException \InvalidArgumentException
      */
-    public function testSetConfigException($config)
+    public function testSetProvidersException($providers)
     {
         $configInstance = new StringConfig('foo');
-        $configInstance->setConfig($config);
+        $configInstance->setProviders($providers);
     }
 
     /**
-     * @dataProvider invalidConfigProvider
+     * @dataProvider invalidProvidersProvider
      * @expectedException \InvalidArgumentException
      */
-    public function testValidateConfigException($config)
+    public function testValidateProvidersException($providers)
     {
         $configInstance = new StringConfig('foo');
-        $configInstance->validateConfig($config);
+        $configInstance->validateProviders($providers);
     }
 
     public function testConstruct()
@@ -56,11 +56,11 @@ class StringConfigTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($configInstance instanceof ConfigInterface, "StringConfig instance does not implement ConfigInterface");
     }
 
-    public function testGetConfig()
+    public function testGetProviders()
     {
         $configInstance = new StringConfig('foo');
-        $actualConfig = $configInstance->getConfig();
-        $this->assertTrue(is_array($actualConfig), "StringConfig did not return an array config");
-        $this->assertFalse(empty($actualConfig), "StringConfig return an empty config");
+        $actualProviders = $configInstance->getProviders();
+        $this->assertTrue(is_array($actualProviders), "StringConfig did not return an array of providers");
+        $this->assertFalse(empty($actualProviders), "StringConfig return an empty list of providers");
     }
 }

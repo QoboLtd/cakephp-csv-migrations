@@ -48,7 +48,6 @@ class HasManyRenderer extends BaseRenderer
             }
         }
 
-
         $params = [
             'field' => $field,
             'name' => $options['associated_table_name'],

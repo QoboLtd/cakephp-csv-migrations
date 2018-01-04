@@ -335,7 +335,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         if (is_resource($data)) {
             $data = stream_get_contents($data);
         }
-        $data = (string)$this->_getFieldValueFromData($data, $this->field);
+        $data = $this->_getFieldValueFromData($data, $this->field);
 
         if (empty($data) && !empty($options['default'])) {
             $data = $options['default'];

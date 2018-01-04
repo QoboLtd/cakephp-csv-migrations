@@ -31,7 +31,6 @@ class RelatedSearchOptions extends BaseSearchOptions
             <span class="input-group-addon" title="%s"><span class="fa fa-%s"></span></span>%s
         </div>';
 
-
     /**
      * Provide search options
      *
@@ -41,10 +40,17 @@ class RelatedSearchOptions extends BaseSearchOptions
      */
     public function provide($data = null, array $options = [])
     {
+        $field = $this->config->getField();
+
+        $template = $this->getBasicTemplate('text');
+        $defaultOptions = $this->getDefaultOptions($data, $options);
+        $defaultOptions['input'] = ['content' => $template];
+
+        $result[$field] = $defaultOptions;
+
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), null);
 
         $view = $this->config->getOptions()['view'];
-        $field = $this->config->getField();
 
         $content = sprintf(
             static::HTML_INPUT,

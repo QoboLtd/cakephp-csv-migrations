@@ -27,7 +27,7 @@ class ListSearchOptions extends BaseSearchOptions
      */
     public function provide($data = null, array $options = [])
     {
-        $template = $this->getBasicTemplate('url');
+        $template = $this->getBasicTemplate('text');
         $defaultOptions = $this->getDefaultOptions($data, $options);
         $defaultOptions['input'] = ['content' => $template];
 

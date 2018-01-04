@@ -48,7 +48,6 @@ class RelatedRenderer extends BaseRenderer
             }
         }
 
-
         $params = [
             'field' => $field,
             'name' => $fieldName,

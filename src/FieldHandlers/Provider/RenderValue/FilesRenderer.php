@@ -149,9 +149,9 @@ class FilesRenderer extends BaseRenderer
         }
 
         $view = $this->config->getOptions()['view'];
+
         return $view->Url->image(
             'CsvMigrations.icons/files/' . static::ICON_SIZE . 'px/' . $file . '.' . static::ICON_EXTENSION
         );
     }
-
 }

@@ -56,8 +56,13 @@ class ConfigTest extends PHPUnit_Framework_TestCase
         return [
             [
                 [
+                    'combinedFields' => '\\CsvMigrations\\FieldHandlers\\Provider\\CombinedFields\\NullCombinedFields',
                     'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
+                    'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\StringFieldToDb',
                     'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
+                    'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\StringSearchOptions',
+                    'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
+                    'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\StringRenderer',
                     'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\StringRenderer',
                     'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
                 ],

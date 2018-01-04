@@ -55,6 +55,11 @@ class ListRenderer extends BaseRenderer
         }
 
         $listItems = $options['listItems'];
+
+        if (!is_array($options['listItems'])) {
+            throw new InvalidArgumentException("List items is not an array");
+        }
+
         if (!isset($listItems[$data])) {
             return sprintf(static::VALUE_NOT_FOUND_HTML, parent::provide($data, $options));
         }

@@ -52,7 +52,6 @@ class DecimalFieldToDb extends BaseFieldToDb
             $fieldOptions['precision'] = $precision;
             $fieldOptions['scale'] = $scale;
             $dbField->setOptions($fieldOptions);
-
         }
 
         $result = [

@@ -351,59 +351,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     }
 
     /**
-     * Render Field Handler element
-     *
-     * Handles logic for rendering appropriate element based on Field Handler
-     * class and render method (renderInput, renderValue etc).
-     *
-     * Supports rendering custom element by passing the element's name using
-     * $options['element'] parameter. If the element does exist, it will be used,
-     * and the Field Handler appropriate parameters will be passed to it.
-     *
-     * If a custom element was not provided, then it will try and use the specific
-     * Field Handler's render element. If there is no specific render element for
-     * the Field Handler, it will use the Base Field Handler element. If that does
-     * not exist either, then an exception will be thrown.
-     *
-     * @param string $method Method name (example: renderInput)
-     * @param array $params Element parameters
-     * @param array $options Field options
-     * @throws \RuntimeException If no element was found
-     * @return string
-     */
-    protected function _renderElement($method, array $params, array $options = [])
-    {
-        $params += ['attributes' => empty($options['attributes']) ? [] : $options['attributes']];
-
-        // render custom element
-        if (!empty($options['element']) && $this->cakeView->elementExists($options['element'])) {
-            return $this->cakeView->element($options['element'], $params);
-        }
-
-        $type = strtolower($method);
-        $type = str_replace('render', '', $type);
-
-        $fqcn = get_class($this);
-        $className = substr($fqcn, strrpos($fqcn, '\\') + 1);
-
-        $element = 'CsvMigrations.FieldHandlers/' . $className . '/' . $type;
-
-        // if element does not exist, use default one
-        if (!$this->cakeView->elementExists($element)) {
-            $element = 'CsvMigrations.FieldHandlers/BaseFieldHandler/' . $type;
-        }
-
-        // if no element was found, throw exception
-        if (!$this->cakeView->elementExists($element)) {
-            throw new RuntimeException(
-                Inflector::humanize($type) . ' element, for class ' . $className . ', was not found.'
-            );
-        }
-
-        return $this->cakeView->element($element, $params);
-    }
-
-    /**
      * Get options for field search
      *
      * This method prepares an array of search options, which includes

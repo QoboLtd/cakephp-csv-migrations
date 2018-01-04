@@ -1,7 +1,7 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
-use CsvMigrations\FieldHandlers\Provider\Config\EmailConfig;
+use CsvMigrations\FieldHandlers\Config\EmailConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\EmailRenderer;
 use PHPUnit_Framework_TestCase;
 

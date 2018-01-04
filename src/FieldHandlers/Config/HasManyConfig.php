@@ -9,28 +9,28 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers\Provider\Config;
+namespace CsvMigrations\FieldHandlers\Config;
 
 /**
- * MoneyConfig
+ * HasManyConfig
  *
  * This class provides the predefined configuration
- * for money field handlers.
+ * for HasMany field handlers.
  */
-class MoneyConfig extends FixedConfig
+class HasManyConfig extends FixedConfig
 {
     /**
      * @var array $config Field handler configuration
      */
     protected $config = [
-        'combinedFields' => '\\CsvMigrations\\FieldHandlers\\Provider\\CombinedFields\\MoneyCombinedFields',
+        'combinedFields' => '\\CsvMigrations\\FieldHandlers\\Provider\\CombinedFields\\NullCombinedFields',
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
-        'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\CombinedFieldToDb',
+        'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\RelatedFieldToDb',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\NullSearchOperators',
-        'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\CombinedSearchOptions',
+        'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\NullSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
-        'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\CombinedRenderer',
-        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\CombinedRenderer',
+        'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\HasManyRenderer',
+        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\RelatedRenderer',
         'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
     ];
 }

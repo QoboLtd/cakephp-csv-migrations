@@ -9,15 +9,15 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers\Provider\Config;
+namespace CsvMigrations\FieldHandlers\Config;
 
 /**
- * SublistConfig
+ * PhoneConfig
  *
  * This class provides the predefined configuration
- * for Sublist field handlers.
+ * for phone field handlers.
  */
-class SublistConfig extends FixedConfig
+class PhoneConfig extends FixedConfig
 {
     /**
      * @var array $config Field handler configuration
@@ -25,12 +25,12 @@ class SublistConfig extends FixedConfig
     protected $config = [
         'combinedFields' => '\\CsvMigrations\\FieldHandlers\\Provider\\CombinedFields\\NullCombinedFields',
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
-        'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\ListFieldToDb',
-        'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\ListSearchOperators',
-        'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\ListSearchOptions',
-        'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\ListSelectOptions',
-        'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\SublistRenderer',
-        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\ListRenderer',
+        'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\StringFieldToDb',
+        'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
+        'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\PhoneSearchOptions',
+        'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
+        'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\PhoneRenderer',
+        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\StringRenderer',
         'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
     ];
 }

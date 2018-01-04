@@ -16,5 +16,5 @@ class PhoneFieldHandler extends BaseFieldHandler
     /**
      * @var string $defaultConfigClass Config class to use as default
      */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\PhoneConfig';
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\PhoneConfig';
 }

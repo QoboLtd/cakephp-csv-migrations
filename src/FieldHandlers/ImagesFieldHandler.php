@@ -16,7 +16,7 @@ class ImagesFieldHandler extends BaseFieldHandler
     /**
      * @var string $defaultConfigClass Config class to use as default
      */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\ImagesConfig';
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\ImagesConfig';
 
     /**
      * Field type

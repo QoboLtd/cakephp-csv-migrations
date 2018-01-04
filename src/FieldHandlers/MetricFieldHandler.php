@@ -16,5 +16,5 @@ class MetricFieldHandler extends BaseFieldHandler
     /**
      * @var string $defaultConfigClass Config class to use as default
      */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\MetricConfig';
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\MetricConfig';
 }

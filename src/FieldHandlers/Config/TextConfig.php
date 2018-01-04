@@ -9,15 +9,15 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers\Provider\Config;
+namespace CsvMigrations\FieldHandlers\Config;
 
 /**
- * UrlConfig
+ * TextConfig
  *
  * This class provides the predefined configuration
- * for URL field handlers.
+ * for text field handlers.
  */
-class UrlConfig extends FixedConfig
+class TextConfig extends FixedConfig
 {
     /**
      * @var array $config Field handler configuration
@@ -25,12 +25,12 @@ class UrlConfig extends FixedConfig
     protected $config = [
         'combinedFields' => '\\CsvMigrations\\FieldHandlers\\Provider\\CombinedFields\\NullCombinedFields',
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
-        'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\StringFieldToDb',
+        'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\TextFieldToDb',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
-        'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\UrlSearchOptions',
+        'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\StringSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
-        'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\UrlRenderer',
-        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\UrlRenderer',
+        'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\TextRenderer',
+        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\TextRenderer',
         'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
     ];
 }

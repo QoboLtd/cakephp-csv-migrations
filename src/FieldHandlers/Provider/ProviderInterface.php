@@ -11,7 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider;
 
-use CsvMigrations\FieldHandlers\Provider\Config\ConfigInterface;
+use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 
 /**
  * ProviderInterface
@@ -24,7 +24,7 @@ interface ProviderInterface
     /**
      * Constructor
      *
-     * @param ConfigInterface $config Configuration
+     * @param \CsvMigrations\FieldHandlers\Config\ConfigInterface $config Configuration
      */
     public function __construct(ConfigInterface $config);
 

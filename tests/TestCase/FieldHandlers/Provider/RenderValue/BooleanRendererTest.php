@@ -1,7 +1,7 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
-use CsvMigrations\FieldHandlers\Provider\Config\BooleanConfig;
+use CsvMigrations\FieldHandlers\Config\BooleanConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\BooleanRenderer;
 use PHPUnit_Framework_TestCase;
 

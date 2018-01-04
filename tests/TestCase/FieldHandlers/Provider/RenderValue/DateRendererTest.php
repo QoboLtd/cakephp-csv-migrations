@@ -2,7 +2,7 @@
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use Cake\I18n\Time;
-use CsvMigrations\FieldHandlers\Provider\Config\DateConfig;
+use CsvMigrations\FieldHandlers\Config\DateConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\DateRenderer;
 use PHPUnit_Framework_TestCase;
 use StdClass;

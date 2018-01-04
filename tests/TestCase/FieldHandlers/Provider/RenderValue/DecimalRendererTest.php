@@ -1,7 +1,7 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
-use CsvMigrations\FieldHandlers\Provider\Config\DecimalConfig;
+use CsvMigrations\FieldHandlers\Config\DecimalConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\DecimalRenderer;
 use PHPUnit_Framework_TestCase;
 use StdClass;

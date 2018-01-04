@@ -21,5 +21,5 @@ class DecimalFieldHandler extends BaseFieldHandler
     /**
      * @var string $defaultConfigClass Config class to use as default
      */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\DecimalConfig';
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\DecimalConfig';
 }

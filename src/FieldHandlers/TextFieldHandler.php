@@ -23,5 +23,5 @@ class TextFieldHandler extends BaseFieldHandler
     /**
      * @var string $defaultConfigClass Config class to use as default
      */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\TextConfig';
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\TextConfig';
 }

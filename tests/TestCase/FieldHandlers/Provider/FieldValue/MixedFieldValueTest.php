@@ -3,7 +3,7 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\FieldValue;
 
 use Cake\Network\Request;
 use Cake\ORM\Entity;
-use CsvMigrations\FieldHandlers\Provider\Config\StringConfig;
+use CsvMigrations\FieldHandlers\Config\StringConfig;
 use CsvMigrations\FieldHandlers\Provider\FieldValue\MixedFieldValue;
 use CsvMigrations\FieldHandlers\Provider\ProviderInterface;
 use PHPUnit_Framework_TestCase;

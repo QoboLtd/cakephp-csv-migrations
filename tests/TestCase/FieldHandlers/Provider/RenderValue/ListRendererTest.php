@@ -1,7 +1,7 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
-use CsvMigrations\FieldHandlers\Provider\Config\ListConfig;
+use CsvMigrations\FieldHandlers\Config\ListConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\ListRenderer;
 use PHPUnit_Framework_TestCase;
 

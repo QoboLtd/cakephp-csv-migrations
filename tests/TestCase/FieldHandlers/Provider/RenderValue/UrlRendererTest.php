@@ -1,7 +1,7 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
-use CsvMigrations\FieldHandlers\Provider\Config\UrlConfig;
+use CsvMigrations\FieldHandlers\Config\UrlConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\UrlRenderer;
 use PHPUnit_Framework_TestCase;
 

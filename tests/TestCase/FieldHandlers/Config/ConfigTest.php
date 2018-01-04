@@ -1,9 +1,9 @@
 <?php
-namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\Config;
+namespace CsvMigrations\Test\TestCase\FieldHandlers\Config;
 
 use Cake\ORM\Table;
-use CsvMigrations\FieldHandlers\Provider\Config\Config;
-use CsvMigrations\FieldHandlers\Provider\Config\ConfigInterface;
+use CsvMigrations\FieldHandlers\Config\Config;
+use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 use PHPUnit_Framework_TestCase;
 use stdClass;
 

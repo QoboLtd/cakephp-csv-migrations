@@ -1,9 +1,9 @@
 <?php
-namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\Config;
+namespace CsvMigrations\Test\TestCase\FieldHandlers\Config;
 
-use CsvMigrations\FieldHandlers\Provider\Config\Config;
-use CsvMigrations\FieldHandlers\Provider\Config\ConfigInterface;
-use CsvMigrations\FieldHandlers\Provider\Config\StringConfig;
+use CsvMigrations\FieldHandlers\Config\Config;
+use CsvMigrations\FieldHandlers\Config\ConfigInterface;
+use CsvMigrations\FieldHandlers\Config\StringConfig;
 use PHPUnit_Framework_TestCase;
 
 class StringConfigTest extends PHPUnit_Framework_TestCase

@@ -85,10 +85,10 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * @var string $defaultConfigClass Config class to use as default
      */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Provider\\Config\\StringConfig';
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\StringConfig';
 
     /**
-     * @var $config \CsvMigrations\FieldHandlers\Provider\Config\ConfigInterface Configuration
+     * @var $config \CsvMigrations\FieldHandlers\Config\ConfigInterface Configuration
      */
     protected $config;
 

@@ -1,7 +1,7 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
-use CsvMigrations\FieldHandlers\Provider\Config\IntegerConfig;
+use CsvMigrations\FieldHandlers\Config\IntegerConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\IntegerRenderer;
 use PHPUnit_Framework_TestCase;
 use StdClass;

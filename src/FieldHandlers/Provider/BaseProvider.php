@@ -11,7 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider;
 
-use CsvMigrations\FieldHandlers\Provider\Config\ConfigInterface;
+use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 
 /**
  * BaseProvider
@@ -22,14 +22,14 @@ use CsvMigrations\FieldHandlers\Provider\Config\ConfigInterface;
 abstract class BaseProvider implements ProviderInterface
 {
     /**
-     * @var ConfigInterface $config Configuration
+     * @var \CsvMigrations\FieldHandlers\Config\ConfigInterface $config Configuration
      */
     protected $config;
 
     /**
      * Constructor
      *
-     * @param ConfigInterface $config Configuration
+     * @param \CsvMigrations\FieldHandlers\Config\ConfigInterface $config Configuration
      */
     public function __construct(ConfigInterface $config)
     {

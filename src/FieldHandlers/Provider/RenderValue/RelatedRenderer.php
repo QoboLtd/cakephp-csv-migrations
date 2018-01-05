@@ -32,9 +32,9 @@ class RelatedRenderer extends BaseRenderer
      */
     public function provide($data = null, array $options = [])
     {
-        $result = (string)$data;
+        $result = null;
 
-        if (empty($result)) {
+        if (empty($data)) {
             return $result;
         }
 

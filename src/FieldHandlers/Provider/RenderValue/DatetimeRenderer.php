@@ -14,11 +14,11 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 use InvalidArgumentException;
 
 /**
- * DateTimeRenderer
+ * DatetimeRenderer
  *
  * Render value as date time
  */
-class DateTimeRenderer extends BaseRenderer
+class DatetimeRenderer extends BaseRenderer
 {
     /**
      * Date/time format

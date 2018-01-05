@@ -16,7 +16,7 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
  *
  * Render value as date
  */
-class DateRenderer extends DateTimeRenderer
+class DateRenderer extends DatetimeRenderer
 {
     /**
      * Date/time format

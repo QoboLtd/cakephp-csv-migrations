@@ -50,7 +50,7 @@ class FilesRenderer extends BaseRenderer
             'required' => $options['fieldDefinitions']->getRequired(),
             'value' => $data,
             'entities' => $entities,
-            'table' => Inflector::dasherize($table),
+            'table' => Inflector::dasherize($table->alias()),
         ];
 
         $defaultElement = 'CsvMigrations.FieldHandlers/FilesFieldHandler/input';

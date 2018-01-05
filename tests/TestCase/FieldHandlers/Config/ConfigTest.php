@@ -20,34 +20,63 @@ class ConfigTest extends PHPUnit_Framework_TestCase
             [['searchOperators' => '\\Foo\\Bar\\No\\Exist']],
             // class missing interface searchOperators
             [['searchOperators' => '\\stdClass' ]],
-            // all but FieldValue type is OK
+            // all good, but combinedFields is of wrong type
             [
                 [
-                    'fieldValue' => true,
+                    'combinedFields' => true,
+                    'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
+                    'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\StringFieldToDb',
                     'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
+                    'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\StringSearchOptions',
+                    'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
+                    'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\StringRenderer',
                     'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\StringRenderer',
                     'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
                 ],
             ],
-            // all but FieldValue interface is OK
+            // all good, but combinedFields class does not implement ProviderInterface
             [
                 [
-                    'fieldValue' => '\\stdClass',
+                    'combinedFields' => '\\StdClass',
+                    'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
+                    'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\StringFieldToDb',
                     'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
+                    'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\StringSearchOptions',
+                    'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
+                    'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\StringRenderer',
                     'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\StringRenderer',
                     'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
                 ],
             ],
-            // all but FieldValue class existing is OK
+            // all good, but combinedFields class does not exist
             [
                 [
-                    'fieldValue' => '\\Foo\\Bar\\No\\Exist',
+                    'combinedFields' => '\\Foo\\Bar\\No\\Exist',
+                    'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
+                    'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\StringFieldToDb',
                     'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
+                    'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\StringSearchOptions',
+                    'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
+                    'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\StringRenderer',
                     'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\StringRenderer',
                     'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
-                ],
-            ],
 
+                ],
+            ],
+            // all good, but combinedFields class is empty
+            [
+                [
+                    'combinedFields' => ' ',
+                    'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
+                    'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\StringFieldToDb',
+                    'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
+                    'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\StringSearchOptions',
+                    'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
+                    'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\StringRenderer',
+                    'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\StringRenderer',
+                    'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
+                ],
+            ],
         ];
     }
 
@@ -109,6 +138,17 @@ class ConfigTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider validProvidersProvider
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetProviderMissingException($providers)
+    {
+        $configInstance = new Config('foo');
+        $configInstance->setProviders($providers);
+        $undefinedProvider = $configInstance->getProvider('this provider does not exist in providers list');
+    }
+
+    /**
      * @expectedException \InvalidArgumentException
      */
     public function testSetFieldExceptionNotString()
@@ -132,10 +172,24 @@ class ConfigTest extends PHPUnit_Framework_TestCase
         $configInstance = new Config('field', new stdClass());
     }
 
-    public function testGettable()
+    public function testGetTable()
     {
         $configInstance = new Config('field');
         $result = $configInstance->getTable();
         $this->assertTrue($result instanceof Table, "Config table returned a non-valid instance");
+    }
+
+    public function testSetOptions()
+    {
+        $options = [
+            'foo' => 'bar',
+            'blah' => 'yes',
+            15 => 200,
+            'a' => true,
+        ];
+        $configInstance = new Config('options');
+        $configInstance->setOptions($options);
+        $result = $configInstance->getOptions();
+        $this->assertEquals($options, $result, "Config options were modified");
     }
 }

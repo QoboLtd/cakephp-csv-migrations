@@ -1,4 +1,4 @@
-<?php
+{#
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,10 +9,19 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+#}
+<?php
 namespace App\Controller;
 
 use CsvMigrations\Controller\AppController as BaseController;
 
-class <%= $name %>Controller extends BaseController
+/**
+ * {{ name }} Controller
+ *
+{% if defaultModel %}
+ * @property \{{ defaultModel }} ${{ name }}
+{% endif %}
+ */
+class {{ name }}Controller extends BaseController
 {
 }

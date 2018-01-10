@@ -13,7 +13,7 @@ namespace CsvMigrations\FieldHandlers\Provider\FieldValue;
 
 use Cake\Network\Request;
 use Cake\ORM\Entity;
-use CsvMigrations\FieldHandlers\Provider\BaseProvider;
+use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
 
 /**
  * MixedFieldValue
@@ -22,7 +22,7 @@ use CsvMigrations\FieldHandlers\Provider\BaseProvider;
  * of looking for field value in a variety of
  * (mixed) data.
  */
-class MixedFieldValue extends BaseProvider
+class MixedFieldValue extends AbstractProvider
 {
     /**
      * Provide field value

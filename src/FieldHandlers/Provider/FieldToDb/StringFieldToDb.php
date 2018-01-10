@@ -17,6 +17,6 @@ namespace CsvMigrations\FieldHandlers\Provider\FieldToDb;
  * String FieldToDb provides the conversion functionality
  * for string fields.
  */
-class StringFieldToDb extends BaseFieldToDb
+class StringFieldToDb extends AbstractFieldToDb
 {
 }

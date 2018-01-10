@@ -16,7 +16,7 @@ namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
  *
  * Integer search options
  */
-class IntegerSearchOptions extends BaseSearchOptions
+class IntegerSearchOptions extends AbstractSearchOptions
 {
     /**
      * Provide search options

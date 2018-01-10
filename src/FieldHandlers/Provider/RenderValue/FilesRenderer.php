@@ -18,7 +18,7 @@ use CsvMigrations\FileUploadsUtils;
  *
  * Files value as a linkable URL with icon
  */
-class FilesRenderer extends BaseRenderer
+class FilesRenderer extends AbstractRenderer
 {
     /**
      * CSS Framework grid columns number

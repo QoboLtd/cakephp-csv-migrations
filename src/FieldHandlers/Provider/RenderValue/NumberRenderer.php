@@ -18,7 +18,7 @@ use InvalidArgumentException;
  *
  * Render value as number
  */
-class NumberRenderer extends BaseRenderer
+class NumberRenderer extends AbstractRenderer
 {
     /**
      * Decimal precision

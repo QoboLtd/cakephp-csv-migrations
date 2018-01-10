@@ -14,12 +14,12 @@ namespace CsvMigrations\FieldHandlers\Provider;
 use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 
 /**
- * BaseProvider
+ * AbstractProvider
  *
- * BaseProvider is the base class for all
+ * AbstractProvider is the base class for all
  * providers, implementing ProviderInterface.
  */
-abstract class BaseProvider implements ProviderInterface
+abstract class AbstractProvider implements ProviderInterface
 {
     /**
      * @var \CsvMigrations\FieldHandlers\Config\ConfigInterface $config Configuration

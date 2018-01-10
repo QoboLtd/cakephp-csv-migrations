@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
  * Email renderer provides the functionality
  * for rendering email inputs.
  */
-class EmailRenderer extends BaseRenderer
+class EmailRenderer extends AbstractRenderer
 {
     /**
      * Provide

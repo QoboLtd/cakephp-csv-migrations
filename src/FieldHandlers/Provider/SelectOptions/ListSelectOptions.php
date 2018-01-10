@@ -21,7 +21,7 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
  *
  * List select options
  */
-class ListSelectOptions extends BaseSelectOptions
+class ListSelectOptions extends AbstractSelectOptions
 {
     /**
      * Provide select options

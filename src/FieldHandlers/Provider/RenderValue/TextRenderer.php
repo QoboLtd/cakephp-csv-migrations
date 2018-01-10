@@ -16,7 +16,7 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
  *
  * Render value as paragraphed text
  */
-class TextRenderer extends BaseRenderer
+class TextRenderer extends AbstractRenderer
 {
     /**
      * Provide rendered value

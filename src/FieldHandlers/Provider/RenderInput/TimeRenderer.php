@@ -20,7 +20,7 @@ use Cake\I18n\Time;
  * Time renderer provides the functionality
  * for rendering time inputs.
  */
-class TimeRenderer extends BaseRenderer
+class TimeRenderer extends AbstractRenderer
 {
     /**
      * Provide

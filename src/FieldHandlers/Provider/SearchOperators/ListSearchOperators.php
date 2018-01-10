@@ -16,7 +16,7 @@ namespace CsvMigrations\FieldHandlers\Provider\SearchOperators;
  *
  * Search operators for list values
  */
-class ListSearchOperators extends BaseSearchOperators
+class ListSearchOperators extends AbstractSearchOperators
 {
     /**
      * @var array $operators Search operators

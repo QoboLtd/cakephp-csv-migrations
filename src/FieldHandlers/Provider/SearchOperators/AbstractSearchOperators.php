@@ -11,14 +11,14 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\SearchOperators;
 
-use CsvMigrations\FieldHandlers\Provider\BaseProvider;
+use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
 
 /**
- * BaseSearchOperators
+ * AbstractSearchOperators
  *
- * Abstract base class extending BaseProvider
+ * Abstract base class extending AbstractProvider
  */
-abstract class BaseSearchOperators extends BaseProvider
+abstract class AbstractSearchOperators extends AbstractProvider
 {
     /**
      * @var array $operators Search operators

@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
  * Integer renderer provides the functionality
  * for rendering integer inputs.
  */
-class IntegerRenderer extends BaseRenderer
+class IntegerRenderer extends AbstractRenderer
 {
     /**
      * Provide

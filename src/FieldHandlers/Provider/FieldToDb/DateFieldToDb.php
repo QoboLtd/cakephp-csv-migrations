@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\FieldToDb;
  * Date FieldToDb provides the conversion functionality
  * for date fields.
  */
-class DateFieldToDb extends BaseFieldToDb
+class DateFieldToDb extends AbstractFieldToDb
 {
     /**
      * @var string $dbFieldType Database field type

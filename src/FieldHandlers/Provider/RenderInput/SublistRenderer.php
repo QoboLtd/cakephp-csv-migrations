@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
  * Sublist renderer provides the functionality
  * for rendering sublist inputs.
  */
-class SublistRenderer extends BaseRenderer
+class SublistRenderer extends AbstractRenderer
 {
     /**
      * Provide

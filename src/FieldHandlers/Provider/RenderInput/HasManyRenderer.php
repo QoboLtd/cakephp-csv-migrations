@@ -19,7 +19,7 @@ use CsvMigrations\FieldHandlers\RelatedFieldTrait;
  * HasMany renderer provides the functionality
  * for rendering HasMany inputs.
  */
-class HasManyRenderer extends BaseRenderer
+class HasManyRenderer extends AbstractRenderer
 {
     use RelatedFieldTrait;
 

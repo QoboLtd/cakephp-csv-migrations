@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\FieldToDb;
  * Datetime FieldToDb provides the conversion functionality
  * for datetime fields.
  */
-class DatetimeFieldToDb extends BaseFieldToDb
+class DatetimeFieldToDb extends AbstractFieldToDb
 {
     /**
      * @var string $dbFieldType Database field type

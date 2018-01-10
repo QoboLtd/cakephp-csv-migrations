@@ -11,16 +11,16 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
-use CsvMigrations\FieldHandlers\Provider\BaseProvider;
+use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
 use InvalidArgumentException;
 
 /**
- * BaseRenderer
+ * AbstractRenderer
  *
- * Base renderer provides the default rendering
+ * Abstract renderer provides the default rendering
  * functionality.
  */
-abstract class BaseRenderer extends BaseProvider
+abstract class AbstractRenderer extends AbstractProvider
 {
     /**
      * Provide rendered value

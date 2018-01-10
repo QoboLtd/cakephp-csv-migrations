@@ -12,7 +12,7 @@
 namespace CsvMigrations\FieldHandlers\Provider\RenderName;
 
 use Cake\Utility\Inflector;
-use CsvMigrations\FieldHandlers\Provider\BaseProvider;
+use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
 
 /**
  * DefaultRenderer
@@ -20,7 +20,7 @@ use CsvMigrations\FieldHandlers\Provider\BaseProvider;
  * This class provides the default renderer
  * for the field name.
  */
-class DefaultRenderer extends BaseProvider
+class DefaultRenderer extends AbstractProvider
 {
     /**
      * Provide rendered name

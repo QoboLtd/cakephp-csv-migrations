@@ -16,7 +16,7 @@ namespace CsvMigrations\FieldHandlers\Provider\SearchOperators;
  *
  * Search operators for date and time values
  */
-class TimeSearchOperators extends BaseSearchOperators
+class TimeSearchOperators extends AbstractSearchOperators
 {
     /**
      * @var array $operators Search operators

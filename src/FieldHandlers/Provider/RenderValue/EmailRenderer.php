@@ -18,7 +18,7 @@ use InvalidArgumentException;
  *
  * Render value as a linkable email URL
  */
-class EmailRenderer extends BaseRenderer
+class EmailRenderer extends AbstractRenderer
 {
     /**
      * Provide rendered value

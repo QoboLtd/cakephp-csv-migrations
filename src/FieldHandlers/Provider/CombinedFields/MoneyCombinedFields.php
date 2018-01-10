@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\CombinedFields;
  * Money CombinedFields provides the functionality
  * for money combined fields provider.
  */
-class MoneyCombinedFields extends BaseCombinedFields
+class MoneyCombinedFields extends AbstractCombinedFields
 {
     /**
      * @var array $fields List of fields

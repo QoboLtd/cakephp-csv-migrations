@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\CombinedFields;
  * Metric CombinedFields provides the functionality
  * for metric combined fields provider.
  */
-class MetricCombinedFields extends BaseCombinedFields
+class MetricCombinedFields extends AbstractCombinedFields
 {
     /**
      * @var array $fields List of fields

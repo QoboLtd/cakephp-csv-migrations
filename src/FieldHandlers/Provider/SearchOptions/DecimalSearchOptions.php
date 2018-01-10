@@ -16,7 +16,7 @@ namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
  *
  * Decimal search options
  */
-class DecimalSearchOptions extends BaseSearchOptions
+class DecimalSearchOptions extends AbstractSearchOptions
 {
     /**
      * Provide search options

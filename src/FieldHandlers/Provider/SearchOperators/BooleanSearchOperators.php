@@ -16,7 +16,7 @@ namespace CsvMigrations\FieldHandlers\Provider\SearchOperators;
  *
  * Search operators for boolean values
  */
-class BooleanSearchOperators extends BaseSearchOperators
+class BooleanSearchOperators extends AbstractSearchOperators
 {
     /**
      * @var array $operators Search operators

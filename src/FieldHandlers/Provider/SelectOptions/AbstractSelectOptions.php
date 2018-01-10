@@ -11,13 +11,13 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\SelectOptions;
 
-use CsvMigrations\FieldHandlers\Provider\BaseProvider;
+use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
 
 /**
- * BaseSelectOptions
+ * AbstractSelectOptions
  *
- * Abstract base class extending BaseProvider
+ * Abstract base class extending AbstractProvider
  */
-abstract class BaseSelectOptions extends BaseProvider
+abstract class AbstractSelectOptions extends AbstractProvider
 {
 }

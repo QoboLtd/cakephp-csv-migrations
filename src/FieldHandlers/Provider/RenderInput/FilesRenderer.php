@@ -20,7 +20,7 @@ use CsvMigrations\FileUploadsUtils;
  * Files renderer provides the functionality
  * for rendering files inputs.
  */
-class FilesRenderer extends BaseRenderer
+class FilesRenderer extends AbstractRenderer
 {
     /**
      * Provide

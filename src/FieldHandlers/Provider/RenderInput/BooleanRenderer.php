@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
  * Boolean renderer provides the functionality
  * for rendering boolean inputs.
  */
-class BooleanRenderer extends BaseRenderer
+class BooleanRenderer extends AbstractRenderer
 {
     /**
      * Provide

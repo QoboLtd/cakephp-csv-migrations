@@ -19,7 +19,7 @@ use CsvMigrations\FileUploadsUtils;
  *
  * Images value as a linkable URL with icon
  */
-class ImagesRenderer extends BaseRenderer
+class ImagesRenderer extends AbstractRenderer
 {
     /**
      * CSS Framework grid columns number

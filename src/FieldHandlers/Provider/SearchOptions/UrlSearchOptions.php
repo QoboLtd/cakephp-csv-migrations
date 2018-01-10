@@ -16,7 +16,7 @@ namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
  *
  * Url search options
  */
-class UrlSearchOptions extends BaseSearchOptions
+class UrlSearchOptions extends AbstractSearchOptions
 {
     /**
      * Provide search options

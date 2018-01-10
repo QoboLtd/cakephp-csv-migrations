@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\FieldToDb;
  * Boolean FieldToDb provides the conversion functionality
  * for boolean fields.
  */
-class BooleanFieldToDb extends BaseFieldToDb
+class BooleanFieldToDb extends AbstractFieldToDb
 {
     /**
      * @var string $dbFieldType Database field type

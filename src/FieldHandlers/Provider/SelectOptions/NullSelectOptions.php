@@ -16,7 +16,7 @@ namespace CsvMigrations\FieldHandlers\Provider\SelectOptions;
  *
  * Null select options
  */
-class NullSelectOptions extends BaseSelectOptions
+class NullSelectOptions extends AbstractSelectOptions
 {
     /**
      * Provide select options

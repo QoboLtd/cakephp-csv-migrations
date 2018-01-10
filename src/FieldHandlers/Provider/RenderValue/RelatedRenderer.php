@@ -19,7 +19,7 @@ use InvalidArgumentException;
  *
  * Related value as a linkable URL
  */
-class RelatedRenderer extends BaseRenderer
+class RelatedRenderer extends AbstractRenderer
 {
     use RelatedFieldTrait;
 

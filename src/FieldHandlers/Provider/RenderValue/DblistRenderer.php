@@ -18,7 +18,7 @@ use InvalidArgumentException;
  *
  * Render value as database list item
  */
-class DblistRenderer extends BaseRenderer
+class DblistRenderer extends AbstractRenderer
 {
     /**
      * Provide rendered value

@@ -21,7 +21,7 @@ use InvalidArgumentException;
  * Relatd FieldToDb provides the conversion functionality
  * for related fields.
  */
-class RelatedFieldToDb extends BaseFieldToDb
+class RelatedFieldToDb extends AbstractFieldToDb
 {
     /**
      * @var string $dbFieldType Database field type

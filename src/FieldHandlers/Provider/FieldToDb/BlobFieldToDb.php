@@ -22,7 +22,7 @@ use Phinx\Db\Adapter\MysqlAdapter;
  * Blob FieldToDb provides the conversion functionality
  * for BLOB fields.
  */
-class BlobFieldToDb extends BaseFieldToDb
+class BlobFieldToDb extends AbstractFieldToDb
 {
     /**
      * @var string $dbFieldType Database field type

@@ -18,7 +18,7 @@ use Cake\ORM\TableRegistry;
  *
  * Database List search options
  */
-class DblistSearchOptions extends BaseSearchOptions
+class DblistSearchOptions extends AbstractSearchOptions
 {
     /**
      * Provide search options

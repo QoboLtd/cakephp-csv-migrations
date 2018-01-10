@@ -18,7 +18,7 @@ use InvalidArgumentException;
  *
  * Render value as list item
  */
-class ListRenderer extends BaseRenderer
+class ListRenderer extends AbstractRenderer
 {
     /**
      * HTML to add to invalid list items

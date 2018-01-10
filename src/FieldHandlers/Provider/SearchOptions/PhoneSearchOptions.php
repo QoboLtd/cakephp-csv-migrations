@@ -16,7 +16,7 @@ namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
  *
  * Phone search options
  */
-class PhoneSearchOptions extends BaseSearchOptions
+class PhoneSearchOptions extends AbstractSearchOptions
 {
     /**
      * Provide search options

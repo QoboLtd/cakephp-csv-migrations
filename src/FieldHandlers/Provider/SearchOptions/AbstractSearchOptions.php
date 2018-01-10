@@ -11,14 +11,14 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
 
-use CsvMigrations\FieldHandlers\Provider\BaseProvider;
+use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
 
 /**
- * BaseSearchOptions
+ * AbstractSearchOptions
  *
- * Abstract base class extending BaseProvider
+ * Abstract base class extending AbstractProvider
  */
-abstract class BaseSearchOptions extends BaseProvider
+abstract class AbstractSearchOptions extends AbstractProvider
 {
     /**
      * Helper method to get search operators

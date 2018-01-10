@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
  * List renderer provides the functionality
  * for rendering list inputs.
  */
-class ListRenderer extends BaseRenderer
+class ListRenderer extends AbstractRenderer
 {
     /**
      * Provide

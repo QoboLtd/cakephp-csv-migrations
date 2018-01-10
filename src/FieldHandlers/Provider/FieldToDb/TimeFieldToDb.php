@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\FieldToDb;
  * Time FieldToDb provides the conversion functionality
  * for time fields.
  */
-class TimeFieldToDb extends BaseFieldToDb
+class TimeFieldToDb extends AbstractFieldToDb
 {
     /**
      * @var string $dbFieldType Database field type

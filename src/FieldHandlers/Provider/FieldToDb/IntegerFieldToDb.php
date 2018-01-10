@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\FieldToDb;
  * Integer FieldToDb provides the conversion functionality
  * for integer fields.
  */
-class IntegerFieldToDb extends BaseFieldToDb
+class IntegerFieldToDb extends AbstractFieldToDb
 {
     /**
      * @var string $dbFieldType Database field type

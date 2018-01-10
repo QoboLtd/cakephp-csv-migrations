@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
  * Dblist renderer provides the functionality
  * for rendering database list inputs.
  */
-class DblistRenderer extends BaseRenderer
+class DblistRenderer extends AbstractRenderer
 {
     /**
      * Provide

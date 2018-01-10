@@ -19,7 +19,7 @@ use CsvMigrations\FieldHandlers\RelatedFieldTrait;
  * Related renderer provides the functionality
  * for rendering related inputs.
  */
-class RelatedRenderer extends BaseRenderer
+class RelatedRenderer extends AbstractRenderer
 {
     use RelatedFieldTrait;
 

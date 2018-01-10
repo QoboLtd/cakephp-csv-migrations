@@ -22,7 +22,7 @@ use Phinx\Db\Adapter\MysqlAdapter;
  * Combined FieldToDb provides the conversion functionality
  * for combined fields.
  */
-class CombinedFieldToDb extends BaseFieldToDb
+class CombinedFieldToDb extends AbstractFieldToDb
 {
     /**
      * Provide rendered value

@@ -16,7 +16,7 @@ namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
  *
  * Boolean search options
  */
-class BooleanSearchOptions extends BaseSearchOptions
+class BooleanSearchOptions extends AbstractSearchOptions
 {
     /**
      * Provide search options

@@ -18,7 +18,7 @@ use InvalidArgumentException;
  *
  * Render boolean value.
  */
-class BooleanRenderer extends BaseRenderer
+class BooleanRenderer extends AbstractRenderer
 {
     /**
      * Provide rendered value

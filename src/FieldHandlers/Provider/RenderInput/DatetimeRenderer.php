@@ -20,7 +20,7 @@ use Cake\I18n\Time;
  * Datetime renderer provides the functionality
  * for rendering datetime inputs.
  */
-class DatetimeRenderer extends BaseRenderer
+class DatetimeRenderer extends AbstractRenderer
 {
     /**
      * Provide

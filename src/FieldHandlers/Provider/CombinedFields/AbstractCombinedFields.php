@@ -11,15 +11,15 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\CombinedFields;
 
-use CsvMigrations\FieldHandlers\Provider\BaseProvider;
+use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
 
 /**
- * BaseCombinedFields
+ * AbstractCombinedFields
  *
- * Base CombinedFields provides the default functionality
+ * Abstract CombinedFields provides the default functionality
  * for combined fields provider.
  */
-abstract class BaseCombinedFields extends BaseProvider
+abstract class AbstractCombinedFields extends AbstractProvider
 {
     /**
      * @var array $fields List of fields

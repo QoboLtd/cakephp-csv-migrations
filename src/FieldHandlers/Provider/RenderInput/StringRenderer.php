@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
  * String renderer provides the functionality
  * for rendering string inputs.
  */
-class StringRenderer extends BaseRenderer
+class StringRenderer extends AbstractRenderer
 {
     /**
      * Provide

@@ -16,6 +16,6 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
  *
  * Plain renderer provides default rendering functionality.
  */
-class PlainRenderer extends BaseRenderer
+class PlainRenderer extends AbstractRenderer
 {
 }

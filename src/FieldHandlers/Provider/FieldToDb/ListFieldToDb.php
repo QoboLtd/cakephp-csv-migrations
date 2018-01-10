@@ -21,7 +21,7 @@ use InvalidArgumentException;
  * List FieldToDb provides the conversion functionality
  * for list fields.
  */
-class ListFieldToDb extends BaseFieldToDb
+class ListFieldToDb extends AbstractFieldToDb
 {
     /**
      * Provide rendered value

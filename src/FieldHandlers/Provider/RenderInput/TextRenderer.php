@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
  * Text renderer provides the functionality
  * for rendering text inputs.
  */
-class TextRenderer extends BaseRenderer
+class TextRenderer extends AbstractRenderer
 {
     /**
      * Provide

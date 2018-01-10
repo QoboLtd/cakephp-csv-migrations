@@ -18,7 +18,7 @@ use InvalidArgumentException;
  *
  * Render value as date time
  */
-class DatetimeRenderer extends BaseRenderer
+class DatetimeRenderer extends AbstractRenderer
 {
     /**
      * Date/time format

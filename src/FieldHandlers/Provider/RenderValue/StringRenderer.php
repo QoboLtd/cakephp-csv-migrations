@@ -16,6 +16,6 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
  *
  * String renderer provides default rendering functionality.
  */
-class StringRenderer extends BaseRenderer
+class StringRenderer extends AbstractRenderer
 {
 }

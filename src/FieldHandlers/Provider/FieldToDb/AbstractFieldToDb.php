@@ -13,16 +13,16 @@ namespace CsvMigrations\FieldHandlers\Provider\FieldToDb;
 
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
-use CsvMigrations\FieldHandlers\Provider\BaseProvider;
+use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
 use InvalidArgumentException;
 
 /**
- * BaseFieldToDb
+ * AbstractFieldToDb
  *
- * Base FieldToDb provides the default conversion
+ * Abstract FieldToDb provides the default conversion
  * functionality.
  */
-abstract class BaseFieldToDb extends BaseProvider
+abstract class AbstractFieldToDb extends AbstractProvider
 {
     /**
      * @var string $dbFieldType Database field type

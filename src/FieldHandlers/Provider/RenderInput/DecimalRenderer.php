@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
  * Decimal renderer provides the functionality
  * for rendering decimal inputs.
  */
-class DecimalRenderer extends BaseRenderer
+class DecimalRenderer extends AbstractRenderer
 {
     /**
      * Provide

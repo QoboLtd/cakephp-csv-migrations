@@ -16,7 +16,7 @@ namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
  *
  * Null search options
  */
-class NullSearchOptions extends BaseSearchOptions
+class NullSearchOptions extends AbstractSearchOptions
 {
     /**
      * Provide search options

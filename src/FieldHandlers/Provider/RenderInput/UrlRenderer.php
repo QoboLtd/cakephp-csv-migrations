@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
  * Url renderer provides the functionality
  * for rendering URL inputs.
  */
-class UrlRenderer extends BaseRenderer
+class UrlRenderer extends AbstractRenderer
 {
     /**
      * Provide

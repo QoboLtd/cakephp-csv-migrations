@@ -16,7 +16,7 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
  *
  * Render value of combined field
  */
-class CombinedRenderer extends BaseRenderer
+class CombinedRenderer extends AbstractRenderer
 {
     /**
      * Provide rendered value

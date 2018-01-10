@@ -16,7 +16,7 @@ namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
  *
  * Time search options
  */
-class TimeSearchOptions extends BaseSearchOptions
+class TimeSearchOptions extends AbstractSearchOptions
 {
     /**
      * Custom form input templates.

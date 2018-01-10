@@ -22,7 +22,7 @@ use Phinx\Db\Adapter\MysqlAdapter;
  * Decimal FieldToDb provides the conversion functionality
  * for decimal fields.
  */
-class DecimalFieldToDb extends BaseFieldToDb
+class DecimalFieldToDb extends AbstractFieldToDb
 {
     /**
      * @var string $dbFieldType Database field type

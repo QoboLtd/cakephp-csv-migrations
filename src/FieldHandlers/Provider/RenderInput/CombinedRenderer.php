@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
  * Combined renderer provides the functionality
  * for rendering combined inputs.
  */
-class CombinedRenderer extends BaseRenderer
+class CombinedRenderer extends AbstractRenderer
 {
     /**
      * Provide

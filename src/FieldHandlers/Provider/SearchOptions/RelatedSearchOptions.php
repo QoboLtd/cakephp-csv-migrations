@@ -19,7 +19,7 @@ use CsvMigrations\FieldHandlers\RelatedFieldTrait;
  *
  * Related search options
  */
-class RelatedSearchOptions extends BaseSearchOptions
+class RelatedSearchOptions extends AbstractSearchOptions
 {
     use RelatedFieldTrait;
 

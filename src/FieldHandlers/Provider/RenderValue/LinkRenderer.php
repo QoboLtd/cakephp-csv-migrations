@@ -18,7 +18,7 @@ use InvalidArgumentException;
  *
  * Render value as a link to custom URL
  */
-class LinkRenderer extends BaseRenderer
+class LinkRenderer extends AbstractRenderer
 {
     /**
      * Default link target

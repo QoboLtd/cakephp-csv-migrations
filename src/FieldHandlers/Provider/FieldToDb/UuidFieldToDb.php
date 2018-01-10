@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\FieldToDb;
  * Uuid FieldToDb provides the conversion functionality
  * for UUID fields.
  */
-class UuidFieldToDb extends BaseFieldToDb
+class UuidFieldToDb extends AbstractFieldToDb
 {
     /**
      * @var string $dbFieldType Database field type

@@ -17,7 +17,7 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
  * Phone renderer provides the functionality
  * for rendering phone inputs.
  */
-class PhoneRenderer extends BaseRenderer
+class PhoneRenderer extends AbstractRenderer
 {
     /**
      * Provide

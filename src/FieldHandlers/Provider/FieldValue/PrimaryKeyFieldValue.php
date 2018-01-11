@@ -11,35 +11,38 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\FieldValue;
 
+use Cake\Database\Exception;
+use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
+
 /**
  * PrimaryKeyFieldValue
  *
- * MixedFieldValue provides the functionality
- * of looking for field value in a variety of
- * (mixed) data.
+ * PrimaryKeyFieldValue provides the functionality
+ * of looking for field value in entity's primary key.
  */
-class PrimaryKeyFieldValue extends MixedFieldValue
+class PrimaryKeyFieldValue extends AbstractProvider
 {
     /**
      * Provide field value
      *
-     * @param mixed $data Data to look for field value in (Request, Entity, etc)
+     *
+     * @param mixed $data Field value (Request, Entity, etc)
      * @param array $options Options to use for provision
      * @return mixed Field value
      */
     public function provide($data = null, array $options = [])
     {
-        $primaryKey = $this->config->getTable()->getPrimaryKey();
-        $currentField = $this->config->getField();
+        if (empty($options['entity'])) {
+            return null;
+        }
 
-        // temporarily switch field to primary key
-        $this->config->setField($primaryKey);
+        // return null in cases where no table or a dummy table was provided by the config class
+        try {
+            $primaryKey = $this->config->getTable()->getPrimaryKey();
+        } catch (Exception $e) {
+            return null;
+        }
 
-        $result = parent::provide($data, $options);
-
-        // reset field back to the current field
-        $this->config->setField($currentField);
-
-        return $result;
+        return $options['entity']->get($primaryKey);
     }
 }

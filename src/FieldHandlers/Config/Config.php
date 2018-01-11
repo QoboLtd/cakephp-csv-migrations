@@ -224,6 +224,7 @@ class Config implements ConfigInterface
      * Get provider by name
      *
      * @throws \InvalidArgumentException for invalid provider
+     * @param string $name Name of the provider to get
      * @return array
      */
     public function getProvider($name)

@@ -29,8 +29,8 @@ class RelatedConfig extends FixedConfig
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\RelatedSearchOperators',
         'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\RelatedSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
-        'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\RelatedRenderer',
-        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\RelatedRenderer',
-        'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
+        'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\RelatedRenderer',
+        'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\RelatedRenderer',
+        'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
     ];
 }

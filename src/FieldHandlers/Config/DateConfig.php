@@ -29,8 +29,8 @@ class DateConfig extends FixedConfig
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\TimeSearchOperators',
         'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\DateSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
-        'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\DateRenderer',
-        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\DateRenderer',
-        'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
+        'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\DateRenderer',
+        'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\DateRenderer',
+        'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
     ];
 }

@@ -29,8 +29,8 @@ class IntegerConfig extends FixedConfig
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\NumberSearchOperators',
         'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\IntegerSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
-        'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\IntegerRenderer',
-        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\IntegerRenderer',
-        'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
+        'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\IntegerRenderer',
+        'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\IntegerRenderer',
+        'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
     ];
 }

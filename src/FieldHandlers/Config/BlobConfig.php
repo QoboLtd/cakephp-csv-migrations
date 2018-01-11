@@ -29,8 +29,8 @@ class BlobConfig extends FixedConfig
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators',
         'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\StringSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
-        'inputRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\TextRenderer',
-        'valueRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\StringRenderer',
-        'nameRenderAs' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
+        'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\TextRenderer',
+        'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\StringRenderer',
+        'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
     ];
 }

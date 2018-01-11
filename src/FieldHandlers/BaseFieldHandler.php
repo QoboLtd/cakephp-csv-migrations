@@ -344,7 +344,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
 
         $options['label'] = !isset($options['label']) ? $this->renderName() : $options['label'];
 
-        $searchOptions = $this->config->getProvider('inputRenderAs');
+        $searchOptions = $this->config->getProvider('renderInput');
         $searchOptions = new $searchOptions($this->config);
         $result = $searchOptions->provide($data, $options);
 
@@ -389,7 +389,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $label = !empty($this->defaultOptions['label']) ? $this->defaultOptions['label'] : '';
 
-        $renderer = $this->config->getProvider('nameRenderAs');
+        $renderer = $this->config->getProvider('renderName');
         $renderer = new $renderer($this->config);
         $result = $renderer->provide($label);
 
@@ -419,7 +419,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $result = stream_get_contents($result);
         }
 
-        $rendererClass = $this->config->getProvider('valueRenderAs');
+        $rendererClass = $this->config->getProvider('renderValue');
         if (!empty($options['renderAs'])) {
             $rendererClass = __NAMESPACE__ . '\\Provider\\RenderValue\\' . ucfirst($options['renderAs']) . 'Renderer';
         }

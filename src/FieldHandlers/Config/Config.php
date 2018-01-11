@@ -64,9 +64,9 @@ class Config implements ConfigInterface
         'searchOperators',
         'searchOptions',
         'selectOptions',
-        'inputRenderAs',
-        'valueRenderAs',
-        'nameRenderAs',
+        'renderInput',
+        'renderValue',
+        'renderName',
     ];
 
     /**

@@ -342,7 +342,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
             $data = $options['default'];
         }
 
-        $options['label'] = empty($options['label']) ? $this->renderName() : $options['label'];
+        $options['label'] = !isset($options['label']) ? $this->renderName() : $options['label'];
 
         $searchOptions = $this->config->getProvider('inputRenderAs');
         $searchOptions = new $searchOptions($this->config);

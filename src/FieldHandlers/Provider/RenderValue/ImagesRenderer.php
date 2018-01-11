@@ -79,9 +79,9 @@ class ImagesRenderer extends AbstractRenderer
         $table = $this->config->getTable();
         $field = $this->config->getField();
 
-        $fileUploadsUtils = new FileUploadsUtils($this->table);
+        $fileUploadsUtils = new FileUploadsUtils($table);
 
-        $entities = $fileUploadsUtils->getFiles($this->table, $this->field, $data);
+        $entities = $fileUploadsUtils->getFiles($table, $field, $data);
 
         if (empty($options['imageSize'])) {
             $options['imageSize'] = Configure::read('FileStorage.defaultImageSize');

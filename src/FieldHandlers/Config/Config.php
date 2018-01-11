@@ -59,6 +59,7 @@ class Config implements ConfigInterface
      * @var array $requiredProviders List of required providers
      */
     protected $requiredProviders = [
+        'combinedFields',
         'fieldValue',
         'fieldToDb',
         'searchOperators',

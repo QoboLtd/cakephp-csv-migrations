@@ -260,7 +260,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         if (is_resource($data)) {
             $data = stream_get_contents($data);
         }
-        $data = $this->getFieldValueFromData($data, $this->config->getField(), $options);
+        $data = $this->getFieldValueFromData($data, $options);
 
         if (empty($data) && !empty($options['default'])) {
             $data = $options['default'];
@@ -334,7 +334,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public function renderValue($data, array $options = [])
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $result = $this->getFieldValueFromData($data, $this->config->getField(), $options);
+        $result = $this->getFieldValueFromData($data, $options);
 
         // Currently needed for blobs from the database, but might be handy later
         // for network data and such.
@@ -382,28 +382,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * Get field value from given data
      *
-     * Extract field value from the variable, based on the type
-     * of the variable.  Support types are:
-     *
-     * * Entity, use Entity property with the field name
-     * * Request, use Request->data() with the key of the field name
-     * * Otherwise assume the variable is the data already
-     *
      * @param mixed  $data  Variable to extract value from
-     * @param string $field Field name
      * @param array  $options Field options
      * @return mixed
      */
-    protected function getFieldValueFromData($data, $field, array $options)
+    protected function getFieldValueFromData($data, array $options)
     {
         $fieldValue = $this->config->getProvider('fieldValue');
-
-        // Occasionally, we have data in a different field
-        // (files, combined fields, etc)
-        $runtimeConfig = $this->config;
-        $runtimeConfig->setField($field);
-
-        $fieldValue = new $fieldValue($runtimeConfig);
+        $fieldValue = new $fieldValue($this->config);
         $result = $fieldValue->provide($data, $options);
 
         return $result;

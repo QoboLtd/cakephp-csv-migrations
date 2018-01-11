@@ -15,7 +15,7 @@ use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\Event\EventName;
-use CsvMigrations\View\AppView;
+use Cake\View\View;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
@@ -66,7 +66,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      *
      * @param mixed  $table    Name or instance of the Table
      * @param string $field    Field name
-     * @param object $view     Optional instance of the AppView
+     * @param \Cake\View\View|null $view     Optional instance of the View
      */
     public function __construct($table, $field, $view = null)
     {
@@ -79,13 +79,13 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      *
      * @param mixed  $table    Name or instance of the Table
      * @param string $field    Field name
-     * @param object $view Instance of the AppView
+     * @param \Cake\View\View|null $view     Optional instance of the View
      * @return void
      */
     protected function setConfig($table, $field, $view)
     {
         $this->config = new static::$defaultConfigClass($field, $table);
-        if ($view instanceof \Cake\View\View) {
+        if ($view instanceof View) {
             $this->config->setView($view);
         }
     }

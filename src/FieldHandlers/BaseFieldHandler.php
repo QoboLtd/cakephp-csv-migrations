@@ -40,19 +40,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     const DB_FIELD_TYPE = 'string';
 
     /**
-     * Default HTML form field type
-     */
-    const INPUT_FIELD_TYPE = 'text';
-
-    /**
      * Flag for rendering value as is
      */
     const RENDER_PLAIN_VALUE = 'plain';
-
-    /**
-     * Renderer to use
-     */
-    const RENDERER = 'string';
 
     /**
      * Table object

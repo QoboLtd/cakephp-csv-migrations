@@ -33,6 +33,10 @@ class MixedFieldValue extends AbstractProvider
      */
     public function provide($data = null, array $options = [])
     {
+        if (empty($data) && !empty($options['entity'])) {
+            $data = $options['entity'];
+        }
+
         if ($data instanceof Entity) {
             return $this->provideFromEntity($data, $this->config->getField());
         }

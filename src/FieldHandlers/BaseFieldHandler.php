@@ -45,27 +45,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     const RENDER_PLAIN_VALUE = 'plain';
 
     /**
-     * Table object
-     *
-     * @var \Cake\ORM\Table
-     */
-    public $table;
-
-    /**
-     * Field name
-     *
-     * @var string
-     */
-    public $field;
-
-    /**
-     * View instance
-     *
-     * @var \Cake\View\View
-     */
-    public $cakeView;
-
-    /**
      * Default options
      *
      * @var array
@@ -87,14 +66,11 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      *
      * @param mixed  $table    Name or instance of the Table
      * @param string $field    Field name
-     * @param object $cakeView Optional instance of the AppView
+     * @param object $view     Optional instance of the AppView
      */
-    public function __construct($table, $field, $cakeView = null)
+    public function __construct($table, $field, $view = null)
     {
-        $this->setView($cakeView);
-        $this->setConfig($table, $field, $this->cakeView);
-        $this->setTable($table);
-        $this->setField($field);
+        $this->setConfig($table, $field, $view);
         $this->setDefaultOptions();
     }
 
@@ -109,41 +85,9 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     protected function setConfig($table, $field, $view)
     {
         $this->config = new static::$defaultConfigClass($field, $table);
-        $this->config->setView($view);
-    }
-
-    /**
-     * Set table
-     *
-     * @throws \InvalidArgumentException when table is empty
-     * @param mixed $table Table name of instance
-     * @return void
-     */
-    protected function setTable($table)
-    {
-        if (empty($table)) {
-            throw new InvalidArgumentException('Table cannot be empty.');
+        if ($view instanceof \Cake\View\View) {
+            $this->config->setView($view);
         }
-        if (is_string($table)) {
-            $table = TableRegistry::get($table);
-        }
-        $this->table = $table;
-    }
-
-    /**
-     * Set field
-     *
-     * @throws \InvalidArgumentException when field is empty
-     * @param string $field Field name
-     * @return void
-     */
-    protected function setField($field)
-    {
-        $field = (string)$field;
-        if (empty($field)) {
-            throw new InvalidArgumentException('Field cannot be empty.');
-        }
-        $this->field = $field;
     }
 
     /**
@@ -172,10 +116,13 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected function setDefaultFieldOptions()
     {
-        $mc = new ModuleConfig(ConfigType::FIELDS(), Inflector::camelize($this->table->table()));
+        $table = $this->config->getTable();
+        $field = $this->config->getField();
+
+        $mc = new ModuleConfig(ConfigType::FIELDS(), Inflector::camelize($table->table()));
         $config = (array)json_decode(json_encode($mc->parse()), true);
-        if (!empty($config[$this->field])) {
-            $this->defaultOptions = array_replace_recursive($this->defaultOptions, $config[$this->field]);
+        if (!empty($config[$field])) {
+            $this->defaultOptions = array_replace_recursive($this->defaultOptions, $config[$field]);
         }
     }
 
@@ -200,23 +147,26 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     protected function setDefaultFieldDefinitions()
     {
+        $table = $this->config->getTable();
+        $field = $this->config->getField();
+
         // set $options['fieldDefinitions']
         $stubFields = [
-            $this->field => [
-                'name' => $this->field,
+            $field => [
+                'name' => $field,
                 'type' => self::DB_FIELD_TYPE, // not static:: to preserve string
             ],
         ];
-        if (method_exists($this->table, 'getFieldsDefinitions') && is_callable([$this->table, 'getFieldsDefinitions'])) {
-            $fieldDefinitions = $this->table->getFieldsDefinitions($stubFields);
-            $this->defaultOptions['fieldDefinitions'] = new CsvField($fieldDefinitions[$this->field]);
+        if (method_exists($table, 'getFieldsDefinitions') && is_callable([$table, 'getFieldsDefinitions'])) {
+            $fieldDefinitions = $table->getFieldsDefinitions($stubFields);
+            $this->defaultOptions['fieldDefinitions'] = new CsvField($fieldDefinitions[$field]);
         }
 
         // This should never be the case, except, maybe
         // for some unit test runs or custom non-CSV
         // modules.
         if (empty($this->defaultOptions['fieldDefinitions'])) {
-            $this->defaultOptions['fieldDefinitions'] = new CsvField($stubFields[$this->field]);
+            $this->defaultOptions['fieldDefinitions'] = new CsvField($stubFields[$field]);
         }
     }
 
@@ -237,10 +187,12 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         $event = new Event($eventName, $this, [
             'default' => $this->defaultOptions['default']
         ]);
-        $this->cakeView->eventManager()->dispatch($event);
+
+        $view = $this->config->getView();
+        $view->eventManager()->dispatch($event);
 
         // Only overwrite the default if any events were triggered
-        $listeners = $this->cakeView->eventManager()->listeners($eventName);
+        $listeners = $view->eventManager()->listeners($eventName);
         if (empty($listeners)) {
             return;
         }
@@ -277,7 +229,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         // the CsvField instance, as the name is required.  Gladly, we know the name
         // and can fix it easily.
         if (empty($result['fieldDefinitions']['name'])) {
-            $result['fieldDefinitions']['name'] = $this->field;
+            $result['fieldDefinitions']['name'] = $this->config->getField();
         }
 
         // Previously, fieldDefinitions could be either an array or a CsvField instance.
@@ -286,24 +238,6 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         $result['fieldDefinitions'] = new CsvField($result['fieldDefinitions']);
 
         return $result;
-    }
-
-    /**
-     * Set view
-     *
-     * If an instance of the view is given, use that.
-     * Otherwise, instantiate a new view.
-     *
-     * @param object $view View
-     * @return void
-     */
-    protected function setView($view = null)
-    {
-        if ($view) {
-            $this->cakeView = $view;
-        } else {
-            $this->cakeView = new AppView();
-        }
     }
 
     /**
@@ -326,7 +260,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         if (is_resource($data)) {
             $data = stream_get_contents($data);
         }
-        $data = $this->_getFieldValueFromData($data, $this->field, $options);
+        $data = $this->_getFieldValueFromData($data, $this->config->getField(), $options);
 
         if (empty($data) && !empty($options['default'])) {
             $data = $options['default'];
@@ -400,7 +334,7 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     public function renderValue($data, array $options = [])
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $result = $this->_getFieldValueFromData($data, $this->field, $options);
+        $result = $this->_getFieldValueFromData($data, $this->config->getField(), $options);
 
         // Currently needed for blobs from the database, but might be handy later
         // for network data and such.

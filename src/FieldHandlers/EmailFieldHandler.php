@@ -11,17 +11,10 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseStringFieldHandler;
-
-class EmailFieldHandler extends BaseStringFieldHandler
+class EmailFieldHandler extends BaseFieldHandler
 {
     /**
-     * HTML form field type
+     * @var string $defaultConfigClass Config class to use as default
      */
-    const INPUT_FIELD_TYPE = 'email';
-
-    /**
-     * Renderer to use
-     */
-    const RENDERER = 'email';
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\EmailConfig';
 }

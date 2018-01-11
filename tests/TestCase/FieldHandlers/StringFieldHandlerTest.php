@@ -95,7 +95,7 @@ class StringFieldHandlerTest extends PHPUnit_Framework_TestCase
      */
     public function testSetTableException()
     {
-        $this->fh = new StringFieldHandler(null, $this->field);
+        $this->fh = new StringFieldHandler(new \StdClass(), $this->field);
     }
 
     /**

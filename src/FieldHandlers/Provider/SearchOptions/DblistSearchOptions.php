@@ -48,7 +48,9 @@ class DblistSearchOptions extends AbstractSearchOptions
             'label' => false,
             'required' => $options['fieldDefinitions']->getRequired(),
             'value' => '{{value}}',
-            'options' => $table->find('options', ['name' => $list])
+            'options' => $table->find('options', ['name' => $list]),
+            'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
+            'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
         ];
 
         $defaultElement = 'CsvMigrations.FieldHandlers/DblistFieldHandler/input';

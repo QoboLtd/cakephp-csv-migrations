@@ -10,6 +10,8 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+$attributes = isset($attributes) ? $attributes : [];
+
 $levels = 0;
 // get nesting level based on dot notation
 foreach ($optionValues as $k => $v) {

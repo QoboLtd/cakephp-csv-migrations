@@ -12,6 +12,8 @@
 namespace CsvMigrations\FieldHandlers\Provider\FieldValue;
 
 use Cake\Database\Exception;
+use Cake\Datasource\EntityInterface;
+use Cake\Http\ServerRequest;
 use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
 
 /**
@@ -43,6 +45,14 @@ class PrimaryKeyFieldValue extends AbstractProvider
             return null;
         }
 
-        return $options['entity']->get($primaryKey);
+        if ($options['entity'] instanceof EntityInterface) {
+            return $options['entity']->get($primaryKey);
+        }
+
+        if ($options['entity'] instanceof ServerRequest) {
+            return $options['entity']->getData($primaryKey);
+        }
+
+        return null;
     }
 }

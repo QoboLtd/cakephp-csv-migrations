@@ -10,6 +10,8 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+$attributes = isset($attributes) ? $attributes : [];
+
 $attributes += [
     'empty' => true,
     'value' => $value,

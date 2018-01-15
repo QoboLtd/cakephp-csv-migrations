@@ -11,6 +11,8 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
 
+use Cake\ORM\TableRegistry;
+
 /**
  * DblistRenderer
  *

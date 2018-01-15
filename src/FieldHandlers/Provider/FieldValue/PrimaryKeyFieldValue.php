@@ -45,11 +45,11 @@ class PrimaryKeyFieldValue extends AbstractProvider
             return null;
         }
 
-        if ($data instanceof EntityInterface) {
+        if ($options['entity'] instanceof EntityInterface) {
             return $options['entity']->get($primaryKey);
         }
 
-        if ($data instanceof ServerRequest) {
+        if ($options['entity'] instanceof ServerRequest) {
             return $options['entity']->getData($primaryKey);
         }
 

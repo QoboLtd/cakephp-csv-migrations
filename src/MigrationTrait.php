@@ -143,7 +143,7 @@ trait MigrationTrait
      */
     protected function _setAssociationsFromCsv(array $config)
     {
-        $data = $this->_csvDataToCsvObj($this->_csvData(true));
+        $data = $this->_csvDataToCsvObj($this->_csvData());
 
         if (!empty($data[$config['table']])) {
             $this->setFileAssociations($data[$config['table']]);

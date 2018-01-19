@@ -11,9 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use Cake\ORM\Entity;
-
-class DatetimeFieldHandler extends BaseTimeFieldHandler
+class DatetimeFieldHandler extends BaseFieldHandler
 {
     /**
      * Database field type
@@ -21,95 +19,7 @@ class DatetimeFieldHandler extends BaseTimeFieldHandler
     const DB_FIELD_TYPE = 'datetime';
 
     /**
-     * Input field type
+     * @var string $defaultConfigClass Config class to use as default
      */
-    const INPUT_FIELD_TYPE = 'datetimepicker';
-
-    /**
-     * Date/time format
-     */
-    const FORMAT = 'yyyy-MM-dd HH:mm';
-
-    /**
-     * Get options for field search
-     *
-     * This method prepares an array of search options, which includes
-     * label, form input, supported search operators, etc.  The result
-     * can be controlled with a variety of options.
-     *
-     * @param  array  $options Field options
-     * @return array           Array of field input HTML, pre and post CSS, JS, etc
-     */
-    public function getSearchOptions(array $options = [])
-    {
-        // Fix options as early as possible
-        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
-        $result = parent::getSearchOptions($options);
-        if (empty($result[$this->field]['input'])) {
-            return $result;
-        }
-
-        if (isset($options['element'])) {
-            $content = $this->cakeView->element($options['element'], [
-                'options' => [
-                    'fieldName' => '{{name}}',
-                    'value' => '{{value}}',
-                    'type' => static::INPUT_FIELD_TYPE,
-                    'label' => false
-                ]
-            ]);
-        } else {
-            $content = $this->cakeView->Form->input('', [
-                'name' => '{{name}}',
-                'value' => '{{value}}',
-                'type' => 'text',
-                'data-provide' => 'datetimepicker',
-                'autocomplete' => 'off',
-                'label' => false,
-                'templates' => [
-                    'input' => vsprintf($this->_templates['input'], [
-                        '',
-                        'calendar'
-                    ])
-                ]
-            ]);
-        }
-
-        $result[$this->field]['input'] = [
-            'content' => $content,
-            'post' => [
-                [
-                    'type' => 'script',
-                    'content' => [
-                        'CsvMigrations.dom-observer',
-                        'AdminLTE./plugins/daterangepicker/moment.min',
-                        'AdminLTE./plugins/daterangepicker/daterangepicker',
-                        'CsvMigrations.datetimepicker.init'
-                    ],
-                    'block' => 'scriptBottom'
-                ],
-                [
-                    'type' => 'css',
-                    'content' => 'AdminLTE./plugins/daterangepicker/daterangepicker',
-                    'block' => 'css'
-                ]
-            ]
-        ];
-
-        return $result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function renderInput($data = '', array $options = [])
-    {
-        // set datetimepicker default value when creating new record
-        // @todo this should be handled through fields.ini default parameter
-        if (!empty($options['entity']) && (!$options['entity'] instanceof Entity || $options['entity']->isNew())) {
-            $options['attributes']['data-default-value'] = 'YYYY-MM-DD 10:00';
-        }
-
-        return parent::renderInput($data, $options);
-    }
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\DatetimeConfig';
 }

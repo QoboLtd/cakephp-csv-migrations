@@ -14,11 +14,7 @@ namespace CsvMigrations\FieldHandlers;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
-use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\ForeignKeysHandler;
-use DirectoryIterator;
 use InvalidArgumentException;
-use RegexIterator;
 use RuntimeException;
 
 class FieldHandlerFactory

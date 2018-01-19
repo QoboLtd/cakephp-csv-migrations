@@ -11,21 +11,10 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BaseCombinedFieldHandler;
-
-class MetricFieldHandler extends BaseCombinedFieldHandler
+class MetricFieldHandler extends BaseFieldHandler
 {
     /**
-     * Combined fields
-     *
-     * @var array
+     * @var string $defaultConfigClass Config class to use as default
      */
-    protected static $_fields = [
-        'amount' => [
-            'handler' => __NAMESPACE__ . '\\DecimalFieldHandler'
-        ],
-        'unit' => [
-            'handler' => __NAMESPACE__ . '\\ListFieldHandler'
-        ]
-    ];
+    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\MetricConfig';
 }

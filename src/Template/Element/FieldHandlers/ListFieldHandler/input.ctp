@@ -10,6 +10,8 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+$attributes = isset($attributes) ? $attributes : [];
+
 $attributes += [
     'class' => 'form-control' . ( (isset($extraClasses) && !empty($extraClasses)) ? ' ' . $extraClasses : null ),
     'required' => (bool)$required,

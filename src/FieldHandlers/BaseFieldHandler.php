@@ -75,6 +75,16 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     }
 
     /**
+     * Config instance getter.
+     *
+     * @return \CsvMigrations\FieldHandlers\Config\ConfigInterface
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
      * Set field handler config
      *
      * @param mixed  $table    Name or instance of the Table

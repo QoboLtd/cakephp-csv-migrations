@@ -11,6 +11,8 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
 
+use CsvMigrations\FieldHandlers\Setting;
+
 /**
  * ListRenderer
  *
@@ -33,7 +35,7 @@ class ListRenderer extends AbstractRenderer
 
         $fieldName = $table->aliasField($field);
 
-        $selectOptions = ['' => ' -- Please choose -- '];
+        $selectOptions = ['' => Setting::EMPTY_OPTION_LABEL()];
 
         // if select options are not pre-defined
         if (empty($options['selectOptions'])) {

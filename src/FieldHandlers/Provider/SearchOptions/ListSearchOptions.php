@@ -11,6 +11,8 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
 
+use CsvMigrations\FieldHandlers\Setting;
+
 /**
  * ListSearchOptions
  *
@@ -38,7 +40,7 @@ class ListSearchOptions extends AbstractSearchOptions
         $listName = $options['fieldDefinitions']->getLimit();
         $listOptions = [];
 
-        $selectOptions = ['' => ' -- Please choose -- '];
+        $selectOptions = ['' => Setting::EMPTY_OPTION_LABEL()];
         $selectOptions += $selectListItems->provide($listName, $listOptions);
 
         $options['listItems'] = $selectOptions;

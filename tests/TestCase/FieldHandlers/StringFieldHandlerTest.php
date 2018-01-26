@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
+use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\StringFieldHandler;
 use PHPUnit_Framework_TestCase;
@@ -38,6 +39,13 @@ class StringFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(StringFieldHandler::DB_FIELD_TYPE, $result[$this->field]->getType(), "fieldToDb() did not return correct type for DbField instance");
         $this->assertEquals('string', $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
         $this->assertEquals(255, $result[$this->field]->getLimit(), "fieldToDb() did not return correct limit for DbField instance");
+    }
+
+    public function testGetConfig()
+    {
+        $result = $this->fh->getConfig();
+
+        $this->assertInstanceOf(ConfigInterface::class, $result);
     }
 
     public function getValues()

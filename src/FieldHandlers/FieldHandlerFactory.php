@@ -136,10 +136,11 @@ class FieldHandlerFactory
      */
     public function fieldToDb(CsvField $csvField, $table, $field = null)
     {
-        if (!static::hasFieldHandler($csvField->getType())) {
-            throw new RuntimeException("No field handler for type [" . $csvField->getType . "]");
+        $type = $csvField->getType();
+        if (!static::hasFieldHandler($type)) {
+            throw new RuntimeException("No field handler for type [$type]");
         }
-        $handlerName = static::_getHandlerClassName($csvField->getType(), true);
+        $handlerName = static::_getHandlerClassName($type, true);
 
         return $handlerName::fieldToDb($csvField);
     }

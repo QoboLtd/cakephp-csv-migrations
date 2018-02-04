@@ -128,6 +128,15 @@ class FieldHandlerFactoryTest extends TestCase
         $this->assertFalse(empty($result), "fieldToDb() method returns an empty array");
     }
 
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testFieldToDbException()
+    {
+        $csvField = new CsvField(['name' => 'blah', 'type' => 'foobar']);
+        $result = $this->fhf->fieldToDb($csvField, $this->table, 'id');
+    }
+
     public function testHasFieldHandler()
     {
         $result = $this->fhf->hasFieldHandler('string');

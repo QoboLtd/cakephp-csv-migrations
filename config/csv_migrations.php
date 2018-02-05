@@ -25,6 +25,13 @@ return [
         'modules' => [
             'path' => CONFIG . 'Modules' . DS
         ],
+        'features' => [
+            'module' => [
+                'path' => APP . 'Feature' . DS . 'Type' . DS . 'Module',
+                'path_fragment' => 'Feature' . DS . 'Type' . DS . 'Module' . DS,
+                'template' => 'Feature/module_feature',
+            ],
+        ],
         'reports' => [
             'filename' => 'reports'
         ],

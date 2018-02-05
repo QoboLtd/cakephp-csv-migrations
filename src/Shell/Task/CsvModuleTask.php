@@ -55,6 +55,10 @@ class CsvModuleTask extends BakeTask
             $this->abort('CSV modules path is not defined.');
         }
 
+        if (empty(Configure::read('CsvMigrations.features.module.path'))) {
+            $this->abort('Features path is not defined');
+        }
+
         $this->bake($name);
     }
 
@@ -96,6 +100,13 @@ class CsvModuleTask extends BakeTask
             'name' => $entityName
         ];
         $this->_bakeTemplate($entityName, 'Model/entity', $data);
+
+        $this->pathFragment = Configure::read('CsvMigrations.features.module.path_fragment');
+        $featureName = $this->_modelNameFromKey($name);
+        $data = [
+            'name' => $featureName,
+        ];
+        $this->_bakeTemplate($featureName, Configure::read('CsvMigrations.features.module.template'), $data, 'Feature');
     }
 
     /**
@@ -141,7 +152,6 @@ class CsvModuleTask extends BakeTask
     protected function _bakeTemplate($name, $templateName, array $data, $fileSuffix = '')
     {
         $this->BakeTemplate->set($data);
-
         $contents = $this->BakeTemplate->generate('CsvMigrations.' . $templateName);
 
         $path = $this->getPath();

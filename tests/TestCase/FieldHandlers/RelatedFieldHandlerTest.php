@@ -68,6 +68,28 @@ class RelatedFieldHandlerTest extends TestCase
         $entity = $table->get($id);
         $fieldName = $table->displayField();
         $this->assertContains($entity->{$fieldName}, $result);
+        // assert that embedded-modal trigger button is NOT present (task #5347)
+        $this->assertNotContains('data-target="#field_related_modal"', $result);
+    }
+
+    public function testRenderInputWithEmbeddedModal()
+    {
+        $id = '00000000-0000-0000-0000-000000000001';
+        $options = [
+            'embeddedModal' => true, // set embedded modal flag
+            'fieldDefinitions' => new CsvField([
+                'name' => $this->field,
+                'type' => 'related(Foo)',
+                'required' => false,
+                'non-searchable' => false,
+                'unique' => false
+            ])
+        ];
+
+        $result = $this->fh->renderInput($id, $options);
+
+        // assert that embedded-modal trigger button is present (task #5347)
+        $this->assertContains('data-target="#field_related_modal"', $result);
     }
 
     public function testFieldToDb()

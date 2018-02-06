@@ -57,7 +57,7 @@ class RelatedRenderer extends AbstractRenderer
             'value' => $data,
             'options' => [$data => $relatedProperties['dispFieldVal']],
             'relatedProperties' => $relatedProperties,
-            'embedded' => !empty($options['emDataTarget']) ? $options['emDataTarget'] : $field,
+            'embedded' => isset($options['embeddedModal']) ? (bool)$options['embeddedModal'] : false,
             'icon' => $this->_getInputIcon($relatedProperties),
             'title' => $this->_getInputHelp($relatedProperties),
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),

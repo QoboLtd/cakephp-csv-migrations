@@ -39,7 +39,7 @@ foreach ($options['fields'] as $panelName => $panelFields) : ?>
             $handlerOptions = $options['handlerOptions'];
 
             if ($embeddedDirty) {
-                $handlerOptions['embModal'] = true;
+                $handlerOptions['embeddedModal'] = true;
                 $field['name'] = substr($field['name'], strrpos($field['name'], '.') + 1);
             }
             ?>

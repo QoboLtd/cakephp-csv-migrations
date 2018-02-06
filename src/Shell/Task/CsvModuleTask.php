@@ -14,6 +14,7 @@ namespace CsvMigrations\Shell\Task;
 use Bake\Shell\Task\BakeTask;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Filesystem\File;
 use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
 
@@ -137,7 +138,99 @@ class CsvModuleTask extends BakeTask
             $this->abort('Failure');
         }
 
+        // Once the files are copied. Go through them and generate twig ones.
+        if (!$this->_processConfigFiles($name, $path)) {
+            $this->abort('Couldn\'t process twig files within module config dir');
+        }
+
         $this->success('Success');
+    }
+
+    /**
+     * Process Config directory for the module
+     *
+     * @param string $name of the module
+     * @param string $path of the module location
+     *
+     * @return bool $result on whether the conf files were processed.
+     */
+    protected function _processConfigFiles($name, $path)
+    {
+        $result = false;
+        $path .= 'config' . DS;
+
+        $dir = new Folder($path);
+
+        $contents = $dir->read(true, true);
+
+        if (empty($contents[1])) {
+            return $result;
+        }
+
+        foreach ($contents[1] as $file) {
+            if (substr($file, -5) !== '.twig') {
+                continue;
+            }
+
+            $filename = substr($file, 0, -5);
+            $methodName = 'set' . Inflector::camelize($filename) . 'Template';
+
+            if (!method_exists($this, $methodName)) {
+                throw new \RuntimeException("No method for setting data for $file exists");
+            }
+
+            $data = $this->$methodName(['name' => $name]);
+            $templateName = 'config' . DS . 'CsvModule' . DS . 'config' . DS . $filename;
+
+            $contents = $this->_bakeTemplate($filename, $templateName, $data, '', [
+                'ext' => $data['ext'],
+                'path' => $data['path'],
+            ]);
+
+            if (!empty($contents)) {
+                $result = $this->_deleteFile($file, $data['path']);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Remove template file from generated module
+     *
+     * @param string $file name of twig template
+     * @param string $path of the destination directory
+     *
+     * @return bool $result on file deletion.
+     */
+    protected function _deleteFile($file, $path)
+    {
+        $result = false;
+
+        $file = new File($path . $file);
+        $result = $file->delete();
+        $file->close();
+
+        return $result;
+    }
+
+    /**
+     * Template Data setter
+     *
+     * @param array $options passing module's name
+     *
+     * @return array $data with required paths and vars
+     */
+    protected function setMenusTemplate(array $options = [])
+    {
+        $data = [
+            'label' => Inflector::humanize($options['name']),
+            'url' => DS . Inflector::dasherize($options['name']) . DS,
+            'path' => CONFIG . 'Modules' . DS . $options['name'] . DS . 'config' . DS,
+            'ext' => '.json',
+        ];
+
+        return $data;
     }
 
     /**
@@ -149,14 +242,18 @@ class CsvModuleTask extends BakeTask
      * @param string $fileSuffix File suffix.
      * @return string The generated controller file.
      */
-    protected function _bakeTemplate($name, $templateName, array $data, $fileSuffix = '')
+    protected function _bakeTemplate($name, $templateName, array $data, $fileSuffix = '', array $options = [])
     {
         $this->BakeTemplate->set($data);
         $contents = $this->BakeTemplate->generate('CsvMigrations.' . $templateName);
 
-        $path = $this->getPath();
+        $path = empty($options['path']) ? $this->getPath() : $options['path'];
 
-        $filename = $path . $name . $fileSuffix . '.php';
+        if (empty($options['ext'])) {
+            $options['ext'] = '.php';
+        }
+
+        $filename = $path . $name . $fileSuffix . $options['ext'];
 
         $this->createFile($filename, $contents);
 

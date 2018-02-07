@@ -28,10 +28,10 @@ class DblistsController extends BaseController
      */
     public function index()
     {
-        $dblists = $this->Dblists->find('all');
+        $entities = $this->Dblists->find('all');
 
-        $this->set(compact('dblists'));
-        $this->set('_serialize', ['dblists']);
+        $this->set(compact('entities'));
+        $this->set('_serialize', ['entities']);
     }
 
     /**
@@ -41,45 +41,45 @@ class DblistsController extends BaseController
      */
     public function add()
     {
-        $dblist = $this->Dblists->newEntity();
+        $entity = $this->Dblists->newEntity();
         if ($this->request->is('post')) {
-            $dblist = $this->Dblists->patchEntity($dblist, $this->request->data);
-            if ($this->Dblists->save($dblist)) {
-                $this->Flash->success(__('The Database list has been saved.'));
+            $entity = $this->Dblists->patchEntity($entity, $this->request->data);
+            if ($this->Dblists->save($entity)) {
+                $this->Flash->success(__('The database list has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The Database list could not be saved. Please, try again.'));
             }
+
+            $this->Flash->error(__('The database list could not be saved. Please, try again.'));
         }
-        $this->set(compact('dblist'));
-        $this->set('_serialize', ['dblist']);
+
+        $this->set(compact('entity'));
+        $this->set('_serialize', ['entity']);
     }
 
     /**
      * Edit method
      *
-     * @param string|null $id Dblist id.
+     * @param string $id Dblist id.
      * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit($id)
     {
-        $dblist = $this->Dblists->get($id, [
-            'contain' => []
-        ]);
+        $entity = $this->Dblists->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $dblist = $this->Dblists->patchEntity($dblist, $this->request->data);
-            if ($this->Dblists->save($dblist)) {
-                $this->Flash->success(__('The Database list has been saved.'));
+            $entity = $this->Dblists->patchEntity($entity, $this->request->data);
+            if ($this->Dblists->save($entity)) {
+                $this->Flash->success(__('The database list has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The Database list could not be saved. Please, try again.'));
             }
+
+            $this->Flash->error(__('The database list could not be saved. Please, try again.'));
         }
-        $this->set(compact('dblist'));
-        $this->set('_serialize', ['dblist']);
+
+        $this->set(compact('entity'));
+        $this->set('_serialize', ['entity']);
     }
 
     /**
@@ -94,9 +94,9 @@ class DblistsController extends BaseController
         $this->request->allowMethod(['post', 'delete']);
         $dblist = $this->Dblists->get($id);
         if ($this->Dblists->delete($dblist)) {
-            $this->Flash->success(__('The Database list has been deleted.'));
+            $this->Flash->success(__('The database list has been deleted.'));
         } else {
-            $this->Flash->error(__('The Database list could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The database list could not be deleted. Please, try again.'));
         }
 
         return $this->redirect(['action' => 'index']);

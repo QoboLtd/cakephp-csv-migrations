@@ -10,9 +10,9 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-use CsvMigrations\FieldHandlers\Renderer\DateTimeRenderer;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
-$renderer = new DateTimeRenderer($this);
+$factory = new FieldHandlerFactory($this);
 ?>
 <section class="content-header">
     <div class="row">
@@ -29,7 +29,7 @@ $renderer = new DateTimeRenderer($this);
             <div class="pull-right">
                 <div class="btn-group btn-group-sm" role="group">
                     <?php
-                    $url = ['plugin' => 'CsvMigrations', 'controller' => 'DblistItems', 'action' => 'add', $list->id];
+                    $url = ['plugin' => 'CsvMigrations', 'controller' => 'DblistItems', 'action' => 'add', $list->get('id')];
                     echo $this->Html->link('<i class="fa fa-plus"></i> ' . __('Add'), $url, [
                         'title' => __('Add'), 'escape' => false, 'class' => 'btn btn-default'
                     ]);
@@ -53,59 +53,65 @@ $renderer = new DateTimeRenderer($this);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($tree as $entity) : ?>
-                    <tr class="<?= !($entity->get('active')) ? 'warning' : ''; ?>">
+                    <?php foreach ($query as $entity) : ?>
+                    <tr class="<?= $entity->get('active') ? '' : 'warning'; ?>">
                         <td><?= $entity->get('spacer')?></td>
                         <td><?= $entity->get('value') ?></td>
-                        <td><?= $renderer->renderValue($entity->created) ?></td>
-                        <td><?= $renderer->renderValue($entity->modified) ?></td>
+                        <td><?= $factory->renderValue('Dblists', 'created', $entity->get('created'), ['fieldDefinitions' => ['type' => 'datetime']]);?></td>
+                        <td><?= $factory->renderValue('Dblists', 'modified', $entity->get('modified'), ['fieldDefinitions' => ['type' => 'datetime']]);?></td>
                         <td class="actions">
                             <div class="btn-group btn-group-xs" role="group">
                             <?php
-                            $url = [
-                                'plugin' => 'CsvMigrations',
-                                'controller' => 'DblistItems',
-                                'action' => 'move_node',
-                                $entity->id,
-                                'up'
-                            ];
-                            echo $this->Form->postLink('<i class="fa fa-arrow-up"></i>', $url, [
-                                'title' => __('Move up'), 'class' => 'btn btn-default', 'escape' => false
-                            ]);
+                            echo $this->Form->postLink(
+                                '<i class="fa fa-arrow-up"></i>',
+                                [
+                                    'plugin' => 'CsvMigrations',
+                                    'controller' => 'DblistItems',
+                                    'action' => 'move_node',
+                                    $entity->get('id'),
+                                    'up'
+                                ],
+                                ['title' => __('Move up'), 'class' => 'btn btn-default', 'escape' => false]
+                            );
 
-                            $url = [
-                                'plugin' => 'CsvMigrations',
-                                'controller' => 'DblistItems',
-                                'action' => 'move_node',
-                                $entity->id,
-                                'down'
-                            ];
-                            echo $this->Form->postLink('<i class="fa fa-arrow-down"></i>', $url, [
-                                'title' => __('Move down'), 'class' => 'btn btn-default', 'escape' => false
-                            ]);
+                            echo $this->Form->postLink(
+                                '<i class="fa fa-arrow-down"></i>',
+                                [
+                                    'plugin' => 'CsvMigrations',
+                                    'controller' => 'DblistItems',
+                                    'action' => 'move_node',
+                                    $entity->get('id'),
+                                    'down'
+                                ],
+                                ['title' => __('Move down'), 'class' => 'btn btn-default', 'escape' => false]
+                            );
 
-                            $url = [
-                                'plugin' => 'CsvMigrations',
-                                'controller' => 'DblistItems',
-                                'action' => 'edit',
-                                $entity->id
-                            ];
-                            echo $this->Html->link('<i class="fa fa-pencil"></i>', $url, [
-                                'title' => __('Edit'), 'class' => 'btn btn-default', 'escape' => false
-                            ]);
+                            echo $this->Html->link(
+                                '<i class="fa fa-pencil"></i>',
+                                [
+                                    'plugin' => 'CsvMigrations',
+                                    'controller' => 'DblistItems',
+                                    'action' => 'edit',
+                                    $entity->get('id')
+                                ],
+                                ['title' => __('Edit'), 'class' => 'btn btn-default', 'escape' => false]
+                            );
 
-                            $url = [
-                                'plugin' => 'CsvMigrations',
-                                'controller' => 'DblistItems',
-                                'action' => 'delete',
-                                $entity->id
-                            ];
-                            echo $this->Form->postLink('<i class="fa fa-trash"></i>', $url, [
-                                'title' => __('Delete'),
-                                'class' => 'btn btn-default',
-                                'escape' => false,
-                                'confirm' => __('Are you sure you want to delete {0}?', $entity->name)
-                            ]);
+                            echo $this->Form->postLink(
+                                '<i class="fa fa-trash"></i>',
+                                [
+                                    'plugin' => 'CsvMigrations',
+                                    'controller' => 'DblistItems',
+                                    'action' => 'delete',
+                                    $entity->get('id')
+                                ],
+                                [
+                                    'title' => __('Delete'),
+                                    'class' => 'btn btn-default',
+                                    'escape' => false,
+                                    'confirm' => __('Are you sure you want to delete {0}?', $entity->get('name'))
+                                ]
+                            );
                             ?>
                             </div>
                         </td>

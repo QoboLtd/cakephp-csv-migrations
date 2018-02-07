@@ -78,6 +78,10 @@ class DblistItemsTable extends Table
             ->requirePresence('value', 'create')
             ->notEmpty('value');
 
+        $validator
+            ->requirePresence('dblist_id', 'create')
+            ->notEmpty('dblist_id');
+
         return $validator;
     }
 

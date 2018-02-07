@@ -11,9 +11,9 @@
  */
 
 use Cake\Core\Configure;
-use CsvMigrations\FieldHandlers\Renderer\DateTimeRenderer;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
-$renderer = new DateTimeRenderer($this);
+$factory = new FieldHandlerFactory($this);
 
 echo $this->Html->css('Qobo/Utils./plugins/datatables/css/dataTables.bootstrap.min', ['block' => 'css']);
 
@@ -68,8 +68,8 @@ echo $this->Html->scriptBlock(
                     <?php foreach ($dblists as $dblist) : ?>
                     <tr>
                         <td><?= h($dblist->name) ?></td>
-                        <td><?= $renderer->renderValue($dblist->created) ?></td>
-                        <td><?= $renderer->renderValue($dblist->modified) ?></td>
+                        <td><?= $factory->renderValue('Dblists', 'created', $dblist->created, ['fieldDefinitions' => ['type' => 'datetime']]);?></td>
+                        <td><?= $factory->renderValue('Dblists', 'modified', $dblist->modified, ['fieldDefinitions' => ['type' => 'datetime']]);?></td>
                         <td class="actions">
                             <div class="btn-group btn-group-xs" role="group">
                             <?php

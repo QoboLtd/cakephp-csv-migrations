@@ -10,9 +10,9 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-use CsvMigrations\FieldHandlers\Renderer\DateTimeRenderer;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
-$renderer = new DateTimeRenderer($this);
+$factory = new FieldHandlerFactory($this);
 ?>
 <section class="content-header">
     <div class="row">
@@ -57,8 +57,8 @@ $renderer = new DateTimeRenderer($this);
                     <tr class="<?= !($entity->get('active')) ? 'warning' : ''; ?>">
                         <td><?= $entity->get('spacer')?></td>
                         <td><?= $entity->get('value') ?></td>
-                        <td><?= $renderer->renderValue($entity->created) ?></td>
-                        <td><?= $renderer->renderValue($entity->modified) ?></td>
+                        <td><?= $factory->renderValue('Dblists', 'created', $entity->created, ['fieldDefinitions' => ['type' => 'datetime']]);?></td>
+                        <td><?= $factory->renderValue('Dblists', 'modified', $entity->modified, ['fieldDefinitions' => ['type' => 'datetime']]);?></td>
                         <td class="actions">
                             <div class="btn-group btn-group-xs" role="group">
                             <?php

@@ -131,7 +131,7 @@ class DblistItemsController extends BaseController
         $this->request->allowMethod('post');
 
         if (!in_array($action, ['up', 'down'])) {
-            $this->Flash->error(__('Unknown move action.'));
+            $this->Flash->error(__('Unknown move action "{0}".', $action));
 
             return $this->redirect($this->referer());
         }

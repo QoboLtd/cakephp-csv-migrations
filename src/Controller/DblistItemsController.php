@@ -60,7 +60,7 @@ class DblistItemsController extends BaseController
                 return $this->redirect(['action' => 'index', $id]);
             }
 
-            $this->Flash->error(__('The Database list item could not be saved. Please, try again.'));
+            $this->Flash->error(__('The database list item could not be saved. Please, try again.'));
         }
 
         $tree = $this->DblistItems->find('treeList', ['spacer' => '&nbsp;&nbsp;&nbsp;&nbsp;'])
@@ -90,7 +90,7 @@ class DblistItemsController extends BaseController
                 return $this->redirect(['action' => 'index', $entity->get('dblist_id')]);
             }
 
-            $this->Flash->error(__('The Database list item could not be saved. Please, try again.'));
+            $this->Flash->error(__('The database list item could not be saved. Please, try again.'));
         }
 
         $tree = $this->DblistItems->find('treeList', ['spacer' => '&nbsp;&nbsp;&nbsp;&nbsp;'])
@@ -113,9 +113,9 @@ class DblistItemsController extends BaseController
         $entity = $this->DblistItems->get($id);
 
         if ($this->DblistItems->delete($entity)) {
-            $this->Flash->success(__('The Database list item has been deleted.'));
+            $this->Flash->success(__('The database list item has been deleted.'));
         } else {
-            $this->Flash->error(__('The Database list item could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The database list item could not be deleted. Please, try again.'));
         }
 
         return $this->redirect($this->referer());

@@ -55,7 +55,7 @@ class DblistItemsController extends BaseController
             $entity = $this->DblistItems->patchEntity($entity, array_merge($this->request->getData(), ['dblist_id' => $id]));
 
             if ($this->DblistItems->save($entity)) {
-                $this->Flash->success(__('The Database list item has been saved.'));
+                $this->Flash->success(__('The database list item has been saved.'));
 
                 return $this->redirect(['action' => 'index', $id]);
             }
@@ -85,7 +85,7 @@ class DblistItemsController extends BaseController
             $entity = $this->DblistItems->patchEntity($entity, $this->request->data);
 
             if ($this->DblistItems->save($entity)) {
-                $this->Flash->success(__('The Database list item has been saved.'));
+                $this->Flash->success(__('The database list item has been saved.'));
 
                 return $this->redirect(['action' => 'index', $entity->get('dblist_id')]);
             }

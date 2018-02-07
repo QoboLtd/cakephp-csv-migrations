@@ -90,7 +90,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->post('/csv-migrations/dblist-items/add/' . $id, []);
         $this->assertResponseOk();
         $this->assertEquals($count, $this->table->find()->count());
-        $this->assertSession('The Database list item could not be saved. Please, try again.', 'Flash.flash.0.message');
+        $this->assertSession('The database list item could not be saved. Please, try again.', 'Flash.flash.0.message');
     }
 
     public function testEdit()
@@ -128,7 +128,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->put('/csv-migrations/dblist-items/edit/' . $id, $data);
         $this->assertResponseOk();
         $this->assertEquals($entity, $this->table->get($id));
-        $this->assertSession('The Database list item could not be saved. Please, try again.', 'Flash.flash.0.message');
+        $this->assertSession('The database list item could not be saved. Please, try again.', 'Flash.flash.0.message');
     }
 
     public function testDelete()

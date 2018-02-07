@@ -25,7 +25,7 @@
                     <h3 class="box-title"><?= __d('CsvMigrations', 'Details') ?></h3>
                 </div>
                 <div class="box-body">
-                <?= $this->Form->create($dblistItem); ?>
+                <?= $this->Form->create($entity); ?>
                     <div class="row">
                         <div class="col-md-6">
                             <?= $this->Form->input('parent_id', ['options' => $tree, 'escape' => false, 'empty' => true]); ?>
@@ -44,7 +44,6 @@
                             <?= $this->Form->input('active', ['checked' => 'checked']); ?>
                         </div>
                     </div>
-                <?= $this->Form->hidden('dblist_id', ['value' => $list['id']]); ?>
                 <?= $this->Form->button(__d('CsvMigrations', "Submit"), ['class' => 'btn btn-primary']); ?>
                 <?= $this->Form->end() ?>
                 </div>

@@ -23,88 +23,96 @@ class DblistItemsController extends BaseController
     /**
      * Index method
      *
-     * @param string $listId List's id
+     * @param string $id Associated Dblist id
      * @return \Cake\Network\Response|null
      */
-    public function index($listId = null)
+    public function index($id)
     {
-        $list = $this->DblistItems->Dblists->get($listId);
-        $tree = $this->DblistItems->find('treeEntities', ['listId' => $listId]);
-        if ($tree->isEmpty()) {
-            $this->Flash->set(__d('CsvMigrations', 'List is empty, do you want to add new item?'));
+        $list = $this->DblistItems->Dblists->get($id);
+        $query = $this->DblistItems->find('treeEntities', ['listId' => $id]);
 
-            return $this->redirect(['action' => 'add', $listId]);
+        if ($query->isEmpty()) {
+            $this->Flash->set(__('List is empty, do you want to add new item?'));
+
+            return $this->redirect(['action' => 'add', $id]);
         }
 
-        $this->set(compact('tree', 'list'));
+        $this->set(compact('query', 'list'));
+        $this->set('_serialize', ['entities']);
     }
 
     /**
      * Add method
      *
-     * @param string $listId List's id
+     * @param string $id Associated Dblist id
      * @return \Cake\Network\Response|null
      */
-    public function add($listId = null)
+    public function add($id)
     {
-        $dblistItem = $this->DblistItems->newEntity();
-        if ($this->request->is('post')) {
-            $dblistItem = $this->DblistItems->patchEntity($dblistItem, $this->request->data);
-            if ($this->DblistItems->save($dblistItem)) {
-                $this->Flash->success(__d('CsvMigrations', 'The Database list item has been saved.'));
+        $entity = $this->DblistItems->newEntity();
 
-                return $this->redirect(['action' => 'index', $listId]);
-            } else {
-                $this->Flash->error(__d('CsvMigrations', 'The Database list item could not be saved. Please, try again.'));
+        if ($this->request->is('post')) {
+            $entity = $this->DblistItems->patchEntity($entity, array_merge($this->request->getData(), ['dblist_id' => $id]));
+
+            if ($this->DblistItems->save($entity)) {
+                $this->Flash->success(__('The Database list item has been saved.'));
+
+                return $this->redirect(['action' => 'index', $id]);
             }
+
+            $this->Flash->error(__('The Database list item could not be saved. Please, try again.'));
         }
-        $list = $this->DblistItems->Dblists->get($listId);
-        $tree = $this->DblistItems
-            ->find('treeList', ['spacer' => '&nbsp;&nbsp;&nbsp;&nbsp;'])
-            ->where(['dblist_id' => $listId]);
-        $this->set(compact('dblistItem', 'tree', 'list'));
+
+        $tree = $this->DblistItems->find('treeList', ['spacer' => '&nbsp;&nbsp;&nbsp;&nbsp;'])
+            ->where(['dblist_id' => $id]);
+
+        $this->set(compact('entity', 'tree'));
+        $this->set('_serialize', ['entity']);
     }
 
     /**
      * Edit method
      *
-     * @param string|null $id Dblist Item id.
+     * @param string $id Dblist Item id.
      * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit($id)
     {
-        $dblistItem = $this->DblistItems->get($id);
+        $entity = $this->DblistItems->get($id);
+
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $dblistItem = $this->DblistItems->patchEntity($dblistItem, $this->request->data);
-            if ($this->DblistItems->save($dblistItem)) {
+            $entity = $this->DblistItems->patchEntity($entity, $this->request->data);
+
+            if ($this->DblistItems->save($entity)) {
                 $this->Flash->success(__('The Database list item has been saved.'));
 
-                return $this->redirect(['action' => 'index', $dblistItem->get('dblist_id')]);
-            } else {
-                $this->Flash->error(__('The Database list item could not be saved. Please, try again.'));
+                return $this->redirect(['action' => 'index', $entity->get('dblist_id')]);
             }
+
+            $this->Flash->error(__('The Database list item could not be saved. Please, try again.'));
         }
-        $list = $this->DblistItems->Dblists->get($dblistItem->get('dblist_id'));
-        $tree = $this->DblistItems
-            ->find('treeList', ['spacer' => '&nbsp;&nbsp;&nbsp;&nbsp;'])
-            ->where(['dblist_id' => $dblistItem->get('dblist_id')]);
-        $this->set(compact('dblistItem', 'list', 'tree'));
-        $this->set('_serialize', ['dblistItem']);
+
+        $tree = $this->DblistItems->find('treeList', ['spacer' => '&nbsp;&nbsp;&nbsp;&nbsp;'])
+            ->where(['dblist_id' => $entity->get('dblist_id')]);
+
+        $this->set(compact('entity', 'tree'));
+        $this->set('_serialize', ['entity']);
     }
 
     /**
      * Delete method
      *
-     * @param string|null $id Dblist Item id.
+     * @param string $id Dblist Item id.
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete($id)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $dblistItem = $this->DblistItems->get($id);
-        if ($this->DblistItems->delete($dblistItem)) {
+        $entity = $this->DblistItems->get($id);
+
+        if ($this->DblistItems->delete($entity)) {
             $this->Flash->success(__('The Database list item has been deleted.'));
         } else {
             $this->Flash->error(__('The Database list item could not be deleted. Please, try again.'));
@@ -121,21 +129,22 @@ class DblistItemsController extends BaseController
      * @throws InvalidPrimaryKeyException When provided id is invalid.
      * @return \Cake\Network\Response|null
      */
-    public function moveNode($id = null, $action = '')
+    public function moveNode($id, $action = '')
     {
         $this->request->allowMethod('post');
-        $moveActions = ['up', 'down'];
-        if (!in_array($action, $moveActions)) {
-            $this->Flash->error(__d('CsvMigrations', 'Unknown move action.'));
+
+        if (!in_array($action, ['up', 'down'])) {
+            $this->Flash->error(__('Unknown move action "{0}".', $action));
 
             return $this->redirect($this->referer());
         }
-        $node = $this->DblistItems->get($id);
-        $moveFunction = 'move' . $action;
-        if ($this->DblistItems->{$moveFunction}($node)) {
-            $this->Flash->success(__d('CsvMigrations', '{0} has been moved {1} successfully.', $node->name, $action));
+
+        $entity = $this->DblistItems->get($id);
+
+        if ($this->DblistItems->{'move' . $action}($entity)) {
+            $this->Flash->success(__('{0} has been moved {1} successfully.', $entity->get('name'), $action));
         } else {
-            $this->Flash->error(__d('CsvMigrations', 'Fail to move {0} {1}.', $node->name, $action));
+            $this->Flash->error(__('Fail to move {0} {1}.', $entity->get('name'), $action));
         }
 
         return $this->redirect($this->referer());

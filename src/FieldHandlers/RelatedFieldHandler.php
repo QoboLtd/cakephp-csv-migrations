@@ -17,9 +17,4 @@ class RelatedFieldHandler extends BaseFieldHandler
      * @var string $defaultConfigClass Config class to use as default
      */
     protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\RelatedConfig';
-
-    /**
-     * Flag for rendering value as is
-     */
-    const RENDER_PLAIN_VALUE = 'relatedPlain';
 }

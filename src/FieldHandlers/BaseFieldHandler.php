@@ -35,11 +35,6 @@ use RuntimeException;
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
     /**
-     * Flag for rendering value as is
-     */
-    const RENDER_PLAIN_VALUE = 'plain';
-
-    /**
      * Default options
      *
      * @var array

@@ -95,7 +95,7 @@ trait RelatedFieldTrait
                 $table,
                 $table->displayField(),
                 $result['entity']->{$table->displayField()},
-                ['renderAs' => RelatedFieldHandler::RENDER_PLAIN_VALUE]
+                ['renderAs' => Setting::RENDER_PLAIN_VALUE_RELATED()]
             );
         } else {
             $result['dispFieldVal'] = null;

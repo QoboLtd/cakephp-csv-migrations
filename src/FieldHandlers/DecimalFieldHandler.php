@@ -14,11 +14,6 @@ namespace CsvMigrations\FieldHandlers;
 class DecimalFieldHandler extends BaseFieldHandler
 {
     /**
-     * Database field type
-     */
-    const DB_FIELD_TYPE = 'decimal';
-
-    /**
      * @var string $defaultConfigClass Config class to use as default
      */
     protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\DecimalConfig';

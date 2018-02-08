@@ -9,12 +9,17 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers;
+namespace CsvMigrations\FieldHandlers\Provider\DbFieldType;
 
-class HasManyFieldHandler extends BaseFieldHandler
+/**
+ * UuidDbFieldType
+ *
+ * Uuid database field type.
+ */
+class UuidDbFieldType extends AbstractDbFieldType
 {
     /**
-     * @var string $defaultConfigClass Config class to use as default
+     * @var string $dbFieldType Database field type
      */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\HasManyConfig';
+    protected $dbFieldType = 'uuid';
 }

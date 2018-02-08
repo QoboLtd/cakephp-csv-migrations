@@ -24,6 +24,7 @@ class FilesConfig extends FixedConfig
      */
     protected $providers = [
         'combinedFields' => '\\CsvMigrations\\FieldHandlers\\Provider\\CombinedFields\\NullCombinedFields',
+        'dbFieldType' => '\\CsvMigrations\\FieldHandlers\\Provider\\DbFieldType\\UuidDbFieldType',
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\PrimaryKeyFieldValue',
         'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\RelatedFieldToDb',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\NullSearchOperators',

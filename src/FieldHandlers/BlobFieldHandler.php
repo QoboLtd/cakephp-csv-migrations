@@ -16,11 +16,6 @@ use Phinx\Db\Adapter\MysqlAdapter;
 class BlobFieldHandler extends BaseFieldHandler
 {
     /**
-     * Database field type
-     */
-    const DB_FIELD_TYPE = 'blob';
-
-    /**
      * @var string $defaultConfigClass Config class to use as default
      */
     protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\BlobConfig';

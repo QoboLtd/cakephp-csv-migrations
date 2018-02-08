@@ -36,7 +36,7 @@ class DateFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_object($result[$this->field]), "fieldToDb() did not return object value for field key");
         $this->assertTrue(is_a($result[$this->field], 'CsvMigrations\FieldHandlers\DbField'), "fieldToDb() did not return DbField instance for field key");
 
-        $this->assertEquals(DateFieldHandler::DB_FIELD_TYPE, $result[$this->field]->getType(), "fieldToDb() did not return correct type for DbField instance");
+        $this->assertEquals(DateFieldHandler::getDbFieldType($this->field), $result[$this->field]->getType(), "fieldToDb() did not return correct type for DbField instance");
         $this->assertEquals('date', $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
     }
 

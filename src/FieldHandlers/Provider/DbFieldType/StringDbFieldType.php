@@ -9,12 +9,13 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers;
+namespace CsvMigrations\FieldHandlers\Provider\DbFieldType;
 
-class HasManyFieldHandler extends BaseFieldHandler
+/**
+ * StringDbFieldType
+ *
+ * String database field type.
+ */
+class StringDbFieldType extends AbstractDbFieldType
 {
-    /**
-     * @var string $defaultConfigClass Config class to use as default
-     */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\HasManyConfig';
 }

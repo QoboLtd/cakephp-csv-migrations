@@ -35,11 +35,6 @@ use RuntimeException;
 abstract class BaseFieldHandler implements FieldHandlerInterface
 {
     /**
-     * Default database field type
-     */
-    const DB_FIELD_TYPE = 'string';
-
-    /**
      * Flag for rendering value as is
      */
     const RENDER_PLAIN_VALUE = 'plain';
@@ -159,12 +154,13 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $table = $this->config->getTable();
         $field = $this->config->getField();
+        $dbFieldType = $this->getDbFieldType($field);
 
         // set $options['fieldDefinitions']
         $stubFields = [
             $field => [
                 'name' => $field,
-                'type' => self::DB_FIELD_TYPE, // not static:: to preserve string
+                'type' => $dbFieldType,
             ],
         ];
         if (method_exists($table, 'getFieldsDefinitions') && is_callable([$table, 'getFieldsDefinitions'])) {
@@ -387,6 +383,23 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
         $result = $fieldToDb->provide($csvField);
 
         return $result;
+    }
+
+    /**
+     * Get database field type
+     *
+     * @param string $field Field name
+     * @return string
+     */
+    public static function getDbFieldType($field)
+    {
+        // Temporary dummy configuration
+        $config = new static::$defaultConfigClass($field);
+        $dbFieldType = $config->getProvider('dbFieldType');
+        $dbFieldType = new $dbFieldType($config);
+        $dbFieldType = $dbFieldType->provide($field);
+
+        return $dbFieldType;
     }
 
     /**

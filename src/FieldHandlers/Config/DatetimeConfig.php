@@ -24,6 +24,7 @@ class DatetimeConfig extends FixedConfig
      */
     protected $providers = [
         'combinedFields' => '\\CsvMigrations\\FieldHandlers\\Provider\\CombinedFields\\NullCombinedFields',
+        'dbFieldType' => '\\CsvMigrations\\FieldHandlers\\Provider\\DbFieldType\\DatetimeDbFieldType',
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
         'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\DatetimeFieldToDb',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\TimeSearchOperators',

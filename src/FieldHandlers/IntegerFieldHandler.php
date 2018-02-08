@@ -14,11 +14,6 @@ namespace CsvMigrations\FieldHandlers;
 class IntegerFieldHandler extends BaseFieldHandler
 {
     /**
-     * Database field type
-     */
-    const DB_FIELD_TYPE = 'integer';
-
-    /**
      * @var string $defaultConfigClass Config class to use as default
      */
     protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\IntegerConfig';

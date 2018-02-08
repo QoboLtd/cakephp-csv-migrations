@@ -82,7 +82,7 @@ class MetricFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_object($result[$fieldName]), "fieldToDb() did not return object value for field key");
         $this->assertTrue(is_a($result[$fieldName], 'CsvMigrations\FieldHandlers\DbField'), "fieldToDb() did not return DbField instance for field key");
 
-        $this->assertEquals(DecimalFieldHandler::DB_FIELD_TYPE, $result[$fieldName]->getType(), "fieldToDb() did not return correct type for DbField instance");
+        $this->assertEquals(DecimalFieldHandler::getDbFieldType($fieldName), $result[$fieldName]->getType(), "fieldToDb() did not return correct type for DbField instance");
         $this->assertEquals('decimal', $result[$fieldName]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
 
         $fieldName = $this->field . '_' . 'unit';
@@ -90,7 +90,7 @@ class MetricFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_object($result[$fieldName]), "fieldToDb() did not return object value for field key");
         $this->assertTrue(is_a($result[$fieldName], 'CsvMigrations\FieldHandlers\DbField'), "fieldToDb() did not return DbField instance for field key");
 
-        $this->assertEquals(ListFieldHandler::DB_FIELD_TYPE, $result[$fieldName]->getType(), "fieldToDb() did not return correct type for DbField instance");
+        $this->assertEquals(ListFieldHandler::getDbFieldType($fieldName), $result[$fieldName]->getType(), "fieldToDb() did not return correct type for DbField instance");
         $this->assertEquals('string', $result[$fieldName]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
         $this->assertEquals(255, $result[$fieldName]->getLimit(), "fieldToDb() did not return correct limit for DbField instance");
     }

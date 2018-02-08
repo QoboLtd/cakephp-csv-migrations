@@ -16,11 +16,6 @@ use Phinx\Db\Adapter\MysqlAdapter;
 class TextFieldHandler extends BaseFieldHandler
 {
     /**
-     * Database field type
-     */
-    const DB_FIELD_TYPE = 'text';
-
-    /**
      * @var string $defaultConfigClass Config class to use as default
      */
     protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\TextConfig';

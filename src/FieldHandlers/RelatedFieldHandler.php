@@ -19,11 +19,6 @@ class RelatedFieldHandler extends BaseFieldHandler
     protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\RelatedConfig';
 
     /**
-     * Field type
-     */
-    const DB_FIELD_TYPE = 'uuid';
-
-    /**
      * Flag for rendering value as is
      */
     const RENDER_PLAIN_VALUE = 'relatedPlain';

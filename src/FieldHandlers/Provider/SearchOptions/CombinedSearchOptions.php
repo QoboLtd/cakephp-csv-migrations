@@ -35,8 +35,8 @@ class CombinedSearchOptions extends AbstractSearchOptions
 
         $view = $this->config->getView();
         foreach ($combinedFields as $suffix => $fieldOptions) {
-            $options['fieldDefinitions']->setType($fieldOptions['handler']::DB_FIELD_TYPE);
             $fieldName = $this->config->getField() . '_' . $suffix;
+            $options['fieldDefinitions']->setType($fieldOptions['handler']::getDbFieldType($fieldName));
             $handler = new $fieldOptions['handler']($this->config->getTable(), $fieldName, $view);
             $fieldOptions = $handler->getSearchOptions($options);
             if (!empty($fieldOptions)) {

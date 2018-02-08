@@ -17,9 +17,4 @@ class HasManyFieldHandler extends BaseFieldHandler
      * @var string $defaultConfigClass Config class to use as default
      */
     protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\HasManyConfig';
-
-    /**
-     * Field type
-     */
-    const DB_FIELD_TYPE = 'uuid';
 }

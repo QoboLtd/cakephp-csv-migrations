@@ -16,23 +16,18 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\View\View;
 use CsvMigrations\Event\EventName;
+use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use RuntimeException;
 
 /**
- * BaseFieldHandler
+ * FieldHandler
  *
- * This class provides the fallback functionality that
- * is common to all field handlers.
- *
- * NOTE: Try to avoid inheriting from this class directly.
- *       Instead, use one of the more specific base classes.
- *
- * @abstract
+ * This class provides field handler functionality.
  */
-abstract class BaseFieldHandler implements FieldHandlerInterface
+class FieldHandler implements FieldHandlerInterface
 {
     /**
      * Default options
@@ -54,18 +49,16 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * Constructor
      *
-     * @param mixed  $table    Name or instance of the Table
-     * @param string $field    Field name
-     * @param \Cake\View\View|null $view     Optional instance of the View
+     * @param \CsvMigrations\FieldHandlers\Config\ConfigInterface $config Instance of field handler config
      */
-    public function __construct($table, $field, $view = null)
+    public function __construct(ConfigInterface $config)
     {
-        $this->setConfig($table, $field, $view);
+        $this->setConfig($config);
         $this->setDefaultOptions();
     }
 
     /**
-     * Config instance getter.
+     * Config instance getter
      *
      * @return \CsvMigrations\FieldHandlers\Config\ConfigInterface
      */
@@ -75,19 +68,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     }
 
     /**
-     * Set field handler config
+     * Config instance setter
      *
-     * @param mixed  $table    Name or instance of the Table
-     * @param string $field    Field name
-     * @param \Cake\View\View|null $view     Optional instance of the View
+     * @param \CsvMigrations\FieldHandlers\Config\ConfigInterface $config Instance of field handler config
      * @return void
      */
-    protected function setConfig($table, $field, $view)
+    public function setConfig(ConfigInterface $config)
     {
-        $this->config = new static::$defaultConfigClass($field, $table);
-        if ($view instanceof View) {
-            $this->config->setView($view);
-        }
+        $this->config = $config;
     }
 
     /**

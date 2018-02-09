@@ -15,7 +15,7 @@ namespace CsvMigrations\FieldHandlers\Provider\CombinedFields;
  * NullCombinedFields
  *
  * Null CombinedFields provides the functionality
- * for not combined fields provider.
+ * for not combined fields configuration.
  */
 class NullCombinedFields extends AbstractCombinedFields
 {

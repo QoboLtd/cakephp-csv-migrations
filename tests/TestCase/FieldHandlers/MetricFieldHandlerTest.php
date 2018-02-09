@@ -2,24 +2,25 @@
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use Cake\ORM\Entity;
+use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\FieldHandlers\DecimalFieldHandler;
-use CsvMigrations\FieldHandlers\ListFieldHandler;
-use CsvMigrations\FieldHandlers\MetricFieldHandler;
+use CsvMigrations\FieldHandlers\FieldHandler;
 use PHPUnit_Framework_TestCase;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class MetricFieldHandlerTest extends PHPUnit_Framework_TestCase
 {
-    protected $table = 'Fields';
+    protected $table = 'fields';
     protected $field = 'field_metric';
+    protected $type = 'metric';
 
     protected $fh;
 
     protected function setUp()
     {
-        $this->fh = new MetricFieldHandler($this->table, $this->field);
+        $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
+        $this->fh = new FieldHandler($config);
     }
 
     public function testInterface()
@@ -70,7 +71,7 @@ class MetricFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     public function testFieldToDb()
     {
-        $csvField = new CsvField(['name' => $this->field, 'type' => 'text']);
+        $csvField = new CsvField(['name' => $this->field, 'type' => 'metric(metric)']);
         $fh = $this->fh;
         $result = $fh::fieldToDb($csvField);
 
@@ -82,7 +83,6 @@ class MetricFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_object($result[$fieldName]), "fieldToDb() did not return object value for field key");
         $this->assertTrue(is_a($result[$fieldName], 'CsvMigrations\FieldHandlers\DbField'), "fieldToDb() did not return DbField instance for field key");
 
-        $this->assertEquals(DecimalFieldHandler::getDbFieldType($fieldName), $result[$fieldName]->getType(), "fieldToDb() did not return correct type for DbField instance");
         $this->assertEquals('decimal', $result[$fieldName]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
 
         $fieldName = $this->field . '_' . 'unit';
@@ -90,7 +90,6 @@ class MetricFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_object($result[$fieldName]), "fieldToDb() did not return object value for field key");
         $this->assertTrue(is_a($result[$fieldName], 'CsvMigrations\FieldHandlers\DbField'), "fieldToDb() did not return DbField instance for field key");
 
-        $this->assertEquals(ListFieldHandler::getDbFieldType($fieldName), $result[$fieldName]->getType(), "fieldToDb() did not return correct type for DbField instance");
         $this->assertEquals('string', $result[$fieldName]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
         $this->assertEquals(255, $result[$fieldName]->getLimit(), "fieldToDb() did not return correct limit for DbField instance");
     }

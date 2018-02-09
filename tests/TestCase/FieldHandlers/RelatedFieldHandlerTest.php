@@ -3,8 +3,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\FieldHandlers\RelatedFieldHandler;
+use CsvMigrations\FieldHandlers\FieldHandler;
 
 class RelatedFieldHandlerTest extends TestCase
 {
@@ -12,14 +13,16 @@ class RelatedFieldHandlerTest extends TestCase
         'plugin.CsvMigrations.foo'
     ];
 
-    protected $table = 'Fields';
+    protected $table = 'fields';
     protected $field = 'field_related';
+    protected $type = 'related';
 
     protected $fh;
 
     public function setUp()
     {
-        $this->fh = new RelatedFieldHandler($this->table, $this->field);
+        $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
+        $this->fh = new FieldHandler($config);
     }
 
     public function testInterface()
@@ -94,7 +97,7 @@ class RelatedFieldHandlerTest extends TestCase
 
     public function testFieldToDb()
     {
-        $csvField = new CsvField(['name' => $this->field, 'type' => 'text']);
+        $csvField = new CsvField(['name' => $this->field, 'type' => 'related(Foo)']);
         $fh = $this->fh;
         $result = $fh::fieldToDb($csvField);
 
@@ -104,7 +107,7 @@ class RelatedFieldHandlerTest extends TestCase
         $this->assertTrue(is_object($result[$this->field]), "fieldToDb() did not return object value for field key");
         $this->assertTrue(is_a($result[$this->field], 'CsvMigrations\FieldHandlers\DbField'), "fieldToDb() did not return DbField instance for field key");
 
-        $this->assertEquals(RelatedFieldHandler::getDbFieldType($this->field), $result[$this->field]->getType(), "fieldToDb() did not return correct type for DbField instance");
+        $this->assertEquals($this->fh->getDbFieldType(), $result[$this->field]->getType(), "fieldToDb() did not return correct type for DbField instance");
         $this->assertEquals('uuid', $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
     }
 

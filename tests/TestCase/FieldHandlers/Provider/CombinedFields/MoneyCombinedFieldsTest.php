@@ -36,9 +36,9 @@ class MoneyCombinedFieldsTest extends PHPUnit_Framework_TestCase
         foreach ($result as $field => $options) {
             $this->assertTrue(is_array($options), "Options is not an array for field [$field]");
             $this->assertFalse(empty($options), "Options are empty for field [$field]");
-            $this->assertTrue(array_key_exists('handler', $options), "Options for field [$field] are missing the 'handler' key");
-            $this->assertTrue(is_string($options['handler']), "Options for field [$field] define a non-string 'handler' key");
-            $this->assertTrue(class_exists($options['handler']), "Options for field [$field] define a non-existing class in 'handler' key");
+            $this->assertTrue(array_key_exists('config', $options), "Options for field [$field] are missing the 'config' key");
+            $this->assertTrue(is_string($options['config']), "Options for field [$field] define a non-string 'config' key");
+            $this->assertTrue(class_exists($options['config']), "Options for field [$field] define a non-existing class in 'config' key");
         }
     }
 }

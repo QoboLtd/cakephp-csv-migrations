@@ -13,8 +13,8 @@ namespace CsvMigrations\FieldHandlers\Provider\FieldToDb;
 
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
+use CsvMigrations\FieldHandlers\FieldHandler;
 use InvalidArgumentException;
-use Phinx\Db\Adapter\MysqlAdapter;
 
 /**
  * CombinedFieldToDb
@@ -49,7 +49,10 @@ class CombinedFieldToDb extends AbstractFieldToDb
                 $subField->setLimit($options['limit']);
             }
 
-            $dbFields = array_merge($dbFields, $options['handler']::fieldToDb($subField));
+            $config = new $options['config']($subField->getName(), $this->config->getTable());
+            $provider = $config->getProvider('fieldToDb');
+            $provider = new $provider($config);
+            $dbFields = array_merge($dbFields, $provider->provide($subField));
         }
 
         return $dbFields;

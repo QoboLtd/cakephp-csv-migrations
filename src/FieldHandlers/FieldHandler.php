@@ -16,6 +16,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\View\View;
 use CsvMigrations\Event\EventName;
+use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
@@ -35,11 +36,6 @@ class FieldHandler implements FieldHandlerInterface
      * @var array
      */
     public $defaultOptions = [];
-
-    /**
-     * @var string $defaultConfigClass Config class to use as default
-     */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\StringConfig';
 
     /**
      * @var $config \CsvMigrations\FieldHandlers\Config\ConfigInterface Configuration
@@ -137,7 +133,7 @@ class FieldHandler implements FieldHandlerInterface
     {
         $table = $this->config->getTable();
         $field = $this->config->getField();
-        $dbFieldType = $this->getDbFieldType($field);
+        $dbFieldType = $this->getDbFieldType();
 
         // set $options['fieldDefinitions']
         $stubFields = [
@@ -359,8 +355,7 @@ class FieldHandler implements FieldHandlerInterface
      */
     public static function fieldToDb(CsvField $csvField)
     {
-        // Temporary dummy configuration
-        $config = new static::$defaultConfigClass('dummy_field');
+        $config = ConfigFactory::getByType($csvField->getType(), $csvField->getName());
         $fieldToDb = $config->getProvider('fieldToDb');
         $fieldToDb = new $fieldToDb($config);
         $result = $fieldToDb->provide($csvField);
@@ -371,16 +366,13 @@ class FieldHandler implements FieldHandlerInterface
     /**
      * Get database field type
      *
-     * @param string $field Field name
      * @return string
      */
-    public static function getDbFieldType($field)
+    public function getDbFieldType()
     {
-        // Temporary dummy configuration
-        $config = new static::$defaultConfigClass($field);
-        $dbFieldType = $config->getProvider('dbFieldType');
-        $dbFieldType = new $dbFieldType($config);
-        $dbFieldType = $dbFieldType->provide($field);
+        $dbFieldType = $this->config->getProvider('dbFieldType');
+        $dbFieldType = new $dbFieldType($this->config);
+        $dbFieldType = $dbFieldType->provide();
 
         return $dbFieldType;
     }

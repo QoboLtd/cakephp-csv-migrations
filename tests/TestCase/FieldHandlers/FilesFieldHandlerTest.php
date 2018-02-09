@@ -1,20 +1,23 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
+use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\FieldHandlers\FilesFieldHandler;
+use CsvMigrations\FieldHandlers\FieldHandler;
 use PHPUnit_Framework_TestCase;
 
 class FilesFieldHandlerTest extends PHPUnit_Framework_TestCase
 {
-    protected $table = 'Fields';
+    protected $table = 'fields';
     protected $field = 'field_files';
+    protected $type = 'files';
 
     protected $fh;
 
     protected function setUp()
     {
-        $this->fh = new FilesFieldHandler($this->table, $this->field);
+        $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
+        $this->fh = new FieldHandler($config);
     }
 
     public function testInterface()
@@ -25,7 +28,7 @@ class FilesFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     public function testFieldToDb()
     {
-        $csvField = new CsvField(['name' => $this->field, 'type' => 'text']);
+        $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
         $result = $fh::fieldToDb($csvField);
 
@@ -35,7 +38,7 @@ class FilesFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_object($result[$this->field]), "fieldToDb() did not return object value for field key");
         $this->assertTrue(is_a($result[$this->field], 'CsvMigrations\FieldHandlers\DbField'), "fieldToDb() did not return DbField instance for field key");
 
-        $this->assertEquals(FilesFieldHandler::getDbFieldType($this->field), $result[$this->field]->getType(), "fieldToDb() did not return correct type for DbField instance");
+        $this->assertEquals($this->fh->getDbFieldType(), $result[$this->field]->getType(), "fieldToDb() did not return correct type for DbField instance");
         $this->assertEquals('uuid', $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
     }
 

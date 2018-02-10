@@ -7,6 +7,7 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\FieldHandlers\FieldHandlerInterface;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
@@ -91,6 +92,13 @@ class FieldHandlerFactoryTest extends TestCase
         $this->table = TableRegistry::get($this->tableName, $config);
 
         $this->fhf = new FieldHandlerFactory();
+    }
+
+    public function testGetByTableField()
+    {
+        $result = FieldHandlerFactory::getByTableField($this->table, 'id');
+        $this->assertFalse(empty($result), "FieldHandlerFactory returned an empty result");
+        $this->assertTrue($result instanceof FieldHandlerInterface, "FieldHandlerFactory returned incorrect instance");
     }
 
     public function testRenderInput()

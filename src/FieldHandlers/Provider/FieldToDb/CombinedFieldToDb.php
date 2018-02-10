@@ -12,8 +12,6 @@
 namespace CsvMigrations\FieldHandlers\Provider\FieldToDb;
 
 use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\FieldHandlers\DbField;
-use CsvMigrations\FieldHandlers\FieldHandler;
 use InvalidArgumentException;
 
 /**

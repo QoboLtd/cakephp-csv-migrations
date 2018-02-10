@@ -178,8 +178,6 @@ class FieldHandlerFactory
      */
     protected static function getTableInstance($table)
     {
-        $tableName = '';
-
         if (is_object($table)) {
             return $table;
         }

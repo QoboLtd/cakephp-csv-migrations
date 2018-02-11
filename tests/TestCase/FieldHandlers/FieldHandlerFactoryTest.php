@@ -144,13 +144,4 @@ class FieldHandlerFactoryTest extends TestCase
         $csvField = new CsvField(['name' => 'blah', 'type' => 'foobar']);
         $result = $this->fhf->fieldToDb($csvField, $this->table, 'id');
     }
-
-    public function testHasFieldHandler()
-    {
-        $result = $this->fhf->hasFieldHandler('string');
-        $this->assertTrue($result, "Failed to find field handler for type 'string'");
-
-        $result = $this->fhf->hasFieldHandler('non-existing-field-type');
-        $this->assertFalse($result, "Found field handler for type 'non-existing-field-type'");
-    }
 }

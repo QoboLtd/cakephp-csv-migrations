@@ -65,8 +65,7 @@ class FieldHandlerFactory
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        $table = self::getTableInstance($table);
-        $handler = self::getHandler($table, $field, $options, $this->cakeView);
+        $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
         return $handler->renderInput($data, $options);
     }
@@ -81,11 +80,8 @@ class FieldHandlerFactory
      */
     public function renderName($table, $field, array $options = [])
     {
-        $table = self::getTableInstance($table);
-        $handler = self::getHandler($table, $field, $options, $this->cakeView);
+        $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
-        //@TODO: add options for the renderName instance methods,
-        //so we could customize the label.
         return $handler->renderName();
     }
 
@@ -99,8 +95,7 @@ class FieldHandlerFactory
      */
     public function getSearchOptions($table, $field, array $options = [])
     {
-        $table = self::getTableInstance($table);
-        $handler = self::getHandler($table, $field, $options, $this->cakeView);
+        $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
         return $handler->getSearchOptions($options);
     }
@@ -116,8 +111,7 @@ class FieldHandlerFactory
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $table = self::getTableInstance($table);
-        $handler = self::getHandler($table, $field, $options, $this->cakeView);
+        $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
         return $handler->renderValue($data, $options);
     }
@@ -137,36 +131,13 @@ class FieldHandlerFactory
      */
     public function fieldToDb(CsvField $csvField, $table, $field = null)
     {
-        $type = $csvField->getType();
-        if (!static::hasFieldHandler($type)) {
-            throw new RuntimeException("No field handler for type [$type]");
+        if (empty($field)) {
+            $field = $csvField->getName();
         }
+        // No options or view is necessary for the fieldToDb currently
+        $handler = self::getByTableField($table, $field);
 
-        return FieldHandler::fieldToDb($csvField);
-    }
-
-    /**
-     * Check if given field type has a field handler
-     *
-     * Previously, we used to load all available field handlers
-     * via getList() method and check if the handler for the given
-     * type was in that list.  However, this doesn't play well
-     * with autoloaders.  It's better to rely on the autoloader
-     * and namespaces, rather than on our search through directories.
-     * Hence this check whether a particular handler exists.
-     *
-     * @param string $fieldType Field type
-     * @return bool             True if yes, false otherwise
-     */
-    public static function hasFieldHandler($fieldType)
-    {
-        $className = __NAMESPACE__ . '\\Config\\' . ucfirst($fieldType) . 'Config';
-
-        if (class_exists($className)) {
-            return true;
-        }
-
-        return false;
+        return $handler->fieldToDb($csvField);
     }
 
     /**

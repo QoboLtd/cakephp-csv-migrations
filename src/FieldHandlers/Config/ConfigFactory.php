@@ -11,7 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers\Config;
 
-use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * ConfigFactory
@@ -35,7 +35,7 @@ class ConfigFactory
     {
         $configClass = __NAMESPACE__ . '\\' . ucfirst($type) . 'Config';
         if (!class_exists($configClass)) {
-            throw new InvalidArgumentException("Configuration type [$type] is not supported");
+            throw new RuntimeException("Configuration type [$type] is not supported");
         }
 
         $result = new $configClass($field, $table, $options);

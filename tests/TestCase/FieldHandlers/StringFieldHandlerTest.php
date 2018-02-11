@@ -2,7 +2,6 @@
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
-use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandler;
 use PHPUnit_Framework_TestCase;
@@ -36,13 +35,6 @@ class StringFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->fh->getDbFieldType($this->field), $result[$this->field]->getType(), "fieldToDb() did not return correct type for DbField instance");
         $this->assertEquals('string', $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
         $this->assertEquals(255, $result[$this->field]->getLimit(), "fieldToDb() did not return correct limit for DbField instance");
-    }
-
-    public function testGetConfig()
-    {
-        $result = $this->fh->getConfig();
-
-        $this->assertInstanceOf(ConfigInterface::class, $result);
     }
 
     public function getValues()
@@ -88,18 +80,5 @@ class StringFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('not_contains', $result[$this->field]['operators'], "getSearchOptions() did not return 'not_contains' operator");
         $this->assertArrayHasKey('starts_with', $result[$this->field]['operators'], "getSearchOptions() did not return 'starts_with' operator");
         $this->assertArrayHasKey('ends_with', $result[$this->field]['operators'], "getSearchOptions() did not return 'ends_with' operator");
-    }
-
-    // These are non-StringFieldHandler specific tests.  They are here,
-    // because we need one field handler to play with.  It makes sense
-    // to use the most basic one, which a lot of others are falling
-    // back onto.
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testRenderValueMissingRendererException()
-    {
-        $result = $this->fh->renderValue('test', ['renderAs' => 'thisRendererDoesNotExist']);
     }
 }

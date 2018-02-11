@@ -24,12 +24,6 @@ class BlobFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->fh = new FieldHandler($config);
     }
 
-    public function testInterface()
-    {
-        $implementedInterfaces = array_keys(class_implements($this->fh));
-        $this->assertTrue(in_array('CsvMigrations\FieldHandlers\FieldHandlerInterface', $implementedInterfaces), "FieldHandlerInterface is not implemented");
-    }
-
     public function testRenderInput()
     {
         $result = $this->fh->renderInput(null);

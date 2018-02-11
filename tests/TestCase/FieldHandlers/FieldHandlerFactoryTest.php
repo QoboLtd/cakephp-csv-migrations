@@ -122,6 +122,18 @@ class FieldHandlerFactoryTest extends TestCase
         $this->assertEquals('Related Field', $result);
     }
 
+    public function testGetSearchOptions()
+    {
+        $fieldDefinitions = [
+            CsvField::FIELD_NAME => 'id',
+            CsvField::FIELD_TYPE => 'string',
+            CsvField::FIELD_NON_SEARCHABLE => true,
+        ];
+        $result = $this->fhf->getSearchOptions($this->table, 'id', ['fieldDefinitions' => $fieldDefinitions]);
+        $this->assertTrue(is_array($result), "getSearchOptions() returned a non-array result");
+        $this->assertTrue(empty($result), "getSearchOptions() returned a non-empty result");
+    }
+
     public function testRenderValue()
     {
         $result = $this->fhf->renderValue($this->table, 'id', 'blah');

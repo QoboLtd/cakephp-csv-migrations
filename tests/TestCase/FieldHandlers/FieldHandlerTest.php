@@ -3,6 +3,7 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\Config\ConfigInterface;
+use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandler;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
 use PHPUnit_Framework_TestCase;
@@ -40,5 +41,21 @@ class FieldHandlerTest extends PHPUnit_Framework_TestCase
     public function testRenderValueMissingRendererException()
     {
         $result = $this->fh->renderValue('test', ['renderAs' => 'thisRendererDoesNotExist']);
+    }
+
+    public function testGetSearchOptions()
+    {
+        $result = $this->fh->getSearchOptions();
+        $this->assertTrue(is_array($result), "getSearchOptions() returned a non-array result");
+        $this->assertFalse(empty($result), "getSearchOptions() returned an empty result");
+
+        $fieldDefinitions = [
+            CsvField::FIELD_NAME => 'test_field',
+            CsvField::FIELD_TYPE => 'string',
+            CsvField::FIELD_NON_SEARCHABLE => true,
+        ];
+        $result = $this->fh->getSearchOptions(['fieldDefinitions' => $fieldDefinitions]);
+        $this->assertTrue(is_array($result), "getSearchOptions() returned a non-array result");
+        $this->assertTrue(empty($result), "getSearchOptions() returned a non-empty result");
     }
 }

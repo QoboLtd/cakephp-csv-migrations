@@ -40,7 +40,7 @@ class FieldHandlerFactory
     /**
      * Get an instance of field handler for given table field
      *
-     * @param mixed $table Table name or instance
+     * @param mixed $table Table name or instance of \Cake\ORM\Table
      * @param string $field Field name
      * @param array $options Field handler options
      * @param mixed $view Optional CakePHP view instance
@@ -48,7 +48,7 @@ class FieldHandlerFactory
      */
     public static function getByTableField($table, $field, array $options = [], $view = null)
     {
-        $table = self::getTableInstance($table);
+        $table = is_string($table) ? TableRegistry::get($table) : $table;
         $handler = self::getHandler($table, $field, $options, $view);
 
         return $handler;
@@ -138,29 +138,6 @@ class FieldHandlerFactory
         $handler = self::getByTableField($table, $field);
 
         return $handler->fieldToDb($csvField);
-    }
-
-    /**
-     * Get table instance
-     *
-     * @throws \InvalidArgumentException when $table is not an object or string
-     * @param  mixed  $table  name or instance of the Table
-     * @return object         Table instance
-     */
-    protected static function getTableInstance($table)
-    {
-        if (is_object($table)) {
-            return $table;
-        }
-
-        // Avoid ambiguity
-        if (!is_string($table)) {
-            throw new InvalidArgumentException("Table must be a name or instance object");
-        }
-
-        $result = TableRegistry::get($table);
-
-        return $result;
     }
 
     /**

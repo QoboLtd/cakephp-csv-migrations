@@ -1,32 +1,28 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\Config\ConfigInterface;
+use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\FieldHandlers\StringFieldHandler;
+use CsvMigrations\FieldHandlers\FieldHandler;
 use PHPUnit_Framework_TestCase;
 
 class StringFieldHandlerTest extends PHPUnit_Framework_TestCase
 {
-    protected $table = 'Fields';
+    protected $table = 'fields';
     protected $field = 'field_string';
+    protected $type = 'string';
 
     protected $fh;
 
     protected function setUp()
     {
-        $this->fh = new StringFieldHandler($this->table, $this->field);
-    }
-
-    public function testInterface()
-    {
-        $implementedInterfaces = array_keys(class_implements($this->fh));
-        $this->assertTrue(in_array('CsvMigrations\FieldHandlers\FieldHandlerInterface', $implementedInterfaces), "FieldHandlerInterface is not implemented");
+        $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
+        $this->fh = new FieldHandler($config);
     }
 
     public function testFieldToDb()
     {
-        $csvField = new CsvField(['name' => $this->field, 'type' => 'text']);
+        $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
         $result = $fh::fieldToDb($csvField);
 
@@ -36,16 +32,9 @@ class StringFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_object($result[$this->field]), "fieldToDb() did not return object value for field key");
         $this->assertTrue(is_a($result[$this->field], 'CsvMigrations\FieldHandlers\DbField'), "fieldToDb() did not return DbField instance for field key");
 
-        $this->assertEquals(StringFieldHandler::getDbFieldType($this->field), $result[$this->field]->getType(), "fieldToDb() did not return correct type for DbField instance");
+        $this->assertEquals($this->fh->getDbFieldType($this->field), $result[$this->field]->getType(), "fieldToDb() did not return correct type for DbField instance");
         $this->assertEquals('string', $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
         $this->assertEquals(255, $result[$this->field]->getLimit(), "fieldToDb() did not return correct limit for DbField instance");
-    }
-
-    public function testGetConfig()
-    {
-        $result = $this->fh->getConfig();
-
-        $this->assertInstanceOf(ConfigInterface::class, $result);
     }
 
     public function getValues()
@@ -91,35 +80,5 @@ class StringFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('not_contains', $result[$this->field]['operators'], "getSearchOptions() did not return 'not_contains' operator");
         $this->assertArrayHasKey('starts_with', $result[$this->field]['operators'], "getSearchOptions() did not return 'starts_with' operator");
         $this->assertArrayHasKey('ends_with', $result[$this->field]['operators'], "getSearchOptions() did not return 'ends_with' operator");
-    }
-
-    // These are non-StringFieldHandler specific tests.  They are here,
-    // because we need one field handler to play with.  It makes sense
-    // to use the most basic one, which a lot of others are falling
-    // back onto.
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testSetTableException()
-    {
-        $this->fh = new StringFieldHandler(new \StdClass(), $this->field);
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testSetFieldException()
-    {
-        $this->fh = new StringFieldHandler($this->table, null);
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testRenderValueMissingRendererException()
-    {
-        $this->fh = new StringFieldHandler($this->table, $this->field);
-        $result = $this->fh->renderValue('test', ['renderAs' => 'thisRendererDoesNotExist']);
     }
 }

@@ -1,26 +1,23 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\BooleanFieldHandler;
+use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\CsvField;
+use CsvMigrations\FieldHandlers\FieldHandler;
 use PHPUnit_Framework_TestCase;
 
 class BooleanFieldHandlerTest extends PHPUnit_Framework_TestCase
 {
-    protected $table = 'Fields';
+    protected $table = 'fields';
     protected $field = 'field_boolean';
+    protected $type = 'boolean';
 
     protected $fh;
 
     protected function setUp()
     {
-        $this->fh = new BooleanFieldHandler($this->table, $this->field);
-    }
-
-    public function testInterface()
-    {
-        $implementedInterfaces = array_keys(class_implements($this->fh));
-        $this->assertTrue(in_array('CsvMigrations\FieldHandlers\FieldHandlerInterface', $implementedInterfaces), "FieldHandlerInterface is not implemented");
+        $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
+        $this->fh = new FieldHandler($config);
     }
 
     public function testRenderInput()
@@ -36,7 +33,7 @@ class BooleanFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     public function testFieldToDb()
     {
-        $csvField = new CsvField(['name' => $this->field, 'type' => 'text']);
+        $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
         $result = $fh::fieldToDb($csvField);
 
@@ -46,8 +43,8 @@ class BooleanFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_object($result[$this->field]), "fieldToDb() did not return object value for field key");
         $this->assertTrue(is_a($result[$this->field], 'CsvMigrations\FieldHandlers\DbField'), "fieldToDb() did not return DbField instance for field key");
 
-        $this->assertEquals(BooleanFieldHandler::getDbFieldType($this->field), $result[$this->field]->getType(), "fieldToDb() did not return correct type for DbField instance");
-        $this->assertEquals('boolean', $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
+        $this->assertEquals($this->fh->getDbFieldType(), $result[$this->field]->getType(), "fieldToDb() did not return correct type for DbField instance");
+        $this->assertEquals($this->type, $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
     }
 
     public function getValues()

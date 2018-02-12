@@ -22,4 +22,14 @@ class Setting extends Enum
      * Label to use for the empty option in dropdown lists
      */
     const EMPTY_OPTION_LABEL = ' -- Please choose -- ';
+
+    /**
+     * Plain rendering to use for regular values
+     */
+    const RENDER_PLAIN_VALUE = 'plain';
+
+    /**
+     * Plain rendering to use for related (recursive) values
+     */
+    const RENDER_PLAIN_VALUE_RELATED = 'relatedPlain';
 }

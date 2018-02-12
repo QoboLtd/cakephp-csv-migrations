@@ -2,14 +2,16 @@
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use Cake\Core\Configure;
+use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\FieldHandlers\ListFieldHandler;
+use CsvMigrations\FieldHandlers\FieldHandler;
 use PHPUnit_Framework_TestCase;
 
 class ListFieldHandlerTest extends PHPUnit_Framework_TestCase
 {
-    protected $table = 'Fields';
+    protected $table = 'fields';
     protected $field = 'field_list';
+    protected $type = 'list';
 
     protected $fh;
 
@@ -18,13 +20,8 @@ class ListFieldHandlerTest extends PHPUnit_Framework_TestCase
         $dir = dirname(__DIR__) . DS . '..' . DS . 'config' . DS . 'Modules' . DS;
         Configure::write('CsvMigrations.modules.path', $dir);
 
-        $this->fh = new ListFieldHandler($this->table, $this->field);
-    }
-
-    public function testInterface()
-    {
-        $implementedInterfaces = array_keys(class_implements($this->fh));
-        $this->assertTrue(in_array('CsvMigrations\FieldHandlers\FieldHandlerInterface', $implementedInterfaces), "FieldHandlerInterface is not implemented");
+        $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
+        $this->fh = new FieldHandler($config);
     }
 
     public function getRenderedValues()
@@ -140,7 +137,7 @@ class ListFieldHandlerTest extends PHPUnit_Framework_TestCase
 
     public function testFieldToDb()
     {
-        $csvField = new CsvField(['name' => $this->field, 'type' => 'text']);
+        $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
         $result = $fh::fieldToDb($csvField);
 
@@ -150,7 +147,7 @@ class ListFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_object($result[$this->field]), "fieldToDb() did not return object value for field key");
         $this->assertTrue(is_a($result[$this->field], 'CsvMigrations\FieldHandlers\DbField'), "fieldToDb() did not return DbField instance for field key");
 
-        $this->assertEquals(ListFieldHandler::getDbFieldType($this->field), $result[$this->field]->getType(), "fieldToDb() did not return correct type for DbField instance");
+        $this->assertEquals($this->fh->getDbFieldType(), $result[$this->field]->getType(), "fieldToDb() did not return correct type for DbField instance");
         $this->assertEquals('string', $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
         $this->assertEquals(255, $result[$this->field]->getLimit(), "fieldToDb() did not return correct limit for DbField instance");
     }

@@ -7,6 +7,7 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\FieldHandlers\FieldHandlerInterface;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
@@ -93,6 +94,13 @@ class FieldHandlerFactoryTest extends TestCase
         $this->fhf = new FieldHandlerFactory();
     }
 
+    public function testGetByTableField()
+    {
+        $result = FieldHandlerFactory::getByTableField($this->table, 'id');
+        $this->assertFalse(empty($result), "FieldHandlerFactory returned an empty result");
+        $this->assertTrue($result instanceof FieldHandlerInterface, "FieldHandlerFactory returned incorrect instance");
+    }
+
     public function testRenderInput()
     {
         $result = $this->fhf->renderInput($this->table, 'id');
@@ -112,6 +120,18 @@ class FieldHandlerFactoryTest extends TestCase
 
         $result = $this->fhf->renderName($this->table, 'related_field_id');
         $this->assertEquals('Related Field', $result);
+    }
+
+    public function testGetSearchOptions()
+    {
+        $fieldDefinitions = [
+            CsvField::FIELD_NAME => 'id',
+            CsvField::FIELD_TYPE => 'string',
+            CsvField::FIELD_NON_SEARCHABLE => true,
+        ];
+        $result = $this->fhf->getSearchOptions($this->table, 'id', ['fieldDefinitions' => $fieldDefinitions]);
+        $this->assertTrue(is_array($result), "getSearchOptions() returned a non-array result");
+        $this->assertTrue(empty($result), "getSearchOptions() returned a non-empty result");
     }
 
     public function testRenderValue()
@@ -135,14 +155,5 @@ class FieldHandlerFactoryTest extends TestCase
     {
         $csvField = new CsvField(['name' => 'blah', 'type' => 'foobar']);
         $result = $this->fhf->fieldToDb($csvField, $this->table, 'id');
-    }
-
-    public function testHasFieldHandler()
-    {
-        $result = $this->fhf->hasFieldHandler('string');
-        $this->assertTrue($result, "Failed to find field handler for type 'string'");
-
-        $result = $this->fhf->hasFieldHandler('non-existing-field-type');
-        $this->assertFalse($result, "Found field handler for type 'non-existing-field-type'");
     }
 }

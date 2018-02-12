@@ -15,7 +15,7 @@ namespace CsvMigrations\FieldHandlers\Provider\CombinedFields;
  * MetricCombinedFields
  *
  * Metric CombinedFields provides the functionality
- * for metric combined fields provider.
+ * for metric combined fields configuration.
  */
 class MetricCombinedFields extends AbstractCombinedFields
 {
@@ -24,10 +24,10 @@ class MetricCombinedFields extends AbstractCombinedFields
      */
     protected $fields = [
         'amount' => [
-            'handler' => '\\CsvMigrations\\FieldHandlers\\DecimalFieldHandler'
+            'config' => '\\CsvMigrations\\FieldHandlers\\Config\\DecimalConfig'
         ],
         'unit' => [
-            'handler' => '\\CsvMigrations\\FieldHandlers\\ListFieldHandler'
+            'config' => '\\CsvMigrations\\FieldHandlers\\Config\\ListConfig'
         ]
     ];
 }

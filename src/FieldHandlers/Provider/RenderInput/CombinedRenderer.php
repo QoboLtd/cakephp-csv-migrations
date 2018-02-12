@@ -11,6 +11,8 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
 
+use CsvMigrations\FieldHandlers\FieldHandler;
+
 /**
  * CombinedRenderer
  *
@@ -47,7 +49,11 @@ class CombinedRenderer extends AbstractRenderer
                 $fieldData = $options['entity'];
             }
 
-            $handler = new $preOptions['handler']($this->config->getTable(), $fieldName, $view);
+            $config = new $preOptions['config']($fieldName, $this->config->getTable(), $options);
+            if ($view) {
+                $config->setView($view);
+            }
+            $handler = new FieldHandler($config);
 
             $inputs[] = $handler->renderInput($fieldData, $options);
         }

@@ -17,7 +17,7 @@ use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
  * AbstractCombinedFields
  *
  * Abstract CombinedFields provides the default functionality
- * for combined fields provider.
+ * for combined fields configuration.
  */
 abstract class AbstractCombinedFields extends AbstractProvider
 {

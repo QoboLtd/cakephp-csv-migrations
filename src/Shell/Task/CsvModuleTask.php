@@ -17,6 +17,7 @@ use Cake\Core\Configure;
 use Cake\Filesystem\File;
 use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
+use Qobo\Utils\Utility;
 
 /**
  * CSV Module baking migration task, used to extend CakePHP's bake functionality.
@@ -82,7 +83,9 @@ class CsvModuleTask extends BakeTask
         $this->_bakeTemplate($controllerName, 'Controller/controller', $data, 'Controller');
 
         // bake api controller
-        $this->pathFragment = 'Controller/Api/';
+        $apiPaths = $this->getTargetApiPath();
+        $this->pathFragment = $apiPaths['fragment'];
+        $data = array_merge($data, $apiPaths);
         $this->_bakeTemplate($controllerName, 'Controller/Api/controller', $data, 'Controller');
 
         // bake model table
@@ -144,6 +147,37 @@ class CsvModuleTask extends BakeTask
         }
 
         $this->success('Success');
+    }
+
+    /**
+     * Get Target API Path for API Controllers
+     *
+     * We create API controllers for the most recent API version.
+     *
+     * @return array $result containing path Fragment for baking.
+     */
+    protected function getTargetApiPath()
+    {
+        $result = [
+            'fragment' => 'Controller/Api',
+            'namespace' => 'App\Controller\Api',
+        ];
+
+        $versions = Utility::getApiVersions();
+
+        if (empty($versions)) {
+            return $result;
+        }
+
+        $recent = end($versions);
+
+        if (preg_match('/^api(.*)$/', $recent['prefix'], $matches)) {
+            $postfix = strtoupper($matches[1]);
+            $result['fragment'] .= $postfix . '/';
+            $result['namespace'] .= str_replace('/', '\\', $postfix);
+        }
+
+        return $result;
     }
 
     /**

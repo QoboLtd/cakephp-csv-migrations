@@ -60,6 +60,7 @@ class Config implements ConfigInterface
      */
     protected $requiredProviders = [
         'combinedFields',
+        'dbFieldType',
         'fieldValue',
         'fieldToDb',
         'searchOperators',

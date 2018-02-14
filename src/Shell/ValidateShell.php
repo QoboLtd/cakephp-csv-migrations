@@ -14,7 +14,7 @@ namespace CsvMigrations\Shell;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
-use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use Exception;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
@@ -313,7 +313,7 @@ class ValidateShell extends Shell
     /**
      * Check if the field type is valid
      *
-     * Migration field type needs a field handler.
+     * Migration field type needs a field handler configuration.
      *
      * @param string $type Field type
      * @return bool True if valid, false otherwise
@@ -322,10 +322,13 @@ class ValidateShell extends Shell
     {
         $result = false;
 
-        $fhf = new FieldHandlerFactory();
-        if ($fhf->hasFieldHandler($type)) {
-            $result = true;
+        try {
+            $config = ConfigFactory::getByType($type, 'dummy_field');
+        } catch (Exception $e) {
+            return $result;
         }
+
+        $result = true;
 
         return $result;
     }

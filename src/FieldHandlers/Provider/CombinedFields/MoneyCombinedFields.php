@@ -15,7 +15,7 @@ namespace CsvMigrations\FieldHandlers\Provider\CombinedFields;
  * MoneyCombinedFields
  *
  * Money CombinedFields provides the functionality
- * for money combined fields provider.
+ * for money combined fields configuration.
  */
 class MoneyCombinedFields extends AbstractCombinedFields
 {
@@ -24,10 +24,10 @@ class MoneyCombinedFields extends AbstractCombinedFields
      */
     protected $fields = [
         'amount' => [
-            'handler' => 'CsvMigrations\\FieldHandlers\\DecimalFieldHandler'
+            'config' => 'CsvMigrations\\FieldHandlers\\Config\\DecimalConfig'
         ],
         'currency' => [
-            'handler' => 'CsvMigrations\\FieldHandlers\\ListFieldHandler'
+            'config' => 'CsvMigrations\\FieldHandlers\\Config\\ListConfig'
         ]
     ];
 }

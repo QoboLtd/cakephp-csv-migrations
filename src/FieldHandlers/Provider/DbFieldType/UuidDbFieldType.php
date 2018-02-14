@@ -9,17 +9,17 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers;
+namespace CsvMigrations\FieldHandlers\Provider\DbFieldType;
 
-class TimeFieldHandler extends BaseFieldHandler
+/**
+ * UuidDbFieldType
+ *
+ * Uuid database field type.
+ */
+class UuidDbFieldType extends AbstractDbFieldType
 {
     /**
-     * Database field type
+     * @var string $dbFieldType Database field type
      */
-    const DB_FIELD_TYPE = 'time';
-
-    /**
-     * @var string $defaultConfigClass Config class to use as default
-     */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\TimeConfig';
+    protected $dbFieldType = 'uuid';
 }

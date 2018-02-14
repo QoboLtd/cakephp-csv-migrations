@@ -9,32 +9,32 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers\Provider\CombinedFields;
+namespace CsvMigrations\FieldHandlers\Provider\DbFieldType;
 
 use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
 
 /**
- * AbstractCombinedFields
+ * AbstractDbFieldType
  *
- * Abstract CombinedFields provides the default functionality
- * for combined fields configuration.
+ * Abstract DbFieldType provides the default functionality
+ * for fetching the field's database type.
  */
-abstract class AbstractCombinedFields extends AbstractProvider
+abstract class AbstractDbFieldType extends AbstractProvider
 {
     /**
-     * @var array $fields List of fields
+     * @var string $dbFieldType Database field type
      */
-    protected $fields = [];
+    protected $dbFieldType = 'string';
 
     /**
-     * Provide rendered value
+     * Provide database field type
      *
      * @param mixed $data Data to use for provision
      * @param array $options Options to use for provision
-     * @return mixed
+     * @return string
      */
     public function provide($data = null, array $options = [])
     {
-        return $this->fields;
+        return $this->dbFieldType;
     }
 }

@@ -24,6 +24,7 @@ class IntegerConfig extends FixedConfig
      */
     protected $providers = [
         'combinedFields' => '\\CsvMigrations\\FieldHandlers\\Provider\\CombinedFields\\NullCombinedFields',
+        'dbFieldType' => '\\CsvMigrations\\FieldHandlers\\Provider\\DbFieldType\\IntegerDbFieldType',
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
         'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\IntegerFieldToDb',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\NumberSearchOperators',

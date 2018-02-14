@@ -9,17 +9,17 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers;
+namespace CsvMigrations\FieldHandlers\Provider\DbFieldType;
 
-class DatetimeFieldHandler extends BaseFieldHandler
+/**
+ * BooleanDbFieldType
+ *
+ * Boolean database field type.
+ */
+class BooleanDbFieldType extends AbstractDbFieldType
 {
     /**
-     * Database field type
+     * @var string $dbFieldType Database field type
      */
-    const DB_FIELD_TYPE = 'datetime';
-
-    /**
-     * @var string $defaultConfigClass Config class to use as default
-     */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\DatetimeConfig';
+    protected $dbFieldType = 'boolean';
 }

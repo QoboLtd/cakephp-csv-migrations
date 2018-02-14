@@ -16,45 +16,26 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\View\View;
 use CsvMigrations\Event\EventName;
+use CsvMigrations\FieldHandlers\Config\ConfigFactory;
+use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use RuntimeException;
 
 /**
- * BaseFieldHandler
+ * FieldHandler
  *
- * This class provides the fallback functionality that
- * is common to all field handlers.
- *
- * NOTE: Try to avoid inheriting from this class directly.
- *       Instead, use one of the more specific base classes.
- *
- * @abstract
+ * This class provides field handler functionality.
  */
-abstract class BaseFieldHandler implements FieldHandlerInterface
+class FieldHandler implements FieldHandlerInterface
 {
-    /**
-     * Default database field type
-     */
-    const DB_FIELD_TYPE = 'string';
-
-    /**
-     * Flag for rendering value as is
-     */
-    const RENDER_PLAIN_VALUE = 'plain';
-
     /**
      * Default options
      *
      * @var array
      */
     public $defaultOptions = [];
-
-    /**
-     * @var string $defaultConfigClass Config class to use as default
-     */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\StringConfig';
 
     /**
      * @var $config \CsvMigrations\FieldHandlers\Config\ConfigInterface Configuration
@@ -64,18 +45,16 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     /**
      * Constructor
      *
-     * @param mixed  $table    Name or instance of the Table
-     * @param string $field    Field name
-     * @param \Cake\View\View|null $view     Optional instance of the View
+     * @param \CsvMigrations\FieldHandlers\Config\ConfigInterface $config Instance of field handler config
      */
-    public function __construct($table, $field, $view = null)
+    public function __construct(ConfigInterface $config)
     {
-        $this->setConfig($table, $field, $view);
+        $this->setConfig($config);
         $this->setDefaultOptions();
     }
 
     /**
-     * Config instance getter.
+     * Config instance getter
      *
      * @return \CsvMigrations\FieldHandlers\Config\ConfigInterface
      */
@@ -85,19 +64,14 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     }
 
     /**
-     * Set field handler config
+     * Config instance setter
      *
-     * @param mixed  $table    Name or instance of the Table
-     * @param string $field    Field name
-     * @param \Cake\View\View|null $view     Optional instance of the View
+     * @param \CsvMigrations\FieldHandlers\Config\ConfigInterface $config Instance of field handler config
      * @return void
      */
-    protected function setConfig($table, $field, $view)
+    public function setConfig(ConfigInterface $config)
     {
-        $this->config = new static::$defaultConfigClass($field, $table);
-        if ($view instanceof View) {
-            $this->config->setView($view);
-        }
+        $this->config = $config;
     }
 
     /**
@@ -159,12 +133,13 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
     {
         $table = $this->config->getTable();
         $field = $this->config->getField();
+        $dbFieldType = $this->getDbFieldType();
 
         // set $options['fieldDefinitions']
         $stubFields = [
             $field => [
                 'name' => $field,
-                'type' => self::DB_FIELD_TYPE, // not static:: to preserve string
+                'type' => $dbFieldType,
             ],
         ];
         if (method_exists($table, 'getFieldsDefinitions') && is_callable([$table, 'getFieldsDefinitions'])) {
@@ -380,13 +355,26 @@ abstract class BaseFieldHandler implements FieldHandlerInterface
      */
     public static function fieldToDb(CsvField $csvField)
     {
-        // Temporary dummy configuration
-        $config = new static::$defaultConfigClass('dummy_field');
+        $config = ConfigFactory::getByType($csvField->getType(), $csvField->getName());
         $fieldToDb = $config->getProvider('fieldToDb');
         $fieldToDb = new $fieldToDb($config);
         $result = $fieldToDb->provide($csvField);
 
         return $result;
+    }
+
+    /**
+     * Get database field type
+     *
+     * @return string
+     */
+    public function getDbFieldType()
+    {
+        $dbFieldType = $this->config->getProvider('dbFieldType');
+        $dbFieldType = new $dbFieldType($this->config);
+        $dbFieldType = $dbFieldType->provide();
+
+        return $dbFieldType;
     }
 
     /**

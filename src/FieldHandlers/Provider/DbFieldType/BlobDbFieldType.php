@@ -9,16 +9,17 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers;
+namespace CsvMigrations\FieldHandlers\Provider\DbFieldType;
 
 /**
- * ReminderFieldHandler
+ * BlobDbFieldType
  *
- * For all intensive purposes, Reminder field is
- * exactly like the Datetime field.  A separate
- * class in necessary for the functional separation
- * related to reminders, calendars, and the like.
+ * Blob database field type.
  */
-class ReminderFieldHandler extends DatetimeFieldHandler
+class BlobDbFieldType extends AbstractDbFieldType
 {
+    /**
+     * @var string $dbFieldType Database field type
+     */
+    protected $dbFieldType = 'blob';
 }

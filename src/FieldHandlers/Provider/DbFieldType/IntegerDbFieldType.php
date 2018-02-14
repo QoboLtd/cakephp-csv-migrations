@@ -9,19 +9,17 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers;
+namespace CsvMigrations\FieldHandlers\Provider\DbFieldType;
 
-use Phinx\Db\Adapter\MysqlAdapter;
-
-class TextFieldHandler extends BaseFieldHandler
+/**
+ * IntegerDbFieldType
+ *
+ * Integer database field type.
+ */
+class IntegerDbFieldType extends AbstractDbFieldType
 {
     /**
-     * Database field type
+     * @var string $dbFieldType Database field type
      */
-    const DB_FIELD_TYPE = 'text';
-
-    /**
-     * @var string $defaultConfigClass Config class to use as default
-     */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\TextConfig';
+    protected $dbFieldType = 'integer';
 }

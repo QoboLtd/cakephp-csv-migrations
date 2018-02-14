@@ -11,6 +11,8 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
+use CsvMigrations\FieldHandlers\Config\ConfigInterface;
+
 /**
  * FieldHandlerInterface
  *
@@ -22,11 +24,24 @@ interface FieldHandlerInterface
     /**
      * Constructor
      *
-     * @param mixed  $table    Name or instance of the Table
-     * @param string $field    Field name
-     * @param object $cakeView Optional instance of the AppView
+     * @param \CsvMigrations\FieldHandlers\Config\ConfigInterface $config Instance of field handler config
      */
-    public function __construct($table, $field, $cakeView = null);
+    public function __construct(ConfigInterface $config);
+
+    /**
+     * Config instance getter
+     *
+     * @return \CsvMigrations\FieldHandlers\Config\ConfigInterface
+     */
+    public function getConfig();
+
+    /**
+     * Config instance setter
+     *
+     * @param \CsvMigrations\FieldHandlers\Config\ConfigInterface $config Instance of field handler config
+     * @return void
+     */
+    public function setConfig(ConfigInterface $config);
 
     /**
      * Render field input

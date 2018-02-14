@@ -9,17 +9,17 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers;
+namespace CsvMigrations\FieldHandlers\Provider\DbFieldType;
 
-class DecimalFieldHandler extends BaseFieldHandler
+/**
+ * DatetimeDbFieldType
+ *
+ * Datetime database field type.
+ */
+class DatetimeDbFieldType extends AbstractDbFieldType
 {
     /**
-     * Database field type
+     * @var string $dbFieldType Database field type
      */
-    const DB_FIELD_TYPE = 'decimal';
-
-    /**
-     * @var string $defaultConfigClass Config class to use as default
-     */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\DecimalConfig';
+    protected $dbFieldType = 'datetime';
 }

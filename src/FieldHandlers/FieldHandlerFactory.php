@@ -14,28 +14,12 @@ namespace CsvMigrations\FieldHandlers;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use InvalidArgumentException;
 use RuntimeException;
 
 class FieldHandlerFactory
 {
-    /**
-     * Field Handler classes suffix
-     */
-    const HANDLER_SUFFIX = 'FieldHandler';
-
-    /**
-     * Field Handler Interface class name
-     */
-    const FIELD_HANDLER_INTERFACE = 'FieldHandlerInterface';
-
-    /**
-     * Loaded Table instances
-     *
-     * @var array
-     */
-    protected $_tableInstances = [];
-
     /**
      * View instance.
      *
@@ -54,6 +38,23 @@ class FieldHandlerFactory
     }
 
     /**
+     * Get an instance of field handler for given table field
+     *
+     * @param mixed $table Table name or instance of \Cake\ORM\Table
+     * @param string $field Field name
+     * @param array $options Field handler options
+     * @param mixed $view Optional CakePHP view instance
+     * @return \CsvMigrations\FieldHandlers\FieldHandlerInterface
+     */
+    public static function getByTableField($table, $field, array $options = [], $view = null)
+    {
+        $table = is_string($table) ? TableRegistry::get($table) : $table;
+        $handler = self::getHandler($table, $field, $options, $view);
+
+        return $handler;
+    }
+
+    /**
      * Render field form input
      *
      * @param  mixed  $table   name or instance of the Table
@@ -64,8 +65,7 @@ class FieldHandlerFactory
      */
     public function renderInput($table, $field, $data = '', array $options = [])
     {
-        $table = $this->_getTableInstance($table);
-        $handler = $this->_getHandler($table, $field, $options);
+        $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
         return $handler->renderInput($data, $options);
     }
@@ -80,11 +80,8 @@ class FieldHandlerFactory
      */
     public function renderName($table, $field, array $options = [])
     {
-        $table = $this->_getTableInstance($table);
-        $handler = $this->_getHandler($table, $field, $options);
+        $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
-        //@TODO: add options for the renderName instance methods,
-        //so we could customize the label.
         return $handler->renderName();
     }
 
@@ -98,8 +95,7 @@ class FieldHandlerFactory
      */
     public function getSearchOptions($table, $field, array $options = [])
     {
-        $table = $this->_getTableInstance($table);
-        $handler = $this->_getHandler($table, $field, $options);
+        $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
         return $handler->getSearchOptions($options);
     }
@@ -115,8 +111,7 @@ class FieldHandlerFactory
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
-        $table = $this->_getTableInstance($table);
-        $handler = $this->_getHandler($table, $field, $options);
+        $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
         return $handler->renderValue($data, $options);
     }
@@ -136,73 +131,13 @@ class FieldHandlerFactory
      */
     public function fieldToDb(CsvField $csvField, $table, $field = null)
     {
-        $type = $csvField->getType();
-        if (!static::hasFieldHandler($type)) {
-            throw new RuntimeException("No field handler for type [$type]");
+        if (empty($field)) {
+            $field = $csvField->getName();
         }
-        $handlerName = static::_getHandlerClassName($type, true);
+        // No options or view is necessary for the fieldToDb currently
+        $handler = self::getByTableField($table, $field);
 
-        return $handlerName::fieldToDb($csvField);
-    }
-
-    /**
-     * Check if given field type has a field handler
-     *
-     * Previously, we used to load all available field handlers
-     * via getList() method and check if the handler for the given
-     * type was in that list.  However, this doesn't play well
-     * with autoloaders.  It's better to rely on the autoloader
-     * and namespaces, rather than on our search through directories.
-     * Hence this check whether a particular handler exists.
-     *
-     * @param string $fieldType Field type
-     * @return bool             True if yes, false otherwise
-     */
-    public static function hasFieldHandler($fieldType)
-    {
-        $interface = __NAMESPACE__ . '\\' . static::FIELD_HANDLER_INTERFACE;
-
-        $handlerName = static::_getHandlerClassName($fieldType, true);
-        if (class_exists($handlerName) && in_array($interface, class_implements($handlerName))) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Get table instance
-     *
-     * @throws \InvalidArgumentException when $table is not an object or string
-     * @param  mixed  $table  name or instance of the Table
-     * @return object         Table instance
-     */
-    protected function _getTableInstance($table)
-    {
-        $tableName = '';
-
-        if (is_object($table)) {
-            $tableName = $table->alias();
-            // Update instance cache with the freshest copy and exist
-            $this->_tableInstances[$tableName] = $table;
-
-            return $table;
-        }
-
-        // Avoid ambiguity
-        if (!is_string($table)) {
-            throw new InvalidArgumentException("Table must be a name or instance object");
-        }
-
-        // Return a cached instance if we have one
-        if (in_array($table, array_keys($this->_tableInstances))) {
-            return $this->_tableInstances[$table];
-        }
-
-        // Populate cache
-        $this->_tableInstances[$table] = TableRegistry::get($table);
-
-        return $this->_tableInstances[$table];
+        return $handler->fieldToDb($csvField);
     }
 
     /**
@@ -215,9 +150,10 @@ class FieldHandlerFactory
      * @param  Table         $table   Table instance
      * @param  string|array  $field   Field name
      * @param  array         $options Field options
+     * @param  object        $view    Optional CakePHP view instance
      * @return object                 FieldHandler instance
      */
-    protected function _getHandler(Table $table, $field, array $options = [])
+    protected static function getHandler(Table $table, $field, array $options = [], $view = null)
     {
         if (empty($field)) {
             throw new InvalidArgumentException("Field parameter is empty");
@@ -238,10 +174,10 @@ class FieldHandlerFactory
         $stubFields = [];
 
         if (is_string($field)) {
-            $stubFields = $this->getStubFromString($fieldName);
+            $stubFields = self::getStubFromString($fieldName);
         }
         if (is_array($field)) {
-            $stubFields = $this->getStubFromArray($fieldName, $field);
+            $stubFields = self::getStubFromArray($fieldName, $field);
         }
 
         if (empty($stubFields)) {
@@ -260,17 +196,12 @@ class FieldHandlerFactory
         $field = new CsvField($fieldDefinitions[$fieldName]);
         $fieldType = $field->getType();
 
-        $interface = __NAMESPACE__ . '\\' . static::FIELD_HANDLER_INTERFACE;
-
-        $handlerName = static::_getHandlerClassName($fieldType, true);
-        if (!class_exists($handlerName)) {
-            throw new RuntimeException("Field handler class [$handlerName] for field type [$fieldType] does not exist");
-        }
-        if (!in_array($interface, class_implements($handlerName))) {
-            throw new RuntimeException("Field handler class [$handlerName] does not implement interface [$interface]");
+        $config = ConfigFactory::getByType($fieldType, $fieldName, $table);
+        if ($view) {
+            $config->setView($view);
         }
 
-        return new $handlerName($table, $fieldName, $this->cakeView);
+        return new FieldHandler($config);
     }
 
     /**
@@ -279,7 +210,7 @@ class FieldHandlerFactory
      * @param string $fieldName Field name
      * @return array Stub fields
      */
-    protected function getStubFromString($fieldName)
+    protected static function getStubFromString($fieldName)
     {
         $result = [
             $fieldName => [
@@ -299,7 +230,7 @@ class FieldHandlerFactory
      * @param array $field Field array
      * @return array Stub fields
      */
-    protected function getStubFromArray($fieldName, array $field)
+    protected static function getStubFromArray($fieldName, array $field)
     {
         // Try our best to find the field name
         if (empty($field['name']) && !empty($fieldName)) {
@@ -316,26 +247,6 @@ class FieldHandlerFactory
         $result = [
             $fieldName => $field,
         ];
-
-        return $result;
-    }
-
-    /**
-     * Get field handler class name
-     *
-     * This method constructs handler class name based on provided field type.
-     *
-     * @param  string $type          field type
-     * @param  bool   $withNamespace whether or not to include namespace
-     * @return string                handler class name
-     */
-    protected static function _getHandlerClassName($type, $withNamespace = false)
-    {
-        $result = Inflector::camelize($type) . static::HANDLER_SUFFIX;
-
-        if ($withNamespace) {
-            $result = __NAMESPACE__ . '\\' . $result;
-        }
 
         return $result;
     }

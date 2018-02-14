@@ -24,6 +24,7 @@ class MoneyConfig extends FixedConfig
      */
     protected $providers = [
         'combinedFields' => '\\CsvMigrations\\FieldHandlers\\Provider\\CombinedFields\\MoneyCombinedFields',
+        'dbFieldType' => '\\CsvMigrations\\FieldHandlers\\Provider\\DbFieldType\\StringDbFieldType',
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
         'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\CombinedFieldToDb',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\NullSearchOperators',

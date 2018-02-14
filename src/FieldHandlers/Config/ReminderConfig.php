@@ -9,12 +9,14 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers;
+namespace CsvMigrations\FieldHandlers\Config;
 
-class SublistFieldHandler extends BaseFieldHandler
+/**
+ * ReminderConfig
+ *
+ * This class provides the predefined configuration
+ * for reminder field handlers.
+ */
+class ReminderConfig extends DatetimeConfig
 {
-    /**
-     * @var string $defaultConfigClass Config class to use as default
-     */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\SublistConfig';
 }

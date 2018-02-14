@@ -9,17 +9,17 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers;
+namespace CsvMigrations\FieldHandlers\Provider\DbFieldType;
 
-class IntegerFieldHandler extends BaseFieldHandler
+/**
+ * DecimalDbFieldType
+ *
+ * Decimal database field type.
+ */
+class DecimalDbFieldType extends AbstractDbFieldType
 {
     /**
-     * Database field type
+     * @var string $dbFieldType Database field type
      */
-    const DB_FIELD_TYPE = 'integer';
-
-    /**
-     * @var string $defaultConfigClass Config class to use as default
-     */
-    protected static $defaultConfigClass = '\\CsvMigrations\\FieldHandlers\\Config\\IntegerConfig';
+    protected $dbFieldType = 'decimal';
 }

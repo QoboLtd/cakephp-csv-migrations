@@ -44,7 +44,8 @@ $modalBody = $this->requestAction(
                 'plugin' => $this->plugin,
                 'controller' => $this->name,
                 'action' => 'link',
-                $this->request->param('pass.0')
+                $this->request->getParam('pass.0'),
+                $association->getName()
             ],
             'id' => 'link_related'
         ];
@@ -69,8 +70,6 @@ $modalBody = $this->requestAction(
 
         echo $factory->renderInput($tableName, $association->getForeignKey(), null, $handlerOptions);
 
-        echo $this->Form->hidden('assocName', ['value' => $association->getTable()]);
-        echo $this->Form->hidden('id', ['value' => $this->request->param('pass.0')]);
         echo $this->Form->end();
         ?>
         </div>

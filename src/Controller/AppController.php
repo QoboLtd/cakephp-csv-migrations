@@ -266,33 +266,41 @@ class AppController extends BaseController
      * link the associations without calling direct edit() action
      * on the origin entity - it prevents overwritting the associations
      *
+     * @param string $id Entity id.
+     * @param string $associationName Association Name.
      * @return \Cake\Network\Response|null Redirects to referer.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function link()
+    public function link($id, $associationName)
     {
         $this->request->allowMethod(['post']);
 
-        $data = $this->request->getData();
-        $assocEntities = [];
-        $assocName = $data['assocName'];
+        $association = $this->{$this->name}->{$associationName};
 
-        $model = $this->{$this->name};
-        $entity = $model->get($data['id']);
+        $ids = $this->request->getData(
+            $association->getTable() . '._ids'
+        );
 
-        if (!empty($data[$assocName]) && isset($data[$assocName]['_ids'])) {
-            foreach ($data[$assocName]['_ids'] as $assocId) {
-                $assocEntity = $model->{$assocName}->get($assocId);
-                if (!empty($assocEntity)) {
-                    array_push($assocEntities, $assocEntity);
-                }
-            }
+        if (empty($ids)) {
+            $this->Flash->error(__('No records provided for linking.'));
+            return $this->redirect($this->referer());
         }
 
-        if (!empty($assocEntities)) {
-            $model->{$assocName}->link($entity, $assocEntities);
-            $this->Flash->success(__('The record has been linked.'));
+        $query = $association->find('all')
+            ->where([$association->getPrimaryKey() . ' IN' => $ids]);
+
+        if ($query->isEmpty()) {
+            $this->Flash->error(__('No records found for linking.'));
+            return $this->redirect($this->referer());
         }
+
+        if (! $association->link($this->{$this->name}->get($id), $query->toArray())) {
+            $this->Flash->error(__('Failed to link records'));
+
+            return $this->redirect($this->referer());
+        }
+
+        $this->Flash->success(__('The record has been linked.'));
 
         return $this->redirect($this->referer());
     }

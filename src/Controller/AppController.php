@@ -283,6 +283,7 @@ class AppController extends BaseController
 
         if (empty($ids)) {
             $this->Flash->error(__('No records provided for linking.'));
+
             return $this->redirect($this->referer());
         }
 
@@ -291,6 +292,7 @@ class AppController extends BaseController
 
         if ($query->isEmpty()) {
             $this->Flash->error(__('No records found for linking.'));
+
             return $this->redirect($this->referer());
         }
 

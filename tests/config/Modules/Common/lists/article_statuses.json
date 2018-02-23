@@ -1,0 +1,16 @@
+{
+    "items": [
+        {
+            "value": "draft",
+            "label": "Draft",
+            "inactive": "",
+            "children": []
+        },
+        {
+            "value": "published",
+            "label": "Published",
+            "inactive": "",
+            "children": []
+        }
+    ]
+}

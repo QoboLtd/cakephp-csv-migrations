@@ -1,0 +1,33 @@
+{
+    "table": {
+        "searchable": true,
+        "display_field": "name",
+        "lookup_fields": [
+            "name"
+        ],
+        "typeahead_fields": [
+            "name",
+            "author"
+        ],
+        "icon": "cube",
+        "basic_search_fields": [],
+        "allow_reminders": [],
+        "translatable": false,
+        "permissions_parent_modules": []
+    },
+    "parent": {
+        "module": "Categories"
+    },
+    "virtualFields": {},
+    "associations": {
+        "hide_associations": []
+    },
+    "associationLabels": {},
+    "notifications": {
+        "enable": false,
+        "ignored_fields": []
+    },
+    "manyToMany": {
+        "modules": []
+    }
+}

@@ -1,0 +1,37 @@
+{
+    "id": {
+        "name": "id",
+        "type": "uuid",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "name": {
+        "name": "name",
+        "type": "string",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "description": {
+        "name": "description",
+        "type": "text",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "created": {
+        "name": "created",
+        "type": "datetime",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "modified": {
+        "name": "modified",
+        "type": "datetime",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    }
+}

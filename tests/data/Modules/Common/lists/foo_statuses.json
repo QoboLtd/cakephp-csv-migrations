@@ -1,0 +1,16 @@
+{
+    "items": [
+        {
+            "value": "active",
+            "label": "Active",
+            "inactive": "",
+            "children": []
+        },
+        {
+            "value": "inactive",
+            "label": "Inactive",
+            "inactive": "",
+            "children": []
+        }
+    ]
+}

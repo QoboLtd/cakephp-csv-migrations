@@ -1,0 +1,35 @@
+{
+    "items": [
+        [
+            "Details",
+            "status",
+            "type"
+        ],
+        [
+            "Details",
+            "name",
+            "description"
+        ],
+        [
+            "Details",
+            "cost",
+            ""
+        ],
+        [
+            "Details",
+            "created",
+            "modified"
+        ],
+        [
+            "Personal",
+            "gender",
+            "birthdate",
+            ""
+        ],
+        [
+            "Personal",
+            "city",
+            "country"
+        ]
+    ]
+}

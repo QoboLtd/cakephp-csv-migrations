@@ -1,0 +1,44 @@
+{
+    "id": {
+        "name": "id",
+        "type": "uuid",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "name": {
+        "name": "name",
+        "type": "string",
+        "required": "1",
+        "non-searchable": null,
+        "unique": null
+    },
+    "follow_up_date": {
+        "name": "follow_up_date",
+        "type": "reminder",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "assigned_to": {
+        "name": "assigned_to",
+        "type": "related(Users)",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "created": {
+        "name": "created",
+        "type": "datetime",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "modified": {
+        "name": "modified",
+        "type": "datetime",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    }
+}

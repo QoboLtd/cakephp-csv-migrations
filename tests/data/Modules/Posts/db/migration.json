@@ -1,0 +1,51 @@
+{
+    "id": {
+        "name": "id",
+        "type": "uuid",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "name": {
+        "name": "name",
+        "type": "string",
+        "required": "1",
+        "non-searchable": "",
+        "unique": "1"
+    },
+    "description": {
+        "name": "description",
+        "type": "text",
+        "required": "",
+        "non-searchable": "1",
+        "unique": null
+    },
+    "owner": {
+        "name": "owner",
+        "type": "related(Authors)",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "trashed": {
+        "name": "trashed",
+        "type": "datetime",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "created": {
+        "name": "created",
+        "type": "datetime",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "modified": {
+        "name": "modified",
+        "type": "datetime",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    }
+}

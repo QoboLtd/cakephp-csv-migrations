@@ -1,0 +1,30 @@
+{
+    "table": {
+        "searchable": true,
+        "display_field": "name",
+        "lookup_fields": [
+            "name",
+            "id"
+        ],
+        "allow_reminders": [
+            "Users"
+        ],
+        "icon": "cube",
+        "typeahead_fields": [],
+        "basic_search_fields": [],
+        "translatable": false,
+        "permissions_parent_modules": []
+    },
+    "virtualFields": {},
+    "associations": {
+        "hide_associations": []
+    },
+    "associationLabels": {},
+    "notifications": {
+        "enable": false,
+        "ignored_fields": []
+    },
+    "manyToMany": {
+        "modules": []
+    }
+}

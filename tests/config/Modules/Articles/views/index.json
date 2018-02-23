@@ -1,0 +1,19 @@
+{
+    "items": [
+        [
+            "name"
+        ],
+        [
+            "status"
+        ],
+        [
+            "author"
+        ],
+        [
+            "created"
+        ],
+        [
+            "modified"
+        ]
+    ]
+}

@@ -1,0 +1,37 @@
+{
+    "id": {
+        "name": "id",
+        "type": "uuid",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "name": {
+        "name": "name",
+        "type": "string",
+        "required": "1",
+        "non-searchable": null,
+        "unique": null
+    },
+    "status": {
+        "name": "status",
+        "type": "list(article_statuses)",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "author": {
+        "name": "author",
+        "type": "related(Users)",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "category": {
+        "name": "category",
+        "type": "related(Categories)",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    }
+}

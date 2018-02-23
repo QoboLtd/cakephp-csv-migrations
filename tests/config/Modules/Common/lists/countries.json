@@ -1,0 +1,22 @@
+{
+    "items": [
+        {
+            "value": "cy",
+            "label": "Cyprus",
+            "inactive": "",
+            "children": []
+        },
+        {
+            "value": "usa",
+            "label": "USA",
+            "inactive": "",
+            "children": []
+        },
+        {
+            "value": "uk",
+            "label": "United Kingdom",
+            "inactive": "",
+            "children": []
+        }
+    ]
+}

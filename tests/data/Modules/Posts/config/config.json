@@ -1,0 +1,28 @@
+{
+    "table": {
+        "alias": "Articles",
+        "display_field": "id",
+        "icon": "cube",
+        "searchable": true,
+        "lookup_fields": [],
+        "typeahead_fields": [],
+        "basic_search_fields": [],
+        "allow_reminders": [],
+        "translatable": false,
+        "permissions_parent_modules": []
+    },
+    "manyToMany": {
+        "modules": [
+            "Tags"
+        ]
+    },
+    "virtualFields": {},
+    "associations": {
+        "hide_associations": []
+    },
+    "associationLabels": {},
+    "notifications": {
+        "enable": false,
+        "ignored_fields": []
+    }
+}

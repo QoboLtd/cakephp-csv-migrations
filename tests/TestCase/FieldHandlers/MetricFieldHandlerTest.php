@@ -52,13 +52,13 @@ class MetricFieldHandlerTest extends PHPUnit_Framework_TestCase
         $result = $this->fh->renderInput(null, $options);
 
         $mc = new ModuleConfig(ConfigType::LISTS(), null, 'units_area');
-        foreach ($mc->parse()->items as $item) {
-            if ((bool)$item->inactive) {
-                $this->assertNotContains('value="' . $item->value . '"', $result);
-                $this->assertNotContains(h($item->label), $result);
+        foreach ($mc->parse()->items as $key => $item) {
+            if ((bool)$item['inactive']) {
+                $this->assertNotContains('value="' . $key . '"', $result);
+                $this->assertNotContains(h($item['label']), $result);
             } else {
-                $this->assertContains('value="' . $item->value . '"', $result);
-                $this->assertContains(h($item->label), $result);
+                $this->assertContains('value="' . $key . '"', $result);
+                $this->assertContains(h($item['label']), $result);
             }
         }
     }

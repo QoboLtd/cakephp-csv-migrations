@@ -52,13 +52,13 @@ class MoneyFieldHandlerTest extends PHPUnit_Framework_TestCase
         $result = $this->fh->renderInput(null, $options);
 
         $mc = new ModuleConfig(ConfigType::LISTS(), null, 'countries');
-        foreach ($mc->parse()->items as $item) {
-            if ((bool)$item->inactive) {
-                $this->assertNotContains('value="' . $item->value . '"', $result);
-                $this->assertNotContains($item->label, $result);
+        foreach ($mc->parse()->items as $key => $item) {
+            if ((bool)$item['inactive']) {
+                $this->assertNotContains('value="' . $key . '"', $result);
+                $this->assertNotContains($item['label'], $result);
             } else {
-                $this->assertContains('value="' . $item->value . '"', $result);
-                $this->assertContains($item->label, $result);
+                $this->assertContains('value="' . $key . '"', $result);
+                $this->assertContains($item['label'], $result);
             }
         }
     }

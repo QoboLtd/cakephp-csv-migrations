@@ -73,7 +73,7 @@ class SublistRenderer extends AbstractRenderer
     {
         $result = [];
         foreach ($options as $k => $v) {
-            $result[$v['name']] = !empty($v['children']) ? $this->_dynamicSelectStructure($v['children']) : [];
+            $result[$v['label']] = !empty($v['children']) ? $this->_dynamicSelectStructure($v['children']) : [];
         }
 
         return $result;

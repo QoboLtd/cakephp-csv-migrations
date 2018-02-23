@@ -1,0 +1,22 @@
+{
+    "items": [
+        [
+            "status"
+        ],
+        [
+            "type"
+        ],
+        [
+            "name"
+        ],
+        [
+            "cost"
+        ],
+        [
+            "created"
+        ],
+        [
+            "modified"
+        ]
+    ]
+}

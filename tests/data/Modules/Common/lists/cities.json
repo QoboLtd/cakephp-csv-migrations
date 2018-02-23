@@ -1,0 +1,22 @@
+{
+    "items": [
+        {
+            "value": "limassol",
+            "label": "Limassol",
+            "inactive": "",
+            "children": []
+        },
+        {
+            "value": "new_york",
+            "label": "New York",
+            "inactive": "",
+            "children": []
+        },
+        {
+            "value": "london",
+            "label": "London",
+            "inactive": "",
+            "children": []
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "id": {
+        "name": "id",
+        "type": "uuid",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "name": {
+        "name": "name",
+        "type": "string",
+        "required": "1",
+        "non-searchable": null,
+        "unique": null
+    }
+}

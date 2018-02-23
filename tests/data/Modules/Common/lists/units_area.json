@@ -1,0 +1,16 @@
+{
+    "items": [
+        {
+            "value": "m",
+            "label": "m&sup2;",
+            "inactive": "",
+            "children": []
+        },
+        {
+            "value": "ft",
+            "label": "ft&sup2;",
+            "inactive": "",
+            "children": []
+        }
+    ]
+}

@@ -1,0 +1,61 @@
+{
+    "items": [
+        {
+            "value": "bronze",
+            "label": "Bronze",
+            "inactive": "",
+            "children": [
+                {
+                    "value": "new",
+                    "label": "New",
+                    "inactive": "",
+                    "children": []
+                },
+                {
+                    "value": "used",
+                    "label": "Used",
+                    "inactive": "",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "value": "silver",
+            "label": "Silver",
+            "inactive": "",
+            "children": [
+                {
+                    "value": "new",
+                    "label": "New",
+                    "inactive": "",
+                    "children": []
+                },
+                {
+                    "value": "used",
+                    "label": "Used",
+                    "inactive": "",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "value": "gold",
+            "label": "Gold",
+            "inactive": "",
+            "children": [
+                {
+                    "value": "new",
+                    "label": "New",
+                    "inactive": "",
+                    "children": []
+                },
+                {
+                    "value": "used",
+                    "label": "Used",
+                    "inactive": "",
+                    "children": []
+                }
+            ]
+        }
+    ]
+}

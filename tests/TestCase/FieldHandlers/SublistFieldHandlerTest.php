@@ -41,13 +41,13 @@ class SublistFieldHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertContains('data-selectors', $result);
 
         $mc = new ModuleConfig(ConfigType::LISTS(), null, 'countries');
-        foreach ($mc->parse()->items as $item) {
-            if ((bool)$item->inactive) {
-                $this->assertNotContains(h('"' . $item->value . '"'), $result);
-                $this->assertNotContains(h('"' . $item->label . '"'), $result);
+        foreach ($mc->parse()->items as $key => $item) {
+            if ((bool)$item['inactive']) {
+                $this->assertNotContains(h('"' . $key . '"'), $result);
+                $this->assertNotContains(h('"' . $item['label'] . '"'), $result);
             } else {
-                $this->assertContains(h('"' . $item->value . '"'), $result);
-                $this->assertContains(h('"' . $item->label . '"'), $result);
+                $this->assertContains(h('"' . $key . '"'), $result);
+                $this->assertContains(h('"' . $item['label'] . '"'), $result);
             }
         }
     }

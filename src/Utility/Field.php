@@ -103,65 +103,14 @@ class Field
             list($moduleName, $listName) = explode('.', $listName, 2);
         }
 
-        $config = new ModuleConfig(ConfigType::LISTS(), $moduleName, $listName);
+        $config = new ModuleConfig(ConfigType::LISTS(), $moduleName, $listName, ['flatten' => $flat]);
         try {
             $items = $config->parse()->items;
         } catch (Exception $e) {
             return [];
         }
 
-        if (empty($items)) {
-            return [];
-        }
-
-        $result = [];
-        foreach ($items as $item) {
-            $key = $prefix . $item->value;
-
-            $result[$key] = [
-                'label' => $item->label,
-                'inactive' => (bool)$item->inactive
-            ];
-            // recursive call to fetch children
-            $children = static::getList($listName . DS . $item->value, $flat, $key . '.');
-            if (empty($children)) {
-                continue;
-            }
-
-            $result[$key]['children'] = $children;
-        }
-
-        if ($flat) {
-            $result = static::_flattenList($result);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Flatten list options.
-     *
-     * @param array $options List options
-     * @return array
-     */
-    protected static function _flattenList(array $options)
-    {
-        $result = [];
-        foreach ($options as $field => $params) {
-            if (empty($params['children'])) {
-                $result[$field] = $params;
-                continue;
-            }
-
-            $children = $params['children'];
-            unset($params['children']);
-            $result[$field] = $params;
-            foreach ($children as $childField => $childParams) {
-                $result[$childField] = $childParams;
-            }
-        }
-
-        return $result;
+        return $items;
     }
 
     /**

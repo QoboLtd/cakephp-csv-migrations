@@ -101,7 +101,7 @@ var embedded = embedded || {};
                 set related field display-field and value
                  */
                 if (related.related_model) {
-                    that._setRelations(related, data.data.id, embedded.toLowerCase());
+                    that._setRelations(related, data.data.id, embedded);
                 } else {
                     that._setRelatedField(url, data.data.id, form);
                 }
@@ -129,16 +129,14 @@ var embedded = embedded || {};
      *
      * @param {array} related   related data
      * @param {string} id       record id
-     * @param {string} model    model name
+     * @param {string} associationName Association name
      * @return {void}
      */
-    Embedded.prototype._setRelations = function (related, id, model) {
+    Embedded.prototype._setRelations = function (related, id, associationName) {
         var that = this;
-        url = '/' + related.related_model + '/link/' + related.related_id;
+        url = '/' + related.related_model + '/link/' + related.related_id + '/' + associationName;
         data = {
-            assocName: model,
-            id:related.related_id,
-            [model] : {
+            [associationName.toLowerCase()] : {
                 '_ids' : [
                     id
                 ]
@@ -155,7 +153,6 @@ var embedded = embedded || {};
                 'Authorization': 'Bearer ' + that.api_token
             },
             success: function (data, textStatus, jqXHR) {
-                window.location.hash = '#' + model;
                 location.reload();
             },
             error: function (jqXHR, textStatus, errorThrown) {

@@ -58,7 +58,7 @@ $modalBody = $this->requestAction(
         $handlerOptions['associated_table_name'] = $association->getTable();
         $handlerOptions['emDataTarget'] = $dataTarget;
         // set field type to 'has_many' and default parameters
-        $handlerOptions['fieldDefinitions']['type'] = 'has_many(' . $association->className() . ')';
+        $handlerOptions['fieldDefinitions']['type'] = 'hasMany(' . $association->className() . ')';
         $handlerOptions['fieldDefinitions']['required'] = true;
         $handlerOptions['fieldDefinitions']['non-searchable'] = true;
         $handlerOptions['fieldDefinitions']['unique'] = false;

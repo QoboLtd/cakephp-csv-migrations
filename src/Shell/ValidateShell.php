@@ -192,7 +192,7 @@ class ValidateShell extends Shell
         }
         $listItems = [];
         try {
-            $mc = new ModuleConfig(ConfigType::LISTS(), $module, $list);
+            $mc = new ModuleConfig(ConfigType::LISTS(), $module, $list, ['cacheSkip' => true]);
             $listItems = $mc->parse()->items;
         } catch (Exception $e) {
             // We don't care about the specifics of the failure
@@ -244,7 +244,7 @@ class ValidateShell extends Shell
 
         $moduleFields = [];
         try {
-            $mc = new ModuleConfig(ConfigType::MIGRATION(), $module);
+            $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
             $moduleFields = json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             // We already report issues with migration in _checkMigrationPresence()
@@ -283,7 +283,7 @@ class ValidateShell extends Shell
 
         $config = [];
         try {
-            $mc = new ModuleConfig(ConfigType::MODULE(), $module);
+            $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
             $config = (array)json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             return $result;
@@ -347,7 +347,7 @@ class ValidateShell extends Shell
         $this->out(' - Module config ... ', 0);
         $config = [];
         try {
-            $mc = new ModuleConfig(ConfigType::MODULE(), $module);
+            $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
             $config = json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             // We need errors and warnings irrelevant of the exception
@@ -514,7 +514,7 @@ class ValidateShell extends Shell
         $this->out(' - Fields config ... ', 0);
         $config = [];
         try {
-            $mc = new ModuleConfig(ConfigType::FIELDS(), $module);
+            $mc = new ModuleConfig(ConfigType::FIELDS(), $module, null, ['cacheSkip' => true]);
             $config = json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             // We need errors and warnings irrelevant of the exception
@@ -547,7 +547,7 @@ class ValidateShell extends Shell
         $this->out(' - Menus config ... ', 0);
         $config = [];
         try {
-            $mc = new ModuleConfig(ConfigType::MENUS(), $module);
+            $mc = new ModuleConfig(ConfigType::MENUS(), $module, null, ['cacheSkip' => true]);
             $config = json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             // We need errors and warnings irrelevant of the exception
@@ -580,7 +580,7 @@ class ValidateShell extends Shell
         $this->out(' - Reports config ... ', 0);
         $config = [];
         try {
-            $mc = new ModuleConfig(ConfigType::REPORTS(), $module);
+            $mc = new ModuleConfig(ConfigType::REPORTS(), $module, null, ['cacheSkip' => true]);
             $config = json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             // We need errors and warnings irrelevant of the exception
@@ -613,7 +613,7 @@ class ValidateShell extends Shell
         $this->out(' - Migration ... ', 0);
         $fields = [];
         try {
-            $mc = new ModuleConfig(ConfigType::MIGRATION(), $module);
+            $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
             $fields = json_decode(json_encode($mc->parse()), true);
         } catch (Exception $e) {
             // We need errors and warnings irrelevant of the exception
@@ -726,7 +726,7 @@ class ValidateShell extends Shell
         foreach ($views as $view) {
             $path = '';
             try {
-                $mc = new ModuleConfig(ConfigType::VIEW(), $module, $view);
+                $mc = new ModuleConfig(ConfigType::VIEW(), $module, $view, ['cacheSkip' => true]);
                 $path = $mc->find();
             } catch (Exception $e) {
                 // It's OK for view files to be missing.

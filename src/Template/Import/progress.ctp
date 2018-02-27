@@ -95,7 +95,7 @@ if (100 === (int)$percent) {
 <section class="content">
     <div class="row">
         <div class="col-lg-6">
-            <div class="box box-solid">
+            <div class="box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">
                         <?= __('Import progress') ?>
@@ -144,7 +144,7 @@ if (100 === (int)$percent) {
             </div>
         </div>
     </div>
-    <div class="box box-solid">
+    <div class="box box-primary">
         <div class="box-body">
             <table id="progress-table" class="table table-hover table-condensed table-vertical-align" width="100%">
                 <thead>

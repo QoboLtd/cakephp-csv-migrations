@@ -17,7 +17,7 @@ $factory = new FieldHandlerFactory($this);
 $embeddedDirty = false;
 
 foreach ($options['fields'] as $panelName => $panelFields) : ?>
-<div class="box box-solid" data-provide="dynamic-panel">
+<div class="box box-primary" data-provide="dynamic-panel">
     <div class="box-header with-border">
         <h3 class="box-title" data-title="dynamic-panel-title"><?= $panelName ?></h3>
     </div>

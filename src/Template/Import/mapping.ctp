@@ -36,7 +36,7 @@ foreach ($headers as $header) {
 <section class="content">
     <div class="row">
         <div class="col-md-10 col-lg-8">
-            <div class="box box-solid">
+            <div class="box box-primary">
                 <div class="box-body">
                 <?= $this->Form->create($import) ?>
                 <div class="visible-md visible-lg text-center">

@@ -79,7 +79,7 @@ foreach ($options['fields'] as $panelName => $panelFields) : ?>
         $panelName = Inflector::singularize(Inflector::humanize($this->name)) . ': ' . $panelName;
     }
     ?>
-    <div class="box box-solid">
+    <div class="box box-primary">
         <div class="box-header with-border">
             <h3 class="box-title"><?= $panelName; ?></h3>
             <div class="box-tools pull-right">

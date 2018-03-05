@@ -19,6 +19,9 @@ use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility;
 
+/**
+ * @deprecated 28.0.2
+ */
 trait MigrationTrait
 {
     /**

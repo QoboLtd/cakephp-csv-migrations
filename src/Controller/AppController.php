@@ -125,7 +125,7 @@ class AppController extends BaseController
             $reason = 'Please try again later.';
             // TODO: Log the error.
             try {
-                $saved = $model->save($entity);
+                $saved = $model->save($entity, ['lookup' => true]);
             } catch (\PDOException $e) {
                 if (!empty($e->errorInfo[2])) {
                     $reason = $e->errorInfo[2];
@@ -182,7 +182,7 @@ class AppController extends BaseController
             $reason = 'Please try again later.';
             // TODO: Log the error.
             try {
-                $saved = $model->save($entity);
+                $saved = $model->save($entity, ['lookup' => true]);
             } catch (\PDOException $e) {
                 if (!empty($e->errorInfo[2])) {
                     $reason = $e->errorInfo[2];

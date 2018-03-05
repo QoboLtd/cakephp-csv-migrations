@@ -62,6 +62,21 @@ class Field
     }
 
     /**
+     * Module virtual fields getter.
+     *
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
+     * @return array
+     */
+    public static function getVirtual(RepositoryInterface $table)
+    {
+        $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
+
+        $config = (new ModuleConfig(ConfigType::MODULE(), $moduleName))->parse();
+
+        return (array)$config->virtualFields;
+    }
+
+    /**
      * Get View's csv fields.
      *
      * @param \Cake\Datasource\RepositoryInterface $table Table instance

@@ -90,10 +90,11 @@ class AppController extends BaseController
      */
     public function view($id = null)
     {
-        $entity = $this->{$this->name}->get($id, [
-            'contain' => []
-        ]);
-        $this->set('entity', $entity);
+        $entity = $this->{$this->name}->find('all')
+            ->where([$this->{$this->name}->getPrimaryKey() => $id])
+            ->applyOptions(['lookup' => true, 'value' => $id]);
+
+        $this->set('entity', $entity->firstOrFail());
         $this->render('CsvMigrations.Common/view');
         $this->set('_serialize', ['entity']);
     }

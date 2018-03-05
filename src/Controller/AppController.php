@@ -92,9 +92,10 @@ class AppController extends BaseController
     {
         $entity = $this->{$this->name}->find('all')
             ->where([$this->{$this->name}->getPrimaryKey() => $id])
-            ->applyOptions(['lookup' => true, 'value' => $id]);
+            ->applyOptions(['lookup' => true, 'value' => $id])
+            ->firstOrFail();
 
-        $this->set('entity', $entity->firstOrFail());
+        $this->set('entity', $entity);
         $this->render('CsvMigrations.Common/view');
         $this->set('_serialize', ['entity']);
     }
@@ -163,9 +164,11 @@ class AppController extends BaseController
     public function edit($id = null)
     {
         $model = $this->{$this->name};
-        $entity = $model->get($id, [
-            'contain' => []
-        ]);
+        $entity = $model->find('all')
+            ->where([$this->{$this->name}->getPrimaryKey() => $id])
+            ->applyOptions(['lookup' => true, 'value' => $id])
+            ->firstOrFail();
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             if ($this->request->data('btn_operation') == 'cancel') {
                 return $this->redirect(['action' => 'view', $id]);

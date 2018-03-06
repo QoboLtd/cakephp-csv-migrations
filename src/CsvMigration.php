@@ -11,10 +11,7 @@
  */
 namespace CsvMigrations;
 
-use Cake\Core\Configure;
-use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
-use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
@@ -25,13 +22,10 @@ use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 /**
- * CSV Migration class
+ * This class is responsible for handling all CSV migrations.
  */
 class CsvMigration extends AbstractMigration
 {
-    use ConfigurationTrait;
-    use MigrationTrait;
-
     /**
      * Migrations table object
      *
@@ -145,16 +139,6 @@ class CsvMigration extends AbstractMigration
     public function joins($tableName)
     {
         return [];
-    }
-
-    /**
-     * Get table alias
-     *
-     * @return string
-     */
-    public function alias()
-    {
-        return Inflector::pluralize(Inflector::classify($this->_table->getName()));
     }
 
     /**

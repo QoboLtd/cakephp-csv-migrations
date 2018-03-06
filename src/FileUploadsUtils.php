@@ -20,7 +20,7 @@ use Cake\Log\Log;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\ORM\Table as UploadTable;
-use CsvMigrations\CsvMigrationsUtils;
+use CsvMigrations\Model\AssociationsAwareTrait;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
@@ -118,7 +118,7 @@ class FileUploadsUtils
      */
     public function getFiles($table, $field, $data)
     {
-        $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field);
+        $assocName = AssociationsAwareTrait::generateAssociationName('Burzum/FileStorage.FileStorage', $field);
         $query = $this->_table->{$assocName}->find('all', [
             'conditions' => [
                 'foreign_key' => $data,
@@ -208,7 +208,7 @@ class FileUploadsUtils
      */
     protected function _storeFileStorage($table, $field, $fileData, $options = [])
     {
-        $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field);
+        $assocName = AssociationsAwareTrait::generateAssociationName('Burzum/FileStorage.FileStorage', $field);
         $entity = $this->_table->{$assocName}->newEntity($fileData);
 
         $className = App::shortName(get_class($table), 'Model/Table', 'Table');
@@ -306,7 +306,10 @@ class FileUploadsUtils
             }
 
             $savedIds = array_values(array_filter($savedIds));
-            $assocName = CsvMigrationsUtils::createAssociationName('Burzum/FileStorage.FileStorage', $field['name']);
+            $assocName = AssociationsAwareTrait::generateAssociationName(
+                'Burzum/FileStorage.FileStorage',
+                $field['name']
+            );
 
             foreach ($savedIds as $fileId) {
                 $record = $this->_table->{$assocName}->get($fileId);

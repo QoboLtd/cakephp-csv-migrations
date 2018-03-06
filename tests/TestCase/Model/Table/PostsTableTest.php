@@ -54,80 +54,18 @@ class PostsTableTest extends TestCase
         $this->PostsTable = TableRegistry::get('Posts', $config);
     }
 
-    public function testGetAssociationFields()
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
     {
-        foreach ($this->PostsTable->associations() as $association) {
-            $result = $this->PostsTable->getAssociationFields($association);
-            if ('OwnerAuthors' == $association->name()) {
-                $this->assertNotEmpty($result);
-                $expectedFields = array_values($result['fields']);
-                $this->assertEquals($expectedFields, ['name', 'description', 'created', 'modified']);
-            }
+        unset($this->table);
 
-            if ('Tags' == $association->name()) {
-                $this->assertEquals('tag_id', $result['foreign_key']);
-            }
-        }
+        parent::tearDown();
     }
 
-    public function testGetAssociationObject()
     {
-        $result = $this->PostsTable->getAssociationObject('OwnerAuthors');
-        $this->assertEquals('OwnerAuthors', $result->name());
-    }
-
-    public function testGetRelatedEntitiesOrder()
-    {
-        $fields = [
-            'name',
-            'description',
-            'created',
-            'modified'
-        ];
-
-        $data = [
-            'columns' => [
-                'name' => [
-                    'data' => 0,
-                    'name' => '',
-                    'searchable' => true,
-                    'orderable' => true,
-                    'search' => [
-                        'value' => '',
-                        'regex' => false,
-                    ]
-                ],
-                'description' => [
-                    'data' => 1,
-                    'name' => '',
-                    'searchable' => true,
-                    'orderable' => true,
-                    'search' => [
-                        'value' => '',
-                        'regex' => false,
-                    ],
-                ],
-            ],
-            'order' => [
-                ['column' => 0, 'dir' => 'asc'],
-            ]
-        ];
-
-        $result = $this->PostsTable->getRelatedEntitiesOrder($this->PostsTable, $fields, $data);
-        $this->assertEquals($result, ['Posts.name' => 'asc']);
-    }
-
-    public function testGetOneToManyCount()
-    {
-        $query = $this->PostsTable->find();
-
-        $result = $this->PostsTable->getOneToManyCount($query, [
-            'conditions' => [
-                'id' => '00000000-0000-0000-0000-000000000001',
-            ],
-        ]);
-
-        $this->assertEquals($result, 1);
-        $this->assertTrue(is_numeric($result));
     }
 }

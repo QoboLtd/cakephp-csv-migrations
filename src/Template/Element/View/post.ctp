@@ -37,7 +37,7 @@ $formOptions = [
         'controller' => $this->request->controller,
         'action' => 'panels'
     ]),
-    'name' => Inflector::dasherize($moduleAlias),
+    'name' => Inflector::dasherize($this->name),
     'type' => 'file',
 ];
 

@@ -11,9 +11,14 @@
  */
 
 use Cake\Utility\Inflector;
+use Qobo\Utils\ModuleConfig\ConfigType;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
-// Get title from the entity
-$title = Inflector::singularize(Inflector::humanize(Inflector::underscore($moduleAlias)));
+$config = (new ModuleConfig(ConfigType::MODULE(), $this->name))->parse();
+
+$title = Inflector::singularize(isset($config->table->alias) ?
+    $config->table->alias : Inflector::humanize(Inflector::underscore($this->name))
+);
 
 $options = [
     'entity' => $entity,

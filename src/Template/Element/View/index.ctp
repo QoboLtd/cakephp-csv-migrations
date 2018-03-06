@@ -133,7 +133,10 @@ $options = array_merge($defaultOptions, $options);
 
 // Get title from controller
 if (empty($options['title'])) {
-    $options['title'] = Inflector::humanize(Inflector::underscore($moduleAlias));
+    $config = (new ModuleConfig(ConfigType::MODULE(), $this->name))->parse();
+    $options['title'] = isset($config->table->alias) ?
+        $config->table->alias :
+        Inflector::humanize(Inflector::underscore($this->name));
 }
 ?>
 <section class="content-header">

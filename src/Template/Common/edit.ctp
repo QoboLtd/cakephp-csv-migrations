@@ -16,8 +16,8 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 $config = (new ModuleConfig(ConfigType::MODULE(), $this->name))->parse();
 
-$title = Inflector::singularize(isset($config->table->alias) ?
-    $config->table->alias : Inflector::humanize(Inflector::underscore($this->name))
+$title = Inflector::singularize(
+    isset($config->table->alias) ? $config->table->alias : Inflector::humanize(Inflector::underscore($this->name))
 );
 
 $options = [

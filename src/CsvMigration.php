@@ -140,66 +140,11 @@ class CsvMigration extends AbstractMigration
      *
      * @param  string $tableName current table name
      * @return array             phinx table instances
+     * @deprecated 28.0.2 Kept for BC, already baked csv migration files are using this method.
      */
     public function joins($tableName)
     {
-        $result = [];
-        $this->setConfig($tableName);
-
-        $manyToMany = (array)$this->getConfig(ConfigurationTrait::$CONFIG_OPTION_MANY_TO_MANY_MODULES);
-        if (empty($manyToMany)) {
-            return $result;
-        }
-
-        foreach ($manyToMany as $module) {
-            // skip manyToMany table creation if one of the tables does not exist
-            if (!$this->hasTable(Inflector::tableize($module))) {
-                continue;
-            }
-
-            $tables = [];
-            $tables[] = $tableName;
-            /*
-            associated table name
-             */
-            $moduleTable = TableRegistry::get($module)->table();
-            $tables[] = $moduleTable;
-
-            /*
-            sort them alphabetically for CakePHP naming convention
-             */
-            sort($tables);
-
-            $joinedTable = implode('_', $tables);
-
-            /*
-            skip if join table exists
-             */
-            if ($this->hasTable($joinedTable)) {
-                continue;
-            }
-
-            /*
-            construct instance of the new table
-             */
-            $table = $this->table($joinedTable);
-            $table->addColumn('id', 'uuid', [
-                'null' => false
-            ]);
-            $table->addColumn(Inflector::singularize($tableName) . '_id', 'uuid', [
-                'null' => false
-            ]);
-            $table->addColumn(Inflector::singularize($moduleTable) . '_id', 'uuid', [
-                'null' => false
-            ]);
-            $table->addColumn('created', 'datetime');
-            $table->addColumn('modified', 'datetime');
-            $table->addPrimaryKey(['id']);
-
-            $result[] = $table;
-        }
-
-        return $result;
+        return [];
     }
 
     /**

@@ -90,23 +90,11 @@ if (!empty($this->request->query['embedded'])) {
         echo $this->Form->button(__('Submit'), [
             'name' => 'btn_operation', 'value' => 'submit', 'class' => 'btn btn-primary'
         ]);
-        echo "&nbsp;";
 
-        $cancelBtnOptions = [
-            'name' => 'btn_operation',
-            'value' => 'cancel',
-            'class' => 'btn remove-client-validation'
-        ];
-
-        if ($this->request->query('embedded')) {
-            $cancelBtnOptions = array_merge($cancelBtnOptions, [
-                'type' => 'button',
-                'aria-label' => 'Close',
-                'data-dismiss' => 'modal'
-            ]);
-        }
-
-        echo $this->Form->button(__('Cancel'), $cancelBtnOptions);
+        echo $this->Html->link(__('Cancel'), ['action' => 'index'], array_merge(
+            ['class' => 'btn btn-link', 'role' => 'button'],
+            $this->request->getQuery('embedded') ? ['aria-label' => 'Close', 'data-dismiss' => 'modal'] : []
+        ));
         echo $this->Form->end();
 
         // Fetch embedded module(s) using CakePHP's requestAction() method, if request is not coming from requestAction()

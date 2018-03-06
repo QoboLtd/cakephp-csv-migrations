@@ -12,14 +12,16 @@
 namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
-use Cake\Http\Response;
-use Cake\ORM\TableRegistry;
+use Cake\Log\Log;
 use Cake\Utility\Inflector;
 use CsvMigrations\Controller\Traits\ImportTrait;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\FileUploadsUtils;
 use CsvMigrations\Utility\Field;
+use Exception;
+use Psr\Http\Message\ResponseInterface;
 
 class AppController extends BaseController
 {
@@ -95,49 +97,20 @@ class AppController extends BaseController
      */
     public function add()
     {
-        $model = $this->{$this->name};
-        $entity = $model->newEntity();
+        $entity = $this->{$this->name}->newEntity();
 
         if (!empty($this->request->params['data'])) {
             $this->request->data = $this->request->params['data'];
         }
 
         if ($this->request->is('post')) {
-            if ($this->request->data('btn_operation') == 'cancel') {
-                return $this->redirect(['action' => 'index']);
-            }
-
-            $entity = $model->patchEntity($entity, $this->request->data);
-
-            $saved = null;
-            $reason = 'Please try again later.';
-            // TODO: Log the error.
-            try {
-                $saved = $model->save($entity, ['lookup' => true]);
-            } catch (\PDOException $e) {
-                if (!empty($e->errorInfo[2])) {
-                    $reason = $e->errorInfo[2];
-                }
-            } catch (\Exception $e) {
-            }
-
-            if ($saved) {
-                $linked = $this->_fileUploadsUtils->linkFilesToEntity($entity, $model, $this->request->data);
-
-                $this->Flash->success(__('The record has been saved.'));
-
-                $redirectUrl = $model->getParentRedirectUrl($model, $entity);
-                if (empty($redirectUrl)) {
-                    return $this->redirect(['action' => 'view', $entity->{$model->primaryKey()}]);
-                } else {
-                    return $this->redirect($redirectUrl);
-                }
-            } else {
-                $this->Flash->error(__('The record could not be saved. ' . $reason));
+            $response = $this->persistEntity($entity);
+            if ($response) {
+                return $response;
             }
         }
 
-        $this->set(compact('entity'));
+        $this->set('entity', $entity);
         $this->render('CsvMigrations.Common/add');
         $this->set('_serialize', ['entity']);
     }
@@ -151,52 +124,62 @@ class AppController extends BaseController
      */
     public function edit($id = null)
     {
-        $model = $this->{$this->name};
-        $entity = $model->find('all')
+        $entity = $this->{$this->name}->find()
             ->where([$this->{$this->name}->getPrimaryKey() => $id])
             ->applyOptions(['lookup' => true, 'value' => $id])
             ->firstOrFail();
 
         if ($this->request->is(['patch', 'post', 'put'])) {
-            if ($this->request->data('btn_operation') == 'cancel') {
-                return $this->redirect(['action' => 'view', $id]);
-            }
-
             // enable accessibility to associated entity's primary key to avoid associated entity getting flagged as new
-            $patchOptions = $model->enablePrimaryKeyAccess();
-            $entity = $model->patchEntity($entity, $this->request->data, $patchOptions);
-
-            $saved = null;
-            $reason = 'Please try again later.';
-            // TODO: Log the error.
-            try {
-                $saved = $model->save($entity, ['lookup' => true]);
-            } catch (\PDOException $e) {
-                if (!empty($e->errorInfo[2])) {
-                    $reason = $e->errorInfo[2];
-                }
-            } catch (\Exception $e) {
+            $response = $this->persistEntity($entity, $this->{$this->name}->enablePrimaryKeyAccess());
+            if ($response) {
+                return $response;
             }
 
-            if ($saved) {
-                // handle file uploads if found in the request data
-                $linked = $this->_fileUploadsUtils->linkFilesToEntity($entity, $model, $this->request->data);
-
-                $this->Flash->success(__('The record has been saved.'));
-
-                $redirectUrl = $model->getParentRedirectUrl($model, $entity);
-                if (empty($redirectUrl)) {
-                    return $this->redirect(['action' => 'view', $entity->{$model->primaryKey()}]);
-                } else {
-                    return $this->redirect($redirectUrl);
-                }
-            } else {
-                $this->Flash->error(__('The record could not be saved. ' . $reason));
-            }
         }
-        $this->set(compact('entity'));
+        $this->set('entity', $entity);
         $this->render('CsvMigrations.Common/edit');
         $this->set('_serialize', ['entity']);
+    }
+
+    /**
+     * Persist new/modified entity.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity Entity instance
+     * @param array $options Patch options
+     * @return \Cake\Http\Response|null
+     */
+    private function persistEntity(EntityInterface $entity, array $options = [])
+    {
+        $entity = $this->{$this->name}->patchEntity($entity, $this->request->data, $options);
+
+        $saved = false;
+        try {
+            $saved = $this->{$this->name}->save($entity, ['lookup' => true]);
+        } catch (Exception $e) {
+            Log::warning($e->getMessage());
+        }
+
+        if ($entity->getErrors()) {
+            Log::warning($entity->getErrors());
+        }
+
+        if (! $saved) {
+            $this->Flash->error(__('The record could not be saved, please try again.'));
+        }
+
+        if ($saved) {
+            $this->Flash->success(__('The record has been saved.'));
+            // handle file uploads if found in the request data
+            $this->_fileUploadsUtils->linkFilesToEntity($entity, $this->{$this->name}, $this->request->data);
+
+            $url = $this->{$this->name}->getParentRedirectUrl($this->{$this->name}, $entity);
+            $url = ! empty($url) ? $url : ['action' => 'view', $entity->get($this->{$this->name}->getPrimaryKey())];
+
+            return $this->redirect($url);
+        }
+
+        return null;
     }
 
     /**

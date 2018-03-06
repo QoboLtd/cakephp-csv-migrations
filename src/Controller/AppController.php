@@ -44,31 +44,19 @@ class AppController extends BaseController
      * or perform logic that needs to happen before each controller action.
      *
      * @param \Cake\Event\Event $event An Event instance
-     * @return void|\Cake\Http\Response
+     * @return \Psr\Http\Message\ResponseInterface|void
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeFilter(\Cake\Event\Event $event)
+    public function beforeFilter(Event $event)
     {
         $result = parent::beforeFilter($event);
-        if ($result instanceof Response) {
+        if ($result instanceof ResponseInterface) {
             return $result;
         }
 
-        // pass module alias to the View
-        $table = $this->loadModel();
-
-        if ($this->Auth->user()) {
-            if (method_exists($table, 'setCurrentUser')) {
-                $table->setCurrentUser($this->Auth->user());
-            }
+        if ($this->Auth->user() && method_exists($this->{$this->name}, 'setCurrentUser')) {
+            $this->{$this->name}->setCurrentUser($this->Auth->user());
         }
-
-        if (method_exists($table, 'moduleAlias')) {
-            $alias = $table->moduleAlias();
-        } else {
-            $alias = $table->alias();
-        }
-        $this->set('moduleAlias', $alias);
     }
 
     /**
@@ -90,7 +78,7 @@ class AppController extends BaseController
      */
     public function view($id = null)
     {
-        $entity = $this->{$this->name}->find('all')
+        $entity = $this->{$this->name}->find()
             ->where([$this->{$this->name}->getPrimaryKey() => $id])
             ->applyOptions(['lookup' => true, 'value' => $id])
             ->firstOrFail();

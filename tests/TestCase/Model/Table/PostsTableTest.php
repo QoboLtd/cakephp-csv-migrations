@@ -47,11 +47,10 @@ class PostsTableTest extends TestCase
     {
         parent::setUp();
 
-        $dir = dirname(__DIR__) . DS . '..' . DS . '..' . DS . 'data' . DS . 'Modules' . DS;
-        Configure::write('CsvMigrations.modules.path', $dir);
+        Configure::write('CsvMigrations.modules.path', TESTS . 'config' . DS . 'Modules' . DS);
 
-        $config = TableRegistry::exists('Posts') ? [] : ['className' => 'CsvMigrations\Test\TestCase\Model\Table\PostsTable'];
-        $this->PostsTable = TableRegistry::get('Posts', $config);
+        $config = TableRegistry::exists('Posts') ? [] : ['className' => 'CsvMigrations\Test\App\Model\Table\PostsTable'];
+        $this->table = TableRegistry::get('Posts', $config);
     }
 
     /**
@@ -64,8 +63,5 @@ class PostsTableTest extends TestCase
         unset($this->table);
 
         parent::tearDown();
-    }
-
-    {
     }
 }

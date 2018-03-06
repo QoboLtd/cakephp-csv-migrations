@@ -9,9 +9,7 @@ use CsvMigrations\FieldHandlers\FieldHandler;
 
 class RelatedFieldHandlerTest extends TestCase
 {
-    public $fixtures = [
-        'plugin.CsvMigrations.foo'
-    ];
+    public $fixtures = ['plugin.CsvMigrations.Foo'];
 
     protected $table = 'fields';
     protected $field = 'field_related';

@@ -34,42 +34,7 @@ class Foo extends Entity
 
 class FieldHandlerFactoryTest extends TestCase
 {
-    /**
-     * Fixtures
-     *
-     * @var array
-     */
-    public $fixtures = [
-        'plugin.CsvMigrations.foo'
-    ];
-
-    /**
-     * Test subject
-     *
-     * @var CsvMigrations\FieldHandlers\FieldHandlerFactory
-     */
-    public $fhf;
-
-    /**
-     * Table instance
-     *
-     * @var Cake\ORM\Table
-     */
-    public $table;
-
-    /**
-     * Csv Data
-     *
-     * @var array
-     */
-    public $csvData;
-
-    /**
-     * Table name
-     *
-     * @var string
-     */
-    public $tableName = 'Foo';
+    public $fixtures = ['plugin.CsvMigrations.foo'];
 
     /**
      * setUp method
@@ -80,18 +45,29 @@ class FieldHandlerFactoryTest extends TestCase
     {
         parent::setUp();
 
-        $dir = dirname(__DIR__) . DS . '..' . DS . 'data' . DS . 'Modules' . DS;
-        Configure::write('CsvMigrations.modules.path', $dir);
+        Configure::write('CsvMigrations.modules.path', TESTS . 'config' . DS . 'Modules' . DS);
 
-        $mc = new ModuleConfig(ConfigType::MIGRATION(), $this->tableName);
+        $mc = new ModuleConfig(ConfigType::MIGRATION(), 'Foo');
         $this->csvData = (array)json_decode(json_encode($mc->parse()), true);
 
-        $config = TableRegistry::exists($this->tableName)
-            ? []
-            : ['className' => 'CsvMigrations\Test\TestCase\Model\Table\FooTable'];
-        $this->table = TableRegistry::get($this->tableName, $config);
+        $config = TableRegistry::exists('Foo') ? [] : ['className' => 'CsvMigrations\Test\App\Model\Table\FooTable'];
+        $this->table = TableRegistry::get('Foo', $config);
 
         $this->fhf = new FieldHandlerFactory();
+    }
+
+    /**
+     * tearDown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        unset($this->fhf);
+        unset($this->table);
+        unset($this->csvData);
+
+        parent::tearDown();
     }
 
     public function testGetByTableField()

@@ -89,8 +89,13 @@ class Field
     {
         $tableName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
-        $config = new ModuleConfig(ConfigType::VIEW(), $tableName, $action);
-        $result = $config->parse()->items;
+        $config = (new ModuleConfig(ConfigType::VIEW(), $tableName, $action))->parse();
+
+        if (! isset($config->items)) {
+            return [];
+        }
+
+        $result = $config->items;
 
         if ((bool)$panels) {
             $result = static::arrangePanels($result);

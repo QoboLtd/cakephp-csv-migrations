@@ -38,13 +38,15 @@ class CombinedSearchOptions extends AbstractSearchOptions
             $fieldName = $this->config->getField() . '_' . $suffix;
 
             $config = new $fieldOptions['config']($fieldName, $this->config->getTable());
+
+            $provider = $config->getProvider('renderName');
+            $provider = new $provider($config);
+            $options['label'] = $provider->provide();
+
             $provider = $config->getProvider('searchOptions');
             $provider = new $provider($config);
-            $fieldOptions = array_merge($fieldOptions, $provider->provide($data, $options));
 
-            if (!empty($fieldOptions)) {
-                $result = array_merge($result, $fieldOptions);
-            }
+            $result = array_merge($result, (array)$provider->provide($data, $options));
         }
 
         return $result;

@@ -4,34 +4,9 @@ namespace CsvMigrations\Test\TestCase\Model\Table;
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use CsvMigrations\ConfigurationTrait;
-use CsvMigrations\FieldHandlers\FieldHandlerFactory;
-use CsvMigrations\Table;
-
-class PostsTable extends Table
-{
-    public function initialize(array $config)
-    {
-        parent::initialize($config);
-
-        $this->table('posts');
-        $this->primaryKey('id');
-
-        $this->addBehavior('Timestamp');
-        $config['table'] = 'Posts';
-        $this->_setAssociations($config);
-    }
-}
 
 class PostsTableTest extends TestCase
 {
-    /**
-     * Test subject
-     *
-     * @var CsvMigrations\Test\TestCase\Model\Table\FooTable
-     */
-    public $PostsTable;
-
     public $fixtures = [
         'plugin.csv_migrations.posts',
         'plugin.csv_migrations.authors',

@@ -58,7 +58,6 @@ class RelatedSearchOptions extends AbstractSearchOptions
             $this->_getInputIcon($relatedProperties),
             $view->Form->input($field, [
                 'label' => false,
-                'options' => ['{{value}}' => ''],
                 'name' => '{{name}}',
                 'id' => $field,
                 'type' => 'select',
@@ -67,6 +66,7 @@ class RelatedSearchOptions extends AbstractSearchOptions
                 'data-display-field' => $relatedProperties['displayField'],
                 'escape' => false,
                 'autocomplete' => 'off',
+                'multiple' => 'multiple',
                 'data-url' => $view->Url->build([
                     'prefix' => 'api',
                     'plugin' => $relatedProperties['plugin'],

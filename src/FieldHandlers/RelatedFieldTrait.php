@@ -17,6 +17,8 @@ use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\RelatedFieldHandler;
+use Qobo\Utils\ModuleConfig\ConfigType;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 trait RelatedFieldTrait
 {
@@ -159,22 +161,17 @@ trait RelatedFieldTrait
      */
     protected function _getInputHelp($properties)
     {
-        $result = '';
-        // use typeahead fields
-        if (!empty($properties['config']['table']['typeahead_fields'])) {
-            $result = $properties['config']['table']['typeahead_fields'];
-            if (!empty($result)) {
-                $result = implode(', or ', array_map(function ($value) {
-                    return Inflector::humanize($value);
-                }, $result));
-            }
-        }
+        $config = (new ModuleConfig(ConfigType::MODULE(), $properties['controller']))->parse();
+
         // if typeahead fields were not defined, use display field
-        if (empty($result)) {
-            $result = Inflector::humanize($properties['displayField']);
+        if (empty($config->table->typeahead_fields)) {
+            return Inflector::humanize($properties['displayField']);
         }
 
-        return $result;
+        // use typeahead fields
+        return implode(', or ', array_map(function ($value) {
+            return Inflector::humanize($value);
+        }, $config->table->typeahead_fields));
     }
 
     /**

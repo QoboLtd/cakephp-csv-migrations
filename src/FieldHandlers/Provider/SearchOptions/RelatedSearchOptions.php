@@ -28,7 +28,7 @@ class RelatedSearchOptions extends AbstractSearchOptions
      */
     const HTML_INPUT = '
         <div class="input-group select2-bootstrap-prepend select2-bootstrap-append">
-            <span class="input-group-addon" title="%s"><span class="fa fa-%s"></span></span>%s
+            <span class="input-group-addon"><span class="fa fa-%s"></span></span>%s
         </div>';
 
     /**
@@ -54,19 +54,17 @@ class RelatedSearchOptions extends AbstractSearchOptions
 
         $content = sprintf(
             static::HTML_INPUT,
-            $relatedProperties['controller'],
             $this->_getInputIcon($relatedProperties),
             $view->Form->input($field, [
                 'label' => false,
-                'options' => ['{{value}}' => ''],
                 'name' => '{{name}}',
                 'id' => $field,
                 'type' => 'select',
-                'title' => $this->_getInputHelp($relatedProperties),
                 'data-type' => 'select2',
                 'data-display-field' => $relatedProperties['displayField'],
                 'escape' => false,
                 'autocomplete' => 'off',
+                'multiple' => 'multiple',
                 'data-url' => $view->Url->build([
                     'prefix' => 'api',
                     'plugin' => $relatedProperties['plugin'],

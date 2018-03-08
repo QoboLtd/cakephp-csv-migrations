@@ -43,9 +43,15 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
      * @return {undefined}
      */
     Select2.prototype.init = function (element) {
+        var that = this;
+        var value = $(element).val();
+
         // set select2 option label, if is empty and the option value is set
-        if ($(element).val() && !$(element).text()) {
-            this._setDisplayValue($(element).val(), element);
+        if (value && !$(element).text()) {
+            value = Array === value.constructor ? value : [value];
+            value.forEach(function (val) {
+                that._setDisplayValue(val, element);
+            });
         }
 
         // enable select2 functionality
@@ -151,8 +157,8 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
                     return;
                 }
                 var label = data.data[$(input).data('display-field')];
-                $(input).find(':selected').remove();
-                var option = $('<option>' + label + '</option>').val(id);
+                $(input).find('option[value="' + id + '"]').remove();
+                var option = $('<option selected="selected">' + label + '</option>').val(id);
                 $(input).append(option).trigger('change');
                 // set select2 display value
                 $(input).trigger('change');

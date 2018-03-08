@@ -12,7 +12,7 @@
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
 use Cake\Core\Configure;
-use CsvMigrations\FileUploadsUtils;
+use CsvMigrations\Utility\FileUpload;
 
 /**
  * ImagesRenderer
@@ -79,16 +79,16 @@ class ImagesRenderer extends AbstractRenderer
         $table = $this->config->getTable();
         $field = $this->config->getField();
 
-        $fileUploadsUtils = new FileUploadsUtils($table);
+        $fileUpload = new FileUpload($table);
 
-        $entities = $fileUploadsUtils->getFiles($table, $field, $data);
+        $entities = $fileUpload->getFiles($table, $field, $data);
 
         if (empty($options['imageSize'])) {
             $options['imageSize'] = Configure::read('FileStorage.defaultImageSize');
         }
 
         if (!empty($entities)) {
-            $result = $this->_thumbnailsHtml($entities, $fileUploadsUtils, $options);
+            $result = $this->_thumbnailsHtml($entities, $fileUpload, $options);
         }
 
         return $result;
@@ -98,19 +98,19 @@ class ImagesRenderer extends AbstractRenderer
      * Generates thumbnails html markup.
      *
      * @param \Cake\ORM\ResultSet $entities File Entities
-     * @param FileUploadsUtils $fileUploadsUtils fileUploadsUtils class object
+     * @param \CsvMigrations\Utility\FileUpload $fileUpload FileUpload instance
      * @param array $options for default thumbs versions and other setttings
      *
      * @return string
      */
-    protected function _thumbnailsHtml($entities, FileUploadsUtils $fileUploadsUtils, $options = [])
+    protected function _thumbnailsHtml($entities, FileUpload $fileUpload, $options = [])
     {
         $result = null;
         $colWidth = static::GRID_COUNT / static::THUMBNAIL_LIMIT;
         $thumbnailUrl = 'CsvMigrations.thumbnails/' . static::NO_THUMBNAIL_FILE;
 
         $hashes = Configure::read('FileStorage.imageHashes.file_storage');
-        $extensions = $fileUploadsUtils->getImgExtensions();
+        $extensions = $fileUpload->getImgExtensions();
 
         foreach ($entities as $k => $entity) {
             if ($k >= static::THUMBNAIL_LIMIT) {
@@ -123,7 +123,7 @@ class ImagesRenderer extends AbstractRenderer
                 if (isset($hashes[$options['imageSize']])) {
                     $version = $hashes[$options['imageSize']];
 
-                    $exists = $this->_checkThumbnail($entity, $version, $fileUploadsUtils);
+                    $exists = $this->_checkThumbnail($entity, $version, $fileUpload);
 
                     if ($exists) {
                         $path = dirname($entity->path) . '/' . basename($entity->path, $entity->extension);
@@ -159,12 +159,12 @@ class ImagesRenderer extends AbstractRenderer
     /**
      * Check if specified image version exists
      *
-     * @param  \Cake\ORM\Entity $entity  Entity
-     * @param  string           $version Image version
-     * @param  \CsvMigrations\FileUploadsUtils $fileUploadsUtils fileUploadsUtils class object
+     * @param \Cake\ORM\Entity $entity Entity
+     * @param string $version Image version
+     * @param \CsvMigrations\Utility\FileUpload $fileUpload FileUpload instance
      * @return bool
      */
-    protected function _checkThumbnail($entity, $version, FileUploadsUtils $fileUploadsUtils)
+    protected function _checkThumbnail($entity, $version, FileUpload $fileUpload)
     {
         // image version directory path
         $dir = realpath(WWW_ROOT . trim($entity->path, DS));

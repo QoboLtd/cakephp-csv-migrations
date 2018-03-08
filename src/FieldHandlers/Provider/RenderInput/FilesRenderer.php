@@ -12,7 +12,7 @@
 namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
 
 use Cake\Utility\Inflector;
-use CsvMigrations\FileUploadsUtils;
+use CsvMigrations\Utility\FileUpload;
 
 /**
  * FilesdRenderer
@@ -38,8 +38,8 @@ class FilesRenderer extends AbstractRenderer
 
         $entities = null;
         if (!empty($data)) {
-            $fileUploadsUtils = new FileUploadsUtils($table);
-            $entities = $fileUploadsUtils->getFiles($table, $field, $data);
+            $fileUpload = new FileUpload($table);
+            $entities = $fileUpload->getFiles($table, $field, $data);
         }
 
         $params = [

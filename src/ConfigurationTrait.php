@@ -11,11 +11,16 @@
  */
 namespace CsvMigrations;
 
-use Cake\Core\Configure;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+
+trigger_error(
+    'Use Qobo\Utils\ModuleConfig\ModuleConfig for parsing configuration files directly, ' .
+    'instead of using CsvMigrations\ConfigurationTrait.',
+    E_USER_DEPRECATED
+);
 
 /**
  * @deprecated 28.0.2 Use ModuleConfig instead, for parsing configuration files

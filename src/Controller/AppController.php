@@ -18,8 +18,8 @@ use Cake\Log\Log;
 use Cake\Utility\Inflector;
 use CsvMigrations\Controller\Traits\ImportTrait;
 use CsvMigrations\Event\EventName;
-use CsvMigrations\FileUploadsUtils;
 use CsvMigrations\Utility\Field;
+use CsvMigrations\Utility\FileUpload;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 
@@ -27,7 +27,7 @@ class AppController extends BaseController
 {
     use ImportTrait;
 
-    protected $_fileUploadsUtils;
+    protected $fileUpload;
 
     /**
      * {@inheritDoc}
@@ -36,7 +36,7 @@ class AppController extends BaseController
     {
         parent::initialize();
 
-        $this->_fileUploadsUtils = new FileUploadsUtils($this->{$this->name});
+        $this->fileUpload = new FileUpload($this->{$this->name});
 
         $this->loadComponent('CsvMigrations.CsvView');
     }
@@ -171,7 +171,7 @@ class AppController extends BaseController
         if ($saved) {
             $this->Flash->success(__('The record has been saved.'));
             // handle file uploads if found in the request data
-            $this->_fileUploadsUtils->linkFilesToEntity($entity, $this->{$this->name}, $this->request->data);
+            $this->fileUpload->linkFilesToEntity($entity, $this->{$this->name}, $this->request->data);
 
             $url = $this->{$this->name}->getParentRedirectUrl($this->{$this->name}, $entity);
             $url = ! empty($url) ? $url : ['action' => 'view', $entity->get($this->{$this->name}->getPrimaryKey())];

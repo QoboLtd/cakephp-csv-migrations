@@ -16,7 +16,7 @@ use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 /**
- * @deprecated 28.0.2 getFieldsDefinitions method should be moved to \CsvMigrations\Table,
+ * @deprecated 28.0.2 getFieldsDefinitions method should be moved to CsvMigrations\Table,
  * but since this method is used heavily it will require a lot of testing before moving and
  * dropping this Trait class altogether.
  */

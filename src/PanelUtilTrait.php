@@ -11,39 +11,12 @@
  */
 namespace CsvMigrations;
 
-use CsvMigrations\Panel;
-
 /**
- * Utilities trait provides assistance in using Panels.
+ * @deprecated 28.0.2 Added BC alias.
  */
-trait PanelUtilTrait
-{
-    /**
-     * List of evaluated Panels.
-     *
-     * Returns the all the evaluated panels which are split into two
-     * types success and fail.
-     * Success type contains the panels have been evaluated with success
-     * and vice verca for fail type.
-     *
-     * @see \CsvMigrations\Panel::evalExpression How the expression is evaluated.
-     * @param  array  $config Table's config.
-     * @param  array  $data to get the values for placeholders
-     * @return array          Evaluated panel list.
-     */
-    public function getEvalPanels(array $config, array $data)
-    {
-        $result = ['success' => [], 'fail' => []];
-        $panels = Panel::getPanelNames($config) ?: [];
-        foreach ($panels as $name) {
-            $panel = new Panel($name, $config);
-            if (!empty($data) && $panel->evalExpression($data)) {
-                $result['success'][] = $panel->getName();
-            } else {
-                $result['fail'][] = $panel->getName();
-            }
-        }
+class_alias('CsvMigrations\Controller\Traits\PanelsTrait', 'CsvMigrations\PanelUtilTrait');
 
-        return $result;
-    }
-}
+trigger_error(
+    'Use CsvMigrations\Controller\Traits\PanelsTrait instead of CsvMigrations\PanelUtilTrait.',
+    E_USER_DEPRECATED
+);

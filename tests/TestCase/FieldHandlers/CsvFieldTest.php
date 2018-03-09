@@ -13,11 +13,17 @@ class CsvFieldTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $dir = dirname(__DIR__) . DS . '..' . DS . 'data' . DS . 'Modules' . DS;
-        Configure::write('CsvMigrations.modules.path', $dir);
+        Configure::write('CsvMigrations.modules.path', TESTS . 'config' . DS . 'Modules' . DS);
 
         $mc = new ModuleConfig(ConfigType::MIGRATION(), 'Foo');
         $this->csvData = (array)json_decode(json_encode($mc->parse()), true);
+    }
+
+    public function tearDown()
+    {
+        unset($this->csvData);
+
+        parent::tearDown();
     }
 
     /**

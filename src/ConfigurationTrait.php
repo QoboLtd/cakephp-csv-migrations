@@ -11,32 +11,92 @@
  */
 namespace CsvMigrations;
 
-use Cake\Core\Configure;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
+trigger_error(
+    'Use Qobo\Utils\ModuleConfig\ModuleConfig for parsing configuration files directly, ' .
+    'instead of using CsvMigrations\ConfigurationTrait.',
+    E_USER_DEPRECATED
+);
+
+/**
+ * @deprecated 28.0.2 Use ModuleConfig instead, for parsing configuration files
+ * @see \Qobo\Utils\ModuleConfig\ModuleConfig
+ */
 trait ConfigurationTrait
 {
-    // Traits cannot have constants, so we rely on public static properties
+    /**
+     * Traits cannot have constants, so we rely on public static properties
+     */
+
+    /**
+     * @deprecated 28.0.2
+     */
     public static $CONFIG_OPTION_SEARCHABLE = 'table.searchable';
+
+    /**
+     * @deprecated 28.0.2
+     */
     public static $CONFIG_OPTION_ICON = 'table.icon';
+
+    /**
+     * @deprecated 28.0.2
+     */
     public static $CONFIG_OPTION_LOOKUP_FIELDS = 'table.lookup_fields';
+
+    /**
+     * @deprecated 28.0.2
+     */
     public static $CONFIG_OPTION_TYPEAHEAD_FIELDS = 'table.typeahead_fields';
+
+    /**
+     * @deprecated 28.0.2
+     */
     public static $CONFIG_OPTION_ALLOW_REMINDERS = 'table.allow_reminders';
+
+    /**
+     * @deprecated 28.0.2
+     */
     public static $CONFIG_OPTION_PARENT = 'parent';
+
+    /**
+     * @deprecated 28.0.2
+     */
     public static $CONFIG_OPTION_ASSOCIATION_LABELS = 'associationLabels';
+
+    /**
+     * @deprecated 28.0.2
+     */
     public static $CONFIG_OPTION_NOTIFICATIONS = 'notifications';
+
+    /**
+     * @deprecated 28.0.2
+     */
     public static $CONFIG_OPTION_HIDDEN_ASSOCIATIONS = 'associations.hide_associations';
+
+    /**
+     * @deprecated 28.0.2
+     */
     public static $CONFIG_OPTION_MODULE_ALIAS = 'table.alias';
+
+    /**
+     * @deprecated 28.0.2
+     */
     public static $CONFIG_OPTION_VIRTUAL_FIELDS = 'virtualFields';
+
+    /**
+     * @deprecated 28.0.2
+     */
     public static $CONFIG_OPTION_MANY_TO_MANY_MODULES = 'manyToMany.modules';
 
     /**
      * Table/module configuration
      *
      * @var array
+     * @deprecated 28.0.2
      */
     protected $_config = [];
 
@@ -51,6 +111,7 @@ trait ConfigurationTrait
      *
      * @param string $path Path to subset of configuration
      * @return array
+     * @deprecated 28.0.2
      */
     public function getConfig($path = null)
     {
@@ -71,6 +132,7 @@ trait ConfigurationTrait
      *
      * @param string $tableName table name
      * @return void
+     * @deprecated 28.0.2
      */
     public function setConfig($tableName)
     {
@@ -87,6 +149,7 @@ trait ConfigurationTrait
      * Returns the searchable flag
      *
      * @return bool
+     * @deprecated 28.0.2
      */
     public function isSearchable()
     {
@@ -100,6 +163,7 @@ trait ConfigurationTrait
      * Returns the module icon
      *
      * @return string
+     * @deprecated 28.0.2
      */
     public function icon()
     {
@@ -113,6 +177,7 @@ trait ConfigurationTrait
      * Returns the module alias
      *
      * @return string
+     * @deprecated 28.0.2
      */
     public function moduleAlias()
     {

@@ -1,25 +1,17 @@
 <?php
 namespace CsvMigrations\Test\App\Model\Table;
 
-use Cake\ORM\Table;
-use CsvMigrations\Model\AssociationsAwareTrait;
+use CsvMigrations\Table;
 
-/**
- * Users Model
- */
-class UsersTable extends Table
+class AuthorsTable extends Table
 {
-    use AssociationsAwareTrait;
-
     public function initialize(array $config)
     {
         parent::initialize($config);
 
-        $this->table('users');
+        $this->table('authors');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
-
-        $this->setAssociations();
     }
 }

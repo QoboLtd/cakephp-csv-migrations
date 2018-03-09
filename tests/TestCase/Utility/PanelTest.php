@@ -1,10 +1,8 @@
 <?php
-namespace CsvMigrations\Test\TestCase\FieldHandlers;
+namespace CsvMigrations\Test\TestCase\Utility;
 
 use Cake\TestSuite\TestCase;
-use CsvMigrations\Panel;
-use \InvalidArgumentException;
-use \RuntimeException;
+use CsvMigrations\Utility\Panel;
 
 class PanelTest extends TestCase
 {
@@ -12,11 +10,20 @@ class PanelTest extends TestCase
 
     public function setUp()
     {
+        parent::setUp();
+
         $this->config = [
             'panels' => [
                 'Foobar' => "(%%type%% == 'foobar' && %%name%% == 'antonis')",
             ],
         ];
+    }
+
+    public function tearDown()
+    {
+        unset($this->config);
+
+        parent::tearDown();
     }
 
     public function testgetName()

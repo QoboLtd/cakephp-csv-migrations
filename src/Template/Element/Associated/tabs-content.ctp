@@ -11,16 +11,19 @@
  */
 
 use Cake\Utility\Inflector;
-
-$url = $this->Url->build([
-    'prefix' => 'api',
-    'controller' => $this->request->param('controller'),
-    'action' => 'related'
-]);
 ?>
 <div class="tab-content">
     <?php $active = 'active'; ?>
     <?php foreach ($associations as $association) : ?>
+        <?php
+        $url = [
+            'prefix' => 'api',
+            'controller' => $this->request->getParam('controller'),
+            'action' => 'related',
+            $entity->get($table->getPrimaryKey()),
+            $association->getName()
+        ];
+        ?>
         <?php $containerId = Inflector::underscore($association->getAlias()); ?>
         <div role="tabpanel" class="tab-pane <?= $active ?>" id="<?= $containerId ?>">
             <?php
@@ -28,7 +31,7 @@ $url = $this->Url->build([
                 echo $this->element('CsvMigrations.Embedded/lookup', ['association' => $association]);
             } ?>
             <?= $this->element('CsvMigrations.Associated/tab-content', [
-                'association' => $association, 'table' => $table, 'url' => $url, 'factory' => $factory
+                'association' => $association, 'table' => $table, 'url' => $this->Url->build($url), 'factory' => $factory
             ]) ?>
         </div>
         <?php $active = ''; ?>

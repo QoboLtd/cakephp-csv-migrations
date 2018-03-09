@@ -14,15 +14,13 @@ namespace CsvMigrations\Shell;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
-use CsvMigrations\MigrationTrait;
 use Faker\Factory;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Utility;
 
 class SeedShell extends Shell
 {
-    use MigrationTrait;
-
     /**
      * Number of records to be added for each Module.
      * @var int
@@ -98,8 +96,7 @@ class SeedShell extends Shell
             $this->numberOfRecords = $numberOfRecords;
         }
 
-        $path = Configure::readOrFail('CsvMigrations.modules.path');
-        $this->modules = $this->_getAllModules($path);
+        $this->modules = Utility::findDirs(Configure::readOrFail('CsvMigrations.modules.path'));
         $csvFiles = $this->getModuleCsvData($this->modules);
 
         //check if module has relations
@@ -296,11 +293,11 @@ class SeedShell extends Shell
         }
 
         $keysArray = [];
-        foreach ($listData as $data) {
-            if ($data->inactive == '1') {
+        foreach ($listData as $key => $data) {
+            if ($data['inactive'] == '1') {
                 continue;
             }
-            $keysArray[] = $data->value;
+            $keysArray[] = $key;
         }
 
         return $keysArray;

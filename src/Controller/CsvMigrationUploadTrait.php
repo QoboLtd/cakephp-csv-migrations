@@ -14,6 +14,11 @@ namespace CsvMigrations\Controller;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 
+trigger_error(
+    'CsvMigrations\Controller\CsvMigrationUploadTrait is longer used by internal code and not recommended.',
+    E_USER_DEPRECATED
+);
+
 /**
  * @deprecated v10.0.0 No longer used by internal code and not recommended.
  */

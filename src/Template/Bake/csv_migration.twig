@@ -32,12 +32,5 @@ class {{ name }} extends CsvMigration
         } else {
             $table->update();
         }
-
-        $joinedTables = $this->joins('{{ table }}');
-        if (!empty($joinedTables)) {
-            foreach ($joinedTables as $joinedTable) {
-                $joinedTable->create();
-            }
-        }
     }
 }

@@ -11,7 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
-use CsvMigrations\FileUploadsUtils;
+use CsvMigrations\Utility\FileUpload;
 
 /**
  * FilesRenderer
@@ -78,12 +78,12 @@ class FilesRenderer extends AbstractRenderer
         $table = $this->config->getTable();
         $field = $this->config->getField();
 
-        $fileUploadsUtils = new FileUploadsUtils($table);
+        $fileUpload = new FileUpload($table);
 
-        $entities = $fileUploadsUtils->getFiles($table, $field, $data);
+        $entities = $fileUpload->getFiles($table, $field, $data);
 
         if (!empty($entities)) {
-            $result = $this->_filesHtml($entities, $fileUploadsUtils);
+            $result = $this->_filesHtml($entities, $fileUpload);
         }
 
         return $result;
@@ -93,11 +93,11 @@ class FilesRenderer extends AbstractRenderer
      * Generates file icons markup
      *
      * @param \Cake\ORM\ResultSet $entities File Entities
-     * @param FileUploadsUtils $fileUploadsUtils fileUploadsUtils class object
+     * @param \CsvMigrations\Utility\FileUpload $fileUpload FileUpload instance
      *
      * @return string
      */
-    protected function _filesHtml($entities, FileUploadsUtils $fileUploadsUtils)
+    protected function _filesHtml($entities, FileUpload $fileUpload)
     {
         $result = null;
         $colWidth = static::GRID_COUNT / static::THUMBNAIL_LIMIT;

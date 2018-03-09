@@ -66,6 +66,79 @@ class FieldTest extends TestCase
         $this->assertSame([], Field::getCsv($table));
     }
 
+    public function testGetVirtual()
+    {
+        $this->assertSame(['name' => ['foo', 'bar']], Field::getVirtual(TableRegistry::get('Foo')));
+    }
+
+    public function testGetVirtualEmpty()
+    {
+        $this->assertSame([], Field::getVirtual(TableRegistry::get('Articles')));
+    }
+
+    public function testGetCsvView()
+    {
+        $expected = [
+            ['Details', 'name', 'status'],
+            ['Details', 'author', '']
+        ];
+
+        $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add'));
+    }
+
+    public function testGetCsvViewWithIncludePluginModel()
+    {
+        $expected = [
+            [
+                ['plugin' => null, 'model' => 'Articles', 'name' => 'Details'],
+                ['plugin' => null, 'model' => 'Articles', 'name' => 'name'],
+                ['plugin' => null, 'model' => 'Articles', 'name' => 'status'],
+            ],
+            [
+                ['plugin' => null, 'model' => 'Articles', 'name' => 'Details'],
+                ['plugin' => null, 'model' => 'Articles', 'name' => 'author'],
+                ['plugin' => null, 'model' => 'Articles', 'name' => '']
+            ]
+        ];
+
+        $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add', true));
+    }
+
+    public function testGetCsvViewWithArrangeInPanels()
+    {
+        $expected = [
+            'Details' => [
+                ['name', 'status'],
+                ['author', '']
+            ]
+        ];
+
+        $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add', false, true));
+    }
+
+    public function testGetCsvViewWithIncludePluginModelAndArrangeInPanels()
+    {
+        $expected = [
+            'Details' => [
+                [
+                    ['plugin' => null, 'model' => 'Articles', 'name' => 'name'],
+                    ['plugin' => null, 'model' => 'Articles', 'name' => 'status'],
+                ],
+                [
+                    ['plugin' => null, 'model' => 'Articles', 'name' => 'author'],
+                    ['plugin' => null, 'model' => 'Articles', 'name' => '']
+                ]
+            ]
+        ];
+
+        $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add', true, true));
+    }
+
+    public function testGetCsvViewEmpty()
+    {
+        $this->assertSame([], Field::getCsvView(TableRegistry::get('NonExistingTable'), 'add', true, true));
+    }
+
     public function testGetList()
     {
         $expected = [
@@ -80,6 +153,22 @@ class FieldTest extends TestCase
         ];
 
         $this->assertSame($expected, Field::getList('list'));
+    }
+
+    public function testGetListWithModule()
+    {
+        $expected = [
+            'one' => [
+                'label' => 'One',
+                'inactive' => false
+            ],
+            'two' => [
+                'label' => 'Two',
+                'inactive' => false
+            ]
+        ];
+
+        $this->assertSame($expected, Field::getList('Common.list'));
     }
 
     public function testGetListWithChildren()
@@ -132,5 +221,10 @@ class FieldTest extends TestCase
         ];
 
         $this->assertSame($expected, Field::getList('nested', true));
+    }
+
+    public function testGetListEmpty()
+    {
+        $this->assertSame([], Field::getList('non-existing-list'));
     }
 }

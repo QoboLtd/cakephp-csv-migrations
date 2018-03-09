@@ -12,7 +12,7 @@
 namespace CsvMigrations\Utility;
 
 use Cake\Core\App;
-use Cake\ORM\Table;
+use Cake\Datasource\RepositoryInterface;
 use CsvMigrations\FieldHandlers\CsvField;
 use Exception;
 use Qobo\Utils\ModuleConfig\ConfigType;
@@ -23,10 +23,10 @@ class Field
     /**
      * Get Table's lookup fields.
      *
-     * @param \Cake\ORM\Table $table Table instance
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
      * @return array
      */
-    public static function getLookup(Table $table)
+    public static function getLookup(RepositoryInterface $table)
     {
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
@@ -39,10 +39,10 @@ class Field
     /**
      * Get Table's csv fields.
      *
-     * @param \Cake\ORM\Table $table Table instance
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
      * @return array
      */
-    public static function getCsv(Table $table)
+    public static function getCsv(RepositoryInterface $table)
     {
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
@@ -62,20 +62,40 @@ class Field
     }
 
     /**
+     * Module virtual fields getter.
+     *
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
+     * @return array
+     */
+    public static function getVirtual(RepositoryInterface $table)
+    {
+        $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
+
+        $config = (new ModuleConfig(ConfigType::MODULE(), $moduleName))->parse();
+
+        return (array)$config->virtualFields;
+    }
+
+    /**
      * Get View's csv fields.
      *
-     * @param \Cake\ORM\Table $table Table instance
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
      * @param string $action Controller action
      * @param bool $includeModel Include model flag
      * @param bool $panels Arrange panels flag
      * @return array
      */
-    public static function getCsvView(Table $table, $action, $includeModel = false, $panels = false)
+    public static function getCsvView(RepositoryInterface $table, $action, $includeModel = false, $panels = false)
     {
         $tableName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
-        $config = new ModuleConfig(ConfigType::VIEW(), $tableName, $action);
-        $result = $config->parse()->items;
+        $config = (new ModuleConfig(ConfigType::VIEW(), $tableName, $action))->parse();
+
+        if (! isset($config->items)) {
+            return [];
+        }
+
+        $result = $config->items;
 
         if ((bool)$panels) {
             $result = static::arrangePanels($result);

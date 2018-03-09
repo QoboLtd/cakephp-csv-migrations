@@ -17,7 +17,6 @@ use Cake\Event\EventListenerInterface;
 use Cake\I18n\Time;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
-use CsvMigrations\ConfigurationTrait;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\Table as CsvTable;
 use CsvMigrations\Utility\DTZone;
@@ -25,6 +24,8 @@ use CsvMigrations\Utility\ICal\IcEmail;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
+use Qobo\Utils\ModuleConfig\ConfigType;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class ModelAfterSaveListener implements EventListenerInterface
 {
@@ -155,12 +156,12 @@ class ModelAfterSaveListener implements EventListenerInterface
      */
     protected function getRemindersToModules(CsvTable $table)
     {
-        $result = $table->getConfig(ConfigurationTrait::$CONFIG_OPTION_ALLOW_REMINDERS);
-        if (empty($result) || !is_array($result)) {
+        $config = (new ModuleConfig(ConfigType::MODULE(), $table->getRegistryAlias()))->parse();
+        if (empty($config->table->allow_reminders)) {
             throw new InvalidArgumentException("Failed to find reminder modules");
         }
 
-        return $result;
+        return $config->table->allow_reminders;
     }
 
     /**
@@ -182,20 +183,22 @@ class ModelAfterSaveListener implements EventListenerInterface
      */
     protected function getReminderField(CsvTable $table)
     {
-        $fields = $table->getReminderFields();
-        if (empty($fields) || !is_array($fields)) {
+        $config = (new ModuleConfig(ConfigType::MIGRATION(), $table->getRegistryAlias()))->parse();
+
+        $fields = array_filter((array)$config, function ($field) {
+            if ('reminder' === $field->type) {
+                return $field;
+            }
+        });
+
+        if (empty($fields)) {
             throw new InvalidArgumentException("Failed to find reminder fields");
         }
 
-        // FIXME : What should happen when there is more than 1 reminder field on the table?
-        foreach ($fields as $field) {
-            if (!empty($field['name'])) {
-                // Return the first field found
-                return $field['name'];
-            }
-        }
+        // FIXME: What should happen when there is more than 1 reminder field on the table?
+        reset($fields);
 
-        throw new InvalidArgumentException("Failed to find a reminder field with 'name' key");
+        return current($fields)->name;
     }
 
     /**

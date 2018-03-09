@@ -12,18 +12,10 @@
 namespace CsvMigrations\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
-use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
-use Cake\Event\EventManager;
-use Cake\ORM\Association;
-use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
-use Cake\Utility\Inflector;
+use CsvMigrations\Controller\Traits\PanelsTrait;
 use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\Panel;
-use CsvMigrations\PanelUtilTrait;
 use CsvMigrations\Utility\Field;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
@@ -33,7 +25,7 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
  */
 class CsvViewComponent extends Component
 {
-    use PanelUtilTrait;
+    use PanelsTrait;
 
     /**
      * Called before the controller action. You can use this method to configure and customize components
@@ -86,12 +78,12 @@ class CsvViewComponent extends Component
         $config = new ModuleConfig(ConfigType::MODULE(), $event->subject()->name);
         $tableConfig = json_decode(json_encode($config->parse()), true);
 
-        $evalPanels = $this->getEvalPanels($tableConfig, $event->subject()->viewVars['entity']->toArray());
-        if (!empty($evalPanels['fail'])) {
+        $panels = $this->getPanels($tableConfig, $event->subject()->viewVars['entity']->toArray());
+        if (!empty($panels['fail'])) {
             // filter out fields of hidden panels
             $event->subject()->viewVars['fields'] = array_diff_key(
                 $event->subject()->viewVars['fields'],
-                array_flip($evalPanels['fail'])
+                array_flip($panels['fail'])
             );
         }
 

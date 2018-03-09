@@ -72,8 +72,8 @@ class CsvMigrationTask extends MigrationTask
      */
     public function fileName($name)
     {
+        list($table) = $this->_getVars($name);
         $name = $this->getMigrationName($name);
-        list($table) = $this->_getVars($this->args[0]);
 
         return $this->__timestamp . '_' . Inflector::camelize($name) . $this->_getLastModifiedTime($table) . '.php';
     }

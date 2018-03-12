@@ -20,7 +20,7 @@
             "first_name",
             "last_name"
         ],
-        "icon": "cube",
+        "icon": "user",
         "translatable": false,
         "permissions_parent_modules": []
     },

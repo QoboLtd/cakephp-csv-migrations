@@ -142,7 +142,7 @@ foreach ($options['fields'] as $panelName => $panelFields) : ?>
     <div class="row associated-records">
         <div class="col-xs-12">
             <?= $this->element('CsvMigrations.View/associated', [
-                'options' => $options, 'table' => $table, 'factory' => $factory
+                'options' => $options, 'table' => $table, 'factory' => $factory, 'entity' => $options['entity']
             ]) ?>
         </div>
     </div>

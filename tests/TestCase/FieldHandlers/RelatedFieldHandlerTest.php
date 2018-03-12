@@ -59,6 +59,12 @@ class RelatedFieldHandlerTest extends TestCase
         $this->assertContains('value="' . $id . '"', $result);
         $this->assertContains('data-url="/api/foo/lookup.json"', $result);
 
+        // test helper text
+        $this->assertContains('title="Name, or Foobar"', $result);
+
+        // test icon
+        $this->assertContains('<span class="fa fa-user"></span>', $result);
+
         $table = TableRegistry::get('Foo');
         $entity = $table->get($id);
         $fieldName = $table->displayField();

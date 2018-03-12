@@ -182,11 +182,13 @@ trait RelatedFieldTrait
      */
     protected function _getInputIcon($properties)
     {
+        $config = (new ModuleConfig(ConfigType::MODULE(), $properties['controller']))->parse();
+
         // return default icon if none is defined
-        if (empty($properties['config']['table']['icon'])) {
+        if (empty($config->table->icon)) {
             return Configure::read('CsvMigrations.default_icon');
         }
 
-        return $properties['config']['table']['icon'];
+        return $config->table->icon;
     }
 }

@@ -12,7 +12,6 @@
 namespace CsvMigrations\Shell\Task;
 
 use Bake\Shell\Task\BakeTask;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
 use Cake\Filesystem\Folder;
@@ -20,7 +19,7 @@ use Cake\Utility\Inflector;
 use Qobo\Utils\Utility;
 
 /**
- * CSV Module baking migration task, used to extend CakePHP's bake functionality.
+ * This class is responsible for baking module's bootstrap configuration files and MVC classes.
  */
 class CsvModuleTask extends BakeTask
 {
@@ -41,112 +40,211 @@ class CsvModuleTask extends BakeTask
     ];
 
     /**
-     * {@inheritDoc}
+     * Configure option parser
+     *
+     * @return \Cake\Console\ConsoleOptionParser
      */
-    public function main($name = null)
+    public function getOptionParser()
+    {
+        $parser = parent::getOptionParser();
+        $parser->description(
+            'Bakes Module bootstrap configuration files and MVC classes'
+        );
+        $parser->addArgument('name', [
+            'help' => 'The Module name to bake',
+            'required' => true
+        ]);
+
+        return $parser;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param string $name Module name
+     */
+    public function main($name = '')
     {
         parent::main();
 
-        $name = $this->_getName($name);
+        $name = $this->_camelize($name);
 
-        if (empty($name)) {
-            $this->abort('Please provide the module name.');
-        }
+        $this->validate($name, Configure::read('CsvMigrations.modules.path'));
 
-        if (empty(Configure::read('CsvMigrations.modules.path'))) {
-            $this->abort('CSV modules path is not defined.');
-        }
-
-        if (empty(Configure::read('CsvMigrations.features.module.path'))) {
-            $this->abort('Features path is not defined');
-        }
-
-        $this->bake($name);
+        $this->bakeModuleConfig($name);
+        $this->bakeDatabaseConfig($name);
+        $this->bakeViewsConfig($name);
+        $this->bakeController($name);
+        $this->bakeApiController($name);
+        $this->bakeTable($name);
+        $this->bakeEntity($name);
+        $this->bakeFeature($name);
     }
 
     /**
-     * Generate code for the given module name.
+     * Validates required parameters such as module name and Modules configuration path.
      *
-     * @param string $name The module name to generate.
+     * @param string $name Module name
+     * @param string $path Modules configuration path
      * @return void
      */
-    public function bake($name)
+    private function validate($name, $path)
     {
-        $this->_generateConfigFiles($name);
+        Utility::validatePath($path);
 
-        // bake controller
-        $this->pathFragment = 'Controller/';
-        $controllerName = $this->_camelize($name);
-        $data = [
-            'name' => $controllerName
-        ];
-        $this->_bakeTemplate($controllerName, 'Controller/controller', $data, 'Controller');
+        if (! ctype_alpha($name)) {
+            $this->abort(sprintf('Invalid Module name provided: %s', $name));
+        }
 
-        // bake api controller
-        $apiPaths = $this->getTargetApiPath();
-        $this->pathFragment = $apiPaths['fragment'];
-        $data = array_merge($data, $apiPaths);
-        $this->_bakeTemplate($controllerName, 'Controller/Api/controller', $data, 'Controller');
-
-        // bake model table
-        $this->pathFragment = 'Model/Table/';
-        $tableName = $this->_modelNameFromKey($name);
-        $data = [
-            'name' => $tableName,
-            'table' => Inflector::underscore($name)
-        ];
-        $this->_bakeTemplate($tableName, 'Model/table', $data, 'Table');
-
-        // bake model entity
-        $this->pathFragment = 'Model/Entity/';
-        $entityName = $this->_entityName($name);
-        $data = [
-            'name' => $entityName
-        ];
-        $this->_bakeTemplate($entityName, 'Model/entity', $data);
-
-        $this->pathFragment = Configure::read('CsvMigrations.features.module.path_fragment');
-        $featureName = $this->_modelNameFromKey($name);
-        $data = [
-            'name' => $featureName,
-        ];
-        $this->_bakeTemplate($featureName, Configure::read('CsvMigrations.features.module.template'), $data, 'Feature');
+        if (in_array($name, Utility::findDirs($path))) {
+            $this->abort(sprintf('Module %s already exists', $name));
+        }
     }
 
     /**
-     * Generates csv module configuration files.
+     * Wrapper method responsible for baking the actual files.
+     *
+     * @param string $name Filename
+     * @param string $template Template name
+     * @param array $data Template data
+     * @param string $suffix Filename suffix
+     * @param array $options Extra options
+     * @return bool
+     */
+    private function bake($name, $template, array $data = [], $suffix = '', array $options = [])
+    {
+        $this->BakeTemplate->set($data);
+        $contents = $this->BakeTemplate->generate('CsvMigrations.' . $template);
+
+        $path = empty($options['path']) ? $this->getPath() : $options['path'];
+        $extension = empty($options['ext']) ? $options['ext'] = 'php' : $options['ext'];
+
+        return $this->createFile($path . $name . $suffix . '.' . $extension, $contents);
+    }
+
+    /**
+     * Bake Module configuration files.
      *
      * @param string $name Module name
      * @return void
      */
-    protected function _generateConfigFiles($name)
+    private function bakeModuleConfig($name)
     {
-        $templatePath = current(App::path('Template', 'CsvMigrations')) . 'Bake/config/CsvModule';
-        $templatePath = str_replace('/', DS, $templatePath);
+        $options = [
+            'path' => Configure::read('CsvMigrations.modules.path') . $name . DS . 'config' . DS,
+            'ext' => 'json'
+        ];
 
-        if (!file_exists($templatePath)) {
-            $this->abort('CsvModule Bake template does not exist.');
-        }
+        $this->bake('config', 'Module/config/config', [], '', $options);
+        $this->bake('fields', 'Module/config/fields', [], '', $options);
+        $this->bake(
+            'menus',
+            'Module/config/menus',
+            ['label' => Inflector::humanize($name), 'url' => DS . Inflector::dasherize($name) . DS],
+            '',
+            $options
+        );
+    }
 
-        $path = Configure::read('CsvMigrations.modules.path') . $this->_camelize($name) . DS;
+    /**
+     * Bake Database configuration files.
+     *
+     * @param string $name Module name
+     * @return void
+     */
+    private function bakeDatabaseConfig($name)
+    {
+        $options = [
+            'path' => Configure::read('CsvMigrations.modules.path') . $name . DS . 'db' . DS,
+            'ext' => 'json'
+        ];
 
-        if (file_exists($path)) {
-            $this->abort(Inflector::humanize(Inflector::underscore($name)) . ' module already has configuration files.');
-        }
+        $this->bake('migration', 'Module/db/migration', [], '', $options);
+    }
 
-        $folder = new Folder($templatePath);
+    /**
+     * Bake Views configuration files.
+     *
+     * @param string $name Module name
+     * @return void
+     */
+    private function bakeViewsConfig($name)
+    {
+        $options = [
+            'path' => Configure::read('CsvMigrations.modules.path') . $name . DS . 'views' . DS,
+            'ext' => 'json'
+        ];
 
-        $this->out('Generating config files in ' . $path);
-        if (!$folder->copy($path)) {
-            $this->abort('Failure');
-        }
+        $this->bake('add', 'Module/views/add', [], '', $options);
+        $this->bake('edit', 'Module/views/edit', [], '', $options);
+        $this->bake('index', 'Module/views/index', [], '', $options);
+        $this->bake('view', 'Module/views/view', [], '', $options);
+    }
 
-        // Once the files are copied. Go through them and generate twig ones.
-        if (!$this->_processConfigFiles($name, $path)) {
-            $this->abort('Couldn\'t process twig files within module config dir');
-        }
+    /**
+     * Bake Controller class.
+     *
+     * @param string $name Module name
+     * @return void
+     */
+    private function bakeController($name)
+    {
+        $this->pathFragment = 'Controller/';
 
-        $this->success('Success');
+        $this->bake($name, 'Controller/controller', ['name' => $name], 'Controller');
+    }
+
+    /**
+     * Bake API Controller class.
+     *
+     * @param string $name Module name
+     * @return void
+     */
+    private function bakeApiController($name)
+    {
+        $apiPaths = $this->getTargetApiPath();
+        $this->pathFragment = $apiPaths['fragment'];
+
+        $this->bake($name, 'Controller/Api/controller', array_merge(['name' => $name], $apiPaths), 'Controller');
+    }
+
+    /**
+     * Bake Model/Table class.
+     *
+     * @param string $name Module name
+     * @return void
+     */
+    private function bakeTable($name)
+    {
+        $this->pathFragment = 'Model/Table/';
+
+        $this->bake($name, 'Model/table', ['name' => $name, 'table' => Inflector::underscore($name)], 'Table');
+    }
+
+    /**
+     * Bake Model/Entity class.
+     *
+     * @param string $name Module name
+     * @return void
+     */
+    private function bakeEntity($name)
+    {
+        $this->pathFragment = 'Model/Entity/';
+
+        $this->bake($this->_entityName($name), 'Model/entity', ['name' => $this->_entityName($name)]);
+    }
+
+    /**
+     * Bake Feature class.
+     *
+     * @param string $name Module name
+     * @return void
+     */
+    private function bakeFeature($name)
+    {
+        $this->pathFragment = 'Feature/Type/Module/';
+
+        $this->bake($name, 'Feature/feature', ['name' => $name], 'Feature');
     }
 
     /**
@@ -178,119 +276,5 @@ class CsvModuleTask extends BakeTask
         }
 
         return $result;
-    }
-
-    /**
-     * Process Config directory for the module
-     *
-     * @param string $name of the module
-     * @param string $path of the module location
-     *
-     * @return bool $result on whether the conf files were processed.
-     */
-    protected function _processConfigFiles($name, $path)
-    {
-        $result = false;
-        $path .= 'config' . DS;
-
-        $dir = new Folder($path);
-
-        $contents = $dir->read(true, true);
-
-        if (empty($contents[1])) {
-            return $result;
-        }
-
-        foreach ($contents[1] as $file) {
-            if (substr($file, -5) !== '.twig') {
-                continue;
-            }
-
-            $filename = substr($file, 0, -5);
-            $methodName = 'set' . Inflector::camelize($filename) . 'Template';
-
-            if (!method_exists($this, $methodName)) {
-                throw new \RuntimeException("No method for setting data for $file exists");
-            }
-
-            $data = $this->$methodName(['name' => $name]);
-            $templateName = 'config' . DS . 'CsvModule' . DS . 'config' . DS . $filename;
-
-            $contents = $this->_bakeTemplate($filename, $templateName, $data, '', [
-                'ext' => $data['ext'],
-                'path' => $data['path'],
-            ]);
-
-            if (!empty($contents)) {
-                $result = $this->_deleteFile($file, $data['path']);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Remove template file from generated module
-     *
-     * @param string $file name of twig template
-     * @param string $path of the destination directory
-     *
-     * @return bool $result on file deletion.
-     */
-    protected function _deleteFile($file, $path)
-    {
-        $result = false;
-
-        $file = new File($path . $file);
-        $result = $file->delete();
-        $file->close();
-
-        return $result;
-    }
-
-    /**
-     * Template Data setter
-     *
-     * @param array $options passing module's name
-     *
-     * @return array $data with required paths and vars
-     */
-    protected function setMenusTemplate(array $options = [])
-    {
-        $data = [
-            'label' => Inflector::humanize($options['name']),
-            'url' => DS . Inflector::dasherize($options['name']) . DS,
-            'path' => CONFIG . 'Modules' . DS . $options['name'] . DS . 'config' . DS,
-            'ext' => '.json',
-        ];
-
-        return $data;
-    }
-
-    /**
-     * Generate the controller code
-     *
-     * @param string $name The name of the controller.
-     * @param string $templateName Template name.
-     * @param array $data The data to turn into code.
-     * @param string $fileSuffix File suffix.
-     * @return string The generated controller file.
-     */
-    protected function _bakeTemplate($name, $templateName, array $data, $fileSuffix = '', array $options = [])
-    {
-        $this->BakeTemplate->set($data);
-        $contents = $this->BakeTemplate->generate('CsvMigrations.' . $templateName);
-
-        $path = empty($options['path']) ? $this->getPath() : $options['path'];
-
-        if (empty($options['ext'])) {
-            $options['ext'] = '.php';
-        }
-
-        $filename = $path . $name . $fileSuffix . $options['ext'];
-
-        $this->createFile($filename, $contents);
-
-        return $contents;
     }
 }

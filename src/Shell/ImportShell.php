@@ -20,8 +20,6 @@ use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Shell\Helper\ProgressHelper;
-use CsvMigrations\Controller\Traits\ImportTrait;
-use CsvMigrations\FieldTrait;
 use CsvMigrations\Model\Entity\Import;
 use CsvMigrations\Model\Entity\ImportResult;
 use CsvMigrations\Model\Table\ImportsTable;
@@ -30,13 +28,10 @@ use CsvMigrations\Utility\Import as ImportUtility;
 use Exception;
 use League\Csv\Reader;
 use League\Csv\Writer;
-use Qobo\Utils\Utility\FileLock;
+use Qobo\Utils\Utility\Lock\FileLock;
 
 class ImportShell extends Shell
 {
-    use FieldTrait;
-    use ImportTrait;
-
     /**
      * Set shell description and command line options
      *

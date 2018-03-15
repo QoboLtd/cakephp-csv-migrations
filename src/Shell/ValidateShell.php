@@ -14,11 +14,10 @@ namespace CsvMigrations\Shell;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
-use CsvMigrations\FieldHandlers\Config\ConfigFactory;
+use CsvMigrations\Utility\Validate\Utility;
 use Exception;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
-use Qobo\Utils\Utility;
 
 class ValidateShell extends Shell
 {
@@ -54,8 +53,7 @@ class ValidateShell extends Shell
         $this->out('Checking modules configuration');
         $this->hr();
 
-        $path = Configure::read('CsvMigrations.modules.path');
-        $this->modules = Utility::findDirs($path);
+        $this->modules = Utility::getModules();
 
         if (empty($this->modules)) {
             $this->out('<warning>Did not find any modules</warning>');
@@ -142,183 +140,6 @@ class ValidateShell extends Shell
     }
 
     /**
-     * Check if the given module is valid
-     *
-     * @param string $module Module name to check
-     * @return bool True if module is valid, false otherwise
-     */
-    protected function _isValidModule($module)
-    {
-        $result = false;
-
-        if (in_array($module, $this->modules)) {
-            $result = true;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Check if the given list is valid
-     *
-     * Lists with no items are assumed to be
-     * invalid.
-     *
-     * @param string $list List name to check
-     * @return bool True if valid, false is otherwise
-     */
-    protected function _isValidList($list)
-    {
-        $result = false;
-
-        $module = null;
-        if (strpos($list, '.') !== false) {
-            list($module, $list) = explode('.', $list, 2);
-        }
-        $listItems = [];
-        try {
-            $mc = new ModuleConfig(ConfigType::LISTS(), $module, $list, ['cacheSkip' => true]);
-            $listItems = $mc->parse()->items;
-        } catch (Exception $e) {
-            // We don't care about the specifics of the failure
-        }
-
-        if ($listItems) {
-            $result = true;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Check if the given field is valid for given module
-     *
-     * If valid fields are not available from the migration
-     * we will assume that the field is valid.
-     *
-     * @param string $module Module to check in
-     * @param string $field Field to check
-     * @return bool True if field is valid, false otherwise
-     */
-    protected function _isValidModuleField($module, $field)
-    {
-        $result = false;
-
-        if ($this->_isRealModuleField($module, $field) || $this->_isVirtualModuleField($module, $field)) {
-            $result = true;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Check if the field is defined in the module migration
-     *
-     * If the migration file does not exist or is not
-     * parseable, it is assumed the field is real.  Presence
-     * and validity of the migration file is checked
-     * elsewhere.
-     *
-     * @param string $module Module to check in
-     * @param string $field Field to check
-     * @return bool True if field is real, false otherwise
-     */
-    protected function _isRealModuleField($module, $field)
-    {
-        $result = false;
-
-        $moduleFields = [];
-        try {
-            $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
-            $moduleFields = json_decode(json_encode($mc->parse()), true);
-        } catch (Exception $e) {
-            // We already report issues with migration in _checkMigrationPresence()
-        }
-
-        // If we couldn't get the migration, we cannot verify if the
-        // field is real or not.  To avoid unnecessary fails, we
-        // assume that it's real.
-        if (empty($moduleFields)) {
-            return true;
-        }
-
-        foreach ($moduleFields as $moduleField) {
-            if ($field == $moduleField['name']) {
-                return true;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Check if the field is defined in the module's virtual fields
-     *
-     * The validity of the virtual field definition is checked
-     * elsewhere.  Here we only verify that the field exists in
-     * the `[virtualFields]` section definition.
-     *
-     * @param string $module Module to check in
-     * @param string $field Field to check
-     * @return bool True if field is real, false otherwise
-     */
-    protected function _isVirtualModuleField($module, $field)
-    {
-        $result = false;
-
-        $config = [];
-        try {
-            $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
-            $config = (array)json_decode(json_encode($mc->parse()), true);
-        } catch (Exception $e) {
-            return $result;
-        }
-
-        if (empty($config)) {
-            return $result;
-        }
-
-        if (empty($config['virtualFields'])) {
-            return $result;
-        }
-
-        if (!is_array($config['virtualFields'])) {
-            return $result;
-        }
-
-        foreach ($config['virtualFields'] as $virtualField => $realFields) {
-            if ($virtualField == $field) {
-                return true;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Check if the field type is valid
-     *
-     * Migration field type needs a field handler configuration.
-     *
-     * @param string $type Field type
-     * @return bool True if valid, false otherwise
-     */
-    protected function _isValidFieldType($type)
-    {
-        $result = false;
-
-        try {
-            $config = ConfigFactory::getByType($type, 'dummy_field');
-        } catch (Exception $e) {
-            return $result;
-        }
-
-        $result = true;
-
-        return $result;
-    }
-
-    /**
      * Check module config
      *
      * @param string $module Module name
@@ -347,7 +168,7 @@ class ValidateShell extends Shell
             if (!empty($config['table'])) {
                 // 'display_field' key is optional, but must contain valid field if specified
                 if (!empty($config['table']['display_field'])) {
-                    if (!$this->_isValidModuleField($module, $config['table']['display_field'])) {
+                    if (!Utility::isValidModuleField($module, $config['table']['display_field'])) {
                         $errors[] = $module . " config [table] section references unknown field '" . $config['table']['display_field'] . "' in 'display_field' key";
                     }
                     if (!empty($options['display_field_bad_values']) && in_array($config['table']['display_field'], $options['display_field_bad_values'])) {
@@ -364,7 +185,7 @@ class ValidateShell extends Shell
                 // 'typeahead_fields' key is optional, but must contain valid fields if specified
                 if (!empty($config['table']['typeahead_fields'])) {
                     foreach ($config['table']['typeahead_fields'] as $typeaheadField) {
-                        if (!$this->_isValidModuleField($module, $typeaheadField)) {
+                        if (!Utility::isValidModuleField($module, $typeaheadField)) {
                             $errors[] = $module . " config [table] section references unknown field '" . $typeaheadField . "' in 'typeahead_fields' key";
                         }
                     }
@@ -372,7 +193,7 @@ class ValidateShell extends Shell
                 // 'lookup_fields' key is optional, but must contain valid fields if specified
                 if (!empty($config['table']['lookup_fields'])) {
                     foreach ($config['table']['lookup_fields'] as $lookupField) {
-                        if (!$this->_isValidModuleField($module, $lookupField)) {
+                        if (!Utility::isValidModuleField($module, $lookupField)) {
                             $errors[] = $module . " config [table] section references unknown field '" . $lookupField . "' in 'lookup_fields' key";
                         }
                     }
@@ -382,12 +203,12 @@ class ValidateShell extends Shell
             // [parent] section
             if (!empty($config['parent'])) {
                 if (!empty($config['parent']['module'])) {
-                    if (!$this->_isValidModule($config['parent']['module'])) {
+                    if (!Utility::isValidModule($config['parent']['module'])) {
                         $errors[] = $module . " config [parent] section references unknown module '" . $config['parent']['module'] . "' in 'module' key";
                     }
                 }
                 if (!empty($config['parent']['relation'])) {
-                    if (!$this->_isRealModuleField($config['parent']['relation'], $module)) {
+                    if (!Utility::isRealModuleField($config['parent']['relation'], $module)) {
                         $errors[] = $module . " config [parent] section references non-real field '" . $config['parent']['relation'] . "' in 'relation' key";
                     }
                 }
@@ -417,7 +238,7 @@ class ValidateShell extends Shell
                         continue;
                     }
                     foreach ($realFields as $realField) {
-                        if (!$this->_isRealModuleField($module, $realField)) {
+                        if (!Utility::isRealModuleField($module, $realField)) {
                             $errors[] = $module . " config [virtualFields] section uses a non-real field in '$virtualField' virtual field";
                         }
                     }
@@ -430,7 +251,7 @@ class ValidateShell extends Shell
                 if (!empty($config['manyToMany']['modules'])) {
                     $manyToManyModules = $config['manyToMany']['modules'];
                     foreach ($manyToManyModules as $manyToManyModule) {
-                        if (!$this->_isValidModule($manyToManyModule)) {
+                        if (!Utility::isValidModule($manyToManyModule)) {
                             $errors[] = $module . " config [manyToMany] section references unknown module '$manyToManyModule' in 'modules' key";
                         }
                     }
@@ -443,7 +264,7 @@ class ValidateShell extends Shell
                 if (!empty($config['notifications']['ignored_fields'])) {
                     $ignoredFields = explode(',', trim($config['notifications']['ignored_fields']));
                     foreach ($ignoredFields as $ignoredField) {
-                        if (!$this->_isValidModuleField($module, $ignoredField)) {
+                        if (!Utility::isValidModuleField($module, $ignoredField)) {
                             $errors[] = $module . " config [notifications] section references unknown field '" . $ignoredField . "' in 'typeahead_fields' key";
                         }
                     }
@@ -457,7 +278,7 @@ class ValidateShell extends Shell
                     $conversionModules = explode(',', $config['conversion']['modules']);
                     foreach ($conversionModules as $conversionModule) {
                         // Only check for simple modules, not the vendor/plugin ones
-                        if (preg_match('/^\w+$/', $conversionModule) && !$this->_isValidModule($conversionModule)) {
+                        if (preg_match('/^\w+$/', $conversionModule) && !Utility::isValidModule($conversionModule)) {
                             $errors[] = $module . " config [conversion] section references unknown module '$conversionModule' in 'modules' key";
                         }
                     }
@@ -466,7 +287,7 @@ class ValidateShell extends Shell
                 if (!empty($config['conversion']['inherit'])) {
                     $inheritModules = explode(',', $config['conversion']['inherit']);
                     foreach ($inheritModules as $inheritModule) {
-                        if (!$this->_isValidModule($inheritModule)) {
+                        if (!Utility::isValidModule($inheritModule)) {
                             $errors[] = $module . " config [conversion] section references unknown module '$inheritModule' in 'inherit' key";
                         }
                     }
@@ -474,7 +295,7 @@ class ValidateShell extends Shell
                 // 'field' key is optional, but must contain valid field and 'value' if defined
                 if (!empty($config['conversion']['field'])) {
                     // 'field' key is optional, but must contain valid field is specified
-                    if (!$this->_isValidModuleField($module, $config['conversion']['field'])) {
+                    if (!Utility::isValidModuleField($module, $config['conversion']['field'])) {
                         $errors[] = $module . " config [conversion] section references unknown field '" . $config['conversion']['field'] . "' in 'field' key";
                     }
                     // 'value' key must be set
@@ -653,13 +474,13 @@ class ValidateShell extends Shell
                             $type = $field['type'];
                         }
                         // Field type must be valid
-                        if (!$this->_isValidFieldType($type)) {
+                        if (!Utility::isValidFieldType($type)) {
                             $errors[] = $module . " migration specifies invalid type '" . $type . "' for field  '" . $field['name'] . "'";
                         } else {
                             switch ($type) {
                                 case 'related':
                                     // Only check for simple modules, not the vendor/plugin ones
-                                    if (preg_match('/^\w+$/', $limit) && !$this->_isValidModule($limit)) {
+                                    if (preg_match('/^\w+$/', $limit) && !Utility::isValidModule($limit)) {
                                         $errors[] = $module . " migration relates to unknown module '$limit' in '" . $field['name'] . "' field";
                                     }
                                     // Documents module can be used as `files(Documents)` for a container of the uploaded files,
@@ -674,7 +495,7 @@ class ValidateShell extends Shell
                                 case 'list':
                                 case 'money':
                                 case 'metric':
-                                    if (!$this->_isValidList($limit)) {
+                                    if (!Utility::isValidList($limit)) {
                                         $errors[] = $module . " migration uses unknown or empty list '$limit' in '" . $field['name'] . "' field";
                                     }
                                     break;
@@ -765,20 +586,20 @@ class ValidateShell extends Shell
                                         if (empty($embeddedModule)) {
                                             $errors[] = $module . " module [$view] view reference EMBEDDED column without a module";
                                         } else {
-                                            if (!$this->_isValidModule($embeddedModule)) {
+                                            if (!Utility::isValidModule($embeddedModule)) {
                                                 $errors[] = $module . " module [$view] view reference EMBEDDED column with unknown module '$embeddedModule'";
                                             }
                                         }
                                         if (empty($embeddedModuleField)) {
                                             $errors[] = $module . " module [$view] view reference EMBEDDED column without a module field";
                                         } else {
-                                            if (!$this->_isValidModuleField($module, $embeddedModuleField)) {
+                                            if (!Utility::isValidModuleField($module, $embeddedModuleField)) {
                                                 $errors[] = $module . " module [$view] view reference EMBEDDED column with unknown field '$embeddedModuleField' of module '$embeddedModule'";
                                             }
                                         }
                                         $isEmbedded = false;
                                     } else {
-                                        if ($column && !$this->_isValidModuleField($module, $column)) {
+                                        if ($column && !Utility::isValidModuleField($module, $column)) {
                                             $errors[] = $module . " module [$view] view references unknown field '$column'";
                                         }
                                     }
@@ -789,7 +610,7 @@ class ValidateShell extends Shell
                             }
                         } elseif (count($field) == 1) {
                             // index view
-                            if ($field[0] && !$this->_isValidModuleField($module, $field[0])) {
+                            if ($field[0] && !Utility::isValidModuleField($module, $field[0])) {
                                 $errors[] = $module . " module [$view] view references unknown field '" . $field[0] . "'";
                             }
                         }

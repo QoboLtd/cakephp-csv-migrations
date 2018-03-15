@@ -35,7 +35,7 @@ class ValidateShell extends Shell
     public function getOptionParser()
     {
         $parser = new ConsoleOptionParser('console');
-        $parser->description('Validate CSV and configuration files of all CSV modules');
+        $parser->description('Validate modules configuration');
         $parser->addArgument('modules', [
             'help' => 'Comma-separated list of modules to validate.  All will be checked if omitted.',
         ]);
@@ -51,24 +51,18 @@ class ValidateShell extends Shell
      */
     public function main($modules = null)
     {
-        $modules = (string)$modules;
-        if (!empty($modules)) {
-            $modules = explode(',', $modules);
-        } else {
-            $modules = [];
-        }
-
-        $this->out('Checking CSV files and configurations');
+        $this->out('Checking modules configuration');
         $this->hr();
 
         $path = Configure::read('CsvMigrations.modules.path');
         $this->modules = Utility::findDirs($path);
 
         if (empty($this->modules)) {
-            $this->out('<warning>Did not find any CSV modules</warning>');
+            $this->out('<warning>Did not find any modules</warning>');
             exit();
         }
 
+        $modules = empty($modules) ? $this->modules : explode(',', (string)$modules);
         $errorsCount = $this->validateModules($modules);
         if ($errorsCount > 0) {
             $this->abort("Errors found: $errorsCount.  Validation failed!");
@@ -79,39 +73,30 @@ class ValidateShell extends Shell
     /**
      * Validate a given list of modules
      *
-     * If the list of modules is omitted, then all CSV
-     * modules will be validated.
-     *
      * @param array $modules List of module names to validate
      * @return int Count of errors found
      */
-    protected function validateModules(array $modules = [])
+    protected function validateModules(array $modules)
     {
         $result = 0;
 
-        if (empty($modules)) {
-            $modules = $this->modules;
-        }
-
+        $defaultOptions = Configure::read('CsvMigrations.ValidateShell.module._default');
         foreach ($modules as $module) {
             $errors = [];
             $warnings = [];
-            $checks = [
-                '_checkConfig',
-                '_checkFields',
-                '_checkMenus',
-                '_checkReports',
-                '_checkMigration',
-                '_checkViews',
-            ];
 
             $this->out("Checking module $module", 2);
 
+            $moduleOptions = Configure::read('CsvMigrations.ValidateShell.module.' . $module);
+            $moduleOptions = empty($moduleOptions) ? $defaultOptions : $moduleOptions;
+
+            $checks = $moduleOptions['checks'];
+
             if (!in_array($module, $this->modules)) {
-                $errors[] = "$module is not a CSV module";
+                $errors[] = "$module is not a known module";
             } else {
-                foreach ($checks as $check) {
-                    $checkResult = $this->$check($module);
+                foreach ($checks as $check => $options) {
+                    $checkResult = $this->$check($module, $options);
                     $errors = array_merge($errors, $checkResult['errors']);
                     $warnings = array_merge($warnings, $checkResult['warnings']);
                 }
@@ -337,9 +322,10 @@ class ValidateShell extends Shell
      * Check module config
      *
      * @param string $module Module name
+     * @param array $options Module validation options
      * @return array A list of errors
      */
-    protected function _checkConfig($module)
+    protected function _checkConfig($module, array $options = [])
     {
         $errors = [];
         $warnings = [];
@@ -364,7 +350,17 @@ class ValidateShell extends Shell
                     if (!$this->_isValidModuleField($module, $config['table']['display_field'])) {
                         $errors[] = $module . " config [table] section references unknown field '" . $config['table']['display_field'] . "' in 'display_field' key";
                     }
+                    if (!empty($options['display_field_bad_values']) && in_array($config['table']['display_field'], $options['display_field_bad_values'])) {
+                        $errors[] = $module . " config [table] section uses bad value '" . $config['table']['display_field'] . "' in 'display_field' key";
+                    }
                 }
+                // 'icon' key is optional, but must contain good values if specified
+                if (!empty($config['table']['icon'])) {
+                    if (!empty($options['icon_bad_values']) && in_array($config['table']['icon'], $options['icon_bad_values'])) {
+                        $errors[] = $module . " config [table] section uses bad value '" . $config['table']['icon'] . "' in 'icon' key";
+                    }
+                }
+
                 // 'typeahead_fields' key is optional, but must contain valid fields if specified
                 if (!empty($config['table']['typeahead_fields'])) {
                     foreach ($config['table']['typeahead_fields'] as $typeaheadField) {
@@ -504,9 +500,10 @@ class ValidateShell extends Shell
      * Check fields config
      *
      * @param string $module Module name
+     * @param array $options Module validation options
      * @return array A list of errors
      */
-    protected function _checkFields($module)
+    protected function _checkFields($module, array $options = [])
     {
         $errors = [];
         $warnings = [];
@@ -537,9 +534,10 @@ class ValidateShell extends Shell
      * Check menus config
      *
      * @param string $module Module name
+     * @param array $options Module validation options
      * @return array A list of errors
      */
-    protected function _checkMenus($module)
+    protected function _checkMenus($module, array $options = [])
     {
         $errors = [];
         $warnings = [];
@@ -570,9 +568,10 @@ class ValidateShell extends Shell
      * Check reports config
      *
      * @param string $module Module name
+     * @param array $options Module validation options
      * @return array A list of errors
      */
-    protected function _checkReports($module)
+    protected function _checkReports($module, array $options = [])
     {
         $errors = [];
         $warnings = [];
@@ -603,9 +602,10 @@ class ValidateShell extends Shell
      * Check module migration
      *
      * @param string $module Module name
+     * @param array $options Module validation options
      * @return array A list of errors
      */
-    protected function _checkMigration($module)
+    protected function _checkMigration($module, array $options = [])
     {
         $errors = [];
         $warnings = [];
@@ -712,9 +712,10 @@ class ValidateShell extends Shell
      * Check module views
      *
      * @param string $module Module name
+     * @param array $options Module validation options
      * @return array A list of errors
      */
-    protected function _checkViews($module)
+    protected function _checkViews($module, array $options = [])
     {
         $errors = [];
         $warnings = [];

@@ -35,7 +35,7 @@ class ValidateShell extends Shell
     public function getOptionParser()
     {
         $parser = new ConsoleOptionParser('console');
-        $parser->description('Validate CSV and configuration files of all CSV modules');
+        $parser->description('Validate modules configuration');
         $parser->addArgument('modules', [
             'help' => 'Comma-separated list of modules to validate.  All will be checked if omitted.',
         ]);
@@ -58,14 +58,14 @@ class ValidateShell extends Shell
             $modules = [];
         }
 
-        $this->out('Checking CSV files and configurations');
+        $this->out('Checking modules configuration');
         $this->hr();
 
         $path = Configure::read('CsvMigrations.modules.path');
         $this->modules = Utility::findDirs($path);
 
         if (empty($this->modules)) {
-            $this->out('<warning>Did not find any CSV modules</warning>');
+            $this->out('<warning>Did not find any modules</warning>');
             exit();
         }
 
@@ -79,7 +79,7 @@ class ValidateShell extends Shell
     /**
      * Validate a given list of modules
      *
-     * If the list of modules is omitted, then all CSV
+     * If the list of modules is omitted, then all
      * modules will be validated.
      *
      * @param array $modules List of module names to validate
@@ -108,7 +108,7 @@ class ValidateShell extends Shell
             $this->out("Checking module $module", 2);
 
             if (!in_array($module, $this->modules)) {
-                $errors[] = "$module is not a CSV module";
+                $errors[] = "$module is not a known module";
             } else {
                 foreach ($checks as $check) {
                     $checkResult = $this->$check($module);

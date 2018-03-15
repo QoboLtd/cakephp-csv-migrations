@@ -354,6 +354,13 @@ class ValidateShell extends Shell
                         $errors[] = $module . " config [table] section uses bad value '" . $config['table']['display_field'] . "' in 'display_field' key";
                     }
                 }
+                // 'icon' key is optional, but must contain good values if specified
+                if (!empty($config['table']['icon'])) {
+                    if (!empty($options['icon_bad_values']) && in_array($config['table']['icon'], $options['icon_bad_values'])) {
+                        $errors[] = $module . " config [table] section uses bad value '" . $config['table']['icon'] . "' in 'icon' key";
+                    }
+                }
+
                 // 'typeahead_fields' key is optional, but must contain valid fields if specified
                 if (!empty($config['table']['typeahead_fields'])) {
                     foreach ($config['table']['typeahead_fields'] as $typeaheadField) {

@@ -70,6 +70,7 @@ return [
                     'checks' => [
                         '_checkConfig' => [
                             'display_field_bad_values' => [],
+                            'icon_bad_values' => [],
                         ],
                         '_checkFields' => [],
                         '_checkMenus' => [],

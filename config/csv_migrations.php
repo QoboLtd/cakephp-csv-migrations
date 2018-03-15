@@ -68,7 +68,9 @@ return [
             'module' => [
                 '_default' => [
                     'checks' => [
-                        '_checkConfig' => [],
+                        '_checkConfig' => [
+                            'display_field_bad_values' => [],
+                        ],
                         '_checkFields' => [],
                         '_checkMenus' => [],
                         '_checkReports' => [],

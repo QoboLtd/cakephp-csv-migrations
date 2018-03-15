@@ -350,6 +350,9 @@ class ValidateShell extends Shell
                     if (!$this->_isValidModuleField($module, $config['table']['display_field'])) {
                         $errors[] = $module . " config [table] section references unknown field '" . $config['table']['display_field'] . "' in 'display_field' key";
                     }
+                    if (!empty($options['display_field_bad_values']) && in_array($config['table']['display_field'], $options['display_field_bad_values'])) {
+                        $errors[] = $module . " config [table] section uses bad value '" . $config['table']['display_field'] . "' in 'display_field' key";
+                    }
                 }
                 // 'typeahead_fields' key is optional, but must contain valid fields if specified
                 if (!empty($config['table']['typeahead_fields'])) {

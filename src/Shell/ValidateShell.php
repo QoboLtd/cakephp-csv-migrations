@@ -51,13 +51,6 @@ class ValidateShell extends Shell
      */
     public function main($modules = null)
     {
-        $modules = (string)$modules;
-        if (!empty($modules)) {
-            $modules = explode(',', $modules);
-        } else {
-            $modules = [];
-        }
-
         $this->out('Checking modules configuration');
         $this->hr();
 
@@ -69,6 +62,7 @@ class ValidateShell extends Shell
             exit();
         }
 
+        $modules = empty($modules) ? [] : explode(',', (string)$modules);
         $errorsCount = $this->validateModules($modules);
         if ($errorsCount > 0) {
             $this->abort("Errors found: $errorsCount.  Validation failed!");

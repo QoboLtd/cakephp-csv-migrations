@@ -64,19 +64,31 @@ return [
                 'url' => "/api/file-storages/delete/"
             ]
         ],
+        // Configuration options for the ValidateShell
         'ValidateShell' => [
+            // Module-specific configuration options
             'module' => [
+                // Default module options (used if no module-specific options given)
                 '_default' => [
+                    // The list of checks to perform during the module validation.
+                    // Checks are an associative array of classes (keys) and options
+                    // (values).  Classes have exist and implement the
+                    // CsvMigrations\Utility\Validate\Check\CheckInterface or an
+                    // exception will be thrown during the validation run.
                     'checks' => [
-                        '_checkConfig' => [
+                        'CsvMigrations\\Utility\\Validate\\Check\\ConfigCheck' => [
+                            // List of fields, which are not allowed to be used as
+                            // display_field.  For example: id.
                             'display_field_bad_values' => [],
+                            // List of icons, which are not allowed to be used as
+                            // module icons.  For example: cube.
                             'icon_bad_values' => [],
                         ],
-                        '_checkFields' => [],
-                        '_checkMenus' => [],
-                        '_checkReports' => [],
-                        '_checkMigration' => [],
-                        '_checkViews' => [],
+                        'CsvMigrations\\Utility\\Validate\\Check\\FieldsCheck' => [],
+                        'CsvMigrations\\Utility\\Validate\\Check\\MenusCheck' => [],
+                        'CsvMigrations\\Utility\\Validate\\Check\\ReportsCheck' => [],
+                        'CsvMigrations\\Utility\\Validate\\Check\\MigrationCheck' => [],
+                        'CsvMigrations\\Utility\\Validate\\Check\\ViewsCheck' => [],
                     ]
                 ],
             ]

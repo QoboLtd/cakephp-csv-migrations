@@ -62,7 +62,7 @@ class ValidateShell extends Shell
             exit();
         }
 
-        $modules = empty($modules) ? [] : explode(',', (string)$modules);
+        $modules = empty($modules) ? $this->modules : explode(',', (string)$modules);
         $errorsCount = $this->validateModules($modules);
         if ($errorsCount > 0) {
             $this->abort("Errors found: $errorsCount.  Validation failed!");
@@ -73,19 +73,12 @@ class ValidateShell extends Shell
     /**
      * Validate a given list of modules
      *
-     * If the list of modules is omitted, then all
-     * modules will be validated.
-     *
      * @param array $modules List of module names to validate
      * @return int Count of errors found
      */
-    protected function validateModules(array $modules = [])
+    protected function validateModules(array $modules)
     {
         $result = 0;
-
-        if (empty($modules)) {
-            $modules = $this->modules;
-        }
 
         foreach ($modules as $module) {
             $errors = [];

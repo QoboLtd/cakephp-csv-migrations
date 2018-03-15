@@ -80,25 +80,23 @@ class ValidateShell extends Shell
     {
         $result = 0;
 
+        $defaultOptions = Configure::read('CsvMigrations.ValidateShell.module._default');
         foreach ($modules as $module) {
             $errors = [];
             $warnings = [];
-            $checks = [
-                '_checkConfig',
-                '_checkFields',
-                '_checkMenus',
-                '_checkReports',
-                '_checkMigration',
-                '_checkViews',
-            ];
 
             $this->out("Checking module $module", 2);
+
+            $moduleOptions = Configure::read('CsvMigrations.ValidateShell.module.' . $module);
+            $moduleOptions = empty($moduleOptions) ? $defaultOptions : $moduleOptions;
+
+            $checks = $moduleOptions['checks'];
 
             if (!in_array($module, $this->modules)) {
                 $errors[] = "$module is not a known module";
             } else {
                 foreach ($checks as $check) {
-                    $checkResult = $this->$check($module);
+                    $checkResult = $this->$check($module, $moduleOptions);
                     $errors = array_merge($errors, $checkResult['errors']);
                     $warnings = array_merge($warnings, $checkResult['warnings']);
                 }
@@ -324,9 +322,10 @@ class ValidateShell extends Shell
      * Check module config
      *
      * @param string $module Module name
+     * @param array $options Module validation options
      * @return array A list of errors
      */
-    protected function _checkConfig($module)
+    protected function _checkConfig($module, array $options = [])
     {
         $errors = [];
         $warnings = [];
@@ -491,9 +490,10 @@ class ValidateShell extends Shell
      * Check fields config
      *
      * @param string $module Module name
+     * @param array $options Module validation options
      * @return array A list of errors
      */
-    protected function _checkFields($module)
+    protected function _checkFields($module, array $options = [])
     {
         $errors = [];
         $warnings = [];
@@ -524,9 +524,10 @@ class ValidateShell extends Shell
      * Check menus config
      *
      * @param string $module Module name
+     * @param array $options Module validation options
      * @return array A list of errors
      */
-    protected function _checkMenus($module)
+    protected function _checkMenus($module, array $options = [])
     {
         $errors = [];
         $warnings = [];
@@ -557,9 +558,10 @@ class ValidateShell extends Shell
      * Check reports config
      *
      * @param string $module Module name
+     * @param array $options Module validation options
      * @return array A list of errors
      */
-    protected function _checkReports($module)
+    protected function _checkReports($module, array $options = [])
     {
         $errors = [];
         $warnings = [];
@@ -590,9 +592,10 @@ class ValidateShell extends Shell
      * Check module migration
      *
      * @param string $module Module name
+     * @param array $options Module validation options
      * @return array A list of errors
      */
-    protected function _checkMigration($module)
+    protected function _checkMigration($module, array $options = [])
     {
         $errors = [];
         $warnings = [];
@@ -699,9 +702,10 @@ class ValidateShell extends Shell
      * Check module views
      *
      * @param string $module Module name
+     * @param array $options Module validation options
      * @return array A list of errors
      */
-    protected function _checkViews($module)
+    protected function _checkViews($module, array $options = [])
     {
         $errors = [];
         $warnings = [];

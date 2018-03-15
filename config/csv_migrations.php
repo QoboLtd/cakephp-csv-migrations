@@ -63,6 +63,20 @@ return [
             'initialPreviewConfig' => [
                 'url' => "/api/file-storages/delete/"
             ]
+        ],
+        'ValidateShell' => [
+            'module' => [
+                '_default' => [
+                    'checks' => [
+                        '_checkConfig',
+                        '_checkFields',
+                        '_checkMenus',
+                        '_checkReports',
+                        '_checkMigration',
+                        '_checkViews',
+                    ]
+                ],
+            ]
         ]
     ]
 ];

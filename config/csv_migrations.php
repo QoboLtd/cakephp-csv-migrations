@@ -68,12 +68,12 @@ return [
             'module' => [
                 '_default' => [
                     'checks' => [
-                        '_checkConfig',
-                        '_checkFields',
-                        '_checkMenus',
-                        '_checkReports',
-                        '_checkMigration',
-                        '_checkViews',
+                        '_checkConfig' => [],
+                        '_checkFields' => [],
+                        '_checkMenus' => [],
+                        '_checkReports' => [],
+                        '_checkMigration' => [],
+                        '_checkViews' => [],
                     ]
                 ],
             ]

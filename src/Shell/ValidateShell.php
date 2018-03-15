@@ -95,8 +95,8 @@ class ValidateShell extends Shell
             if (!in_array($module, $this->modules)) {
                 $errors[] = "$module is not a known module";
             } else {
-                foreach ($checks as $check) {
-                    $checkResult = $this->$check($module, $moduleOptions);
+                foreach ($checks as $check => $options) {
+                    $checkResult = $this->$check($module, $options);
                     $errors = array_merge($errors, $checkResult['errors']);
                     $warnings = array_merge($warnings, $checkResult['warnings']);
                 }

@@ -13,18 +13,13 @@ namespace CsvMigrations\Shell;
 
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
-use Cake\Core\Configure;
 use Cake\Utility\Inflector;
+use CsvMigrations\Utility\Validate\Check;
 use CsvMigrations\Utility\Validate\Utility;
-use RuntimeException;
+use Exception;
 
 class ValidateShell extends Shell
 {
-    /**
-     * @var string $checkInterface Interface that all Check classes must implement
-     */
-    protected $checkInterface = 'CsvMigrations\\Utility\\Validate\\Check\\CheckInterface';
-
     /**
      * @var array $modules List of known modules
      */
@@ -115,8 +110,7 @@ class ValidateShell extends Shell
             return $result;
         }
 
-        $options = $this->getModuleOptions($module);
-        $checks = empty($options['checks']) ? [] : $options['checks'];
+        $checks = Check::getList($module);
 
         if (empty($checks)) {
             $result['warnings'][] = "No checks configured for module [$module]";
@@ -128,9 +122,9 @@ class ValidateShell extends Shell
             $this->out(" - Running $check ... ", 0);
 
             try {
-                $check = $this->getCheckInstance($check);
+                $check = Check::getInstance($check);
                 $checkResult = $check->run($module, $options);
-            } catch (RuntimeException $e) {
+            } catch (Exception $e) {
                 $result['errors'][] = $e->getMessage();
                 $this->printCheckStatus(1);
                 continue;
@@ -143,47 +137,6 @@ class ValidateShell extends Shell
         }
 
         return $result;
-    }
-
-    /**
-     * Get ValidateShell configuration for a given module
-     *
-     * If no options configured for the given module, return
-     * the default options instead (aka options for module
-     * '_default').
-     *
-     * @param string $module Module name
-     * @return  array
-     */
-    protected function getModuleOptions($module)
-    {
-        $default = Configure::read('CsvMigrations.ValidateShell.module._default');
-        $result = Configure::read('CsvMigrations.ValidateShell.module.' . $module);
-        $result = empty($result) ? $default : $result;
-
-        return $result;
-    }
-
-    /**
-     * Get an instance of a given check class
-     *
-     * @throws \RuntimeException when class does not exist or is invalid
-     * @param string $checkClass Name of the check class
-     * @return \CsvMigrations\Utility\Validate\Check\CheckInterface
-     */
-    protected function getCheckInstance($checkClass)
-    {
-        $checkClass = (string)$checkClass;
-
-        if (!class_exists($checkClass)) {
-            throw new RuntimeException("Check class [$checkClass] does not exist");
-        }
-
-        if (!in_array($this->checkInterface, array_keys(class_implements($checkClass)))) {
-            throw new RuntimeException("Check class [$checkClass] does not implement [" . $this->checkInterface . "]");
-        }
-
-        return new $checkClass();
     }
 
     /**

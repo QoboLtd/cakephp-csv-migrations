@@ -14,11 +14,17 @@ namespace CsvMigrations\Shell;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
+use Cake\Utility\Inflector;
 use CsvMigrations\Utility\Validate\Utility;
 use RuntimeException;
 
 class ValidateShell extends Shell
 {
+    /**
+     * @var string $checkInterface Interface that all Check classes must implement
+     */
+    protected $checkInterface = 'CsvMigrations\\Utility\\Validate\\Check\\CheckInterface';
+
     /**
      * @var array $modules List of known modules
      */
@@ -48,13 +54,13 @@ class ValidateShell extends Shell
      */
     public function main($modules = null)
     {
-        $this->out('Checking modules configuration');
+        $this->info('Checking modules configuration');
         $this->hr();
 
         $this->modules = Utility::getModules();
 
         if (empty($this->modules)) {
-            $this->out('<warning>Did not find any modules</warning>');
+            $this->warn('Did not find any modules');
             exit();
         }
 
@@ -63,7 +69,7 @@ class ValidateShell extends Shell
         if ($errorsCount > 0) {
             $this->abort("Errors found: $errorsCount.  Validation failed!");
         }
-        $this->out('<success>No errors found. Validation passed!</success>');
+        $this->success('No errors found. Validation passed!');
     }
 
     /**
@@ -76,77 +82,159 @@ class ValidateShell extends Shell
     {
         $result = 0;
 
-        $defaultOptions = Configure::read('CsvMigrations.ValidateShell.module._default');
         foreach ($modules as $module) {
-            $errors = [];
-            $warnings = [];
+            $this->info("Checking module $module", 2);
 
-            $this->out("Checking module $module", 2);
+            $moduleResult = $this->runModuleChecks($module);
 
-            $moduleOptions = Configure::read('CsvMigrations.ValidateShell.module.' . $module);
-            $moduleOptions = empty($moduleOptions) ? $defaultOptions : $moduleOptions;
-
-            $checks = $moduleOptions['checks'];
-
-            if (!in_array($module, $this->modules)) {
-                $errors[] = "$module is not a known module";
-            } else {
-                foreach ($checks as $check => $options) {
-                    $this->out(" - Running $check ... ", 0);
-
-                    if (!class_exists($check)) {
-                        throw new RuntimeException("Check class [$check] does not exist");
-                    }
-                    $interface = 'CsvMigrations\\Utility\\Validate\\Check\\CheckInterface';
-                    if (!in_array($interface, array_keys(class_implements($check)))) {
-                        throw new RuntimeException("Check class [$check] does not implement [$interface]");
-                    }
-                    $check = new $check();
-                    $checkResult = $check->run($module, $options);
-                    $errors = array_merge($errors, $check->getErrors());
-                    $warnings = array_merge($warnings, $check->getWarnings());
-
-                    $checkResult = $checkResult <= 0 ? '<success>OK</success>' : '<error>FAIL</error>';
-                    $this->out($checkResult);
-                }
-            }
-
-            $result += count($errors);
-            $this->_printCheckStatus($errors, $warnings);
+            $result += count($moduleResult['errors']);
+            $this->printMessages('warning', $moduleResult['warnings']);
+            $this->printMessages('error', $moduleResult['errors']);
+            $this->hr();
         }
 
         return $result;
     }
 
     /**
-     * Print the status of a particular check
+     * Run validation checks for a given module
      *
-     * @param array $errors Array of errors to report
-     * @param array $warnings Array of warnings to report
+     * @param string $module Module name
+     * @return array Array with errors and warnings
+     */
+    protected function runModuleChecks($module)
+    {
+        $result = [
+            'errors' => [],
+            'warnings' => [],
+        ];
+
+        if (!in_array($module, $this->modules)) {
+            $result['errors'][] = "$module is not a known module";
+
+            return $result;
+        }
+
+        $options = $this->getModuleOptions($module);
+        $checks = empty($options['checks']) ? [] : $options['checks'];
+
+        if (empty($checks)) {
+            $result['warnings'][] = "No checks configured for module [$module]";
+
+            return $result;
+        }
+
+        foreach ($checks as $check => $options) {
+            $this->out(" - Running $check ... ", 0);
+
+            try {
+                $check = $this->getCheckInstance($check);
+                $checkResult = $check->run($module, $options);
+            } catch (RuntimeException $e) {
+                $result['errors'][] = $e->getMessage();
+                $this->printCheckStatus(1);
+                continue;
+            }
+
+            $result['errors'] = array_merge($result['errors'], $check->getErrors());
+            $result['warnings'] = array_merge($result['warnings'], $check->getWarnings());
+
+            $this->printCheckStatus($checkResult);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get ValidateShell configuration for a given module
+     *
+     * If no options configured for the given module, return
+     * the default options instead (aka options for module
+     * '_default').
+     *
+     * @param string $module Module name
+     * @return  array
+     */
+    protected function getModuleOptions($module)
+    {
+        $default = Configure::read('CsvMigrations.ValidateShell.module._default');
+        $result = Configure::read('CsvMigrations.ValidateShell.module.' . $module);
+        $result = empty($result) ? $default : $result;
+
+        return $result;
+    }
+
+    /**
+     * Get an instance of a given check class
+     *
+     * @throws \RuntimeException when class does not exist or is invalid
+     * @param string $checkClass Name of the check class
+     * @return \CsvMigrations\Utility\Validate\Check\CheckInterface
+     */
+    protected function getCheckInstance($checkClass)
+    {
+        $checkClass = (string)$checkClass;
+
+        if (!class_exists($checkClass)) {
+            throw new RuntimeException("Check class [$checkClass] does not exist");
+        }
+
+        if (!in_array($this->checkInterface, array_keys(class_implements($checkClass)))) {
+            throw new RuntimeException("Check class [$checkClass] does not implement [" . $this->checkInterface . "]");
+        }
+
+        return new $checkClass();
+    }
+
+    /**
+     * Print check status (OK or FAIL)
+     *
+     * If the count of errors is greater than zero,
+     * then print FAIL.  OK otherwise.
+     *
+     * @param int $errorCount Count of errors
      * @return void
      */
-    protected function _printCheckStatus(array $errors = [], array $warnings = [])
+    protected function printCheckStatus($errorCount)
+    {
+        if ($errorCount <= 0) {
+            $this->success('OK');
+
+            return;
+        }
+
+        $this->out($this->wrapMessageWithType('error', 'FAIL'));
+    }
+
+    /**
+     * Print messages of a given type
+     *
+     * @param string $type Type of messages (info, error, warning, etc)
+     * @param array $messages Array of messages to report
+     * @return void
+     */
+    protected function printMessages($type, array $messages = [])
     {
         $this->out('');
 
-        // Print out warnings first, if any
-        if (!empty($warnings)) {
-            $this->out('Warnings:');
-            foreach ($warnings as $warning) {
-                $this->out('<warning> - ' . $warning . '</warning>');
-            }
-            $this->out('');
+        $plural = Inflector::pluralize($type);
+        if (empty($messages)) {
+            $this->success("No $plural found in module.");
+
+            return;
         }
 
-        // Print success or list of errors, if any
-        if (empty($errors)) {
-            $this->out('<success>All OK</success>');
-        } else {
-            $this->out('Errors:');
-            foreach ($errors as $error) {
-                $this->out('<error> - ' . $error . '</error>');
-            }
-        }
-        $this->hr();
+        // Minimize output to only unique messages
+        $messages = array_unique($messages);
+
+        $plural = ucfirst($plural);
+        $this->out($this->wrapMessageWithType($type, "$plural (" . count($messages) . "):"));
+
+        // Remove ROOT path for shorter output
+        $messages = preg_replace('#' . ROOT . DS . '#', '', $messages);
+        // Prefix all messages as list items
+        $messages = preg_replace('/^/', ' - ', $messages);
+
+        $this->out($this->wrapMessageWithType($type, $messages));
     }
 }

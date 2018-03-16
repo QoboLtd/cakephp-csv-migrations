@@ -12,6 +12,7 @@
 namespace CsvMigrations\Utility\Validate;
 
 use Cake\Core\Configure;
+use CsvMigrations\Utility\Validate\Check\CheckInterface;
 use RuntimeException;
 
 class Check
@@ -19,7 +20,7 @@ class Check
     /**
      * @var string $interface Interface that all Check classes must implement
      */
-    protected static $interface = 'CsvMigrations\\Utility\\Validate\\Check\\CheckInterface';
+    protected static $interface = CheckInterface::class;
 
     /**
      * Get an instance of a given check class

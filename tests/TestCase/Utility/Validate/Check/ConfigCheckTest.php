@@ -2,8 +2,8 @@
 namespace CsvMigrations\Test\TestCase\Utility\Validate\Check;
 
 use Cake\TestSuite\TestCase;
-use CsvMigrations\Utility\Validate\Check\ConfigCheck;
 use CsvMigrations\Utility\Validate\Check\CheckInterface;
+use CsvMigrations\Utility\Validate\Check\ConfigCheck;
 
 /**
  * CsvMigrations\Utility\Validate\Check\ConfigCheck Test Case

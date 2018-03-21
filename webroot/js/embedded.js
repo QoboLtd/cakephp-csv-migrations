@@ -52,7 +52,6 @@ var embedded = embedded || {};
 
         var url = $(form).attr('action');
         var embedded = $(form).data('embedded');
-        var modalId = $(form).data('modal_id');
         var data = {};
         var related = {};
 
@@ -111,10 +110,8 @@ var embedded = embedded || {};
                  */
                 that._resetForm(form);
 
-                /*
-                hide modal
-                 */
-                $('#' + modalId).modal('hide');
+                // hide modal
+                $($(form).closest('.modal')).modal('hide');
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);

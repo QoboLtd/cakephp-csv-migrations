@@ -135,19 +135,13 @@ var embedded = embedded || {};
     Embedded.prototype._setRelations = function (related, id, associationName) {
         var that = this;
         url = '/' + related.related_model + '/link/' + related.related_id + '/' + associationName;
-        data = {
-            [associationName.toLowerCase()] : {
-                '_ids' : [
-                    id
-                ]
-            }
-        };
-        data = JSON.stringify(data);
+        data = {[associationName] : {'_ids' : [id]}};
+
         $.ajax({
             url: url,
             type: 'post',
             dataType: 'json',
-            data: data,
+            data: JSON.stringify(data),
             contentType: 'application/json',
             headers: {
                 'Authorization': 'Bearer ' + that.api_token

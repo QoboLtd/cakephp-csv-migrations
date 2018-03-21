@@ -251,10 +251,7 @@ class AppController extends BaseController
         $this->request->allowMethod(['post']);
 
         $association = $this->{$this->name}->{$associationName};
-
-        $ids = $this->request->getData(
-            $association->getTable() . '._ids'
-        );
+        $ids = $this->request->getData($associationName . '._ids');
 
         if (empty($ids)) {
             $this->Flash->error(__('No records provided for linking.'));

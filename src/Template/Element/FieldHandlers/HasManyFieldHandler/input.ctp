@@ -36,7 +36,7 @@ $attributes += [
     <span class="input-group-addon" title="<?= $relatedProperties['controller'] ?>">
         <span class="fa fa-<?= $icon ?>"></span>
     </span>
-        <?= $this->Form->input($name . '._ids', $attributes); ?>
+        <?= $this->Form->input($association->getTarget()->aliasField('_ids'), $attributes); ?>
 
     <div class="input-group-btn">
         <button class="btn btn-primary" title="Link record" type="submit">

@@ -269,12 +269,12 @@ class AppController extends BaseController
         }
 
         if (! $association->link($this->{$this->name}->get($id), $query->toArray())) {
-            $this->Flash->error(__('Failed to link records'));
+            $this->Flash->error(__('Failed to link records.'));
 
             return $this->redirect($this->referer());
         }
 
-        $this->Flash->success(__('The record has been linked.'));
+        $this->Flash->success(sprintf('(%s)', count($ids)) . ' ' . __('records have been linked.'));
 
         return $this->redirect($this->referer());
     }

@@ -26,9 +26,8 @@ $modalBody = $this->requestAction(
     ['plugin' => $plugin, 'controller' => $controller, 'action' => 'add'],
     [
         'query' => [
-            'embedded' => $controller,
+            'embedded' => $association->getName(),
             'foreign_key' => $association->getForeignKey(),
-            'modal_id' => $modalId,
             'related_model' => Inflector::delimit($this->request->controller, '-'),
             'related_id' => $this->request->pass[0],
         ]
@@ -55,7 +54,7 @@ $modalBody = $this->requestAction(
 
         $handlerOptions = [];
         // set associated table name to be used on input field's name
-        $handlerOptions['associated_table_name'] = $association->getTable();
+        $handlerOptions['association'] = $association;
         $handlerOptions['emDataTarget'] = $dataTarget;
         // set field type to 'has_many' and default parameters
         $handlerOptions['fieldDefinitions']['type'] = 'hasMany(' . $association->className() . ')';

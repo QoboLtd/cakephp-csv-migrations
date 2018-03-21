@@ -50,7 +50,7 @@ class HasManyRenderer extends AbstractRenderer
 
         $params = [
             'field' => $field,
-            'name' => $options['associated_table_name'],
+            'association' => $options['association'],
             'type' => 'select',
             'label' => $options['label'],
             'required' => $options['fieldDefinitions']->getRequired(),

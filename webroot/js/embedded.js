@@ -52,7 +52,6 @@ var embedded = embedded || {};
 
         var url = $(form).attr('action');
         var embedded = $(form).data('embedded');
-        var modalId = $(form).data('modal_id');
         var data = {};
         var related = {};
 
@@ -111,10 +110,8 @@ var embedded = embedded || {};
                  */
                 that._resetForm(form);
 
-                /*
-                hide modal
-                 */
-                $('#' + modalId).modal('hide');
+                // hide modal
+                $($(form).closest('.modal')).modal('hide');
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);
@@ -135,19 +132,13 @@ var embedded = embedded || {};
     Embedded.prototype._setRelations = function (related, id, associationName) {
         var that = this;
         url = '/' + related.related_model + '/link/' + related.related_id + '/' + associationName;
-        data = {
-            [associationName.toLowerCase()] : {
-                '_ids' : [
-                    id
-                ]
-            }
-        };
-        data = JSON.stringify(data);
+        data = {[associationName] : {'_ids' : [id]}};
+
         $.ajax({
             url: url,
             type: 'post',
             dataType: 'json',
-            data: data,
+            data: JSON.stringify(data),
             contentType: 'application/json',
             headers: {
                 'Authorization': 'Bearer ' + that.api_token
@@ -173,7 +164,7 @@ var embedded = embedded || {};
      */
     Embedded.prototype._setRelatedField = function (url, id, form) {
         var that = this;
-        url = url.replace('/add', '/view/' + id + '.json');
+        var url = url.replace('/add', '/view/' + id + '.json');
         $.ajax({
             url: url,
             type: 'get',

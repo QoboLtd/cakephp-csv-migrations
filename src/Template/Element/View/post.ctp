@@ -45,10 +45,6 @@ if (!empty($this->request->query['embedded'])) {
     $formOptions['url']['prefix'] = 'api';
     $formOptions['class'] = 'embeddedForm';
 
-    $formOptions['data-modal_id'] = $this->request->query('modal_id') ?
-        $this->request->query('modal_id') :
-        $this->request->query('foreign_key') . '_modal';
-
     $embeddedTableName = $this->request->controller;
     if (!empty($this->request->plugin)) {
         $embeddedTableName = $this->request->plugin . '.' . $embeddedTableName;

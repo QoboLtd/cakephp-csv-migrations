@@ -64,10 +64,8 @@ var embedded = embedded || {};
                 // set related field display-field and value
                 withRelate ? that._setRelations(data.data.id, form) : that._setRelatedField(data.data.id, form);
 
-                /*
-                clear embedded form
-                 */
-                that._resetForm(form);
+                // reset embedded form
+                $(form)[0].reset();
 
                 // hide modal
                 $($(form).closest('.modal')).modal('hide');
@@ -174,17 +172,6 @@ var embedded = embedded || {};
                 console.log(errorThrown);
             }
         });
-    };
-
-    /**
-     * Clear embedded form on successful submission.
-     *
-     * @param  {object} form Form element
-     * @return {void}
-     */
-    Embedded.prototype._resetForm = function (form) {
-        $(form).find('input:text, input:password, input:file, select, textarea').val('');
-        $(form).find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
     };
 
     embedded = new Embedded([]);

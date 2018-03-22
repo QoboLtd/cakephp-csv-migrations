@@ -43,15 +43,19 @@ $formOptions = [
 
 if (!empty($this->request->query['embedded'])) {
     $formOptions['url']['prefix'] = 'api';
-    $formOptions['class'] = 'embeddedForm';
 
     $embeddedTableName = $this->request->controller;
     if (!empty($this->request->plugin)) {
         $embeddedTableName = $this->request->plugin . '.' . $embeddedTableName;
     }
-    $formOptions['data-display_field'] = TableRegistry::get($embeddedTableName)->displayField();
-    $formOptions['data-field_id'] = $this->request->query['foreign_key'];
-    $formOptions['data-embedded'] = $this->request->query['embedded'];
+    $formOptions['data-embedded-display-field'] = TableRegistry::get($embeddedTableName)->displayField();
+    $formOptions['data-embedded-field-id'] = $this->request->query['foreign_key'];
+    $formOptions['data-embedded'] = true;
+    $formOptions['data-embedded-association-name'] = $this->request->query['embedded'];
+    if ($this->request->query('related_model') && $this->request->query('related_id')) {
+        $formOptions['data-embedded-related-model'] = $this->request->query('related_model');
+        $formOptions['data-embedded-related-id'] = $this->request->query('related_id');
+    }
 }
 ?>
 <section class="content-header">
@@ -65,13 +69,6 @@ if (!empty($this->request->query['embedded'])) {
      */
     if (!$this->request->param('pass.conversion')) {
         echo $this->Form->create($options['entity'], $formOptions);
-
-        $relatedModel = $this->request->query('related_model');
-        $relatedId = $this->request->query('related_id');
-        if ($relatedModel && $relatedId) {
-            echo $this->Form->hidden('related_model', ['value' => $relatedModel]);
-            echo $this->Form->hidden('related_id', ['value' => $relatedId]);
-        }
     }
 
     if (!empty($options['fields'])) {

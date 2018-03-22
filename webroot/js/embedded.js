@@ -9,7 +9,7 @@ var embedded = embedded || {};
     {
         this.files = null;
         this.uploadFieldName = null;
-        this.formId = options.hasOwnProperty('formId') ? options.formId : '.embeddedForm';
+        this.formId = 'form[data-embedded="1"]';
         this.api_token = api_options.hasOwnProperty('token') ? api_options.token : null;
         this.attachEvents();
     }
@@ -49,66 +49,23 @@ var embedded = embedded || {};
      */
     Embedded.prototype._submitForm = function (form) {
         var that = this;
+        var withRelate = $(form).data('embedded-related-model') && $(form).data('embedded-related-id');
 
-        var url = $(form).attr('action');
-        var embedded = $(form).data('embedded');
-        var data = {};
-        var related = {};
-
-        $.each($(form).serializeArray(), function (i, field) {
-            if (0 === field.name.indexOf(embedded)) {
-                var name = field.name.replace(embedded, '');
-
-                name = name.replace('[', '');
-                name = name.replace(']', '');
-
-                // @NOTE: if the field name is an array,
-                // we push multiple values.
-                // Example: file_ids[] - we push all the values in.
-                if (name.match(/\[(\d+)?\]$/)) {
-                    name = name.replace('[', '');
-                    name = name.replace(']', '');
-
-                    if (data[name] === undefined) {
-                        data[name] = [];
-                    } else {
-                        if (!data[name].includes(field.value)) {
-                            data[name].push(field.value);
-                        }
-                    }
-                } else {
-                    data[name] = field.value;
-                }
-            } else {
-                if (field.name.match(/related_(id|model)/)) {
-                    related[field.name] = field.value;
-                }
-            }
-        });
-        data = JSON.stringify(data);
         $.ajax({
-            url: url,
+            url: $(form).attr('action'),
             type: 'post',
-            data: data,
+            data: JSON.stringify(this.serializeObject(form)),
             dataType: 'json',
             contentType: 'application/json',
             headers: {
                 'Authorization': 'Bearer ' + that.api_token
             },
             success: function (data, textStatus, jqXHR) {
-                /*
-                set related field display-field and value
-                 */
-                if (related.related_model) {
-                    that._setRelations(related, data.data.id, embedded);
-                } else {
-                    that._setRelatedField(url, data.data.id, form);
-                }
+                // set related field display-field and value
+                withRelate ? that._setRelations(data.data.id, form) : that._setRelatedField(data.data.id, form);
 
-                /*
-                clear embedded form
-                 */
-                that._resetForm(form);
+                // reset embedded form
+                $(form)[0].reset();
 
                 // hide modal
                 $($(form).closest('.modal')).modal('hide');
@@ -122,20 +79,49 @@ var embedded = embedded || {};
     };
 
     /**
+     * Serialize Form to JSON.
+     *
+     * @param {string} form_id Form identifier
+     * @return {object}
+     * @link https://css-tricks.com/snippets/jquery/serialize-form-to-json
+     */
+    Embedded.prototype.serializeObject = function (form_id) {
+        var data = {};
+
+        $.each($(form_id).serializeArray(), function () {
+            var matches = this.name.match(/\[(.*?)\]/);
+            this.name = matches ? matches[1] : this.name;
+
+            if (data[this.name]) {
+                if (! data[this.name].push) {
+                    data[this.name] = [data[this.name]];
+                }
+                data[this.name].push(this.value || '');
+            } else {
+                data[this.name] = this.value || '';
+            }
+        });
+
+        return data;
+    }
+
+    /**
      * Set value and display field for related field after successful form submission.
      *
-     * @param {array} related   related data
-     * @param {string} id       record id
-     * @param {string} associationName Association name
+     * @param {string} id record id
+     * @param {object} form Form element
      * @return {void}
      */
-    Embedded.prototype._setRelations = function (related, id, associationName) {
+    Embedded.prototype._setRelations = function (id, form) {
         var that = this;
-        url = '/' + related.related_model + '/link/' + related.related_id + '/' + associationName;
-        data = {[associationName] : {'_ids' : [id]}};
+
+        var associationName = $(form).data('embedded-association-name');
+        var relatedModel = $(form).data('embedded-related-model');
+        var relatedId = $(form).data('embedded-related-id');
+        var data = {[associationName] : {'_ids' : [id]}};
 
         $.ajax({
-            url: url,
+            url: '/' + relatedModel + '/link/' + relatedId + '/' + associationName,
             type: 'post',
             dataType: 'json',
             data: JSON.stringify(data),
@@ -157,14 +143,14 @@ var embedded = embedded || {};
     /**
      * Set value and display field for related field after successful form submission.
      *
-     * @param {string} url  ajax url
-     * @param {string} id   record id
+     * @param {string} id record id
      * @param {object} form Form element
      * @return {void}
      */
-    Embedded.prototype._setRelatedField = function (url, id, form) {
+    Embedded.prototype._setRelatedField = function (id, form) {
         var that = this;
-        var url = url.replace('/add', '/view/' + id + '.json');
+        var url = $(form).attr('action').replace('/add', '/view/' + id + '.json');
+
         $.ajax({
             url: url,
             type: 'get',
@@ -175,8 +161,8 @@ var embedded = embedded || {};
             },
             success: function (data, textStatus, jqXHR) {
                 // get select2 field
-                var label = data.data[$(form).data('display_field')];
-                var field = $('#' + $(form).data('field_id'));
+                var label = data.data[$(form).data('embedded-display-field')];
+                var field = $('#' + $(form).data('embedded-field-id'));
                 var option = $('<option selected>' + label + '</option>').val(id);
                 field.append(option).trigger('change');
             },
@@ -186,17 +172,6 @@ var embedded = embedded || {};
                 console.log(errorThrown);
             }
         });
-    };
-
-    /**
-     * Clear embedded form on successful submission.
-     *
-     * @param  {object} form Form element
-     * @return {void}
-     */
-    Embedded.prototype._resetForm = function (form) {
-        $(form).find('input:text, input:password, input:file, select, textarea').val('');
-        $(form).find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
     };
 
     embedded = new Embedded([]);

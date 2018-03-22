@@ -51,46 +51,10 @@ var embedded = embedded || {};
         var that = this;
         var withRelate = $(form).data('embedded-related-model') && $(form).data('embedded-related-id');
 
-        var url = $(form).attr('action');
-        var embedded = $(form).data('embedded');
-        var data = {};
-        var related = {};
-
-        $.each($(form).serializeArray(), function (i, field) {
-            if (0 === field.name.indexOf(embedded)) {
-                var name = field.name.replace(embedded, '');
-
-                name = name.replace('[', '');
-                name = name.replace(']', '');
-
-                // @NOTE: if the field name is an array,
-                // we push multiple values.
-                // Example: file_ids[] - we push all the values in.
-                if (name.match(/\[(\d+)?\]$/)) {
-                    name = name.replace('[', '');
-                    name = name.replace(']', '');
-
-                    if (data[name] === undefined) {
-                        data[name] = [];
-                    } else {
-                        if (!data[name].includes(field.value)) {
-                            data[name].push(field.value);
-                        }
-                    }
-                } else {
-                    data[name] = field.value;
-                }
-            } else {
-                if (field.name.match(/related_(id|model)/)) {
-                    related[field.name] = field.value;
-                }
-            }
-        });
-        data = JSON.stringify(data);
         $.ajax({
             url: $(form).attr('action'),
             type: 'post',
-            data: data,
+            data: JSON.stringify(this.serializeObject(form)),
             dataType: 'json',
             contentType: 'application/json',
             headers: {
@@ -115,6 +79,33 @@ var embedded = embedded || {};
             }
         });
     };
+
+    /**
+     * Serialize Form to JSON.
+     *
+     * @param {string} form_id Form identifier
+     * @return {object}
+     * @link https://css-tricks.com/snippets/jquery/serialize-form-to-json
+     */
+    Embedded.prototype.serializeObject = function (form_id) {
+        var data = {};
+
+        $.each($(form_id).serializeArray(), function () {
+            var matches = this.name.match(/\[(.*?)\]/);
+            this.name = matches ? matches[1] : this.name;
+
+            if (data[this.name]) {
+                if (! data[this.name].push) {
+                    data[this.name] = [data[this.name]];
+                }
+                data[this.name].push(this.value || '');
+            } else {
+                data[this.name] = this.value || '';
+            }
+        });
+
+        return data;
+    }
 
     /**
      * Set value and display field for related field after successful form submission.

@@ -27,6 +27,13 @@
         "non-searchable": null,
         "unique": null
     },
+    "main_article": {
+        "name": "main_article",
+        "type": "related(Articles)",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
     "category": {
         "name": "category",
         "type": "related(Categories)",

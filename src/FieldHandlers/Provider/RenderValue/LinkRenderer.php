@@ -11,6 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
+use Cake\Routing\Router;
 use InvalidArgumentException;
 
 /**
@@ -47,12 +48,17 @@ class LinkRenderer extends AbstractRenderer
             return $result;
         }
 
-        if (!isset($options['linkTarget'])) {
+        if (! isset($options['linkTarget'])) {
             $options['linkTarget'] = static::TARGET;
         }
 
-        if (!isset($options['linkTo'])) {
+        if (! isset($options['linkTo'])) {
             $options['linkTo'] = '';
+        }
+
+        // prepend base url for links starting with a slash
+        if (0 === strpos($options['linkTo'], '/')) {
+            $options['linkTo'] = Router::fullBaseUrl() . $options['linkTo'];
         }
 
         $options['linkTo'] = sprintf($options['linkTo'], rawurlencode($data));

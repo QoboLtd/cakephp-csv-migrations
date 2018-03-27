@@ -148,18 +148,25 @@ trait AssociationsAwareTrait
             return;
         }
 
-        // for current table instance "Articles", assuming that the provide $module is "Articles" and a field of
-        // type "related(Authors)" is found in its migration.json config, then we set the association as follows:
-        // $articlesTable->belongTo('Authors', ['className' => 'Authors', 'foreignKey' => 'author']);
+        /**
+         * for current table instance "Articles", assuming that the provide $module is "Articles" and
+         * a field "author_id" of type "related(Authors)" is found in its migration.json config,
+         * then we set the association as follows:
+         *
+         * $articlesTable->belongTo('AuthorIdAuthors', ['className' => 'Authors', 'foreignKey' => 'author_id']);
+         */
         if ($this->getTableName() === $module) {
             $className = $field->getAssocCsvModule();
             $associationType = 'belongsTo';
         }
 
-        // for current table instance "Authors", assuming that the provide $module is "Articles" and a field of
-        // type "related(Authors)" is found in its migration.json config, then we set the association as follows:
-        // in its migration.json config, then we set the association as following:
-        // $authorsTable->hasMany('Articles', ['className' => 'Articles', 'foreignKey' => 'author']);
+        /**
+         * for current table instance "Authors", assuming that the provide $module is "Articles" and
+         * a field "related_author" of type "related(Authors)" is found in its migration.json config,
+         * then we set the association as follows:
+         *
+         * $authorsTable->hasMany('RelatedAuthorArticles', ['className' => 'Articles', 'foreignKey' => 'related_author']);
+         */
         if ($this->getTableName() === $field->getAssocCsvModule()) {
             $className = $module;
             $associationType = 'hasMany';

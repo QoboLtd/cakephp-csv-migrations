@@ -165,6 +165,18 @@ trait AssociationsAwareTrait
             $associationType = 'hasMany';
         }
 
+        /**
+         * for current table instance "Articles", assuming that the provide $module is "Articles" and
+         * a field "main_article" of type "related(Articles)" is found in its migration.json config,
+         * then we set the association as follows:
+         *
+         * $articlesTable->belongTo('MainArticleArticles', ['className' => 'Articles', 'foreignKey' => 'main_article']);
+         */
+        if ($field->getAssocCsvModule() === $module) {
+            $className = $module;
+            $associationType = 'belongsTo';
+        }
+
         $this->setAssociation(
             $associationType,
             static::generateAssociationName($className, $field->getName()),

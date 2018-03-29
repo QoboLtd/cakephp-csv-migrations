@@ -2,6 +2,7 @@
 namespace CsvMigrations\Test\TestCase\Model;
 
 use Cake\ORM\Association\BelongsTo;
+use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\TableRegistry;
 use CsvMigrations\Model\AssociationsAwareTrait;
@@ -22,7 +23,17 @@ class AssociationsAwareTraitTest extends PHPUnit_Framework_TestCase
      */
     public function testAssociations($table, $name, $type)
     {
-        $this->assertInstanceOf($type, TableRegistry::get($table)->association($name));
+        $this->assertInstanceOf($type, TableRegistry::getTableLocator()->get($table)->association($name));
+    }
+
+    /**
+     * @dataProvider manyToManyAssociationsProvider
+     */
+    public function testManyToManyAssociations($table, $name, $joinTable)
+    {
+        $association = TableRegistry::getTableLocator()->get($table)->association($name);
+        $this->assertInstanceOf(BelongsToMany::class, $association);
+        $this->assertEquals($joinTable, $association->junction()->getTable());
     }
 
     public function associationNameProvider()
@@ -49,6 +60,14 @@ class AssociationsAwareTraitTest extends PHPUnit_Framework_TestCase
             ['Categories', 'CategoryArticles', HasMany::class],
             ['Users', 'AssignedToLeads', HasMany::class],
             ['Authors', 'OwnerPosts', HasMany::class],
+        ];
+    }
+
+    public function manyToManyAssociationsProvider()
+    {
+        return [
+            ['Posts', 'TagIdPostTags', 'post_tags'],
+            ['Tags', 'PostIdPostTags', 'post_tags']
         ];
     }
 }

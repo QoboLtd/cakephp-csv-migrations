@@ -1,0 +1,37 @@
+{
+    "id": {
+        "name": "id",
+        "type": "uuid",
+        "required": "1",
+        "non-searchable": null,
+        "unique": null
+    },
+    "post_id": {
+        "name": "post_id",
+        "type": "related(Posts)",
+        "required": "1",
+        "non-searchable": null,
+        "unique": null
+    },
+    "tag_id": {
+        "name": "tag_id",
+        "type": "related(Tags)",
+        "required": "1",
+        "non-searchable": null,
+        "unique": null
+    },
+    "created": {
+        "name": "created",
+        "type": "datetime",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "modified": {
+        "name": "modified",
+        "type": "datetime",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    }
+}

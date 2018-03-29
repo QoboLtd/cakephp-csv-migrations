@@ -214,6 +214,7 @@ trait AssociationsAwareTrait
             'belongsToMany',
             static::generateAssociationName($module, $field->getName()),
             [
+                'joinTable' => Inflector::tableize($module),
                 'className' => $field->getAssocCsvModule(),
                 'foreignKey' => $moduleField->getName(),
                 'targetForeignKey' => $field->getName()

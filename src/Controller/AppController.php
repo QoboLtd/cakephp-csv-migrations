@@ -64,10 +64,21 @@ class AppController extends BaseController
     /**
      * Index method
      *
-     * @return void
+     * @return \Psr\Http\Message\ResponseInterface|void
+     * @deprecated 29.1.4
      */
     public function index()
     {
+        if (is_callable('parent::index')) {
+            return parent::index();
+        }
+
+        trigger_error(
+            __CLASS__ . '::index() is deprecated. To continue using it copy' .
+            ' its functionality to your application\'s controller(s).',
+            E_USER_DEPRECATED
+        );
+
         $this->render('CsvMigrations.Common/index');
     }
 

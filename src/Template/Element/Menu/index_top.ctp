@@ -8,7 +8,14 @@
  *
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
+ * @deprecated    29.1.4
  */
+trigger_error(
+    '"CsvMigrations.Menu/index_top" element is deprecated. To continue using it copy the' .
+    ' file to your application\'s elements directory and render it from there instead' .
+    ' (https://book.cakephp.org/3.0/en/views.html#elements)',
+    E_USER_DEPRECATED
+);
 
 use Cake\Core\Configure;
 ?>

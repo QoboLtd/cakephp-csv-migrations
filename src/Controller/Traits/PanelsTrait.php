@@ -26,7 +26,7 @@ trait PanelsTrait
      * Success type contains the panels have been evaluated with success
      * and vice verca for fail type.
      *
-     * @see \CsvMigrations\Panel::evalExpression How the expression is evaluated.
+     * @see \CsvMigrations\Utility\Panel::evalExpression How the expression is evaluated.
      * @param  array  $config Table's config.
      * @param  array  $data to get the values for placeholders
      * @return array          Evaluated panel list.
@@ -45,29 +45,5 @@ trait PanelsTrait
         }
 
         return $result;
-    }
-
-    /**
-     * List of evaluated Panels.
-     *
-     * Returns the all the evaluated panels which are split into two
-     * types success and fail.
-     * Success type contains the panels have been evaluated with success
-     * and vice verca for fail type.
-     *
-     * @see \CsvMigrations\Panel::evalExpression How the expression is evaluated.
-     * @param  array  $config Table's config.
-     * @param  array  $data to get the values for placeholders
-     * @return array          Evaluated panel list.
-     * @deprecated 28.0.2 use getPanels
-     */
-    public function getEvalPanels(array $config, array $data)
-    {
-        trigger_error(
-            get_called_class() . '::getEvalPanels() is deprecated. Use getPanels() instead.',
-            E_USER_DEPRECATED
-        );
-
-        return $this->getPanels($config, $data);
     }
 }

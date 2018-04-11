@@ -26,7 +26,7 @@ class DblistItemsController extends BaseController
      * @param string $id Associated Dblist id
      * @return \Cake\Network\Response|null
      */
-    public function index($id)
+    public function index($id = '')
     {
         $list = $this->DblistItems->Dblists->get($id);
         $query = $this->DblistItems->find('treeEntities', ['listId' => $id]);

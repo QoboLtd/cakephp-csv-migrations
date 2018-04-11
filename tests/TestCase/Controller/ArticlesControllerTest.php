@@ -26,26 +26,6 @@ class ArticlesControllerTest extends IntegrationTestCase
         ]);
     }
 
-    public function testIndexUnauthenticatedFails()
-    {
-        unset($this->_session['Auth.User.id']);
-
-        // No session data set.
-        $this->get('/articles');
-
-        $this->assertRedirectContains('/users/login');
-    }
-
-    /**
-     * @deprecated 29.1.4
-     */
-    public function testIndex()
-    {
-        $this->get('/articles');
-
-        $this->assertResponseFailure();
-    }
-
     public function testViewUnauthenticatedFails()
     {
         unset($this->_session['Auth.User.id']);

@@ -39,6 +39,10 @@ $formOptions = [
     ]),
     'name' => Inflector::dasherize($this->name),
     'type' => 'file',
+    'templates' => [
+        'inputContainerError' => '<div class="form-group input {{type}}{{required}} has-error">{{content}}{{error}}</div>',
+        'error' => '<div class="error-message help-block">{{content}}</div>',
+    ]
 ];
 
 if (!empty($this->request->query['embedded'])) {

@@ -55,7 +55,7 @@ class CombinedRenderer extends AbstractRenderer
             }
             $handler = new FieldHandler($config);
 
-            $inputs[] = $handler->renderInput($fieldData, $options);
+            $inputs[$fieldName] = $handler->renderInput($fieldData, $options);
         }
 
         $params = [

@@ -21,7 +21,10 @@ $attributes += [
     'checked' => (bool)$value,
     'label' => false,
     'templates' => [
-        'inputContainer' => '<div class="{{required}}">' . $label . '<div class="clearfix"></div>{{content}}</div>'
+        'inputContainer' => '<div class="form-group input {{required}}">' .
+            $label . '<div class="clearfix"></div>{{content}}</div>',
+        'inputContainerError' => '<div class="form-group input {{required}} has-error">' .
+            $label . '<div class="clearfix"></div>{{content}}{{error}}</div>'
     ]
 ];
 

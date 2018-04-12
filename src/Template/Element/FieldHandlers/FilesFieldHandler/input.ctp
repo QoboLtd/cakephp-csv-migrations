@@ -10,6 +10,8 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+$attributes = isset($attributes) ? $attributes : [];
+
 $class = str_replace('.', '_', $name . '_ids');
 
 $options = [
@@ -28,10 +30,12 @@ if ($value && $entities && $entities->count()) {
     //passed to generate previews
     $options['data-files'] = json_encode($files);
 }
+
+$attributes += $options;
 ?>
-<div class="form-group<?= $required ? ' required' : '' ?>">
+<div class="form-group <?= $required ? 'required' : '' ?> <?= $this->Form->isFieldError($name) ? 'has-error' : '' ?>">
 <?= $this->Form->label($name . '[]', $label) ?>
-<?= $this->Form->{$type}($name . '[]', $options); ?>
+<?= $this->Form->{$type}($name . '[]', $attributes); ?>
 <?php if ($entities && $entities->count()) : ?>
     <?php foreach ($entities as $entity) : ?>
         <?= $this->Form->hidden(
@@ -51,4 +55,5 @@ if ($value && $entities && $entities->count()) {
         ]
     ); ?>
 <?php endif; ?>
+<?php echo $this->Form->error($name) ?>
 </div>

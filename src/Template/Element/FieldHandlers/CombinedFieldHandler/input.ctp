@@ -9,8 +9,15 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+$hasError = false;
+foreach (array_keys($inputs) as $fieldName) {
+    if ($this->Form->isFieldError($fieldName)) {
+        $hasError = true;
+        break;
+    }
+}
 ?>
-<div class="form-group<?= $required ? ' required' : '' ?>">
+<div class="form-group <?= $required ? 'required' : '' ?> <?= $hasError ? 'has-error' : '' ?>">
     <?= $this->Form->label($field, $label); ?>
     <div class="row">
     <?php foreach ($inputs as $input) : ?>

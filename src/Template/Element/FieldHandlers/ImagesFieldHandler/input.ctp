@@ -33,7 +33,7 @@ if ($value && $entities && $entities->count()) {
 
 $attributes += $options;
 ?>
-<div class="form-group<?= $required ? ' required' : '' ?>">
+<div class="form-group <?= $required ? 'required' : '' ?> <?= $this->Form->isFieldError($name) ? 'has-error' : '' ?>">
 <?= $this->Form->label($name . '[]', $label) ?>
 <?= $this->Form->{$type}($name . '[]', $attributes); ?>
 <?php if ($entities && $entities->count()) : ?>
@@ -55,4 +55,5 @@ $attributes += $options;
         ]
     ); ?>
 <?php endif; ?>
+<?php echo $this->Form->error($name) ?>
 </div>

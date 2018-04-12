@@ -17,6 +17,7 @@ $attributes += [
     'value' => $value,
     'options' => $options,
     'label' => false,
+    'error' => false,
     'id' => $field,
     'type' => $type,
     'title' => $title,
@@ -33,20 +34,21 @@ $attributes += [
     ])
 ];
 ?>
-<div class="form-group<?= $required ? ' required' : '' ?>">
+<div class="form-group <?= $required ? 'required' : '' ?> <?= $this->Form->isFieldError($name) ? 'has-error' : '' ?>">
     <?= $this->Form->label($name, $label, ['class' => 'control-label']) ?>
-    <div class="input-group select2-bootstrap-prepend select2-bootstrap-append">
-        <span class="input-group-addon" title="<?= $relatedProperties['controller'] ?>">
+    <div class="input-group">
+        <div class="input-group-addon" title="<?= $relatedProperties['controller'] ?>">
             <span class="fa fa-<?= $icon ?>"></span>
-        </span>
+        </div>
         <?= $this->Form->input($name, $attributes);
         ?>
-        <?php if ($embedded) : ?>
-            <div class="input-group-btn">
-                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#<?= $field ?>_modal">
-                    <i class="fa fa-plus" aria-hidden="true"></i>
-                </button>
-            </div>
-        <?php endif; ?>
+    <?php if ($embedded) : ?>
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#<?= $field ?>_modal">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+            </button>
+        </div>
+    <?php endif; ?>
     </div>
+    <?php echo $this->Form->error($name) ?>
 </div>

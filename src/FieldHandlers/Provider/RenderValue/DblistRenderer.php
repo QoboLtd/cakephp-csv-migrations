@@ -36,7 +36,7 @@ class DblistRenderer extends AbstractRenderer
         // Take list name from options or from fieldDefinitions
         if (!empty($options['listName'])) {
             $listName = (string)$options['listName'];
-        } else {
+        } elseif (!empty($options['fieldDefinitions'])) {
             $listName = $options['fieldDefinitions']->getLimit();
         }
 

@@ -32,12 +32,19 @@ class DblistRenderer extends AbstractRenderer
         $result = '';
         $data = (string)$data;
 
+        $listName = null;
+        // Take list name from options or from fieldDefinitions
+        if (!empty($options['listName'])) {
+            $listName = (string)$options['listName'];
+        } elseif (!empty($options['fieldDefinitions'])) {
+            $listName = $options['fieldDefinitions']->getLimit();
+        }
+
         // No known list name, so render value as safe string
-        if (empty($options['listName'])) {
+        if (empty($listName)) {
             return parent::provide($data, $options);
         }
 
-        $listName = (string)$options['listName'];
         $view = $this->config->getView();
         $result = (string)$view->cell('CsvMigrations.Dblist::renderValue', [$data, $listName])->render('renderValue');
 

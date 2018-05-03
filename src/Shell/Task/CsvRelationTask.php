@@ -76,6 +76,12 @@ class CsvRelationTask extends BakeTask
         $this->bakeDatabaseConfig($selection, $path);
     }
 
+    /**
+     * Interactive shell for modules selection.
+     *
+     * @param string $path Modules root path
+     * @return array
+     */
     private function selection($path)
     {
         $modules = $this->getModules($path);
@@ -92,19 +98,12 @@ class CsvRelationTask extends BakeTask
         return $result;
     }
 
-    private function normalize(array $selection)
-    {
-        $result = [];
-        foreach ($selection as $module) {
-            $result[] = $this->_camelize(strtolower(trim($module)));
-        }
-
-        $result = array_unique($result);
-        asort($result);
-
-        return $result;
-    }
-
+    /**
+     * System modules getter.
+     *
+     * @param string $path Modules root path
+     * @return array
+     */
     private function getModules($path)
     {
         $result = [];
@@ -142,10 +141,29 @@ class CsvRelationTask extends BakeTask
     }
 
     /**
+     * Interactive input normalization.
+     *
+     * @param array $selection User input
+     * @return array
+     */
+    private function normalize(array $selection)
+    {
+        $result = [];
+        foreach ($selection as $module) {
+            $result[] = $this->_camelize(strtolower(trim($module)));
+        }
+
+        $result = array_unique($result);
+        asort($result);
+
+        return $result;
+    }
+
+    /**
      * Validates relation name parameter.
      *
      * @param string $name Module name
-     * @param string $path Modules configuration path
+     * @param string $path Modules root path
      * @return void
      */
     private function validate($name, $path)

@@ -37,7 +37,7 @@ class DateSearchOptions extends AbstractSearchOptions
      *
      * @param mixed $data Data to use for provision
      * @param array $options Options to use for provision
-     * @return mixed
+     * @return array
      */
     public function provide($data = null, array $options = [])
     {
@@ -59,9 +59,7 @@ class DateSearchOptions extends AbstractSearchOptions
                 'type' => 'text',
                 'data-provide' => 'datepicker',
                 'autocomplete' => 'off',
-                'data-date-format' => 'yyyy-mm-dd',
-                'data-date-autoclose' => true,
-                'data-date-week-start' => 1,
+                'data-magic-value' => true,
                 'label' => false,
                 'templates' => [
                     'input' => vsprintf($this->templates['input'], [
@@ -77,7 +75,11 @@ class DateSearchOptions extends AbstractSearchOptions
             'post' => [
                 [
                     'type' => 'script',
-                    'content' => 'AdminLTE./plugins/datepicker/bootstrap-datepicker',
+                    'content' => [
+                        'CsvMigrations.dom-observer',
+                        'AdminLTE./plugins/datepicker/bootstrap-datepicker',
+                        'CsvMigrations.datepicker.init'
+                    ],
                     'block' => 'scriptBottom'
                 ],
                 [

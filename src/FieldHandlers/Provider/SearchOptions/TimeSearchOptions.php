@@ -37,7 +37,7 @@ class TimeSearchOptions extends AbstractSearchOptions
      *
      * @param mixed $data Data to use for provision
      * @param array $options Options to use for provision
-     * @return mixed
+     * @return array
      */
     public function provide($data = null, array $options = [])
     {

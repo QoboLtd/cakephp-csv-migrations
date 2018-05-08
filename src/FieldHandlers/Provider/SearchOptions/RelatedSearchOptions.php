@@ -62,6 +62,7 @@ class RelatedSearchOptions extends AbstractSearchOptions
                 'type' => 'select',
                 'data-type' => 'select2',
                 'data-display-field' => $relatedProperties['displayField'],
+                'data-magic-value' => 'Users' === $options['fieldDefinitions']->getLimit(),
                 'escape' => false,
                 'autocomplete' => 'off',
                 'multiple' => 'multiple',

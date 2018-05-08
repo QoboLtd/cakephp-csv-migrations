@@ -37,7 +37,7 @@ class DatetimeSearchOptions extends AbstractSearchOptions
      *
      * @param mixed $data Data to use for provision
      * @param array $options Options to use for provision
-     * @return mixed
+     * @return array
      */
     public function provide($data = null, array $options = [])
     {
@@ -59,6 +59,7 @@ class DatetimeSearchOptions extends AbstractSearchOptions
                 'value' => '{{value}}',
                 'type' => 'text',
                 'data-provide' => 'datetimepicker',
+                'data-magic-value' => true,
                 'autocomplete' => 'off',
                 'label' => false,
                 'templates' => [

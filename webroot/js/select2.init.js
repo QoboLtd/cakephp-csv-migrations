@@ -20,6 +20,7 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
         this.api_token = options.hasOwnProperty('token') ? options.token : null;
         this.limit = options.hasOwnProperty('limit') ? options.limit : 10;
         this.id = options.hasOwnProperty('id') ? options.id : null;
+        this.magicValue = {id: '%%me%%', name: '<< me >>'};
 
         var that = this;
         // loop through select2 inputs
@@ -106,6 +107,10 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
                     });
                     params.page = params.page || 1;
 
+                    if ($(input).data('magic-value')) {
+                        result.unshift(that.magicValue);
+                    }
+
                     return {
                         results: result,
                         pagination: {
@@ -141,6 +146,21 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
      * @return {undefined}
      */
     Select2.prototype._setDisplayValue = function (id, input) {
+        $(input).data('magic-value') && id === this.magicValue.id ?
+            this._magicDisplayValue(id, input) :
+            this._ajaxDisplayValue(id, input);
+    };
+
+    Select2.prototype._magicDisplayValue = function (id, input) {
+        $(input).find('option[value="' + id + '"]').remove();
+
+        var option = $('<option selected="selected">' + this.magicValue.name + '</option>').val(id);
+
+        $(input).append(option).trigger('change');
+        $(input).trigger('change');
+    };
+
+    Select2.prototype._ajaxDisplayValue = function (id, input) {
         var that = this;
         var url = $(input).data('url').replace('/lookup', '/view/' + id);
         $.ajax({

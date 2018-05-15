@@ -31,12 +31,6 @@ $formOptions = [
         'controller' => $this->request->controller,
         'action' => $this->request->action
     ],
-    'data-panels-url' => $this->Url->build([
-        'prefix' => 'api',
-        'plugin' => $this->request->plugin,
-        'controller' => $this->request->controller,
-        'action' => 'panels'
-    ]),
     'name' => Inflector::dasherize($this->name),
     'type' => 'file',
     'templates' => [
@@ -44,6 +38,17 @@ $formOptions = [
         'error' => '<div class="error-message help-block">{{content}}</div>',
     ]
 ];
+
+if ($options['hasPanels']) {
+    $formOptions = [
+        'data-panels-url' => $this->Url->build([
+            'prefix' => 'api',
+            'plugin' => $this->request->plugin,
+            'controller' => $this->request->controller,
+            'action' => 'panels'
+        ]),
+    ];
+}
 
 if (!empty($this->request->query['embedded'])) {
     $formOptions['url']['prefix'] = 'api';

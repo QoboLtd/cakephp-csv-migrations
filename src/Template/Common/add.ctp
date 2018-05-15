@@ -24,6 +24,7 @@ $options = [
     'entity' => $entity,
     'fields' => $fields,
     'title' => __('Create {0}', $title),
-    'handlerOptions' => ['entity' => $this->request]
+    'handlerOptions' => ['entity' => $this->request],
+    'hasPanels' => property_exists($config, 'panels')
 ];
 echo $this->element('CsvMigrations.View/post', ['options' => $options]);

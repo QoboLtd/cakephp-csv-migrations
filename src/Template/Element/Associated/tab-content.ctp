@@ -77,7 +77,15 @@ $dtOptions = [
     ],
 ];
 
-echo $this->Html->scriptBlock('new DataTablesInit(' . json_encode($dtOptions) . ');', ['block' => 'scriptBottom']);
+echo $this->Html->scriptBlock("
+$('#relatedTabs a.$containerId').on('click', function() {
+    if ( ! $.fn.DataTable.isDataTable('#$tableId') ) {
+        new DataTablesInit(" . json_encode($dtOptions) . ");
+    }
+});
+", [
+    'block' => 'scriptBottom'
+]);
 ?>
 <div class="table-responsive">
     <table id="<?= $tableId ?>" class="table table-hover table-condensed table-vertical-align" width="100%">

@@ -22,6 +22,11 @@
     "associations": {
         "hide_associations": []
     },
+    "panels": {
+        "Details": "(%%type%%=='draft')",
+        "Details": "(%%type%%=='published')",
+        "Details": "(%%type%%=='')"
+    },
     "associationLabels": {},
     "notifications": {
         "enable": false,

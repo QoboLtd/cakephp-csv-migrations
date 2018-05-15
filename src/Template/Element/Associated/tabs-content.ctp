@@ -31,9 +31,26 @@ use Cake\Utility\Inflector;
                 echo $this->element('CsvMigrations.Embedded/lookup', ['association' => $association]);
             } ?>
             <?= $this->element('CsvMigrations.Associated/tab-content', [
-                'association' => $association, 'table' => $table, 'url' => $this->Url->build($url), 'factory' => $factory
+                'association' => $association, 'table' => $table, 'url' => $this->Url->build($url), 'factory' => $factory, 'tableContainerId' => $containerId
             ]) ?>
         </div>
         <?php $active = ''; ?>
     <?php endforeach; ?>
 </div> <!-- .tab-content -->
+<?php
+echo $this->Html->scriptBlock("
+$('#relatedTabs li').each(function(key, element) {
+    var activeTab = localStorage.getItem('activeTab_relatedTabs');
+    var link = $(this).find('a');
+    if (activeTab !== undefined) {
+        if (activeTab == key) {
+            $(link).click();
+        }
+    } else {
+        if ($(this).hasClass('active')) {
+            $(link).click();
+        }
+    }
+});
+", ['block' => 'scriptBottom']);
+?>

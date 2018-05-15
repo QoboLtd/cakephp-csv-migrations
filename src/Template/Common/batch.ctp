@@ -11,8 +11,15 @@
  */
 
 use Cake\Utility\Inflector;
+use Qobo\Utils\ModuleConfig\ConfigType;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
-$title = __('Batch edit {0}', strtolower(Inflector::humanize(Inflector::underscore($this->name))));
+$config = (new ModuleConfig(ConfigType::MODULE(), $this->name))->parse();
+
+$title = __(
+    'Batch edit {0}',
+    isset($config->table->alias) ? $config->table->alias : Inflector::humanize(Inflector::underscore($this->name))
+);
 
 $options = [
     'title' => $title,
@@ -23,7 +30,8 @@ $options = [
             'data-batch' => 'field',
             'disabled' => true
         ]
-    ]
+    ],
+    'hasPanels' => property_exists($config, 'panels')
 ];
 echo $this->element('CsvMigrations.View/post', ['options' => $options]);
 

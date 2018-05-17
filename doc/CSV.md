@@ -1,23 +1,23 @@
 CSV
 ===
 
-CSV stands for comma-separated values.  It is a plain text file format,
-supported by many applications.  It is often used for data exchange
+CSV stands for comma-separated values. It is a plain text file format,
+supported by many applications. It is often used for data exchange
 operations, such as import and export, as well as configuration
 definitions.
 
-This document describes module configuration with CSV files.
+This document describes module configuration with JSON files.
 
 Overview
 --------
 
-Our system consists of several modules.  Some of these modules have
-very distinct properties and functionality and are hardcoded.  The
+Our system consists of several modules. Some of these modules have
+very distinct properties and functionality and are hardcoded. The
 others can change significantly from installation to installation
-and/or over time.  In order to faciliate such changes, we used CSV
+and/or over time. In order to faciliate such changes, we used JSON
 files for module configurations.
 
-There are three separate configurations that we support in CSV format:
+There are three separate configurations that we support in JSON format:
 
 1. Migrations
 2. Views
@@ -27,9 +27,9 @@ The following sections will describe each in detail.
 
 ### Conventions
 
-There is no strictly defined de juro format for the CSV files.  It's
+There is no strictly defined de juro format for the CSV files. It's
 more of a de facto standard, with some slight variations from
-application to application.  This section defines our assumptions and
+application to application. This section defines our assumptions and
 expectations, in order to minimize portability issues.
 
 #### Files
@@ -37,7 +37,7 @@ expectations, in order to minimize portability issues.
 * File names should be in English.
 * File names should be in lowercase.
 * Underscore character (_) should be used as a word separator.
-* Files should have a .csv extension.
+* Files should have a .json extension.
 * File character encoding should be ASCII (plain text English).
 * Files should use DOS/Windows line endings (\r\n).
 
@@ -51,13 +51,12 @@ expectations, in order to minimize portability issues.
 
 #### Values
 
-* Values (configuration parameters, field names, etc) should be in
-	English.
+* Values (configuration parameters, field names, etc) should be in English.
 * Values can be either quoted or unquoted.
 * Quoted values should be properly escaped.
 
 Simple values, such as field names and types, can be used without
-quoting.  For example:
+quoting. For example:
 
 ```csv
 first_name,string,255
@@ -74,7 +73,7 @@ person_address,"Nicosia, Cyprus"
 ```
 
 Complex values, which include double quotes in the value, have to be
-escaped with the backslash character (\).  For example:
+escaped with the backslash character (\). For example:
 
 ```csv
 fighter,"Antonio \"Bigfoot\" Silva"
@@ -83,10 +82,10 @@ fighter,"Antonio \"Bigfoot\" Silva"
 ### Migrations
 
 Migrations configuration defines the structure of the database tables
-behind an application.  Each module has one and only one migration
+behind an application. Each module has one and only one migration
 configuration.
 
-The CSV file configuring the migration is considered to be a 
+The JSON file configuring the migration is considered to be a
 representation of the current desired state of the table.
 
 #### Columns
@@ -102,7 +101,7 @@ Migration file consists of the following columns:
 ##### Field name
 
 Field names should always be in lowercase, with underscore character
-used as a word separator.  Field name is unique for the module. That is
+used as a word separator. Field name is unique for the module. That is
 you can have, for example, a field 'status' defined in the migration
 files for different modules, but you cannot have the field 'status'
 defined twice in the same module.
@@ -114,8 +113,10 @@ following fields:
 * id (of type uuid)
 * created (of type datetime)
 * modified (of type datetime)
+* created_by (of type related, with Users)
+* modified_by (of type related, with Users)
 
-The order of the field names in the CSV file is not important, however
+The order of the field names in the JSON file is not important, however
 we recommend that the 'id' field is always first, and the 'created' and
 'modified' fields are always last.
 
@@ -123,7 +124,7 @@ we recommend that the 'id' field is always first, and the 'created' and
 
 Field type defines the type of the value that can be stored in the
 field, as well how the user interface elements will be rendered when
-displaying the value or creating an input form element.  For example,
+displaying the value or creating an input form element. For example,
 for field type 'datetime' a date time picker will be automatically
 provided.
 
@@ -141,60 +142,60 @@ The following field types are supported:
 * time - for storing time values
 * boolean - for storing on/off, yes/no, and other binary values
 * integer - for storing integeger values
-* list:LISTNAME - for storing string values from a predefined list (see
+* list(LISTNAME) - for storing string values from a predefined list (see
 	below)
-* related:MODULE - for storing uuid record of a related module (see
+* related(MODULE_NAME) - for storing uuid record of a related module (see
 	below)
 
-###### Special field type : list
+###### Special field type: list
 
 It is often that an application need to work with predefined lists of
-values and labels.  Some of the examples are : list of countries, list
-of currencies, list of statuses, etc.  We support this with a special
-field type: list:LISTNAME.
+values and labels. Some of the examples are: list of countries, list
+of currencies, list of statuses, etc. We support this with a special
+field type: list(LISTNAME).
 
-LISTNAME should be replaced with the name of the CSV file, defining the
-list values (see below).  For example, 'list:countries',
-'list:currencies'.  The same list can be used in multiple modules,
-which makes the values consistent.  If multiple modules define the same
+LISTNAME should be replaced with the name of the JSON file, defining the
+list values (see below). For example, 'list(countries)',
+'list(currencies)'. The same list can be used in multiple modules,
+which makes the values consistent. If multiple modules define the same
 field name, for example - type or status, and need to use different
 list values, depending on the module, it is suggested to prefix the
-list name with the module name.  For example: 'list:accounts_statuses',
-and 'list:lead_statuses'.
+list name with the module name. For example: 'list(accounts_statuses)',
+and 'list(lead_statuses)'.
 
 ###### Special field type: related
 
 It is often that a record in one module is related to the record in
-another module.  For example, when a Task is assigned to a User, they
-are considered to be related.  The most common type of relationship in
+another module. For example, when a Task is assigned to a User, they
+are considered to be related. The most common type of relationship in
 databases in called
 [one-to-many](https://en.wikipedia.org/wiki/One-to-many_(data_model)).
 
 In one-to-many relationship, one side of the relationship can be
-related to multiple records on other side of the relationship.  For
-example, one User can be assigned many Tasks.  But the Task can only be
+related to multiple records on other side of the relationship. For
+example, one User can be assigned many Tasks. But the Task can only be
 assigned to a single User.
 
 In order to record this in the database, a Task module migration needs
 to have a field, which will store the id of the User to who the task is
 assigned.
 
-In the migrations CSV file you can define this with the field type
+In the migrations JSON file you can define this with the field type
 'related:MODULE', where MODULE should be the name of the module to
 which the relationship is needed.
 
 The opposite direction of the relationship (in the example above, from
-Users to Tasks) is handled automatically and you don't need to define
-anything in the other module's migration CSV.
+Users to Tasks) is handled automatically and you do not need to define
+anything in the other module's migration JSON.
 
 ##### Field length
 
 Field length defines the maximum size of the value that can be stored
-in the database.  For string fields, this represent the number of
+in the database. For string fields, this represent the number of
 characters, for numeric fields, this represents the number of bytes,
 etc.
 
-Field length parameter is not required.  For those fields which require
+Field length parameter is not required. For those fields which require
 a length parameter in the database, the following default values will
 be assumed:
 
@@ -213,20 +214,20 @@ Also, the following field length values will be **always** assumed:
 
 ##### Required
 
-Required column defines whether or not the field is required.  When set to
+Required column defines whether or not the field is required. When set to
 required, records with empty values for required fields will not be allowed
-to be saved.  This rule is enforced on the database level.
+to be saved. This rule is enforced on the database level.
 
 ##### Not Searchable
 
 By default, the application assumes that all fields in the module are
-searchable.  If certain fields have to be excluded from searching, then
+searchable. If certain fields have to be excluded from searching, then
 this column can be used to do so.
 
 ### Views
 
 Views configuration defines how the user screens will be constructed for
-each module.  There are currently 4 screens per module:
+each module. There are currently 4 screens per module:
 
 * add - defines the screen for creating new records
 * edit - defines the screen for updating existing records
@@ -243,12 +244,10 @@ similar.
 Add, edit, and view screens are constructed based on the following
 assumptions:
 
-1. Record fields are organized into one or more  panels, such as General,
-   Details, etc.
+1. Record fields are organized into one or more panels, such as General, Details, etc.
 2. Record fields are displayed in two vertical columns.
 
-Files for the add, edit, and view screen configurations consist of the 
-following columns:
+Files for the add, edit, and view screen configurations consist of the following columns:
 
 * Panel name - human-friendly name of the panel
 * First column - field name that goes into the first (left) column
@@ -261,7 +260,7 @@ instead.
 
 Files for index screen configurations consist of a single column:
 
-* Field name 
+* Field name
 
 which defines which fields will be displayed in the listing of the records
 in the current module, and their order as well.
@@ -282,3 +281,57 @@ List file consists of the following columns:
 In order to avoid data inconsistency and unexpected results during record
 updating, it is **strongly** recommended to not ever delete list items from
 the CSV files, but to mark them Inactive.
+
+### Baking
+
+Cake's baking functionality has been extended to support modules, many-to-many relations and migrations baking.
+
+#### Module
+
+You can bake a new module using the following command:
+```
+./bin/cake bake csv_module MODULE_NAME
+```
+
+#### Many-to-Many relation
+
+You can bake a new Many-to-Many relation (between two or more modules) using the following command:
+```
+./bin/cake bake csv_relation
+```
+
+#### Migration
+
+After baking a new module or relation, or modifying any of the modules columns, you can bake a new migration using the following command:
+```
+./bin/cake bake csv_migration MODULE_NAME
+```
+
+### Associating with Third-party plugins
+
+You can easily associate your application's modules with third-party plugins, such as [cakephp-groups](https://github.com/QoboLtd/cakephp-groups).
+To do so you need to create a new table class in your application, that extends the plugin's table:
+```php
+// src/Model/Table/GroupsTable.php
+<?php
+namespace App\Model\Table;
+
+use Groups\Model\Table\GroupsTable as BaseTable;
+
+class GroupsTable extends BaseTable {
+ //
+}
+```
+
+Then you can relate a module column with the plugin's table by adding the following in your module's `db/migration.json` file:
+```json
+{
+    "group": {
+        "name": "group",
+        "type": "related(Groups)",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    }
+}
+```

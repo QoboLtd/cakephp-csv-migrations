@@ -117,5 +117,12 @@
         "required": null,
         "non-searchable": null,
         "unique": null
+    },
+    "lead": {
+        "name": "lead",
+        "type": "related(Leads)",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
     }
 }

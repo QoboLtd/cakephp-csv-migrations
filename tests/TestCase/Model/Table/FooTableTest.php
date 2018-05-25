@@ -96,7 +96,8 @@ class FooTableTest extends TestCase
                     'garden_area' => ['name' => 'garden_area', 'type' => 'metric(units_area)', 'required' => '', 'non-searchable' => '', 'unique' => false],
                     'is_primary' => ['name' => 'is_primary', 'type' => 'boolean', 'required' => '', 'non-searchable' => '', 'unique' => false],
                     'start_time' => ['name' => 'start_time', 'type' => 'time', 'required' => '', 'non-searchable' => '', 'unique' => false],
-                    'balance' => ['name' => 'balance', 'type' => 'decimal(12.4)', 'required' => '', 'non-searchable' => '', 'unique' => false]
+                    'balance' => ['name' => 'balance', 'type' => 'decimal(12.4)', 'required' => '', 'non-searchable' => '', 'unique' => false],
+                    'lead' => ['name' => 'lead', 'type' => 'related(Leads)', 'required' => '', 'non-searchable' => '', 'unique' => false]
                 ]
             ]
         ];

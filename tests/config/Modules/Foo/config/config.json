@@ -36,7 +36,7 @@
         ]
     },
     "parent": {
-        "module": "TestModule",
+        "module": "Leads",
         "redirect": "self"
     },
     "associations": {

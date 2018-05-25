@@ -81,9 +81,10 @@ trait RelatedFieldTrait
 
         $result['id'] = $data;
 
-        if (method_exists($table, 'getConfig') && is_callable([$table, 'getConfig'])) {
-            $result['config'] = $table->getConfig();
-        }
+        $result['config'] = json_decode(
+            json_encode((new ModuleConfig(ConfigType::MODULE(), $table->getRegistryAlias()))->parse()),
+            true
+        );
         // display field
         $result['displayField'] = $table->displayField();
         // get associated entity record

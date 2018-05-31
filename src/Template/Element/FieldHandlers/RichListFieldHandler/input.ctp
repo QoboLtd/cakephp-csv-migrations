@@ -30,7 +30,7 @@ $attributes += [
 <div class="form-group <?= $required ? 'required' : '' ?> <?= $this->Form->isFieldError($name) ? 'has-error' : '' ?>">
     <?= $this->Form->label($name, $label, ['class' => 'control-label']) ?>
     <div class="input-group">
-        <div class="input-group-addon" title="" data-backend="on">
+        <div class="input-group-addon">
             <span class="fa fa-list"></span>
         </div>
         <?= $this->Form->input($name, $attributes);

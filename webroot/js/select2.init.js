@@ -69,16 +69,23 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
     Select2.prototype._enable = function (input) {
         var that = this;
         var placeholder = $(input).attr('title');
-        // enable select2
-        $(input).select2({
+        var isAjaxEnabled = $(input).data('backend');
+        var args = {
             theme: 'bootstrap',
             width: '100%',
             placeholder: placeholder,
             allowClear: true,
             minimumInputLength: that.min_length,
-            escapeMarkup: function (text) {
-                return text;
-            },
+            escapeMarkup: function (data) {
+                return data;
+            }
+        };
+
+        if (isAjaxEnabled == undefined || isAjaxEnabled == 'on') {
+            isAjaxEnabled = true;
+        }
+
+        var ajaxSettings = {
             ajax: {
                 url: $(input).data('url'),
                 dataType: 'json',
@@ -135,7 +142,12 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
             templateSelection: function (data) {
                 return data.name || data.text;
             }
-        });
+        };
+        if (isAjaxEnabled == true) {
+            args = Object.assign(args, ajaxSettings);
+        }
+        // enable select2
+        $(input).select2(args);
     };
 
     /**

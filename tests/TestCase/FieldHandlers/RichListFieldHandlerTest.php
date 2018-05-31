@@ -46,7 +46,6 @@ class RichListFieldHandlerTest extends PHPUnit_Framework_TestCase
             'unique' => false
         ]);
 
-
         $result = $this->fh->renderValue($value, $options);
     }
 }

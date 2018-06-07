@@ -72,8 +72,13 @@ class AppController extends BaseController
     {
         $entity = $this->{$this->name}->find()
             ->where([$this->{$this->name}->getPrimaryKey() => $id])
-            ->applyOptions(['lookup' => true, 'value' => $id])
-            ->firstOrFail();
+            ->first();
+
+        if (empty($entity)) {
+            $entity = $this->{$this->name}->find()
+                ->applyOptions(['lookup' => true, 'value' => $id])
+                ->firstOrFail();
+        }
 
         $this->set('entity', $entity);
         $this->render('CsvMigrations.Common/view');
@@ -116,8 +121,13 @@ class AppController extends BaseController
     {
         $entity = $this->{$this->name}->find()
             ->where([$this->{$this->name}->getPrimaryKey() => $id])
-            ->applyOptions(['lookup' => true, 'value' => $id])
-            ->firstOrFail();
+            ->first();
+
+        if (empty($entity)) {
+            $entity = $this->{$this->name}->find()
+                ->applyOptions(['lookup' => true, 'value' => $id])
+                ->firstOrFail();
+        }
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             // enable accessibility to associated entity's primary key to avoid associated entity getting flagged as new

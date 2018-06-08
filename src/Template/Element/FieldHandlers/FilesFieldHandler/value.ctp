@@ -13,9 +13,10 @@
 use Cake\Core\Plugin;
 
 $uuid = $this->Text->uuid();
+$limit = 3;
 ?>
 <div class="row">
-<?php if (3 < $entities->count()) : ?>
+<?php if ($limit < $entities->count()) : ?>
     <div class="col-xs-12">
         <p class="text-right">
             <a href="#collapseFiles<?= $uuid ?>" class="btn btn-default btn-xs" data-toggle="collapse" aria-controls="collapseFiles<?= $uuid ?>" aria-expanded="false" role="button">
@@ -27,7 +28,7 @@ $uuid = $this->Text->uuid();
     </div>
 <?php endif; ?>
 <?php foreach ($entities as $index => $entity) : ?>
-    <?php if (3 < $entities->count() && 3 === $index) : ?>
+    <?php if ($limit < $entities->count() && $limit === $index) : ?>
         <div class="collapse" id="collapseFiles<?= $uuid ?>">
     <?php endif; ?>
     <div class="col-xs-4">
@@ -48,11 +49,11 @@ $uuid = $this->Text->uuid();
         </a>
     </div>
 <?php endforeach; ?>
-<?php if (3 < $entities->count()) : ?>
+<?php if ($limit < $entities->count()) : ?>
     </div>
 <?php endif; ?>
 </div>
-<?php if (3 < $entities->count()) {
+<?php if ($limit < $entities->count()) {
     echo $this->Html->scriptBlock(
         '$("a[href=\'#collapseFiles' . $uuid . '\']").click(function () {
             $(this).children().hasClass("dropdown") ?

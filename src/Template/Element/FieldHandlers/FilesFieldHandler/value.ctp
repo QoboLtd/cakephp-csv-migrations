@@ -15,17 +15,19 @@ use Cake\Core\Plugin;
 $uuid = $this->Text->uuid();
 ?>
 <div class="row">
+<?php if (3 < $entities->count()) : ?>
+    <div class="col-xs-12">
+        <p class="text-right">
+            <a href="#collapseFiles<?= $uuid ?>" class="btn btn-default btn-xs" data-toggle="collapse" aria-controls="collapseFiles<?= $uuid ?>" aria-expanded="false" role="button">
+                <span class="dropdown">
+                    <span class="caret"></span>
+                </span>
+            </a>
+        </p>
+    </div>
+<?php endif; ?>
 <?php foreach ($entities as $index => $entity) : ?>
     <?php if (3 < $entities->count() && 3 === $index) : ?>
-        <div class="col-xs-12">
-            <p class="text-right">
-                <a href="#collapseFiles<?= $uuid ?>" class="btn btn-default btn-sm" data-toggle="collapse" aria-controls="collapseFiles<?= $uuid ?>" aria-expanded="false" role="button">
-                    <span class="dropdown">
-                        <span class="caret"></span>
-                    </span>
-                </a>
-            </p>
-        </div>
         <div class="collapse" id="collapseFiles<?= $uuid ?>">
     <?php endif; ?>
     <div class="col-xs-4">

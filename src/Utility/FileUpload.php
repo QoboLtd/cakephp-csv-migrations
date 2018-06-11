@@ -124,6 +124,23 @@ class FileUpload
             ]
         ]);
 
+        $className = App::shortName(get_class($this->_table), 'Model/Table', 'Table');
+        $config = (new ModuleConfig(ConfigType::FIELDS(), $className))->parse();
+
+        if (! property_exists($config, $field)) {
+            return $query->all();
+        }
+
+        if (! property_exists($config->{$field}, 'orderBy')) {
+            return $query->all();
+        }
+
+        if (! property_exists($config->{$field}, 'orderDir')) {
+            return $query->all();
+        }
+
+        $query->order([$config->{$field}->orderBy => $config->{$field}->orderDir]);
+
         return $query->all();
     }
 

@@ -52,11 +52,6 @@ class ImagesRenderer extends AbstractRenderer
     const GRID_COL_HTML = '<div class="col-xs-%d col-sm-%d col-md-%d col-lg-%d">%s</div>';
 
     /**
-     * Icon extension
-     */
-    const ICON_EXTENSION = 'png';
-
-    /**
      * Icon size
      */
     const ICON_SIZE = '48';
@@ -82,6 +77,20 @@ class ImagesRenderer extends AbstractRenderer
         $fileUpload = new FileUpload($table);
 
         $entities = $fileUpload->getFiles($table, $field, $data);
+
+        $params = [
+            'entities' => $entities,
+            'hashes' => (array)Configure::read('FileStorage.imageHashes.file_storage'),
+            'extensions' => $fileUpload->getImgExtensions(),
+            'imageSize' => empty($options['imageSize']) ?
+                Configure::read('FileStorage.defaultImageSize') :
+                $options['imageSize']
+        ];
+
+        $defaultElement = 'CsvMigrations.FieldHandlers/ImagesFieldHandler/value';
+        $element = empty($options['element']) ? $defaultElement : $options['element'];
+
+        return $this->renderElement($element, $params);
 
         if (empty($options['imageSize'])) {
             $options['imageSize'] = Configure::read('FileStorage.defaultImageSize');
@@ -123,7 +132,7 @@ class ImagesRenderer extends AbstractRenderer
                 if (isset($hashes[$options['imageSize']])) {
                     $version = $hashes[$options['imageSize']];
 
-                    $exists = $this->_checkThumbnail($entity, $version, $fileUpload);
+                    $exists = $this->_checkThumbnail($entity, $version);
 
                     if ($exists) {
                         $path = dirname($entity->path) . '/' . basename($entity->path, $entity->extension);
@@ -161,10 +170,9 @@ class ImagesRenderer extends AbstractRenderer
      *
      * @param \Cake\ORM\Entity $entity Entity
      * @param string $version Image version
-     * @param \CsvMigrations\Utility\FileUpload $fileUpload FileUpload instance
      * @return bool
      */
-    protected function _checkThumbnail($entity, $version, FileUpload $fileUpload)
+    protected function _checkThumbnail($entity, $version)
     {
         // image version directory path
         $dir = realpath(WWW_ROOT . trim($entity->path, DS));

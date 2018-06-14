@@ -44,6 +44,7 @@ class DecimalRenderer extends AbstractRenderer
             'max' => '99999999.99',
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
+            'placeholder' => (!empty($options['placeholder']) ? $options['placeholder'] : '')
         ];
 
         $defaultElement = 'CsvMigrations.FieldHandlers/DecimalFieldHandler/input';

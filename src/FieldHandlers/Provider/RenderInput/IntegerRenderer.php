@@ -44,6 +44,7 @@ class IntegerRenderer extends AbstractRenderer
             'max' => '99999999999',
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
+            'placeholder' => (!empty($options['placeholder']) ? $options['placeholder'] : ''),
         ];
 
         $defaultElement = 'CsvMigrations.FieldHandlers/IntegerFieldHandler/input';

@@ -18,7 +18,8 @@ $attributes += [
     'required' => (bool)$required,
     'value' => $value,
     'step' => $step,
-    'max' => $max
+    'max' => $max,
+    'placeholder' => $placeholder,
 ];
 
 echo $this->Form->input($name, $attributes);

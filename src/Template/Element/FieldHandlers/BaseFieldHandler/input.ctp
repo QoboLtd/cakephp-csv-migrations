@@ -16,7 +16,8 @@ $attributes += [
     'type' => $type,
     'label' => $label,
     'required' => (bool)$required,
-    'value' => $value
+    'value' => $value,
+    'placeholder' => $placeholder,
 ];
 
 echo $this->Form->input($name, $attributes);

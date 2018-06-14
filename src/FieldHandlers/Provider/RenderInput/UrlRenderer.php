@@ -42,6 +42,7 @@ class UrlRenderer extends AbstractRenderer
             'value' => $data,
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
+            'placeholder' => (!empty($options['placeholder']) ? $options['placeholder'] : ''),
         ];
 
         $defaultElement = 'CsvMigrations.FieldHandlers/BaseFieldHandler/input';

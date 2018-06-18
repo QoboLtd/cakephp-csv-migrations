@@ -29,4 +29,8 @@ $attributes += [
     ]
 ];
 
+if (!empty($minuteStep)) {
+    $attributes += ['data-minute-step' => $minuteStep];
+}
+
 echo $this->Form->input($name, $attributes);

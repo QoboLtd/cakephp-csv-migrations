@@ -50,8 +50,10 @@
                     });
                 }
 
+                var options = $(this).data();
+
                 // date range picker (used for datetime fields)
-                $(this).daterangepicker(that.getOptions(this), that.getCallback(this, hiddenInput));
+                $(this).daterangepicker(that.getOptions(this, options), that.getCallback(this, hiddenInput));
 
                 $(this).on('apply.daterangepicker', function (ev, picker) {
                     $(this).val(picker.startDate.format(that.format));
@@ -69,7 +71,7 @@
          * @param {object} input Datetime picker input
          * @return {object}
          */
-        getOptions: function (input) {
+        getOptions: function (input, args) {
             var options = {
                 singleDatePicker: true,
                 showDropdowns: true,
@@ -84,6 +86,10 @@
                     firstDay: 1
                 }
             };
+
+            if (args !== undefined) {
+                options = Object.assign(options, args)
+            }
 
             if ($(input).data('magic-value')) {
                 options.ranges = [];

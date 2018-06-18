@@ -52,6 +52,9 @@ class DatetimeRenderer extends AbstractRenderer
             'value' => $data,
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
+            'timeIncrement' => (!empty($options['timeIncrement']) ? $options['timeIncrement'] : ''),
+            'showMonthYearSelect' => (isset($options['showMonthYearSelect']) ? $options['showMonthYearSelect'] : null),
+            'timePicker' => (isset($options['timePicker']) ? $options['timePicker'] : null),
         ];
 
         $defaultElement = 'CsvMigrations.FieldHandlers/DatetimeFieldHandler/input';

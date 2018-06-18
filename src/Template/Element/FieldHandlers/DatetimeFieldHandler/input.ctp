@@ -29,4 +29,16 @@ $attributes += [
     ]
 ];
 
+if (isset($timePicker)) {
+    $attributes += ['data-time-picker' => ($timePicker ? 'true' : 'false')];
+}
+
+if (!empty($timeIncrement)) {
+    $attributes += ['data-time-picker-increment' => $timeIncrement];
+}
+
+if (isset($showMonthYearSelect)) {
+    $attributes += ['data-show-dropdowns' => ($showMonthYearSelect ? 'true' : 'false')];
+}
+
 echo $this->Form->input($name, $attributes);

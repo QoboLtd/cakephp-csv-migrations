@@ -32,11 +32,6 @@ class ImagesRenderer extends AbstractRenderer
     const THUMBNAIL_LIMIT = 6;
 
     /**
-     * Default thumbnail file
-     */
-    const NO_THUMBNAIL_FILE = 'no-thumbnail.jpg';
-
-    /**
      * Thumbnail html markup
      */
     const THUMBNAIL_HTML = '<div class="thumbnail">%s</div>';
@@ -116,7 +111,7 @@ class ImagesRenderer extends AbstractRenderer
     {
         $result = null;
         $colWidth = static::GRID_COUNT / static::THUMBNAIL_LIMIT;
-        $thumbnailUrl = 'CsvMigrations.thumbnails/' . static::NO_THUMBNAIL_FILE;
+        $thumbnailUrl = 'Qobo/Utils.thumbnails/no-thumbnail.jpg';
 
         $hashes = Configure::read('FileStorage.imageHashes.file_storage');
         $extensions = $fileUpload->getImgExtensions();

@@ -11,6 +11,7 @@
  */
 
 use Cake\Core\Plugin;
+use Qobo\Utils\Utility;
 
 $uuid = $this->Text->uuid();
 $limit = 3;
@@ -34,12 +35,7 @@ $limit = 3;
     <div class="col-xs-4">
         <a href="<?= $entity->get('path') ?>" target="_blank">
             <div class="thumbnail" title="<?= $entity->get('filename') ?>">
-                <?php
-                $path = Plugin::path('CsvMigrations') . DS . 'webroot' . DS . 'img' . DS . 'icons' . DS;
-                $path .= 'files' . DS . '48px' . DS . strtolower($entity->get('extension')) . '.png';
-                $filename = file_exists($path) ? strtolower($entity->get('extension')) : '_blank';
-                ?>
-                <?= $this->Html->image('CsvMigrations.icons/files/48px/' . $filename . '.png') ?>
+                <?= $this->Html->image(Utility::getFileTypeIcon($entity->get('extension'), '48px')) ?>
                 <div class="caption">
                     <p class="small text-center no-margin" style="white-space: nowrap; text-overflow: ellipsis;overflow: hidden;">
                         <?= $entity->get('filename') ?>

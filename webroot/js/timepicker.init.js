@@ -27,12 +27,20 @@
          * @return {undefined}
          */
         init: function () {
-            // time picker
-            $('[data-provide="timepicker"]').timepicker({
+            var defaults = {
                 showMeridian: false,
                 minuteStep: 5,
                 defaultTime: false
-            });
+            };
+
+            var opts = $('[data-provide="timepicker"]').data();
+
+            if (opts !== undefined) {
+                defaults = Object.assign(defaults, opts);
+            }
+
+            // time picker
+            $('[data-provide="timepicker"]').timepicker(defaults);
         }
     };
 

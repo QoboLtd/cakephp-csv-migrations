@@ -37,7 +37,7 @@ $closed = true;
         <a href="<?= $entity->get('path') ?>" target="_blank">
             <div class="thumbnail" title="<?= $entity->get('filename') ?>" height="150">
                 <?php
-                $url = 'CsvMigrations.thumbnails/no-thumbnail.jpg';
+                $url = 'Qobo/Utils.thumbnails/no-thumbnail.jpg';
                 if (in_array($entity->get('extension'), $extensions)) {
                     $url = $entity->get('path');
                     if (isset($hashes[$imageSize])) {

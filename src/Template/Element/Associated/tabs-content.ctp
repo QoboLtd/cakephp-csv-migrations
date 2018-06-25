@@ -39,18 +39,25 @@ use Cake\Utility\Inflector;
 </div> <!-- .tab-content -->
 <?php
 echo $this->Html->scriptBlock("
-$('#relatedTabs li').each(function(key, element) {
-    var activeTab = localStorage.getItem('activeTab_relatedTabs');
-    var link = $(this).find('a');
-    if (activeTab !== undefined) {
+var tabClicked = false;
+var activeTab = localStorage.getItem('activeTab_relatedTabs');
+
+if (activeTab) {
+    $('#relatedTabs li').each(function(key, element) {
+        var link = $(this).find('a');
         if (activeTab == key) {
+            tabClicked = true;
             $(link).click();
         }
+    });
+}
+if (!tabClicked) {
+    var activeTab = $('#relatedTabs li.active');
+    if (activeTab) {
+        $(activeTab).find('a').click();
     } else {
-        if ($(this).hasClass('active')) {
-            $(link).click();
-        }
+        $('#relatedTabs li').first().find('a').click();
     }
-});
+}
 ", ['block' => 'scriptBottom']);
 ?>

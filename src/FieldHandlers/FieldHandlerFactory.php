@@ -14,6 +14,7 @@ namespace CsvMigrations\FieldHandlers;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validator;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use InvalidArgumentException;
 use RuntimeException;
@@ -114,6 +115,28 @@ class FieldHandlerFactory
         $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
         return $handler->renderValue($data, $options);
+    }
+
+    /**
+     * Validation rules setter.
+     *
+     * @param mixed $table Name or instance of the Table
+     * @param string $field Field name
+     * @param \Cake\Validation\Validator $validator Validator instance
+     * @param array $options Field options
+     * @return \Cake\Validation\Validator
+     */
+    public function setValidationRules($table, $field, Validator $validator, array $options = [])
+    {
+        $handler = self::getByTableField($table, $field);
+        $validator = $handler->setValidationRules($validator);
+        if (! $validator instanceof Validator) {
+            throw new RuntimeException(
+                sprintf('Field Handler returned value must be an instance of %s.', Validator::class)
+            );
+        }
+
+        return $validator;
     }
 
     /**

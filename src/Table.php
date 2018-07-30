@@ -13,6 +13,7 @@ namespace CsvMigrations;
 
 use ArrayObject;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
@@ -20,7 +21,9 @@ use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\ORM\Query;
 use Cake\ORM\Table as BaseTable;
+use Cake\Validation\Validator;
 use CsvMigrations\Event\EventName;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\MigrationTrait;
 use CsvMigrations\Model\AssociationsAwareTrait;
 use Qobo\Utils\ModuleConfig\ConfigType;
@@ -88,6 +91,30 @@ class Table extends BaseTable
         $this->setDisplayField($config->table->display_field);
 
         $this->setAssociations();
+    }
+
+    /**
+     * Set Table validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        // configurable in config/csv_migrations.php
+        if (! Configure::read('CsvMigrations.tableValidation')) {
+            return $validator;
+        }
+
+        $className = App::shortName(get_class($this), 'Model/Table', 'Table');
+        $config = (new ModuleConfig(ConfigType::MIGRATION(), $className))->parse();
+        $factory = new FieldHandlerFactory();
+
+        foreach ($config as $column) {
+            $validator = $factory->setValidationRules($this, $column->name, $validator);
+        }
+
+        return $validator;
     }
 
     /**

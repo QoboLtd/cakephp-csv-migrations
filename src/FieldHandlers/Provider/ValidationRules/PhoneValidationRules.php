@@ -9,7 +9,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace CsvMigrations\FieldHandlers\Provider\Validation;
+namespace CsvMigrations\FieldHandlers\Provider\ValidationRules;
 
 /**
  * PhoneValidationRules

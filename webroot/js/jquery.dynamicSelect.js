@@ -146,8 +146,8 @@
 
         defaultSelectValue: function ( level ) {
             var result = this.noSelectValue;
-            // use previous select-box value as current select-box default value
-            if (this.previousDefaultValue) {
+            // use previous select-box value as current select-box default value, unless we are already on the top level
+            if (this.previousDefaultValue && 0 < level) {
                 result = $(this.selectors[level - 1], this.context).val();
             }
 

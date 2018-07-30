@@ -39,7 +39,7 @@ $attributes += $options;
 <?php if ($entities && $entities->count()) : ?>
     <?php foreach ($entities as $entity) : ?>
         <?= $this->Form->hidden(
-            $name . '_ids][',
+            $name . '_ids[]',
             [
                 'class' => $class,
                 'value' => $entity->id
@@ -48,7 +48,7 @@ $attributes += $options;
     <?php endforeach; ?>
 <?php else : ?>
     <?= $this->Form->hidden(
-        $name . '_ids][',
+        $name . '_ids[]',
         [
             'class' => $class,
             'value' => ''

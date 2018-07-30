@@ -19,12 +19,17 @@ namespace CsvMigrations\FieldHandlers\Provider\Validation;
 class PhoneValidationRules extends AbstractValidationRules
 {
     /**
+     * Regex pattern for validation rule.
+     */
+    const VALIDATION_PATTERN = '^\+?[0-9\s\(\)\.\-]*$';
+
+    /**
      * {@inheritDoc}
      */
     public function provide($validator = null, array $options = [])
     {
         $validator = parent::provide($validator, $options);
-        $validator->regex($options['fieldDefinitions']->getName(), '/^\+?[0-9\s\(\)\.\-]*$/');
+        $validator->regex($options['fieldDefinitions']->getName(), '/' . static::VALIDATION_PATTERN . '/');
 
         return $validator;
     }

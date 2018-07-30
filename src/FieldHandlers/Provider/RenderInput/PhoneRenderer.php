@@ -33,6 +33,11 @@ class PhoneRenderer extends AbstractRenderer
 
         $fieldName = $table->aliasField($field);
 
+        $attributes = empty($options['attributes']) ? [] : $options['attributes'];
+        if (defined($this->config->getProvider('validationRules') . '::VALIDATION_PATTERN')) {
+            $attributes['pattern'] = $this->config->getProvider('validationRules')::VALIDATION_PATTERN;
+        }
+
         $params = [
             'field' => $field,
             'name' => $fieldName,
@@ -41,7 +46,7 @@ class PhoneRenderer extends AbstractRenderer
             'required' => $options['fieldDefinitions']->getRequired(),
             'value' => $data,
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
-            'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
+            'attributes' => $attributes,
             'placeholder' => (!empty($options['placeholder']) ? $options['placeholder'] : ''),
         ];
 

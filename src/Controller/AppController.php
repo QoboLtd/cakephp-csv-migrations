@@ -161,7 +161,7 @@ class AppController extends BaseController
         }
 
         if ($entity->getErrors()) {
-            Log::warning($entity->getErrors());
+            Log::warning(json_encode($entity->getErrors()));
         }
 
         if (! $saved) {

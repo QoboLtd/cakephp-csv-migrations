@@ -79,6 +79,8 @@
                 singleDatePicker: true,
                 showDropdowns: true,
                 timePicker: true,
+                minYear: 1900,
+                maxYear: 2050,
                 drops: 'down',
                 autoUpdateInput: false,
                 timePicker24Hour: true,

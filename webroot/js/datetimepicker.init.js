@@ -6,7 +6,10 @@
     {
         var that = this;
 
-        this.format = 'YYYY-MM-DD HH:mm';
+        this.format = {
+            datetime: 'YYYY-MM-DD HH:mm',
+            date: 'YYYY-MM-DD'
+        };
         this.magicValues = [
             {id: '%%today%%', name: 'Today', value: [moment(), moment()]},
             {id: '%%yesterday%%', name: 'Yesterday', value: [moment().subtract(1, 'days'), moment().subtract(1, 'days')]},
@@ -56,7 +59,7 @@
                 $(this).daterangepicker(that.getOptions(this, options), that.getCallback(this, hiddenInput));
 
                 $(this).on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(picker.startDate.format(that.format));
+                    $(this).val(picker.startDate.format(picker.locale.format));
                 });
 
                 $(this).on('cancel.daterangepicker', function (ev, picker) {
@@ -76,13 +79,14 @@
                 singleDatePicker: true,
                 showDropdowns: true,
                 timePicker: true,
+                minYear: 1900,
+                maxYear: 2050,
                 drops: 'down',
                 autoUpdateInput: false,
                 timePicker24Hour: true,
                 timePickerIncrement: 5,
                 locale: {
                     cancelLabel: 'Clear',
-                    format: this.format,
                     firstDay: 1
                 }
             };
@@ -90,6 +94,8 @@
             if (args !== undefined) {
                 options = Object.assign(options, args)
             }
+
+            options.locale.format = options.timePicker ? this.format.datetime : this.format.date;
 
             if ($(input).data('magic-value')) {
                 options.ranges = [];

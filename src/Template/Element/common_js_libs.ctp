@@ -15,7 +15,7 @@ use Cake\Core\Configure;
 echo $this->Html->css(
     [
         'AdminLTE./plugins/iCheck/all',
-        'AdminLTE./plugins/daterangepicker/daterangepicker',
+        'Qobo/Utils./plugins/daterangepicker/css/daterangepicker.css',
         'AdminLTE./plugins/datepicker/datepicker3',
         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
         'AdminLTE./plugins/select2/select2.min',
@@ -53,7 +53,7 @@ echo $this->Html->script(
         'AdminLTE./plugins/iCheck/icheck.min',
         'CsvMigrations.icheck.init',
         'AdminLTE./plugins/daterangepicker/moment.min',
-        'AdminLTE./plugins/daterangepicker/daterangepicker',
+        'Qobo/Utils./plugins/daterangepicker/js/daterangepicker.js',
         'CsvMigrations.datetimepicker.init',
         'AdminLTE./plugins/datepicker/bootstrap-datepicker',
         'CsvMigrations.datepicker.init',

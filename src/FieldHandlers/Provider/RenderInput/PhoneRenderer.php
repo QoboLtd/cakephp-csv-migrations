@@ -35,7 +35,7 @@ class PhoneRenderer extends AbstractRenderer
 
         $attributes = empty($options['attributes']) ? [] : $options['attributes'];
         if (defined($this->config->getProvider('validationRules') . '::VALIDATION_PATTERN')) {
-            $attributes['pattern'] = $this->config->getProvider('validationRules')::VALIDATION_PATTERN;
+            $attributes['pattern'] = constant($this->config->getProvider('validationRules') . '::VALIDATION_PATTERN');
         }
 
         $params = [

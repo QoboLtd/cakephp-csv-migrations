@@ -15,10 +15,11 @@ $attributes = isset($attributes) ? $attributes : [];
 $attributes += [
     'type' => 'text',
     'label' => $label,
-    'data-provide' => 'datepicker',
+    'data-provide' => 'datetimepicker',
     'autocomplete' => 'off',
     'required' => (bool)$required,
     'value' => $value,
+    'data-time-picker' => 'false',
     'templates' => [
         'input' => '<div class="input-group">
             <div class="input-group-addon">

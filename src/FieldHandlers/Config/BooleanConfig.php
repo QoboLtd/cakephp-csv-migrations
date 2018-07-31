@@ -33,6 +33,6 @@ class BooleanConfig extends FixedConfig
         'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\BooleanRenderer',
         'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\BooleanYesNoRenderer',
         'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
-        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\Validation\\BooleanValidationRules',
+        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\BooleanValidationRules',
     ];
 }

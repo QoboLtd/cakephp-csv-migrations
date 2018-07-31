@@ -33,6 +33,6 @@ class DateConfig extends FixedConfig
         'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\DateRenderer',
         'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\DateRenderer',
         'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
-        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\Validation\\DateValidationRules',
+        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\DateValidationRules',
     ];
 }

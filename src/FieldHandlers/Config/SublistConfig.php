@@ -33,6 +33,6 @@ class SublistConfig extends FixedConfig
         'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\SublistRenderer',
         'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\ListRenderer',
         'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
-        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\Validation\\ListValidationRules',
+        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\ListValidationRules',
     ];
 }

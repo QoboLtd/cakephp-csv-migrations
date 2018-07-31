@@ -33,6 +33,6 @@ class RelatedConfig extends FixedConfig
         'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\RelatedRenderer',
         'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\RelatedRenderer',
         'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
-        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\Validation\\RelatedValidationRules',
+        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\RelatedValidationRules',
     ];
 }

@@ -33,6 +33,6 @@ class TimeConfig extends FixedConfig
         'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\TimeRenderer',
         'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\TimeRenderer',
         'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
-        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\Validation\\TimeValidationRules',
+        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\TimeValidationRules',
     ];
 }

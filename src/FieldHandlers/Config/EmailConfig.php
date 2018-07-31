@@ -33,5 +33,6 @@ class EmailConfig extends FixedConfig
         'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\EmailRenderer',
         'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\EmailRenderer',
         'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
+        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\EmailValidationRules',
     ];
 }

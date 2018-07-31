@@ -99,6 +99,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
                     'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\StringRenderer',
                     'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\StringRenderer',
                     'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
+                    'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\StringValidationRules',
                 ],
             ],
         ];

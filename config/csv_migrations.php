@@ -5,6 +5,15 @@ $uploadLimit = sizeToBytes(ini_get('upload_max_filesize'));
 // CsvMigrations plugin configuration
 return [
     'CsvMigrations' => [
+        /**
+         * Enables/disables Table default validation rules.
+         *
+         * @see \CsvMigrations\Table::validationDefault();
+         * @see \CsvMigrations\FieldHandlers\FieldHandler::setValidationRules();
+         * @see \CsvMigrations\FieldHandlers\FieldHandlerFactory::setValidationRules();
+         * @see src/FieldHandlers/Provider/ValidationRules;
+         */
+        'tableValidation' => false,
         'api' => [
             'auth' => true,
             'token' => null

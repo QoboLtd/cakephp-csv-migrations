@@ -14,6 +14,7 @@ namespace CsvMigrations\FieldHandlers;
 use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validator;
 use Cake\View\View;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
@@ -341,6 +342,25 @@ class FieldHandler implements FieldHandlerInterface
         $result = (string)$rendererClass->provide($result, $options);
 
         return $result;
+    }
+
+    /**
+     * Validation rules setter.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance
+     * @return \Cake\Validation\Validator
+     */
+    public function setValidationRules(Validator $validator)
+    {
+        $provider = $this->config->getProvider('validationRules');
+        $validator = (new $provider($this->config))->provide($validator, $this->defaultOptions);
+        if (! $validator instanceof Validator) {
+            throw new RuntimeException(
+                sprintf('Provider returned value must be an instance of %s.', Validator::class)
+            );
+        }
+
+        return $validator;
     }
 
     /**

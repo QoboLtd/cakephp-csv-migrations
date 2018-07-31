@@ -33,5 +33,6 @@ class MoneyConfig extends FixedConfig
         'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\CombinedRenderer',
         'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\CombinedRenderer',
         'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
+        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\CombinedValidationRules',
     ];
 }

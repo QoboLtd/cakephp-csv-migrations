@@ -33,5 +33,6 @@ class BlobConfig extends FixedConfig
         'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\TextRenderer',
         'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\StringRenderer',
         'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
+        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\BlobValidationRules',
     ];
 }

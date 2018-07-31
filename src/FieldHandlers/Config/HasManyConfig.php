@@ -33,5 +33,6 @@ class HasManyConfig extends FixedConfig
         'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\HasManyRenderer',
         'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\RelatedRenderer',
         'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
+        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\HasManyValidationRules',
     ];
 }

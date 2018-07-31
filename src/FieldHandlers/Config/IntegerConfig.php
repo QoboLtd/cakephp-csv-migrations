@@ -33,5 +33,6 @@ class IntegerConfig extends FixedConfig
         'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\IntegerRenderer',
         'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\IntegerRenderer',
         'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
+        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\IntegerValidationRules',
     ];
 }

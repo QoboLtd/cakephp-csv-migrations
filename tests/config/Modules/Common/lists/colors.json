@@ -1,0 +1,16 @@
+{
+    "items": [
+        {
+            "value": "cy",
+            "label": "<strong>Cyprus</strong>",
+            "inactive": "",
+            "children": []
+        },
+        {
+            "value": "usa",
+            "label": "<em>USA</em>",
+            "inactive": "",
+            "children": []
+        }
+    ]
+}

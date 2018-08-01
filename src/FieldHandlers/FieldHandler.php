@@ -331,7 +331,7 @@ class FieldHandler implements FieldHandlerInterface
 
         $rendererClass = $this->config->getProvider('renderValue');
         if (!empty($options['renderAs'])) {
-            $rendererClass = __NAMESPACE__ . '\\Provider\\RenderValue\\' . ucfirst($options['renderAs']) . 'Renderer';
+            $rendererClass = __NAMESPACE__ . '\\Provider\\RenderValue\\' . Inflector::camelize($options['renderAs']) . 'Renderer';
         }
 
         if (!class_exists($rendererClass)) {

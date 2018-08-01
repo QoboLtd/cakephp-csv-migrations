@@ -11,6 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers\Config;
 
+use Cake\Utility\Inflector;
 use RuntimeException;
 
 /**
@@ -33,7 +34,8 @@ class ConfigFactory
      */
     public static function getByType($type, $field, $table = null, array $options = [])
     {
-        $configClass = __NAMESPACE__ . '\\' . ucfirst($type) . 'Config';
+        $configClass = __NAMESPACE__ . '\\' . Inflector::camelize($type) . 'Config';
+
         if (!class_exists($configClass)) {
             throw new RuntimeException("Configuration type [$type] is not supported");
         }

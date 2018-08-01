@@ -348,12 +348,15 @@ class FieldHandler implements FieldHandlerInterface
      * Validation rules setter.
      *
      * @param \Cake\Validation\Validator $validator Validator instance
+     * @param array $options Field options
      * @return \Cake\Validation\Validator
      */
-    public function setValidationRules(Validator $validator)
+    public function setValidationRules(Validator $validator, array $options = [])
     {
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+
         $provider = $this->config->getProvider('validationRules');
-        $validator = (new $provider($this->config))->provide($validator, $this->defaultOptions);
+        $validator = (new $provider($this->config))->provide($validator, $options);
         if (! $validator instanceof Validator) {
             throw new RuntimeException(
                 sprintf('Provider returned value must be an instance of %s.', Validator::class)

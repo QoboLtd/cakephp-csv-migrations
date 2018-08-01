@@ -12,6 +12,7 @@
 namespace CsvMigrations\View\Cell;
 
 use Cake\View\Cell;
+use CsvMigrations\FieldHandlers\Provider\RenderValue\ListRenderer;
 
 /**
  * DbList cell
@@ -33,25 +34,32 @@ class DblistCell extends Cell
      * Checks the given list if it has the given value in its list items.
      *
      * @throws RunTimeException If the value is not found
-     * @param  string $listItemValue List item value
-     * @param  string $list Name of the list
+     * @param string $value List item value
+     * @param string $list Name of the list
      * @return void
      */
-    public function renderValue($listItemValue, $list = null)
+    public function renderValue($value, $list = null)
     {
         $this->loadModel('CsvMigrations.Dblists');
         $this->_createList($list);
         $query = $this->Dblists->findByName($list);
-        $query = $query->matching('DblistItems', function ($q) use ($listItemValue) {
-            return $q->where(['DblistItems.value' => $listItemValue]);
+        $query = $query->matching('DblistItems', function ($q) use ($value) {
+            return $q->where(['DblistItems.value' => $value]);
         });
-        if (!$query->isEmpty()) {
-            $data = $query->first()->_matchingData['DblistItems']->get('name');
-        } else {
-            $data = __d('CsvMigrations', 'The value "{0}" cannot be found in the list "{1}"', $listItemValue, $list);
+
+        if (! $query->isEmpty()) {
+            $this->set('data', $query->first()->_matchingData['DblistItems']->get('name'));
+
+            return;
         }
 
-        $this->set('data', $data);
+        if ($query->isEmpty() && '' === trim($value)) {
+            $this->set('data', '');
+
+            return;
+        }
+
+        $this->set('data', sprintf(ListRenderer::VALUE_NOT_FOUND_HTML, $value));
     }
 
     /**

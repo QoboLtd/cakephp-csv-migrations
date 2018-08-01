@@ -129,7 +129,7 @@ class FieldHandlerFactory
     public function setValidationRules($table, $field, Validator $validator, array $options = [])
     {
         $handler = self::getByTableField($table, $field);
-        $validator = $handler->setValidationRules($validator);
+        $validator = $handler->setValidationRules($validator, $options);
         if (! $validator instanceof Validator) {
             throw new RuntimeException(
                 sprintf('Field Handler returned value must be an instance of %s.', Validator::class)

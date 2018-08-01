@@ -33,7 +33,9 @@ class CombinedValidationRules extends AbstractValidationRules
 
             $config = new $fieldOptions['config']($fieldName, $this->config->getTable(), $options);
 
-            $validator = (new FieldHandler($config))->setValidationRules($validator);
+            $definitions = clone $options['fieldDefinitions'];
+            $definitions->setName($fieldName);
+            $validator = (new FieldHandler($config))->setValidationRules($validator, ['fieldDefinitions' => $definitions]);
         }
 
         return $validator;

@@ -12,6 +12,7 @@
 namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
 
 use Cake\ORM\TableRegistry;
+use CsvMigrations\FieldHandlers\Setting;
 
 /**
  * DblistRenderer
@@ -45,7 +46,10 @@ class DblistRenderer extends AbstractRenderer
             'label' => $options['label'],
             'required' => $options['fieldDefinitions']->getRequired(),
             'value' => $data,
-            'options' => $table->find('options', ['name' => $list]),
+            'options' => array_merge(
+                ['' => Setting::EMPTY_OPTION_LABEL()],
+                $table->find('options', ['name' => $list])->toArray()
+            ),
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
         ];

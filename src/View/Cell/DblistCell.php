@@ -12,6 +12,7 @@
 namespace CsvMigrations\View\Cell;
 
 use Cake\View\Cell;
+use CsvMigrations\FieldHandlers\Provider\RenderValue\ListRenderer;
 
 /**
  * DbList cell
@@ -45,13 +46,20 @@ class DblistCell extends Cell
         $query = $query->matching('DblistItems', function ($q) use ($listItemValue) {
             return $q->where(['DblistItems.value' => $listItemValue]);
         });
-        if (!$query->isEmpty()) {
-            $data = $query->first()->_matchingData['DblistItems']->get('name');
-        } else {
-            $data = __d('CsvMigrations', 'The value "{0}" cannot be found in the list "{1}"', $listItemValue, $list);
+
+        if (! $query->isEmpty()) {
+            $this->set('data', $query->first()->_matchingData['DblistItems']->get('name'));
+
+            return;
         }
 
-        $this->set('data', $data);
+        if ($query->isEmpty() && '' === trim($listItemValue)) {
+            $this->set('data', '');
+
+            return;
+        }
+
+        $this->set('data', sprintf(ListRenderer::VALUE_NOT_FOUND_HTML, $listItemValue));
     }
 
     /**

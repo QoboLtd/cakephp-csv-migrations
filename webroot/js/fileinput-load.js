@@ -23,10 +23,10 @@ $(document).ready(function () {
 
     FileInput.prototype.defaultOptions = {
         uploadAsync: true,
-        showUpload: true,
+        showUpload: false,
         showRemove: false,
         dropZoneEnabled: false,
-        showUploadedThumbs: false,
+        showUploadedThumbs: true,
         fileActionSettings: {
             showUpload: false,
             showZoom: false,
@@ -165,6 +165,7 @@ $(document).ready(function () {
         var that = this;
 
         var existing = {
+            showUpload: false,
             overwriteInitial: false,
             initialPreviewAsData: true,
             ajaxDeleteSettings: {
@@ -182,9 +183,9 @@ $(document).ready(function () {
         if ($(inputField).attr('data-upload-url')) {
             options.uploadUrl = $(inputField).attr('data-upload-url');
         }
-
         inputField.fileinput(options).on("filebatchselected", function (event) {
             $(document).trigger('updateFiles', [event.target.files, $(this).attr('name')]);
+            inputField.fileinput('upload');
         });
 
         inputField.fileinput(options).on('fileuploaded', function (event, data) {
@@ -271,6 +272,7 @@ $(document).ready(function () {
         // Keep existing images on adding new images,
         // overwrtting default options in case of existing files
         var existing = {
+            showUpload: false,
             overwriteInitial: false,
             initialPreview: this.options.initialPreview,
             initialPreviewConfig: this.options.initialPreviewConfig,
@@ -305,7 +307,9 @@ $(document).ready(function () {
             var opts = that.addDeleteUrls(ids);
             options.initialPreviewConfig = opts;
             options.initialPreview = paths;
-            that.refreshFileInput(this, options);
+        }).on("filebatchselected", function (event) {
+            $(document).trigger('updateFiles', [event.target.files, $(this).attr('name')]);
+            inputField.fileinput('upload');
         });
     };
 

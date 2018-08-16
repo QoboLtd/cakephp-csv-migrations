@@ -58,8 +58,13 @@ class RelatedRenderer extends AbstractRenderer
                 $inputs[] = $properties['dispFieldVal'];
             } else {
                 // generate related record(s) html link
+                $title = $properties['dispFieldVal'];
+                if (isset($properties['config']['table']['icon'])) {
+                    $title = '<i class="menu-icon fa fa-' . $properties['config']['table']['icon'] . '"></i>' . $title;
+                }
+
                 $inputs[] = $view->Html->link(
-                    $properties['dispFieldVal'],
+                    $title,
                     $view->Url->build([
                         'prefix' => false,
                         'plugin' => $properties['plugin'],
@@ -67,7 +72,7 @@ class RelatedRenderer extends AbstractRenderer
                         'action' => 'view',
                         $properties['id']
                     ]),
-                    ['class' => 'label label-primary']
+                    ['class' => 'label label-primary', 'escape' => false]
                 );
             }
         }

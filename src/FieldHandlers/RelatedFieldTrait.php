@@ -94,12 +94,13 @@ trait RelatedFieldTrait
             // Pass the value through related field handler
             // to properly display the user-friendly label.
             $fhf = new FieldHandlerFactory();
-            $result['dispFieldVal'] = $fhf->renderValue(
+            $dispFieldVal = $fhf->renderValue(
                 $table,
                 $table->displayField(),
                 $result['entity']->{$table->displayField()},
                 ['renderAs' => Setting::RENDER_PLAIN_VALUE_RELATED()]
             );
+            $result['dispFieldVal'] = empty($dispFieldVal) ? 'N/A' : $dispFieldVal;
         } else {
             $result['dispFieldVal'] = null;
         }

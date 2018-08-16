@@ -71,7 +71,7 @@ class AppController extends BaseController
     public function view($id = null)
     {
         $entity = $this->{$this->name}->find()
-            ->where([$this->{$this->name}->getPrimaryKey() => $id])
+            ->where([$this->{$this->name}->aliasField($this->{$this->name}->getPrimaryKey()) => $id])
             ->first();
 
         if (empty($entity)) {

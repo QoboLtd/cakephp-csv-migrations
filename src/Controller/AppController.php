@@ -16,6 +16,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Log\Log;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validation;
 use CsvMigrations\Controller\Traits\ImportTrait;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\Utility\Field;
@@ -74,7 +75,7 @@ class AppController extends BaseController
             ->where([$this->{$this->name}->aliasField($this->{$this->name}->getPrimaryKey()) => $id])
             ->first();
 
-        if (empty($entity)) {
+        if (null === $entity && ! Validation::uuid($id)) {
             $entity = $this->{$this->name}->find()
                 ->applyOptions(['lookup' => true, 'value' => $id])
                 ->firstOrFail();

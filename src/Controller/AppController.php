@@ -75,7 +75,7 @@ class AppController extends BaseController
             ->where([$this->{$this->name}->aliasField($this->{$this->name}->getPrimaryKey()) => $id])
             ->first();
 
-        if (null === $entity && ! Validation::uuid($id)) {
+        if (empty($entity) && ! Validation::uuid($id)) {
             $entity = $this->{$this->name}->find()
                 ->applyOptions(['lookup' => true, 'value' => $id])
                 ->firstOrFail();
@@ -124,7 +124,7 @@ class AppController extends BaseController
             ->where([$this->{$this->name}->getPrimaryKey() => $id])
             ->first();
 
-        if (null === $entity && ! Validation::uuid($id)) {
+        if (empty($entity) && ! Validation::uuid($id)) {
             $entity = $this->{$this->name}->find()
                 ->applyOptions(['lookup' => true, 'value' => $id])
                 ->firstOrFail();

@@ -13,6 +13,7 @@ namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\Log\Log;
 use Cake\Utility\Inflector;
@@ -71,15 +72,7 @@ class AppController extends BaseController
      */
     public function view($id = null)
     {
-        $entity = $this->{$this->name}->find()
-            ->where([$this->{$this->name}->aliasField($this->{$this->name}->getPrimaryKey()) => $id])
-            ->first();
-
-        if (empty($entity) && ! Validation::uuid($id)) {
-            $entity = $this->{$this->name}->find()
-                ->applyOptions(['lookup' => true, 'value' => $id])
-                ->firstOrFail();
-        }
+        $entity = $this->fetchEntity($id);
 
         $this->set('entity', $entity);
         $this->render('CsvMigrations.Common/view');
@@ -120,15 +113,7 @@ class AppController extends BaseController
      */
     public function edit($id = null)
     {
-        $entity = $this->{$this->name}->find()
-            ->where([$this->{$this->name}->getPrimaryKey() => $id])
-            ->first();
-
-        if (empty($entity) && ! Validation::uuid($id)) {
-            $entity = $this->{$this->name}->find()
-                ->applyOptions(['lookup' => true, 'value' => $id])
-                ->firstOrFail();
-        }
+        $entity = $this->fetchEntity($id);
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             // enable accessibility to associated entity's primary key to avoid associated entity getting flagged as new
@@ -141,6 +126,39 @@ class AppController extends BaseController
         $this->set('entity', $entity);
         $this->render('CsvMigrations.Common/edit');
         $this->set('_serialize', ['entity']);
+    }
+
+    /**
+     * Fetches entity from database.
+     *
+     * Tries to fetch the record using the primary key, if no record found and the ID value is not a UUID it will try to
+     * fetch the record using the lookup fields. If that fails as well then a record not found exception will be thrown.
+     *
+     * @param string|null $id Entity id
+     * @return \Cake\Datasource\EntityInterface
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When the record is not found
+     */
+    private function fetchEntity($id = null)
+    {
+        $entity = $this->{$this->name}->find()
+            ->where([$this->{$this->name}->aliasField($this->{$this->name}->getPrimaryKey()) => $id])
+            ->first();
+
+        if (! empty($entity)) {
+            return $entity;
+        }
+
+        if (! Validation::uuid($id)) {
+            $entity = $this->{$this->name}->find()
+                ->applyOptions(['lookup' => true, 'value' => $id])
+                ->firstOrFail();
+        }
+
+        if (! empty($entity)) {
+            return $entity;
+        }
+
+        throw new RecordNotFoundException(sprintf('Record not found in table "%s"', $this->{$this->name}->getTable()));
     }
 
     /**

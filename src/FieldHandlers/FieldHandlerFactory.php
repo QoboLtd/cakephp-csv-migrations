@@ -112,6 +112,10 @@ class FieldHandlerFactory
      */
     public function renderValue($table, $field, $data, array $options = [])
     {
+        if (empty($data)) {
+            $data = 'N/A';
+        }
+
         $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
         return $handler->renderValue($data, $options);

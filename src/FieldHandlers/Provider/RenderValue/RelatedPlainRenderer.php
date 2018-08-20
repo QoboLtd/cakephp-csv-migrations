@@ -35,7 +35,7 @@ class RelatedPlainRenderer extends AbstractRenderer
         $result = null;
 
         if (empty($data)) {
-            return $result;
+            return 'N/A';
         }
 
         if ('related' !== $options['fieldDefinitions']->getType()) {

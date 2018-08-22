@@ -202,7 +202,7 @@ class Import
      */
     public static function getRowsCount($path, $withHeader = false)
     {
-        $result = exec("/usr/bin/env wc -l '" . $path . "'", $output, $return);
+        $result = trim(exec("/usr/bin/env wc -l '" . $path . "'", $output, $return));
         if (0 === $return) {
             list($result, ) = explode(' ', $result);
             $result = (int)$result;

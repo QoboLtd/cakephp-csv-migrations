@@ -413,7 +413,6 @@ class ImportShell extends Shell
                 } else {
                     $data[$field] = $value;
                 }
-
             }
         }
 

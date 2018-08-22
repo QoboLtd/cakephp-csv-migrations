@@ -397,9 +397,8 @@ class ImportShell extends Shell
         $result = [];
 
         $schema = $table->schema();
-
         foreach ($data as $field => $value) {
-            if (!empty($csvFields)) {
+            if (!empty($csvFields) && in_array($field, array_keys($csvFields))) {
                 switch ($csvFields[$field]->getType()) {
                     case 'related':
                         $data[$field] = $this->_findRelatedRecord($table, $field, $value);
@@ -411,7 +410,10 @@ class ImportShell extends Shell
             } else {
                 if ('uuid' === $schema->columnType($field)) {
                     $data[$field] = $this->_findRelatedRecord($table, $field, $value);
+                } else {
+                    $data[$field] = $value;
                 }
+
             }
         }
 

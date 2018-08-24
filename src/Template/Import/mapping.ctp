@@ -12,6 +12,8 @@
 
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use Qobo\Utils\ModuleConfig\ConfigType;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 $fhf = new FieldHandlerFactory($this);
 
@@ -25,11 +27,32 @@ foreach ($headers as $header) {
     $key = Inflector::underscore(str_replace(' ', '', trim($header)));
     $headerOptions[$key] = $header;
 }
+
+$options = [
+    'title' => null,
+    'entity' => null,
+    'fields' => [],
+];
+
+// generate title
+if (!$options['title']) {
+    $config = (new ModuleConfig(ConfigType::MODULE(), $this->name))->parse();
+    $options['title'] = $this->Html->link(
+        isset($config->table->alias) ? $config->table->alias : Inflector::humanize(Inflector::underscore($this->name)),
+        ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index']
+    );
+    $options['title'] .= ' &raquo; ';
+    $options['title'] .= __('Import fields mapping');
+}
 ?>
 <section class="content-header">
     <div class="row">
         <div class="col-xs-12 col-md-6">
-            <h4><?= __('Import fields mapping') ?></h4>
+            <h4><?= $options['title'] ?></h4>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <div class="pull-right">
+            </div>
         </div>
     </div>
 </section>

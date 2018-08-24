@@ -228,6 +228,14 @@ $(document).ready(function () {
             }
         }
 
+        if (hiddenFields.length) {
+            hiddenFields.forEach(function (element) {
+                if ($(element).val() == '') {
+                    $(element).remove();
+                }
+            });
+        }
+
         return added;
     };
 

@@ -35,7 +35,7 @@ if (!$options['title']) {
         ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index']
     );
     $options['title'] .= ' &raquo; ';
-    $options['title'] .=  __('Import Data');
+    $options['title'] .= __('Import Data');
 }
 ?>
 <section class="content-header">

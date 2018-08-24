@@ -17,7 +17,6 @@ use CsvMigrations\Utility\Import as ImportUtility;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
-
 $statusLabels = [
     ImportsTable::STATUS_IN_PROGRESS => 'primary',
     ImportsTable::STATUS_COMPLETED => 'success',
@@ -108,7 +107,7 @@ if (!$options['title']) {
         ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'import']
     );
     $options['title'] .= ' &raquo; ';
-    $options['title'] .=  basename($import->get('filename'));
+    $options['title'] .= basename($import->get('filename'));
 }
 ?>
 <section class="content-header">

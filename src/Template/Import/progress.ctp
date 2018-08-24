@@ -11,8 +11,12 @@
  */
 
 use Cake\Core\Configure;
+use Cake\Utility\Inflector;
 use CsvMigrations\Model\Table\ImportsTable;
 use CsvMigrations\Utility\Import as ImportUtility;
+use Qobo\Utils\ModuleConfig\ConfigType;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
+
 
 $statusLabels = [
     ImportsTable::STATUS_IN_PROGRESS => 'primary',
@@ -84,11 +88,33 @@ $progressClass = 'progress-bar-info active';
 if (100 === (int)$percent) {
     $progressClass = 'progress-bar-success';
 }
+
+$options = [
+    'title' => null,
+    'entity' => null,
+    'fields' => [],
+];
+
+// generate title
+if (!$options['title']) {
+    $config = (new ModuleConfig(ConfigType::MODULE(), $this->name))->parse();
+    $options['title'] = $this->Html->link(
+        isset($config->table->alias) ? $config->table->alias : Inflector::humanize(Inflector::underscore($this->name)),
+        ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index']
+    );
+    $options['title'] .= ' &raquo; ';
+    $options['title'] .= $this->Html->link(
+        __('Imports'),
+        ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'import']
+    );
+    $options['title'] .= ' &raquo; ';
+    $options['title'] .=  basename($import->get('filename'));
+}
 ?>
 <section class="content-header">
     <div class="row">
-        <div class="col-xs-12">
-            <h4><?= basename($import->get('filename')) ?></h4>
+        <div class="col-xs-12 col-md-12">
+            <h4><?= $options['title'] ?></h4>
         </div>
     </div>
 </section>

@@ -10,7 +10,10 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\Utility\Inflector;
 use CsvMigrations\Model\Table\ImportsTable;
+use Qobo\Utils\ModuleConfig\ConfigType;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 $statusLabels = [
     ImportsTable::STATUS_IN_PROGRESS => 'primary',
@@ -18,11 +21,31 @@ $statusLabels = [
     ImportsTable::STATUS_PENDING => 'warning',
     ImportsTable::STATUS_FAIL => 'error'
 ];
+$options = [
+    'title' => null,
+    'entity' => null,
+    'fields' => [],
+];
+
+// generate title
+if (!$options['title']) {
+    $config = (new ModuleConfig(ConfigType::MODULE(), $this->name))->parse();
+    $options['title'] = $this->Html->link(
+        isset($config->table->alias) ? $config->table->alias : Inflector::humanize(Inflector::underscore($this->name)),
+        ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index']
+    );
+    $options['title'] .= ' &raquo; ';
+    $options['title'] .=  __('Import Data');
+}
 ?>
 <section class="content-header">
     <div class="row">
         <div class="col-xs-12 col-md-6">
-            <h4><?= __('Import data for') ?> <?= $this->name ?></h4>
+            <h4><?= $options['title'] ?></h4>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <div class="pull-right">
+            </div>
         </div>
     </div>
 </section>

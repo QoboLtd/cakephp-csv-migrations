@@ -32,9 +32,7 @@ class ListRenderer extends AbstractRenderer
     {
         $field = $this->config->getField();
         $table = $this->config->getTable();
-
         $fieldName = $table->aliasField($field);
-
         $selectOptions = ['' => Setting::EMPTY_OPTION_LABEL()];
 
         // if select options are not pre-defined
@@ -42,6 +40,7 @@ class ListRenderer extends AbstractRenderer
             $selectListItems = $this->config->getProvider('selectOptions');
             $selectListItems = new $selectListItems($this->config);
             $listName = $options['fieldDefinitions']->getLimit();
+            $listName = false !== strpos($listName, '.') ? $listName : $this->config->getTable()->alias() . '.' . $listName;
             $listOptions = [];
             $selectOptions += $selectListItems->provide($listName, $listOptions);
         } else {

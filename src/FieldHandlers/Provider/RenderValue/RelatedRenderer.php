@@ -47,35 +47,12 @@ class RelatedRenderer extends AbstractRenderer
             );
         }
 
-        $view = $this->config->getView();
-        $inputs = [];
-        foreach ($relatedProperties as $properties) {
-            if (empty($properties)) {
-                continue;
-            }
+        $elementName = 'CsvMigrations.FieldHandlers/RelatedFieldHandler/view';
+        $params = [
+            'relatedProperties' => $relatedProperties,
+            'options' => $options,
+        ];
 
-            if (isset($options['renderAs']) && $options['renderAs'] === 'plain') {
-                $inputs[] = $properties['dispFieldVal'];
-            } else {
-                // generate related record(s) html link
-                $inputs[] = $view->Html->link(
-                    $properties['dispFieldVal'],
-                    $view->Url->build([
-                        'prefix' => false,
-                        'plugin' => $properties['plugin'],
-                        'controller' => $properties['controller'],
-                        'action' => 'view',
-                        $properties['id']
-                    ]),
-                    ['class' => 'label label-primary']
-                );
-            }
-        }
-
-        if (!empty($inputs)) {
-            $result .= implode(' ' . $this->_separator . ' ', $inputs);
-        }
-
-        return $result;
+        return $this->renderElement($elementName, $params);
     }
 }

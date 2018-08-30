@@ -60,7 +60,7 @@ class RelatedFieldHandlerTest extends TestCase
         $this->assertContains('data-url="/api/foo/lookup.json"', $result);
 
         // test helper text
-        $this->assertContains('title="Name, or Foobar"', $result);
+        $this->assertContains('title="Foo, or Bar, or Foobar"', $result);
 
         // test icon
         $this->assertContains('<span class="fa fa-user"></span>', $result);

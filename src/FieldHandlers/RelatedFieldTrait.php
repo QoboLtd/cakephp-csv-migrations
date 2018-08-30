@@ -94,12 +94,13 @@ trait RelatedFieldTrait
             // Pass the value through related field handler
             // to properly display the user-friendly label.
             $fhf = new FieldHandlerFactory();
-            $result['dispFieldVal'] = $fhf->renderValue(
+            $dispFieldVal = $fhf->renderValue(
                 $table,
                 $table->displayField(),
                 $result['entity']->{$table->displayField()},
                 ['renderAs' => Setting::RENDER_PLAIN_VALUE_RELATED()]
             );
+            $result['dispFieldVal'] = empty($dispFieldVal) ? 'N/A' : $dispFieldVal;
         } else {
             $result['dispFieldVal'] = null;
         }
@@ -163,16 +164,28 @@ trait RelatedFieldTrait
     protected function _getInputHelp($properties)
     {
         $config = (new ModuleConfig(ConfigType::MODULE(), $properties['controller']))->parse();
+        $fields = $config->table->typeahead_fields;
+        $virtualFields = $config->virtualFields;
 
         // if typeahead fields were not defined, use display field
-        if (empty($config->table->typeahead_fields)) {
-            return Inflector::humanize($properties['displayField']);
+        if (empty($fields)) {
+            $fields = [$properties['displayField']];
+        }
+
+        // extract virtual fields if any
+        $typeaheadFields = [];
+        foreach ($fields as $fieldName) {
+            if (isset($virtualFields->{$fieldName})) {
+                $typeaheadFields = array_merge($typeaheadFields, $virtualFields->{$fieldName});
+            } else {
+                $typeaheadFields[] = $fieldName;
+            }
         }
 
         // use typeahead fields
         return implode(', or ', array_map(function ($value) {
             return Inflector::humanize($value);
-        }, $config->table->typeahead_fields));
+        }, $typeaheadFields));
     }
 
     /**

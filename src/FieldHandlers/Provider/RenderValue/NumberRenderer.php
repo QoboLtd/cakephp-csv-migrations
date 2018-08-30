@@ -51,11 +51,7 @@ class NumberRenderer extends AbstractRenderer
             $options['precision'] = static::PRECISION;
         }
 
-        if (!empty($result) && is_numeric($result)) {
-            $result = number_format($result, $options['precision']);
-        } else {
-            $result = (string)$result;
-        }
+        $result = is_numeric($result) ? number_format($result, $options['precision']) : (string)$result;
 
         return $result;
     }

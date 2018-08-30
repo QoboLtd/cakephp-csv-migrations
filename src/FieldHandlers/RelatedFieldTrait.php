@@ -164,16 +164,28 @@ trait RelatedFieldTrait
     protected function _getInputHelp($properties)
     {
         $config = (new ModuleConfig(ConfigType::MODULE(), $properties['controller']))->parse();
+        $fields = $config->table->typeahead_fields;
+        $virtualFields = $config->virtualFields;
 
         // if typeahead fields were not defined, use display field
-        if (empty($config->table->typeahead_fields)) {
-            return Inflector::humanize($properties['displayField']);
+        if (empty($fields)) {
+            $fields = [$properties['displayField']];
+        }
+
+        // extract virtual fields if any
+        $typeaheadFields = [];
+        foreach ($fields as $fieldName) {
+            if (isset($virtualFields->{$fieldName})) {
+                $typeaheadFields = array_merge($typeaheadFields, $virtualFields->{$fieldName});
+            } else {
+                $typeaheadFields[] = $fieldName;
+            }
         }
 
         // use typeahead fields
         return implode(', or ', array_map(function ($value) {
             return Inflector::humanize($value);
-        }, $config->table->typeahead_fields));
+        }, $typeaheadFields));
     }
 
     /**

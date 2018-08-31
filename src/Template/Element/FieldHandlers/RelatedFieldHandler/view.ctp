@@ -1,5 +1,7 @@
 <?php
 
+use Cake\Core\Configure;
+
 foreach ($relatedProperties as $properties) {
     if (empty($properties)) {
         continue;
@@ -13,7 +15,7 @@ foreach ($relatedProperties as $properties) {
         $beforeLink = null;
 
         // Special case for entities having an image_src like Users
-        if (isset($properties['entity']['image_src'])) {
+        if (Configure::read('Theme.prependAvatars', true) && isset($properties['entity']['image_src'])) {
             $beforeLink = '<img alt="User Image" src="'. $properties['entity']['image_src'] .'" style="width: 20px; height: 20px;" class="img-circle"> ';
         } else if (isset($properties['config']['table']['icon'])) {
             $title = '<i class="menu-icon fa fa-' . $properties['config']['table']['icon'] . '"></i> ' . $title;

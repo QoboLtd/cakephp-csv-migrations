@@ -1,5 +1,7 @@
 <?php
 
+use Cake\Core\Configure;
+
 foreach ($relatedProperties as $properties) {
     if (empty($properties)) {
         continue;
@@ -10,19 +12,24 @@ foreach ($relatedProperties as $properties) {
     } else {
         // generate related record(s) html link
         $title = $properties['dispFieldVal'];
-        if (isset($properties['config']['table']['icon'])) {
+        $beforeLink = null;
+
+        // Special case for entities having an image_src like Users
+        if (Configure::read('Theme.prependAvatars', true) && isset($properties['entity']['image_src'])) {
+            $beforeLink = '<img alt="User Image" src="' . $properties['entity']['image_src'] . '" style="width: 20px; height: 20px;" class="img-circle"> ';
+        } elseif (isset($properties['config']['table']['icon'])) {
             $title = '<i class="menu-icon fa fa-' . $properties['config']['table']['icon'] . '"></i> ' . $title;
         }
 
-        echo $this->Html->link(
+        echo $beforeLink . $this->Html->link(
             $title,
             $this->Url->build([
-                'prefix' => false,
-                'plugin' => $properties['plugin'],
-                'controller' => $properties['controller'],
-                'action' => 'view',
-                $properties['id']
-            ]),
+                    'prefix' => false,
+                    'plugin' => $properties['plugin'],
+                    'controller' => $properties['controller'],
+                    'action' => 'view',
+                    $properties['id']
+                ]),
             ['class' => 'label label-primary', 'escape' => false]
         );
     }

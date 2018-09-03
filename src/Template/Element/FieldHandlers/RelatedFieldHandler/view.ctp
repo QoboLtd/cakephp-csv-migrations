@@ -12,25 +12,24 @@ foreach ($relatedProperties as $properties) {
     } else {
         // generate related record(s) html link
         $title = $properties['dispFieldVal'];
-        $beforeLink = null;
 
         // Special case for entities having an image_src like Users
         if (Configure::read('Theme.prependAvatars', true) && !empty($properties['entity']['image_src'])) {
-            $beforeLink = '<img alt="Thumbnail" src="' . $properties['entity']['image_src'] . '" style="width: 20px; height: 20px;" class="img-circle"> ';
-        } elseif (isset($properties['config']['table']['icon'])) {
-            $title = '<i class="menu-icon fa fa-' . $properties['config']['table']['icon'] . '"></i> ' . $title;
+            $title = '<img alt="Thumbnail" src="' . $properties['entity']['image_src'] . '" style="width: 20px; height: 20px;" class="img-circle">&nbsp;&nbsp;' . $title;
+        } elseif (!empty($properties['config']['table']['icon'])) {
+            $title = '<i class="menu-icon fa fa-' . $properties['config']['table']['icon'] . '"></i>&nbsp;&nbsp;' . $title;
         }
 
-        echo $beforeLink . $this->Html->link(
+        echo $this->Html->link(
             $title,
             $this->Url->build([
-                    'prefix' => false,
-                    'plugin' => $properties['plugin'],
-                    'controller' => $properties['controller'],
-                    'action' => 'view',
-                    $properties['id']
-                ]),
-            ['class' => 'label label-primary', 'escape' => false]
+                'prefix' => false,
+                'plugin' => $properties['plugin'],
+                'controller' => $properties['controller'],
+                'action' => 'view',
+                $properties['id']
+            ]),
+            ['class' => 'btn btn-primary btn-xs', 'escape' => false]
         );
     }
 }

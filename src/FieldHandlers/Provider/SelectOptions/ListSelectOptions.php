@@ -35,7 +35,7 @@ class ListSelectOptions extends AbstractSelectOptions
         $spacer = isset($options['spacer']) ? (bool)$options['spacer'] : ' - ';
         $flatten = isset($options['flatten']) ? (bool)$options['flatten'] : true;
 
-        list($module, $list) = false !== strpos($data, '.') ? explode('.', $data, 2) : [null, $data];
+        list($module, $list) = false !== strpos($data, '.') ? explode('.', $data, 2) : [$this->config->getTable()->alias(), $data];
 
         try {
             $config = new ModuleConfig(ConfigType::LISTS(), $module, $list, ['flatten' => $flatten, 'filter' => true]);

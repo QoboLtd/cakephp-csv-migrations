@@ -40,7 +40,6 @@ class ListRenderer extends AbstractRenderer
             $selectListItems = $this->config->getProvider('selectOptions');
             $selectListItems = new $selectListItems($this->config);
             $listName = $options['fieldDefinitions']->getLimit();
-            $listName = false !== strpos($listName, '.') ? $listName : $this->config->getTable()->alias() . '.' . $listName;
             $listOptions = [];
             $selectOptions += $selectListItems->provide($listName, $listOptions);
         } else {

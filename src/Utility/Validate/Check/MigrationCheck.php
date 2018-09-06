@@ -97,7 +97,7 @@ class MigrationCheck extends AbstractCheck
                             case 'list':
                             case 'money':
                             case 'metric':
-                                if (!Utility::isValidList($limit)) {
+                                if (!Utility::isValidList($limit, $module)) {
                                     $this->errors[] = $module . " migration uses unknown or empty list '$limit' in '" . $field['name'] . "' field";
                                 }
                                 break;

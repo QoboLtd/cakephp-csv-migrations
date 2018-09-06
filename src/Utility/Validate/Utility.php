@@ -65,13 +65,13 @@ class Utility
      * invalid.
      *
      * @param string $list List name to check
+     * $param string $module Module name to check the list in
      * @return bool True if valid, false is otherwise
      */
-    public static function isValidList($list)
+    public static function isValidList($list, $module = null)
     {
         $result = false;
 
-        $module = null;
         if (strpos($list, '.') !== false) {
             list($module, $list) = explode('.', $list, 2);
         }

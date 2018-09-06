@@ -9,6 +9,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+trigger_error('"CsvMigrations.Menu/related_actions" element is deprecated.', E_USER_DEPRECATED);
 
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 

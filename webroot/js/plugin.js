@@ -22,7 +22,7 @@ $(document).ready(function () {
                 },
                 success: function (data) {
                     //traverse upwards on the tree to find table instance and reload it
-                    var table = $(hrefObj).closest('.dataTable').DataTable();
+                    var table = $(hrefObj).closest('.table-datatable, .dataTable').DataTable();
                     table.ajax.reload();
 
                 }

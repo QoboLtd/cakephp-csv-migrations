@@ -81,6 +81,8 @@ echo $this->Html->scriptBlock("
 $('#relatedTabs a.$containerId').on('click', function() {
     if ( ! $.fn.DataTable.isDataTable('#$tableId') ) {
         new DataTablesInit(" . json_encode($dtOptions) . ");
+    } else {
+        $('#$tableId').DataTable().ajax.reload();
     }
 });
 ", [

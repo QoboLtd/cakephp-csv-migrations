@@ -90,7 +90,7 @@ $('#relatedTabs a.$containerId').on('click', function() {
 ]);
 ?>
 <div class="table-responsive">
-    <table id="<?= $tableId ?>" class="table table-hover table-condensed table-vertical-align" width="100%">
+    <table id="<?= $tableId ?>" class="table table-hover table-condensed table-vertical-align table-datatable" width="100%">
         <thead>
             <tr>
             <?php foreach ($fields as $field) : ?>

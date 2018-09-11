@@ -242,11 +242,11 @@ class FieldHandler implements FieldHandlerInterface
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
 
+        $data = $this->getFieldValueFromData($data, $options);
         // Workaround for BLOBs
         if (is_resource($data)) {
             $data = stream_get_contents($data);
         }
-        $data = $this->getFieldValueFromData($data, $options);
 
         if (empty($data) && !empty($options['default'])) {
             $data = $options['default'];

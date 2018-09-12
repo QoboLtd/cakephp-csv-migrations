@@ -135,10 +135,10 @@ class CsvModuleTask extends BakeTask
             'ext' => 'json'
         ];
 
-        $this->bake('config', 'Module/config/config', [], '', $options);
-        $this->bake('fields', 'Module/config/fields', [], '', $options);
+        $this->bake('config.dist', 'Module/config/config', [], '', $options);
+        $this->bake('fields.dist', 'Module/config/fields', [], '', $options);
         $this->bake(
-            'menus',
+            'menus.dist',
             'Module/config/menus',
             ['label' => Inflector::humanize($name), 'url' => DS . Inflector::dasherize($name) . DS],
             '',
@@ -159,7 +159,7 @@ class CsvModuleTask extends BakeTask
             'ext' => 'json'
         ];
 
-        $this->bake('migration', 'Module/db/migration', [], '', $options);
+        $this->bake('migration.dist', 'Module/db/migration', [], '', $options);
     }
 
     /**
@@ -175,10 +175,10 @@ class CsvModuleTask extends BakeTask
             'ext' => 'json'
         ];
 
-        $this->bake('add', 'Module/views/add', [], '', $options);
-        $this->bake('edit', 'Module/views/edit', [], '', $options);
-        $this->bake('index', 'Module/views/index', [], '', $options);
-        $this->bake('view', 'Module/views/view', [], '', $options);
+        $this->bake('add.dist', 'Module/views/add', [], '', $options);
+        $this->bake('edit.dist', 'Module/views/edit', [], '', $options);
+        $this->bake('index.dist', 'Module/views/index', [], '', $options);
+        $this->bake('view.dist', 'Module/views/view', [], '', $options);
     }
 
     /**

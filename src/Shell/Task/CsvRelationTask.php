@@ -189,7 +189,7 @@ class CsvRelationTask extends BakeTask
         $this->BakeTemplate->set(['display_field' => $this->_modelKey(reset($selection))]);
 
         return $this->createFile(
-            $path . implode('', $selection) . DS . 'config' . DS . 'config.json',
+            $path . implode('', $selection) . DS . 'config' . DS . 'config.dist.json',
             $this->BakeTemplate->generate('CsvMigrations.Relation/config/config')
         );
     }
@@ -217,7 +217,7 @@ class CsvRelationTask extends BakeTask
         $this->BakeTemplate->set(['fields' => $fields]);
 
         return $this->createFile(
-            $path . implode('', $selection) . DS . 'db' . DS . 'migration.json',
+            $path . implode('', $selection) . DS . 'db' . DS . 'migration.dist.json',
             $this->BakeTemplate->generate('CsvMigrations.Relation/db/migration')
         );
     }

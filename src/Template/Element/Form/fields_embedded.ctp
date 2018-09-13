@@ -29,7 +29,6 @@ foreach ($fields as $panelFields) {
             $field['name'] = $matches[2];
 
             $embeddedFields[] = $field;
-
         }
     }
 }

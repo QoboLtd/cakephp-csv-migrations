@@ -10,11 +10,10 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 $factory = new FieldHandlerFactory($this);
-
-$embeddedDirty = false;
 
 foreach ($options['fields'] as $panelName => $panelFields) : ?>
 <div class="box box-primary" data-provide="dynamic-panel">
@@ -30,17 +29,14 @@ foreach ($options['fields'] as $panelName => $panelFields) : ?>
                 <?php continue; ?>
             <?php endif; ?>
             <?php
-            // embedded field
-            if ('EMBEDDED' === $field['name']) {
-                $embeddedDirty = true;
-                continue;
-            }
-
             $handlerOptions = $options['handlerOptions'];
 
-            if ($embeddedDirty) {
+            // embedded field detection
+            preg_match(CsvField::PATTERN_TYPE, $field['name'], $matches);
+            if (! empty($matches[1]) && 'EMBEDDED' === $matches[1]) {
                 $handlerOptions['embeddedModal'] = true;
-                $field['name'] = substr($field['name'], strrpos($field['name'], '.') + 1);
+                $field['name'] = explode('.', $matches[2]);
+                $field['name'] = end($field['name']);
             }
             ?>
             <div class="col-xs-12 col-md-6 field-wrapper">
@@ -76,7 +72,6 @@ foreach ($options['fields'] as $panelName => $panelFields) : ?>
             }
             ?>
             </div>
-            <?php $embeddedDirty = false; ?>
         <?php endforeach; ?>
         </div>
     <?php endforeach; ?>

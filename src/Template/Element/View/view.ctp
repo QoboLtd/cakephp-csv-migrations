@@ -12,6 +12,7 @@
 
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
@@ -71,11 +72,9 @@ if (!$this->request->query('embedded')) : ?>
     </div>
 </section>
 <section class="content">
-<?php endif;
-
+<?php endif; ?>
+<?php
 $embeddedFields = [];
-$embeddedDirty = false;
-
 foreach ($options['fields'] as $panelName => $panelFields) : ?>
     <?php
     if ($this->request->query('embedded')) {
@@ -95,28 +94,24 @@ foreach ($options['fields'] as $panelName => $panelFields) : ?>
         <?php foreach ($panelFields as $subFields) : ?>
             <div class="row">
             <?php foreach ($subFields as $field) : ?>
-                <?php if (trim($field['name'])) : ?>
-                    <?php
-                    if (!$embeddedDirty) {
-                        // embedded field
-                        if ('EMBEDDED' === $field['name']) {
-                            $embeddedDirty = true;
-                        }
-
-                        if (!$embeddedDirty) { // non-embedded field
-                            echo $this->element('CsvMigrations.Field/value', [
-                                'factory' => $factory, 'field' => $field, 'options' => $options
-                            ]);
-                        }
-                    } else {
-                        $embeddedFields[] = $field['name'];
-                        $embeddedDirty = false;
-                    }
-                    ?>
-                <?php else : ?>
-                        <div class="col-xs-4 col-md-2 text-right">&nbsp;</div>
-                        <div class="col-xs-8 col-md-4">&nbsp;</div>
+                <?php if ('' === trim($field['name'])) : ?>
+                    <div class="col-xs-4 col-md-2 text-right">&nbsp;</div>
+                    <div class="col-xs-8 col-md-4">&nbsp;</div>
+                    <?php continue; ?>
                 <?php endif; ?>
+                <?php
+                // embedded field detection
+                preg_match(CsvField::PATTERN_TYPE, $field['name'], $matches);
+
+                if (! empty($matches[1]) && 'EMBEDDED' === $matches[1]) {
+                    $embeddedFields[] = $matches[2];
+                    continue;
+                }
+
+                echo $this->element('CsvMigrations.Field/value', [
+                    'factory' => $factory, 'field' => $field, 'options' => $options
+                ]);
+                ?>
                 <div class="clearfix visible-xs visible-sm"></div>
             <?php endforeach; ?>
             </div>

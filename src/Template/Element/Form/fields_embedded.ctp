@@ -22,6 +22,7 @@ foreach ($fields as $panelFields) {
 
             // embedded field detection
             preg_match(CsvField::PATTERN_TYPE, $field['name'], $matches);
+
             if (empty($matches[1]) || 'EMBEDDED' !== $matches[1]) {
                 continue;
             }

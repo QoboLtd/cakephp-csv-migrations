@@ -10,7 +10,8 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-$embeddedDirty = false;
+use CsvMigrations\FieldHandlers\CsvField;
+
 $embeddedFields = [];
 foreach ($fields as $panelFields) {
     foreach ($panelFields as $subFields) {
@@ -18,17 +19,17 @@ foreach ($fields as $panelFields) {
             if ('' === trim($field['name'])) {
                 continue;
             }
-            // embedded field
-            if ('EMBEDDED' === $field['name']) {
-                $embeddedDirty = true;
+
+            // embedded field detection
+            preg_match(CsvField::PATTERN_TYPE, $field['name'], $matches);
+
+            if (empty($matches[1]) || 'EMBEDDED' !== $matches[1]) {
                 continue;
             }
 
-            if ($embeddedDirty) {
-                $embeddedFields[] = $field;
-            }
+            $field['name'] = $matches[2];
 
-            $embeddedDirty = false;
+            $embeddedFields[] = $field;
         }
     }
 }

@@ -19,8 +19,7 @@ $renderOptions = ['entity' => $options['entity'], 'imageSize' => 'small'];
 
 $label = $factory->renderName($tableName, $field['name'], $renderOptions);
 $value = $factory->renderValue($tableName, $field['name'], $options['entity'], $renderOptions);
-// $value = empty($value) ? '&nbsp;' : $value;
-$value = empty($value) ? 'Lorem ipsum' : $value;
+$value = empty($value) ? '&nbsp;' : $value;
 
 // calculate column width
 $columnWidth = (int)floor(12 / $fieldCount);

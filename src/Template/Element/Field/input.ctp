@@ -55,5 +55,9 @@ if ('' !== trim($field['name'])) {
             break;
     }
 }
+
+// calculate column width
+$columnWidth = (int)floor(12 / $fieldCount);
+$columnWidth = 6 < $columnWidth ? 6 : $columnWidth; // max-supported input size is half grid
 ?>
-<div class="col-xs-12 col-md-6 field-wrapper"><?= $value ?></div>
+<div class="col-xs-12 col-md-<?= $columnWidth ?> field-wrapper"><?= $value ?></div>

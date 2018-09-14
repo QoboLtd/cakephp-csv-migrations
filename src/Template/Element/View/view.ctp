@@ -74,6 +74,16 @@ if (!$this->request->query('embedded')) : ?>
 <section class="content">
 <?php endif; ?>
 <?php
+// row field count with most fields
+$fieldCountMax = 1;
+foreach ($options['fields'] as $panelFields) {
+    foreach ($panelFields as $subFields) {
+        if (count($subFields) > $fieldCountMax) {
+            $fieldCountMax = count($subFields);
+        }
+    }
+}
+
 $embeddedFields = [];
 foreach ($options['fields'] as $panelName => $panelFields) : ?>
     <?php
@@ -94,6 +104,7 @@ foreach ($options['fields'] as $panelName => $panelFields) : ?>
         <?php foreach ($panelFields as $subFields) : ?>
             <div class="row">
             <?php foreach ($subFields as $field) : ?>
+                <?php $fieldCount = 12 < count($subFields) ? 12 : count($subFields); ?>
                 <?php if ('' === trim($field['name'])) : ?>
                     <div class="col-xs-4 col-md-2 text-right">&nbsp;</div>
                     <div class="col-xs-8 col-md-4">&nbsp;</div>
@@ -109,7 +120,11 @@ foreach ($options['fields'] as $panelName => $panelFields) : ?>
                 }
 
                 echo $this->element('CsvMigrations.Field/value', [
-                    'factory' => $factory, 'field' => $field, 'options' => $options
+                    'factory' => $factory,
+                    'field' => $field,
+                    'options' => $options,
+                    'fieldCount' => $fieldCount,
+                    'fieldCountMax' => $fieldCountMax
                 ]);
                 ?>
                 <div class="clearfix visible-xs visible-sm"></div>

@@ -12,6 +12,7 @@
 namespace CsvMigrations\Utility\Validate\Check;
 
 use Cake\Core\Configure;
+use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\Utility\Validate\Utility;
 use Exception;
 use Qobo\Utils\ModuleConfig\ConfigType;
@@ -41,74 +42,120 @@ class ViewsCheck extends AbstractCheck
                 // For example, Files and Users modules.
             }
 
-            // If the view file does exist, it has to be parseable.
-            if ($path && file_exists($path)) {
-                $viewCounter++;
-                $fields = [];
-                try {
-                    $fields = $mc->parse()->items;
-                } catch (Exception $e) {
-                    // We need errors and warnings irrelevant of the exception
-                }
-                $this->errors = array_merge($this->errors, $mc->getErrors());
-                $this->warnings = array_merge($this->warnings, $mc->getWarnings());
+            if ('' === trim($path) || ! file_exists($path)) {
+                $this->warnings[] = sprintf('%s module [%s] view file is missing', $module, $view);
 
-                // If the view file does exist, it has to be parseable.
-                if ($fields) {
-                    foreach ($fields as $field) {
-                        if (count($field) > 3) {
-                            $this->errors[] = $module . " module [$view] view has more than 2 columns";
-                        } elseif (count($field) == 3) {
-                            // Get rid of the first column, which is the panel name
-                            array_shift($field);
-                            $isEmbedded = false;
-                            foreach ($field as $column) {
-                                if ($column == 'EMBEDDED') {
-                                    $isEmbedded = true;
-                                    continue;
-                                } else {
-                                    if ($isEmbedded) {
-                                        list($embeddedModule, $embeddedModuleField) = explode('.', $column);
-                                        if (empty($embeddedModule)) {
-                                            $this->errors[] = $module . " module [$view] view reference EMBEDDED column without a module";
-                                        } else {
-                                            if (!Utility::isValidModule($embeddedModule)) {
-                                                $this->errors[] = $module . " module [$view] view reference EMBEDDED column with unknown module '$embeddedModule'";
-                                            }
-                                        }
-                                        if (empty($embeddedModuleField)) {
-                                            $this->errors[] = $module . " module [$view] view reference EMBEDDED column without a module field";
-                                        } else {
-                                            if (!Utility::isValidModuleField($module, $embeddedModuleField)) {
-                                                $this->errors[] = $module . " module [$view] view reference EMBEDDED column with unknown field '$embeddedModuleField' of module '$embeddedModule'";
-                                            }
-                                        }
-                                        $isEmbedded = false;
-                                    } else {
-                                        if ($column && !Utility::isValidModuleField($module, $column)) {
-                                            $this->errors[] = $module . " module [$view] view references unknown field '$column'";
-                                        }
-                                    }
-                                }
-                            }
-                            if ($isEmbedded) {
-                                $this->errors[] = $module . " module [$view] view incorrectly uses EMBEDDED in the last column";
-                            }
-                        } elseif (count($field) == 1) {
-                            // index view
-                            if ($field[0] && !Utility::isValidModuleField($module, $field[0])) {
-                                $this->errors[] = $module . " module [$view] view references unknown field '" . $field[0] . "'";
-                            }
-                        }
+                continue;
+            }
+
+            /**
+             * If the view file does exist, it has to be parseable.
+             */
+            $viewCounter++;
+            $fields = [];
+            try {
+                $fields = $mc->parse()->items;
+            } catch (Exception $e) {
+                // We need errors and warnings irrelevant of the exception
+            }
+            $this->errors = array_merge($this->errors, $mc->getErrors());
+            $this->warnings = array_merge($this->warnings, $mc->getWarnings());
+
+            if (empty($fields)) {
+                continue;
+            }
+
+            foreach ($fields as $field) {
+                if (count($field) > 13) { // Panel name + 12 fields of the grid maximum
+                    $this->errors[] = $module . " module [$view] view has more than 12 columns";
+                    continue;
+                }
+
+                if (count($field) === 1) {
+                    // index view
+                    if ($field[0] && !Utility::isValidModuleField($module, $field[0])) {
+                        $this->errors[] = $module . " module [$view] view references unknown field '" . $field[0] . "'";
+                    }
+
+                    continue;
+                }
+
+                // Get rid of the first column, which is the panel name
+                array_shift($field);
+                foreach ($field as $column) {
+                    // skip empty columns
+                    if ('' === trim($column)) {
+                        continue;
+                    }
+
+                    // embedded field detection
+                    preg_match(CsvField::PATTERN_TYPE, $column, $matches);
+                    // embedded field flag
+                    $isEmbedded = ! empty($matches[1]) && 'EMBEDDED' === $matches[1];
+
+                    // normal field
+                    if (! $isEmbedded && ! Utility::isValidModuleField($module, $column)) {
+                        $this->errors[] = sprintf(
+                            '%s module [%s] view references unknown field "%s"',
+                            $module,
+                            $view,
+                            $column
+                        );
+
+                        continue;
+                    }
+
+                    // skip for non-embedded field
+                    if (! $isEmbedded) {
+                        continue;
+                    }
+
+                    // extract embedded module and field
+                    list($embeddedModule, $embeddedModuleField) = false !== strpos($matches[2], '.') ?
+                        explode('.', $matches[2]) :
+                        [null, $matches[2]];
+
+                    if (empty($embeddedModule)) {
+                        $this->errors[] = sprintf(
+                            '%s module [%s] view reference EMBEDDED column without a module',
+                            $module,
+                            $view
+                        );
+                    }
+
+                    if (! empty($embeddedModule) && ! Utility::isValidModule($embeddedModule)) {
+                        $this->errors[] = sprintf(
+                            '%s module [%s] view reference EMBEDDED column with unknown module "%s"',
+                            $module,
+                            $view,
+                            $embeddedModule
+                        );
+                    }
+
+                    if (empty($embeddedModuleField)) {
+                        $this->errors[] = sprintf(
+                            '%s module [%s] view reference EMBEDDED column without a module field',
+                            $module,
+                            $view
+                        );
+                    }
+
+                    if (! empty($embeddedModuleField) && ! Utility::isValidModuleField($module, $embeddedModuleField)) {
+                        $this->errors[] = sprintf(
+                            '%s module [%s] view reference EMBEDDED column with unknown field "%s" of module "%s"',
+                            $module,
+                            $view,
+                            $embeddedModuleField,
+                            $embeddedModule
+                        );
                     }
                 }
-            } else {
-                $this->warnings[] = $module . " module [$view] view file is missing";
             }
         }
+
         // Warn if the module is missing standard views
         if ($viewCounter < count($views)) {
-            $this->warnings[] = $module . " module has only " . (int)$viewCounter . " views.";
+            $this->warnings[] = sprintf('%s module has only %d views.', $module, (int)$viewCounter);
         }
 
         return count($this->errors);

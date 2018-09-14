@@ -14,72 +14,17 @@ use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 
 $factory = new FieldHandlerFactory($this);
 
-$embeddedDirty = false;
-
 foreach ($options['fields'] as $panelName => $panelFields) : ?>
 <div class="box box-primary" data-provide="dynamic-panel">
     <div class="box-header with-border">
         <h3 class="box-title" data-title="dynamic-panel-title"><?= $panelName ?></h3>
     </div>
     <div class="box-body">
-    <?php foreach ($panelFields as $subFields) : ?>
-        <div class="row">
-        <?php foreach ($subFields as $field) : ?>
-            <?php if ('' === trim($field['name'])) : ?>
-                <div class="col-xs-12 col-md-6">&nbsp;</div>
-                <?php continue; ?>
-            <?php endif; ?>
-            <?php
-            // embedded field
-            if ('EMBEDDED' === $field['name']) {
-                $embeddedDirty = true;
-                continue;
-            }
-
-            $handlerOptions = $options['handlerOptions'];
-
-            if ($embeddedDirty) {
-                $handlerOptions['embeddedModal'] = true;
-                $field['name'] = substr($field['name'], strrpos($field['name'], '.') + 1);
-            }
-            ?>
-            <div class="col-xs-12 col-md-6 field-wrapper">
-            <?php
-            // non-embedded field
-            $tableName = $field['model'];
-            if (!is_null($field['plugin'])) {
-                $tableName = $field['plugin'] . '.' . $tableName;
-            }
-
-            // get value from entity.
-            $value = $options['entity']->get($field['name']);
-            if (!$value) {
-                // allowing query params to define field values.
-                if ($this->request->query($field['name'])) {
-                    $value = $this->request->query($field['name']);
-                }
-                if ($this->request->data($field['name'])) {
-                    $value = $this->request->data($field['name']);
-                }
-            }
-
-            $input = $factory->renderInput($tableName, $field['name'], $value, $handlerOptions);
-
-            switch (gettype($input)) {
-                case 'string':
-                    echo $input;
-                    break;
-
-                case 'array':
-                    echo $input['html'];
-                    break;
-            }
-            ?>
-            </div>
-            <?php $embeddedDirty = false; ?>
-        <?php endforeach; ?>
-        </div>
-    <?php endforeach; ?>
+        <?= $this->element('CsvMigrations.Form/fields_panel', [
+            'panelFields' => $panelFields,
+            'options' => $options,
+            'factory' => $factory
+        ]) ?>
     </div>
 </div>
 <?php endforeach; ?>

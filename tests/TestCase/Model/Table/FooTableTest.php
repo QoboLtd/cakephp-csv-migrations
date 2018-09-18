@@ -2,9 +2,12 @@
 namespace CsvMigrations\Test\TestCase\Model\Table;
 
 use Cake\Core\Configure;
+use Cake\Datasource\RepositoryInterface;
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\Table as CsvMigrationsTable;
 
 /**
  * CsvMigrations\Test\TestCase\Model\Table\FooTable Test Case
@@ -38,6 +41,36 @@ class FooTableTest extends TestCase
         unset($this->table);
 
         parent::tearDown();
+    }
+
+    public function testInitialize()
+    {
+        $this->assertInstanceOf(Table::class, $this->table);
+        $this->assertInstanceOf(RepositoryInterface::class, $this->table);
+        $this->assertInstanceOf(CsvMigrationsTable::class, $this->table);
+
+        $this->assertSame('foo', $this->table->getTable());
+        $this->assertSame('Foo', $this->table->getAlias());
+        $this->assertSame('Foo', $this->table->getRegistryAlias());
+        $this->assertSame('id', $this->table->getPrimaryKey());
+        $this->assertSame('name', $this->table->getDisplayField());
+
+        $this->assertTrue($this->table->hasBehavior('Timestamp'));
+        $this->assertTrue($this->table->hasBehavior('Trash'));
+        $this->assertTrue($this->table->hasBehavior('Footprint'));
+    }
+
+    public function testSaveWithFootprint()
+    {
+        $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'new', 'type' => 'bla bla']);
+
+        $expected = 123;
+        $result = $this->table->setCurrentUser(['id' => $expected]);
+
+        $this->table->save($entity);
+
+        $this->assertEquals($expected, $entity->get('created_by'));
+        $this->assertEquals($expected, $entity->get('modified_by'));
     }
 
     public function testSetCurrentUser()
@@ -97,7 +130,9 @@ class FooTableTest extends TestCase
                     'is_primary' => ['name' => 'is_primary', 'type' => 'boolean', 'required' => '', 'non-searchable' => '', 'unique' => false],
                     'start_time' => ['name' => 'start_time', 'type' => 'time', 'required' => '', 'non-searchable' => '', 'unique' => false],
                     'balance' => ['name' => 'balance', 'type' => 'decimal(12.4)', 'required' => '', 'non-searchable' => '', 'unique' => false],
-                    'lead' => ['name' => 'lead', 'type' => 'related(Leads)', 'required' => '', 'non-searchable' => '', 'unique' => false]
+                    'lead' => ['name' => 'lead', 'type' => 'related(Leads)', 'required' => '', 'non-searchable' => '', 'unique' => false],
+                    'created_by' => ['name' => 'created_by', 'type' => 'related(Users)', 'required' => '', 'non-searchable' => '', 'unique' => false],
+                    'modified_by' => ['name' => 'modified_by', 'type' => 'related(Users)', 'required' => '', 'non-searchable' => '', 'unique' => false]
                 ]
             ]
         ];

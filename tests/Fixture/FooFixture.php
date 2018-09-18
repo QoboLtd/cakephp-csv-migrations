@@ -28,6 +28,8 @@ class FooFixture extends TestFixture
         'balance' => ['type' => 'decimal', 'length' => 8, 'precision' => 4, 'null' => true],
         'created' => ['type' => 'datetime', 'null' => true],
         'modified' => ['type' => 'datetime', 'null' => true],
+        'created_by' => ['type' => 'uuid', 'null' => true],
+        'modified_by' => ['type' => 'uuid', 'null' => true],
         'is_primary' => ['type' => 'boolean', 'null' => true],
         'trashed' => ['type' => 'datetime', 'null' => true],
         '_constraints' => [

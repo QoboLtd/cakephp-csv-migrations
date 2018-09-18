@@ -41,36 +41,6 @@ class Table extends BaseTable
     use MigrationTrait;
 
     /**
-     * Current user from session
-     *
-     * @var array
-     */
-    protected $_currentUser;
-
-    /**
-     * setCurrentUser
-     *
-     * @param array $user from Cake\Controller\Component\AuthComponent
-     * @return array $_currentUser
-     */
-    public function setCurrentUser($user)
-    {
-        $this->_currentUser = $user;
-
-        return $this->_currentUser;
-    }
-
-    /**
-     * getCurrentUser
-     *
-     * @return array $_currentUser property
-     */
-    public function getCurrentUser()
-    {
-        return $this->_currentUser;
-    }
-
-    /**
      * Initialize
      *
      * @param array $config The configuration for the Table.

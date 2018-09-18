@@ -41,6 +41,7 @@ class AppController extends BaseController
         $this->fileUpload = new FileUpload($this->{$this->name});
 
         $this->loadComponent('CsvMigrations.CsvView');
+        $this->loadComponent('Qobo/Utils.Footprint');
     }
 
     /**

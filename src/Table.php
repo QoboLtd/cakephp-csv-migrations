@@ -81,6 +81,7 @@ class Table extends BaseTable
         parent::initialize($config);
 
         $this->addBehavior('Muffin/Trash.Trash');
+        $this->addBehavior('Qobo/Utils.Footprint');
 
         $config = (new ModuleConfig(
             ConfigType::MODULE(),
@@ -115,23 +116,6 @@ class Table extends BaseTable
         }
 
         return $validator;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
-    {
-        $user = $this->getCurrentUser();
-
-        if (empty($user['id'])) {
-            return;
-        }
-
-        $entity->set('modified_by', $user['id']);
-        if ($entity->isNew()) {
-            $entity->set('created_by', $user['id']);
-        }
     }
 
     /**

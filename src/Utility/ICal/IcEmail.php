@@ -19,6 +19,7 @@ use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Table as Table;
 use Exception;
 use InvalidArgumentException;
+use Qobo\Utils\Utility\User;
 
 /**
  * Email class
@@ -259,7 +260,7 @@ class IcEmail
             'email',
         ];
 
-        $currentUser = $this->table->getCurrentUser();
+        $currentUser = User::getCurrentUser();
         if (empty($currentUser) || !is_array($currentUser)) {
             return $result;
         }

@@ -28,6 +28,7 @@ use CsvMigrations\MigrationTrait;
 use CsvMigrations\Model\AssociationsAwareTrait;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Utility\User;
 
 /**
  * CsvMigrations Table
@@ -101,7 +102,7 @@ class Table extends BaseTable
         EventManager::instance()->dispatch(new Event(
             (string)EventName::MODEL_AFTER_SAVE(),
             $this,
-            ['entity' => $entity, 'options' => ['current_user' => $this->getCurrentUser()]]
+            ['entity' => $entity, 'options' => ['current_user' => User::getCurrentUser()]]
         ));
     }
 

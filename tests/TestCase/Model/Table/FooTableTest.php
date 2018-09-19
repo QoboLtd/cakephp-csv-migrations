@@ -2,6 +2,7 @@
 namespace CsvMigrations\Test\TestCase\Model\Table;
 
 use Cake\Core\Configure;
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -61,14 +62,33 @@ class FooTableTest extends TestCase
         $this->assertTrue($this->table->hasBehavior('Footprint'));
     }
 
+    public function testSaveWithMissingRequiredFields()
+    {
+        $entity = $this->table->newEntity(['description' => 'some random text']);
+
+        $this->assertFalse($this->table->save($entity));
+
+        $this->assertEmpty(array_diff(
+            ['name', 'status', 'type'],
+            array_keys($entity->getErrors())
+        ));
+    }
+
+    public function testSaveWithInvalidListItem()
+    {
+        $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'invalid_value', 'type' => 'bronze.new']);
+
+        $this->assertFalse($this->table->save($entity));
+    }
+
     public function testSaveWithFootprint()
     {
-        $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'new', 'type' => 'bla bla']);
+        $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'active', 'type' => 'bronze.new']);
 
         $expected = 123;
         User::setCurrentUser(['id' => $expected]);
 
-        $this->table->save($entity);
+        $this->assertInstanceOf(EntityInterface::class, $this->table->save($entity));
 
         $this->assertEquals($expected, $entity->get('created_by'));
         $this->assertEquals($expected, $entity->get('modified_by'));

@@ -24,6 +24,7 @@ use CsvMigrations\Utility\Field;
 use CsvMigrations\Utility\FileUpload;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
+use Qobo\Utils\Utility\User;
 
 class AppController extends BaseController
 {
@@ -41,6 +42,11 @@ class AppController extends BaseController
         $this->fileUpload = new FileUpload($this->{$this->name});
 
         $this->loadComponent('CsvMigrations.CsvView');
+
+        // set current user
+        if (property_exists($this, 'Auth')) {
+            User::setCurrentUser($this->Auth->user());
+        }
     }
 
     /**
@@ -56,10 +62,6 @@ class AppController extends BaseController
         $result = parent::beforeFilter($event);
         if ($result instanceof ResponseInterface) {
             return $result;
-        }
-
-        if ($this->Auth->user() && method_exists($this->{$this->name}, 'setCurrentUser')) {
-            $this->{$this->name}->setCurrentUser($this->Auth->user());
         }
     }
 

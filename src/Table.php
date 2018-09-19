@@ -28,6 +28,7 @@ use CsvMigrations\MigrationTrait;
 use CsvMigrations\Model\AssociationsAwareTrait;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Utility\User;
 
 /**
  * CsvMigrations Table
@@ -41,36 +42,6 @@ class Table extends BaseTable
     use MigrationTrait;
 
     /**
-     * Current user from session
-     *
-     * @var array
-     */
-    protected $_currentUser;
-
-    /**
-     * setCurrentUser
-     *
-     * @param array $user from Cake\Controller\Component\AuthComponent
-     * @return array $_currentUser
-     */
-    public function setCurrentUser($user)
-    {
-        $this->_currentUser = $user;
-
-        return $this->_currentUser;
-    }
-
-    /**
-     * getCurrentUser
-     *
-     * @return array $_currentUser property
-     */
-    public function getCurrentUser()
-    {
-        return $this->_currentUser;
-    }
-
-    /**
      * Initialize
      *
      * @param array $config The configuration for the Table.
@@ -81,6 +52,7 @@ class Table extends BaseTable
         parent::initialize($config);
 
         $this->addBehavior('Muffin/Trash.Trash');
+        $this->addBehavior('Qobo/Utils.Footprint');
 
         $config = (new ModuleConfig(
             ConfigType::MODULE(),
@@ -118,23 +90,6 @@ class Table extends BaseTable
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
-    {
-        $user = $this->getCurrentUser();
-
-        if (empty($user['id'])) {
-            return;
-        }
-
-        $entity->set('modified_by', $user['id']);
-        if ($entity->isNew()) {
-            $entity->set('created_by', $user['id']);
-        }
-    }
-
-    /**
      * afterSave hook
      *
      * @param \Cake\Event\Event $event from the parent afterSave
@@ -147,7 +102,7 @@ class Table extends BaseTable
         EventManager::instance()->dispatch(new Event(
             (string)EventName::MODEL_AFTER_SAVE(),
             $this,
-            ['entity' => $entity, 'options' => ['current_user' => $this->getCurrentUser()]]
+            ['entity' => $entity, 'options' => ['current_user' => User::getCurrentUser()]]
         ));
     }
 

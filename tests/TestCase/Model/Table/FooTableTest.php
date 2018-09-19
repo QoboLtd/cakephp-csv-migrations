@@ -8,6 +8,7 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Table as CsvMigrationsTable;
+use Qobo\Utils\Utility\User;
 
 /**
  * CsvMigrations\Test\TestCase\Model\Table\FooTable Test Case
@@ -65,22 +66,12 @@ class FooTableTest extends TestCase
         $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'new', 'type' => 'bla bla']);
 
         $expected = 123;
-        $result = $this->table->setCurrentUser(['id' => $expected]);
+        User::setCurrentUser(['id' => $expected]);
 
         $this->table->save($entity);
 
         $this->assertEquals($expected, $entity->get('created_by'));
         $this->assertEquals($expected, $entity->get('modified_by'));
-    }
-
-    public function testSetCurrentUser()
-    {
-        $user = ['id' => 123, 'username' => 'some_foo_user'];
-        $result = $this->table->setCurrentUser($user);
-        $this->assertEquals($user, $result, "setCurrentUser did not return the correct user");
-
-        $result = $this->table->getCurrentUser();
-        $this->assertEquals($user, $result, "getCurrentUser did not return the correct user");
     }
 
     public function testGetParentRedirectUrl()

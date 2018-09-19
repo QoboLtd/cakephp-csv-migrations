@@ -124,5 +124,19 @@
         "required": null,
         "non-searchable": null,
         "unique": null
+    },
+    "created_by": {
+        "name": "created_by",
+        "type": "related(Users)",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
+    },
+    "modified_by": {
+        "name": "modified_by",
+        "type": "related(Users)",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
     }
 }

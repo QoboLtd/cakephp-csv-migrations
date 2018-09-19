@@ -210,6 +210,13 @@ trait AssociationsAwareTrait
             return;
         }
 
+        // skip for fields associated with Footprint behavior ('related' type fields associated with Users table)
+        if ($this->hasBehavior('Footprint') &&
+            in_array($field->getName(), $this->behaviors()->get('Footprint')->getConfig())
+        ) {
+            return;
+        }
+
         $this->setAssociation(
             'belongsToMany',
             static::generateAssociationName($module, $field->getName()),

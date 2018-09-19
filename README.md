@@ -6,13 +6,14 @@
 [![Latest Unstable Version](https://poser.pugx.org/qobo/cakephp-csv-migrations/v/unstable)](https://packagist.org/packages/qobo/cakephp-csv-migrations)
 [![License](https://poser.pugx.org/qobo/cakephp-csv-migrations/license)](https://packagist.org/packages/qobo/cakephp-csv-migrations)
 [![codecov](https://codecov.io/gh/QoboLtd/cakephp-csv-migrations/branch/master/graph/badge.svg)](https://codecov.io/gh/QoboLtd/cakephp-csv-migrations)
+[![BCH compliance](https://bettercodehub.com/edge/badge/QoboLtd/cakephp-csv-migrations?branch=master)](https://bettercodehub.com/)
 
 ## About
 
 CakePHP 3+ plugin for easy creation of application modules, based on a
 variety of the configuration files (CSV/INI/JSON).
 
-Developed by [Qobo](https://www.qobo.biz), used in [Qobrix](https://qobrix.com).
+This plugin is developed by [Qobo](https://www.qobo.biz) for [Qobrix](https://qobrix.com).  It can be used as standalone CakePHP plugin, or as part of the [project-template-cakephp](https://github.com/QoboLtd/project-template-cakephp) installation.
 
 ## Installation
 

@@ -13,7 +13,7 @@ return [
          * @see \CsvMigrations\FieldHandlers\FieldHandlerFactory::setValidationRules();
          * @see src/FieldHandlers/Provider/ValidationRules;
          */
-        'tableValidation' => false,
+        'tableValidation' => true,
         'api' => [
             'auth' => true,
             'token' => null

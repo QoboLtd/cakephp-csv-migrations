@@ -45,7 +45,7 @@ class AppController extends BaseController
 
         // set current user
         if (property_exists($this, 'Auth')) {
-            User::setCurrentUser($this->Auth->user());
+            User::setCurrentUser((array)$this->Auth->user());
         }
     }
 

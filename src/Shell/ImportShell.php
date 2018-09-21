@@ -82,6 +82,10 @@ class ImportShell extends Shell
         }
 
         foreach ($query->all() as $import) {
+            // detach previous iteration listener
+            if (isset($listener)) {
+                EventManager::instance()->off($listener);
+            }
             // set current user to the one who uploaded the import (for footprint behavior)
             User::setCurrentUser(['id' => $import->get('created_by')]);
             // for audit-stash functionality
@@ -101,9 +105,6 @@ class ImportShell extends Shell
                 $this->warn(sprintf('Skipping, no mapping found for "%s"', $filename));
                 $this->out($this->nl(1));
 
-                // detach listener
-                EventManager::instance()->off($listener);
-
                 continue;
             }
 
@@ -119,9 +120,6 @@ class ImportShell extends Shell
                 $this->_existingImport($table, $import, $count);
             }
             $this->out($this->nl(1));
-
-            // detach listener
-            EventManager::instance()->off($listener);
         }
 
         $this->success('Import completed');

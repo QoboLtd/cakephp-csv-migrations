@@ -11,9 +11,12 @@
  */
 namespace CsvMigrations\Shell;
 
+use AuditStash\Meta\RequestMetadata;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
+use Cake\Event\EventManager;
+use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
@@ -29,6 +32,7 @@ use Exception;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use Qobo\Utils\Utility\Lock\FileLock;
+use Qobo\Utils\Utility\User;
 
 class ImportShell extends Shell
 {
@@ -78,17 +82,29 @@ class ImportShell extends Shell
         }
 
         foreach ($query->all() as $import) {
+            // detach previous iteration listener
+            if (isset($listener)) {
+                EventManager::instance()->off($listener);
+            }
+            // set current user to the one who uploaded the import (for footprint behavior)
+            User::setCurrentUser(['id' => $import->get('created_by')]);
+            // for audit-stash functionality
+            $listener = new RequestMetadata(new ServerRequest(), User::getCurrentUser()['id']);
+            EventManager::instance()->on($listener);
+
             $path = ImportUtility::getProcessedFile($import);
             $filename = ImportUtility::getProcessedFile($import, false);
 
-            $this->out('Importing from file: "' . $filename . '"');
+            $this->info(sprintf('Importing file "%s":', $filename));
+            $this->hr();
 
             // process import file
             $this->processImportFile($import);
 
             if (empty($import->get('options'))) {
-                $this->warn('Skipping, no mapping found for file:' . $filename);
-                $this->hr();
+                $this->warn(sprintf('Skipping, no mapping found for "%s"', $filename));
+                $this->out($this->nl(1));
+
                 continue;
             }
 
@@ -103,10 +119,10 @@ class ImportShell extends Shell
             if ($table::STATUS_IN_PROGRESS === $import->get('status')) {
                 $this->_existingImport($table, $import, $count);
             }
-            $this->hr();
+            $this->out($this->nl(1));
         }
 
-        $this->success('Import Completed');
+        $this->success('Import completed');
 
         // unlock file
         $lock->unlock();
@@ -120,7 +136,7 @@ class ImportShell extends Shell
      */
     protected function processImportFile(Import $import)
     {
-        $this->info('Processing import file ..');
+        $this->out('Processing import file ..');
 
         $path = ImportUtility::getProcessedFile($import);
         if (file_exists($path)) {
@@ -224,7 +240,7 @@ class ImportShell extends Shell
         // generate import results records
         $this->createImportResults($import, $count);
 
-        $this->info('Importing records ..');
+        $this->out('Importing records ..');
         $progress = $this->helper('Progress');
         $progress->init();
 
@@ -259,7 +275,7 @@ class ImportShell extends Shell
      */
     protected function createImportResults(Import $import, $count)
     {
-        $this->info('Preparing records ..');
+        $this->out('Preparing records ..');
 
         $progress = $this->helper('Progress');
         $progress->init();

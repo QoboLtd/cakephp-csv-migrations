@@ -91,14 +91,15 @@ class ImportShell extends Shell
             $path = ImportUtility::getProcessedFile($import);
             $filename = ImportUtility::getProcessedFile($import, false);
 
-            $this->out('Importing from file: "' . $filename . '"');
+            $this->info(sprintf('Importing file "%s":', $filename));
+            $this->hr();
 
             // process import file
             $this->processImportFile($import);
 
             if (empty($import->get('options'))) {
-                $this->warn('Skipping, no mapping found for file:' . $filename);
-                $this->hr();
+                $this->warn(sprintf('Skipping, no mapping found for "%s"', $filename));
+                $this->out($this->nl(1));
 
                 // detach listener
                 EventManager::instance()->off($listener);
@@ -117,13 +118,13 @@ class ImportShell extends Shell
             if ($table::STATUS_IN_PROGRESS === $import->get('status')) {
                 $this->_existingImport($table, $import, $count);
             }
-            $this->hr();
+            $this->out($this->nl(1));
 
             // detach listener
             EventManager::instance()->off($listener);
         }
 
-        $this->success('Import Completed');
+        $this->success('Import completed');
 
         // unlock file
         $lock->unlock();
@@ -137,7 +138,7 @@ class ImportShell extends Shell
      */
     protected function processImportFile(Import $import)
     {
-        $this->info('Processing import file ..');
+        $this->out('Processing import file ..');
 
         $path = ImportUtility::getProcessedFile($import);
         if (file_exists($path)) {
@@ -241,7 +242,7 @@ class ImportShell extends Shell
         // generate import results records
         $this->createImportResults($import, $count);
 
-        $this->info('Importing records ..');
+        $this->out('Importing records ..');
         $progress = $this->helper('Progress');
         $progress->init();
 
@@ -276,7 +277,7 @@ class ImportShell extends Shell
      */
     protected function createImportResults(Import $import, $count)
     {
-        $this->info('Preparing records ..');
+        $this->out('Preparing records ..');
 
         $progress = $this->helper('Progress');
         $progress->init();

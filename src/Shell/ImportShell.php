@@ -29,6 +29,7 @@ use Exception;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use Qobo\Utils\Utility\Lock\FileLock;
+use Qobo\Utils\Utility\User;
 
 class ImportShell extends Shell
 {
@@ -78,6 +79,9 @@ class ImportShell extends Shell
         }
 
         foreach ($query->all() as $import) {
+            // set current user to the one who uploaded the import (for footprint behavior)
+            User::setCurrentUser(['id' => $import->get('created_by')]);
+
             $path = ImportUtility::getProcessedFile($import);
             $filename = ImportUtility::getProcessedFile($import, false);
 

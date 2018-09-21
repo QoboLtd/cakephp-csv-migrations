@@ -11,9 +11,12 @@
  */
 namespace CsvMigrations\Shell;
 
+use AuditStash\Meta\RequestMetadata;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
+use Cake\Event\EventManager;
+use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
@@ -81,6 +84,9 @@ class ImportShell extends Shell
         foreach ($query->all() as $import) {
             // set current user to the one who uploaded the import (for footprint behavior)
             User::setCurrentUser(['id' => $import->get('created_by')]);
+            // for audit-stash functionality
+            $listener = new RequestMetadata(new ServerRequest(), User::getCurrentUser()['id']);
+            EventManager::instance()->on($listener);
 
             $path = ImportUtility::getProcessedFile($import);
             $filename = ImportUtility::getProcessedFile($import, false);
@@ -93,6 +99,10 @@ class ImportShell extends Shell
             if (empty($import->get('options'))) {
                 $this->warn('Skipping, no mapping found for file:' . $filename);
                 $this->hr();
+
+                // detach listener
+                EventManager::instance()->off($listener);
+
                 continue;
             }
 
@@ -108,6 +118,9 @@ class ImportShell extends Shell
                 $this->_existingImport($table, $import, $count);
             }
             $this->hr();
+
+            // detach listener
+            EventManager::instance()->off($listener);
         }
 
         $this->success('Import Completed');

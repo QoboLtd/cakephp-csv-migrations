@@ -70,6 +70,7 @@ class ImportsTable extends Table
 
         $this->addBehavior('Muffin/Trash.Trash');
         $this->addBehavior('Timestamp');
+        $this->addBehavior('Qobo/Utils.Footprint');
 
         $this->hasMany('ImportResults', [
             'foreignKey' => 'import_id',

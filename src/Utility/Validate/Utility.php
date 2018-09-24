@@ -65,7 +65,7 @@ class Utility
      * invalid.
      *
      * @param string $list List name to check
-     * $param string $module Module name to check the list in
+     * @param string $module Module name to check the list in
      * @return bool True if valid, false is otherwise
      */
     public static function isValidList($list, $module = null)

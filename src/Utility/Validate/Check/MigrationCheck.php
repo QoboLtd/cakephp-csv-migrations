@@ -52,60 +52,71 @@ class MigrationCheck extends AbstractCheck
             // Field name is required
             if (empty($field['name'])) {
                 $this->errors[] = $module . " migration has a field without a name";
-            } else {
-                // Check for field duplicates
-                if (in_array($field['name'], $seenFields)) {
-                    $this->errors[] = $module . " migration specifies field '" . $field['name'] . "' more than once";
-                } else {
-                    $seenFields[] = $field['name'];
-                }
-                // Field type is required
-                if (empty($field['type'])) {
-                    $this->errors[] = $module . " migration does not specify type for field  '" . $field['name'] . "'";
-                } else {
-                    $type = null;
-                    $limit = null;
-                    // Matches:
-                    // * date, time, string, and other simple types
-                    // * list(something), related(Others) and other simple limits
-                    // * related(Vendor/Plugin.Model) and other complex limits
-                    if (preg_match('/^(\w+?)\(([\w\/\.]+?)\)$/', $field['type'], $matches)) {
-                        $type = $matches[1];
-                        $limit = $matches[2];
-                    } else {
-                        $type = $field['type'];
+                continue;
+            }
+
+            // Check for field duplicates
+            if (in_array($field['name'], $seenFields)) {
+                $this->errors[] = $module . " migration specifies field '" . $field['name'] . "' more than once";
+                continue;
+            }
+
+            $seenFields[] = $field['name'];
+
+            // Disallow unique on non-required fields
+            $unique = isset($field['unique']) ? (bool)$field['unique'] : false;
+            $required = isset($field['required']) ? (bool)$field['required'] : false;
+            if ($unique && !$required) {
+                $this->errors[] = $module . " migration forces unique values for a non-required field '" . $field['name'] . "'";
+            }
+
+            // Field type is required
+            if (empty($field['type'])) {
+                $this->errors[] = $module . " migration does not specify type for field  '" . $field['name'] . "'";
+            }
+
+            $type = $field['type'];
+            $limit = null;
+            // Matches:
+            // * date, time, string, and other simple types
+            // * list(something), related(Others) and other simple limits
+            // * related(Vendor/Plugin.Model) and other complex limits
+            if (preg_match('/^(\w+?)\(([\w\/\.]+?)\)$/', $field['type'], $matches)) {
+                $type = $matches[1];
+                $limit = $matches[2];
+            }
+
+            // Field type must be valid
+            if (!Utility::isValidFieldType($type)) {
+                $this->errors[] = $module . " migration specifies invalid type '" . $type . "' for field  '" . $field['name'] . "'";
+                continue;
+            }
+
+            switch ($type) {
+                case 'related':
+                    // Only check for simple modules, not the vendor/plugin ones
+                    if (preg_match('/^\w+$/', $limit) && !Utility::isValidModule($limit)) {
+                        $errors[] = $module . " migration relates to unknown module '$limit' in '" . $field['name'] . "' field";
                     }
-                    // Field type must be valid
-                    if (!Utility::isValidFieldType($type)) {
-                        $this->errors[] = $module . " migration specifies invalid type '" . $type . "' for field  '" . $field['name'] . "'";
-                    } else {
-                        switch ($type) {
-                            case 'related':
-                                // Only check for simple modules, not the vendor/plugin ones
-                                if (preg_match('/^\w+$/', $limit) && !Utility::isValidModule($limit)) {
-                                    $errors[] = $module . " migration relates to unknown module '$limit' in '" . $field['name'] . "' field";
-                                }
-                                // Documents module can be used as `files(Documents)` for a container of the uploaded files,
-                                // or as `related(Documents)` as a regular module relationship.  It's often easy to overlook
-                                // which one was desired.  Failing on either one is incorrect, as both are valid.  A
-                                // warning is needed instead for the `related(Documents)` case instead.
-                                // The only known legitimate case is in the Files, which is join table between Documents and FileStorage.
-                                if (('Documents' == $limit) && ('Files' != $module)) {
-                                    $this->warnings[] = $module . " migration uses 'related' type for 'Documents' in '" . $field['name'] . "'. Maybe wanted 'files(Documents)'?";
-                                }
-                                break;
-                            case 'list':
-                            case 'money':
-                            case 'metric':
-                                if (!Utility::isValidList($limit, $module)) {
-                                    $this->errors[] = $module . " migration uses unknown or empty list '$limit' in '" . $field['name'] . "' field";
-                                }
-                                break;
-                        }
+                    // Documents module can be used as `files(Documents)` for a container of the uploaded files,
+                    // or as `related(Documents)` as a regular module relationship.  It's often easy to overlook
+                    // which one was desired.  Failing on either one is incorrect, as both are valid.  A
+                    // warning is needed instead for the `related(Documents)` case instead.
+                    // The only known legitimate case is in the Files, which is join table between Documents and FileStorage.
+                    if (('Documents' == $limit) && ('Files' != $module)) {
+                        $this->warnings[] = $module . " migration uses 'related' type for 'Documents' in '" . $field['name'] . "'. Maybe wanted 'files(Documents)'?";
                     }
-                }
+                    break;
+                case 'list':
+                case 'money':
+                case 'metric':
+                    if (!Utility::isValidList($limit, $module)) {
+                        $this->errors[] = $module . " migration uses unknown or empty list '$limit' in '" . $field['name'] . "' field";
+                    }
+                    break;
             }
         }
+
         // Check for the required fields
         // TODO: Allow specifying the required fields as the command line argument (for things like trashed)
         $requiredFields = [

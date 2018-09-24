@@ -524,7 +524,7 @@ class ImportShell extends Shell
     {
         $table = TableRegistry::get('CsvMigrations.ImportResults');
 
-        $errors = json_encode($errors);
+        $errors = is_string($errors) ? $errors : json_encode($errors);
 
         $entity->set('status', $table::STATUS_FAIL);
         $message = sprintf($table::STATUS_FAIL_MESSAGE, $errors);

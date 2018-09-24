@@ -21,7 +21,7 @@ $statusLabels = [
     ImportsTable::STATUS_IN_PROGRESS => 'primary',
     ImportsTable::STATUS_COMPLETED => 'success',
     ImportsTable::STATUS_PENDING => 'warning',
-    ImportsTable::STATUS_FAIL => 'error'
+    ImportsTable::STATUS_FAIL => 'danger'
 ];
 
 echo $this->Html->css('Qobo/Utils./plugins/datatables/css/dataTables.bootstrap.min', ['block' => 'css']);

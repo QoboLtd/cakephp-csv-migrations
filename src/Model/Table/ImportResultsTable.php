@@ -56,7 +56,7 @@ class ImportResultsTable extends Table
     /**
      * Fail status message.
      */
-    const STATUS_FAIL_MESSAGE = 'Import failed %s';
+    const STATUS_FAIL_MESSAGE = 'Import failed: %s';
 
     /**
      * Pending status message.

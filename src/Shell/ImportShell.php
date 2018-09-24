@@ -348,19 +348,15 @@ class ImportShell extends Shell
             return;
         }
 
-        $entity = $table->newEntity();
         try {
+            $entity = $table->newEntity();
             $entity = $table->patchEntity($entity, $data);
+
+            $table->save($entity) ?
+                $this->_importSuccess($importResult, $entity) :
+                $this->_importFail($importResult, $entity->getErrors());
         } catch (Exception $e) {
             $this->_importFail($importResult, $e->getMessage());
-
-            return;
-        }
-
-        if ($table->save($entity)) {
-            $this->_importSuccess($importResult, $entity);
-        } else {
-            $this->_importFail($importResult, $entity->getErrors());
         }
     }
 
@@ -528,7 +524,7 @@ class ImportShell extends Shell
     {
         $table = TableRegistry::get('CsvMigrations.ImportResults');
 
-        $errors = json_encode($errors);
+        $errors = is_string($errors) ? $errors : json_encode($errors);
 
         $entity->set('status', $table::STATUS_FAIL);
         $message = sprintf($table::STATUS_FAIL_MESSAGE, $errors);

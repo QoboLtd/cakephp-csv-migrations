@@ -343,7 +343,7 @@ class Import
         $statusLabels = [
             ImportResultsTable::STATUS_SUCCESS => 'success',
             ImportResultsTable::STATUS_PENDING => 'warning',
-            ImportResultsTable::STATUS_FAIL => 'error'
+            ImportResultsTable::STATUS_FAIL => 'danger'
         ];
         foreach ($data as $key => $value) {
             $data[$key][$index] = $view->Html->tag('span', $value[$index], [

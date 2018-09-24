@@ -51,12 +51,12 @@ class AssociationsAwareTraitTest extends PHPUnit_Framework_TestCase
     public function associationsProvider()
     {
         return [
-            ['Articles', 'AuthorUsers', BelongsTo::class],
+            ['Articles', 'AuthorAuthors', BelongsTo::class],
             ['Articles', 'CategoryCategories', BelongsTo::class],
             ['Articles', 'MainArticleArticles', BelongsTo::class],
             ['Leads', 'AssignedToUsers', BelongsTo::class],
             ['Posts', 'OwnerAuthors', BelongsTo::class],
-            ['Users', 'AuthorArticles', HasMany::class],
+            ['Authors', 'AuthorArticles', HasMany::class],
             ['Categories', 'CategoryArticles', HasMany::class],
             ['Users', 'AssignedToLeads', HasMany::class],
             ['Authors', 'OwnerPosts', HasMany::class],

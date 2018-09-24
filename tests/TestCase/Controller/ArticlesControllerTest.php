@@ -12,7 +12,7 @@ class ArticlesControllerTest extends IntegrationTestCase
 {
     public $fixtures = [
         'plugin.csv_migrations.articles',
-        'plugin.csv_migrations.users'
+        'plugin.csv_migrations.authors'
     ];
 
     public function setUp()

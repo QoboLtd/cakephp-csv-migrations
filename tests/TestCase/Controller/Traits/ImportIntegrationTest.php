@@ -55,7 +55,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         $this->assertInstanceOf(Import::class, $this->viewVariable('import'));
 
         $this->assertEquals(['name', 'category', 'author', 'status'], $this->viewVariable('columns'));
-        $this->assertEquals(['Name'], $this->viewVariable('headers'));
+        $this->assertEquals(['Name', 'Author', 'Status'], $this->viewVariable('headers'));
     }
 
     public function testImportGetExistingMapped()
@@ -89,7 +89,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         $data = [
             'file' => [
                 'tmp_name' => TESTS . 'uploads' . DS . 'tmp' . DS . 'import',
-                'name' => 'import.csv',
+                'name' => 'articles.csv',
                 'type' => 'text/csv'
             ]
         ];

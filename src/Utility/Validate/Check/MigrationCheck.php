@@ -63,6 +63,13 @@ class MigrationCheck extends AbstractCheck
 
             $seenFields[] = $field['name'];
 
+            // Disallow unique on non-required fields
+            $unique = isset($field['unique']) ? (bool)$field['unique'] : false;
+            $required = isset($field['required']) ? (bool)$field['required'] : false;
+            if ($unique && !$required) {
+                $this->errors[] = $module . " migration forces unique values for a non-required field '" . $field['name'] . "'";
+            }
+
             // Field type is required
             if (empty($field['type'])) {
                 $this->errors[] = $module . " migration does not specify type for field  '" . $field['name'] . "'";

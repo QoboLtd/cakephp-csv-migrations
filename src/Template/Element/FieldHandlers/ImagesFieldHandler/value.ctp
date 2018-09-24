@@ -25,7 +25,6 @@ $thumbnailPath = function ($entity) use ($extensions, $hashes, $imageSize) {
         return $entity->get('path');
     }
 
-
     // image directory path
     $path = realpath(WWW_ROOT . trim($entity->get('path'), DS));
     // image version directory path

@@ -47,7 +47,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
     public function setUp()
     {
         parent::setUp();
-        $io = new ConsoleIo( new ConsoleOutput());
+        $io = new ConsoleIo(new ConsoleOutput());
         $io->level(ConsoleIo::QUIET);
         $this->ImportShell = new ImportShell($io);
     }

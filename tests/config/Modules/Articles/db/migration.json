@@ -22,7 +22,7 @@
     },
     "author": {
         "name": "author",
-        "type": "related(Users)",
+        "type": "related(Authors)",
         "required": null,
         "non-searchable": null,
         "unique": null

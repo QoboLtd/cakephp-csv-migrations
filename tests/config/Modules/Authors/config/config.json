@@ -3,7 +3,7 @@
         "icon": "cube",
         "searchable": true,
         "display_field": "id",
-        "lookup_fields": [],
+        "lookup_fields": ["name"],
         "typeahead_fields": [],
         "basic_search_fields": [],
         "allow_reminders": [],

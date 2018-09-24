@@ -16,6 +16,7 @@ class AuthorsFixture extends TestFixture
         'description' => ['type' => 'text', 'length' => null, 'null' => true],
         'created' => ['type' => 'datetime', 'null' => true],
         'modified' => ['type' => 'datetime', 'null' => true],
+        'trashed' => ['type' => 'datetime', 'null' => true],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
             'unique' => ['type' => 'unique', 'columns' => ['name', 'id']]
@@ -28,14 +29,16 @@ class AuthorsFixture extends TestFixture
             'name' => 'Author - 1',
             'description' => 'Author 1 Description',
             'created' => '2016-07-01 10:39:23',
-            'modified' => '2016-07-01 10:41:31'
+            'modified' => '2016-07-01 10:41:31',
+            'trashed' => null,
         ],
         [
             'id' => '00000000-0000-0000-0000-000000000002',
             'name' => 'Author - 2',
             'description' => 'Author - 2 - Description',
             'created' => '2016-07-02 10:39:23',
-            'modified' => '2016-07-02 10:41:31'
+            'modified' => '2016-07-02 10:41:31',
+            'trashed' => null,
         ]
     ];
 }

@@ -348,19 +348,15 @@ class ImportShell extends Shell
             return;
         }
 
-        $entity = $table->newEntity();
         try {
+            $entity = $table->newEntity();
             $entity = $table->patchEntity($entity, $data);
+
+            $table->save($entity) ?
+                $this->_importSuccess($importResult, $entity) :
+                $this->_importFail($importResult, $entity->getErrors());
         } catch (Exception $e) {
             $this->_importFail($importResult, $e->getMessage());
-
-            return;
-        }
-
-        if ($table->save($entity)) {
-            $this->_importSuccess($importResult, $entity);
-        } else {
-            $this->_importFail($importResult, $entity->getErrors());
         }
     }
 

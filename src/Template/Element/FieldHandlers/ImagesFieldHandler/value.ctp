@@ -15,6 +15,33 @@ use Cake\Core\Plugin;
 $uuid = $this->Text->uuid();
 $limit = 3;
 $closed = true;
+
+$thumbnailPath = function ($entity) use ($extensions, $hashes, $imageSize) {
+    if (! in_array($entity->get('extension'), $extensions)) {
+        return 'Qobo/Utils.thumbnails/no-thumbnail.jpg';
+    }
+
+    if (! isset($hashes[$imageSize])) {
+        return $entity->get('path');
+    }
+
+
+    // image directory path
+    $path = realpath(WWW_ROOT . trim($entity->get('path'), DS));
+    // image version directory path
+    $path = dirname($path) . DS . basename($path, $entity->get('extension'));
+    $path .= $hashes[$imageSize] . '.' . $entity->get('extension');
+
+    if (! file_exists($path)) {
+        return $entity->get('path');
+    }
+
+    return implode('', [
+        dirname($entity->get('path')) . '/',
+        basename($entity->get('path'), $entity->get('extension')),
+        $hashes[$imageSize] . '.' . $entity->get('extension')
+    ]);
+};
 ?>
 <?php if ($limit < $entities->count()) : ?>
     <p class="text-right">
@@ -36,27 +63,7 @@ $closed = true;
     <div class="col-xs-4">
         <a href="<?= $entity->get('path') ?>" target="_blank">
             <div class="thumbnail" title="<?= $entity->get('filename') ?>" height="150">
-                <?php
-                $url = 'Qobo/Utils.thumbnails/no-thumbnail.jpg';
-                if (in_array($entity->get('extension'), $extensions)) {
-                    $url = $entity->get('path');
-                    if (isset($hashes[$imageSize])) {
-                        // image directory path
-                        $path = realpath(WWW_ROOT . trim($entity->get('path'), DS));
-
-                        // image version directory path
-                        $path = dirname($path) . DS . basename($path, $entity->get('extension'));
-                        $path .= $hashes[$imageSize] . '.' . $entity->get('extension');
-
-                        if (file_exists($path)) {
-                            $url = dirname($entity->get('path')) . '/';
-                            $url .= basename($entity->get('path'), $entity->get('extension'));
-                            $url .= $hashes[$imageSize] . '.' . $entity->get('extension');
-                        }
-                    }
-                }
-                ?>
-                <?= $this->Html->image($url) ?>
+                <?= $this->Html->image($thumbnailPath($entity)) ?>
                 <div class="caption">
                     <p class="small text-center no-margin" style="white-space: nowrap; text-overflow: ellipsis;overflow: hidden;">
                         <?= $entity->get('filename') ?>

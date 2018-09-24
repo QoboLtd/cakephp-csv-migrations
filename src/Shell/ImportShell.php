@@ -15,6 +15,7 @@ use AuditStash\Meta\RequestMetadata;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Event\EventManager;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
@@ -420,7 +421,7 @@ class ImportShell extends Shell
                         $data[$field] = $this->_findRelatedRecord($table, $field, $value);
                         break;
                     case 'list':
-                        $data[$field] = $this->_findListValue($csvFields[$field]->getLimit(), $value);
+                        $data[$field] = $this->_findListValue($table, $csvFields[$field]->getLimit(), $value);
                         break;
                 }
             } else {
@@ -486,13 +487,14 @@ class ImportShell extends Shell
      * First will try to find if the row value matches one
      * of the list options.
      *
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
      * @param string $listName List name
      * @param string $value Field value
      * @return string
      */
-    protected function _findListValue($listName, $value)
+    protected function _findListValue(RepositoryInterface $table, $listName, $value)
     {
-        $options = FieldUtility::getList($listName, true);
+        $options = FieldUtility::getList(sprintf('%s.%s', $table->getAlias(), $listName), true);
 
         // check against list options values
         foreach ($options as $val => $params) {

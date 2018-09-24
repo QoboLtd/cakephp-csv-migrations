@@ -45,7 +45,7 @@ class ImportsFixture extends TestFixture
     public $records = [
         [
             'id' => '00000000-0000-0000-0000-000000000001',
-            'filename' => TESTS . 'uploads' . DS . 'imports' . DS . 'import.csv',
+            'filename' => TESTS . 'uploads' . DS . 'imports' . DS . 'articles.csv',
             'options' => null,
             'created' => '2017-08-01 11:06:06',
             'modified' => '2017-08-01 11:06:06',
@@ -57,8 +57,8 @@ class ImportsFixture extends TestFixture
         ],
         [
             'id' => '00000000-0000-0000-0000-000000000002',
-            'filename' => TESTS . 'uploads' . DS . 'imports' . DS . 'import.csv',
-            'options' => '{"fields":{"name":{"column":"Name","default":""}}}',
+            'filename' => TESTS . 'uploads' . DS . 'imports' . DS . 'articles.csv',
+            'options' => '{"fields":{"name":{"column":"Name","default":""},"author":{"column":"Author","default":""},"status":{"column":"Status","default":""}}}',
             'created' => '2017-08-01 11:06:06',
             'modified' => '2017-08-01 11:06:06',
             'trashed' => null,

@@ -2,6 +2,7 @@
 namespace CsvMigrations\Aggregator;
 
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\TableRegistry;
 use InvalidArgumentException;
 
@@ -36,7 +37,7 @@ final class Configuration
      *
      * @var string
      */
-    private $displayField;
+    private $displayField = '';
 
     /**
      * Entity instance. This is only required if aggregation is in limited mode.
@@ -50,46 +51,23 @@ final class Configuration
      *
      * Mostly used for properties assignment and data validation.
      *
-     * @param string $tableName Aggregation table name
+     * @param \Cake\Datasource\RepositoryInterface $table Aggregate table instance
      * @param string $field Aggregate field name
-     * @param string $displayField Display field name, optional
-     * @param string $joinTable Join Table name, optional
-     * @param \Cake\Datasource\EntityInterface|null $entity Entity instance from Join table
      * @return void
      */
-    public function __construct($tableName, $field, $displayField = '', $joinTable = '', EntityInterface $entity = null)
+    public function __construct(RepositoryInterface $table, $field)
     {
-        // basic string validation, this can be removed on PHP 7 with string typehinting.
-        foreach ([$tableName, $field, $displayField, $joinTable] as $key => $argument) {
-            if (! is_string($argument)) {
-                throw new InvalidArgumentException(sprintf(
-                    'Argument %d passed to %s() must be of the type string, %s given.',
-                    $key + 1,
-                    __METHOD__,
-                    gettype($argument)
-                ));
-            }
-        }
-
-        $this->table = TableRegistry::get($tableName);
-        if ('' !== trim($joinTable)) {
-            $this->joinTable = TableRegistry::get($joinTable);
-        }
-        $this->field = $field;
-        $this->displayField = $displayField ? $displayField : $field;
-        $this->entity = $entity;
-
-        if ($this->joinMode() && null === $this->entity) {
-            throw new InvalidArgumentException('Running aggregation in limited mode, entity argument is required.');
-        }
-
-        if ($this->joinMode() && get_class($this->entity) !== $this->joinTable->getEntityClass()) {
+        // string validation, this can be removed on PHP 7 with string typehinting.
+        if (! is_string($field)) {
             throw new InvalidArgumentException(sprintf(
-                'Entity must be an instance of "%s". Instead, instance of "%s" was provided.',
-                $this->joinTable->getEntityClass(),
-                get_class($this->entity)
+                'Argument 2 passed to %s() must be of the type string, %s given.',
+                __METHOD__,
+                gettype($field)
             ));
         }
+
+        $this->table = $table;
+        $this->field = $field;
     }
 
     /**
@@ -123,6 +101,42 @@ final class Configuration
     }
 
     /**
+     * Display field getter.
+     *
+     * @return string
+     */
+    public function getDisplayField()
+    {
+        if ('' === trim($this->displayField)) {
+            return $this->field;
+        }
+
+        return $this->displayField;
+    }
+
+    /**
+     * Display field setter.
+     *
+     * @param string $displayField Display field name
+     * @return \CsvMigrations\Aggregator\Configuration
+     */
+    public function setDisplayField($displayField)
+    {
+        // string validation, this can be removed on PHP 7 with string typehinting.
+        if (! is_string($displayField)) {
+            throw new InvalidArgumentException(sprintf(
+                'Argument 1 passed to %s() must be of the type string, %s given.',
+                __METHOD__,
+                gettype($displayField)
+            ));
+        }
+
+        $this->displayField = $displayField;
+
+        return $this;
+    }
+
+    /**
      * Join table getter.
      *
      * @return \Cake\Datasource\RepositoryInterface
@@ -133,16 +147,6 @@ final class Configuration
     }
 
     /**
-     * Display field getter.
-     *
-     * @return string
-     */
-    public function getDisplayField()
-    {
-        return $this->displayField;
-    }
-
-    /**
      * Entity getter.
      *
      * @return string
@@ -150,5 +154,29 @@ final class Configuration
     public function getEntity()
     {
         return $this->entity;
+    }
+
+    /**
+     * Join data setter.
+     *
+     * @param \Cake\Datasource\RepositoryInterface $table Join table intsance
+     * @param \Cake\Datasource\EntityInterface $entity Entity instance from join table
+     * @return \CsvMigrations\Aggregator\Configuration
+     */
+    public function setJoinData(RepositoryInterface $table, EntityInterface $entity)
+    {
+        $entityClass = $table->getEntityClass();
+        if (! $entity instanceof $entityClass) {
+            throw new InvalidArgumentException(sprintf(
+                'Entity must be an instance of "%s". Instead, instance of "%s" was provided.',
+                $table->getEntityClass(),
+                get_class($entity)
+            ));
+        }
+
+        $this->joinTable = $table;
+        $this->entity = $entity;
+
+        return $this;
     }
 }

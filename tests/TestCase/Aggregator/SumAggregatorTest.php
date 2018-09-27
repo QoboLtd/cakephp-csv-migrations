@@ -13,11 +13,21 @@ class SumAggregatorTest extends TestCase
         'plugin.CsvMigrations.foo'
     ];
 
+    public function setUp()
+    {
+        $this->table = TableRegistry::get('Foo');
+    }
+
+    public function tearDown()
+    {
+        unset($this->table);
+    }
+
     public function testValidateWithNonExistingField()
     {
         $this->expectException(RuntimeException::class);
 
-        new SumAggregator(new Configuration('Foo', 'non-existing-field'));
+        new SumAggregator(new Configuration($this->table, 'non-existing-field'));
     }
 
     /**
@@ -27,14 +37,14 @@ class SumAggregatorTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        new SumAggregator(new Configuration('Foo', $field));
+        new SumAggregator(new Configuration($this->table, $field));
     }
 
     public function testApplyConditions()
     {
-        $aggregator = new SumAggregator(new Configuration('Foo', 'cost_amount'));
+        $aggregator = new SumAggregator(new Configuration($this->table, 'cost_amount'));
 
-        $query = TableRegistry::get('Foo')->find('all');
+        $query = $this->table->find('all');
         // clone query before modification
         $expected = clone $query;
 
@@ -45,9 +55,9 @@ class SumAggregatorTest extends TestCase
 
     public function testGetResult()
     {
-        $aggregator = new SumAggregator(new Configuration('Foo', 'cost_amount'));
+        $aggregator = new SumAggregator(new Configuration($this->table, 'cost_amount'));
 
-        $query = TableRegistry::get('Foo')->find('all');
+        $query = $this->table->find('all');
         $query = $aggregator->applyConditions($query);
 
         $this->assertSame('3300.3', $aggregator->getResult($query->first()));
@@ -55,7 +65,7 @@ class SumAggregatorTest extends TestCase
 
     public function testGetConfig()
     {
-        $aggregator = new SumAggregator(new Configuration('Foo', 'cost_amount'));
+        $aggregator = new SumAggregator(new Configuration($this->table, 'cost_amount'));
 
         $this->assertInstanceOf(Configuration::class, $aggregator->getConfig());
     }

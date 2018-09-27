@@ -13,18 +13,28 @@ class LastAggregatorTest extends TestCase
         'plugin.CsvMigrations.foo'
     ];
 
+    public function setUp()
+    {
+        $this->table = TableRegistry::get('Foo');
+    }
+
+    public function tearDown()
+    {
+        unset($this->table);
+    }
+
     public function testValidateWithNonExistingField()
     {
         $this->expectException(RuntimeException::class);
 
-        new LastAggregator(new Configuration('Foo', 'non-existing-field'));
+        new LastAggregator(new Configuration($this->table, 'non-existing-field'));
     }
 
     public function testApplyConditions()
     {
-        $aggregator = new LastAggregator(new Configuration('Foo', 'cost_amount'));
+        $aggregator = new LastAggregator(new Configuration($this->table, 'cost_amount'));
 
-        $query = TableRegistry::get('Foo')->find('all');
+        $query = $this->table->find('all');
         // clone query before modification
         $expected = clone $query;
 
@@ -35,9 +45,11 @@ class LastAggregatorTest extends TestCase
 
     public function testGetResult()
     {
-        $aggregator = new LastAggregator(new Configuration('Foo', 'created', 'status'));
+        $configuration = new Configuration($this->table, 'created');
+        $configuration->setDisplayField('status');
+        $aggregator = new LastAggregator($configuration);
 
-        $query = TableRegistry::get('Foo')->find('all');
+        $query = $this->table->find('all');
         $query = $aggregator->applyConditions($query);
 
         $this->assertSame('inactive', $aggregator->getResult($query->first()));
@@ -45,7 +57,7 @@ class LastAggregatorTest extends TestCase
 
     public function testGetConfig()
     {
-        $aggregator = new LastAggregator(new Configuration('Foo', 'cost_amount'));
+        $aggregator = new LastAggregator(new Configuration($this->table, 'cost_amount'));
 
         $this->assertInstanceOf(Configuration::class, $aggregator->getConfig());
     }

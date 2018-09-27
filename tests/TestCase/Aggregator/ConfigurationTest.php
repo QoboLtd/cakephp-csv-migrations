@@ -17,87 +17,88 @@ class ConfigurationTest extends TestCase
 
     public function testConstructor()
     {
-        new Configuration('tableName', 'field');
-    }
-
-    public function testConstructorWithAllAgruments()
-    {
-        $entity = TableRegistry::get('Foo')->find()->first();
-
-        new Configuration('tableName', 'field', 'displayField', 'Foo', $entity);
+        new Configuration(TableRegistry::get('tableName'), 'field');
     }
 
     public function testConstructorWithInvalidConfig()
     {
         $this->expectException(InvalidArgumentException::class);
 
-        // invalid first parameter, string expected
-        new Configuration(['tableName'], 'field');
-    }
-
-    public function testConstructorWithoutRequiredEntity()
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        // since join table is provided, entity is required
-        new Configuration('tableName', 'field', 'displayField', 'joinTable');
-    }
-
-    public function testConstructorWittInvalidEntity()
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        // using entity from another table, instead of the configured join table (Foo)
-        $entity = TableRegistry::get('Articles')->find()->first();
-
-        new Configuration('tableName', 'field', 'displayField', 'Foo', $entity);
+        // invalid second parameter, string expected
+        new Configuration(TableRegistry::get('tableName'), ['field']);
     }
 
     public function testJoinMode()
     {
-        $entity = TableRegistry::get('Foo')->find()->first();
-        $configuration = new Configuration('tableName', 'field', '', 'Foo', $entity);
+        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
+        $configuration->setJoinData(
+            TableRegistry::get('Foo'),
+            TableRegistry::get('Foo')->find()->first()
+        );
         $this->assertTrue($configuration->joinMode());
 
-        $configuration = new Configuration('tableName', 'field');
+        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
         $this->assertFalse($configuration->joinMode());
     }
 
     public function testGetTable()
     {
-        $configuration = new Configuration('tableName', 'field');
+        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
 
         $this->assertInstanceOf(RepositoryInterface::class, $configuration->getTable());
     }
 
     public function testGetField()
     {
-        $configuration = new Configuration('tableName', 'field');
+        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
 
         $this->assertEquals('field', $configuration->getField());
     }
 
-    public function testGetDisplayField()
+    public function testSetGetDisplayField()
     {
-        $configuration = new Configuration('tableName', 'field', 'displayField');
+        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
+        $configuration->setDisplayField('displayField');
 
         $this->assertEquals('displayField', $configuration->getDisplayField());
     }
 
+    public function testSetDisplayFieldWithWrongParameter()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
+        $configuration->setDisplayField(['wrong_parameter']);
+    }
+
     public function testGetJoinTable()
     {
-        $entity = TableRegistry::get('Foo')->find()->first();
-        $configuration = new Configuration('tableName', 'field', 'displayField', 'Foo', $entity);
+        $table = TableRegistry::get('Foo');
+        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
+        $configuration->setJoinData($table, $table->find()->first());
 
-        $this->assertInstanceOf(RepositoryInterface::class, $configuration->getJoinTable());
+        $this->assertSame($table, $configuration->getJoinTable());
     }
 
     public function testGetEntity()
     {
-        $entity = TableRegistry::get('Foo')->find()->first();
-        $configuration = new Configuration('tableName', 'field', 'displayField', 'Foo', $entity);
+        $table = TableRegistry::get('Foo');
+        $entity = $table->find()->first();
+        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
+        $configuration->setJoinData($table, $entity);
 
-        $this->assertInstanceOf(EntityInterface::class, $configuration->getEntity());
         $this->assertSame($entity, $configuration->getEntity());
+    }
+
+    public function testSetJoinDataWithoutInvalidEntity()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
+        $configuration->setJoinData(
+            TableRegistry::get('Foo'),
+            // using entity from another table, instead of the configured join table (Foo)
+            TableRegistry::get('Articles')->find()->first()
+        );
     }
 }

@@ -42,6 +42,15 @@ class LeadsFixture extends TestFixture
             'trashed' => null,
             'created' => '2016-07-02 10:39:23',
             'modified' => '2016-07-02 10:41:31'
+        ],
+        [
+            'id' => '00000000-0000-0000-0000-000000000003',
+            'name' => 'Foobar',
+            'follow_up_date' => null,
+            'assigned_to' => null,
+            'trashed' => null,
+            'created' => '2018-09-27 10:51:23',
+            'modified' => '2018-09-27 10:55:31'
         ]
     ];
 }

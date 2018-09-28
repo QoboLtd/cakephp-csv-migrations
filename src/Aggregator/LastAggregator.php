@@ -62,6 +62,6 @@ final class LastAggregator extends AbstractAggregator
      */
     public function getResult(EntityInterface $entity)
     {
-        return (string)$entity->get($this->getConfig()->getDisplayField());
+        return $entity->get($this->getConfig()->getDisplayField());
     }
 }

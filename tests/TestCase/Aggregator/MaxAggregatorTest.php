@@ -50,7 +50,7 @@ class MaxAggregatorTest extends TestCase
         $query = $this->table->find('all');
         $query = $aggregator->applyConditions($query);
 
-        $this->assertSame('2000.1', $aggregator->getResult($query->first()));
+        $this->assertSame(2000.1, $aggregator->getResult($query->first()));
     }
 
     public function testGetConfig()

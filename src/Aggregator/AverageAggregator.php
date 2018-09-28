@@ -55,6 +55,6 @@ final class AverageAggregator extends AbstractAggregator
      */
     public function getResult(EntityInterface $entity)
     {
-        return (string)$entity->get('average');
+        return $entity->get('average');
     }
 }

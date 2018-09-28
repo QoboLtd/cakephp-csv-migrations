@@ -60,7 +60,7 @@ class AverageAggregatorTest extends TestCase
         $query = $this->table->find('all');
         $query = $aggregator->applyConditions($query);
 
-        $this->assertSame('1100.1', $aggregator->getResult($query->first()));
+        $this->assertSame(1100.1, $aggregator->getResult($query->first()));
     }
 
     public function testGetConfig()

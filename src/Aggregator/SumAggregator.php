@@ -55,6 +55,6 @@ final class SumAggregator extends AbstractAggregator
      */
     public function getResult(EntityInterface $entity)
     {
-        return (string)$entity->get('sum');
+        return $entity->get('sum');
     }
 }

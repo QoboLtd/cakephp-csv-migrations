@@ -60,7 +60,7 @@ class SumAggregatorTest extends TestCase
         $query = $this->table->find('all');
         $query = $aggregator->applyConditions($query);
 
-        $this->assertSame('3300.3', $aggregator->getResult($query->first()));
+        $this->assertSame(3300.3, $aggregator->getResult($query->first()));
     }
 
     public function testGetConfig()

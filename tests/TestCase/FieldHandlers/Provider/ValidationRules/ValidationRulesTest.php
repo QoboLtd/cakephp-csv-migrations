@@ -4,6 +4,7 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\ValidationRule;
 use Cake\Validation\Validator;
+use CsvMigrations\FieldHandlers\Config\AggregatedConfig;
 use CsvMigrations\FieldHandlers\Config\BlobConfig;
 use CsvMigrations\FieldHandlers\Config\BooleanConfig;
 use CsvMigrations\FieldHandlers\Config\DateConfig;
@@ -21,6 +22,7 @@ use CsvMigrations\FieldHandlers\Config\TimeConfig;
 use CsvMigrations\FieldHandlers\Config\UrlConfig;
 use CsvMigrations\FieldHandlers\Config\UuidConfig;
 use CsvMigrations\FieldHandlers\CsvField;
+use CsvMigrations\FieldHandlers\Provider\ValidationRules\AggregatedValidationRules;
 use CsvMigrations\FieldHandlers\Provider\ValidationRules\BlobValidationRules;
 use CsvMigrations\FieldHandlers\Provider\ValidationRules\BooleanValidationRules;
 use CsvMigrations\FieldHandlers\Provider\ValidationRules\DatetimeValidationRules;
@@ -104,6 +106,20 @@ class ValidationRulesTest extends TestCase
         sort($expected);
 
         $this->assertEquals($expected, $validatorRules);
+    }
+
+    public function testProvideWithoutValidationRules()
+    {
+        $provider = new AggregatedValidationRules(new AggregatedConfig('aggregated_field'));
+        $validator = new Validator();
+        $result = $provider->provide($validator, [
+            'fieldDefinitions' => new CsvField([
+                'name' => 'aggregated_field',
+                'type' => 'aggregated'
+            ])
+        ]);
+
+        $this->assertSame($validator, $result);
     }
 
     public function getValdationRulesByType()

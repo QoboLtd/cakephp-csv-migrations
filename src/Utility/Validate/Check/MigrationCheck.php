@@ -81,7 +81,8 @@ class MigrationCheck extends AbstractCheck
             // * date, time, string, and other simple types
             // * list(something), related(Others) and other simple limits
             // * related(Vendor/Plugin.Model) and other complex limits
-            if (preg_match('/^(\w+?)\(([\w\/\.]+?)\)$/', $field['type'], $matches)) {
+            // * aggregated(CsvMigrations\\Aggregator\\MaxAggregator,TableName,field_name) aggregated configuration
+            if (preg_match('/^(\w+?)\(([\w\/\.\,\\\]+?)\)$/', $field['type'], $matches)) {
                 $type = $matches[1];
                 $limit = $matches[2];
             }

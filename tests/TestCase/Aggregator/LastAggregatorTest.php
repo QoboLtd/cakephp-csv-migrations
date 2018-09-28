@@ -5,6 +5,7 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\Aggregator\Configuration;
 use CsvMigrations\Aggregator\LastAggregator;
+use DateTime;
 use RuntimeException;
 
 class LastAggregatorTest extends TestCase
@@ -43,7 +44,7 @@ class LastAggregatorTest extends TestCase
         $this->assertNotEquals($expected, $query);
     }
 
-    public function testGetResult()
+    public function testGetResultWithString()
     {
         $configuration = new Configuration($this->table, 'created');
         $configuration->setDisplayField('status');
@@ -53,6 +54,17 @@ class LastAggregatorTest extends TestCase
         $query = $aggregator->applyConditions($query);
 
         $this->assertSame('inactive', $aggregator->getResult($query->first()));
+    }
+
+    public function testGetResultWithDatetime()
+    {
+        $configuration = new Configuration($this->table, 'created');
+        $aggregator = new LastAggregator($configuration);
+
+        $query = $this->table->find('all');
+        $query = $aggregator->applyConditions($query);
+
+        $this->assertInstanceOf(DateTime::class, $aggregator->getResult($query->first()));
     }
 
     public function testGetConfig()

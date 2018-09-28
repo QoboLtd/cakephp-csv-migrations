@@ -25,7 +25,7 @@ interface AggregatorInterface
      * Returns aggregated result.
      *
      * @param \Cake\Datasource\ResultSetInterface $resultSet ResultSet instance
-     * @return string
+     * @return mixed
      */
     public function getResult(EntityInterface $resultSet);
 }

@@ -3,7 +3,6 @@ namespace CsvMigrations\Aggregator;
 
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
-use Cake\ORM\TableRegistry;
 use InvalidArgumentException;
 
 /**
@@ -118,7 +117,7 @@ final class Configuration
      * Display field setter.
      *
      * @param string $displayField Display field name
-     * @return \CsvMigrations\Aggregator\Configuration
+     * @return self
      */
     public function setDisplayField($displayField)
     {
@@ -149,7 +148,7 @@ final class Configuration
     /**
      * Entity getter.
      *
-     * @return string
+     * @return \Cake\Datasource\EntityInterface
      */
     public function getEntity()
     {
@@ -161,7 +160,7 @@ final class Configuration
      *
      * @param \Cake\Datasource\RepositoryInterface $table Join table intsance
      * @param \Cake\Datasource\EntityInterface $entity Entity instance from join table
-     * @return \CsvMigrations\Aggregator\Configuration
+     * @return self
      */
     public function setJoinData(RepositoryInterface $table, EntityInterface $entity)
     {

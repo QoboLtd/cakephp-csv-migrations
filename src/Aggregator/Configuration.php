@@ -148,7 +148,7 @@ final class Configuration
     /**
      * Entity getter.
      *
-     * @return string
+     * @return \Cake\Datasource\EntityInterface
      */
     public function getEntity()
     {

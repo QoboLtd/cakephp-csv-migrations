@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\Test\TestCase\Aggregator;
 
+use Cake\I18n\Time;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\Aggregator\AggregateResult;
@@ -36,20 +37,23 @@ class AggregateTest extends TestCase
     /**
      * @dataProvider aggregatorResultProvider
      */
-    public function testGetResult($aggregatorClass, $expected)
+    public function testGetResult($aggregatorClass, $field, $expected)
     {
-        $aggregator = new $aggregatorClass(new Configuration($this->fooTable, 'cost_amount'));
+        $aggregator = new $aggregatorClass(new Configuration($this->fooTable, $field));
 
-        $this->assertSame($expected, AggregateResult::get($aggregator));
+        $this->assertEquals($expected, AggregateResult::get($aggregator));
     }
 
     public function aggregatorResultProvider()
     {
         return [
-            [SumAggregator::class, '3300.3'],
-            [AverageAggregator::class, '1100.1'],
-            [MaxAggregator::class, '2000.1'],
-            [LastAggregator::class, '2000.1']
+            [SumAggregator::class, 'cost_amount', 3300.3],
+            [AverageAggregator::class, 'cost_amount', 1100.1],
+            [MaxAggregator::class, 'cost_amount', 2000.1],
+            [LastAggregator::class, 'cost_amount', 2000.1],
+            [LastAggregator::class, 'status', 'inactive'],
+            [LastAggregator::class, 'created', new Time('2018-09-26 10:39:23')],
+            [LastAggregator::class, 'lead', '00000000-0000-0000-0000-000000000002']
         ];
     }
 
@@ -69,10 +73,10 @@ class AggregateTest extends TestCase
     public function aggregatorResultProviderWithJoin()
     {
         return [
-            [SumAggregator::class, '3000.2'],
-            [AverageAggregator::class, '1500.1'],
-            [MaxAggregator::class, '2000.1'],
-            [LastAggregator::class, '2000.1']
+            [SumAggregator::class, 3000.2],
+            [AverageAggregator::class, 1500.1],
+            [MaxAggregator::class, 2000.1],
+            [LastAggregator::class, 2000.1]
         ];
     }
 

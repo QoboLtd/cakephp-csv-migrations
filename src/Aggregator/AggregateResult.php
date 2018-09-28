@@ -10,7 +10,7 @@ final class AggregateResult
      * Aggregator execution method.
      *
      * @param \CsvMigrations\Aggregator\AggregatorInterface $aggregator Aggregator instance
-     * @return string
+     * @return mixed
      */
     public static function get(AggregatorInterface $aggregator)
     {
@@ -27,7 +27,7 @@ final class AggregateResult
             return '';
         }
 
-        return (string)$aggregator->getResult($query->first());
+        return $aggregator->getResult($query->first());
     }
 
     /**

@@ -45,7 +45,11 @@ final class SumAggregator extends AbstractAggregator
      */
     public function applyConditions(QueryInterface $query)
     {
-        $query->select(['sum' => $query->func()->sum($this->getConfig()->getField())]);
+        $aggregateField = $this->getConfig()
+            ->getTable()
+            ->aliasField($this->getConfig()->getField());
+
+        $query->select(['sum' => $query->func()->sum($aggregateField)]);
 
         return $query;
     }

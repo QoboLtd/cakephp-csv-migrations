@@ -34,8 +34,12 @@ final class LastAggregator extends AbstractAggregator
      */
     private function applyConditionsWithOrder(QueryInterface $query)
     {
-        $query->select($this->getConfig()->getDisplayField());
-        $query->order([($this->getConfig()->getField()) => 'DESC']);
+        $aggregateField = $this->getConfig()
+            ->getTable()
+            ->aliasField($this->getConfig()->getField());
+
+        $query->select($this->getConfig()->getDisplayField())
+            ->order([$aggregateField => 'DESC']);
 
         return $query;
     }
@@ -50,9 +54,11 @@ final class LastAggregator extends AbstractAggregator
      */
     private function applyConditionsWithMax(QueryInterface $query)
     {
-        $query->select([
-            $this->getConfig()->getDisplayField() => $query->func()->max($this->getConfig()->getField())
-        ]);
+        $aggregateField = $this->getConfig()
+            ->getTable()
+            ->aliasField($this->getConfig()->getField());
+
+        $query->select([$this->getConfig()->getDisplayField() => $query->func()->max($aggregateField)]);
 
         return $query;
     }

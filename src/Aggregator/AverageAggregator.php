@@ -45,7 +45,11 @@ final class AverageAggregator extends AbstractAggregator
      */
     public function applyConditions(QueryInterface $query)
     {
-        $query->select(['average' => $query->func()->avg($this->getConfig()->getField())]);
+        $aggregateField = $this->getConfig()
+            ->getTable()
+            ->aliasField($this->getConfig()->getField());
+
+        $query->select(['average' => $query->func()->avg($aggregateField)]);
 
         return $query;
     }

@@ -34,8 +34,12 @@ final class FirstAggregator extends AbstractAggregator
      */
     private function applyConditionsWithOrder(QueryInterface $query)
     {
-        $query->select($this->getConfig()->getDisplayField());
-        $query->order([($this->getConfig()->getField()) => 'ASC']);
+        $aggregateField = $this->getConfig()
+            ->getTable()
+            ->aliasField($this->getConfig()->getField());
+
+        $query->select($this->getConfig()->getDisplayField())
+            ->order([$aggregateField => 'ASC']);
 
         return $query;
     }
@@ -50,9 +54,11 @@ final class FirstAggregator extends AbstractAggregator
      */
     private function applyConditionsWithMin(QueryInterface $query)
     {
-        $query->select([
-            $this->getConfig()->getDisplayField() => $query->func()->min($this->getConfig()->getField())
-        ]);
+        $aggregateField = $this->getConfig()
+            ->getTable()
+            ->aliasField($this->getConfig()->getField());
+
+        $query->select([$this->getConfig()->getDisplayField() => $query->func()->min($aggregateField)]);
 
         return $query;
     }

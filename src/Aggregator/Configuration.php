@@ -3,7 +3,6 @@ namespace CsvMigrations\Aggregator;
 
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
-use Cake\ORM\TableRegistry;
 use InvalidArgumentException;
 
 /**

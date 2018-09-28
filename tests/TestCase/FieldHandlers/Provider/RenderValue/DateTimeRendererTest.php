@@ -2,7 +2,7 @@
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use Cake\I18n\Time;
-use CsvMigrations\FieldHandlers\Config\DateTimeConfig;
+use CsvMigrations\FieldHandlers\Config\DatetimeConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\DateTimeRenderer;
 use PHPUnit_Framework_TestCase;
 use StdClass;
@@ -13,7 +13,7 @@ class DateTimeRendererTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $config = new DateTimeConfig('datetime');
+        $config = new DatetimeConfig('datetime');
         $this->renderer = new DateTimeRenderer($config);
     }
 

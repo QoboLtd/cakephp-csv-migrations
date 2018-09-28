@@ -4,12 +4,12 @@ namespace CsvMigrations\Test\TestCase\Aggregator;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\Aggregator\Configuration;
-use CsvMigrations\Aggregator\LastAggregator;
-use CsvMigrations\Aggregator\MaxAggregator;
+use CsvMigrations\Aggregator\FirstAggregator;
+use CsvMigrations\Aggregator\MinAggregator;
 use DateTime;
 use RuntimeException;
 
-class LastAggregatorTest extends TestCase
+class FirstAggregatorTest extends TestCase
 {
     public $fixtures = [
         'plugin.CsvMigrations.foo'
@@ -25,21 +25,21 @@ class LastAggregatorTest extends TestCase
         unset($this->table);
     }
 
-    public function testAliasMaxAggregator()
+    public function testAliasMinAggregator()
     {
-        new MaxAggregator(new Configuration($this->table, 'cost_amount'));
+        new MinAggregator(new Configuration($this->table, 'cost_amount'));
     }
 
     public function testValidateWithNonExistingField()
     {
         $this->expectException(RuntimeException::class);
 
-        new LastAggregator(new Configuration($this->table, 'non-existing-field'));
+        new FirstAggregator(new Configuration($this->table, 'non-existing-field'));
     }
 
     public function testApplyConditions()
     {
-        $aggregator = new LastAggregator(new Configuration($this->table, 'cost_amount'));
+        $aggregator = new FirstAggregator(new Configuration($this->table, 'cost_amount'));
 
         $query = $this->table->find('all');
         // clone query before modification
@@ -53,42 +53,42 @@ class LastAggregatorTest extends TestCase
     public function testGetResultWithDecimal()
     {
         $configuration = new Configuration($this->table, 'cost_amount');
-        $aggregator = new LastAggregator($configuration);
+        $aggregator = new FirstAggregator($configuration);
 
         $query = $this->table->find('all');
         $query = $aggregator->applyConditions($query);
 
-        $this->assertSame(2000.10, $aggregator->getResult($query->first()));
+        $this->assertSame(300.10, $aggregator->getResult($query->first()));
     }
 
     public function testGetResultWithString()
     {
         $configuration = new Configuration($this->table, 'created');
         $configuration->setDisplayField('status');
-        $aggregator = new LastAggregator($configuration);
+        $aggregator = new FirstAggregator($configuration);
 
         $query = $this->table->find('all');
         $query = $aggregator->applyConditions($query);
 
-        $this->assertSame('inactive', $aggregator->getResult($query->first()));
+        $this->assertSame('active', $aggregator->getResult($query->first()));
     }
 
     public function testGetResultWithDatetime()
     {
         $configuration = new Configuration($this->table, 'created');
-        $aggregator = new LastAggregator($configuration);
+        $aggregator = new FirstAggregator($configuration);
 
         $query = $this->table->find('all');
         $query = $aggregator->applyConditions($query);
         $result = $aggregator->getResult($query->first());
 
         $this->assertInstanceOf(DateTime::class, $result);
-        $this->assertSame('2018-09-26 10:39:23', $result->i18nFormat('yyyy-MM-dd HH:mm:ss'));
+        $this->assertSame('2016-07-01 10:39:23', $result->i18nFormat('yyyy-MM-dd HH:mm:ss'));
     }
 
     public function testGetConfig()
     {
-        $aggregator = new LastAggregator(new Configuration($this->table, 'cost_amount'));
+        $aggregator = new FirstAggregator(new Configuration($this->table, 'cost_amount'));
 
         $this->assertInstanceOf(Configuration::class, $aggregator->getConfig());
     }

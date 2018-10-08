@@ -5,11 +5,11 @@ use Cake\ORM\Entity;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandler;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
-class MoneyFieldHandlerTest extends PHPUnit_Framework_TestCase
+class MoneyFieldHandlerTest extends TestCase
 {
     protected $table = 'fields';
     protected $field = 'field_money';

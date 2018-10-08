@@ -3,9 +3,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class DbFieldTest extends PHPUnit_Framework_TestCase
+class DbFieldTest extends TestCase
 {
     public function testConstructor()
     {

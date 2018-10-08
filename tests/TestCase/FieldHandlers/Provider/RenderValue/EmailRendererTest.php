@@ -3,9 +3,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use CsvMigrations\FieldHandlers\Config\EmailConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\EmailRenderer;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class EmailRendererTest extends PHPUnit_Framework_TestCase
+class EmailRendererTest extends TestCase
 {
     protected $renderer;
 

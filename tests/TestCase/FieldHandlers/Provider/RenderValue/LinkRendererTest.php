@@ -4,9 +4,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\Config\UrlConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\LinkRenderer;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class LinkRendererTest extends PHPUnit_Framework_TestCase
+class LinkRendererTest extends TestCase
 {
     protected $renderer;
 

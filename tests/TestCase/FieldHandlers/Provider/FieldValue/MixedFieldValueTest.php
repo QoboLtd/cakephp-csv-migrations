@@ -6,9 +6,9 @@ use Cake\ORM\Entity;
 use CsvMigrations\FieldHandlers\Config\StringConfig;
 use CsvMigrations\FieldHandlers\Provider\FieldValue\MixedFieldValue;
 use CsvMigrations\FieldHandlers\Provider\ProviderInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class MixedFieldValueTest extends PHPUnit_Framework_TestCase
+class MixedFieldValueTest extends TestCase
 {
     public function testProvide()
     {

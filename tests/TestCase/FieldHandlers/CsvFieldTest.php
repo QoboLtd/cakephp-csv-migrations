@@ -3,11 +3,11 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\CsvField;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
-class CsvFieldTest extends PHPUnit_Framework_TestCase
+class CsvFieldTest extends TestCase
 {
     public function setUp()
     {

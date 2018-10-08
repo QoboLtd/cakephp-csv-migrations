@@ -3,9 +3,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use CsvMigrations\FieldHandlers\Config\TextConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\TextRenderer;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class TextRendererTest extends PHPUnit_Framework_TestCase
+class TextRendererTest extends TestCase
 {
     protected $renderer;
 

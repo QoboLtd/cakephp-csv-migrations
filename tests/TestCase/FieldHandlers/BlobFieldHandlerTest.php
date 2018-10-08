@@ -5,9 +5,9 @@ use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandler;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class BlobFieldHandlerTest extends PHPUnit_Framework_TestCase
+class BlobFieldHandlerTest extends TestCase
 {
     protected $dataDir;
     protected $table = 'fields';

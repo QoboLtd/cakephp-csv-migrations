@@ -4,10 +4,10 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 use Cake\I18n\Time;
 use CsvMigrations\FieldHandlers\Config\DatetimeConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\DateTimeRenderer;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use StdClass;
 
-class DateTimeRendererTest extends PHPUnit_Framework_TestCase
+class DateTimeRendererTest extends TestCase
 {
     protected $renderer;
 

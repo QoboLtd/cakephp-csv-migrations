@@ -3,9 +3,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\CombinedFields;
 
 use CsvMigrations\FieldHandlers\Config\MetricConfig;
 use CsvMigrations\FieldHandlers\Provider\CombinedFields\MetricCombinedFields;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class MetricCombinedFieldsTest extends PHPUnit_Framework_TestCase
+class MetricCombinedFieldsTest extends TestCase
 {
     protected $field = 'distance';
     protected $provider;

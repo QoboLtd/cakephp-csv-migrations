@@ -3,9 +3,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Config;
 
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\Config\ConfigInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class ConfigFactoryTest extends PHPUnit_Framework_TestCase
+class ConfigFactoryTest extends TestCase
 {
     public function supportedTypesProvider()
     {

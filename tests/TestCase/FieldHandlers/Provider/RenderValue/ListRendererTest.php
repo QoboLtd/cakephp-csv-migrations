@@ -3,9 +3,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use CsvMigrations\FieldHandlers\Config\ListConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\ListRenderer;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class ListRendererTest extends PHPUnit_Framework_TestCase
+class ListRendererTest extends TestCase
 {
     protected $renderer;
 

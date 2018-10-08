@@ -6,9 +6,9 @@ use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\TableRegistry;
 use CsvMigrations\Model\AssociationsAwareTrait;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class AssociationsAwareTraitTest extends PHPUnit_Framework_TestCase
+class AssociationsAwareTraitTest extends TestCase
 {
     public function setUp()
     {

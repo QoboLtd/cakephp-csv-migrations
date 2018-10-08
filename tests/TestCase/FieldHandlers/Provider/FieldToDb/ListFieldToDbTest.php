@@ -5,9 +5,9 @@ use CsvMigrations\FieldHandlers\Config\StringConfig;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\Provider\FieldToDb\ListFieldToDb;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class ListFieldToDbTest extends PHPUnit_Framework_TestCase
+class ListFieldToDbTest extends TestCase
 {
     protected $provider;
 

@@ -3,9 +3,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use CsvMigrations\FieldHandlers\Config\UrlConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\UrlRenderer;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class UrlRendererTest extends PHPUnit_Framework_TestCase
+class UrlRendererTest extends TestCase
 {
     protected $renderer;
 

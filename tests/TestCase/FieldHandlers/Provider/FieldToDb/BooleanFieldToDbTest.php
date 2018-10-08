@@ -5,9 +5,9 @@ use CsvMigrations\FieldHandlers\Config\StringConfig;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\Provider\FieldToDb\BooleanFieldToDb;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class BooleanFieldToDbTest extends PHPUnit_Framework_TestCase
+class BooleanFieldToDbTest extends TestCase
 {
     protected $provider;
 

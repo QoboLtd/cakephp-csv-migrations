@@ -4,9 +4,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Config;
 use CsvMigrations\FieldHandlers\Config\Config;
 use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 use CsvMigrations\FieldHandlers\Config\StringConfig;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class StringConfigTest extends PHPUnit_Framework_TestCase
+class StringConfigTest extends TestCase
 {
     public function invalidProvidersProvider()
     {

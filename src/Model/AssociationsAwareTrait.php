@@ -211,9 +211,7 @@ trait AssociationsAwareTrait
         }
 
         // skip for fields associated with Footprint behavior ('related' type fields associated with Users table)
-        if ($this->hasBehavior('Footprint') &&
-            in_array($field->getName(), $this->behaviors()->get('Footprint')->getConfig())
-        ) {
+        if ($this->isFootprintField($field) || $this->isFootprintField($moduleField)) {
             return;
         }
 
@@ -227,6 +225,21 @@ trait AssociationsAwareTrait
                 'targetForeignKey' => $field->getName()
             ]
         );
+    }
+
+    /**
+     * Validates whether the provided field is used in Footprint behavior.
+     *
+     * @param \CsvMigrations\FieldHandlers\CsvField $field CSV Field instance
+     * @return bool
+     */
+    private function isFootprintField(CsvField $field)
+    {
+        if (! $this->hasBehavior('Footprint')) {
+            return false;
+        }
+
+        return in_array($field->getName(), $this->behaviors()->get('Footprint')->getConfig());
     }
 
     /**

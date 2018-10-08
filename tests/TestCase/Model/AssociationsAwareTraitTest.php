@@ -10,6 +10,12 @@ use PHPUnit_Framework_TestCase;
 
 class AssociationsAwareTraitTest extends PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        // clear table registry to avoid ambiguous table instances during test runs
+        TableRegistry::clear();
+    }
+
     /**
      * @dataProvider associationNameProvider
      */
@@ -21,19 +27,34 @@ class AssociationsAwareTraitTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider associationsProvider
      */
-    public function testAssociations($table, $name, $type)
+    public function testAssociations($table, $name, $type, $joinTable = '')
     {
-        $this->assertInstanceOf($type, TableRegistry::getTableLocator()->get($table)->association($name));
+        $association = TableRegistry::get($table)->association($name);
+
+        $this->assertInstanceOf($type, $association);
+
+        if ('' !== trim($joinTable)) {
+            $this->assertEquals($joinTable, $association->junction()->getTable());
+        }
     }
 
     /**
-     * @dataProvider manyToManyAssociationsProvider
+     * Assert that Table contains only specific associations.
+     *
+     * @return void
      */
-    public function testManyToManyAssociations($table, $name, $joinTable)
+    public function testAssociationsStrict()
     {
-        $association = TableRegistry::getTableLocator()->get($table)->association($name);
-        $this->assertInstanceOf(BelongsToMany::class, $association);
-        $this->assertEquals($joinTable, $association->junction()->getTable());
+        $data = [];
+        // normalize data
+        foreach ($this->associationsProvider() as $value) {
+            $data[$value[0]][] = strtolower($value[1]);
+        }
+
+        foreach ($data as $tableName => $associations) {
+            $tableAssociations = TableRegistry::get($tableName)->associations()->keys();
+            $this->assertEmpty(array_diff($tableAssociations, $associations));
+        }
     }
 
     public function associationNameProvider()
@@ -54,20 +75,20 @@ class AssociationsAwareTraitTest extends PHPUnit_Framework_TestCase
             ['Articles', 'AuthorAuthors', BelongsTo::class],
             ['Articles', 'CategoryCategories', BelongsTo::class],
             ['Articles', 'MainArticleArticles', BelongsTo::class],
-            ['Leads', 'AssignedToUsers', BelongsTo::class],
-            ['Posts', 'OwnerAuthors', BelongsTo::class],
             ['Authors', 'AuthorArticles', HasMany::class],
-            ['Categories', 'CategoryArticles', HasMany::class],
-            ['Users', 'AssignedToLeads', HasMany::class],
             ['Authors', 'OwnerPosts', HasMany::class],
-        ];
-    }
-
-    public function manyToManyAssociationsProvider()
-    {
-        return [
-            ['Posts', 'TagIdPostTags', 'post_tags'],
-            ['Tags', 'PostIdPostTags', 'post_tags']
+            ['Categories', 'CategoryArticles', HasMany::class],
+            ['Foo', 'CreatedByUsers', BelongsTo::class],
+            ['Foo', 'LeadLeads', BelongsTo::class],
+            ['Foo', 'ModifiedByUsers', BelongsTo::class],
+            ['Leads', 'AssignedToUsers', BelongsTo::class],
+            ['Leads', 'LeadFoo', HasMany::class],
+            ['Posts', 'OwnerAuthors', BelongsTo::class],
+            ['Posts', 'TagIdPostTags', BelongsToMany::class, 'post_tags'],
+            ['Tags', 'PostIdPostTags', BelongsToMany::class, 'post_tags'],
+            ['Users', 'AssignedToLeads', HasMany::class],
+            ['Users', 'CreatedByFoo', HasMany::class],
+            ['Users', 'ModifiedByFoo', HasMany::class],
         ];
     }
 }

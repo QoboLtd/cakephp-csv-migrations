@@ -3,10 +3,10 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use CsvMigrations\FieldHandlers\Config\IntegerConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\IntegerRenderer;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use StdClass;
 
-class IntegerRendererTest extends PHPUnit_Framework_TestCase
+class IntegerRendererTest extends TestCase
 {
     protected $renderer;
 

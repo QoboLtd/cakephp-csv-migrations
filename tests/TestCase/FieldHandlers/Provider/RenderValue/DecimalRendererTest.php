@@ -3,10 +3,10 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use CsvMigrations\FieldHandlers\Config\DecimalConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\DecimalRenderer;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use StdClass;
 
-class DecimalRendererTest extends PHPUnit_Framework_TestCase
+class DecimalRendererTest extends TestCase
 {
     protected $renderer;
 

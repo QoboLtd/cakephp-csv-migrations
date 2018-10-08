@@ -3,9 +3,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\SearchOperators;
 
 use CsvMigrations\FieldHandlers\Config\StringConfig;
 use CsvMigrations\FieldHandlers\Provider\SearchOperators\NumberSearchOperators;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class NumberSearchOperatorsTest extends PHPUnit_Framework_TestCase
+class NumberSearchOperatorsTest extends TestCase
 {
     protected $provider;
 

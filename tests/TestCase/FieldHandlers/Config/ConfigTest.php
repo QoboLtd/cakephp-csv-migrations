@@ -4,10 +4,10 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Config;
 use Cake\ORM\Table;
 use CsvMigrations\FieldHandlers\Config\Config;
 use CsvMigrations\FieldHandlers\Config\ConfigInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class ConfigTest extends PHPUnit_Framework_TestCase
+class ConfigTest extends TestCase
 {
     public function invalidProvidersProvider()
     {

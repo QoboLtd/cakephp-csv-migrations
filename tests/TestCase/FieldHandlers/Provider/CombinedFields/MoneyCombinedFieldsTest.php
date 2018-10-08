@@ -3,9 +3,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\CombinedFields;
 
 use CsvMigrations\FieldHandlers\Config\MoneyConfig;
 use CsvMigrations\FieldHandlers\Provider\CombinedFields\MoneyCombinedFields;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class MoneyCombinedFieldsTest extends PHPUnit_Framework_TestCase
+class MoneyCombinedFieldsTest extends TestCase
 {
     protected $field = 'salary';
     protected $provider;

@@ -6,9 +6,9 @@ use Cake\I18n\Time;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandler;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class TimeFieldHandlerTest extends PHPUnit_Framework_TestCase
+class TimeFieldHandlerTest extends TestCase
 {
     protected $table = 'fields';
     protected $field = 'field_time';

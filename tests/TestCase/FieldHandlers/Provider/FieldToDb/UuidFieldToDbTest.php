@@ -5,9 +5,9 @@ use CsvMigrations\FieldHandlers\Config\StringConfig;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\Provider\FieldToDb\UuidFieldToDb;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class UuidFieldToDbTest extends PHPUnit_Framework_TestCase
+class UuidFieldToDbTest extends TestCase
 {
     protected $provider;
 

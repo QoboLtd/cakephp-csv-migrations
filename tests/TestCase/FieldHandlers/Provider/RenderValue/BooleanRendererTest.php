@@ -3,9 +3,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use CsvMigrations\FieldHandlers\Config\BooleanConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\BooleanRenderer;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class BooleanRendererTest extends PHPUnit_Framework_TestCase
+class BooleanRendererTest extends TestCase
 {
     protected $renderer;
 

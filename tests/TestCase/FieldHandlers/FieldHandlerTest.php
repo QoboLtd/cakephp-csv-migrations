@@ -6,9 +6,9 @@ use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandler;
 use CsvMigrations\FieldHandlers\FieldHandlerInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class FieldHandlerTest extends PHPUnit_Framework_TestCase
+class FieldHandlerTest extends TestCase
 {
     protected $table = 'fields';
     protected $field = 'field_string';

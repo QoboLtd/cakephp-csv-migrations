@@ -5,9 +5,9 @@ use CsvMigrations\FieldHandlers\Config\StringConfig;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\Provider\FieldToDb\TimeFieldToDb;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class TimeFieldToDbTest extends PHPUnit_Framework_TestCase
+class TimeFieldToDbTest extends TestCase
 {
     protected $provider;
 

@@ -6,9 +6,9 @@ use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\Provider\FieldToDb\TextFieldToDb;
 use Phinx\Db\Adapter\MysqlAdapter;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class TextFieldToDbTest extends PHPUnit_Framework_TestCase
+class TextFieldToDbTest extends TestCase
 {
     protected $provider;
 

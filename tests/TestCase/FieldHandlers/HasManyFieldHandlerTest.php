@@ -4,9 +4,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandler;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class HasManyFieldHandlerTest extends PHPUnit_Framework_TestCase
+class HasManyFieldHandlerTest extends TestCase
 {
     protected $table = 'fields';
     protected $field = 'field_hasmany';

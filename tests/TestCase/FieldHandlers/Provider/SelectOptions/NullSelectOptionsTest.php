@@ -3,9 +3,9 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\SelectOptions;
 
 use CsvMigrations\FieldHandlers\Config\StringConfig;
 use CsvMigrations\FieldHandlers\Provider\SelectOptions\NullSelectOptions;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class NullSelectOptionsTest extends PHPUnit_Framework_TestCase
+class NullSelectOptionsTest extends TestCase
 {
     protected $provider;
 

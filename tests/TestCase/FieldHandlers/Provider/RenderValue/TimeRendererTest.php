@@ -4,10 +4,10 @@ namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 use Cake\I18n\Time;
 use CsvMigrations\FieldHandlers\Config\TimeConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\TimeRenderer;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use StdClass;
 
-class TimeRendererTest extends PHPUnit_Framework_TestCase
+class TimeRendererTest extends TestCase
 {
     protected $renderer;
 

@@ -172,11 +172,12 @@ class AppController extends BaseController
      */
     private function persistEntity(EntityInterface $entity, array $options = [])
     {
+        $options = array_merge($options, ['lookup' => true]);
         $entity = $this->{$this->name}->patchEntity($entity, $this->request->data, $options);
 
         $saved = false;
         try {
-            $saved = $this->{$this->name}->save($entity, ['lookup' => true]);
+            $saved = $this->{$this->name}->save($entity);
         } catch (Exception $e) {
             Log::warning($e->getMessage());
         }

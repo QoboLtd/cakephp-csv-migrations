@@ -321,7 +321,8 @@ class FileUpload
                 continue;
             }
 
-            $savedIds = array_values(array_filter($savedIds));
+            $savedIds = is_array($savedIds) ? array_values(array_filter($savedIds)) : [$savedIds];
+
             $assocName = AssociationsAwareTrait::generateAssociationName(
                 'Burzum/FileStorage.FileStorage',
                 $field['name']

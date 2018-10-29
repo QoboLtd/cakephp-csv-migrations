@@ -1,6 +1,4 @@
 <?php
-use Burzum\FileStorage\Storage\Listener\BaseListener;
-use Burzum\FileStorage\Storage\StorageManager;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use CsvMigrations\Event\Model\AutoIncrementEventListener;

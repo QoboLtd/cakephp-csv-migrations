@@ -51,7 +51,7 @@ class FieldTest extends TestCase
         $table = TableRegistry::get('Articles');
 
         $result = Field::getCsv($table);
-        $expected = ['id', 'name', 'status', 'author', 'main_article', 'category'];
+        $expected = ['id', 'name', 'status', 'author', 'main_article', 'category', 'image'];
         $this->assertSame($expected, array_keys($result));
 
         foreach ($result as $csvField) {

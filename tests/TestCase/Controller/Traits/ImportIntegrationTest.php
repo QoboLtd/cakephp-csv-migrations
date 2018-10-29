@@ -54,7 +54,7 @@ class ImportIntegrationTest extends IntegrationTestCase
 
         $this->assertInstanceOf(Import::class, $this->viewVariable('import'));
 
-        $this->assertEquals(['name', 'category', 'author', 'status'], $this->viewVariable('columns'));
+        $this->assertEquals(['name', 'category', 'author', 'status', 'main_article', 'image'], $this->viewVariable('columns'));
         $this->assertEquals(['Name', 'Author', 'Status'], $this->viewVariable('headers'));
     }
 

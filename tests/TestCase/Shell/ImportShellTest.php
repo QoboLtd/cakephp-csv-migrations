@@ -89,10 +89,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
 
         $this->ImportShell->main();
 
-        $count = $table->find()->count();
-        $this->assertNotEquals($initialCount, $count);
-        $this->assertGreaterThan($initialCount, $count);
-        $this->assertEquals(4, $count);
+        $this->assertSame($initialCount + 2, $table->find()->count());
 
         $this->assertEquals(
             ['name' => 'John Doe [import]', 'author' => '00000000-0000-0000-0000-000000000001', 'status' => 'draft'],

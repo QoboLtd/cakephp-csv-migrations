@@ -194,6 +194,9 @@ class ArticlesControllerTest extends IntegrationTestCase
 
     public function testBatchDelete()
     {
+        $table = TableRegistry::get('Articles');
+        $initialCount = $table->find('all')->count();
+
         $data = [
             'batch' => [
                 'ids' => [
@@ -207,8 +210,7 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertResponseSuccess();
         $this->assertSession('2 of 2 selected records have been deleted.', 'Flash.flash.0.message');
 
-        $query = TableRegistry::get('Articles')->find('all');
-        $this->assertTrue($query->isEmpty());
+        $this->assertSame($initialCount - 2, $table->find('all')->count());
     }
 
     public function testBatchDeleteNoIds()

@@ -40,5 +40,12 @@
         "required": null,
         "non-searchable": null,
         "unique": null
+    },
+    "image": {
+        "name": "image",
+        "type": "images",
+        "required": null,
+        "non-searchable": null,
+        "unique": null
     }
 }

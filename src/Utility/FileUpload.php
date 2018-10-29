@@ -14,6 +14,7 @@ namespace CsvMigrations\Utility;
 use Burzum\FileStorage\Storage\StorageManager;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\ORM\Entity;
@@ -117,17 +118,17 @@ class FileUpload
     /**
      * Get files by foreign key record.
      *
-     * @param  string $table  Table
-     * @param  string $field  Field
-     * @param  mixed $data  Data
-     * @return \Cake\ORM\ResultSet
+     * @param tring $table Table
+     * @param string $field Field name
+     * @param string $id Foreign key value (UUID)
+     * @return \Cake\Datasource\ResultSetInterface
      */
-    public function getFiles($table, $field, $data)
+    public function getFiles($table, string $field, string $id) : ResultSetInterface
     {
         $assocName = AssociationsAwareTrait::generateAssociationName('Burzum/FileStorage.FileStorage', $field);
         $query = $this->_table->{$assocName}->find('all', [
             'conditions' => [
-                'foreign_key' => $data,
+                'foreign_key' => $id,
             ]
         ]);
 

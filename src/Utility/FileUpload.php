@@ -80,6 +80,13 @@ class FileUpload
 
         $this->_getFileStorageAssociationInstance();
         $this->_fileStorageForeignKey = 'foreign_key';
+
+
+        // NOTE: if we don't have a predefined setup for the field
+        // image versions, we add it dynamically with default thumbnail versions.
+        if (empty((array)Configure::read('FileStorage.imageSizes.' . $table->getTable()))) {
+            Configure::write('FileStorage.imageSizes.' . $table->getTable(), Configure::read('ThumbnailVersions'));
+        }
     }
 
     /**
@@ -410,13 +417,6 @@ class FileUpload
         }
 
         $operations = Configure::read('FileStorage.imageSizes.' . $entity->model);
-
-        // @NOTE: if we don't have a predefined setup for the field
-        // image versions, we add it dynamically with default thumbnail versions.
-        if (empty($operations)) {
-            Configure::write('FileStorage.imageSizes.' . $entity->model, Configure::read('ThumbnailVersions'));
-            $operations = Configure::read('FileStorage.imageSizes.' . $entity->model);
-        }
 
         $storageTable = TableRegistry::get('Burzum/FileStorage.ImageStorage');
         $result = true;

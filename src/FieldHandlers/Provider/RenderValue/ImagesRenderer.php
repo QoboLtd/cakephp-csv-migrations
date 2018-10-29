@@ -26,14 +26,14 @@ class ImagesRenderer extends AbstractRenderer
      *
      * @param mixed $data Data to use for provision
      * @param array $options Options to use for provision
-     * @return mixed
+     * @return string
      */
     public function provide($data = null, array $options = [])
     {
         $result = (string)$data;
 
         if (empty($result)) {
-            return $result;
+            return '';
         }
 
         $table = $this->config->getTable();

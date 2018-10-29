@@ -11,9 +11,11 @@
  */
 namespace CsvMigrations\Utility;
 
+use Burzum\FileStorage\Model\Entity\FileStorage;
 use Burzum\FileStorage\Storage\StorageManager;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Datasource\QueryInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
@@ -118,7 +120,7 @@ class FileUpload
     /**
      * Get files by foreign key record.
      *
-     * @param tring $table Table
+     * @param string $table Table
      * @param string $field Field name
      * @param string $id Foreign key value (UUID)
      * @return \Cake\Datasource\ResultSetInterface
@@ -135,6 +137,9 @@ class FileUpload
         $this->orderClause($query, $field);
 
         $result = $query->all();
+        foreach ($result as $entity) {
+            $entity = $this->attachThumbnails($entity);
+        }
 
         return $result;
     }
@@ -166,7 +171,77 @@ class FileUpload
 
         $query->order([$config->{$field}->orderBy => $config->{$field}->orderDir]);
 
-        return $query->all();
+        return $query;
+    }
+
+    /**
+     * Attaches thumbnails field to FileStorage entity.
+     *
+     * @param \Burzum\FileStorage\Model\Entity\FileStorage $entity FileStorage entity
+     * @return \Burzum\FileStorage\Model\Entity\FileStorage
+     */
+    private function attachThumbnails(FileStorage $entity) : FileStorage
+    {
+        $entity->set('thumbnails', $this->getThumbnails($entity));
+
+        return $entity;
+    }
+
+    /**
+     * File storage entity thumbnails getter.
+     *
+     * @param \Burzum\FileStorage\Model\Entity\FileStorage $entity File storage entity
+     * @return string[]
+     */
+    public function getThumbnails(FileStorage $entity) : array
+    {
+        $versions = Configure::read('FileStorage.imageHashes.file_storage');
+        if (empty($versions)) {
+            return [];
+        }
+
+        $result = [];
+        foreach (array_keys($versions) as $version) {
+            $result[$version] = str_replace(DS, '/', $this->getThumbnail($entity, $version));
+        }
+
+        return $result;
+    }
+
+    /**
+     * File storage entity thumbnail getter by version.
+     *
+     * @param \Burzum\FileStorage\Model\Entity\FileStorage $entity File storage entity
+     * @param string $version Version name
+     * @return string
+     */
+    public function getThumbnail(FileStorage $entity, string $version) : string
+    {
+        $versions = (array)Configure::read('FileStorage.imageHashes.file_storage');
+        if (empty($versions)) {
+            return $entity->path;
+        }
+
+        if (! array_key_exists($version, $versions)) {
+            return $entity->path;
+        }
+
+        $hash = Configure::read(sprintf('FileStorage.imageHashes.file_storage.%s', $version));
+        if (empty($hash)) {
+            return $entity->path;
+        }
+
+        $event = new Event('ImageVersion.getVersions', $this, [
+            'hash' => $hash,
+            'image' => $entity,
+            'version' => $version,
+            'options' => [],
+            'pathType' => 'url'
+        ]);
+
+        EventManager::instance()->dispatch($event);
+
+        return $event->getResult();
     }
 
     /**

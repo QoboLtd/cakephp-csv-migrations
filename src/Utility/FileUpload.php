@@ -131,19 +131,36 @@ class FileUpload
             ]
         ]);
 
+        $this->orderClause($query, $field);
+
+        $result = $query->all();
+
+        return $result;
+    }
+
+    /**
+     * Adds order clause to the provided Query based on specified field configuration.
+     *
+     * @see  https://github.com/QoboLtd/cakephp-utils/blob/v9.2.0/src/ModuleConfig/Parser/Schema/fields.json#L30-L40
+     * @param \Cake\Datasource\QueryInterface $query Query instance
+     * @param string $field Field name
+     * @return \Cake\Datasource\QueryInterface
+     */
+    private function orderClause(QueryInterface $query, string $field) : QueryInterface
+    {
         $className = App::shortName(get_class($this->_table), 'Model/Table', 'Table');
         $config = (new ModuleConfig(ConfigType::FIELDS(), $className))->parse();
 
         if (! property_exists($config, $field)) {
-            return $query->all();
+            return $query;
         }
 
         if (! property_exists($config->{$field}, 'orderBy')) {
-            return $query->all();
+            return $query;
         }
 
         if (! property_exists($config->{$field}, 'orderDir')) {
-            return $query->all();
+            return $query;
         }
 
         $query->order([$config->{$field}->orderBy => $config->{$field}->orderDir]);

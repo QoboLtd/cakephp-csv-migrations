@@ -19,7 +19,6 @@ class ConfigFactoryTest extends TestCase
             ['email'],
             ['files'],
             ['hasMany'],
-            ['images'],
             ['integer'],
             ['list'],
             ['metric'],

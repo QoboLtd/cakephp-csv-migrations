@@ -29,9 +29,9 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
 class FileUpload
 {
     /**
-     * File-Storage database table name
+     * FileStorage table name.
      */
-    const FILES_STORAGE_NAME = 'Burzum/FileStorage.FileStorage';
+    const FILE_STORAGE_TABLE_NAME = 'Burzum/FileStorage.FileStorage';
 
     /**
      * FileStorage table foreign key.

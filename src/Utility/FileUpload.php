@@ -33,18 +33,6 @@ class FileUpload
      */
     const FILES_STORAGE_NAME = 'Burzum/FileStorage.FileStorage';
 
-    const TABLE_FILE_STORAGE = 'file_storage';
-
-    /**
-     * One-to-many association identifier
-     */
-    const ASSOCIATION_ONE_TO_MANY_ID = 'oneToMany';
-
-    /**
-     * Many-to-one association identifier
-     */
-    const ASSOCIATION_MANY_TO_ONE_ID = 'manyToOne';
-
     /**
      * Instance of Cake ORM Table
      * @var \Cake\ORM\Table

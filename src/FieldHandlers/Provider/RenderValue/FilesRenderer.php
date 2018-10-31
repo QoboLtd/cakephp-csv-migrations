@@ -11,6 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
+use Cake\Core\Configure;
 use CsvMigrations\Utility\FileUpload;
 
 /**
@@ -25,14 +26,16 @@ class FilesRenderer extends AbstractRenderer
      *
      * @param mixed $data Data to use for provision
      * @param array $options Options to use for provision
-     * @return mixed
+     * @return string
      */
     public function provide($data = null, array $options = [])
     {
-        $result = (string)$data;
+        if (! is_string($data)) {
+            return '';
+        }
 
-        if (empty($result)) {
-            return $result;
+        if ('' === $data) {
+            return '';
         }
 
         $table = $this->config->getTable();
@@ -42,8 +45,15 @@ class FilesRenderer extends AbstractRenderer
 
         $entities = $fileUpload->getFiles($table, $field, $data);
 
+        if ($entities->isEmpty()) {
+            return '';
+        }
+
         $params = [
-            'entities' => $entities
+            'entities' => $entities,
+            'imageSize' => empty($options['imageSize']) ?
+                Configure::read('FileStorage.defaultImageSize') :
+                $options['imageSize']
         ];
 
         $defaultElement = 'CsvMigrations.FieldHandlers/FilesFieldHandler/value';

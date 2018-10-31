@@ -43,7 +43,7 @@
     },
     "image": {
         "name": "image",
-        "type": "images",
+        "type": "files",
         "required": null,
         "non-searchable": null,
         "unique": null

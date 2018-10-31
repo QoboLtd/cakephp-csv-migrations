@@ -462,7 +462,12 @@ class FileUpload
             return false;
         }
 
-        return $this->fileStorageAssociation->delete($entity);
+        $result = $this->fileStorageAssociation->delete($entity);
+        if ($result) {
+            $this->removeThumbnails($entity);
+        }
+
+        return $result;
     }
 
     /**

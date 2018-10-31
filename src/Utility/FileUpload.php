@@ -16,12 +16,12 @@ use Burzum\FileStorage\Storage\StorageManager;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Datasource\QueryInterface;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
-use Cake\ORM\Table as UploadTable;
 use CsvMigrations\Model\AssociationsAwareTrait;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
@@ -29,60 +29,50 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
 class FileUpload
 {
     /**
-     * File-Storage database table name
+     * FileStorage table name.
      */
-    const FILES_STORAGE_NAME = 'Burzum/FileStorage.FileStorage';
-
-    const TABLE_FILE_STORAGE = 'file_storage';
+    const FILE_STORAGE_TABLE_NAME = 'Burzum/FileStorage.FileStorage';
 
     /**
-     * One-to-many association identifier
+     * FileStorage table foreign key.
      */
-    const ASSOCIATION_ONE_TO_MANY_ID = 'oneToMany';
-
-    /**
-     * Many-to-one association identifier
-     */
-    const ASSOCIATION_MANY_TO_ONE_ID = 'manyToOne';
+    const FILE_STORAGE_FOREIGN_KEY = 'foreign_key';
 
     /**
      * Instance of Cake ORM Table
      * @var \Cake\ORM\Table
      */
-    protected $_table;
+    protected $table;
 
     /**
      * Instance of File-Storage Association class
      *
      * @var \Cake\ORM\Association
+     * @deprecated
      */
-    protected $_fileStorageAssociation;
-
-    /**
-     * File-Storage table foreign key
-     *
-     * @var string
-     */
-    protected $_fileStorageForeignKey;
+    protected $fileStorageAssociation;
 
     /**
      * Image file extensions
      *
      * @var array
      */
-    protected $_imgExtensions = ['jpg', 'png', 'jpeg', 'gif'];
+    protected $imgExtensions = ['jpg', 'png', 'jpeg', 'gif'];
 
     /**
-     * Contructor method
+     * Contructor method.
      *
-     * @param \Cake\ORM\Table $table Upload Table Instance
+     * @param \Cake\Datasource\RepositoryInterface $table Table Instance
+     * @return void
      */
-    public function __construct(UploadTable $table)
+    public function __construct(RepositoryInterface $table)
     {
-        $this->_table = $table;
+        $this->table = $table;
 
-        $this->_getFileStorageAssociationInstance();
-        $this->_fileStorageForeignKey = 'foreign_key';
+        /**
+         * @deprecated
+         */
+        $this->getFileStorageAssociationInstance();
 
         // NOTE: if we don't have a predefined setup for the field
         // image versions, we add it dynamically with default thumbnail versions.
@@ -98,19 +88,20 @@ class FileUpload
      */
     public function getImgExtensions()
     {
-        return $this->_imgExtensions;
+        return $this->imgExtensions;
     }
 
     /**
      * Get instance of FileStorage association.
      *
      * @return void
+     * @deprecated
      */
-    protected function _getFileStorageAssociationInstance()
+    protected function getFileStorageAssociationInstance()
     {
-        foreach ($this->_table->associations() as $association) {
+        foreach ($this->table->associations() as $association) {
             if ($association->className() == self::FILES_STORAGE_NAME) {
-                $this->_fileStorageAssociation = $association;
+                $this->fileStorageAssociation = $association;
                 break;
             }
         }
@@ -119,15 +110,15 @@ class FileUpload
     /**
      * Get files by foreign key record.
      *
-     * @param string $table Table
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
      * @param string $field Field name
      * @param string $id Foreign key value (UUID)
      * @return \Cake\Datasource\ResultSetInterface
      */
-    public function getFiles($table, string $field, string $id) : ResultSetInterface
+    public function getFiles(RepositoryInterface $table, string $field, string $id) : ResultSetInterface
     {
         $assocName = AssociationsAwareTrait::generateAssociationName('Burzum/FileStorage.FileStorage', $field);
-        $query = $this->_table->{$assocName}->find('all', [
+        $query = $this->table->{$assocName}->find('all', [
             'conditions' => [
                 'foreign_key' => $id,
             ]
@@ -153,7 +144,7 @@ class FileUpload
      */
     private function orderClause(QueryInterface $query, string $field) : QueryInterface
     {
-        $className = App::shortName(get_class($this->_table), 'Model/Table', 'Table');
+        $className = App::shortName(get_class($this->table), 'Model/Table', 'Table');
         $config = (new ModuleConfig(ConfigType::FIELDS(), $className))->parse();
 
         if (! property_exists($config, $field)) {
@@ -249,14 +240,14 @@ class FileUpload
      * Actual save() clone, but with optional entity, as we
      * don't have it saved yet, and saving files first.
      *
-     * @param \Cake\ORM\Table $table Table instance
+     * @param \Cake\Datasource\RepositoryInterface $table Table Instance
      * @param string $field name of the association
      * @param array $files passed via file upload input field
      * @param array $options specifying if its AJAX call or not
      *
      * @return mixed $result boolean or file_storage ID.
      */
-    public function ajaxSave(UploadTable $table, $field, array $files = [], $options = [])
+    public function ajaxSave(RepositoryInterface $table, $field, array $files = [], $options = [])
     {
         $result = false;
 
@@ -266,11 +257,11 @@ class FileUpload
 
         foreach ($files as $file) {
             // file not stored and not uploaded.
-            if ($this->_isInValidUpload($file['error'])) {
+            if ($this->isInValidUpload($file['error'])) {
                 continue;
             }
 
-            $result = $this->_storeFileStorage($table, $field, ['file' => $file], $options);
+            $result = $this->storeFileStorage($table, $field, ['file' => $file], $options);
             if ($result) {
                 $result = [
                     'id' => $result->get('id'),
@@ -290,6 +281,7 @@ class FileUpload
      * @param  array            $files  Uploaded files
      * @param  array            $options for ajax call if any
      * @return bool
+     * @deprecated
      */
     public function save(Entity $entity, $field, array $files = [], $options = [])
     {
@@ -301,11 +293,11 @@ class FileUpload
 
         foreach ($files as $file) {
             // file not stored and not uploaded.
-            if ($this->_isInValidUpload($file['error'])) {
+            if ($this->isInValidUpload($file['error'])) {
                 continue;
             }
 
-            $result = $this->_storeFileStorage($entity, $field, ['file' => $file], $options);
+            $result = $this->storeFileStorage($entity, $field, ['file' => $file], $options);
         }
 
         return $result;
@@ -314,17 +306,17 @@ class FileUpload
     /**
      * Store to FileStorage table.
      *
-     * @param  \Cake\ORM\Table $table Table instance
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
      * @param  string $field of the association
      * @param  array $fileData File data
      * @param  array $options for extra setup
      * @return object|bool Fresh created entity or false on unsuccesful attempts.
      * @todo $table can be typecasted to UploadTable, once deprecated method FileUploadsUtils::save() is removed.
      */
-    protected function _storeFileStorage($table, $field, $fileData, $options = [])
+    protected function storeFileStorage(RepositoryInterface $table, $field, $fileData, $options = [])
     {
         $assocName = AssociationsAwareTrait::generateAssociationName('Burzum/FileStorage.FileStorage', $field);
-        $entity = $this->_table->{$assocName}->newEntity($fileData);
+        $entity = $this->table->{$assocName}->newEntity($fileData);
 
         $className = App::shortName(get_class($table), 'Model/Table', 'Table');
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $className);
@@ -345,21 +337,21 @@ class FileUpload
             //AJAX upload doesn't know anything about the entity
             //it relates to, as it's not saved yet
             $patchData = [
-                'model' => $this->_table->table(),
+                'model' => $this->table->table(),
                 'model_field' => $field,
             ];
         } else {
             // @todo else statement can be removed, once deprecated method FileUploadsUtils::save() is removed.
             $patchData = [
-                $this->_fileStorageForeignKey => $table->get('id'),
-                'model' => $this->_table->table(),
+                self::FILE_STORAGE_FOREIGN_KEY => $table->get('id'),
+                'model' => $this->table->table(),
                 'model_field' => $field,
             ];
         }
 
-        $entity = $this->_table->{$assocName}->patchEntity($entity, $patchData);
+        $entity = $this->table->{$assocName}->patchEntity($entity, $patchData);
 
-        if ($this->_table->{$assocName}->save($entity)) {
+        if ($this->table->{$assocName}->save($entity)) {
             if (!empty($fieldOption) && $fieldOption['type'] === 'images') {
                 $this->createThumbnails($entity);
             }
@@ -377,13 +369,13 @@ class FileUpload
      * and stored FileStorage files, upon saving the entity,
      * the items should be linked with 'foreign_key' field.
      *
-     * @param \Cake\ORM\Entity $entity of the record
-     * @param \Cake\ORM\Table $tableInstance of the entity
+     * @param \Cake\Datasource\EntityInterface $entity Entity with associated files
+     * @param \Cake\Datasource\RepositoryInterface $tableInstance of the entity
      * @param array $data of this->request->data containing ids.
      * @param array $options Options
      * @return mixed $result of saved/updated file entities.
      */
-    public function linkFilesToEntity($entity, $tableInstance, $data = [], $options = [])
+    public function linkFilesToEntity(EntityInterface $entity, RepositoryInterface $tableInstance, $data = [], $options = [])
     {
         $result = [];
         $uploadFields = [];
@@ -420,17 +412,18 @@ class FileUpload
                 continue;
             }
 
-            $savedIds = array_values(array_filter($savedIds));
+            $savedIds = is_array($savedIds) ? array_values(array_filter($savedIds)) : [$savedIds];
+
             $assocName = AssociationsAwareTrait::generateAssociationName(
                 'Burzum/FileStorage.FileStorage',
                 $field['name']
             );
 
             foreach ($savedIds as $fileId) {
-                $record = $this->_table->{$assocName}->get($fileId);
+                $record = $this->table->{$assocName}->get($fileId);
                 $record->foreign_key = $entity->id;
 
-                $result[] = $this->_table->{$assocName}->save($record);
+                $result[] = $this->table->{$assocName}->save($record);
             }
         }
 
@@ -442,10 +435,11 @@ class FileUpload
      *
      * @param  string $id Associated Entity id
      * @return bool
+     * @deprecated
      */
     public function delete($id)
     {
-        $result = $this->_deleteFileAssociationRecord($id);
+        $result = $this->deleteFileAssociationRecord($id);
 
         return $result;
     }
@@ -455,11 +449,12 @@ class FileUpload
      *
      * @param  string $id file id
      * @return bool
+     * @deprecated
      */
-    protected function _deleteFileAssociationRecord($id)
+    protected function deleteFileAssociationRecord($id)
     {
-        $query = $this->_fileStorageAssociation->find('all', [
-            'conditions' => [$this->_fileStorageForeignKey => $id]
+        $query = $this->fileStorageAssociation->find('all', [
+            'conditions' => [self::FILE_STORAGE_FOREIGN_KEY => $id]
         ]);
         $entity = $query->first();
 
@@ -467,29 +462,34 @@ class FileUpload
             return false;
         }
 
-        return $this->_fileStorageAssociation->delete($entity);
+        $result = $this->fileStorageAssociation->delete($entity);
+        if ($result) {
+            $this->removeThumbnails($entity);
+        }
+
+        return $result;
     }
 
     /**
      * Method used for creating image file thumbnails.
      *
-     * @param  \Cake\ORM\Entity $entity File Entity
+     * @param \Cake\Datasource\EntityInterface $entity FileStorage entity
      * @return bool
      */
-    public function createThumbnails(Entity $entity)
+    public function createThumbnails(EntityInterface $entity)
     {
-        return $this->_handleThumbnails($entity, 'ImageVersion.createVersion');
+        return $this->handleThumbnails($entity, 'ImageVersion.createVersion');
     }
 
     /**
      * Method used for removing image file thumbnails.
      *
-     * @param  \Cake\ORM\Entity $entity File Entity
+     * @param \Cake\Datasource\EntityInterface $entity FileStorage entity
      * @return bool
      */
-    protected function _removeThumbnails(Entity $entity)
+    protected function removeThumbnails(EntityInterface $entity)
     {
-        return $this->_handleThumbnails($entity, 'ImageVersion.removeVersion');
+        return $this->handleThumbnails($entity, 'ImageVersion.removeVersion');
     }
 
     /**
@@ -498,13 +498,13 @@ class FileUpload
      * Note that the code on this method was borrowed fromBurzum/FileStorage
      * plugin, ImageVersionShell Class _loop method.
      *
-     * @param  \Cake\ORM\Entity $entity    File Entity
-     * @param  string           $eventName Event name
+     * @param \Cake\Datasource\EntityInterface $entity FileStorage entity
+     * @param string           $eventName Event name
      * @return bool
      */
-    protected function _handleThumbnails(Entity $entity, $eventName)
+    protected function handleThumbnails(EntityInterface $entity, $eventName)
     {
-        if (!in_array(strtolower($entity->extension), $this->_imgExtensions)) {
+        if (!in_array(strtolower($entity->extension), $this->imgExtensions)) {
             return false;
         }
 
@@ -539,8 +539,9 @@ class FileUpload
      * @see http://php.net/manual/en/features.file-upload.errors.php
      * @param  int  $error PHP validation error
      * @return bool true for invalid.
+     * @deprecated
      */
-    protected function _isInValidUpload($error)
+    protected function isInValidUpload($error)
     {
         return (bool)$error;
     }

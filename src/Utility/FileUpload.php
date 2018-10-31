@@ -16,12 +16,12 @@ use Burzum\FileStorage\Storage\StorageManager;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Datasource\QueryInterface;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
-use Cake\ORM\Table as UploadTable;
 use CsvMigrations\Model\AssociationsAwareTrait;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
@@ -59,11 +59,12 @@ class FileUpload
     protected $imgExtensions = ['jpg', 'png', 'jpeg', 'gif'];
 
     /**
-     * Contructor method
+     * Contructor method.
      *
-     * @param \Cake\ORM\Table $table Upload Table Instance
+     * @param \Cake\Datasource\RepositoryInterface $table Table Instance
+     * @return void
      */
-    public function __construct(UploadTable $table)
+    public function __construct(RepositoryInterface $table)
     {
         $this->table = $table;
 
@@ -234,14 +235,14 @@ class FileUpload
      * Actual save() clone, but with optional entity, as we
      * don't have it saved yet, and saving files first.
      *
-     * @param \Cake\ORM\Table $table Table instance
+     * @param \Cake\Datasource\RepositoryInterface $table Table Instance
      * @param string $field name of the association
      * @param array $files passed via file upload input field
      * @param array $options specifying if its AJAX call or not
      *
      * @return mixed $result boolean or file_storage ID.
      */
-    public function ajaxSave(UploadTable $table, $field, array $files = [], $options = [])
+    public function ajaxSave(RepositoryInterface $table, $field, array $files = [], $options = [])
     {
         $result = false;
 

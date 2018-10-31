@@ -105,12 +105,12 @@ class FileUpload
     /**
      * Get files by foreign key record.
      *
-     * @param string $table Table
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
      * @param string $field Field name
      * @param string $id Foreign key value (UUID)
      * @return \Cake\Datasource\ResultSetInterface
      */
-    public function getFiles($table, string $field, string $id) : ResultSetInterface
+    public function getFiles(RepositoryInterface $table, string $field, string $id) : ResultSetInterface
     {
         $assocName = AssociationsAwareTrait::generateAssociationName('Burzum/FileStorage.FileStorage', $field);
         $query = $this->table->{$assocName}->find('all', [
@@ -300,14 +300,14 @@ class FileUpload
     /**
      * Store to FileStorage table.
      *
-     * @param  \Cake\ORM\Table $table Table instance
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
      * @param  string $field of the association
      * @param  array $fileData File data
      * @param  array $options for extra setup
      * @return object|bool Fresh created entity or false on unsuccesful attempts.
      * @todo $table can be typecasted to UploadTable, once deprecated method FileUploadsUtils::save() is removed.
      */
-    protected function storeFileStorage($table, $field, $fileData, $options = [])
+    protected function storeFileStorage(RepositoryInterface $table, $field, $fileData, $options = [])
     {
         $assocName = AssociationsAwareTrait::generateAssociationName('Burzum/FileStorage.FileStorage', $field);
         $entity = $this->table->{$assocName}->newEntity($fileData);
@@ -363,13 +363,13 @@ class FileUpload
      * and stored FileStorage files, upon saving the entity,
      * the items should be linked with 'foreign_key' field.
      *
-     * @param \Cake\ORM\Entity $entity of the record
-     * @param \Cake\ORM\Table $tableInstance of the entity
+     * @param \Cake\Datasource\EntityInterface $entity Entity with associated files
+     * @param \Cake\Datasource\RepositoryInterface $tableInstance of the entity
      * @param array $data of this->request->data containing ids.
      * @param array $options Options
      * @return mixed $result of saved/updated file entities.
      */
-    public function linkFilesToEntity($entity, $tableInstance, $data = [], $options = [])
+    public function linkFilesToEntity(EntityInterface $entity, RepositoryInterface $tableInstance, $data = [], $options = [])
     {
         $result = [];
         $uploadFields = [];
@@ -460,10 +460,10 @@ class FileUpload
     /**
      * Method used for creating image file thumbnails.
      *
-     * @param  \Cake\ORM\Entity $entity File Entity
+     * @param \Cake\Datasource\EntityInterface $entity FileStorage entity
      * @return bool
      */
-    public function createThumbnails(Entity $entity)
+    public function createThumbnails(EntityInterface $entity)
     {
         return $this->handleThumbnails($entity, 'ImageVersion.createVersion');
     }
@@ -471,10 +471,10 @@ class FileUpload
     /**
      * Method used for removing image file thumbnails.
      *
-     * @param  \Cake\ORM\Entity $entity File Entity
+     * @param \Cake\Datasource\EntityInterface $entity FileStorage entity
      * @return bool
      */
-    protected function removeThumbnails(Entity $entity)
+    protected function removeThumbnails(EntityInterface $entity)
     {
         return $this->handleThumbnails($entity, 'ImageVersion.removeVersion');
     }
@@ -485,11 +485,11 @@ class FileUpload
      * Note that the code on this method was borrowed fromBurzum/FileStorage
      * plugin, ImageVersionShell Class _loop method.
      *
-     * @param  \Cake\ORM\Entity $entity    File Entity
-     * @param  string           $eventName Event name
+     * @param \Cake\Datasource\EntityInterface $entity FileStorage entity
+     * @param string           $eventName Event name
      * @return bool
      */
-    protected function handleThumbnails(Entity $entity, $eventName)
+    protected function handleThumbnails(EntityInterface $entity, $eventName)
     {
         if (!in_array(strtolower($entity->extension), $this->imgExtensions)) {
             return false;

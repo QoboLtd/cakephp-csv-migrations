@@ -34,6 +34,11 @@ class FileUpload
     const FILES_STORAGE_NAME = 'Burzum/FileStorage.FileStorage';
 
     /**
+     * FileStorage table foreign key.
+     */
+    const FILE_STORAGE_FOREIGN_KEY = 'foreign_key';
+
+    /**
      * Instance of Cake ORM Table
      * @var \Cake\ORM\Table
      */
@@ -45,13 +50,6 @@ class FileUpload
      * @var \Cake\ORM\Association
      */
     protected $fileStorageAssociation;
-
-    /**
-     * File-Storage table foreign key
-     *
-     * @var string
-     */
-    protected $fileStorageForeignKey;
 
     /**
      * Image file extensions
@@ -70,8 +68,6 @@ class FileUpload
         $this->table = $table;
 
         $this->getFileStorageAssociationInstance();
-        $this->fileStorageForeignKey = 'foreign_key';
-
 
         // NOTE: if we don't have a predefined setup for the field
         // image versions, we add it dynamically with default thumbnail versions.
@@ -340,7 +336,7 @@ class FileUpload
         } else {
             // @todo else statement can be removed, once deprecated method FileUploadsUtils::save() is removed.
             $patchData = [
-                $this->fileStorageForeignKey => $table->get('id'),
+                self::FILE_STORAGE_FOREIGN_KEY => $table->get('id'),
                 'model' => $this->table->table(),
                 'model_field' => $field,
             ];
@@ -449,7 +445,7 @@ class FileUpload
     protected function deleteFileAssociationRecord($id)
     {
         $query = $this->fileStorageAssociation->find('all', [
-            'conditions' => [$this->fileStorageForeignKey => $id]
+            'conditions' => [self::FILE_STORAGE_FOREIGN_KEY => $id]
         ]);
         $entity = $query->first();
 

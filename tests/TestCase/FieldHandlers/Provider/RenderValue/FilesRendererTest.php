@@ -6,10 +6,10 @@ use Cake\Core\Configure;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
-use CsvMigrations\FieldHandlers\Config\ImagesConfig;
-use CsvMigrations\FieldHandlers\Provider\RenderValue\ImagesRenderer;
+use CsvMigrations\FieldHandlers\Config\FilesConfig;
+use CsvMigrations\FieldHandlers\Provider\RenderValue\FilesRenderer;
 
-class ImagesRendererTest extends TestCase
+class FilesRendererTest extends TestCase
 {
     use ModelAwareTrait;
 
@@ -19,7 +19,7 @@ class ImagesRendererTest extends TestCase
     {
         parent::setUp();
 
-        $this->renderer = new ImagesRenderer(new ImagesConfig('image', $this->loadModel('Articles')));
+        $this->renderer = new FilesRenderer(new FilesConfig('image', $this->loadModel('Articles')));
 
         // @link https://github.com/burzum/cakephp-file-storage/blob/master/docs/Documentation/Included-Event-Listeners.md
         EventManager::instance()->on(new LocalListener([
@@ -52,7 +52,7 @@ class ImagesRendererTest extends TestCase
 
     public function testRenderValue()
     {
-        $expected = '/uploads/articles/c5/6e/fd/00000000000000000000000000000001/00000000000000000000000000000001.b3b05155.png';
+        $expected = '/tests/img/qobo.png';
         $result = $this->renderer->provide('00000000-0000-0000-0000-000000000003');
 
         $this->assertContains($expected, $result);

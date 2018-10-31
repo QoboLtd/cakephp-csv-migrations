@@ -84,7 +84,6 @@ class FileUpload
         $this->_getFileStorageAssociationInstance();
         $this->_fileStorageForeignKey = 'foreign_key';
 
-
         // NOTE: if we don't have a predefined setup for the field
         // image versions, we add it dynamically with default thumbnail versions.
         if (empty((array)Configure::read('FileStorage.imageSizes.' . $table->getTable()))) {

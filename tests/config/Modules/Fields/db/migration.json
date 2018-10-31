@@ -55,13 +55,6 @@
         "non-searchable": null,
         "unique": null
     },
-    "field_images": {
-        "name": "field_images",
-        "type": "images",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
-    },
     "field_integer": {
         "name": "field_integer",
         "type": "integer",

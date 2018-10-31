@@ -48,6 +48,7 @@ class FileUpload
      * Instance of File-Storage Association class
      *
      * @var \Cake\ORM\Association
+     * @deprecated
      */
     protected $fileStorageAssociation;
 
@@ -68,6 +69,9 @@ class FileUpload
     {
         $this->table = $table;
 
+        /**
+         * @deprecated
+         */
         $this->getFileStorageAssociationInstance();
 
         // NOTE: if we don't have a predefined setup for the field
@@ -91,6 +95,7 @@ class FileUpload
      * Get instance of FileStorage association.
      *
      * @return void
+     * @deprecated
      */
     protected function getFileStorageAssociationInstance()
     {
@@ -276,6 +281,7 @@ class FileUpload
      * @param  array            $files  Uploaded files
      * @param  array            $options for ajax call if any
      * @return bool
+     * @deprecated
      */
     public function save(Entity $entity, $field, array $files = [], $options = [])
     {
@@ -429,6 +435,7 @@ class FileUpload
      *
      * @param  string $id Associated Entity id
      * @return bool
+     * @deprecated
      */
     public function delete($id)
     {
@@ -442,6 +449,7 @@ class FileUpload
      *
      * @param  string $id file id
      * @return bool
+     * @deprecated
      */
     protected function deleteFileAssociationRecord($id)
     {
@@ -526,6 +534,7 @@ class FileUpload
      * @see http://php.net/manual/en/features.file-upload.errors.php
      * @param  int  $error PHP validation error
      * @return bool true for invalid.
+     * @deprecated
      */
     protected function isInValidUpload($error)
     {

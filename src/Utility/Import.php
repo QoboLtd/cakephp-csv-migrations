@@ -19,6 +19,7 @@ use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\View\View;
+use CsvMigrations\CsvMigration;
 use CsvMigrations\Model\Entity\Import as ImportEntity;
 use CsvMigrations\Model\Table\ImportResultsTable;
 use CsvMigrations\Model\Table\ImportsTable;
@@ -44,18 +45,6 @@ class Import
         'text/tab-separated-values',
         'text/x-comma-separated-values',
         'text/x-csv'
-    ];
-
-    /**
-     * Ignored table columns, by name.
-     *
-     * @var array
-     */
-    private $__ignoreColumns = [
-        'id',
-        'created',
-        'modified',
-        'trashed'
     ];
 
     /**
@@ -176,12 +165,11 @@ class Import
      */
     public static function prepareOptions(array $options)
     {
-        $result = [];
-
         if (empty($options['fields'])) {
-            return null;
+            return [];
         }
 
+        $result = [];
         foreach ($options['fields'] as $field => $params) {
             if (empty($params['column']) && empty($params['default'])) {
                 continue;
@@ -252,7 +240,7 @@ class Import
 
         $result = [];
         foreach ($schema->columns() as $column) {
-            if (in_array($column, $this->__ignoreColumns)) {
+            if (in_array($column, CsvMigration::getRequiredFields())) {
                 continue;
             }
 

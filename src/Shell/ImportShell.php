@@ -456,10 +456,12 @@ class ImportShell extends Shell
 
             $targetTable = $association->getTarget();
 
-            $primaryKey = $targetTable->getPrimaryKey();
+            // combine lookup fields with primary key and display field
+            $lookupFields = array_merge(
+                FieldUtility::getLookup($targetTable),
+                [$targetTable->getPrimaryKey(), $targetTable->getDisplayField()]
+            );
 
-            $lookupFields = FieldUtility::getLookup($targetTable);
-            $lookupFields[] = $primaryKey;
             // alias lookup fields
             foreach ($lookupFields as $k => $v) {
                 $lookupFields[$k] = $targetTable->aliasField($v);
@@ -469,7 +471,7 @@ class ImportShell extends Shell
             $lookupValues = array_fill(0, count($lookupFields), $value);
 
             $query = $targetTable->find('all')
-                ->select([$targetTable->aliasField($primaryKey)])
+                ->select([$targetTable->aliasField($targetTable->getPrimaryKey())])
                 ->where(['OR' => array_combine($lookupFields, $lookupValues)]);
 
             if ($query->isEmpty()) {
@@ -478,7 +480,7 @@ class ImportShell extends Shell
 
             $entity = $query->first();
 
-            return $entity->get($primaryKey);
+            return $entity->get($targetTable->getPrimaryKey());
         }
 
         return $value;

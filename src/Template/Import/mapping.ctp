@@ -15,7 +15,7 @@ use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
-$fhf = new FieldHandlerFactory($this);
+$factory = new FieldHandlerFactory();
 
 $tableName = $this->name;
 if ($this->plugin) {
@@ -70,13 +70,14 @@ if (!$options['title']) {
                     </div>
                 </div>
                 <?php foreach ($columns as $column) : ?>
+                    <?php $label = $factory->renderName($this->name, $column) ?>
                     <div class="row">
                         <div class="col-md-3">
                             <div class="visible-md visible-lg text-right">
-                                <?= $this->Form->label($column) ?>
+                                <?= $this->Form->label($label) ?>
                             </div>
                             <div class="visible-xs visible-sm">
-                                <?= $this->Form->label($column) ?>
+                                <?= $this->Form->label($label) ?>
                             </div>
                         </div>
                         <div class="col-md-4">

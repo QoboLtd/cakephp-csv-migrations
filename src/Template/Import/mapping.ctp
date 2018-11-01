@@ -44,6 +44,8 @@ if (!$options['title']) {
     $options['title'] .= ' &raquo; ';
     $options['title'] .= __('Import fields mapping');
 }
+
+echo $this->element('CsvMigrations.common_js_libs', ['scriptBlock' => 'bottom']);
 ?>
 <section class="content-header">
     <div class="row">
@@ -91,12 +93,20 @@ if (!$options['title']) {
                             ]) ?>
                         </div>
                         <div class="col-md-4">
-                            <?= $this->Form->input('options.fields.' . $column . '.default', [
-                                'value' => false,
-                                'label' => false,
-                                'placeholder' => __('Default value'),
-                                'class' => 'form-control'
-                            ]) ?>
+                            <?php
+                            $searchOptions = $factory->getSearchOptions($this->name, $column, [
+                                'multiple' => false, // disable multi-selection
+                                'magic-value' => false // disable magic values
+                            ]);
+
+                            if (isset($searchOptions[$column]['input']['content'])) {
+                                echo str_replace(
+                                    ['{{name}}', '{{value}}'],
+                                    [sprintf('options[fields][%s][default]', $column), ''],
+                                    $searchOptions[$column]['input']['content']
+                                );
+                            }
+                            ?>
                         </div>
                     </div>
                 <?php endforeach ?>

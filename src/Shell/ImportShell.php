@@ -12,6 +12,7 @@
 namespace CsvMigrations\Shell;
 
 use AuditStash\Meta\RequestMetadata;
+use CakeDC\Users\Controller\Traits\CustomUsersTableTrait;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
@@ -37,6 +38,8 @@ use Qobo\Utils\Utility\User;
 
 class ImportShell extends Shell
 {
+    use CustomUsersTableTrait;
+
     /**
      * Set shell description and command line options
      *
@@ -88,7 +91,11 @@ class ImportShell extends Shell
                 EventManager::instance()->off($listener);
             }
             // set current user to the one who uploaded the import (for footprint behavior)
-            User::setCurrentUser(['id' => $import->get('created_by')]);
+            User::setCurrentUser(
+                $this->getUsersTable()
+                    ->get($import->get('created_by'))
+                    ->toArray()
+            );
             // for audit-stash functionality
             $listener = new RequestMetadata(new ServerRequest(), User::getCurrentUser()['id']);
             EventManager::instance()->on($listener);

@@ -48,13 +48,6 @@ class Import
     ];
 
     /**
-     * Ignored table columns, by type.
-     *
-     * @var array
-     */
-    private $__ignoreColumnTypes = [];
-
-    /**
      * Constructor method.
      *
      * @param \Cake\ORM\Table $table Table instance
@@ -241,10 +234,6 @@ class Import
         $result = [];
         foreach ($schema->columns() as $column) {
             if (in_array($column, CsvMigration::getRequiredFields())) {
-                continue;
-            }
-
-            if (in_array($schema->columnType($column), $this->__ignoreColumnTypes)) {
                 continue;
             }
 

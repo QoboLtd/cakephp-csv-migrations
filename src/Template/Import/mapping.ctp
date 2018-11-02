@@ -74,7 +74,18 @@ echo $this->element('CsvMigrations.common_js_libs', ['scriptBlock' => 'bottom'])
                     </div>
                 </div>
                 <?php foreach ($columns as $column) : ?>
-                    <?php $label = $factory->renderName($this->name, $column) ?>
+                    <?php
+                    $searchOptions = $factory->getSearchOptions($this->name, $column, [
+                        'multiple' => false, // disable multi-selection
+                        'magic-value' => false // disable magic values
+                    ]);
+                    // skip fields with no input markup
+                    if (! isset($searchOptions[$column]['input']['content'])) {
+                        continue;
+                    }
+
+                    $label = $factory->renderName($this->name, $column);
+                    ?>
                     <div class="row">
                         <div class="col-md-3">
                             <div class="visible-md visible-lg text-right">
@@ -95,20 +106,11 @@ echo $this->element('CsvMigrations.common_js_libs', ['scriptBlock' => 'bottom'])
                             ]) ?>
                         </div>
                         <div class="col-md-4">
-                            <?php
-                            $searchOptions = $factory->getSearchOptions($this->name, $column, [
-                                'multiple' => false, // disable multi-selection
-                                'magic-value' => false // disable magic values
-                            ]);
-
-                            if (isset($searchOptions[$column]['input']['content'])) {
-                                echo str_replace(
-                                    ['{{name}}', '{{value}}'],
-                                    [sprintf('options[fields][%s][default]', $column), ''],
-                                    $searchOptions[$column]['input']['content']
-                                );
-                            }
-                            ?>
+                            <?= str_replace(
+                                ['{{name}}', '{{value}}'],
+                                [sprintf('options[fields][%s][default]', $column), ''],
+                                $searchOptions[$column]['input']['content']
+                            ) ?>
                         </div>
                     </div>
                 <?php endforeach ?>

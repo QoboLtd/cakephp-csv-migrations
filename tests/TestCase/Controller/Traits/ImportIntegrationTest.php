@@ -20,6 +20,8 @@ class ImportIntegrationTest extends IntegrationTestCase
      */
     public $fixtures = [
         'plugin.csv_migrations.articles',
+        'plugin.csv_migrations.authors',
+        'plugin.csv_migrations.categories',
         'plugin.csv_migrations.imports',
         'plugin.csv_migrations.import_results'
     ];

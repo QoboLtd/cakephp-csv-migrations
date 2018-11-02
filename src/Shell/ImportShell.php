@@ -90,6 +90,12 @@ class ImportShell extends Shell
             if (isset($listener)) {
                 EventManager::instance()->off($listener);
             }
+
+            if (! $import->get('created_by')) {
+                $this->warn('Skipping, "created_by" user is not set on this import.');
+                continue;
+            }
+
             // set current user to the one who uploaded the import (for footprint behavior)
             User::setCurrentUser(
                 $this->getUsersTable()
@@ -414,8 +420,6 @@ class ImportShell extends Shell
      */
     protected function _processData(Table $table, array $csvFields, array $data)
     {
-        $result = [];
-
         $schema = $table->schema();
         foreach ($data as $field => $value) {
             if (!empty($csvFields) && in_array($field, array_keys($csvFields))) {

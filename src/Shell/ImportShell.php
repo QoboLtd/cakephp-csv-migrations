@@ -56,18 +56,22 @@ class ImportShell extends Shell
     /**
      * Main method for shell execution
      *
-     * @return void
+     * @return bool
      */
-    public function main()
+    public function main() : bool
     {
         try {
             $lock = new FileLock('import_' . md5(__FILE__) . '.lock');
         } catch (Exception $e) {
-            $this->abort($e->getMessage());
+            $this->warn($e->getMessage());
+
+            return true;
         }
 
         if (!$lock->lock()) {
-            $this->abort('Import is already in progress');
+            $this->info('Import is already in progress');
+
+            return true;
         }
 
         $table = TableRegistry::get('CsvMigrations.Imports');
@@ -82,7 +86,9 @@ class ImportShell extends Shell
             // unlock file
             $lock->unlock();
 
-            $this->abort('No imports found');
+            $this->info('No imports found');
+
+            return true;
         }
 
         foreach ($query->all() as $import) {
@@ -140,6 +146,8 @@ class ImportShell extends Shell
 
         // unlock file
         $lock->unlock();
+
+        return true;
     }
 
     /**
@@ -277,6 +285,7 @@ class ImportShell extends Shell
             $progress->increment(100 / $count);
             $progress->draw();
         }
+
         $this->out(null);
     }
 

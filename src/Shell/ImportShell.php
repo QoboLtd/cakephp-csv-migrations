@@ -484,6 +484,9 @@ class ImportShell extends Shell
                 [$targetTable->getPrimaryKey(), $targetTable->getDisplayField()]
             );
 
+            // remove virtual/non-existing fields
+            $lookupFields = array_intersect($lookupFields, $targetTable->getSchema()->columns());
+
             // alias lookup fields
             foreach ($lookupFields as $k => $v) {
                 $lookupFields[$k] = $targetTable->aliasField($v);

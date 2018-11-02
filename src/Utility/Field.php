@@ -62,6 +62,35 @@ class Field
     }
 
     /**
+     * CSV field instance getter.
+     *
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
+     * @param string $field Field name
+     * @return \CsvMigrations\FieldHandlers\CsvField|null
+     */
+    public static function getCsvField(RepositoryInterface $table, string $field) : ?CsvField
+    {
+        if ('' === $field) {
+            return null;
+        }
+
+        $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
+
+        $config = new ModuleConfig(ConfigType::MIGRATION(), $moduleName);
+        $parsed = $config->parse();
+
+        if (null === $parsed) {
+            return null;
+        }
+
+        if (! property_exists($parsed, $field)) {
+            return null;
+        }
+
+        return new CsvField(json_decode(json_encode($parsed->{$field}), true));
+    }
+
+    /**
      * Module virtual fields getter.
      *
      * @param \Cake\Datasource\RepositoryInterface $table Table instance

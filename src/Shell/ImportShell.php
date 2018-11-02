@@ -462,6 +462,15 @@ class ImportShell extends Shell
      */
     protected function _findRelatedRecord(Table $table, $field, $value)
     {
+        $csvField = FieldUtility::getCsvField($table, $field);
+        if (null !== $csvField && 'related' === $csvField->getType()) {
+            $value = $this->_findRelatedRecord(
+                TableRegistry::get($csvField->getLimit()),
+                TableRegistry::get($csvField->getLimit())->getDisplayField(),
+                $value
+            );
+        }
+
         foreach ($table->associations() as $association) {
             if ($association->getForeignKey() !== $field) {
                 continue;

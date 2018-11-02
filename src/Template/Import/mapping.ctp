@@ -45,6 +45,8 @@ if (!$options['title']) {
     $options['title'] .= __('Import fields mapping');
 }
 
+sort($columns);
+
 echo $this->element('CsvMigrations.common_js_libs', ['scriptBlock' => 'bottom']);
 ?>
 <section class="content-header">

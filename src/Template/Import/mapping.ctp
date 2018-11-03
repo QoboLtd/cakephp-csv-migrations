@@ -15,7 +15,7 @@ use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
-$fhf = new FieldHandlerFactory($this);
+$factory = new FieldHandlerFactory();
 
 $tableName = $this->name;
 if ($this->plugin) {
@@ -44,6 +44,10 @@ if (!$options['title']) {
     $options['title'] .= ' &raquo; ';
     $options['title'] .= __('Import fields mapping');
 }
+
+sort($columns);
+
+echo $this->element('CsvMigrations.common_js_libs', ['scriptBlock' => 'bottom']);
 ?>
 <section class="content-header">
     <div class="row">
@@ -70,13 +74,25 @@ if (!$options['title']) {
                     </div>
                 </div>
                 <?php foreach ($columns as $column) : ?>
+                    <?php
+                    $searchOptions = $factory->getSearchOptions($this->name, $column, [
+                        'multiple' => false, // disable multi-selection
+                        'magic-value' => false // disable magic values
+                    ]);
+                    // skip fields with no input markup
+                    if (! isset($searchOptions[$column]['input']['content'])) {
+                        continue;
+                    }
+
+                    $label = $factory->renderName($this->name, $column);
+                    ?>
                     <div class="row">
                         <div class="col-md-3">
                             <div class="visible-md visible-lg text-right">
-                                <?= $this->Form->label($column) ?>
+                                <?= $this->Form->label($label) ?>
                             </div>
                             <div class="visible-xs visible-sm">
-                                <?= $this->Form->label($column) ?>
+                                <?= $this->Form->label($label) ?>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -90,12 +106,11 @@ if (!$options['title']) {
                             ]) ?>
                         </div>
                         <div class="col-md-4">
-                            <?= $this->Form->input('options.fields.' . $column . '.default', [
-                                'value' => false,
-                                'label' => false,
-                                'placeholder' => __('Default value'),
-                                'class' => 'form-control'
-                            ]) ?>
+                            <?= str_replace(
+                                ['{{name}}', '{{value}}'],
+                                [sprintf('options[fields][%s][default]', $column), ''],
+                                $searchOptions[$column]['input']['content']
+                            ) ?>
                         </div>
                     </div>
                 <?php endforeach ?>

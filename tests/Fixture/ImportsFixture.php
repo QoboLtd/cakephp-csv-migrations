@@ -27,6 +27,8 @@ class ImportsFixture extends TestFixture
         'attempts' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
         'attempted_date' => ['type' => 'datetime', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
         'status' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '', 'precision' => null, 'fixed' => null],
+        'created_by' => ['type' => 'uuid', 'length' => null, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null],
+        'modified_by' => ['type' => 'uuid', 'length' => null, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
         ],
@@ -53,7 +55,9 @@ class ImportsFixture extends TestFixture
             'model_name' => 'Articles',
             'attempts' => 1,
             'attempted_date' => '2017-08-01 11:06:06',
-            'status' => 'Pending'
+            'status' => 'Pending',
+            'created_by' => '00000000-0000-0000-0000-000000000002',
+            'modified_by' => '00000000-0000-0000-0000-000000000001'
         ],
         [
             'id' => '00000000-0000-0000-0000-000000000002',
@@ -65,7 +69,9 @@ class ImportsFixture extends TestFixture
             'model_name' => 'Articles',
             'attempts' => 1,
             'attempted_date' => '2017-08-01 11:06:06',
-            'status' => 'Pending'
+            'status' => 'Pending',
+            'created_by' => '00000000-0000-0000-0000-000000000001',
+            'modified_by' => '00000000-0000-0000-0000-000000000002'
         ],
     ];
 }

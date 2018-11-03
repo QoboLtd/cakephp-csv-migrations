@@ -27,12 +27,13 @@
     "autoload": {
         "psr-4": {
             "CsvMigrations\\": "src",
-            "CsvMigrations\\Test\\Fixture\\": "tests\\Fixture"
+            "CakeDC\\Users\\Test\\Fixture\\": "tests"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "CsvMigrations\\Test\\": "tests",
+            "CakeDC\\Users\\Test\\": "./vendor/cakedc/users/tests",
             "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
         }
     }

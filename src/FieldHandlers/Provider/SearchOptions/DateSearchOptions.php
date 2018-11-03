@@ -59,7 +59,7 @@ class DateSearchOptions extends AbstractSearchOptions
                 'type' => 'text',
                 'data-provide' => 'datepicker',
                 'autocomplete' => 'off',
-                'data-magic-value' => true,
+                'data-magic-value' => isset($options['magic-value']) ? (bool)$options['magic-value'] : true,
                 'label' => false,
                 'templates' => [
                     'input' => vsprintf($this->templates['input'], [

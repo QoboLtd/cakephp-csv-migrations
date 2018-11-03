@@ -60,7 +60,7 @@ class DblistItemsTableTest extends TestCase
 
     /**
      * Test validationDefault method
-     * @dataProvider testValidationDefaultProvider
+     * @dataProvider validationDefaultProvider
      *
      * @return void
      */
@@ -75,7 +75,7 @@ class DblistItemsTableTest extends TestCase
      *
      * @return array Field names
      */
-    public function testValidationDefaultProvider()
+    public function validationDefaultProvider()
     {
         return [
             ['id'],

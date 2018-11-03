@@ -110,6 +110,14 @@ class ImportsTable extends Table
             ->dateTime('trashed')
             ->allowEmpty('trashed');
 
+        $validator
+            ->uuid('created_by')
+            ->notEmpty('created_by');
+
+        $validator
+            ->uuid('modified_by')
+            ->notEmpty('modified_by');
+
         return $validator;
     }
 

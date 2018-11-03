@@ -17,7 +17,9 @@ class ConfigurationTest extends TestCase
 
     public function testConstructor()
     {
-        new Configuration(TableRegistry::get('tableName'), 'field');
+        $result = new Configuration(TableRegistry::get('tableName'), 'field');
+
+        $this->assertInstanceOf(Configuration::class, $result);
     }
 
     public function testConstructorWithInvalidConfig()

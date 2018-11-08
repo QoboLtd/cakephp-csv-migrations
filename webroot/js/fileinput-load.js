@@ -189,12 +189,13 @@ $(document).ready(function () {
         });
 
         inputField.fileinput(options).on('fileuploaded', function (event, data) {
-            if (data.response.id !== undefined) {
-                if (data.response.id.length) {
-                    ids.push(data.response.id);
-                    paths.push(data.response.path);
-                    that.addHiddenFileId(this, data.response.id);
-                }
+            if (true === data.response.success) {
+                var input = this;
+                data.response.data.forEach(function (file) {
+                    ids.push(file.id);
+                    paths.push(file.path);
+                    that.addHiddenFileId(input, file.id);
+                });
             }
         }).on('filedeleted', function (event, key) {
             that.removeHiddenFileId(this, key);
@@ -304,10 +305,11 @@ $(document).ready(function () {
         var options = $.extend({}, defaultOptions, existing);
 
         inputField.fileinput(options).on('fileuploaded', function (event, data) {
-            if (data.response.id !== undefined) {
-                if (data.response.id.length) {
-                    that.addHiddenFileId(this, data.response.id);
-                }
+            if (true === data.response.success) {
+                var input = this;
+                data.response.data.forEach(function (file) {
+                    that.addHiddenFileId(input, file.id);
+                });
             }
         }).on('filedeleted', function (event, key) {
             that.removeHiddenFileId(this, key);

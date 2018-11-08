@@ -95,16 +95,6 @@ final class FileUpload
     }
 
     /**
-     * Getter method for supported image extensions.
-     *
-     * @return string[]
-     */
-    public static function getImgExtensions() : array
-    {
-        return self::IMAGE_EXTENSIONS;
-    }
-
-    /**
      * Get files by foreign key record.
      *
      * @param string $field Field name

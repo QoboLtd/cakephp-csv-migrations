@@ -47,7 +47,7 @@ class CsvMigration extends AbstractMigration
      *
      * @var array
      */
-    protected $_requiredFields = [
+    protected static $_requiredFields = [
         'id' => [
             'name' => 'id',
             'type' => 'uuid',
@@ -118,7 +118,7 @@ class CsvMigration extends AbstractMigration
         $tableName = Inflector::pluralize(Inflector::classify($this->_table->getName()));
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $tableName);
         $csvData = (array)json_decode(json_encode($mc->parse()), true);
-        $csvData = array_merge($csvData, $this->_requiredFields);
+        $csvData = array_merge($csvData, self::$_requiredFields);
 
         $tableFields = $this->_getTableFields();
 
@@ -139,6 +139,19 @@ class CsvMigration extends AbstractMigration
     public function joins($tableName)
     {
         return [];
+    }
+
+    /**
+     * Required fields getter method.
+     *
+     * Returns either just the field names or with their schema definition.
+     *
+     * @param bool $withSchema Schema inclusion flag
+     * @return array
+     */
+    public static function getRequiredFields(bool $withSchema = false) : array
+    {
+        return $withSchema ? self::$_requiredFields : array_keys(self::$_requiredFields);
     }
 
     /**

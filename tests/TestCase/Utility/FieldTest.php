@@ -66,6 +66,22 @@ class FieldTest extends TestCase
         $this->assertSame([], Field::getCsv($table));
     }
 
+    public function testGetCsvField()
+    {
+        $result = Field::getCsvField(TableRegistry::get('Articles'), 'name');
+
+        $this->assertInstanceOf(CsvField::class, $result);
+        $this->assertSame('name', $result->getName());
+        $this->assertSame('string', $result->getType());
+    }
+
+    public function testGetCsvFieldWithInvalidField()
+    {
+        $result = Field::getCsvField(TableRegistry::get('Articles'), 'non-existing-field');
+
+        $this->assertNull($result);
+    }
+
     public function testGetVirtual()
     {
         $this->assertSame(['name' => ['foo', 'bar']], Field::getVirtual(TableRegistry::get('Foo')));

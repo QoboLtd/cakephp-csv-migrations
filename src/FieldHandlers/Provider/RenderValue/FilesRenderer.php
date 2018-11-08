@@ -43,7 +43,7 @@ class FilesRenderer extends AbstractRenderer
 
         $fileUpload = new FileUpload($table);
 
-        $entities = $fileUpload->getFiles($table, $field, $data);
+        $entities = $fileUpload->getFiles($field, $data);
 
         if ($entities->isEmpty()) {
             return '';

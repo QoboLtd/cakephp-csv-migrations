@@ -30,16 +30,12 @@ class AppController extends BaseController
 {
     use ImportTrait;
 
-    protected $fileUpload;
-
     /**
      * {@inheritDoc}
      */
     public function initialize()
     {
         parent::initialize();
-
-        $this->fileUpload = new FileUpload($this->{$this->name});
 
         $this->loadComponent('CsvMigrations.CsvView');
 
@@ -193,7 +189,11 @@ class AppController extends BaseController
         if ($saved) {
             $this->Flash->success(__('The record has been saved.'));
             // handle file uploads if found in the request data
-            $this->fileUpload->linkFilesToEntity($entity, $this->{$this->name}, $this->request->data);
+            $fileUpload = new FileUpload($this->{$this->name});
+            $fileUpload->link(
+                $entity->get($this->{$this->name}->getPrimaryKey()),
+                $this->request->getData()
+            );
 
             $url = $this->{$this->name}->getParentRedirectUrl($this->{$this->name}, $entity);
             $url = ! empty($url) ? $url : ['action' => 'view', $entity->get($this->{$this->name}->getPrimaryKey())];

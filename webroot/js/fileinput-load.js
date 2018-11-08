@@ -104,7 +104,7 @@ $(document).ready(function () {
                 if (file !== undefined) {
                     var options = {
                         key: file.id,
-                        url: '/api/file-storages/delete/' + file.id
+                        url: '/api/file-storage/delete/' + file.id
                     };
                     filesOptions.push(options);
                 }
@@ -121,7 +121,7 @@ $(document).ready(function () {
 
         if (ids.length) {
             ids.forEach(function (id) {
-                opts.push({key: id, url: '/api/file-storages/delete/' + id});
+                opts.push({key: id, url: '/api/file-storage/delete/' + id});
             });
         }
 

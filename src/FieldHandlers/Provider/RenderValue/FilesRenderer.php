@@ -49,16 +49,9 @@ class FilesRenderer extends AbstractRenderer
             return '';
         }
 
-        $params = [
-            'entities' => $entities,
-            'imageSize' => empty($options['imageSize']) ?
-                Configure::read('FileStorage.defaultImageSize') :
-                $options['imageSize']
-        ];
-
         $defaultElement = 'CsvMigrations.FieldHandlers/FilesFieldHandler/value';
         $element = empty($options['element']) ? $defaultElement : $options['element'];
 
-        return $this->renderElement($element, $params);
+        return $this->renderElement($element, ['entities' => $entities]);
     }
 }

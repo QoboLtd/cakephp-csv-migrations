@@ -20,6 +20,7 @@ use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\Log\LogTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use CsvMigrations\Model\AssociationsAwareTrait;
@@ -28,6 +29,8 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class FileUpload
 {
+    use LogTrait;
+
     /**
      * FileStorage table name.
      */
@@ -473,10 +476,10 @@ class FileUpload
     /**
      * Method used for creating image file thumbnails.
      *
-     * @param \Cake\Datasource\EntityInterface $entity FileStorage entity
+     * @param \Burzum\FileStorage\Model\Entity\FileStorage $entity FileStorage entity
      * @return bool
      */
-    public function createThumbnails(EntityInterface $entity)
+    public function createThumbnails(FileStorage $entity) : bool
     {
         return $this->handleThumbnails($entity, 'ImageVersion.createVersion');
     }
@@ -484,10 +487,10 @@ class FileUpload
     /**
      * Method used for removing image file thumbnails.
      *
-     * @param \Cake\Datasource\EntityInterface $entity FileStorage entity
+     * @param \Burzum\FileStorage\Model\Entity\FileStorage $entity FileStorage entity
      * @return bool
      */
-    protected function removeThumbnails(EntityInterface $entity)
+    public function removeThumbnails(FileStorage $entity) : bool
     {
         return $this->handleThumbnails($entity, 'ImageVersion.removeVersion');
     }
@@ -498,35 +501,50 @@ class FileUpload
      * Note that the code on this method was borrowed fromBurzum/FileStorage
      * plugin, ImageVersionShell Class _loop method.
      *
-     * @param \Cake\Datasource\EntityInterface $entity FileStorage entity
-     * @param string           $eventName Event name
+     * @param \Burzum\FileStorage\Model\Entity\FileStorage $entity FileStorage entity
+     * @param string $eventName Event name
      * @return bool
      */
-    protected function handleThumbnails(EntityInterface $entity, $eventName)
+    private function handleThumbnails(FileStorage $entity, string $eventName) : bool
     {
-        if (!in_array(strtolower($entity->extension), $this->imgExtensions)) {
+        if (! in_array(strtolower($entity->extension), $this->imgExtensions)) {
             return false;
         }
 
-        $operations = Configure::read('FileStorage.imageSizes.' . $entity->model);
+        $imgSizes = (array)Configure::read(sprintf('FileStorage.imageSizes.%s', $entity->model));
 
-        $storageTable = TableRegistry::get('Burzum/FileStorage.ImageStorage');
+        if (empty($imgSizes)) {
+            $this->log(
+                sprintf('Failed to %s: no image sizes defined for model "%s"', $eventName, $entity->model),
+                'warning'
+            );
+
+            return false;
+        }
+
+        $event = new Event($eventName, $this, [
+            'record' => $entity,
+            'versions' => array_keys($imgSizes),
+        ]);
+        EventManager::instance()->dispatch($event);
+
+        $eventResult = $event->getResult();
+        if (empty($eventResult)) {
+            $this->log(sprintf('Failed to %s: event result is empty', $eventName), 'error');
+
+            return false;
+        }
+
         $result = true;
-        foreach ($operations as $version => $operation) {
-            $payload = [
-                'record' => $entity,
-                'storage' => StorageManager::adapter($entity->adapter),
-                'operations' => [$version => $operation],
-                'versions' => [$version],
-                'table' => $storageTable,
-                'options' => []
-            ];
-
-            $event = new Event($eventName, $storageTable, $payload);
-            EventManager::instance()->dispatch($event);
-
-            if ('error' === $event->result[$version]['status']) {
+        foreach (array_keys($imgSizes) as $version) {
+            if (! array_key_exists($version, $eventResult)) {
                 $result = false;
+                $this->log(sprintf('Failed to %s for version "%s"', $eventName, $version), 'error');
+            }
+
+            if ('error' === $eventResult[$version]['status']) {
+                $result = false;
+                $this->log(sprintf('Failed to handle thumbnail: %s', $eventResult[$version]['error']), 'error');
             }
         }
 

@@ -111,17 +111,18 @@ class DblistsTable extends Table
      * @param  array $options Options see function's long description.
      * @return array          Options for the select option field.
      */
-    public function findOptions(Query $query, array $options)
+    public function findOptions(Query $query, array $options) : array
     {
-        $result = [];
         $name = Hash::get($options, 'name');
-        $list = $this->findByName($name)->first();
-        if ($list) {
-            $result = $this
-                ->DblistItems->find('treeList', ['keyPath' => 'value', 'valuePath' => 'name', 'spacer' => ' - '])
-                ->where(['dblist_id' => $list->get('id')]);
+        $entity = $this->findByName($name)->first();
+
+        if (null === $entity) {
+            return [];
         }
 
-        return $result;
+        return $this->DblistItems
+            ->find('treeList', ['keyPath' => 'value', 'valuePath' => 'name', 'spacer' => ' - '])
+            ->where(['dblist_id' => $entity->get('id')])
+            ->toArray();
     }
 }

@@ -72,14 +72,29 @@ class DblistsTableTest extends TestCase
      */
     public function testOptions()
     {
+        $expected = [
+            'corporate' => 'Corporate',
+            'leonid' => ' - Leonid',
+            'individual' => 'Individual',
+            'antonis' => ' - Antonis',
+            'george' => ' - George'
+        ];
         $list = 'categories';
-        $query = $this->Dblists->find('options', ['name' => $list]);
-        $this->assertInstanceOf('Cake\ORM\Query', $query);
-        $this->assertFalse($query->isEmpty());
 
-        $list = null;
-        $result = $this->Dblists->find('options', ['name' => $list]);
-        $this->assertTrue(is_array($result), 'Return shouold be an empty array on wrong name lists');
+        $this->assertSame($expected, $this->Dblists->find('options', ['name' => $list]));
+    }
+
+    /**
+     * Test Options query.
+     *
+     * @return void
+     */
+    public function testOptionsWithInvalidListName()
+    {
+        $expected = [];
+        $list = 'some-invalid-list-name';
+
+        $this->assertSame($expected, $this->Dblists->find('options', ['name' => $list]));
     }
 
     /**

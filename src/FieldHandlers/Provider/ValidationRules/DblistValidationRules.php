@@ -29,9 +29,9 @@ class DblistValidationRules extends AbstractValidationRules
         $validator->scalar($options['fieldDefinitions']->getName());
 
         $table = TableRegistry::getTableLocator()->get('CsvMigrations.Dblists');
-        $query = $table->find('options', ['name' => $options['fieldDefinitions']->getLimit()]);
+        $listOptions = $table->find('options', ['name' => $options['fieldDefinitions']->getLimit()]);
 
-        $validator->inList($options['fieldDefinitions']->getName(), array_keys($query->toArray()));
+        $validator->inList($options['fieldDefinitions']->getName(), array_keys($listOptions));
 
         return $validator;
     }

@@ -1,16 +1,23 @@
 <?php
 namespace CsvMigrations\Test\App\Config;
 
-use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Routing\Router;
+use Cake\Routing\Route\DashedRoute;
 
-Router::connect('/users/login', ['controller' => 'Users', 'action' => 'login']);
+Router::defaultRouteClass(DashedRoute::class);
 
+Router::connect('/:controller/:action/*');
+Router::plugin(
+    'CsvMigrations',
+    ['path' => '/csv-migrations'],
+    function ($routes) {
+        $routes->fallbacks('DashedRoute');
+    }
+);
 // Add api route to handle our REST API functionality
 Router::prefix('api', function ($routes) {
     // handle json file extension on API calls
-    $routes->extensions(['json']);
+    $routes->setExtensions(['json']);
 
     $routes->resources('Articles');
     $routes->resources('Leads');
@@ -19,7 +26,7 @@ Router::prefix('api', function ($routes) {
 });
 
 Router::scope('/', function ($routes) {
-    $routes->extensions(['json']);
+    $routes->setExtensions(['json']);
     $routes->connect('/:controller', ['action' => 'index'], ['routeClass' => 'DashedRoute']);
     $routes->connect('/:controller/:action/*', [], ['routeClass' => 'DashedRoute']);
 });

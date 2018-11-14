@@ -9,8 +9,8 @@ class FooTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('foo');
-        $this->primaryKey('id');
+        $this->setTable('foo');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
     }

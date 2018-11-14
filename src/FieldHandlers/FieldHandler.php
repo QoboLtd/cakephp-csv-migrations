@@ -104,7 +104,7 @@ class FieldHandler implements FieldHandlerInterface
         $table = $this->config->getTable();
         $field = $this->config->getField();
 
-        $mc = new ModuleConfig(ConfigType::FIELDS(), Inflector::camelize($table->table()));
+        $mc = new ModuleConfig(ConfigType::FIELDS(), Inflector::camelize($table->getTable()));
         $config = (array)json_decode(json_encode($mc->parse()), true);
         if (!empty($config[$field])) {
             $this->defaultOptions = array_replace_recursive($this->defaultOptions, $config[$field]);
@@ -175,10 +175,10 @@ class FieldHandler implements FieldHandlerInterface
         ]);
 
         $view = $this->config->getView();
-        $view->eventManager()->dispatch($event);
+        $view->getEventManager()->dispatch($event);
 
         // Only overwrite the default if any events were triggered
-        $listeners = $view->eventManager()->listeners($eventName);
+        $listeners = $view->getEventManager()->listeners($eventName);
         if (empty($listeners)) {
             return;
         }

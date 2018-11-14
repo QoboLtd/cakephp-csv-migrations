@@ -47,13 +47,13 @@ class DblistItemsTableTest extends TestCase
      */
     public function testInitialize()
     {
-        $displayField = $this->DblistItems->displayField();
+        $displayField = $this->DblistItems->getDisplayField();
         $this->assertEquals('name', $displayField, 'Display field is the name');
-        $pK = $this->DblistItems->primaryKey();
+        $pK = $this->DblistItems->getPrimaryKey();
         $this->assertEquals('id', $pK, 'Primary key is the id');
         $this->assertTrue($this->DblistItems->hasBehavior('Timestamp'), 'Missing behavior Timestamp');
         $this->assertTrue($this->DblistItems->hasBehavior('Tree'), 'Missing behavior Tree');
-        $assoc = $this->DblistItems->association('Dblists');
+        $assoc = $this->DblistItems->getAssociation('Dblists');
         $this->assertFalse(is_null($assoc), 'DblistItems cannot be found');
         $this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $assoc, 'DblistItems\'s association with Dblists should be belongsTo');
     }
@@ -66,7 +66,7 @@ class DblistItemsTableTest extends TestCase
      */
     public function testValidationDefault($fieldName)
     {
-        $validator = $this->DblistItems->validator();
+        $validator = $this->DblistItems->getValidator();
         $this->assertTrue($validator->hasField($fieldName), 'Missing validation for ' . $fieldName);
     }
 

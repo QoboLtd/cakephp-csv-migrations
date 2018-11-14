@@ -90,8 +90,8 @@ class AppController extends BaseController
     {
         $entity = $this->{$this->name}->newEntity();
 
-        if (!empty($this->request->params['data'])) {
-            $this->request->data = $this->request->params['data'];
+        if (!empty($this->request->getParam('data'))) {
+            $this->request->withData($this->request->getParam('data'));
         }
 
         if ($this->request->is('post')) {
@@ -173,7 +173,7 @@ class AppController extends BaseController
     private function persistEntity(EntityInterface $entity, array $options = [])
     {
         $options = array_merge($options, ['lookup' => true]);
-        $entity = $this->{$this->name}->patchEntity($entity, $this->request->data, $options);
+        $entity = $this->{$this->name}->patchEntity($entity, $this->request->getData(), $options);
 
         $saved = false;
         try {
@@ -193,7 +193,7 @@ class AppController extends BaseController
         if ($saved) {
             $this->Flash->success(__('The record has been saved.'));
             // handle file uploads if found in the request data
-            $this->fileUpload->linkFilesToEntity($entity, $this->{$this->name}, $this->request->data);
+            $this->fileUpload->linkFilesToEntity($entity, $this->{$this->name}, $this->request->getData());
 
             $url = $this->{$this->name}->getParentRedirectUrl($this->{$this->name}, $entity);
             $url = ! empty($url) ? $url : ['action' => 'view', $entity->get($this->{$this->name}->getPrimaryKey())];
@@ -313,7 +313,7 @@ class AppController extends BaseController
 
         $redirectUrl = $this->getBatchRedirectUrl();
 
-        $batchIds = (array)$this->request->data('batch.ids');
+        $batchIds = (array)$this->request->getData('batch.ids');
         if (empty($batchIds)) {
             $this->Flash->error(__('No records selected.'));
 
@@ -328,7 +328,7 @@ class AppController extends BaseController
             $operation,
             $this->Auth->user()
         ]);
-        $this->eventManager()->dispatch($event);
+        $this->getEventManager()->dispatch($event);
 
         $batchIds = is_array($event->result) ? $event->result : $batchIds;
 
@@ -353,8 +353,8 @@ class AppController extends BaseController
             return $this->redirect($redirectUrl);
         }
 
-        if ('edit' === $operation && (bool)$this->request->data('batch.execute')) {
-            $fields = (array)$this->request->data($this->name);
+        if ('edit' === $operation && (bool)$this->request->getData('batch.execute')) {
+            $fields = (array)$this->request->getData($this->name);
             if (empty($fields)) {
                 $this->Flash->error(__('Selected records could not be updated. No changes provided.'));
 
@@ -389,15 +389,15 @@ class AppController extends BaseController
         // default url
         $result = ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index'];
 
-        $currentUrl = $this->request->env('HTTP_ORIGIN') . $this->request->getRequestTarget();
+        $currentUrl = $this->request->getEnv('HTTP_ORIGIN') . $this->request->getRequestTarget();
         // if referer does not match current url, redirect to referer (delete action)
         if (false === strpos($this->referer(), $currentUrl)) {
             $result = $this->referer();
         }
 
         // use batch redirect url if provided (edit action)
-        if ($this->request->data('batch.redirect_url')) {
-            $result = $this->request->data('batch.redirect_url');
+        if ($this->request->getData('batch.redirect_url')) {
+            $result = $this->request->getData('batch.redirect_url');
         }
 
         return $result;

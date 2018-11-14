@@ -29,7 +29,7 @@ class AssociationsAwareTraitTest extends TestCase
      */
     public function testAssociations($table, $name, $type, $joinTable = '')
     {
-        $association = TableRegistry::get($table)->association($name);
+        $association = TableRegistry::get($table)->getAssociation($name);
 
         $this->assertInstanceOf($type, $association);
 

@@ -79,8 +79,9 @@ class MixedFieldValue extends AbstractProvider
     protected function provideFromRequest(Request $request, $field)
     {
         $result = null;
-        if (is_array($request->data) && array_key_exists($field, $request->data)) {
-            $result = $request->data[$field];
+        $data = $request->getData();
+        if (is_array($data) && array_key_exists($field, $data)) {
+            $result = $data[$field];
         }
 
         return $result;

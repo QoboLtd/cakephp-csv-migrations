@@ -9,8 +9,8 @@ class AuthorsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('authors');
-        $this->primaryKey('id');
+        $this->setTable('authors');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
     }

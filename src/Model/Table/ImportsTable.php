@@ -126,7 +126,7 @@ class ImportsTable extends Table
      */
     protected function _initializeSchema(TableSchema $schema)
     {
-        $schema->columnType('options', 'json');
+        $schema->setColumnType('options', 'json');
 
         return $schema;
     }

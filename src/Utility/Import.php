@@ -338,13 +338,13 @@ class Import
      */
     protected function _validateUpload()
     {
-        if (!$this->_request->data('file')) {
+        if (!$this->_request->getData('file')) {
             $this->_flash->error(__('Please choose a file to upload.'));
 
             return false;
         }
 
-        if (!in_array($this->_request->data('file.type'), $this->__supportedMimeTypes)) {
+        if (!in_array($this->_request->getData('file.type'), $this->__supportedMimeTypes)) {
             $this->_flash->error(__('Unable to upload file, unsupported file provided.'));
 
             return false;
@@ -366,7 +366,7 @@ class Import
             return '';
         }
 
-        $pathInfo = pathinfo($this->_request->data('file.name'));
+        $pathInfo = pathinfo($this->_request->getData('file.name'));
 
         $time = new Time();
         $timestamp = $time->i18nFormat('yyyyMMddHHmmss');
@@ -376,7 +376,7 @@ class Import
         $filename = trim($filename, '_');
 
         $path = $uploadPath . $timestamp . '_' . $filename . '.' . $pathInfo['extension'];
-        if (!move_uploaded_file($this->_request->data('file.tmp_name'), $path)) {
+        if (!move_uploaded_file($this->_request->getData('file.tmp_name'), $path)) {
             $this->_flash->error(__('Unable to upload file to the specified directory.'));
 
             return '';

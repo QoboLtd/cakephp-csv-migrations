@@ -23,7 +23,7 @@ class MixedFieldValueTest extends TestCase
         $data = new Request();
         $result = $provider->provide($data);
         $this->assertEquals(null, $result, "Data provider did not return null from Request");
-        $data->data($field, 'hello');
+        $data->withData($field, 'hello');
         $result = $provider->provide($data);
         $this->assertEquals('hello', $result, "Data provider did not return correct data from Request");
 

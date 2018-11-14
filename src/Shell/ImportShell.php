@@ -48,7 +48,7 @@ class ImportShell extends Shell
     public function getOptionParser()
     {
         $parser = new ConsoleOptionParser('console');
-        $parser->description('Process all import jobs');
+        $parser->setDescription('Process all import jobs');
 
         return $parser;
     }
@@ -429,7 +429,7 @@ class ImportShell extends Shell
      */
     protected function _processData(Table $table, array $csvFields, array $data)
     {
-        $schema = $table->schema();
+        $schema = $table->getSchema();
         foreach ($data as $field => $value) {
             if (!empty($csvFields) && in_array($field, array_keys($csvFields))) {
                 switch ($csvFields[$field]->getType()) {

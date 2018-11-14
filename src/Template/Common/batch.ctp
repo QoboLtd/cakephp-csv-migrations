@@ -38,13 +38,13 @@ echo $this->element('CsvMigrations.View/post', ['options' => $options]);
 echo $this->Html->script('CsvMigrations.view-batch', ['block' => 'scriptBottom']);
 
 $formUrl = $this->Url->build([
-    'plugin' => $this->request->plugin,
-    'controller' => $this->request->controller,
-    'action' => $this->request->action
+    'plugin' => $this->request->getParam('plugin'),
+    'controller' => $this->request->getParam('controller'),
+    'action' => $this->request->getParam('action')
 ]);
 echo $this->Html->scriptBlock(
     '$("form[action=\'' . $formUrl . '\']").viewBatch({
-        batch_ids: ' . json_encode($this->request->data('batch.ids')) . ',
+        batch_ids: ' . json_encode($this->request->getData('batch.ids')) . ',
         redirect_url: "' . $this->request->referer() . '",
         target_id: "*[data-batch=\'field\']",
         disable_id: "*[data-batch=\'disable\']",

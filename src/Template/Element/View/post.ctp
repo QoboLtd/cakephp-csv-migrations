@@ -27,9 +27,9 @@ $options = array_merge($defaultOptions, $options);
 
 $formOptions = [
     'url' => [
-        'plugin' => $this->request->plugin,
-        'controller' => $this->request->controller,
-        'action' => $this->request->action
+        'plugin' => $this->request->getParam('plugin'),
+        'controller' => $this->request->getParam('controller'),
+        'action' => $this->request->getParam('action')
     ],
     'name' => Inflector::dasherize($this->name),
     'type' => 'file',
@@ -43,27 +43,27 @@ if ($options['hasPanels']) {
     $formOptions = [
         'data-panels-url' => $this->Url->build([
             'prefix' => 'api',
-            'plugin' => $this->request->plugin,
-            'controller' => $this->request->controller,
+            'plugin' => $this->request->getParam('plugin'),
+            'controller' => $this->request->getParam('controller'),
             'action' => 'panels'
         ]),
     ];
 }
 
-if (!empty($this->request->query['embedded'])) {
+if (!empty($this->request->getQuery('embedded'))) {
     $formOptions['url']['prefix'] = 'api';
 
     $embeddedTableName = $this->request->controller;
-    if (!empty($this->request->plugin)) {
-        $embeddedTableName = $this->request->plugin . '.' . $embeddedTableName;
+    if (!empty($this->request->getParam('plugin'))) {
+        $embeddedTableName = $this->request->getParam('plugin') . '.' . $embeddedTableName;
     }
     $formOptions['data-embedded-display-field'] = TableRegistry::get($embeddedTableName)->displayField();
-    $formOptions['data-embedded-field-id'] = $this->request->query['foreign_key'];
+    $formOptions['data-embedded-field-id'] = $this->request->getQuery('foreign_key');
     $formOptions['data-embedded'] = true;
-    $formOptions['data-embedded-association-name'] = $this->request->query['embedded'];
-    if ($this->request->query('related_model') && $this->request->query('related_id')) {
-        $formOptions['data-embedded-related-model'] = $this->request->query('related_model');
-        $formOptions['data-embedded-related-id'] = $this->request->query('related_id');
+    $formOptions['data-embedded-association-name'] = $this->request->getQuery('embedded');
+    if ($this->request->getQuery('related_model') && $this->request->getQuery('related_id')) {
+        $formOptions['data-embedded-related-model'] = $this->request->getQuery('related_model');
+        $formOptions['data-embedded-related-id'] = $this->request->getQuery('related_id');
     }
 }
 ?>
@@ -76,7 +76,7 @@ if (!empty($this->request->query['embedded'])) {
      * Conversion logic
      * @todo probably this has to be moved to another plugin
      */
-    if (!$this->request->param('pass.conversion')) {
+    if (!$this->request->getParam('pass.conversion')) {
         echo $this->Form->create($options['entity'], $formOptions);
     }
 
@@ -88,7 +88,7 @@ if (!empty($this->request->query['embedded'])) {
      * Conversion logic
      * @todo probably this has to be moved to another plugin
      */
-    if (!$this->request->param('pass.conversion')) {
+    if (!$this->request->getParam('pass.conversion')) {
         echo $this->Form->button(__('Submit'), [
             'name' => 'btn_operation', 'value' => 'submit', 'class' => 'btn btn-primary'
         ]);

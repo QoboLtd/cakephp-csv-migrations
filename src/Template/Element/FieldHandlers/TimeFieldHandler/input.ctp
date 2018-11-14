@@ -33,4 +33,4 @@ if (!empty($minuteStep)) {
     $attributes += ['data-minute-step' => $minuteStep];
 }
 
-echo $this->Form->input($name, $attributes);
+echo $this->Form->control($name, $attributes);

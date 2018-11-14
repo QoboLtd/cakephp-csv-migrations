@@ -39,7 +39,7 @@ class RelatedFieldHandlerTest extends TestCase
 
         $table = TableRegistry::get('Foo');
         $entity = $table->get($id);
-        $fieldName = $table->displayField();
+        $fieldName = $table->getDisplayField();
         $this->assertContains($entity->{$fieldName}, $result);
     }
 
@@ -67,7 +67,7 @@ class RelatedFieldHandlerTest extends TestCase
 
         $table = TableRegistry::get('Foo');
         $entity = $table->get($id);
-        $fieldName = $table->displayField();
+        $fieldName = $table->getDisplayField();
         $this->assertContains($entity->{$fieldName}, $result);
         // assert that embedded-modal trigger button is NOT present (task #5347)
         $this->assertNotContains('data-target="#field_related_modal"', $result);

@@ -82,7 +82,7 @@ class DblistItemsController extends BaseController
         $entity = $this->DblistItems->get($id);
 
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $entity = $this->DblistItems->patchEntity($entity, $this->request->data);
+            $entity = $this->DblistItems->patchEntity($entity, $this->request->getData());
 
             if ($this->DblistItems->save($entity)) {
                 $this->Flash->success(__('The database list item has been saved.'));

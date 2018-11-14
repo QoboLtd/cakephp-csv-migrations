@@ -163,8 +163,8 @@ class Table extends BaseTable
     {
         $result = [];
         foreach ($this->associations() as $association) {
-            $result['associated'][$association->name()] = [
-                'accessibleFields' => [$association->primaryKey() => true]
+            $result['associated'][$association->getName()] = [
+                'accessibleFields' => [$association->getPrimaryKey() => true]
             ];
         }
 

@@ -61,7 +61,7 @@ class ImportsTableTest extends TestCase
     {
         $this->assertTrue($this->Imports->hasBehavior('Timestamp'), 'Missing behavior Timestamp.');
         $this->assertTrue($this->Imports->hasBehavior('Trash'), 'Missing behavior Trash.');
-        $this->assertInstanceOf('Cake\ORM\Association\HasMany', $this->Imports->association('ImportResults'));
+        $this->assertInstanceOf('Cake\ORM\Association\HasMany', $this->Imports->getAssociation('ImportResults'));
         $this->assertInstanceOf(ImportsTable::class, $this->Imports);
     }
 

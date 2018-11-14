@@ -96,7 +96,7 @@ echo $this->element('CsvMigrations.common_js_libs', ['scriptBlock' => 'bottom'])
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <?= $this->Form->input('options.fields.' . $column . '.column', [
+                            <?= $this->Form->control('options.fields.' . $column . '.column', [
                                 'empty' => true,
                                 'label' => false,
                                 'type' => 'select',

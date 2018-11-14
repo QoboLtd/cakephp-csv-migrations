@@ -28,7 +28,7 @@
                     <div class="row">
                         <div class="col-md-6">
                         <?= $this->Form->create($entity); ?>
-                            <?= $this->Form->input('name') ?>
+                            <?= $this->Form->control('name') ?>
                             <?= $this->Form->button(__('Submit'), ['class' => 'btn btn-primary']); ?>
                         <?= $this->Form->end() ?>
                         </div>

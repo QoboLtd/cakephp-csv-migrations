@@ -9,8 +9,8 @@ class ArticlesTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('articles');
-        $this->primaryKey('id');
+        $this->setTable('articles');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
     }

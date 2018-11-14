@@ -37,16 +37,16 @@ class CsvViewComponent extends Component
      */
     public function beforeFilter(Event $event)
     {
-        $table = $event->subject()->{$event->subject()->name};
+        $table = $event->getSubject()->{$event->getSubject()->getName()};
 
         // skip passing table fields if action is not supported by the plugin
-        if (in_array($this->request->action, Configure::readOrFail('CsvMigrations.actions'))) {
+        if (in_array($this->request->getParam('action'), Configure::readOrFail('CsvMigrations.actions'))) {
             // if action requires panels, arrange the fields into the panels
-            $panels = in_array($this->request->action, (array)Configure::read('CsvMigrations.panels.actions'));
-            $fields = Field::getCsvView($table, $this->request->action, true, $panels);
+            $panels = in_array($this->request->getParam('action'), (array)Configure::read('CsvMigrations.panels.actions'));
+            $fields = Field::getCsvView($table, $this->request->getParam('action'), true, $panels);
 
-            $event->subject()->set('fields', $fields);
-            $event->subject()->set('_serialize', ['fields']);
+            $event->getSubject()->set('fields', $fields);
+            $event->getSubject()->set('_serialize', ['fields']);
         }
     }
 
@@ -71,23 +71,23 @@ class CsvViewComponent extends Component
     {
         $panelActions = (array)Configure::read('CsvMigrations.panels.actions');
         $dynamicPanelActions = (array)Configure::read('CsvMigrations.panels.dynamic_actions');
-        if (!in_array($this->request->action, array_diff($panelActions, $dynamicPanelActions))) {
+        if (!in_array($this->request->getParam('action'), array_diff($panelActions, $dynamicPanelActions))) {
             return;
         }
 
-        $config = new ModuleConfig(ConfigType::MODULE(), $event->subject()->name);
+        $config = new ModuleConfig(ConfigType::MODULE(), $event->getSubject()->getName());
         $tableConfig = json_decode(json_encode($config->parse()), true);
 
-        $panels = $this->getPanels($tableConfig, $event->subject()->viewVars['entity']->toArray());
+        $panels = $this->getPanels($tableConfig, $event->getSubject()->viewVars['entity']->toArray());
         if (!empty($panels['fail'])) {
             // filter out fields of hidden panels
-            $event->subject()->viewVars['fields'] = array_diff_key(
-                $event->subject()->viewVars['fields'],
+            $event->getSubject()->viewVars['fields'] = array_diff_key(
+                $event->getSubject()->viewVars['fields'],
                 array_flip($panels['fail'])
             );
         }
 
-        if ((string)Configure::read('CsvMigrations.batch.action') === $this->request->action) {
+        if ((string)Configure::read('CsvMigrations.batch.action') === $this->request->getParam('action')) {
             $this->filterBatchFields($event);
         }
     }
@@ -100,7 +100,7 @@ class CsvViewComponent extends Component
      */
     protected function filterBatchFields(Event $event)
     {
-        $config = new ModuleConfig(ConfigType::MIGRATION(), $this->request->controller);
+        $config = new ModuleConfig(ConfigType::MIGRATION(), $this->request->getParam('controller'));
         $fields = json_decode(json_encode($config->parse()), true);
 
         $batchFields = (array)Configure::read('CsvMigrations.batch.types');
@@ -119,7 +119,7 @@ class CsvViewComponent extends Component
             return;
         }
 
-        $fields = $event->subject()->viewVars['fields'];
+        $fields = $event->getSubject()->viewVars['fields'];
         foreach ($fields as $panel => $panelFields) {
             foreach ($panelFields as $section => $sectionFields) {
                 foreach ($sectionFields as $key => $field) {
@@ -132,6 +132,6 @@ class CsvViewComponent extends Component
             }
         }
 
-        $event->subject()->viewVars['fields'] = $fields;
+        $event->getSubject()->viewVars['fields'] = $fields;
     }
 }

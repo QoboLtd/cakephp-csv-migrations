@@ -48,7 +48,7 @@ class DblistsTableTest extends TestCase
     public function testInitialize()
     {
         $this->assertTrue($this->Dblists->hasBehavior('Timestamp'), 'Missing behavior Timestamp.');
-        $assoc = $this->Dblists->association('DblistItems');
+        $assoc = $this->Dblists->getAssociation('DblistItems');
         $this->assertFalse(is_null($assoc), 'DblistItems cannot be found');
         $this->assertInstanceOf('Cake\ORM\Association\HasMany', $assoc, 'Dblists\'s association with DblistItems should be hasMany');
     }
@@ -60,7 +60,7 @@ class DblistsTableTest extends TestCase
      */
     public function testValidationDefault()
     {
-        $validator = $this->Dblists->validator();
+        $validator = $this->Dblists->getValidator();
         $this->assertTrue($validator->hasField('id'), 'Missing validation for id');
         $this->assertTrue($validator->hasField('name'), 'Missing validation for name');
     }

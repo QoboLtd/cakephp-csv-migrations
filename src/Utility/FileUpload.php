@@ -408,8 +408,8 @@ class FileUpload
 
             // @NOTE: in case of AJAX/API calls we don't have data[Table][field]
             // notation, only data[field].
-            if (isset($data[$tableInstance->alias()][$savedIdsField])) {
-                $savedIds = $data[$tableInstance->alias()][$savedIdsField];
+            if (isset($data[$tableInstance->getAlias()][$savedIdsField])) {
+                $savedIds = $data[$tableInstance->getAlias()][$savedIdsField];
             } else {
                 if (isset($data[$savedIdsField])) {
                     $savedIds = $data[$savedIdsField];

@@ -76,7 +76,7 @@ trait RelatedFieldTrait
             $tableName = $table;
             $table = TableRegistry::get($tableName);
         } else {
-            $tableName = $table->registryAlias();
+            $tableName = $table->getRegistryAlias();
         }
 
         $result['id'] = $data;
@@ -86,7 +86,7 @@ trait RelatedFieldTrait
             true
         );
         // display field
-        $result['displayField'] = $table->displayField();
+        $result['displayField'] = $table->getDisplayField();
         // get associated entity record
         $result['entity'] = $this->_getAssociatedRecord($table, $data);
         // get related table's displayField value
@@ -96,8 +96,8 @@ trait RelatedFieldTrait
             $fhf = new FieldHandlerFactory();
             $dispFieldVal = $fhf->renderValue(
                 $table,
-                $table->displayField(),
-                $result['entity']->{$table->displayField()},
+                $table->getDisplayField(),
+                $result['entity']->{$table->getDisplayField()},
                 ['renderAs' => Setting::RENDER_PLAIN_VALUE_RELATED()]
             );
             $result['dispFieldVal'] = empty($dispFieldVal) ? 'N/A' : $dispFieldVal;
@@ -122,7 +122,7 @@ trait RelatedFieldTrait
         $result = null;
         foreach ($table->associations() as $association) {
             if ($modelName === $association->className()) {
-                $result = $association->foreignKey();
+                $result = $association->getForeignKey();
             }
         }
 

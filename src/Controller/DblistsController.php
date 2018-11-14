@@ -43,7 +43,7 @@ class DblistsController extends BaseController
     {
         $entity = $this->Dblists->newEntity();
         if ($this->request->is('post')) {
-            $entity = $this->Dblists->patchEntity($entity, $this->request->data);
+            $entity = $this->Dblists->patchEntity($entity, $this->request->getData());
             if ($this->Dblists->save($entity)) {
                 $this->Flash->success(__('The database list has been saved.'));
 
@@ -68,7 +68,7 @@ class DblistsController extends BaseController
     {
         $entity = $this->Dblists->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $entity = $this->Dblists->patchEntity($entity, $this->request->data);
+            $entity = $this->Dblists->patchEntity($entity, $this->request->getData());
             if ($this->Dblists->save($entity)) {
                 $this->Flash->success(__('The database list has been saved.'));
 

@@ -9,8 +9,8 @@ class CategoriesTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('categories');
-        $this->primaryKey('id');
+        $this->setTable('categories');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
     }

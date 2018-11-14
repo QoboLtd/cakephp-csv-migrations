@@ -15,8 +15,8 @@ class UsersTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('users');
-        $this->primaryKey('id');
+        $this->setTable('users');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
         $this->addBehavior('Qobo/Utils.Footprint');

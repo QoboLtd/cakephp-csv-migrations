@@ -45,9 +45,9 @@ class DblistsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('dblists');
-        $this->displayField('name');
-        $this->primaryKey('id');
+        $this->setTable('dblists');
+        $this->setDisplayField('name');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
 

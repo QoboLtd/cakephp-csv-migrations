@@ -9,8 +9,8 @@ class LeadsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('leads');
-        $this->primaryKey('id');
+        $this->setTable('leads');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
     }

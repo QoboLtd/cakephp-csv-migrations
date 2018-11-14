@@ -44,9 +44,9 @@ class DblistItemsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('dblist_items');
-        $this->displayField('name');
-        $this->primaryKey('id');
+        $this->setTable('dblist_items');
+        $this->setDisplayField('name');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
         $this->addBehavior('Tree');

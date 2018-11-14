@@ -67,10 +67,10 @@ trait ImportTrait
 
         // PUT logic
         if ($this->request->is('put')) { // Import/mapping.ctp
-            $options = ImportUtility::prepareOptions($this->request->data('options'));
+            $options = ImportUtility::prepareOptions($this->request->getData('options'));
             $entity = $table->patchEntity($entity, ['options' => $options]);
             if ($table->save($entity)) {
-                return $this->redirect($this->request->here);
+                return $this->redirect($this->request->getAttribute('here'));
             } else {
                 $this->Flash->error(__('Unable to set import options.'));
             }

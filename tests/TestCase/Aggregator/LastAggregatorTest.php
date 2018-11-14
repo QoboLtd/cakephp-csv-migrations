@@ -27,7 +27,9 @@ class LastAggregatorTest extends TestCase
 
     public function testAliasMaxAggregator()
     {
-        new MaxAggregator(new Configuration($this->table, 'cost_amount'));
+        $result = new MaxAggregator(new Configuration($this->table, 'cost_amount'));
+
+        $this->assertInstanceOf(LastAggregator::class, $result);
     }
 
     public function testValidateWithNonExistingField()

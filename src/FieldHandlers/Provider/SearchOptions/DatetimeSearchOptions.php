@@ -59,7 +59,7 @@ class DatetimeSearchOptions extends AbstractSearchOptions
                 'value' => '{{value}}',
                 'type' => 'text',
                 'data-provide' => 'datetimepicker',
-                'data-magic-value' => true,
+                'data-magic-value' => isset($options['magic-value']) ? (bool)$options['magic-value'] : true,
                 'autocomplete' => 'off',
                 'label' => false,
                 'templates' => [

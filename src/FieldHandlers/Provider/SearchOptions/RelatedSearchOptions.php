@@ -62,10 +62,14 @@ class RelatedSearchOptions extends AbstractSearchOptions
                 'type' => 'select',
                 'data-type' => 'select2',
                 'data-display-field' => $relatedProperties['displayField'],
-                'data-magic-value' => 'Users' === $options['fieldDefinitions']->getLimit(),
+                'data-magic-value' => isset($options['magic-value']) ?
+                    (bool)$options['magic-value'] :
+                    'Users' === $options['fieldDefinitions']->getLimit(),
                 'escape' => false,
                 'autocomplete' => 'off',
-                'multiple' => 'multiple',
+                'multiple' => isset($options['multiple']) ?
+                    ((bool)$options['multiple'] ? 'multiple' : false) :
+                    'multiple',
                 'data-url' => $view->Url->build([
                     'prefix' => 'api',
                     'plugin' => $relatedProperties['plugin'],

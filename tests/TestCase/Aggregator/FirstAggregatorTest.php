@@ -27,7 +27,9 @@ class FirstAggregatorTest extends TestCase
 
     public function testAliasMinAggregator()
     {
-        new MinAggregator(new Configuration($this->table, 'cost_amount'));
+        $result = new MinAggregator(new Configuration($this->table, 'cost_amount'));
+
+        $this->assertInstanceOf(FirstAggregator::class, $result);
     }
 
     public function testValidateWithNonExistingField()

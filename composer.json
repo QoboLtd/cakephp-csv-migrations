@@ -1,40 +1,64 @@
 {
     "name": "qobo/cakephp-csv-migrations",
     "description": "CSV Migrations plugin for CakePHP",
+    "keywords": ["cakephp", "modules"],
     "type": "cakephp-plugin",
-	"license": "MIT",
-	"authors": [
-		{
-			"name": "Qobo Ltd",
-			"email": "info@qobo.biz",
-			"homepage": "https://www.qobo.biz",
-			"role": "Developer"
-		}
-	],
+    "license": "MIT",
+    "homepage": "https://www.qobo.biz",
+    "authors": [
+        {
+            "name": "Qobo Ltd",
+            "email": "support@qobo.biz",
+            "homepage": "https://www.qobo.biz",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/QoboLtd/cakephp-csv-migrations/issues",
+        "source": "https://github.com/QoboLtd/cakephp-csv-migrations"
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
     "require": {
         "eluceo/ical": "^0.11.0",
-        "qobo/cakephp-translations": "^9.0",
-        "qobo/cakephp-utils": "^9.0",
+        "qobo/cakephp-translations": "^10.0",
+        "qobo/cakephp-utils": "^10.0",
         "symfony/expression-language": "^3.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.0",
-        "cakephp/cakephp-codesniffer": "^3.0"
+        "qobo/cakephp-composer-dev": "^v1.0"
     },
     "replace": {
         "qobo/cakephp-csv-views": "1.0.0 - 1.0.5"
     },
     "autoload": {
         "psr-4": {
-            "CsvMigrations\\": "src",
-            "Burzum\\FileStorage\\Test\\Fixture\\": "tests"
+            "CsvMigrations\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "CsvMigrations\\Test\\": "tests",
-            "Burzum\\FileStorage\\Test\\": "./vendor/burzum/cakephp-file-storage/tests",
-            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
+            "CsvMigrations\\Test\\": "tests/",
+            "Burzum\\FileStorage\\Test\\": "vendor/burzum/cakephp-file-storage/tests/",
+            "Cake\\Test\\": "vendor/cakephp/cakephp/tests/"
         }
-    }
+    },
+    "scripts": {
+        "test": [
+            "phpcs",
+            "phpunit --no-coverage"
+        ],
+        "test-coverage": [
+            "phpcs",
+            "phpunit"
+        ],
+        "post-autoload-dump": "Cake\\Composer\\Installer\\PluginInstaller::postAutoloadDump"
+    },
+    "scripts-descriptions": {
+        "test": "Runs phpcs and phpunit without coverage",
+        "test-coverage": "Runs phpcs and phpunit with coverage enabled"
+    },
+    "prefer-stable": true
 }

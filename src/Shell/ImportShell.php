@@ -12,6 +12,7 @@
 namespace CsvMigrations\Shell;
 
 use AuditStash\Meta\RequestMetadata;
+use CakeDC\Users\Controller\Traits\CustomUsersTableTrait;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
@@ -37,6 +38,8 @@ use Qobo\Utils\Utility\User;
 
 class ImportShell extends Shell
 {
+    use CustomUsersTableTrait;
+
     /**
      * Set shell description and command line options
      *
@@ -53,18 +56,22 @@ class ImportShell extends Shell
     /**
      * Main method for shell execution
      *
-     * @return void
+     * @return bool
      */
-    public function main()
+    public function main() : bool
     {
         try {
             $lock = new FileLock('import_' . md5(__FILE__) . '.lock');
         } catch (Exception $e) {
-            $this->abort($e->getMessage());
+            $this->warn($e->getMessage());
+
+            return true;
         }
 
         if (!$lock->lock()) {
-            $this->abort('Import is already in progress');
+            $this->info('Import is already in progress');
+
+            return true;
         }
 
         $table = TableRegistry::get('CsvMigrations.Imports');
@@ -79,7 +86,9 @@ class ImportShell extends Shell
             // unlock file
             $lock->unlock();
 
-            $this->abort('No imports found');
+            $this->info('No imports found');
+
+            return true;
         }
 
         foreach ($query->all() as $import) {
@@ -87,8 +96,18 @@ class ImportShell extends Shell
             if (isset($listener)) {
                 EventManager::instance()->off($listener);
             }
+
+            if (! $import->get('created_by')) {
+                $this->warn('Skipping, "created_by" user is not set on this import.');
+                continue;
+            }
+
             // set current user to the one who uploaded the import (for footprint behavior)
-            User::setCurrentUser(['id' => $import->get('created_by')]);
+            User::setCurrentUser(
+                $this->getUsersTable()
+                    ->get($import->get('created_by'))
+                    ->toArray()
+            );
             // for audit-stash functionality
             $listener = new RequestMetadata(new ServerRequest(), User::getCurrentUser()['id']);
             EventManager::instance()->on($listener);
@@ -127,6 +146,8 @@ class ImportShell extends Shell
 
         // unlock file
         $lock->unlock();
+
+        return true;
     }
 
     /**
@@ -264,6 +285,7 @@ class ImportShell extends Shell
             $progress->increment(100 / $count);
             $progress->draw();
         }
+
         $this->out(null);
     }
 
@@ -407,8 +429,6 @@ class ImportShell extends Shell
      */
     protected function _processData(Table $table, array $csvFields, array $data)
     {
-        $result = [];
-
         $schema = $table->schema();
         foreach ($data as $field => $value) {
             if (!empty($csvFields) && in_array($field, array_keys($csvFields))) {
@@ -442,6 +462,15 @@ class ImportShell extends Shell
      */
     protected function _findRelatedRecord(Table $table, $field, $value)
     {
+        $csvField = FieldUtility::getCsvField($table, $field);
+        if (null !== $csvField && 'related' === $csvField->getType()) {
+            $value = $this->_findRelatedRecord(
+                TableRegistry::get($csvField->getLimit()),
+                TableRegistry::get($csvField->getLimit())->getDisplayField(),
+                $value
+            );
+        }
+
         foreach ($table->associations() as $association) {
             if ($association->getForeignKey() !== $field) {
                 continue;
@@ -449,10 +478,15 @@ class ImportShell extends Shell
 
             $targetTable = $association->getTarget();
 
-            $primaryKey = $targetTable->getPrimaryKey();
+            // combine lookup fields with primary key and display field
+            $lookupFields = array_merge(
+                FieldUtility::getLookup($targetTable),
+                [$targetTable->getPrimaryKey(), $targetTable->getDisplayField()]
+            );
 
-            $lookupFields = FieldUtility::getLookup($targetTable);
-            $lookupFields[] = $primaryKey;
+            // remove virtual/non-existing fields
+            $lookupFields = array_intersect($lookupFields, $targetTable->getSchema()->columns());
+
             // alias lookup fields
             foreach ($lookupFields as $k => $v) {
                 $lookupFields[$k] = $targetTable->aliasField($v);
@@ -462,7 +496,7 @@ class ImportShell extends Shell
             $lookupValues = array_fill(0, count($lookupFields), $value);
 
             $query = $targetTable->find('all')
-                ->select([$targetTable->aliasField($primaryKey)])
+                ->select([$targetTable->aliasField($targetTable->getPrimaryKey())])
                 ->where(['OR' => array_combine($lookupFields, $lookupValues)]);
 
             if ($query->isEmpty()) {
@@ -471,7 +505,7 @@ class ImportShell extends Shell
 
             $entity = $query->first();
 
-            return $entity->get($primaryKey);
+            return $entity->get($targetTable->getPrimaryKey());
         }
 
         return $value;

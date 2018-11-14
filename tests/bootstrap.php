@@ -1,6 +1,4 @@
 <?php
-// @codingStandardsIgnoreFile
-
 use Cake\Core\Configure;
 use Cake\Filesystem\Folder;
 use Cake\Utility\Security;
@@ -10,29 +8,28 @@ if (empty($pluginName)) {
     throw new \RuntimeException("Plugin name is not configured");
 }
 
-$findRoot = function () {
-    $root = dirname(__DIR__);
-    if (is_dir($root . '/vendor/cakephp/cakephp')) {
-        return $root;
-    }
-
-    $root = dirname(dirname(__DIR__));
-    if (is_dir($root . '/vendor/cakephp/cakephp')) {
-        return $root;
-    }
-
-    $root = dirname(dirname(dirname(__DIR__)));
-    if (is_dir($root . '/vendor/cakephp/cakephp')) {
-        return $root;
-    }
-
+/*
+ * Test suite bootstrap
+ *
+ * This function is used to find the location of CakePHP whether CakePHP
+ * has been installed as a dependency of the plugin, or the plugin is itself
+ * installed as a dependency of an application.
+ */
+$findRoot = function ($root) {
+    do {
+        $lastRoot = $root;
+        $root = dirname($root);
+        if (is_dir($root . '/vendor/cakephp/cakephp')) {
+            return $root;
+        }
+    } while ($root !== $lastRoot);
     throw new \RuntimeException("Failed to find CakePHP");
 };
 
 if (!defined('DS')) {
     define('DS', DIRECTORY_SEPARATOR);
 }
-define('ROOT', $findRoot());
+define('ROOT', $findRoot(__FILE__));
 define('APP_DIR', 'App');
 define('WEBROOT_DIR', 'webroot');
 define('APP', ROOT . '/tests/App/');
@@ -58,7 +55,7 @@ Configure::write('App', [
     ]
 ]);
 Configure::write('debug', true);
-Security::salt('C14#E9YY0t*QZ2M9Ia4D6swLJ8507Kai47C14#E9YY0t*QZ2M9Ia4D6swLJ8507Kai47');
+Security::setSalt('C14#E9YY0t*QZ2M9Ia4D6swLJ8507Kai47C14#E9YY0t*QZ2M9Ia4D6swLJ8507Kai47');
 
 $TMP = new Folder(TMP);
 $TMP->create(TMP . 'cache/models', 0777);
@@ -110,14 +107,11 @@ Cake\Datasource\ConnectionManager::setConfig('test', [
 // Alias AppController to the test App
 class_alias($pluginName . '\Test\App\Controller\AppController', 'App\Controller\AppController');
 // If plugin has routes.php/bootstrap.php then load them, otherwise don't.
-$loadPluginRoutes = file_exists(dirname(__FILE__) . DS . 'config' . DS . 'routes.php');
-$loadPluginBootstrap = file_exists(dirname(__FILE__) . DS . 'config' . DS . 'bootstrap.php');
+$loadPluginRoutes = file_exists(ROOT . DS . 'config' . DS . 'routes.php');
+$loadPluginBootstrap = file_exists(ROOT . DS . 'config' . DS . 'bootstrap.php');
 Cake\Core\Plugin::load('Qobo/Utils', [ 'bootstrap' => true ]);
 Cake\Core\Plugin::load('CakeDC/Users', ['routes' => true, 'bootstrap' => true ]);
 Cake\Core\Plugin::load($pluginName, ['path' => ROOT . DS, 'autoload' => true, 'routes' => $loadPluginRoutes, 'bootstrap' => $loadPluginBootstrap]);
-
-Cake\Routing\DispatcherFactory::add('Routing');
-Cake\Routing\DispatcherFactory::add('ControllerFactory');
 
 // Load configuration file(s)
 Configure::load('CsvMigrations.csv_migrations');

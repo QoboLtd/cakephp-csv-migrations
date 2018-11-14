@@ -43,22 +43,15 @@ class FilesRenderer extends AbstractRenderer
 
         $fileUpload = new FileUpload($table);
 
-        $entities = $fileUpload->getFiles($table, $field, $data);
+        $entities = $fileUpload->getFiles($field, $data);
 
         if ($entities->isEmpty()) {
             return '';
         }
 
-        $params = [
-            'entities' => $entities,
-            'imageSize' => empty($options['imageSize']) ?
-                Configure::read('FileStorage.defaultImageSize') :
-                $options['imageSize']
-        ];
-
         $defaultElement = 'CsvMigrations.FieldHandlers/FilesFieldHandler/value';
         $element = empty($options['element']) ? $defaultElement : $options['element'];
 
-        return $this->renderElement($element, $params);
+        return $this->renderElement($element, ['entities' => $entities]);
     }
 }

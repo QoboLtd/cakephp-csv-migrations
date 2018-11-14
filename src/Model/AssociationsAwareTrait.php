@@ -15,6 +15,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
+use CsvMigrations\Utility\FileUpload;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility;
@@ -256,9 +257,9 @@ trait AssociationsAwareTrait
 
         $this->setAssociation(
             'hasMany',
-            static::generateAssociationName('Burzum/FileStorage.FileStorage', $field->getName()),
+            static::generateAssociationName(FileUpload::FILE_STORAGE_TABLE_NAME, $field->getName()),
             [
-                'className' => 'Burzum/FileStorage.FileStorage',
+                'className' => FileUpload::FILE_STORAGE_TABLE_NAME,
                 'foreignKey' => 'foreign_key',
                 'conditions' => ['model' => $this->getTable(), 'model_field' => $field->getName()]
             ]

@@ -11,6 +11,7 @@
  */
 
 use Cake\Utility\Hash;
+use CsvMigrations\Utility\FileUpload;
 
 $uuid = $this->Text->uuid();
 $limit = 3;
@@ -34,7 +35,10 @@ $limit = 3;
     <div class="col-xs-4">
         <a href="<?= $entity->get('path') ?>" target="_blank">
             <div class="thumbnail" title="<?= $entity->get('filename') ?>">
-                <?= $this->Html->image(Hash::get($entity->get('thumbnails'), $imageSize)) ?>
+                <?= $this->Html->image(Hash::get(
+                    $entity->get('thumbnails'),
+                    in_array($entity->extension, FileUpload::IMAGE_EXTENSIONS) ? 'small' : 'huge'
+                )) ?>
                 <div class="caption">
                     <p class="small text-center no-margin" style="white-space: nowrap; text-overflow: ellipsis;overflow: hidden;">
                         <?= $entity->get('filename') ?>

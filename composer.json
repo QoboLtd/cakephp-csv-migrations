@@ -42,6 +42,7 @@
         "psr-4": {
             "CsvMigrations\\Test\\": "tests/",
             "Burzum\\FileStorage\\Test\\": "vendor/burzum/cakephp-file-storage/tests/",
+            "CakeDC\\Users\\Test\\": "vendor/cakedc/users/tests/",
             "Cake\\Test\\": "vendor/cakephp/cakephp/tests/"
         }
     },

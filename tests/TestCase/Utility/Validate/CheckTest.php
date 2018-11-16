@@ -10,7 +10,7 @@ use CsvMigrations\Utility\Validate\Check\CheckInterface;
  */
 class CheckTest extends TestCase
 {
-    public function testGetInstance()
+    public function testGetInstance() : void
     {
         $checks = Check::getList('Users');
         // This is just a safety net in case test setup changes
@@ -29,7 +29,7 @@ class CheckTest extends TestCase
     /**
      * @expectedException \RuntimeException
      */
-    public function testGetInstanceExceptionMissingClass()
+    public function testGetInstanceExceptionMissingClass() : void
     {
         $result = Check::getInstance('this class does not exist');
     }
@@ -37,12 +37,12 @@ class CheckTest extends TestCase
     /**
      * @expectedException \RuntimeException
      */
-    public function testGetInstanceExceptionBadInterface()
+    public function testGetInstanceExceptionBadInterface() : void
     {
         $result = Check::getInstance(__CLASS__);
     }
 
-    public function testGetList()
+    public function testGetList() : void
     {
         $result = Check::getList('Users');
         $this->assertTrue(is_array($result), "getList() returned a non-array result");

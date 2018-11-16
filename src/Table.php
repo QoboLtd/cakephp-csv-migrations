@@ -47,7 +47,7 @@ class Table extends BaseTable
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config) : void
     {
         parent::initialize($config);
 
@@ -60,7 +60,9 @@ class Table extends BaseTable
         ))->parse();
 
         // set display field from config
-        $this->setDisplayField($config->table->display_field);
+        if (property_exists($config, 'table') && property_exists($config->table, 'display_field')) {
+            $this->setDisplayField($config->table->display_field);
+        }
 
         $this->setAssociations();
     }
@@ -71,7 +73,7 @@ class Table extends BaseTable
      * @param \Cake\Validation\Validator $validator Validator instance
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
+    public function validationDefault(Validator $validator) : Validator
     {
         // configurable in config/csv_migrations.php
         if (! Configure::read('CsvMigrations.tableValidation')) {
@@ -80,6 +82,11 @@ class Table extends BaseTable
 
         $className = App::shortName(get_class($this), 'Model/Table', 'Table');
         $config = (new ModuleConfig(ConfigType::MIGRATION(), $className))->parse();
+        $config = json_encode($config);
+        if (false === $config) {
+            return $validator;
+        }
+        $config = json_decode($config, true);
         $factory = new FieldHandlerFactory();
 
         foreach ($config as $column) {
@@ -97,7 +104,7 @@ class Table extends BaseTable
      * @param \ArrayObject $options from the parent afterSave
      * @return void
      */
-    public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options)
+    public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options) : void
     {
         EventManager::instance()->dispatch(new Event(
             (string)EventName::MODEL_AFTER_SAVE(),
@@ -112,12 +119,12 @@ class Table extends BaseTable
      * Uses [parent] section of tables config.ini to define
      * where to redirect after the entity was added/edited.
      *
-     * @param \Cake\Datasource\RepositoryInterface $table of the entity table
+     * @param \Cake\ORM\Table $table of the entity table
      * @param \Cake\Datasource\EntityInterface $entity of the actual table.
      *
-     * @return array $result containing Cake-standard array for redirect.
+     * @return mixed[] $result containing CakePHP-standard array for redirect.
      */
-    public function getParentRedirectUrl(RepositoryInterface $table, EntityInterface $entity)
+    public function getParentRedirectUrl(RepositoryInterface $table, EntityInterface $entity) : array
     {
         $config = (new ModuleConfig(ConfigType::MODULE(), $this->getAlias()))->parse();
         if (! isset($config->parent)) {
@@ -145,7 +152,12 @@ class Table extends BaseTable
         }
 
         if ('self' === $config->parent->redirect) {
-            return ['action' => 'view', $entity->get($table->getPrimaryKey())];
+            $values = [];
+            foreach ((array)$table->getPrimaryKey() as $primaryKey) {
+                $values = $entity->get($primaryKey);
+            }
+
+            return array_merge(['action' => 'view'], $values);
         }
 
         return [];
@@ -157,14 +169,19 @@ class Table extends BaseTable
      * Enable accessibility to associations primary key. Useful for
      * patching entities with associated data during updating process.
      *
-     * @return array
+     * @return mixed[]
      */
-    public function enablePrimaryKeyAccess()
+    public function enablePrimaryKeyAccess() : array
     {
         $result = [];
         foreach ($this->associations() as $association) {
+            $accessibleFields = [];
+            foreach ((array)$association->getTarget()->getPrimaryKey() as $primaryKey) {
+                $accessibleFields[$primaryKey] = true;
+            }
+
             $result['associated'][$association->getName()] = [
-                'accessibleFields' => [$association->getPrimaryKey() => true]
+                'accessibleFields' => $accessibleFields
             ];
         }
 

@@ -48,7 +48,7 @@ class RelatedSearchOptions extends AbstractSearchOptions
 
         $result[$field] = $defaultOptions;
 
-        $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), null);
+        $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), '');
 
         $view = $this->config->getView();
 

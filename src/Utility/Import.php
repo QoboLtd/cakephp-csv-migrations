@@ -13,11 +13,14 @@ namespace CsvMigrations\Utility;
 
 use Cake\Controller\Component\FlashComponent;
 use Cake\Core\Configure;
+use Cake\Datasource\QueryInterface;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Hash;
 use Cake\View\View;
 use CsvMigrations\CsvMigration;
 use CsvMigrations\Model\Entity\Import as ImportEntity;
@@ -48,6 +51,21 @@ class Import
     ];
 
     /**
+     * @var \Cake\ORM\Table
+     */
+    private $table;
+
+    /**
+     * @var \Cake\Http\ServerRequest
+     */
+    private $request;
+
+    /**
+     * @var \Cake\Controller\Component\FlashComponent
+     */
+    private $flash;
+
+    /**
      * Constructor method.
      *
      * @param \Cake\ORM\Table $table Table instance
@@ -57,9 +75,9 @@ class Import
      */
     public function __construct(Table $table, ServerRequest $request, FlashComponent $flash)
     {
-        $this->_table = $table;
-        $this->_request = $request;
-        $this->_flash = $flash;
+        $this->table = $table;
+        $this->request = $request;
+        $this->flash = $flash;
     }
 
     /**
@@ -69,7 +87,7 @@ class Import
      * @param bool $fullBase Full base flag
      * @return string
      */
-    public static function getProcessedFile(ImportEntity $import, $fullBase = true)
+    public static function getProcessedFile(ImportEntity $import, bool $fullBase = true) : string
     {
         $pathInfo = pathinfo($import->get('filename'));
 
@@ -88,13 +106,19 @@ class Import
      *
      * @return string
      */
-    public function upload()
+    public function upload() : string
     {
         if (!$this->_validateUpload()) {
             return '';
         }
 
-        return $this->_uploadFile();
+        $result = $this->_uploadFile();
+
+        if ('' === $result) {
+            $this->flash->error('Unable to upload file to the specified directory.');
+        }
+
+        return $result;
     }
 
     /**
@@ -105,11 +129,11 @@ class Import
      * @param string $filename Uploaded file name
      * @return bool
      */
-    public function create(ImportsTable $table, ImportEntity $entity, $filename)
+    public function create(ImportsTable $table, ImportEntity $entity, string $filename) : bool
     {
-        $modelName = $this->_request->getParam('controller');
-        if ($this->_request->getParam('plugin')) {
-            $modelName = $this->_request->getParam('plugin') . '.' . $modelName;
+        $modelName = $this->request->getParam('controller');
+        if ($this->request->getParam('plugin')) {
+            $modelName = $this->request->getParam('plugin') . '.' . $modelName;
         }
 
         $data = [
@@ -121,22 +145,22 @@ class Import
 
         $entity = $table->patchEntity($entity, $data);
 
-        return $table->save($entity);
+        return (bool)$table->save($entity);
     }
 
     /**
      * Import results getter.
      *
      * @param \CsvMigrations\Model\Entity\Import $entity Import entity
-     * @param array $columns Display columns
-     * @return \Cake\ORM\Query
+     * @param string[] $columns Display columns
+     * @return \Cake\Datasource\QueryInterface
      */
-    public function getImportResults(ImportEntity $entity, array $columns)
+    public function getImportResults(ImportEntity $entity, array $columns) : QueryInterface
     {
-        $sortCol = $this->_request->query('order.0.column') ?: 0;
+        $sortCol = Hash::get($this->request->getQueryParams(), 'order.0.column', 0);
         $sortCol = array_key_exists($sortCol, $columns) ? $columns[$sortCol] : current($columns);
 
-        $sortDir = $this->_request->query('order.0.dir') ?: 'asc';
+        $sortDir = $this->request->query('order.0.dir') ?: 'asc';
         if (!in_array($sortDir, ['asc', 'desc'])) {
             $sortDir = 'asc';
         }
@@ -153,10 +177,10 @@ class Import
     /**
      * Prepare import options by removing fields with empty mapping parameters.
      *
-     * @param array $options Import options
-     * @return array
+     * @param mixed[] $options Import options
+     * @return mixed[]
      */
-    public static function prepareOptions(array $options)
+    public static function prepareOptions(array $options) : array
     {
         if (empty($options['fields'])) {
             return [];
@@ -181,7 +205,7 @@ class Import
      * @param bool $withHeader Include header row into the count
      * @return int
      */
-    public static function getRowsCount($path, $withHeader = false)
+    public static function getRowsCount(string $path, bool $withHeader = false) : int
     {
         $result = trim(exec("/usr/bin/env wc -l '" . $path . "'", $output, $return));
         if (0 === $return) {
@@ -200,9 +224,7 @@ class Import
             return true;
         });
 
-        $result = (int)$result;
-
-        if (!$withHeader) {
+        if (! $withHeader) {
             $result = $result - 1;
         }
 
@@ -213,9 +235,9 @@ class Import
      * Get upload file column headers (first row).
      *
      * @param \CsvMigrations\Model\Entity\Import $entity Import entity
-     * @return array
+     * @return string[]
      */
-    public static function getUploadHeaders(ImportEntity $entity)
+    public static function getUploadHeaders(ImportEntity $entity) : array
     {
         $reader = Reader::createFromPath($entity->filename, 'r');
 
@@ -225,11 +247,11 @@ class Import
     /**
      * Get target module fields.
      *
-     * @return array
+     * @return string[]
      */
-    public function getTableColumns()
+    public function getTableColumns() : array
     {
-        $schema = $this->_table->getSchema();
+        $schema = $this->table->getSchema();
 
         $result = [];
         foreach ($schema->columns() as $column) {
@@ -246,11 +268,11 @@ class Import
     /**
      * Method that re-formats entities to Datatables supported format.
      *
-     * @param \Cake\ORM\ResultSet $resultSet ResultSet
-     * @param array $fields Display fields
-     * @return array
+     * @param \Cake\Datasource\ResultSetInterface $resultSet ResultSet
+     * @param string[] $fields Display fields
+     * @return mixed[]
      */
-    public static function toDatatables(ResultSet $resultSet, array $fields)
+    public static function toDatatables(ResultSetInterface $resultSet, array $fields) : array
     {
         $result = [];
 
@@ -270,12 +292,12 @@ class Import
     /**
      * Add action buttons to response data.
      *
-     * @param \Cake\ORM\ResultSet $resultSet ResultSet
+     * @param \Cake\Datasource\ResultSetInterface $resultSet ResultSet
      * @param \Cake\ORM\Table $table Table instance
-     * @param array $data Response data
-     * @return array
+     * @param mixed[] $data Response data
+     * @return mixed[]
      */
-    public static function actionButtons(ResultSet $resultSet, Table $table, array $data)
+    public static function actionButtons(ResultSetInterface $resultSet, Table $table, array $data) : array
     {
         $view = new View();
         list($plugin, $controller) = pluginSplit($table->getRegistryAlias());
@@ -310,11 +332,11 @@ class Import
     /**
      * Response data status labels setter.
      *
-     * @param array $data Response data
+     * @param mixed[] $data Response data
      * @param int $index Status column index
-     * @return array
+     * @return mixed[]
      */
-    public static function setStatusLabels(array $data, $index)
+    public static function setStatusLabels(array $data, int $index) : array
     {
         $view = new View();
         $statusLabels = [
@@ -336,16 +358,16 @@ class Import
      *
      * @return bool
      */
-    protected function _validateUpload()
+    protected function _validateUpload() : bool
     {
-        if (!$this->_request->getData('file')) {
-            $this->_flash->error(__('Please choose a file to upload.'));
+        if (! $this->request->getData('file')) {
+            $this->flash->error('Please choose a file to upload.');
 
             return false;
         }
 
-        if (!in_array($this->_request->getData('file.type'), $this->__supportedMimeTypes)) {
-            $this->_flash->error(__('Unable to upload file, unsupported file provided.'));
+        if (! in_array($this->request->getData('file.type'), $this->__supportedMimeTypes)) {
+            $this->flash->error('Unable to upload file, unsupported file provided.');
 
             return false;
         }
@@ -358,27 +380,36 @@ class Import
      *
      * @return string
      */
-    protected function _uploadFile()
+    protected function _uploadFile() : string
     {
-        $uploadPath = $this->_getUploadPath();
-
-        if (empty($uploadPath)) {
+        if (! is_string($this->request->getData('file.name'))) {
             return '';
         }
 
-        $pathInfo = pathinfo($this->_request->getData('file.name'));
+        if (! is_string($this->request->getData('file.tmp_name'))) {
+            return '';
+        }
 
-        $time = new Time();
-        $timestamp = $time->i18nFormat('yyyyMMddHHmmss');
+        $uploadPath = $this->_getUploadPath();
+        if ('' === $uploadPath) {
+            return '';
+        }
 
-        $filename = preg_replace('/\W/', '_', $pathInfo['filename']);
-        $filename = preg_replace('/_+/', '_', $filename);
+        $pathInfo = pathinfo($this->request->getData('file.name'));
+
+        $filename = (string)preg_replace('/\W/', '_', $pathInfo['filename']);
+        $filename = (string)preg_replace('/_+/', '_', $filename);
         $filename = trim($filename, '_');
 
-        $path = $uploadPath . $timestamp . '_' . $filename . '.' . $pathInfo['extension'];
-        if (!move_uploaded_file($this->_request->getData('file.tmp_name'), $path)) {
-            $this->_flash->error(__('Unable to upload file to the specified directory.'));
+        $path = sprintf(
+            '%s%s_%s.%s',
+            $uploadPath,
+            (new Time())->i18nFormat('yyyyMMddHHmmss'),
+            $filename,
+            $pathInfo['extension']
+        );
 
+        if (! move_uploaded_file($this->request->getData('file.tmp_name'), $path)) {
             return '';
         }
 
@@ -390,7 +421,7 @@ class Import
      *
      * @return string
      */
-    protected function _getUploadPath()
+    protected function _getUploadPath() : string
     {
         $result = Configure::read('Importer.path');
 
@@ -409,7 +440,7 @@ class Import
 
         // create upload path, recursively.
         if (!mkdir($result, 0777, true)) {
-            $this->_flash->error(__('Failed to create upload directory.'));
+            $this->flash->error('Failed to create upload directory.');
 
             return '';
         }

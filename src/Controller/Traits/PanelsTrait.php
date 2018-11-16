@@ -34,8 +34,8 @@ trait PanelsTrait
     public function getPanels(array $config, array $data)
     {
         $result = ['success' => [], 'fail' => []];
-        $panels = Panel::getPanelNames($config) ?: [];
-        foreach ($panels as $name) {
+
+        foreach (Panel::getPanelNames($config) as $name) {
             $panel = new Panel($name, $config);
             if (!empty($data) && $panel->evalExpression($data)) {
                 $result['success'][] = $panel->getName();

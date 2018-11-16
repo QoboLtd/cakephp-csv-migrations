@@ -30,18 +30,14 @@ class DTZone
      * If application timezone is not configured,
      * fallback on UTC.
      *
-     * @todo Move to Qobo/Utils
+     * @todo Move to \Qobo\Utils
      * @return string Timezone string, like UTC
      */
-    public static function getAppTimeZone()
+    public static function getAppTimeZone() : string
     {
-        $result = 'UTC';
         $appTimezone = Time::now()->format('e');
-        if (!empty($appTimezone)) {
-            $result = $appTimezone;
-        }
 
-        return $result;
+        return empty($appTimezone) ? 'UTC' : $appTimezone;
     }
 
     /**
@@ -52,16 +48,18 @@ class DTZone
      * @param \DateTimeZone $dtz DateTimeZone instance
      * @return \DateTime
      */
-    public static function toDateTime($value, DateTimeZone $dtz)
+    public static function toDateTime($value, DateTimeZone $dtz) : DateTime
     {
         // TODO : Figure out where to move. Can vary for different source objects
         $format = 'Y-m-d H:i:s';
 
         if (is_string($value)) {
-            $value = strtotime($value);
-            $value = date($format, $value);
+            $val = strtotime($value);
+            if (false === $val) {
+                throw new InvalidArgumentException(sprintf('Unsupported datetime string provided: %s', $value));
+            }
 
-            return new DateTime($value, $dtz);
+            return new DateTime(date($format, $val), $dtz);
         }
 
         if ($value instanceof Time) {
@@ -89,7 +87,7 @@ class DTZone
      * @param \DateTime $value DateTime value to offset
      * @return \DateTime
      */
-    public static function offsetToUtc(DateTime $value)
+    public static function offsetToUtc(DateTime $value) : DateTime
     {
         $result = $value;
 

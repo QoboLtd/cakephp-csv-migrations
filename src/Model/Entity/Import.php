@@ -18,7 +18,7 @@ use Cake\ORM\Entity;
  *
  * @property string $id
  * @property string $filename
- * @property $options
+ * @property string $options
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
  * @property \Cake\I18n\Time $trashed

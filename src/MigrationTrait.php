@@ -57,15 +57,15 @@ trait MigrationTrait
      * array of field definitions is returned.  Unless, of course,
      * there are stub fields provided.
      *
-     * @param  array $stubFields Stub fields
-     * @return array             Associative array of fields and their definitions
+     * @param mixed[] $stubFields Stub fields
+     * @return mixed[] Associative array of fields and their definitions
      */
-    public function getFieldsDefinitions(array $stubFields = [])
+    public function getFieldsDefinitions(array $stubFields = []) : array
     {
         $result = [];
 
         // Get cached definitions
-        if (!empty($this->_fieldDefinitions)) {
+        if (! empty($this->_fieldDefinitions)) {
             $result = $this->_fieldDefinitions;
         }
 
@@ -75,8 +75,9 @@ trait MigrationTrait
             list(, $moduleName) = pluginSplit($moduleName);
 
             $mc = new ModuleConfig(ConfigType::MIGRATION(), $moduleName);
-            $result = (array)json_decode(json_encode($mc->parse()), true);
-            if (!empty($result)) {
+            $config = json_encode($mc->parse());
+            $result = false === $config ? [] : json_decode($config, true);
+            if (! empty($result)) {
                 $this->_fieldDefinitions = $result;
             }
         }

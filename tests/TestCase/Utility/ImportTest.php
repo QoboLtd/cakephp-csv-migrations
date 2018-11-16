@@ -20,7 +20,7 @@ class ImportTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
     }
@@ -30,12 +30,12 @@ class ImportTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown() : void
     {
         parent::tearDown();
     }
 
-    public function testToDatatables()
+    public function testToDatatables() : void
     {
         $table = TableRegistry::get('CsvMigrations.ImportResults');
         $query = $table->find();
@@ -53,7 +53,7 @@ class ImportTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public function testActionButtons()
+    public function testActionButtons() : void
     {
         $articlesTable = TableRegistry::get('CsvMigrations.Articles');
         $table = TableRegistry::get('CsvMigrations.ImportResults');
@@ -69,7 +69,7 @@ class ImportTest extends TestCase
         $this->assertContains($expected, end($result[0]));
     }
 
-    public function testSetStatusLabels()
+    public function testSetStatusLabels() : void
     {
         $articlesTable = TableRegistry::get('CsvMigrations.Articles');
         $table = TableRegistry::get('CsvMigrations.ImportResults');

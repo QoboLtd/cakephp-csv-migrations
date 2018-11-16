@@ -56,9 +56,9 @@ class Panel
      *
      *
      * @param string $name Panel name
-     * @param array $config Table's config
+     * @param mixed[] $config Table's config
      */
-    public function __construct($name, array $config)
+    public function __construct(string $name, array $config)
     {
         $this->setName($name);
         $this->setExpression($config);
@@ -70,7 +70,7 @@ class Panel
      *
      * @return string panel name
      */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
@@ -78,10 +78,10 @@ class Panel
     /**
      * Setter of panel name.
      *
-     * @param  string $name Panel name
+     * @param string $name Panel name
      * @return void
      */
-    public function setName($name = '')
+    public function setName(string $name = '') : void
     {
         if (empty($name)) {
             throw new RuntimeException('Panel name not found therefore the object cannot be created');
@@ -92,26 +92,23 @@ class Panel
     /**
      * Getter of expression
      *
-     * @param  bool $clean Flag for removing the expression tokens
+     * @param bool $clean Flag for removing the expression tokens
      * @return string expression
      */
-    public function getExpression($clean = false)
+    public function getExpression(bool $clean = false) : string
     {
-        if ($clean) {
-            //Clean up expression from placeholder tokens.
-            return str_replace(self::EXP_TOKEN, '', $this->expression);
-        }
-
-        return $this->expression;
+        return $clean ?
+            str_replace(self::EXP_TOKEN, '', $this->expression) : // clean up expression from placeholder tokens.
+            $this->expression;
     }
 
     /**
      * Setter of expression.
      *
-     * @param  array $config Table's config
+     * @param mixed[] $config Table's config
      * @return void
      */
-    public function setExpression(array $config)
+    public function setExpression(array $config) : void
     {
         $panels = Hash::get($config, self::PANELS);
         $exp = Hash::get($panels, $this->getName());
@@ -121,9 +118,9 @@ class Panel
     /**
      * Getter of fields
      *
-     * @return array fields
+     * @return string[] fields
      */
-    public function getFields()
+    public function getFields() : array
     {
         return $this->fields;
     }
@@ -131,9 +128,10 @@ class Panel
     /**
      * Setter of fields.
      *
+     * @throws InvalidArgumentException
      * @return void
      */
-    public function setFields()
+    public function setFields() : void
     {
         preg_match_all('#' . self::EXP_TOKEN . '(.*?)' . self::EXP_TOKEN . '#', $this->getExpression(), $matches);
         if (empty($matches[1])) {
@@ -145,17 +143,14 @@ class Panel
     /**
      * Returns field values from the given entity.
      *
-     * @param  array $data    to get the values for placeholders
-     * @return array          Associative array, Keys: placeholders Values: values
+     * @param mixed[] $data to get the values for placeholders
+     * @return mixed[] Associative array, Keys: placeholders Values: values
      */
-    public function getFieldValues(array $data)
+    public function getFieldValues(array $data) : array
     {
         $result = [];
-        foreach ($this->getFields() as $f) {
-            $result[$f] = null;
-            if (array_key_exists($f, $data)) {
-                $result[$f] = $data[$f];
-            }
+        foreach ($this->getFields() as $field) {
+            $result[$field] = array_key_exists($field, $data) ? $data[$field] : null;
         }
 
         return $result;
@@ -164,10 +159,10 @@ class Panel
     /**
      * Evaluate the expression.
      *
-     * @param  array $data    to get the values for placeholders
-     * @return bool           True if it matches, false otherwise.
+     * @param mixed[] $data to get the values for placeholders
+     * @return bool True if it matches, false otherwise.
      */
-    public function evalExpression(array $data)
+    public function evalExpression(array $data) : bool
     {
         $language = new ExpressionLanguage();
         $values = $this->getFieldValues($data);
@@ -179,13 +174,13 @@ class Panel
     /**
      * Returns panel names.
      *
-     * @param  array  $config Table's config
-     * @return array|bool  Panel names or false
+     * @param mixed[] $config Table's config
+     * @return mixed[]
      */
-    public static function getPanelNames(array $config)
+    public static function getPanelNames(array $config) : array
     {
         if (empty($config[self::PANELS])) {
-            return false;
+            return [];
         }
 
         return array_keys($config[self::PANELS]);

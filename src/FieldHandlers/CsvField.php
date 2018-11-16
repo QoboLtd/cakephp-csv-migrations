@@ -347,11 +347,11 @@ class CsvField
      * This is an alias of getLimit().
      *
      * @see CsvField::getLimit
-     * @return int
+     * @return string
      */
-    public function getAssocCsvModule()
+    public function getAssocCsvModule() : string
     {
-        return $this->getLimit();
+        return (string)$this->getLimit();
     }
 
     /**

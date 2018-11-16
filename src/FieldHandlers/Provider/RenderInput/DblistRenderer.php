@@ -48,7 +48,7 @@ class DblistRenderer extends AbstractRenderer
             'value' => $data,
             'options' => array_merge(
                 ['' => Setting::EMPTY_OPTION_LABEL()],
-                $table->find('options', ['name' => $list])->toArray()
+                $table->getOptions($list)
             ),
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],

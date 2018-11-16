@@ -11,6 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers\Config;
 
+use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\View\View;
@@ -36,7 +37,7 @@ class Config implements ConfigInterface
     protected $field;
 
     /**
-     * @var object $table Table intance
+     * @var \Cake\Datasource\RepositoryInterface $table Table intance
      */
     protected $table;
 
@@ -143,9 +144,9 @@ class Config implements ConfigInterface
     /**
      * Get table
      *
-     * @return object
+     * @return \Cake\Datasource\RepositoryInterface
      */
-    public function getTable()
+    public function getTable() : RepositoryInterface
     {
         return $this->table;
     }

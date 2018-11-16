@@ -16,7 +16,7 @@ use Cake\Console\Shell;
 use Cake\Utility\Inflector;
 use CsvMigrations\Utility\Validate\Check;
 use CsvMigrations\Utility\Validate\Utility;
-use Exception;
+use InvalidArgumentException;
 
 class ValidateShell extends Shell
 {
@@ -47,7 +47,7 @@ class ValidateShell extends Shell
      * @param string $modules Comma-separated list of module names to validate
      * @return void
      */
-    public function main($modules = null)
+    public function main(string $modules)
     {
         $this->info('Checking modules configuration');
         $this->hr();
@@ -59,7 +59,7 @@ class ValidateShell extends Shell
             exit();
         }
 
-        $modules = empty($modules) ? $this->modules : explode(',', (string)$modules);
+        $modules = '' === $modules ? $this->modules : explode(',', $modules);
         $errorsCount = $this->validateModules($modules);
         if ($errorsCount > 0) {
             $this->abort("Errors found: $errorsCount.  Validation failed!");
@@ -70,10 +70,10 @@ class ValidateShell extends Shell
     /**
      * Validate a given list of modules
      *
-     * @param array $modules List of module names to validate
+     * @param string[] $modules List of module names to validate
      * @return int Count of errors found
      */
-    protected function validateModules(array $modules)
+    protected function validateModules(array $modules) : int
     {
         $result = 0;
 
@@ -95,9 +95,9 @@ class ValidateShell extends Shell
      * Run validation checks for a given module
      *
      * @param string $module Module name
-     * @return array Array with errors and warnings
+     * @return mixed[] Array with errors and warnings
      */
-    protected function runModuleChecks($module)
+    protected function runModuleChecks(string $module) : array
     {
         $result = [
             'errors' => [],
@@ -124,7 +124,7 @@ class ValidateShell extends Shell
             try {
                 $check = Check::getInstance($check);
                 $checkResult = $check->run($module, $options);
-            } catch (Exception $e) {
+            } catch (InvalidArgumentException $e) {
                 $result['errors'][] = $e->getMessage();
                 $this->printCheckStatus(1);
                 continue;
@@ -148,7 +148,7 @@ class ValidateShell extends Shell
      * @param int $errorCount Count of errors
      * @return void
      */
-    protected function printCheckStatus($errorCount)
+    protected function printCheckStatus(int $errorCount) : void
     {
         if ($errorCount <= 0) {
             $this->success('OK');
@@ -163,10 +163,10 @@ class ValidateShell extends Shell
      * Print messages of a given type
      *
      * @param string $type Type of messages (info, error, warning, etc)
-     * @param array $messages Array of messages to report
+     * @param string[] $messages Array of messages to report
      * @return void
      */
-    protected function printMessages($type, array $messages = [])
+    protected function printMessages(string $type, array $messages = []) : void
     {
         $this->out('');
 
@@ -185,8 +185,15 @@ class ValidateShell extends Shell
 
         // Remove ROOT path for shorter output
         $messages = preg_replace('#' . ROOT . DS . '#', '', $messages);
+        if (null === $messages) {
+            return;
+        }
+
         // Prefix all messages as list items
         $messages = preg_replace('/^/', ' - ', $messages);
+        if (null === $messages) {
+            return;
+        }
 
         $this->out($this->wrapMessageWithType($type, $messages));
     }

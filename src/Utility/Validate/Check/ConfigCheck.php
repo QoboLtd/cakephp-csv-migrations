@@ -12,7 +12,7 @@
 namespace CsvMigrations\Utility\Validate\Check;
 
 use CsvMigrations\Utility\Validate\Utility;
-use Exception;
+use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
@@ -22,20 +22,20 @@ class ConfigCheck extends AbstractCheck
      * Execute a check
      *
      * @param string $module Module name
-     * @param array $options Check options
+     * @param mixed[] $options Check options
      * @return int Number of encountered errors
      */
-    public function run($module, array $options = [])
+    public function run(string $module, array $options = []) : int
     {
+        $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
         $config = [];
-
         try {
-            $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
-            $config = json_decode(json_encode($mc->parse()), true);
-        } catch (Exception $e) {
+            $conf = json_encode($mc->parse());
+            $config = false === $conf ? [] : json_decode($conf, true);
+        } catch (InvalidArgumentException $e) {
             // We need errors and warnings irrelevant of the exception
+            $this->errors = array_merge($this->errors, $mc->getErrors());
         }
-        $this->errors = array_merge($this->errors, $mc->getErrors());
         $this->warnings = array_merge($this->warnings, $mc->getWarnings());
 
         if (empty($config)) {
@@ -59,11 +59,11 @@ class ConfigCheck extends AbstractCheck
      * Check table section of the configuration
      *
      * @param string $module Module name
-     * @param array $options Check options
-     * @param array $config Configuration
+     * @param mixed[] $options Check options
+     * @param mixed[] $config Configuration
      * @return void
      */
-    protected function checkTable($module, array $options = [], array $config = [])
+    protected function checkTable(string $module, array $options = [], array $config = []) : void
     {
         if (empty($config['table'])) {
             return;
@@ -107,11 +107,11 @@ class ConfigCheck extends AbstractCheck
      * Check parent section of the configuration
      *
      * @param string $module Module name
-     * @param array $options Check options
-     * @param array $config Configuration
+     * @param mixed[] $options Check options
+     * @param mixed[] $config Configuration
      * @return void
      */
-    protected function checkParent($module, array $options = [], array $config = [])
+    protected function checkParent(string $module, array $options = [], array $config = []) : void
     {
         if (empty($config['parent'])) {
             return;
@@ -149,11 +149,11 @@ class ConfigCheck extends AbstractCheck
      * Check virtualFields section of the configuration
      *
      * @param string $module Module name
-     * @param array $options Check options
-     * @param array $config Configuration
+     * @param mixed[] $options Check options
+     * @param mixed[] $config Configuration
      * @return void
      */
-    protected function checkVirtualFields($module, array $options = [], array $config = [])
+    protected function checkVirtualFields(string $module, array $options = [], array $config = []) : void
     {
         if (empty($config['virtualFields'])) {
             return;
@@ -176,11 +176,11 @@ class ConfigCheck extends AbstractCheck
      * Check manyToMany section of the configuration
      *
      * @param string $module Module name
-     * @param array $options Check options
-     * @param array $config Configuration
+     * @param mixed[] $options Check options
+     * @param mixed[] $config Configuration
      * @return void
      */
-    protected function checkManyToMany($module, array $options = [], array $config = [])
+    protected function checkManyToMany(string $module, array $options = [], array $config = []) : void
     {
         if (empty($config['manyToMany'])) {
             return;
@@ -201,11 +201,11 @@ class ConfigCheck extends AbstractCheck
      * Check notifications section of the configuration
      *
      * @param string $module Module name
-     * @param array $options Check options
-     * @param array $config Configuration
+     * @param mixed[] $options Check options
+     * @param mixed[] $config Configuration
      * @return void
      */
-    protected function checkNotifications($module, array $options = [], array $config = [])
+    protected function checkNotifications(string $module, array $options = [], array $config = []) : void
     {
         if (empty($config['notifications'])) {
             return;
@@ -226,11 +226,11 @@ class ConfigCheck extends AbstractCheck
      * Check conversion section of the configuration
      *
      * @param string $module Module name
-     * @param array $options Check options
-     * @param array $config Configuration
+     * @param mixed[] $options Check options
+     * @param mixed[] $config Configuration
      * @return void
      */
-    protected function checkConversion($module, array $options = [], array $config = [])
+    protected function checkConversion(string $module, array $options = [], array $config = []) : void
     {
         if (empty($config['conversion'])) {
             return;

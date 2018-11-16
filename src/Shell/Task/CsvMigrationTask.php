@@ -33,7 +33,7 @@ class CsvMigrationTask extends MigrationTask
     /**
      * {@inheritDoc}
      */
-    public function main($name = null)
+    public function main($name = null) : void
     {
         if (empty(Configure::read('CsvMigrations.modules.path'))) {
             $this->abort('CSV modules path is not defined.');
@@ -53,7 +53,7 @@ class CsvMigrationTask extends MigrationTask
                 $this->out('- ' . $module);
             }
 
-            return true;
+            return;
         }
 
         parent::main($name);
@@ -74,6 +74,9 @@ class CsvMigrationTask extends MigrationTask
     {
         list($table) = $this->_getVars($name);
         $name = $this->getMigrationName($name);
+        if (null === $name) {
+            $this->abort('Failed to get migration name');
+        }
 
         return $this->__timestamp . '_' . Inflector::camelize($name) . $this->_getLastModifiedTime($table) . '.php';
     }
@@ -102,9 +105,9 @@ class CsvMigrationTask extends MigrationTask
     /**
      * Get CSV module names from defined modules directory.
      *
-     * @return array
+     * @return mixed[]
      */
-    protected function _getCsvModules()
+    protected function _getCsvModules() : array
     {
         $dir = new Folder(Configure::read('CsvMigrations.modules.path'));
         $folders = $dir->read(true)[0];
@@ -115,10 +118,10 @@ class CsvMigrationTask extends MigrationTask
     /**
      * Returns variables for bake template.
      *
-     * @param  string $tableName Table name
-     * @return array
+     * @param string $tableName Table name
+     * @return string[]
      */
-    protected function _getVars($tableName)
+    protected function _getVars(string $tableName) : array
     {
         $table = Inflector::tableize($tableName);
 
@@ -130,19 +133,22 @@ class CsvMigrationTask extends MigrationTask
     /**
      * Get csv file's last modified time.
      *
-     * @param  string $tableName target table name
+     * @param string $tableName target table name
      * @return string
      */
-    protected function _getLastModifiedTime($tableName)
+    protected function _getLastModifiedTime(string $tableName) : string
     {
         $tableName = Inflector::camelize($tableName);
 
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $tableName);
         $path = $mc->find();
 
-        // Unit time stamp to YYYYMMDDhhmmss
-        $result = date('YmdHis', filemtime($path));
+        $mtime = filemtime($path);
+        if (false === $mtime) {
+            $this->abort('Failed to get file\'s last modified time');
+        }
 
-        return $result;
+        // Unit time stamp to YYYYMMDDhhmmss
+        return date('YmdHis', $mtime);
     }
 }

@@ -11,6 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers\Config;
 
+use Cake\Datasource\RepositoryInterface;
 use Cake\View\View;
 
 /**
@@ -57,9 +58,9 @@ interface ConfigInterface
     /**
      * Get table
      *
-     * @return object
+     * @return \Cake\Datasource\RepositoryInterface
      */
-    public function getTable();
+    public function getTable() : RepositoryInterface;
 
     /**
      * Set options

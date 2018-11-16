@@ -12,7 +12,7 @@
 namespace CsvMigrations\FieldHandlers\Provider\SelectOptions;
 
 use Cake\Collection\Collection;
-use Exception;
+use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
@@ -30,17 +30,28 @@ class ListSelectOptions extends AbstractSelectOptions
      * @param array $options Options to use for provision
      * @return array
      */
-    public function provide($data = null, array $options = [])
+    public function provide($data = null, array $options = []) : array
     {
-        $spacer = isset($options['spacer']) ? (bool)$options['spacer'] : ' - ';
+        $spacer = isset($options['spacer']) ? (string)$options['spacer'] : ' - ';
         $flatten = isset($options['flatten']) ? (bool)$options['flatten'] : true;
 
         list($module, $list) = false !== strpos($data, '.') ? explode('.', $data, 2) : [$this->config->getTable()->getAlias(), $data];
 
+        $result = [];
         try {
             $config = new ModuleConfig(ConfigType::LISTS(), $module, $list, ['flatten' => $flatten, 'filter' => true]);
-            $items = json_decode(json_encode($config->parse()->items), true);
-        } catch (Exception $e) {
+            $config = $config->parse();
+            if (! property_exists($config, 'items')) {
+                return [];
+            }
+
+            $config = json_encode($config->items);
+            if (false === $config) {
+                return [];
+            }
+
+            $result = json_decode($config, true);
+        } catch (InvalidArgumentException $e) {
             /* Do nothing.
              *
              * ModuleConfig checks for the file to exist and to be readable and so on, but here we do load lists
@@ -51,14 +62,18 @@ class ListSelectOptions extends AbstractSelectOptions
             return [];
         }
 
+        if (empty($result)) {
+            return [];
+        }
+
         if (! $flatten) {
-            return $items;
+            return $result;
         }
 
-        foreach ($items as $key => $value) {
-            $items[$key] = str_repeat($spacer, substr_count($key, '.')) . $value['label'];
+        foreach ($result as $key => $value) {
+            $result[$key] = str_repeat($spacer, substr_count($key, '.')) . $value['label'];
         }
 
-        return $items;
+        return $result;
     }
 }

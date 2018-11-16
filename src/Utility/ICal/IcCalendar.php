@@ -48,7 +48,7 @@ class IcCalendar
      * @param \Eluceo\iCal\Component\Calendar $calendar Calendar instance to set
      * @return void
      */
-    public function setCalendar(Calendar $calendar)
+    public function setCalendar(Calendar $calendar) : void
     {
         $this->calendar = $calendar;
     }
@@ -58,7 +58,7 @@ class IcCalendar
      *
      * @return \Eluceo\iCal\Component\Calendar
      */
-    public function getCalendar()
+    public function getCalendar() : Calendar
     {
         return $this->calendar;
     }
@@ -69,7 +69,7 @@ class IcCalendar
      * @param \Eluceo\iCal\Component\Event $event Event to add
      * @return void
      */
-    public function addEvent(Event $event)
+    public function addEvent(Event $event) : void
     {
         $this->calendar->addComponent($event);
     }

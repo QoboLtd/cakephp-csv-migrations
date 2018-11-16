@@ -24,10 +24,10 @@ abstract class AbstractSearchOptions extends AbstractProvider
      * Helper method to get search operators
      *
      * @param mixed $data Data to use for provision
-     * @param array $options Options to use for provision
-     * @return array
+     * @param mixed[] $options Options to use for provision
+     * @return mixed[]
      */
-    protected function getSearchOperators($data = null, array $options = [])
+    protected function getSearchOperators($data = null, array $options = []) : array
     {
         $result = $this->config->getProvider('searchOperators');
         $result = new $result($this->config);
@@ -40,10 +40,10 @@ abstract class AbstractSearchOptions extends AbstractProvider
      * Get default search options
      *
      * @param mixed $data Data to use for provision
-     * @param array $options Options to use for provision
-     * @return array
+     * @param mixed[] $options Options to use for provision
+     * @return mixed[]
      */
-    protected function getDefaultOptions($data = null, array $options = [])
+    protected function getDefaultOptions($data = null, array $options = []) : array
     {
         $result = [
             'type' => $options['fieldDefinitions']->getType(),
@@ -63,7 +63,7 @@ abstract class AbstractSearchOptions extends AbstractProvider
      * @param string $type Form input type
      * @return string
      */
-    protected function getBasicTemplate($type)
+    protected function getBasicTemplate(string $type) : string
     {
         $view = $this->config->getView();
         $result = $view->Form->input('{{name}}', [

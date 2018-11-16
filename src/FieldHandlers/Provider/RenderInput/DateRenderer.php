@@ -39,6 +39,7 @@ class DateRenderer extends AbstractRenderer
         }
 
         $field = $this->config->getField();
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->config->getTable();
 
         $fieldName = $table->aliasField($field);

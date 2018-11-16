@@ -50,9 +50,7 @@ class CombinedRenderer extends AbstractRenderer
             }
 
             $config = new $preOptions['config']($fieldName, $this->config->getTable(), $options);
-            if ($view) {
-                $config->setView($view);
-            }
+            $config->setView($view);
             $handler = new FieldHandler($config);
 
             $inputs[$fieldName] = $handler->renderInput($fieldData, $options);

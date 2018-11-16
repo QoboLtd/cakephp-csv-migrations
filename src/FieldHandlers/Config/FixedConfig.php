@@ -28,7 +28,7 @@ abstract class FixedConfig extends Config
      * @param array $providers List of provider names and classes
      * @return void
      */
-    public function setProviders(array $providers)
+    public function setProviders(array $providers) : void
     {
         throw new InvalidArgumentException("Setting predefined providers is not allowed");
     }

@@ -27,11 +27,11 @@ trait PanelsTrait
      * and vice verca for fail type.
      *
      * @see \CsvMigrations\Utility\Panel::evalExpression How the expression is evaluated.
-     * @param  array  $config Table's config.
-     * @param  array  $data to get the values for placeholders
-     * @return array          Evaluated panel list.
+     * @param mixed[] $config Table's config.
+     * @param mixed[] $data to get the values for placeholders
+     * @return mixed[] Evaluated panel list.
      */
-    public function getPanels(array $config, array $data)
+    public function getPanels(array $config, array $data) : array
     {
         $result = ['success' => [], 'fail' => []];
 

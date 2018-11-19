@@ -116,11 +116,11 @@ class IcEmail
     protected function getDisplayValue() : string
     {
         try {
-            $displayField = $this->table->displayField();
-            $displayValue = $this->entity->{$displayField};
+            $displayField = $this->table->getDisplayField();
+            $displayValue = $this->entity->get($displayField);
 
-            $fhf = new FieldHandlerFactory();
-            $result = $fhf->renderValue($this->table, $displayField, $displayValue, [ 'renderAs' => 'plain']);
+            $factory = new FieldHandlerFactory();
+            $result = $factory->renderValue($this->table, $displayField, $displayValue, [ 'renderAs' => 'plain']);
         } catch (InvalidArgumentException $e) {
             $result = 'reminder';
         }
@@ -135,12 +135,14 @@ class IcEmail
      */
     public function getEmailSubject() : string
     {
-        $module = Inflector::singularize($this->table->alias());
-        $displayValue = $this->getDisplayValue();
-        $result = $module . ": " . $displayValue;
+        $result = sprintf(
+            '%s: %s',
+            Inflector::singularize($this->table->alias()),
+            $this->getDisplayValue()
+        );
 
-        if (!$this->entity->isNew()) {
-            $result = "(Updated) " . $result;
+        if (! $this->entity->isNew()) {
+            $result = sprintf('(Updated) %s', $result);
         }
 
         return $result;

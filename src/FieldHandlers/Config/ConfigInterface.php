@@ -27,7 +27,7 @@ interface ConfigInterface
      *
      * @param string $field Field name
      * @param mixed $table Table name or instance
-     * @param array $options Options
+     * @param mixed[] $options Options
      */
     public function __construct(string $field, $table = null, array $options = []);
 
@@ -50,10 +50,10 @@ interface ConfigInterface
     /**
      * Set table
      *
-     * @param mixed $table Table name or instance
+     * @param \Cake\Datasource\RepositoryInterface|string $table Table name or instance
      * @return void
      */
-    public function setTable($table = null);
+    public function setTable($table = '') : void;
 
     /**
      * Get table
@@ -65,7 +65,7 @@ interface ConfigInterface
     /**
      * Set options
      *
-     * @param array $options Options
+     * @param mixed[] $options Options
      * @return void
      */
     public function setOptions(array $options = []) : void;
@@ -73,7 +73,7 @@ interface ConfigInterface
     /**
      * Get options
      *
-     * @return array
+     * @return mixed[]
      */
     public function getOptions() : array;
 
@@ -96,7 +96,7 @@ interface ConfigInterface
      * Set providers
      *
      * @throws \InvalidArgumentException for invalid providers
-     * @param array $providers List of provider names and classes
+     * @param mixed[] $providers List of provider names and classes
      * @return void
      */
     public function setProviders(array $providers) : void;
@@ -105,7 +105,7 @@ interface ConfigInterface
      * Get providers
      *
      * @throws \InvalidArgumentException for invalid providers
-     * @return array
+     * @return mixed[]
      */
     public function getProviders() : array;
 
@@ -122,7 +122,7 @@ interface ConfigInterface
      * Validate providers
      *
      * @throws \InvalidArgumentException for invalid providers
-     * @param array $providers List of provider names and classes
+     * @param mixed[] $providers List of provider names and classes
      * @return void
      */
     public function validateProviders(array $providers) : void;

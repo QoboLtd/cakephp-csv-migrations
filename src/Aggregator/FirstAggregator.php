@@ -9,7 +9,7 @@ final class FirstAggregator extends AbstractAggregator
     /**
      * {@inheritDoc}
      */
-    public function validate()
+    public function validate() : bool
     {
         return parent::validate();
     }
@@ -17,7 +17,7 @@ final class FirstAggregator extends AbstractAggregator
     /**
      * {@inheritDoc}
      */
-    public function applyConditions(QueryInterface $query)
+    public function applyConditions(QueryInterface $query) : QueryInterface
     {
         return $this->getConfig()->getField() === $this->getConfig()->getDisplayField() ?
             $this->applyConditionsWithMin($query) :
@@ -32,11 +32,12 @@ final class FirstAggregator extends AbstractAggregator
      * @return \Cake\Datasource\QueryInterface
      * @link https://stackoverflow.com/a/19411219/2562232
      */
-    private function applyConditionsWithOrder(QueryInterface $query)
+    private function applyConditionsWithOrder(QueryInterface $query) : QueryInterface
     {
-        $aggregateField = $this->getConfig()
-            ->getTable()
-            ->aliasField($this->getConfig()->getField());
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $this->getConfig()->getTable();
+
+        $aggregateField = $table->aliasField($this->getConfig()->getField());
 
         $query->select($this->getConfig()->getDisplayField())
             ->order([$aggregateField => 'ASC']);
@@ -52,11 +53,15 @@ final class FirstAggregator extends AbstractAggregator
      * @return \Cake\Datasource\QueryInterface
      * @link https://stackoverflow.com/a/426785/2562232
      */
-    private function applyConditionsWithMin(QueryInterface $query)
+    private function applyConditionsWithMin(QueryInterface $query) : QueryInterface
     {
-        $aggregateField = $this->getConfig()
-            ->getTable()
-            ->aliasField($this->getConfig()->getField());
+        /** @var \Cake\Datasource\QueryInterface&\Cake\Database\Query */
+        $query = $query;
+
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $this->getConfig()->getTable();
+
+        $aggregateField = $table->aliasField($this->getConfig()->getField());
 
         $query->select([$this->getConfig()->getDisplayField() => $query->func()->min($aggregateField)]);
 

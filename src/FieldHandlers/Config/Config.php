@@ -121,12 +121,12 @@ class Config implements ConfigInterface
     /**
      * Set table
      *
-     * @param mixed $table Table name or instance
+     * @param \Cake\Datasource\RepositoryInterface|string $table Table name or instance
      * @return void
      */
-    public function setTable($table = null) : void
+    public function setTable($table = '') : void
     {
-        if (empty($table)) {
+        if ('' === $table) {
             $table = 'dummy';
         }
 
@@ -134,7 +134,7 @@ class Config implements ConfigInterface
             $table = TableRegistry::get($table);
         }
 
-        if (!$table instanceof Table) {
+        if (! $table instanceof RepositoryInterface) {
             throw new InvalidArgumentException("Given table is not an instance of ORM Table");
         }
 

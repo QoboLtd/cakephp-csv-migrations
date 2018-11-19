@@ -11,6 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers\Config;
 
+use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 use InvalidArgumentException;
 
 /**
@@ -27,11 +28,11 @@ class ConfigFactory
      * @throws \InvalidArgumentException for unsupported configuration types
      * @param string $type Configuration type (e.g.: string, email, uuid)
      * @param string $field Field name
-     * @param mixed $table Table name or instance
-     * @param array $options Configuration options
+     * @param \Cake\Datasource\RepositoryInterface|string $table Table name or instance
+     * @param mixed[] $options Configuration options
      * @return \CsvMigrations\FieldHandlers\Config\ConfigInterface
      */
-    public static function getByType($type, $field, $table = null, array $options = [])
+    public static function getByType(string $type, string $field, $table = '', array $options = []) : ConfigInterface
     {
         $configClass = __NAMESPACE__ . '\\' . ucfirst($type) . 'Config';
         if (!class_exists($configClass)) {

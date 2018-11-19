@@ -39,7 +39,7 @@ class FieldHandler implements FieldHandlerInterface
     public $defaultOptions = [];
 
     /**
-     * @var $config \CsvMigrations\FieldHandlers\Config\ConfigInterface Configuration
+     * @var \CsvMigrations\FieldHandlers\Config\ConfigInterface
      */
     protected $config;
 
@@ -59,7 +59,7 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return \CsvMigrations\FieldHandlers\Config\ConfigInterface
      */
-    public function getConfig()
+    public function getConfig() : ConfigInterface
     {
         return $this->config;
     }
@@ -70,7 +70,7 @@ class FieldHandler implements FieldHandlerInterface
      * @param \CsvMigrations\FieldHandlers\Config\ConfigInterface $config Instance of field handler config
      * @return void
      */
-    public function setConfig(ConfigInterface $config)
+    public function setConfig(ConfigInterface $config) : void
     {
         $this->config = $config;
     }
@@ -83,7 +83,7 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return void
      */
-    protected function setDefaultOptions()
+    protected function setDefaultOptions() : void
     {
         $this->setDefaultFieldOptions();
         $this->setDefaultFieldDefinitions();
@@ -99,14 +99,16 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return void
      */
-    protected function setDefaultFieldOptions()
+    protected function setDefaultFieldOptions() : void
     {
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->config->getTable();
         $field = $this->config->getField();
 
         $mc = new ModuleConfig(ConfigType::FIELDS(), Inflector::camelize($table->getTable()));
-        $config = (array)json_decode(json_encode($mc->parse()), true);
-        if (!empty($config[$field])) {
+        $config = json_encode($mc->parse());
+        $config = false !== $config ? json_decode($config, true) : [];
+        if (! empty($config[$field])) {
             $this->defaultOptions = array_replace_recursive($this->defaultOptions, $config[$field]);
         }
     }
@@ -120,7 +122,7 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return void
      */
-    protected function setDefaultLabel()
+    protected function setDefaultLabel() : void
     {
         $this->defaultOptions['label'] = $this->renderName();
     }
@@ -130,7 +132,7 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return void
      */
-    protected function setDefaultFieldDefinitions()
+    protected function setDefaultFieldDefinitions() : void
     {
         $table = $this->config->getTable();
         $field = $this->config->getField();
@@ -161,7 +163,7 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return void
      */
-    protected function setDefaultValue()
+    protected function setDefaultValue() : void
     {
         if (empty($this->defaultOptions['default'])) {
             return;
@@ -192,10 +194,10 @@ class FieldHandler implements FieldHandlerInterface
      * compatibility and make sure that $options parameters
      * are consistent throughout.
      *
-     * @param array  $options Options to fix
-     * @return array          Fixed options
+     * @param mixed[] $options Options to fix
+     * @return mixed[] Fixed options
      */
-    protected function fixOptions(array $options = [])
+    protected function fixOptions(array $options = []) : array
     {
         $result = $options;
         if (empty($result)) {
@@ -238,7 +240,7 @@ class FieldHandler implements FieldHandlerInterface
      * @param  array  $options Field options
      * @return string          Field input HTML
      */
-    public function renderInput($data = '', array $options = [])
+    public function renderInput(string $data = '', array $options = []) : string
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
 
@@ -271,7 +273,7 @@ class FieldHandler implements FieldHandlerInterface
      * @param  array  $options Field options
      * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function getSearchOptions(array $options = [])
+    public function getSearchOptions(array $options = []) : array
     {
         $result = [];
 
@@ -295,7 +297,7 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return string
      */
-    public function renderName()
+    public function renderName() : string
     {
         $label = !empty($this->defaultOptions['label']) ? $this->defaultOptions['label'] : '';
 
@@ -317,7 +319,7 @@ class FieldHandler implements FieldHandlerInterface
      * @param  array  $options Field options
      * @return string          Field value
      */
-    public function renderValue($data, array $options = [])
+    public function renderValue(string $data, array $options = []) : string
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $result = $this->getFieldValueFromData($data, $options);
@@ -351,7 +353,7 @@ class FieldHandler implements FieldHandlerInterface
      * @param array $options Field options
      * @return \Cake\Validation\Validator
      */
-    public function setValidationRules(Validator $validator, array $options = [])
+    public function setValidationRules(Validator $validator, array $options = []) : Validator
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
 
@@ -376,7 +378,7 @@ class FieldHandler implements FieldHandlerInterface
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return array                                           DbField instances
      */
-    public static function fieldToDb(CsvField $csvField)
+    public static function fieldToDb(CsvField $csvField) : array
     {
         $config = ConfigFactory::getByType($csvField->getType(), $csvField->getName());
         $fieldToDb = $config->getProvider('fieldToDb');
@@ -391,7 +393,7 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return string
      */
-    public function getDbFieldType()
+    public function getDbFieldType() : string
     {
         $dbFieldType = $this->config->getProvider('dbFieldType');
         $dbFieldType = new $dbFieldType($this->config);
@@ -403,11 +405,11 @@ class FieldHandler implements FieldHandlerInterface
     /**
      * Get field value from given data
      *
-     * @param mixed  $data  Variable to extract value from
-     * @param array  $options Field options
+     * @param string $data Variable to extract value from
+     * @param mixed[] $options Field options
      * @return mixed
      */
-    protected function getFieldValueFromData($data, array $options)
+    protected function getFieldValueFromData(string $data, array $options)
     {
         $fieldValue = $this->config->getProvider('fieldValue');
         $fieldValue = new $fieldValue($this->config);

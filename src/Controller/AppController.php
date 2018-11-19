@@ -15,14 +15,19 @@ use App\Controller\AppController as BaseController;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
+use Cake\Http\Response;
 use Cake\Log\Log;
+use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validation;
 use CsvMigrations\Controller\Traits\ImportTrait;
 use CsvMigrations\Event\EventName;
+use CsvMigrations\Table;
 use CsvMigrations\Utility\Field;
 use CsvMigrations\Utility\FileUpload;
 use Exception;
+use InvalidArgumentException;
+use PDOException;
 use Psr\Http\Message\ResponseInterface;
 use Qobo\Utils\Utility\User;
 
@@ -64,11 +69,11 @@ class AppController extends BaseController
     /**
      * View method
      *
-     * @param string|null $id Entity id.
+     * @param string $id Entity id.
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view(string $id) : void
     {
         $entity = $this->fetchEntity($id);
 
@@ -80,18 +85,20 @@ class AppController extends BaseController
     /**
      * Add method
      *
-     * @return mixed Redirects on successful add, renders view otherwise.
+     * @return \Cake\Http\Response|null
      */
-    public function add()
+    public function add() : ?Response
     {
-        $entity = $this->{$this->name}->newEntity();
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $this->loadModel();
 
-        if (!empty($this->request->getParam('data'))) {
-            $this->request->withData($this->request->getParam('data'));
-        }
+        $entity = $table->newEntity();
 
         if ($this->request->is('post')) {
-            $response = $this->persistEntity($entity);
+            $response = $this->persistEntity($entity, $this->request->getParam(
+                'data',
+                (array)$this->request->getData()
+            ));
             if ($response) {
                 return $response;
             }
@@ -106,16 +113,22 @@ class AppController extends BaseController
      * Edit method
      *
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     * @param string|null $id Entity id.
-     * @return mixed Redirects on successful edit, renders view otherwise.
+     * @param string $id Entity id.
+     * @return \Cake\Http\Response|null
      */
-    public function edit($id = null)
+    public function edit(string $id) : ?Response
     {
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $this->loadModel();
+
         $entity = $this->fetchEntity($id);
 
         if ($this->request->is(['patch', 'post', 'put'])) {
-            // enable accessibility to associated entity's primary key to avoid associated entity getting flagged as new
-            $response = $this->persistEntity($entity, $this->{$this->name}->enablePrimaryKeyAccess());
+            // enable accessibility to associated entity's primary key
+            // to avoid associated entity getting flagged as new
+            $options = $table instanceof Table ? $table->enablePrimaryKeyAccess() : [];
+
+            $response = $this->persistEntity($entity, (array)$this->request->getData(), $options);
             if ($response) {
                 return $response;
             }
@@ -129,74 +142,100 @@ class AppController extends BaseController
     /**
      * Fetches entity from database.
      *
-     * Tries to fetch the record using the primary key, if no record found and the ID value is not a UUID it will try to
-     * fetch the record using the lookup fields. If that fails as well then a record not found exception will be thrown.
+     * Tries to fetch the record using the primary key, if no record found and the ID
+     * value is not a UUID it will try to fetch the record using the lookup fields.
+     * If that fails as well then a record not found exception will be thrown.
      *
-     * @param string|null $id Entity id
+     * @param string $id Entity id
      * @return \Cake\Datasource\EntityInterface
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When the record is not found
      */
-    private function fetchEntity($id = null)
+    private function fetchEntity(string $id) : EntityInterface
     {
-        $entity = $this->{$this->name}->find()
-            ->where([$this->{$this->name}->aliasField($this->{$this->name}->getPrimaryKey()) => $id])
-            ->first();
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $this->loadModel();
 
-        if (! empty($entity)) {
-            return $entity;
+        $primaryKey = $table->getPrimaryKey();
+        if (! is_string($primaryKey)) {
+            throw new InvalidArgumentException('Primary key must be a string');
         }
 
-        if (! Validation::uuid($id)) {
-            $entity = $this->{$this->name}->find()
-                ->applyOptions(['lookup' => true, 'value' => $id])
+        try {
+            /** @var \Cake\Datasource\EntityInterface */
+            $entity = $table->find()
+                ->where([$table->aliasField($primaryKey) => $id])
+                ->enableHydration(true)
                 ->firstOrFail();
-        }
 
-        if (! empty($entity)) {
             return $entity;
+        } catch (Exception $e) {
+            // $id is a UUID, re-throwing the exception as we cannot fetch the record by lookup field(s)
+            if (Validation::uuid($id)) {
+                throw $e;
+            }
         }
 
-        throw new RecordNotFoundException(sprintf('Record not found in table "%s"', $this->{$this->name}->getTable()));
+        /**
+         * Try to fetch record by lookup field(s)
+         *
+         * @var \Cake\Datasource\EntityInterface
+         */
+        $entity = $table->find()
+            ->applyOptions(['lookup' => true, 'value' => $id])
+            ->enableHydration(true)
+            ->firstOrFail();
+
+        return $entity;
     }
 
     /**
      * Persist new/modified entity.
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity instance
-     * @param array $options Patch options
+     * @param mixed[] $data Request data
+     * @param mixed[] $options Patch options
      * @return \Cake\Http\Response|null
      */
-    private function persistEntity(EntityInterface $entity, array $options = [])
+    private function persistEntity(EntityInterface $entity, array $data, array $options = []) : ?Response
     {
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $this->loadModel();
+
         $options = array_merge($options, ['lookup' => true]);
-        $entity = $this->{$this->name}->patchEntity($entity, $this->request->getData(), $options);
+        $entity = $table->patchEntity($entity, $data, $options);
 
         $saved = false;
         try {
-            $saved = $this->{$this->name}->save($entity);
-        } catch (Exception $e) {
-            Log::warning($e->getMessage());
+            $saved = $table->save($entity);
+        } catch (PDOException $e) {
+            Log::error($e->getMessage());
         }
 
         if ($entity->getErrors()) {
-            Log::warning(json_encode($entity->getErrors()));
+            Log::warning((string)json_encode($entity->getErrors()));
         }
 
         if (! $saved) {
-            $this->Flash->error(__('The record could not be saved, please try again.'));
+            $this->Flash->error((string)__('The record could not be saved, please try again.'));
         }
 
         if ($saved) {
-            $this->Flash->success(__('The record has been saved.'));
+            $this->Flash->success((string)__('The record has been saved.'));
+
+            $primaryKey = $table->getPrimaryKey();
+            if (! is_string($primaryKey)) {
+                throw new InvalidArgumentException('Primary key must be a string');
+            }
+
             // handle file uploads if found in the request data
-            $fileUpload = new FileUpload($this->{$this->name});
+            $fileUpload = new FileUpload($table);
             $fileUpload->link(
-                $entity->get($this->{$this->name}->getPrimaryKey()),
-                $this->request->getData()
+                $entity->get($primaryKey),
+                (array)$this->request->getData()
             );
 
-            $url = $this->{$this->name}->getParentRedirectUrl($this->{$this->name}, $entity);
-            $url = ! empty($url) ? $url : ['action' => 'view', $entity->get($this->{$this->name}->getPrimaryKey())];
+            $url = $table instanceof Table ? $table->getParentRedirectUrl($table, $entity) : [];
+            $url = ! empty($url) ? $url : ['action' => 'view', $entity->get($primaryKey)];
 
             return $this->redirect($url);
         }
@@ -207,20 +246,20 @@ class AppController extends BaseController
     /**
      * Delete method
      *
-     * @param string|null $id Entity id.
-     * @return \Cake\Network\Response|null Redirects to index.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     * @param string $id Entity id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(string $id) : ?Response
     {
         $this->request->allowMethod(['post', 'delete']);
-        $model = $this->{$this->name};
+        $model = $this->loadModel();
         $entity = $model->get($id);
 
         if ($model->delete($entity)) {
-            $this->Flash->success(__('The record has been deleted.'));
+            $this->Flash->success((string)__('The record has been deleted.'));
         } else {
-            $this->Flash->error(__('The record could not be deleted. Please, try again.'));
+            $this->Flash->error((string)__('The record could not be deleted. Please, try again.'));
         }
 
         $url = $this->referer();
@@ -238,20 +277,23 @@ class AppController extends BaseController
      * @param string $id Entity id.
      * @param string $assocName Association Name.
      * @param string $assocId Associated Entity id.
-     * @return \Cake\Network\Response|null Redirects to referer.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     * @return \Cake\Http\Response|null Redirects to referer.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function unlink($id, $assocName, $assocId)
+    public function unlink(string $id, string $assocName, string $assocId) : ?Response
     {
         $this->request->allowMethod(['post']);
-        $model = $this->{$this->name};
-        $entity = $model->get($id);
-        $assocEntity = $model->{$assocName}->get($assocId);
+
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $this->loadModel();
+
+        $entity = $table->get($id);
+        $assocEntity = $table->{$assocName}->get($assocId);
 
         // unlink associated record
-        $model->{$assocName}->unlink($entity, [$assocEntity]);
+        $table->{$assocName}->unlink($entity, [$assocEntity]);
 
-        $this->Flash->success(__('The record has been unlinked.'));
+        $this->Flash->success((string)__('The record has been unlinked.'));
 
         return $this->redirect($this->referer());
     }
@@ -265,18 +307,21 @@ class AppController extends BaseController
      *
      * @param string $id Entity id.
      * @param string $associationName Association Name.
-     * @return \Cake\Network\Response|null Redirects to referer.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     * @return \Cake\Http\Response|null Redirects to referer.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function link($id, $associationName)
+    public function link(string $id, string $associationName) : ?Response
     {
         $this->request->allowMethod(['post']);
 
-        $association = $this->{$this->name}->{$associationName};
-        $ids = $this->request->getData($associationName . '._ids');
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $this->loadModel();
+
+        $association = $table->{$associationName};
+        $ids = (array)$this->request->getData($associationName . '._ids');
 
         if (empty($ids)) {
-            $this->Flash->error(__('No records provided for linking.'));
+            $this->Flash->error((string)__('No records provided for linking.'));
 
             return $this->redirect($this->referer());
         }
@@ -285,13 +330,13 @@ class AppController extends BaseController
             ->where([$association->getPrimaryKey() . ' IN' => $ids]);
 
         if ($query->isEmpty()) {
-            $this->Flash->error(__('No records found for linking.'));
+            $this->Flash->error((string)__('No records found for linking.'));
 
             return $this->redirect($this->referer());
         }
 
-        if (! $association->link($this->{$this->name}->get($id), $query->toArray())) {
-            $this->Flash->error(__('Failed to link records.'));
+        if (! $association->link($table->get($id), $query->toArray())) {
+            $this->Flash->error((string)__('Failed to link records.'));
 
             return $this->redirect($this->referer());
         }
@@ -305,17 +350,20 @@ class AppController extends BaseController
      * Batch operations action.
      *
      * @param string $operation Batch operation.
-     * @return \Cake\Network\Response|void Redirects to referer.
+     * @return \Cake\Http\Response|null Redirects to referer.
      */
-    public function batch($operation)
+    public function batch(string $operation) : ?Response
     {
         $this->request->allowMethod(['post']);
+
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $this->loadModel();
 
         $redirectUrl = $this->getBatchRedirectUrl();
 
         $batchIds = (array)$this->request->getData('batch.ids');
         if (empty($batchIds)) {
-            $this->Flash->error(__('No records selected.'));
+            $this->Flash->error((string)__('No records selected.'));
 
             return $this->redirect($redirectUrl);
         }
@@ -334,20 +382,25 @@ class AppController extends BaseController
 
         if (empty($batchIds)) {
             $operation = strtolower(Inflector::humanize($operation));
-            $this->Flash->error(__('Insufficient permissions to ' . $operation . ' the selected records.'));
+            $this->Flash->error((string)__('Insufficient permissions to ' . $operation . ' the selected records.'));
 
             return $this->redirect($redirectUrl);
         }
 
         if ('delete' === $operation) {
-            $conditions = [$this->{$this->name}->getPrimaryKey() . ' IN' => $batchIds];
+            $primaryKey = $table->getPrimaryKey();
+            if (! is_string($primaryKey)) {
+                throw new InvalidArgumentException('Primary key must be a string');
+            }
+
+            $conditions = [$primaryKey . ' IN' => $batchIds];
             // execute batch delete
-            if ($this->{$this->name}->deleteAll($conditions)) {
+            if ($table->deleteAll($conditions)) {
                 $this->Flash->success(
-                    __(count($batchIds) . ' of ' . $batchIdsCount . ' selected records have been deleted.')
+                    (string)__(count($batchIds) . ' of ' . $batchIdsCount . ' selected records have been deleted.')
                 );
             } else {
-                $this->Flash->error(__('Selected records could not be deleted. Please, try again.'));
+                $this->Flash->error((string)__('Selected records could not be deleted. Please, try again.'));
             }
 
             return $this->redirect($redirectUrl);
@@ -356,26 +409,31 @@ class AppController extends BaseController
         if ('edit' === $operation && (bool)$this->request->getData('batch.execute')) {
             $fields = (array)$this->request->getData($this->name);
             if (empty($fields)) {
-                $this->Flash->error(__('Selected records could not be updated. No changes provided.'));
+                $this->Flash->error((string)__('Selected records could not be updated. No changes provided.'));
 
                 return $this->redirect($redirectUrl);
             }
 
-            $conditions = [$this->{$this->name}->getPrimaryKey() . ' IN' => $batchIds];
+            $primaryKey = $table->getPrimaryKey();
+            if (! is_string($primaryKey)) {
+                throw new InvalidArgumentException('Primary key must be a string');
+            }
+
+            $conditions = [$primaryKey . ' IN' => $batchIds];
             // execute batch edit
-            if ($this->{$this->name}->updateAll($fields, $conditions)) {
+            if ($table->updateAll($fields, $conditions)) {
                 $this->Flash->success(
-                    __(count($batchIds) . ' of ' . $batchIdsCount . ' selected records have been updated.')
+                    (string)__(count($batchIds) . ' of ' . $batchIdsCount . ' selected records have been updated.')
                 );
             } else {
-                $this->Flash->error(__('Selected records could not be updated. Please, try again.'));
+                $this->Flash->error((string)__('Selected records could not be updated. Please, try again.'));
             }
 
             return $this->redirect($redirectUrl);
         }
 
-        $this->set('entity', $this->{$this->name}->newEntity());
-        $this->set('fields', Field::getCsvView($this->{$this->name}, $operation, true, true));
+        $this->set('entity', $table->newEntity());
+        $this->set('fields', Field::getCsvView($table, $operation, true, true));
         $this->render('CsvMigrations.Common/batch');
     }
 
@@ -384,7 +442,7 @@ class AppController extends BaseController
      *
      * @return string
      */
-    protected function getBatchRedirectUrl()
+    protected function getBatchRedirectUrl() : string
     {
         // default url
         $result = ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index'];
@@ -400,6 +458,6 @@ class AppController extends BaseController
             $result = $this->request->getData('batch.redirect_url');
         }
 
-        return $result;
+        return Router::url($result);
     }
 }

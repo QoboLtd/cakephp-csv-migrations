@@ -12,9 +12,11 @@
 namespace CsvMigrations\Event\Model;
 
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\I18n\Time;
+use Cake\Log\LogTrait;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use CsvMigrations\Event\EventName;
@@ -24,23 +26,27 @@ use CsvMigrations\Utility\ICal\IcEmail;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
+use PHPUnit\Framework\MockObject\BadMethodCallException;
+use Psr\Log\LogLevel;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class ModelAfterSaveListener implements EventListenerInterface
 {
+    use LogTrait;
+
     /**
      * Skip attendees in fields
      *
      * @todo This should move into the configuration
-     * @var array
+     * @var string[]
      */
     protected $skipAttendeesIn = ['created_by', 'modified_by'];
 
     /**
      * End date fields
      *
-     * @var array
+     * @var string[]
      */
     protected $endDateFields = ['end_date', 'due_date'];
 
@@ -70,77 +76,97 @@ class ModelAfterSaveListener implements EventListenerInterface
      *
      * @param \Cake\Event\Event $event from the afterSave
      * @param \Cake\Datasource\EntityInterface $entity from the afterSave
-     * @return array Associative array with tried emails as keys and results as values
+     * @return mixed[] Associative array with tried emails as keys and results as values
      */
-    public function sendCalendarReminder(Event $event, EntityInterface $entity)
+    public function sendCalendarReminder(Event $event, EntityInterface $entity) : array
     {
-        $result = [];
+        /**
+         * Get Table instance from the event.
+         *
+         * @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table
+         */
+        $table = $event->getSubject();
 
-        try {
-            // Get Table instance from the event
-            $table = $event->subject();
-            // Make sure it's a CsvTable
-            $this->checkCsvTable($table);
-            //get attendees Table for the event (example: Users)
-            $remindersTo = $this->getRemindersToModules($table);
-            // Figure out which field is a reminder one (example: start_date)
-            $reminderField = $this->getReminderField($table);
-            // Skip sending email if reminder field is empty
-            if (empty($entity->$reminderField)) {
-                throw new InvalidArgumentException("Reminder field has no value");
-            }
-            // Find attendee fields (example: assigned_to)
-            $attendeesFields = $this->getAttendeesFields($table, ['tables' => $remindersTo]);
-            // skip if none of the required fields was modified
-            $requiredFields = array_merge((array)$reminderField, $attendeesFields);
-            $this->checkRequiredModified($entity, $requiredFields);
-            // get attendee emails
-            $emails = $this->getAttendees($table, $entity, $attendeesFields);
-            // get email subject and content
-            $mailer = new IcEmail($table, $entity);
-            $emailSubject = $mailer->getEmailSubject();
-            $emailContent = $mailer->getEmailContent();
-            // get common event options
-            $eventOptions = $this->getEventOptions($table, $entity, $reminderField);
-            // Set same attendees for all
-            $eventOptions['attendees'] = $emails;
-        } catch (Exception $e) {
-            return $result;
+        // make sure it is a \CsvMigrations\Event\Model\CsvTable
+        if (! $table instanceof CsvTable) {
+            $this->log('Table is not an intance of \CsvMigrations\Event\Model\CsvTable', LogLevel::ERROR);
+
+            return [];
         }
 
+        // get attendees Table for the event (example: Users)
+        $remindersTo = $this->getRemindersToModules($table);
+        if (empty($remindersTo)) {
+            $this->log('Failed to find reminder modules', LogLevel::ERROR);
+
+            return [];
+        }
+
+        // figure out which field is a reminder one (example: start_date)
+        $reminderField = $this->getReminderField($table);
+        if ('' === $reminderField) {
+            $this->log('Failed to find reminder fields', LogLevel::ERROR);
+
+            return [];
+        }
+
+        // skip sending email if reminder field is empty
+        if (empty($entity->get($reminderField))) {
+            $this->log('Reminder field has no value', LogLevel::ERROR);
+
+            return [];
+        }
+
+        // find attendee fields (example: assigned_to)
+        $attendeesFields = $this->getAttendeesFields($table, $remindersTo);
+        if (empty($attendeesFields)) {
+            $this->log('Failed to find attendee fields', LogLevel::ERROR);
+
+            return [];
+        }
+
+        $requiredFields = array_merge((array)$reminderField, $attendeesFields);
+
+        // skip if none of the required fields was modified
+        if (! $this->isRequiredModified($entity, $requiredFields)) {
+            $this->log('None of the required fields were modified', LogLevel::ERROR);
+
+            return [];
+        }
+
+        // get attendee emails
+        $emails = $this->getAttendees($table, $entity, $attendeesFields);
+        if (empty($emails)) {
+            $this->log('Failed to find attendee emails', LogLevel::ERROR);
+
+            return [];
+        }
+
+        // get email subject and content
+        $mailer = new IcEmail($table, $entity);
+        $emailSubject = $mailer->getEmailSubject();
+        $emailContent = $mailer->getEmailContent();
+
+        // get common event options
+        $eventOptions = $this->getEventOptions($table, $entity, $reminderField);
+        // Set same attendees for all
+        $eventOptions['attendees'] = $emails;
+
+        $result = [];
         foreach ($emails as $email) {
             // New event with current attendee as organizer (WTF?)
             $eventOptions['organizer'] = $email;
 
             try {
                 $sent = $mailer->sendCalendarEmail($email, $emailSubject, $emailContent, $eventOptions);
-            } catch (\Exception $e) {
+            } catch (BadMethodCallException $e) {
                 $sent = $e;
             }
+
             $result[$email] = $sent;
         }
 
         return $result;
-    }
-
-    /**
-     * Check if given table is an instance of CsvTable
-     *
-     * Reminder functionality relies on a number of
-     * methods which are defined in \CsvMigrations\Table.
-     * So instead of checking all those methods one by
-     * one, we simply check if the given table instance
-     * inherits from the \CsvMigrations\Table.
-     *
-     * @throws \InvalidArgumentException If $table is not an instance of CsvTable
-     * @param object $table Instance of a table class
-     * @return void
-     */
-    protected function checkCsvTable($table)
-    {
-        if (!$table instanceof CsvTable) {
-            throw new InvalidArgumentException("Table is not an intance of CsvTable");
-        }
     }
 
     /**
@@ -150,15 +176,14 @@ class ModelAfterSaveListener implements EventListenerInterface
      * and if so, return the list of modules to which
      * reminders should be sent (Users, Contacts, etc).
      *
-     * @throws \InvalidArgumentException when no reminder modules found
-     * @param \CsvTable\Table $table Table to check
-     * @return array List of modules
+     * @param \Cake\Datasource\RepositoryInterface $table Table to check
+     * @return string[] List of modules
      */
-    protected function getRemindersToModules(CsvTable $table)
+    protected function getRemindersToModules(RepositoryInterface $table) : array
     {
         $config = (new ModuleConfig(ConfigType::MODULE(), $table->getRegistryAlias()))->parse();
         if (empty($config->table->allow_reminders)) {
-            throw new InvalidArgumentException("Failed to find reminder modules");
+            return [];
         }
 
         return $config->table->allow_reminders;
@@ -177,11 +202,10 @@ class ModelAfterSaveListener implements EventListenerInterface
      *       * Send separate reminder for each.
      *       * Have more flexible configuration rules.
      *
-     * @throws \InvalidArgumentException when failed to find reminder field
-     * @param \CsvMigrations\Table $table Table to use
+     * @param \Cake\Datasource\RepositoryInterface $table Table to use
      * @return string First reminder field name
      */
-    protected function getReminderField(CsvTable $table)
+    protected function getReminderField(RepositoryInterface $table) : string
     {
         $config = (new ModuleConfig(ConfigType::MIGRATION(), $table->getRegistryAlias()))->parse();
 
@@ -192,7 +216,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         });
 
         if (empty($fields)) {
-            throw new InvalidArgumentException("Failed to find reminder fields");
+            return '';
         }
 
         // FIXME: What should happen when there is more than 1 reminder field on the table?
@@ -204,35 +228,34 @@ class ModelAfterSaveListener implements EventListenerInterface
     /**
      * Retrieve attendees fields from current Table's associations.
      *
-     * @throws \InvalidArgumentException when failed to find attendee fields
-     * @param \CsvMigrations\Table $table Table instance
-     * @param array $options Options
-     * @return array
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
+     * @param string[] $modules Reminder to modules
+     * @return string[]
      */
-    protected function getAttendeesFields(CsvTable $table, $options = [])
+    protected function getAttendeesFields(RepositoryInterface $table, array $modules) : array
     {
-        $result = [];
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $table;
 
-        $associations = $table->associations();
-        if (!empty($options['tables'])) {
-            $associations = [];
-            foreach ($table->associations() as $association) {
-                if (in_array(Inflector::humanize($association->target()->table()), $options['tables'])) {
-                    $associations[] = $association;
-                }
+        $associations = [];
+        foreach ($table->associations() as $association) {
+            if (in_array(Inflector::humanize($association->target()->table()), $modules)) {
+                $associations[] = $association;
             }
         }
 
+        if (empty($associations)) {
+            return [];
+        }
+
+        $result = [];
         foreach ($associations as $association) {
-            $field = $association->foreignKey();
-            if (in_array($field, $this->skipAttendeesIn)) {
+            /** @var string */
+            $foreignKey = $association->getForeignKey();
+            if (in_array($foreignKey, $this->skipAttendeesIn)) {
                 continue;
             }
-            $result[] = $field;
-        }
-
-        if (empty($result)) {
-            throw new InvalidArgumentException("Failed to find attendee fields");
+            $result[] = $foreignKey;
         }
 
         return $result;
@@ -246,59 +269,19 @@ class ModelAfterSaveListener implements EventListenerInterface
      * we check that particular fields were modified (usually the
      * reminder datetime field or the attendees of the event).
      *
-     * @throws \InvalidArgumentException when required fields are not modified
      * @param \Cake\Datasource\EntityInterface $entity Entity instance
-     * @param array $requiredFields Required fields list
-     * @return void
+     * @param string[] $requiredFields Required fields list
+     * @return bool
      */
-    protected function checkRequiredModified(EntityInterface $entity, array $requiredFields)
+    protected function isRequiredModified(EntityInterface $entity, array $requiredFields) : bool
     {
-        if (empty($requiredFields)) {
-            throw new InvalidArgumentException("Required fields not specified");
-        }
-
-        // check if any of the required fields was modified and set modified flag to true
-        $modified = false;
         foreach ($requiredFields as $field) {
             if ($entity->dirty($field)) {
-                $modified = true;
-                break;
+                return true;
             }
         }
 
-        if (!$modified) {
-            throw new InvalidArgumentException("None of the required fields were modified");
-        }
-    }
-
-    /**
-     * getAssignedAssociations
-     *
-     * gets all Entities associated with the record
-     *
-     * @param \Cake\ORM\Table $table of the record
-     * @param \Cake\Datasource\EntityInterface $entity extra options
-     * @param array $fields Attendees fields
-     * @return array $entities
-     */
-    public function getAssignedAssociations(Table $table, EntityInterface $entity, array $fields)
-    {
-        $entities = [];
-
-        foreach ($table->associations() as $association) {
-            if (!in_array($association->foreignKey(), $fields)) {
-                continue;
-            }
-            $query = $association->target()->find('all', [
-                'conditions' => [$association->primaryKey() => $entity->{$association->foreignKey()} ]
-            ]);
-            $result = $query->first();
-            if ($result) {
-                $entities[] = $result;
-            }
-        }
-
-        return $entities;
+        return false;
     }
 
     /**
@@ -309,15 +292,21 @@ class ModelAfterSaveListener implements EventListenerInterface
      * @throws \InvalidArgumentException when no attendees found
      * @param \CsvMigrations\Table $table passed
      * @param \Cake\Datasource\EntityInterface $entity of the record
-     * @param array $fields Attendees fields
-     * @return array
+     * @param string[] $fields Attendees fields
+     * @return string[]
      */
-    protected function getAttendees(CsvTable $table, EntityInterface $entity, array $fields)
+    protected function getAttendees(CsvTable $table, EntityInterface $entity, array $fields) : array
     {
-        $assignedEntities = $this->getAssignedAssociations($table, $entity, $fields);
+        try {
+            $assignedEntities = $this->getAssignedAssociations($table, $entity, $fields);
+        } catch (InvalidArgumentException $e) {
+            $assignedEntities = [];
+        }
 
         if (empty($assignedEntities)) {
-            throw new InvalidArgumentException("Failed to find attendee entities");
+            $this->log('Failed to find attendee entities', LogLevel::ERROR);
+
+            return [];
         }
 
         $result = array_map(function ($item) {
@@ -325,13 +314,55 @@ class ModelAfterSaveListener implements EventListenerInterface
                 return $item['email'];
             }
         }, $assignedEntities);
+
         // Filter out empty items
         $result = array_filter($result);
+
         // Filter out duplicates
         $result = array_unique($result, SORT_STRING);
 
-        if (empty($result)) {
-            throw new InvalidArgumentException("Failed to find attendee emails");
+        return $result;
+    }
+
+    /**
+     * getAssignedAssociations
+     *
+     * gets all Entities associated with the record
+     *
+     * @param \Cake\Datasource\RepositoryInterface $table of the record
+     * @param \Cake\Datasource\EntityInterface $entity extra options
+     * @param string[] $fields Attendees fields
+     * @return \Cake\Datasource\EntityInterface[] $entities
+     */
+    public function getAssignedAssociations(RepositoryInterface $table, EntityInterface $entity, array $fields) : array
+    {
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $table;
+
+        $result = [];
+        foreach ($table->associations() as $association) {
+            if (! in_array($association->getForeignKey(), $fields)) {
+                continue;
+            }
+
+            $primaryKey = $association->getTarget()->getPrimaryKey();
+            if (! is_string($primaryKey)) {
+                throw new InvalidArgumentException('Primary key must be a string');
+            }
+
+            /** @var string */
+            $foreignKey = $association->getForeignKey();
+
+            /** @var \Cake\Datasource\EntityInterface|null */
+            $relatedEntity = $association->getTarget()
+                ->find('all')
+                ->where([$primaryKey => $entity->get($foreignKey)])
+                ->enableHydration(true)
+                ->first();
+
+            if (null !== $relatedEntity) {
+                $result[] = $relatedEntity;
+            }
         }
 
         return $result;
@@ -343,9 +374,9 @@ class ModelAfterSaveListener implements EventListenerInterface
      * @param \CsvMigrations\Table $table Table instance
      * @param \Cake\Datasource\EntityInterface $entity Entity instance
      * @param string $startField Entity field to use for event start time
-     * @return array
+     * @return mixed[]
      */
-    protected function getEventOptions(CsvTable $table, EntityInterface $entity, $startField)
+    protected function getEventOptions(CsvTable $table, EntityInterface $entity, string $startField) : array
     {
         // Event start and end times
         $eventTimes = $this->getEventTime($entity, $startField);
@@ -357,7 +388,7 @@ class ModelAfterSaveListener implements EventListenerInterface
             'sequence' => $entity->isNew() ? 0 : time(),
             'summary' => $mailer->getEventSubject(),
             'description' => $mailer->getEventContent(),
-            'location' => $entity->location,
+            'location' => $entity->get('location'),
             'startTime' => $eventTimes['start'],
             'endTime' => $eventTimes['end'],
         ];
@@ -374,9 +405,9 @@ class ModelAfterSaveListener implements EventListenerInterface
      *
      * @param \Cake\Datasource\EntityInterface $entity Saved entity instance
      * @param string $startField Entity field to use for event start time
-     * @return array Associative array of DateTimeZone instances for start and end
+     * @return mixed[] Associative array of DateTimeZone instances for start and end
      */
-    protected function getEventTime(EntityInterface $entity, $startField)
+    protected function getEventTime(EntityInterface $entity, string $startField) : array
     {
         // Application timezone
         $dtz = new DateTimeZone(DTZone::getAppTimeZone());

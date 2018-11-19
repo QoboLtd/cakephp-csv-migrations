@@ -18,7 +18,6 @@ use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Table as Table;
 use Eluceo\iCal\Component\Calendar;
-use Exception;
 use InvalidArgumentException;
 use Qobo\Utils\Utility\User;
 

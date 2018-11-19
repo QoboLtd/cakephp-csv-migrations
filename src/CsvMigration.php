@@ -16,7 +16,6 @@ use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
-use Exception;
 use Migrations\AbstractMigration;
 use Migrations\Table;
 use Psr\Log\LogLevel;

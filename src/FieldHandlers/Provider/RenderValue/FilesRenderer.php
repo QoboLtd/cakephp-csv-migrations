@@ -11,7 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
-use Cake\Core\Configure;
 use CsvMigrations\Utility\FileUpload;
 
 /**

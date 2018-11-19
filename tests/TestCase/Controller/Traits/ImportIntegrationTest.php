@@ -1,7 +1,6 @@
 <?php
 namespace CsvMigrations\Test\TestCase\Controller\Traits;
 
-use Cake\Core\Configure;
 use Cake\ORM\ResultSet;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestCase;

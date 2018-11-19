@@ -3,7 +3,6 @@ namespace CsvMigrations\Test\TestCase\Utility;
 
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\Utility\Import;
 
 /**

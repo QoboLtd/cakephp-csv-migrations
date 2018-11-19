@@ -13,11 +13,9 @@ namespace CsvMigrations\FieldHandlers;
 
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 use Cake\View\View;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
-use CsvMigrations\FieldHandlers\FieldHandlerInterface;
 use InvalidArgumentException;
 use RuntimeException;
 

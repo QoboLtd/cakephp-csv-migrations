@@ -13,7 +13,6 @@ namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Log\Log;

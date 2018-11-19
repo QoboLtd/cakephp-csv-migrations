@@ -14,7 +14,6 @@ namespace CsvMigrations\FieldHandlers\Provider\FieldToDb;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use InvalidArgumentException;
-use Phinx\Db\Adapter\MysqlAdapter;
 
 /**
  * DecimalFieldToDb

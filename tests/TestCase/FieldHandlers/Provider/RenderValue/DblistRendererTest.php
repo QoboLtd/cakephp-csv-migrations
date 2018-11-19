@@ -1,11 +1,9 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\FieldHandlers\Config\DblistConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\DblistRenderer;
-use CsvMigrations\Model\Table\DblistsTable;
 
 class DblistRendererTest extends TestCase
 {

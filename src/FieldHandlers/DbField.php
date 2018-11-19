@@ -11,7 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use CsvMigrations\FieldHandlers\CsvField;
 use InvalidArgumentException;
 
 class DbField

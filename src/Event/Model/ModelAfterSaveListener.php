@@ -24,7 +24,6 @@ use CsvMigrations\Table as CsvTable;
 use CsvMigrations\Utility\DTZone;
 use CsvMigrations\Utility\ICal\IcEmail;
 use DateTimeZone;
-use Exception;
 use InvalidArgumentException;
 use PHPUnit\Framework\MockObject\BadMethodCallException;
 use Psr\Log\LogLevel;

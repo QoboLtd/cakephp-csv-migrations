@@ -11,7 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers\Config;
 
-use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 use InvalidArgumentException;
 
 /**

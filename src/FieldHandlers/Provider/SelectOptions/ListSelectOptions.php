@@ -11,7 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\SelectOptions;
 
-use Cake\Collection\Collection;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;

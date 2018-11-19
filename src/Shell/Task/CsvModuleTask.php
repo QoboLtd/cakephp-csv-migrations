@@ -13,8 +13,6 @@ namespace CsvMigrations\Shell\Task;
 
 use Bake\Shell\Task\BakeTask;
 use Cake\Core\Configure;
-use Cake\Filesystem\File;
-use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
 use Qobo\Utils\Utility;
 

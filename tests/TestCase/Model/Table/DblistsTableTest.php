@@ -3,7 +3,6 @@ namespace CsvMigrations\Test\TestCase\Model\Table;
 
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use CsvMigrations\Model\Table\DblistsTable;
 
 /**
  * CsvMigrations\Model\Table\DblistsTable Test Case

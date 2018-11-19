@@ -1,7 +1,6 @@
 <?php
 namespace CsvMigrations\Test\TestCase\Aggregator;
 
-use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;

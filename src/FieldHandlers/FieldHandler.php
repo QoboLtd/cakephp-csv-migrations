@@ -12,10 +12,8 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\Event\Event;
-use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
-use Cake\View\View;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\Config\ConfigInterface;

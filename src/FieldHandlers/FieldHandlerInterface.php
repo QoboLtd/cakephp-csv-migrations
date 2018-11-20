@@ -77,11 +77,11 @@ interface FieldHandlerInterface
      * field.  The result can be controlled via the variety of
      * options.
      *
-     * @param string $data Field data
+     * @param mixed $data Field data
      * @param mixed[] $options Field options
      * @return string Field value
      */
-    public function renderValue(string $data, array $options = []) : string;
+    public function renderValue($data, array $options = []) : string;
 
     /**
      * Render field name

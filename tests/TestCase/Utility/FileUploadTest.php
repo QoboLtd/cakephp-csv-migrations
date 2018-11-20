@@ -25,7 +25,7 @@ class FileUploadTest extends TestCase
     public function setUp() : void
     {
         parent::setUp();
-        StorageManager::setConfig('Local', [
+        StorageManager::config('Local', [
             'adapterOptions' => [TMP, true],
             'adapterClass' => '\Gaufrette\Adapter\Local',
             'class' => '\Gaufrette\Filesystem'

@@ -54,7 +54,7 @@ class DatetimeSearchOptions extends AbstractSearchOptions
                 ]
             ]);
         } else {
-            $template = $view->Form->input('', [
+            $template = $view->Form->control('', [
                 'name' => '{{name}}',
                 'value' => '{{value}}',
                 'type' => 'text',

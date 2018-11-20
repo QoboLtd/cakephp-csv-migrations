@@ -32,7 +32,7 @@ class IntegerSearchOptions extends AbstractSearchOptions
         $defaultOptions['input'] = ['content' => $template];
 
         $view = $this->config->getView();
-        $content = $view->Form->input('', [
+        $content = $view->Form->control('', [
             'name' => '{{name}}',
             'value' => '{{value}}',
             'type' => 'number',

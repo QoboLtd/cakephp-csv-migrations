@@ -33,33 +33,35 @@ class DblistCell extends Cell
      *
      * Checks the given list if it has the given value in its list items.
      *
-     * @throws RunTimeException If the value is not found
      * @param string $value List item value
      * @param string $list Name of the list
      * @return void
      */
-    public function renderValue($value, $list = null)
+    public function renderValue(string $value, string $list) : void
     {
-        $this->loadModel('CsvMigrations.Dblists');
+        /**
+         * @var \CsvMigrations\Model\Table\DblistsTable
+         */
+        $table = $this->loadModel('CsvMigrations.Dblists');
         $this->_createList($list);
-        $query = $this->Dblists->findByName($list);
-        $query = $query->matching('DblistItems', function ($q) use ($value) {
-            return $q->where(['DblistItems.value' => $value]);
-        });
 
-        if (! $query->isEmpty()) {
-            $this->set('data', $query->first()->_matchingData['DblistItems']->get('name'));
+        $query = $table->find()
+            ->enableHydration(true)
+            ->where([$table->aliasField('name') => $list])
+            ->matching('DblistItems', function ($q) use ($value) {
+                return $q->where(['DblistItems.value' => $value]);
+            });
+
+        /** @var \Cake\Datasource\EntityInterface|null */
+        $entity = $query->first();
+
+        if (null === $entity) {
+            $this->set('data', '' !== trim($value) ? sprintf(ListRenderer::VALUE_NOT_FOUND_HTML, $value) : '');
 
             return;
         }
 
-        if ($query->isEmpty() && '' === trim($value)) {
-            $this->set('data', '');
-
-            return;
-        }
-
-        $this->set('data', sprintf(ListRenderer::VALUE_NOT_FOUND_HTML, $value));
+        $this->set('data', $entity->get('_matchingData')['DblistItems']->get('name'));
     }
 
     /**
@@ -67,18 +69,22 @@ class DblistCell extends Cell
      *
      * It will fail to create a new list if the given name already exists.
      *
-     * @param  string $name List's name
-     * @return bool         True on sucess.
+     * @param string $name List name
+     * @return bool
      */
-    protected function _createList($name = '')
+    protected function _createList(string $name) : bool
     {
-        $this->loadModel('CsvMigrations.Dblists');
-        if (!$this->Dblists->exists(['name' => $name])) {
-            $entity = $this->Dblists->newEntity(['name' => $name]);
+        /**
+         * @var \CsvMigrations\Model\Table\DblistsTable
+         */
+        $table = $this->loadModel('CsvMigrations.Dblists');
 
-            return $this->Dblists->save($entity);
+        if ($table->exists(['name' => $name])) {
+            return false;
         }
 
-        return false;
+        $entity = $table->newEntity(['name' => $name]);
+
+        return (bool)$table->save($entity);
     }
 }

@@ -6,31 +6,14 @@ use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestCase;
 use CsvMigrations\Event\Model\ModelAfterSaveListener;
-use CsvMigrations\Model\Table\ArticlesTable;
-use CsvMigrations\Model\Table\LeadsTable;
-use CsvMigrations\Model\Table\UsersTable;
+use CsvMigrations\Test\App\Model\Table\ArticlesTable;
+use CsvMigrations\Test\App\Model\Table\LeadsTable;
+use CsvMigrations\Test\App\Model\Table\UsersTable;
 
 class ModelAfterSaveListenerTest extends IntegrationTestCase
 {
-    /**
-     * Test subject
-     *
-     * @var \CsvMigrations\Model\Table\ArticlesTable
-     */
     public $Articles;
-
-    /**
-     * Test subject
-     *
-     * @var \CsvMigrations\Model\Table\LeadsTable
-     */
     public $Leads;
-
-    /**
-     * Test subject
-     *
-     * @var \CsvMigrations\Model\Table\UsersTable
-     */
     public $Users;
 
     /**
@@ -44,7 +27,7 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
         'plugin.csv_migrations.users',
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         // Setup Articles table
@@ -58,7 +41,7 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
         $this->Users = TableRegistry::get('Users', $config);
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         unset($this->Articles);
         unset($this->Users);
@@ -66,7 +49,7 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
         parent::tearDown();
     }
 
-    public function testSendCalendarReminderNonTable()
+    public function testSendCalendarReminderNonTable() : void
     {
         $event = new Event('CsvMigrations.Model.afterSave', $this);
         $entity = new Entity();
@@ -76,27 +59,27 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
         $this->assertTrue(empty($result), "sendCalendarReminder() returned a non-empty result");
     }
 
-    public function testSendCalendarReminderNonCsvTable()
+    public function testSendCalendarReminderNonCsvTable() : void
     {
         $event = new Event('CsvMigrations.Model.afterSave', $this->Users);
-        $entity = $this->Users->find('all')->first();
+        $entity = $this->Users->find('all')->firstOrFail();
         $listener = new ModelAfterSaveListener();
         $result = $listener->sendCalendarReminder($event, $entity);
         $this->assertTrue(is_array($result), "sendCalendarReminder() returned a non-array result");
         $this->assertTrue(empty($result), "sendCalendarReminder() returned a non-empty result");
     }
 
-    public function testSendCalendarReminderTableNoConfig()
+    public function testSendCalendarReminderTableNoConfig() : void
     {
         $event = new Event('CsvMigrations.Model.afterSave', $this->Articles);
-        $entity = $this->Articles->find('all')->first();
+        $entity = $this->Articles->find('all')->firstOrFail();
         $listener = new ModelAfterSaveListener();
         $result = $listener->sendCalendarReminder($event, $entity);
         $this->assertTrue(is_array($result), "sendCalendarReminder() returned a non-array result");
         $this->assertTrue(empty($result), "sendCalendarReminder() returned a non-empty result");
     }
 
-    public function testSendCalendarReminderGoodAttempt()
+    public function testSendCalendarReminderGoodAttempt() : void
     {
         // FIXME : Figure out why this is not loaded from configuration
         $this->Leads->belongsTo('Users', [

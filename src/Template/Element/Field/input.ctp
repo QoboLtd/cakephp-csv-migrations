@@ -34,12 +34,12 @@ if ('' !== trim($field['name'])) {
     $data = $options['entity']->get($field['name']);
     if (! $data) {
         // allowing query params to define field values.
-        if ($this->request->query($field['name'])) {
+        if ($this->request->getQuery($field['name'])) {
             $data = $this->request->query($field['name']);
         }
 
-        if ($this->request->data($field['name'])) {
-            $data = $this->request->data($field['name']);
+        if ($this->request->getData($field['name'])) {
+            $data = $this->request->getData($field['name']);
         }
     }
 

@@ -15,6 +15,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
+use CsvMigrations\Utility\FileUpload;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility;
@@ -31,7 +32,7 @@ trait AssociationsAwareTrait
      *
      * @return void
      */
-    public function setAssociations()
+    public function setAssociations() : void
     {
         foreach (Utility::findDirs(Configure::read('CsvMigrations.modules.path')) as $module) {
             $this->setByModule($module);
@@ -41,18 +42,17 @@ trait AssociationsAwareTrait
     /**
      * Association setter method.
      *
-     * @param string $type Association type
-     * @param string $alias Association alias
-     * @param array $options Association options
-     *
      * @see \Cake\ORM\Table::belongsTo()
      * @see \Cake\ORM\Table::belongsToMany()
      * @see \Cake\ORM\Table::hasMany()
      * @see \Cake\ORM\Table::hasOne()
      *
+     * @param string $type Association type
+     * @param string $alias Association alias
+     * @param mixed[] $options Association options
      * @return void
      */
-    protected function setAssociation($type, $alias, array $options)
+    protected function setAssociation(string $type, string $alias, array $options) : void
     {
         $this->{$type}($alias, $options);
     }
@@ -63,10 +63,18 @@ trait AssociationsAwareTrait
      * @param string $module Module name
      * @return void
      */
-    private function setByModule($module)
+    private function setByModule(string $module) : void
     {
         $config = (new ModuleConfig(ConfigType::MODULE(), $module))->parse();
         $fields = $this->getModuleFields($module);
+
+        if (! property_exists($config, 'table')) {
+            return;
+        }
+
+        if (! property_exists($config->table, 'type')) {
+            return;
+        }
 
         if ('module' === $config->table->type) {
             $this->setByTypeModule($module, $fields);
@@ -85,10 +93,10 @@ trait AssociationsAwareTrait
      * Set associations from "module" type Modules.
      *
      * @param string $module Module name
-     * @param array $fields Module fields
+     * @param mixed[] $fields Module fields
      * @return void
      */
-    private function setByTypeModule($module, array $fields)
+    private function setByTypeModule(string $module, array $fields) : void
     {
         foreach ($fields as $field) {
             $this->setByTypeModuleField($module, $field);
@@ -99,10 +107,10 @@ trait AssociationsAwareTrait
      * Set associations from "relation" type Modules.
      *
      * @param string $module Module name
-     * @param array $fields Module fields
+     * @param mixed[] $fields Module fields
      * @return void
      */
-    private function setByTypeRelation($module, array $fields)
+    private function setByTypeRelation(string $module, array $fields) : void
     {
         $moduleField = $this->getModuleRelatedField($fields);
 
@@ -119,10 +127,10 @@ trait AssociationsAwareTrait
      * Set Burzum/FileStorage associations.
      *
      * @param string $module Module name
-     * @param array $fields Module fields
+     * @param mixed[] $fields Module fields
      * @return void
      */
-    private function setByTypeFile($module, array $fields)
+    private function setByTypeFile(string $module, array $fields) : void
     {
         foreach ($fields as $field) {
             $this->setByTypeFileField($field);
@@ -136,7 +144,7 @@ trait AssociationsAwareTrait
      * @param \CsvMigrations\FieldHandlers\CsvField $field CSV Field instance
      * @return void
      */
-    private function setByTypeModuleField($module, CsvField $field)
+    private function setByTypeModuleField(string $module, CsvField $field) : void
     {
         // skip non related type
         if (! $this->isRelatedType($field)) {
@@ -147,6 +155,9 @@ trait AssociationsAwareTrait
         if (! in_array($this->getTableName(), [$module, $field->getAssocCsvModule()])) {
             return;
         }
+
+        $className = '';
+        $associationType = '';
 
         /**
          * for current table instance "Articles", assuming that the provide $module is "Articles" and
@@ -199,7 +210,7 @@ trait AssociationsAwareTrait
      * @param \CsvMigrations\FieldHandlers\CsvField $moduleField Module related CSV Field instance
      * @return void
      */
-    private function setByTypeRelationField($module, CsvField $field, CsvField $moduleField)
+    private function setByTypeRelationField(string $module, CsvField $field, CsvField $moduleField) : void
     {
         if (! $this->isRelatedType($field)) {
             return;
@@ -233,13 +244,16 @@ trait AssociationsAwareTrait
      * @param \CsvMigrations\FieldHandlers\CsvField $field CSV Field instance
      * @return bool
      */
-    private function isFootprintField(CsvField $field)
+    private function isFootprintField(CsvField $field) : bool
     {
         if (! $this->hasBehavior('Footprint')) {
             return false;
         }
 
-        return in_array($field->getName(), $this->behaviors()->get('Footprint')->getConfig());
+        /** @var \Cake\ORM\Behavior */
+        $behavior = $this->behaviors()->get('Footprint');
+
+        return in_array($field->getName(), $behavior->getConfig());
     }
 
     /**
@@ -248,7 +262,7 @@ trait AssociationsAwareTrait
      * @param \CsvMigrations\FieldHandlers\CsvField $field CSV Field instance
      * @return void
      */
-    private function setByTypeFileField(CsvField $field)
+    private function setByTypeFileField(CsvField $field) : void
     {
         if (! in_array($field->getType(), ['files', 'images'])) {
             return;
@@ -256,9 +270,9 @@ trait AssociationsAwareTrait
 
         $this->setAssociation(
             'hasMany',
-            static::generateAssociationName('Burzum/FileStorage.FileStorage', $field->getName()),
+            static::generateAssociationName(FileUpload::FILE_STORAGE_TABLE_NAME, $field->getName()),
             [
-                'className' => 'Burzum/FileStorage.FileStorage',
+                'className' => FileUpload::FILE_STORAGE_TABLE_NAME,
                 'foreignKey' => 'foreign_key',
                 'conditions' => ['model' => $this->getTable(), 'model_field' => $field->getName()]
             ]
@@ -270,7 +284,7 @@ trait AssociationsAwareTrait
      *
      * @return string
      */
-    private function getTableName()
+    private function getTableName() : string
     {
         return App::shortName(get_class($this), 'Model/Table', 'Table');
     }
@@ -278,10 +292,10 @@ trait AssociationsAwareTrait
     /**
      * Retrieves current module related field, from "relation" type Modules.
      *
-     * @param array $fields Module fields
+     * @param mixed[] $fields Module fields
      * @return \CsvMigrations\FieldHandlers\CsvField|null
      */
-    private function getModuleRelatedField(array $fields)
+    private function getModuleRelatedField(array $fields) : ?CsvField
     {
         foreach ($fields as $field) {
             if ($this->getTableName() === $field->getAssocCsvModule()) {
@@ -298,7 +312,7 @@ trait AssociationsAwareTrait
      * @param \CsvMigrations\FieldHandlers\CsvField $field CSV field instance
      * @return bool
      */
-    private function isRelatedType(CsvField $field)
+    private function isRelatedType(CsvField $field) : bool
     {
         return 'related' === $field->getType();
     }
@@ -307,12 +321,17 @@ trait AssociationsAwareTrait
      * Retrieves specified Module fields.
      *
      * @param string $module Module name
-     * @return array
+     * @return mixed[]
      */
-    private function getModuleFields($module)
+    private function getModuleFields(string $module) : array
     {
-        $fields = (new ModuleConfig(ConfigType::MIGRATION(), $module))->parse();
-        $fields = json_decode(json_encode($fields), true);
+        $config = (new ModuleConfig(ConfigType::MIGRATION(), $module))->parse();
+        $config = json_encode($config);
+        if (false === $config) {
+            return [];
+        }
+
+        $fields = json_decode($config, true);
 
         foreach ($fields as $k => $v) {
             $fields[$k] = new CsvField($v);
@@ -332,7 +351,7 @@ trait AssociationsAwareTrait
      * @param string $foreignKey Foreign key
      * @return string
      */
-    public static function generateAssociationName($tableName, $foreignKey)
+    public static function generateAssociationName(string $tableName, string $foreignKey) : string
     {
         list($plugin, $tableName) = pluginSplit($tableName);
         $plugin = false !== strpos($plugin, '/') ? substr($plugin, strpos($plugin, '/') + 1) : $plugin;

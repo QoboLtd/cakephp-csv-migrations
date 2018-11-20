@@ -13,17 +13,19 @@ class AverageAggregatorTest extends TestCase
         'plugin.CsvMigrations.foo'
     ];
 
-    public function setUp()
+    private $table;
+
+    public function setUp() : void
     {
         $this->table = TableRegistry::get('Foo');
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         unset($this->table);
     }
 
-    public function testValidateWithNonExistingField()
+    public function testValidateWithNonExistingField() : void
     {
         $this->expectException(RuntimeException::class);
 
@@ -33,14 +35,14 @@ class AverageAggregatorTest extends TestCase
     /**
      * @dataProvider invalidFieldTypesProvider
      */
-    public function testValidateWithInvalidFieldType($field)
+    public function testValidateWithInvalidFieldType(string $field) : void
     {
         $this->expectException(RuntimeException::class);
 
         new AverageAggregator(new Configuration($this->table, $field));
     }
 
-    public function testApplyConditions()
+    public function testApplyConditions() : void
     {
         $aggregator = new AverageAggregator(new Configuration($this->table, 'cost_amount'));
 
@@ -53,7 +55,7 @@ class AverageAggregatorTest extends TestCase
         $this->assertNotEquals($expected, $query);
     }
 
-    public function testGetResult()
+    public function testGetResult() : void
     {
         $aggregator = new AverageAggregator(new Configuration($this->table, 'cost_amount'));
 
@@ -63,14 +65,17 @@ class AverageAggregatorTest extends TestCase
         $this->assertSame(1100.1, $aggregator->getResult($query->first()));
     }
 
-    public function testGetConfig()
+    public function testGetConfig() : void
     {
         $aggregator = new AverageAggregator(new Configuration($this->table, 'cost_amount'));
 
         $this->assertInstanceOf(Configuration::class, $aggregator->getConfig());
     }
 
-    public function invalidFieldTypesProvider()
+    /**
+     * @return mixed[]
+     */
+    public function invalidFieldTypesProvider() : array
     {
         return [
             ['cost_currency'],

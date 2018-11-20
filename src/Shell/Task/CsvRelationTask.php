@@ -13,9 +13,6 @@ namespace CsvMigrations\Shell\Task;
 
 use Bake\Shell\Task\BakeTask;
 use Cake\Core\Configure;
-use Cake\Filesystem\File;
-use Cake\Filesystem\Folder;
-use Cake\Utility\Inflector;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility;
@@ -42,6 +39,11 @@ class CsvRelationTask extends BakeTask
     ];
 
     /**
+     * @var \Bake\Shell\Task\BakeTemplateTask
+     */
+    public $BakeTemplate;
+
+    /**
      * Configure option parser
      *
      * @return \Cake\Console\ConsoleOptionParser
@@ -61,7 +63,7 @@ class CsvRelationTask extends BakeTask
      *
      * @param string $name Module name
      */
-    public function main($name = '')
+    public function main(string $name = '')
     {
         parent::main();
 
@@ -80,9 +82,9 @@ class CsvRelationTask extends BakeTask
      * Interactive shell for modules selection.
      *
      * @param string $path Modules root path
-     * @return array
+     * @return string[]
      */
-    private function selection($path)
+    private function selection(string $path) : array
     {
         $modules = $this->getModules($path);
         if (empty($modules)) {
@@ -102,9 +104,9 @@ class CsvRelationTask extends BakeTask
      * System modules getter.
      *
      * @param string $path Modules root path
-     * @return array
+     * @return string[]
      */
-    private function getModules($path)
+    private function getModules(string $path) : array
     {
         $result = [];
         foreach (Utility::findDirs($path) as $module) {
@@ -124,15 +126,26 @@ class CsvRelationTask extends BakeTask
      * @param string $module Module name
      * @return bool
      */
-    private function isModule($module)
+    private function isModule(string $module) : bool
     {
         $config = (new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]))->parse();
-        $config = json_decode(json_encode($config), true);
+        $config = json_encode($config);
+        if (false === $config) {
+            return false;
+        }
+        $config = json_decode($config, true);
         if (empty($config)) {
             return false;
         }
 
         $config = (new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]))->parse();
+        if (! property_exists($config, 'table')) {
+            return false;
+        }
+        if (! property_exists($config->table, 'type')) {
+            return false;
+        }
+
         if ('module' !== $config->table->type) {
             return false;
         }
@@ -143,10 +156,10 @@ class CsvRelationTask extends BakeTask
     /**
      * Interactive input normalization.
      *
-     * @param array $selection User input
-     * @return array
+     * @param string[] $selection User input
+     * @return string[]
      */
-    private function normalize(array $selection)
+    private function normalize(array $selection) : array
     {
         $result = [];
         foreach ($selection as $module) {
@@ -166,7 +179,7 @@ class CsvRelationTask extends BakeTask
      * @param string $path Modules root path
      * @return void
      */
-    private function validate($name, $path)
+    private function validate(string $name, string $path) : void
     {
         if (! ctype_alpha($name)) {
             $this->abort(sprintf('Invalid Relation name provided: %s', $name));
@@ -180,13 +193,14 @@ class CsvRelationTask extends BakeTask
     /**
      * Bake Relation configuration files.
      *
-     * @param array $selection Modules selection
+     * @param string[] $selection Modules selection
      * @param string $path Modules root path
      * @return bool
      */
-    private function bakeModuleConfig(array $selection, $path)
+    private function bakeModuleConfig(array $selection, string $path) : bool
     {
-        $this->BakeTemplate->set(['display_field' => $this->_modelKey(reset($selection))]);
+        reset($selection);
+        $this->BakeTemplate->set(['display_field' => $this->_modelKey(current($selection))]);
 
         return $this->createFile(
             $path . implode('', $selection) . DS . 'config' . DS . 'config.dist.json',
@@ -197,11 +211,11 @@ class CsvRelationTask extends BakeTask
     /**
      * Bake Database configuration files.
      *
-     * @param array $selection Modules selection
+     * @param string[] $selection Modules selection
      * @param string $path Modules root path
      * @return bool
      */
-    private function bakeDatabaseConfig(array $selection, $path)
+    private function bakeDatabaseConfig(array $selection, string $path) : bool
     {
         $fields = [];
         foreach ($selection as $module) {

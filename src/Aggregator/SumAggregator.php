@@ -16,15 +16,16 @@ final class SumAggregator extends AbstractAggregator
     /**
      * {@inheritDoc}
      */
-    public function validate()
+    public function validate() : bool
     {
         if (! parent::validate()) {
             return false;
         }
 
-        $type = $this->getConfig()
-            ->getTable()
-            ->getSchema()
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $this->getConfig()->getTable();
+
+        $type = $table->getSchema()
             ->getColumnType($this->getConfig()->getField());
 
         if (! in_array($type, $this->supportedTypes)) {
@@ -43,11 +44,15 @@ final class SumAggregator extends AbstractAggregator
     /**
      * {@inheritDoc}
      */
-    public function applyConditions(QueryInterface $query)
+    public function applyConditions(QueryInterface $query) : QueryInterface
     {
-        $aggregateField = $this->getConfig()
-            ->getTable()
-            ->aliasField($this->getConfig()->getField());
+        /** @var \Cake\Datasource\QueryInterface&\Cake\Database\Query */
+        $query = $query;
+
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $this->getConfig()->getTable();
+
+        $aggregateField = $table->aliasField($this->getConfig()->getField());
 
         $query->select(['sum' => $query->func()->sum($aggregateField)]);
 

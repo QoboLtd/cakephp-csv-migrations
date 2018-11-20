@@ -14,7 +14,7 @@ namespace CsvMigrations\Utility;
 use Cake\Core\App;
 use Cake\Datasource\RepositoryInterface;
 use CsvMigrations\FieldHandlers\CsvField;
-use Exception;
+use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
@@ -24,30 +24,43 @@ class Field
      * Get Table's lookup fields.
      *
      * @param \Cake\Datasource\RepositoryInterface $table Table instance
-     * @return array
+     * @return string[]
      */
-    public static function getLookup(RepositoryInterface $table)
+    public static function getLookup(RepositoryInterface $table) : array
     {
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
         $config = new ModuleConfig(ConfigType::MODULE(), $moduleName);
         $parsed = $config->parse();
 
-        return $parsed->table->lookup_fields ?: [];
+        if (! property_exists($parsed, 'table')) {
+            return [];
+        }
+
+        if (! property_exists($parsed->table, 'lookup_fields')) {
+            return [];
+        }
+
+        return $parsed->table->lookup_fields;
     }
 
     /**
      * Get Table's csv fields.
      *
      * @param \Cake\Datasource\RepositoryInterface $table Table instance
-     * @return array
+     * @return mixed[]
      */
-    public static function getCsv(RepositoryInterface $table)
+    public static function getCsv(RepositoryInterface $table) : array
     {
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
         $config = new ModuleConfig(ConfigType::MIGRATION(), $moduleName);
-        $parsed = json_decode(json_encode($config->parse()), true);
+        $parsed = json_encode($config->parse());
+        if (false === $parsed) {
+            return [];
+        }
+
+        $parsed = json_decode($parsed, true);
 
         if (empty($parsed)) {
             return [];
@@ -79,30 +92,31 @@ class Field
         $config = new ModuleConfig(ConfigType::MIGRATION(), $moduleName);
         $parsed = $config->parse();
 
-        if (null === $parsed) {
-            return null;
-        }
-
         if (! property_exists($parsed, $field)) {
             return null;
         }
 
-        return new CsvField(json_decode(json_encode($parsed->{$field}), true));
+        $parsed = json_encode($parsed->{$field});
+        if (false === $parsed) {
+            return null;
+        }
+
+        return new CsvField(json_decode($parsed, true));
     }
 
     /**
      * Module virtual fields getter.
      *
      * @param \Cake\Datasource\RepositoryInterface $table Table instance
-     * @return array
+     * @return string[]
      */
-    public static function getVirtual(RepositoryInterface $table)
+    public static function getVirtual(RepositoryInterface $table) : array
     {
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
         $config = (new ModuleConfig(ConfigType::MODULE(), $moduleName))->parse();
 
-        return (array)$config->virtualFields;
+        return property_exists($config, 'virtualFields') ? (array)$config->virtualFields : [];
     }
 
     /**
@@ -112,9 +126,9 @@ class Field
      * @param string $action Controller action
      * @param bool $includeModel Include model flag
      * @param bool $panels Arrange panels flag
-     * @return array
+     * @return mixed[]
      */
-    public static function getCsvView(RepositoryInterface $table, $action, $includeModel = false, $panels = false)
+    public static function getCsvView(RepositoryInterface $table, string $action, bool $includeModel = false, bool $panels = false) : array
     {
         $tableName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
@@ -126,11 +140,11 @@ class Field
 
         $result = $config->items;
 
-        if ((bool)$panels) {
+        if ($panels) {
             $result = static::arrangePanels($result);
         }
 
-        if ((bool)$includeModel) {
+        if ($includeModel) {
             $result = static::setFieldPluginAndModel($tableName, $result);
         }
 
@@ -142,20 +156,21 @@ class Field
      *
      * @param string $listName List name
      * @param bool $flat Fatten list flag
-     * @param string $prefix Option value prefix
-     * @return array
+     * @return mixed[]
      */
-    public static function getList($listName, $flat = false, $prefix = '')
+    public static function getList(string $listName, bool $flat = false) : array
     {
-        $moduleName = null;
+        $moduleName = '';
         if (false !== strpos($listName, '.')) {
             list($moduleName, $listName) = explode('.', $listName, 2);
         }
 
         $config = new ModuleConfig(ConfigType::LISTS(), $moduleName, $listName, ['flatten' => $flat]);
         try {
-            $items = $config->parse()->items;
-        } catch (Exception $e) {
+            $config = json_encode($config->parse());
+            $config = false !== $config ? json_decode($config, true) : [];
+            $items = isset($config['items']) ? $config['items'] : [];
+        } catch (InvalidArgumentException $e) {
             return [];
         }
 
@@ -165,10 +180,10 @@ class Field
     /**
      * Method that arranges csv fields into panels.
      *
-     * @param array $fields csv fields
-     * @return array
+     * @param mixed[] $fields csv fields
+     * @return mixed[]
      */
-    protected static function arrangePanels(array $fields)
+    protected static function arrangePanels(array $fields) : array
     {
         $result = [];
 
@@ -184,14 +199,14 @@ class Field
      * Add plugin and model name for each of the csv fields.
      *
      * @param string $tableName Table name
-     * @param array $fields View csv fields
-     * @return array
+     * @param string[] $fields View csv fields
+     * @return mixed[]
      */
-    protected static function setFieldPluginAndModel($tableName, array $fields)
+    protected static function setFieldPluginAndModel(string $tableName, array $fields) : array
     {
         list($plugin, $model) = pluginSplit($tableName);
 
-        $callback = function (&$value, $key) use ($plugin, $model, &$callback) {
+        $callback = function (&$value, $key) use ($plugin, $model) {
             $value = ['plugin' => $plugin, 'model' => $model, 'name' => $value];
 
             return $value;

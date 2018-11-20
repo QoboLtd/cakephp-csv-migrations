@@ -12,7 +12,7 @@
 namespace CsvMigrations\Utility\Validate\Check;
 
 use CsvMigrations\Utility\Validate\Utility;
-use Exception;
+use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
@@ -25,17 +25,20 @@ class MigrationCheck extends AbstractCheck
      * @param array $options Check options
      * @return int Number of encountered errors
      */
-    public function run($module, array $options = [])
+    public function run(string $module, array $options = []) : int
     {
+        $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
         $fields = [];
         try {
-            $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
-            $fields = json_decode(json_encode($mc->parse()), true);
-        } catch (Exception $e) {
+            $config = json_encode($mc->parse());
+            $fields = false === $config ? [] : json_decode($config, true);
+        } catch (InvalidArgumentException $e) {
             // We need errors and warnings irrelevant of the exception
+            $this->errors = array_merge($this->errors, $mc->getErrors());
+            $this->warnings = array_merge($this->warnings, $mc->getWarnings());
+
+            return count($this->errors);
         }
-        $this->errors = array_merge($this->errors, $mc->getErrors());
-        $this->warnings = array_merge($this->warnings, $mc->getWarnings());
 
         if (empty($fields)) {
             return count($this->errors);

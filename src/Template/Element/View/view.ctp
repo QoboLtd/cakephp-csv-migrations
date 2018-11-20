@@ -54,7 +54,7 @@ if (!$options['title']) {
     );
 }
 
-if (!$this->request->query('embedded')) : ?>
+if (!$this->request->getQuery('embedded')) : ?>
 <section class="content-header">
     <div class="row">
         <div class="col-xs-12 col-md-6">
@@ -87,7 +87,7 @@ foreach ($options['fields'] as $panelFields) {
 $embeddedFields = [];
 foreach ($options['fields'] as $panelName => $panelFields) : ?>
     <?php
-    if ($this->request->query('embedded')) {
+    if ($this->request->getQuery('embedded')) {
         $panelName = Inflector::singularize(Inflector::humanize($this->name)) . ': ' . $panelName;
     }
     ?>
@@ -145,7 +145,7 @@ foreach ($options['fields'] as $panelName => $panelFields) : ?>
     $embeddedFields = [];
     ?>
 <?php endforeach; ?>
-<?php if (!$this->request->query('embedded')) : ?>
+<?php if (!$this->request->getQuery('embedded')) : ?>
     <?= $this->element('CsvMigrations.common_js_libs'); // loading common setup for typeahead/panel/etc libs ?>
     <?= $this->Html->script('Qobo/Utils.dataTables.init', ['block' => 'scriptBottom']) ?>
     <hr />

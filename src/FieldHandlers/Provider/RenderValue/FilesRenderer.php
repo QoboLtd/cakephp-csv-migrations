@@ -25,30 +25,33 @@ class FilesRenderer extends AbstractRenderer
      *
      * @param mixed $data Data to use for provision
      * @param array $options Options to use for provision
-     * @return mixed
+     * @return string
      */
     public function provide($data = null, array $options = [])
     {
-        $result = (string)$data;
-
-        if (empty($result)) {
-            return $result;
+        if (! is_string($data)) {
+            return '';
         }
 
+        if ('' === $data) {
+            return '';
+        }
+
+        /** @var \Cake\ORM\Table&\Cake\Datasource\RepositoryInterface */
         $table = $this->config->getTable();
         $field = $this->config->getField();
 
         $fileUpload = new FileUpload($table);
 
-        $entities = $fileUpload->getFiles($table, $field, $data);
+        $entities = $fileUpload->getFiles($field, $data);
 
-        $params = [
-            'entities' => $entities
-        ];
+        if ($entities->isEmpty()) {
+            return '';
+        }
 
         $defaultElement = 'CsvMigrations.FieldHandlers/FilesFieldHandler/value';
         $element = empty($options['element']) ? $defaultElement : $options['element'];
 
-        return $this->renderElement($element, $params);
+        return $this->renderElement($element, ['entities' => $entities]);
     }
 }

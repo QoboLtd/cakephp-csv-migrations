@@ -30,7 +30,7 @@ class BooleanSearchOptions extends AbstractSearchOptions
         $defaultOptions = $this->getDefaultOptions($data, $options);
 
         $view = $this->config->getView();
-        $template = $view->Form->input('{{name}}', [
+        $template = $view->Form->control('{{name}}', [
             'type' => 'checkbox',
             'class' => 'square',
             'label' => false

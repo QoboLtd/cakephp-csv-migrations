@@ -12,7 +12,6 @@
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
 use CsvMigrations\FieldHandlers\RelatedFieldTrait;
-use InvalidArgumentException;
 
 /**
  * RelatedRenderer

@@ -11,7 +11,7 @@
  */
 namespace CsvMigrations\Model\Table;
 
-use Cake\ORM\Query;
+use Cake\Datasource\QueryInterface;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -69,7 +69,7 @@ class ImportResultsTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config) : void
     {
         parent::initialize($config);
 
@@ -93,7 +93,7 @@ class ImportResultsTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
+    public function validationDefault(Validator $validator) : Validator
     {
         $validator
             ->uuid('id')
@@ -130,7 +130,7 @@ class ImportResultsTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules)
+    public function buildRules(RulesChecker $rules) : RulesChecker
     {
         $rules->add($rules->existsIn(['import_id'], 'Imports'));
 
@@ -140,11 +140,11 @@ class ImportResultsTable extends Table
     /**
      * Find import results by import id and success status.
      *
-     * @param \Cake\ORM\Query $query Query object
-     * @param array $options Additional options
-     * @return \Cake\ORM\Query
+     * @param \Cake\Datasource\QueryInterface $query Query object
+     * @param mixed[] $options Additional options
+     * @return \Cake\Datasource\QueryInterface
      */
-    public function findImported(Query $query, array $options)
+    public function findImported(QueryInterface $query, array $options) : QueryInterface
     {
         $query->where([
             'import_id' => $options['import']->id,
@@ -157,11 +157,11 @@ class ImportResultsTable extends Table
     /**
      * Find import results by import id and pending status.
      *
-     * @param \Cake\ORM\Query $query Query object
-     * @param array $options Additional options
-     * @return \Cake\ORM\Query
+     * @param \Cake\Datasource\QueryInterface $query Query object
+     * @param mixed[] $options Additional options
+     * @return \Cake\Datasource\QueryInterface
      */
-    public function findPending(Query $query, array $options)
+    public function findPending(QueryInterface $query, array $options) : QueryInterface
     {
         $query->where([
             'import_id' => $options['import']->id,
@@ -174,11 +174,11 @@ class ImportResultsTable extends Table
     /**
      * Find import results by import id and fail status.
      *
-     * @param \Cake\ORM\Query $query Query object
-     * @param array $options Additional options
-     * @return \Cake\ORM\Query
+     * @param \Cake\Datasource\QueryInterface $query Query object
+     * @param mixed[] $options Additional options
+     * @return \Cake\Datasource\QueryInterface
      */
-    public function findFailed(Query $query, array $options)
+    public function findFailed(QueryInterface $query, array $options) : QueryInterface
     {
         $query->where([
             'import_id' => $options['import']->id,

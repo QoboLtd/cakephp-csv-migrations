@@ -11,19 +11,19 @@ class DateFieldToDbTest extends TestCase
 {
     protected $provider;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $config = new StringConfig('foobar');
         $this->provider = new DateFieldToDb($config);
     }
 
-    public function testInterface()
+    public function testInterface() : void
     {
         $implementedInterfaces = array_keys(class_implements($this->provider));
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\Provider\ProviderInterface', $implementedInterfaces), "ProviderInterface is not implemented");
     }
 
-    public function testProvide()
+    public function testProvide() : void
     {
         $csvField = new CsvField(['name' => 'foobar']);
         $result = $this->provider->provide($csvField);
@@ -39,7 +39,10 @@ class DateFieldToDbTest extends TestCase
         $this->assertEquals('date', $result['foobar']->getType(), "DbField type is incorrect");
     }
 
-    public function invalidDataProvider()
+    /**
+     * @return mixed[]
+     */
+    public function invalidDataProvider() : array
     {
         return [
             [null],
@@ -47,15 +50,16 @@ class DateFieldToDbTest extends TestCase
             [100],
             ['foobar'],
             [['one' => 'two']],
-            [new \StdClass()],
+            [new \stdClass()],
         ];
     }
 
     /**
+     * @param mixed $data
      * @dataProvider invalidDataProvider
      * @expectedException \InvalidArgumentException
      */
-    public function testProvideException($data)
+    public function testProvideException($data) : void
     {
         $result = $this->provider->provide($data);
     }

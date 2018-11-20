@@ -43,18 +43,17 @@ abstract class AbstractAggregator implements AggregatorInterface
      *
      * @return bool
      */
-    public function validate()
+    public function validate() : bool
     {
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $this->getConfig()->getTable();
+
         foreach ([$this->config->getField(), $this->config->getDisplayField()] as $field) {
-            if ($this->config->getTable()->getSchema()->hasColumn($field)) {
+            if ($table->getSchema()->hasColumn($field)) {
                 continue;
             }
 
-            $this->errors[] = sprintf(
-                'Unknown column "%s" for table "%s"',
-                $field,
-                $this->config->getTable()->getAlias()
-            );
+            $this->errors[] = sprintf('Unknown column "%s" for table "%s"', $field, $table->getAlias());
         }
 
         return empty($this->errors);
@@ -63,9 +62,9 @@ abstract class AbstractAggregator implements AggregatorInterface
     /**
      * Configuration instance getter.
      *
-     * @return mixed
+     * @return \CsvMigrations\Aggregator\Configuration
      */
-    final public function getConfig()
+    final public function getConfig() : Configuration
     {
         return $this->config;
     }

@@ -41,4 +41,4 @@ if (isset($showMonthYearSelect)) {
     $attributes += ['data-show-dropdowns' => ($showMonthYearSelect ? 'true' : 'false')];
 }
 
-echo $this->Form->input($name, $attributes);
+echo $this->Form->control($name, $attributes);

@@ -8,22 +8,24 @@ use CsvMigrations\FieldHandlers\Provider\ProviderInterface;
 
 class AggregatedFieldToDbTest extends TestCase
 {
-    public function setUp()
+    private $provider;
+
+    public function setUp() : void
     {
         $this->provider = new AggregatedFieldToDb(new AggregatedConfig('foobar'));
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         unset($this->provider);
     }
 
-    public function testInterface()
+    public function testInterface() : void
     {
         $this->assertInstanceOf(ProviderInterface::class, $this->provider);
     }
 
-    public function testProvide()
+    public function testProvide() : void
     {
         $this->assertSame([], $this->provider->provide());
     }

@@ -12,7 +12,7 @@ use DateTimeZone;
  */
 class IcEventTest extends TestCase
 {
-    public function testConstructor()
+    public function testConstructor() : void
     {
         $event = new IcEvent();
         $result = $event->getEvent();
@@ -33,7 +33,7 @@ class IcEventTest extends TestCase
         $this->assertTrue(is_object($event), "constrctor() failed for object event");
     }
 
-    public function testSetId()
+    public function testSetId() : void
     {
         $event = new IcEvent();
         $event->setId('foo123');
@@ -42,16 +42,16 @@ class IcEventTest extends TestCase
         $this->assertEquals('foo123', $result, "setId() failed to set value");
     }
 
-    public function testSetSequence()
+    public function testSetSequence() : void
     {
         $event = new IcEvent();
-        $event->setSequence('2017');
+        $event->setSequence(2017);
         $event = $event->getEvent();
         $result = $event->getSequence();
-        $this->assertEquals('2017', $result, "setSequence() failed to set value");
+        $this->assertEquals(2017, $result, "setSequence() failed to set value");
     }
 
-    public function testSetStartTime()
+    public function testSetStartTime() : void
     {
         $event = new IcEvent();
         $time = new DateTime(date('Y-m-d H:i:s', strtotime('2017-08-10 18:59:59')), new DateTimeZone('UTC'));
@@ -61,7 +61,7 @@ class IcEventTest extends TestCase
         $this->assertEquals($result, $time, "setStartTime() failed to set value");
     }
 
-    public function testSetEndTime()
+    public function testSetEndTime() : void
     {
         $event = new IcEvent();
         $time = new DateTime(date('Y-m-d H:i:s', strtotime('2017-08-10 18:59:59')), new DateTimeZone('UTC'));
@@ -71,7 +71,7 @@ class IcEventTest extends TestCase
         $this->assertEquals($result, $time, "setEndTime() failed to set value");
     }
 
-    public function testSetAttendees()
+    public function testSetAttendees() : void
     {
         $event = new IcEvent();
         $event->setAttendees(['noone@example.com']);
@@ -80,7 +80,7 @@ class IcEventTest extends TestCase
         $this->assertTrue(is_object($result), "setAttendees() failed to set value");
     }
 
-    public function testSetLocation()
+    public function testSetLocation() : void
     {
         $event = new IcEvent();
         $event->setLocation("Foobar Ltd");
@@ -94,7 +94,7 @@ class IcEventTest extends TestCase
         $this->assertRegExp('/Foobar Ltd/', $result, "setLocation() failed to set value");
     }
 
-    public function testSetOrganizer()
+    public function testSetOrganizer() : void
     {
         $event = new IcEvent();
         $event->setOrganizer("noone@example.com");

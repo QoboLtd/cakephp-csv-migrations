@@ -28,4 +28,4 @@ $attributes += [
     ]
 ];
 
-echo $this->Form->input($name, $attributes);
+echo $this->Form->control($name, $attributes);

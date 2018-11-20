@@ -5,12 +5,12 @@ use CsvMigrations\Table;
 
 class CategoriesTable extends Table
 {
-    public function initialize(array $config)
+    public function initialize(array $config) : void
     {
         parent::initialize($config);
 
-        $this->table('categories');
-        $this->primaryKey('id');
+        $this->setTable('categories');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
     }

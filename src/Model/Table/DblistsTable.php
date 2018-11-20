@@ -14,7 +14,6 @@ namespace CsvMigrations\Model\Table;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
-use Cake\Utility\Hash;
 use Cake\Validation\Validator;
 
 /**
@@ -41,13 +40,13 @@ class DblistsTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config) : void
     {
         parent::initialize($config);
 
-        $this->table('dblists');
-        $this->displayField('name');
-        $this->primaryKey('id');
+        $this->setTable('dblists');
+        $this->setDisplayField('name');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
 
@@ -64,7 +63,7 @@ class DblistsTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
+    public function validationDefault(Validator $validator) : Validator
     {
         $validator
             ->uuid('id')
@@ -93,7 +92,7 @@ class DblistsTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules)
+    public function buildRules(RulesChecker $rules) : RulesChecker
     {
         $rules->add($rules->isUnique(['name']));
 
@@ -107,21 +106,28 @@ class DblistsTable extends Table
      * Options:
      * - name: List name (required)
      *
-     * @param  Query $query   Query object
-     * @param  array $options Options see function's long description.
-     * @return array          Options for the select option field.
+     * @param string $listName List name to retrieve options from
+     * @return mixed[] Options for the select option field
      */
-    public function findOptions(Query $query, array $options)
+    public function getOptions(string $listName) : array
     {
-        $result = [];
-        $name = Hash::get($options, 'name');
-        $list = $this->findByName($name)->first();
-        if ($list) {
-            $result = $this
-                ->DblistItems->find('treeList', ['keyPath' => 'value', 'valuePath' => 'name', 'spacer' => ' - '])
-                ->where(['dblist_id' => $list->get('id')]);
+        /** @var \CsvMigrations\Model\Entity\Dblist|null */
+        $entity = $this->find('all')
+            ->enableHydration(true)
+            ->where(['name' => $listName])
+            ->first();
+        if (null === $entity) {
+            return [];
         }
 
-        return $result;
+        $treeOptions = [
+            'keyPath' => 'value',
+            'valuePath' => 'name',
+            'spacer' => ' - '
+        ];
+
+        return $this->DblistItems->find('treeList', $treeOptions)
+            ->where(['dblist_id' => $entity->get('id')])
+            ->toArray();
     }
 }

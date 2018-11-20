@@ -8,7 +8,10 @@ use PHPUnit\Framework\TestCase;
 
 class StringConfigTest extends TestCase
 {
-    public function invalidProvidersProvider()
+    /**
+     * @return mixed[]
+     */
+    public function invalidProvidersProvider() : array
     {
         return [
             // empty config
@@ -22,7 +25,10 @@ class StringConfigTest extends TestCase
         ];
     }
 
-    public function validProvidersProvider()
+    /**
+     * @return mixed[]
+     */
+    public function validProvidersProvider() : array
     {
         return [
             [['searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators']],
@@ -30,33 +36,35 @@ class StringConfigTest extends TestCase
     }
 
     /**
+     * @param mixed[] $providers
      * @dataProvider validProvidersProvider
      * @expectedException \InvalidArgumentException
      */
-    public function testSetProvidersException($providers)
+    public function testSetProvidersException(array $providers) : void
     {
         $configInstance = new StringConfig('foo');
         $configInstance->setProviders($providers);
     }
 
     /**
+     * @param mixed[] $providers
      * @dataProvider invalidProvidersProvider
      * @expectedException \InvalidArgumentException
      */
-    public function testValidateProvidersException($providers)
+    public function testValidateProvidersException(array $providers) : void
     {
         $configInstance = new StringConfig('foo');
         $configInstance->validateProviders($providers);
     }
 
-    public function testConstruct()
+    public function testConstruct() : void
     {
         $configInstance = new StringConfig('foo');
         $this->assertTrue(is_object($configInstance), "Failed to instantiate StringConfig object");
         $this->assertTrue($configInstance instanceof ConfigInterface, "StringConfig instance does not implement ConfigInterface");
     }
 
-    public function testGetProviders()
+    public function testGetProviders() : void
     {
         $configInstance = new StringConfig('foo');
         $actualProviders = $configInstance->getProviders();

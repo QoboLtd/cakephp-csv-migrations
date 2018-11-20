@@ -39,6 +39,7 @@ class DblistSearchOptions extends AbstractSearchOptions
 
         $list = $options['fieldDefinitions']->getListName();
 
+        /** @var \CsvMigrations\Model\Table\DblistsTable */
         $table = TableRegistry::get('CsvMigrations.Dblists');
 
         $params = [
@@ -48,7 +49,7 @@ class DblistSearchOptions extends AbstractSearchOptions
             'label' => false,
             'required' => $options['fieldDefinitions']->getRequired(),
             'value' => '{{value}}',
-            'options' => $table->find('options', ['name' => $list]),
+            'options' => $table->getOptions($list),
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
         ];

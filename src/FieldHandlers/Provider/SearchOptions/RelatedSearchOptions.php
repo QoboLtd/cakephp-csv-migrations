@@ -48,14 +48,14 @@ class RelatedSearchOptions extends AbstractSearchOptions
 
         $result[$field] = $defaultOptions;
 
-        $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), null);
+        $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), '');
 
         $view = $this->config->getView();
 
         $content = sprintf(
             static::HTML_INPUT,
             $this->_getInputIcon($relatedProperties),
-            $view->Form->input($field, [
+            $view->Form->control($field, [
                 'label' => false,
                 'name' => '{{name}}',
                 'id' => $field,

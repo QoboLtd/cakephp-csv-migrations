@@ -5,12 +5,12 @@ use CsvMigrations\Table;
 
 class PostsTable extends Table
 {
-    public function initialize(array $config)
+    public function initialize(array $config) : void
     {
         parent::initialize($config);
 
-        $this->table('posts');
-        $this->primaryKey('id');
+        $this->setTable('posts');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
     }

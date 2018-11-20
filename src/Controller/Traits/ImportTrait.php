@@ -11,6 +11,7 @@
  */
 namespace CsvMigrations\Controller\Traits;
 
+use Cake\Http\Response;
 use Cake\ORM\TableRegistry;
 use CsvMigrations\Utility\Import as ImportUtility;
 
@@ -19,20 +20,22 @@ trait ImportTrait
     /**
      * Import action.
      *
-     * @param string|null $id Import id
-     * @return \Cake\Http\Response|void
+     * @param string $id Import id
+     * @return \Cake\Http\Response|void|null
      */
-    public function import($id = null)
+    public function import(string $id = '')
     {
+        /** @var \CsvMigrations\Model\Table\ImportsTable */
         $table = TableRegistry::get('CsvMigrations.Imports');
 
-        $entity = is_null($id) ? $table->newEntity() : $table->get($id);
+        $entity = '' === $id ? $table->newEntity() : $table->get($id);
 
         // AJAX logic
         if ($this->request->accepts('application/json')) { // Import/progress.ctp
             $this->viewBuilder()->className('Json');
             $utility = new ImportUtility($this->{$this->name}, $this->request, $this->Flash);
             $columns = ['row_number', 'status', 'status_message'];
+            /** @var \Cake\Datasource\QueryInterface&\Cake\ORM\Query */
             $query = $utility->getImportResults($entity, $columns);
 
             $pagination = [
@@ -41,10 +44,7 @@ trait ImportTrait
 
             $data = ImportUtility::toDatatables($this->paginate($query), $columns);
             $data = ImportUtility::actionButtons($this->paginate($query), $this->{$this->name}, $data);
-
-            if (in_array('status', $columns)) {
-                $data = ImportUtility::setStatusLabels($data, array_search('status', $columns));
-            }
+            $data = ImportUtility::setStatusLabels($data, 1);
 
             $this->set([
                 'success' => true,
@@ -67,12 +67,12 @@ trait ImportTrait
 
         // PUT logic
         if ($this->request->is('put')) { // Import/mapping.ctp
-            $options = ImportUtility::prepareOptions($this->request->data('options'));
+            $options = ImportUtility::prepareOptions((array)$this->request->getData('options'));
             $entity = $table->patchEntity($entity, ['options' => $options]);
             if ($table->save($entity)) {
-                return $this->redirect($this->request->here);
+                return $this->redirect($this->request->getAttribute('here'));
             } else {
-                $this->Flash->error(__('Unable to set import options.'));
+                $this->Flash->error('Unable to set import options.');
             }
         }
 
@@ -116,9 +116,10 @@ trait ImportTrait
      * @param string $type Export Type (supported values: 'original', 'processed')
      * @return \Cake\Http\Response
      */
-    public function importDownload($id, $type = 'original')
+    public function importDownload(string $id, string $type = 'original') : Response
     {
         $table = TableRegistry::get('CsvMigrations.Imports');
+        /** @var \CsvMigrations\Model\Entity\Import */
         $entity = $table->get($id);
 
         $path = $entity->get('filename');

@@ -32,11 +32,13 @@ class DblistRenderer extends AbstractRenderer
     public function provide($data = null, array $options = [])
     {
         $field = $this->config->getField();
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->config->getTable();
 
         $fieldName = $table->aliasField($field);
 
         $list = $options['fieldDefinitions']->getListName();
+        /** @var \CsvMigrations\Model\Table\DblistsTable */
         $table = TableRegistry::get('CsvMigrations.Dblists');
 
         $params = [
@@ -48,7 +50,7 @@ class DblistRenderer extends AbstractRenderer
             'value' => $data,
             'options' => array_merge(
                 ['' => Setting::EMPTY_OPTION_LABEL()],
-                $table->find('options', ['name' => $list])->toArray()
+                $table->getOptions($list)
             ),
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],

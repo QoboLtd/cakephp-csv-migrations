@@ -1,7 +1,7 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\FieldValue;
 
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
 use CsvMigrations\FieldHandlers\Config\StringConfig;
 use CsvMigrations\FieldHandlers\Provider\FieldValue\MixedFieldValue;
@@ -20,11 +20,11 @@ class MixedFieldValueTest extends TestCase
         $result = $provider->provide($data);
         $this->assertEquals($data, $result, "Data provider did not return data as is for string");
 
-        $data = new Request();
-        $result = $provider->provide($data);
+        $request = new ServerRequest();
+        $result = $provider->provide($request);
         $this->assertEquals(null, $result, "Data provider did not return null from Request");
-        $data->withData($field, 'hello');
-        $result = $provider->provide($data);
+        $request = $request->withData($field, 'hello');
+        $result = $provider->provide($request);
         $this->assertEquals('hello', $result, "Data provider did not return correct data from Request");
 
         $data = new Entity();

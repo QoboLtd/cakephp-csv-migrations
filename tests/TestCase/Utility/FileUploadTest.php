@@ -134,6 +134,6 @@ class FileUploadTest extends TestCase
             'small' => 'tests/img/qobo.png',
             'tiny' => 'tests/img/qobo.png'
         ];
-        $this->assertSame($expected, $result->firstOrFail()->get('thumbnails'));
+        $this->assertSame($expected, $result->first()->get('thumbnails'));
     }
 }

@@ -130,7 +130,7 @@ class FieldHandlerFactoryTest extends TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException \InvalidArgumentException
      */
     public function testFieldToDbException() : void
     {

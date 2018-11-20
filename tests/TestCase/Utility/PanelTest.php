@@ -147,12 +147,12 @@ class PanelTest extends TestCase
         $actual = Panel::getPanelNames($config);
         $expected = ['Company', 'Personal'];
 
-        $this->assertEquals($actual, $expected, 'Does not return the actual panel names from config.');
+        $this->assertEquals($expected, $actual, 'Does not return the actual panel names from config.');
 
         $config = [];
         $actual = Panel::getPanelNames($config);
-        $expected = false;
+        $expected = [];
 
-        $this->assertEquals($actual, $expected, 'On an empty config, the function should return false.');
+        $this->assertEquals($expected, $actual, 'On an empty config, the function should return an empty array.');
     }
 }

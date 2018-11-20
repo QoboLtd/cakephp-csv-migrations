@@ -51,7 +51,7 @@ class ConfigFactoryTest extends TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException \InvalidArgumentException
      */
     public function testGetByTypeException() : void
     {

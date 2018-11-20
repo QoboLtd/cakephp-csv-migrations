@@ -68,7 +68,7 @@ class AggregateTest extends TestCase
     /**
      * @dataProvider aggregatorResultProviderWithJoin
      */
-    public function testGetResultWithJoin(string $aggregatorClass, int $expected) : void
+    public function testGetResultWithJoin(string $aggregatorClass, float $expected) : void
     {
         $entity = $this->leadsTable->get('00000000-0000-0000-0000-000000000001');
         $configuration = new Configuration($this->fooTable, 'cost_amount');

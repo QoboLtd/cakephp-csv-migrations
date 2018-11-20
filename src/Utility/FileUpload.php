@@ -521,7 +521,7 @@ final class FileUpload
         }
 
         $event = new Event($eventName, $this, [
-            'record' => $entity,
+            'entity' => $entity,
             'versions' => array_keys($imgSizes),
         ]);
         EventManager::instance()->dispatch($event);

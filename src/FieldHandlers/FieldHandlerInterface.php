@@ -52,11 +52,11 @@ interface FieldHandlerInterface
      * and so on.  The result can be controlled via the variety
      * of options.
      *
-     * @param string $data Field data
+     * @param mixed $data Field data
      * @param mixed[] $options Field options
      * @return string Field input HTML
      */
-    public function renderInput(string $data = '', array $options = []) : string;
+    public function renderInput($data = '', array $options = []) : string;
 
     /**
      * Get options for field search

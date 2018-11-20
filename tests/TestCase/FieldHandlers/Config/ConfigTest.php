@@ -172,14 +172,6 @@ class ConfigTest extends TestCase
         $configInstance = new Config('   ');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testSetTableExceptionNotTable() : void
-    {
-        $configInstance = new Config('field', new stdClass());
-    }
-
     public function testGetTable() : void
     {
         $configInstance = new Config('field');

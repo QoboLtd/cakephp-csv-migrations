@@ -27,7 +27,7 @@ class ViewsCheck extends AbstractCheck
      * @param array $options Check options
      * @return int Number of encountered errors
      */
-    public function run($module, array $options = []) : int
+    public function run(string $module, array $options = []) : int
     {
         $views = Configure::read('CsvMigrations.actions');
 

@@ -24,7 +24,7 @@ class FieldsCheck extends AbstractCheck
      * @param array $options Check options
      * @return int Number of encountered errors
      */
-    public function run($module, array $options = []) : int
+    public function run(string $module, array $options = []) : int
     {
         $mc = new ModuleConfig(ConfigType::MENUS(), $module, null, ['cacheSkip' => true]);
         try {

@@ -60,11 +60,11 @@ class FieldHandlerFactory
      *
      * @param mixed $table Name or instance of the Table
      * @param string $field Field name
-     * @param string $data Field data
+     * @param mixed $data Field data
      * @param mixed[] $options Field options
      * @return string Field input
      */
-    public function renderInput($table, string $field, string $data = '', array $options = []) : string
+    public function renderInput($table, string $field, $data = '', array $options = []) : string
     {
         $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
@@ -106,11 +106,11 @@ class FieldHandlerFactory
      *
      * @param mixed $table Name or instance of the Table
      * @param string $field Field name
-     * @param string $data Field data
+     * @param mixed $data Field data
      * @param mixed[] $options Field options
      * @return string
      */
-    public function renderValue($table, string $field, string $data, array $options = []) : string
+    public function renderValue($table, string $field, $data, array $options = []) : string
     {
         $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 

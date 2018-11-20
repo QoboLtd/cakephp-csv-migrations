@@ -283,7 +283,12 @@ class IndexViewListener extends BaseViewListener
                 $k = $tableName . '.' . $k;
             }
 
-            $conditions[$k] = $v;
+			if (is_array($v)) {
+				$conditions[$k . ' IN'] = $v;
+				continue;
+			}
+
+			$conditions[$k] = $v;
         };
 
         $query->applyOptions(['conditions' => $conditions]);

@@ -15,13 +15,13 @@ class DatetimeFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
         $this->fh = new FieldHandler($config);
     }
 
-    public function testFieldToDb()
+    public function testFieldToDb() : void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
@@ -37,7 +37,10 @@ class DatetimeFieldHandlerTest extends TestCase
         $this->assertEquals($this->type, $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
     }
 
-    public function getValues()
+    /**
+     * @return mixed[]
+     */
+    public function getValues() : array
     {
         return [
             ['2017-07-06 14:20:00', '2017-07-06 14:20:00', 'Date time string'],
@@ -51,20 +54,22 @@ class DatetimeFieldHandlerTest extends TestCase
 
     /**
      * @dataProvider getValues
+     * @param mixed $value
+     * @param mixed $expected
      */
-    public function testRenderValue($value, $expected, $description)
+    public function testRenderValue($value, $expected, string $description) : void
     {
         $result = $this->fh->renderValue($value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 
-    public function testRenderInput()
+    public function testRenderInput() : void
     {
         $result = $this->fh->renderInput('2016-10-15 13:30');
         $this->assertRegExp('/field_datetime/', $result, "Input rendering does not contain field name");
     }
 
-    public function testGetSearchOptions()
+    public function testGetSearchOptions() : void
     {
         $result = $this->fh->getSearchOptions();
 

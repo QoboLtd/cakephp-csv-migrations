@@ -45,7 +45,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $io = new ConsoleIo(new ConsoleOutput());
@@ -58,7 +58,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown() : void
     {
         unset($this->ImportShell);
 
@@ -70,7 +70,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function testGetOptionParser()
+    public function testGetOptionParser() : void
     {
         $parser = $this->ImportShell->getOptionParser();
 
@@ -83,7 +83,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function testMain()
+    public function testMain() : void
     {
         $table = TableRegistry::getTableLocator()->get('Articles');
         $initialCount = $table->find()->count();
@@ -92,14 +92,26 @@ class ImportShellTest extends ConsoleIntegrationTestCase
 
         $this->assertSame($initialCount + 2, $table->find()->count());
 
+        /** @var \Cake\Datasource\EntityInterface */
+        $entity = $table->find()
+            ->where(['name' => 'John Doe [import]'])
+            ->select(['name', 'author', 'status'])
+            ->firstOrFail();
+
         $this->assertEquals(
             ['name' => 'John Doe [import]', 'author' => '00000000-0000-0000-0000-000000000001', 'status' => 'draft'],
-            $table->findByName('John Doe [import]')->select(['name', 'author', 'status'])->first()->toArray()
+            $entity->toArray()
         );
+
+        /** @var \Cake\Datasource\EntityInterface */
+        $entity = $table->find()
+            ->where(['name' => 'John Smith [import]'])
+            ->select(['name', 'author', 'status'])
+            ->firstOrFail();
 
         $this->assertEquals(
             ['name' => 'John Smith [import]', 'author' => '00000000-0000-0000-0000-000000000002', 'status' => 'published'],
-            $table->findByName('John Smith [import]')->select(['name', 'author', 'status'])->first()->toArray()
+            $entity->toArray()
         );
     }
 }

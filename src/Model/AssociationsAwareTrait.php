@@ -156,6 +156,9 @@ trait AssociationsAwareTrait
             return;
         }
 
+        $className = '';
+        $associationType = '';
+
         /**
          * for current table instance "Articles", assuming that the provide $module is "Articles" and
          * a field "author_id" of type "related(Authors)" is found in its migration.json config,

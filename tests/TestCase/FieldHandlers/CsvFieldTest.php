@@ -9,17 +9,20 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class CsvFieldTest extends TestCase
 {
-    public function setUp()
+    private $csvData;
+
+    public function setUp() : void
     {
         parent::setUp();
 
         Configure::write('CsvMigrations.modules.path', TESTS . 'config' . DS . 'Modules' . DS);
 
         $mc = new ModuleConfig(ConfigType::MIGRATION(), 'Foo');
-        $this->csvData = (array)json_decode(json_encode($mc->parse()), true);
+        $config = json_encode($mc->parse());
+        $this->csvData = false !== $config ? json_decode($config, true) : [];
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         unset($this->csvData);
 
@@ -31,7 +34,7 @@ class CsvFieldTest extends TestCase
      *
      * @see Task #2431
      */
-    public function testDefaults()
+    public function testDefaults() : void
     {
         $csvField = new CsvField(['name' => 'foobar']);
 
@@ -55,8 +58,10 @@ class CsvFieldTest extends TestCase
 
     /**
      * @dataProvider nameSetterProvider
+     * @param mixed $expected
+     * @param mixed $name
      */
-    public function testSetName($expected, $name)
+    public function testSetName($expected, $name) : void
     {
         $csvField = new CsvField(current($this->csvData));
         $csvField->setName($name);
@@ -66,13 +71,13 @@ class CsvFieldTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testSetNameThrowsException()
+    public function testSetNameThrowsException() : void
     {
         $csvField = new CsvField(current($this->csvData));
         $csvField->setName('');
     }
 
-    public function testGetName()
+    public function testGetName() : void
     {
         foreach ($this->getterProvider() as $v) {
             $csvField = new CsvField(array_shift($this->csvData));
@@ -83,7 +88,7 @@ class CsvFieldTest extends TestCase
     /**
      * @dataProvider typeSetterProvider
      */
-    public function testSetType($expected, $type)
+    public function testSetType(string $expected, string $type) : void
     {
         $csvField = new CsvField(current($this->csvData));
         $csvField->setType($type);
@@ -93,13 +98,13 @@ class CsvFieldTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testSetTypeEmptyValueThrowsException()
+    public function testSetTypeEmptyValueThrowsException() : void
     {
         $csvField = new CsvField(current($this->csvData));
         $csvField->setType('');
     }
 
-    public function testGetType()
+    public function testGetType() : void
     {
         foreach ($this->getterProvider() as $v) {
             $csvField = new CsvField(array_shift($this->csvData));
@@ -109,8 +114,10 @@ class CsvFieldTest extends TestCase
 
     /**
      * @dataProvider limitSetterProvider
+     * @param mixed $expected
+     * @param mixed $type
      */
-    public function testSetLimit($expected, $type)
+    public function testSetLimit($expected, $type) : void
     {
         $csvField = new CsvField(current($this->csvData));
         $csvField->setLimit($type);
@@ -120,7 +127,7 @@ class CsvFieldTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testSetLimitEmptyValueThrowsException()
+    public function testSetLimitEmptyValueThrowsException() : void
     {
         $csvField = new CsvField(current($this->csvData));
         $csvField->setLimit('');
@@ -128,8 +135,10 @@ class CsvFieldTest extends TestCase
 
     /**
      * @dataProvider limitSetterProvider
+     * @param mixed $expected
+     * @param mixed $type
      */
-    public function testGetLimit($expected, $type)
+    public function testGetLimit($expected, $type) : void
     {
         $csvField = new CsvField(current($this->csvData));
         $csvField->setLimit($type);
@@ -138,8 +147,10 @@ class CsvFieldTest extends TestCase
 
     /**
      * @dataProvider limitSetterProvider
+     * @param mixed $expected
+     * @param mixed $type
      */
-    public function testGetListName($expected, $type)
+    public function testGetListName($expected, $type) : void
     {
         $csvField = new CsvField(current($this->csvData));
         $csvField->setLimit($type);
@@ -148,7 +159,7 @@ class CsvFieldTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function testGetAssocCsvModule()
+    public function testGetAssocCsvModule() : void
     {
         foreach ($this->getterProvider() as $v) {
             $csvField = new CsvField(array_shift($this->csvData));
@@ -158,15 +169,16 @@ class CsvFieldTest extends TestCase
 
     /**
      * @dataProvider booleanSetterProvider
+     * @param mixed $boolean
      */
-    public function testSetRequired($expected, $boolean)
+    public function testSetRequired(bool $expected, $boolean) : void
     {
         $csvField = new CsvField(current($this->csvData));
         $csvField->setRequired($boolean);
         $this->assertEquals($expected, $csvField->getRequired());
     }
 
-    public function testGetRequired()
+    public function testGetRequired() : void
     {
         foreach ($this->getterProvider() as $v) {
             $csvField = new CsvField(array_shift($this->csvData));
@@ -176,15 +188,16 @@ class CsvFieldTest extends TestCase
 
     /**
      * @dataProvider booleanSetterProvider
+     * @param mixed $boolean
      */
-    public function testSetNonSearchable($expected, $boolean)
+    public function testSetNonSearchable(bool $expected, $boolean) : void
     {
         $csvField = new CsvField(current($this->csvData));
         $csvField->setNonSearchable($boolean);
         $this->assertEquals($expected, $csvField->getNonSearchable());
     }
 
-    public function testGetNonSearchable()
+    public function testGetNonSearchable() : void
     {
         foreach ($this->getterProvider() as $v) {
             $csvField = new CsvField(array_shift($this->csvData));
@@ -194,15 +207,16 @@ class CsvFieldTest extends TestCase
 
     /**
      * @dataProvider booleanSetterProvider
+     * @param mixed $boolean
      */
-    public function testSetUnique($expected, $boolean)
+    public function testSetUnique(bool $expected, $boolean) : void
     {
         $csvField = new CsvField(current($this->csvData));
         $csvField->setUnique($boolean);
         $this->assertEquals($expected, $csvField->getUnique());
     }
 
-    public function testGetUnique()
+    public function testGetUnique() : void
     {
         foreach ($this->getterProvider() as $v) {
             $csvField = new CsvField(array_shift($this->csvData));
@@ -210,7 +224,10 @@ class CsvFieldTest extends TestCase
         }
     }
 
-    public function getterProvider()
+    /**
+     * @return mixed[]
+     */
+    public function getterProvider() : array
     {
         return [
             ['id', 'uuid', '', '', '', false],
@@ -229,7 +246,10 @@ class CsvFieldTest extends TestCase
         ];
     }
 
-    public function nameSetterProvider()
+    /**
+     * @return mixed[]
+     */
+    public function nameSetterProvider() : array
     {
         return [
             ['foo', 'foo'],
@@ -240,7 +260,10 @@ class CsvFieldTest extends TestCase
         ];
     }
 
-    public function typeSetterProvider()
+    /**
+     * @return mixed[]
+     */
+    public function typeSetterProvider() : array
     {
         return [
             ['related', 'related(Foobar)'],
@@ -261,7 +284,10 @@ class CsvFieldTest extends TestCase
         ];
     }
 
-    public function limitSetterProvider()
+    /**
+     * @return mixed[]
+     */
+    public function limitSetterProvider() : array
     {
         return [
             ['Foobar', 'related(Foobar)'],
@@ -292,7 +318,10 @@ class CsvFieldTest extends TestCase
         ];
     }
 
-    public function booleanSetterProvider()
+    /**
+     * @return mixed[]
+     */
+    public function booleanSetterProvider() : array
     {
         return [
             [true, 1],

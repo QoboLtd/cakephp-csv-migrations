@@ -14,7 +14,9 @@ class DblistItemsControllerTest extends IntegrationTestCase
         'plugin.CsvMigrations.dblist_items'
     ];
 
-    public function setUp()
+    private $table;
+
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -30,14 +32,14 @@ class DblistItemsControllerTest extends IntegrationTestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         unset($this->table);
 
         parent::tearDown();
     }
 
-    public function testIndex()
+    public function testIndex() : void
     {
         $id = '35ded6f1-e886-4f3e-bcdd-47d9c55c3ce4';
 
@@ -45,7 +47,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertResponseOk();
     }
 
-    public function testIndexWithoutItems()
+    public function testIndexWithoutItems() : void
     {
         $this->enableRetainFlashMessages();
 
@@ -59,7 +61,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertSession('List is empty, do you want to add new item?', 'Flash.flash.0.message');
     }
 
-    public function testAdd()
+    public function testAdd() : void
     {
         $id = '35ded6f1-e886-4f3e-bcdd-47d9c55c3ce4';
         $data = [
@@ -78,7 +80,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertEquals(1, $query->count());
     }
 
-    public function testAddWithInvalidData()
+    public function testAddWithInvalidData() : void
     {
         $this->enableRetainFlashMessages();
 
@@ -92,7 +94,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertSession('The database list item could not be saved. Please, try again.', 'Flash.flash.0.message');
     }
 
-    public function testEdit()
+    public function testEdit() : void
     {
         $id = '8233ddc0-5b8a-47e6-9432-e90fcba73015';
         $data = ['name' => 'some random name'];
@@ -107,7 +109,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertEquals($data['name'], $entity->get('name'));
     }
 
-    public function testEditWithInvalidData()
+    public function testEditWithInvalidData() : void
     {
         $this->enableRetainFlashMessages();
 
@@ -130,7 +132,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertSession('The database list item could not be saved. Please, try again.', 'Flash.flash.0.message');
     }
 
-    public function testDelete()
+    public function testDelete() : void
     {
         $id = '8233ddc0-5b8a-47e6-9432-e90fcba73015';
 
@@ -141,7 +143,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertTrue($query->isEmpty());
     }
 
-    public function testMoveNode()
+    public function testMoveNode() : void
     {
         $id = '8233ddc0-5b8a-47e6-9432-e90fcba73015';
 
@@ -155,7 +157,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertEquals($entity, $this->table->get($id));
     }
 
-    public function testMoveNodeWithInvalidAction()
+    public function testMoveNodeWithInvalidAction() : void
     {
         $this->enableRetainFlashMessages();
 

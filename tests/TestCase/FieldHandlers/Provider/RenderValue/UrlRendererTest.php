@@ -9,19 +9,22 @@ class UrlRendererTest extends TestCase
 {
     protected $renderer;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $config = new UrlConfig('url');
         $this->renderer = new UrlRenderer($config);
     }
 
-    public function testInterface()
+    public function testInterface() : void
     {
         $implementedInterfaces = array_keys(class_implements($this->renderer));
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\Provider\ProviderInterface', $implementedInterfaces), "ProviderInterface is not implemented");
     }
 
-    public function getValues()
+    /**
+     * @return mixed[]
+     */
+    public function getValues() : array
     {
         return [
             [true, '1', 'Boolean true'],
@@ -41,14 +44,16 @@ class UrlRendererTest extends TestCase
 
     /**
      * @dataProvider getValues
+     * @param mixed $value
+     * @param mixed $expected
      */
-    public function testRenderValue($value, $expected, $description)
+    public function testRenderValue($value, $expected, string $description) : void
     {
         $result = $this->renderer->provide($value);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 
-    public function testRenderValueWithOptions()
+    public function testRenderValueWithOptions() : void
     {
         // Simple
         $options = [

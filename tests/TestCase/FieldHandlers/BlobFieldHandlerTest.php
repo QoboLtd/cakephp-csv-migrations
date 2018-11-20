@@ -16,7 +16,7 @@ class BlobFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->dataDir = dirname(dirname(__DIR__)) . DS . 'config' . DS . 'Modules' . DS;
         Configure::write('CsvMigrations.modules.path', $this->dataDir);
@@ -24,7 +24,7 @@ class BlobFieldHandlerTest extends TestCase
         $this->fh = new FieldHandler($config);
     }
 
-    public function testRenderInput()
+    public function testRenderInput() : void
     {
         $result = $this->fh->renderInput(null);
 
@@ -33,14 +33,14 @@ class BlobFieldHandlerTest extends TestCase
         $this->assertContains('</textarea>', $result);
     }
 
-    public function testRenderInputWithResource()
+    public function testRenderInputWithResource() : void
     {
         $result = $this->fh->renderInput(fopen('https://www.google.com', 'r'));
 
         $this->assertContains('Google', $result);
     }
 
-    public function testFieldToDb()
+    public function testFieldToDb() : void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
@@ -57,7 +57,10 @@ class BlobFieldHandlerTest extends TestCase
         $this->assertGreaterThan(100000000, $result[$this->field]->getLimit(), "fieldToDb() did not return correct limit for DbField instance");
     }
 
-    public function getValues()
+    /**
+     * @return mixed[]
+     */
+    public function getValues() : array
     {
         return [
             [true, 'Boolean true'],
@@ -75,14 +78,15 @@ class BlobFieldHandlerTest extends TestCase
 
     /**
      * @dataProvider getValues
+     * @param mixed $value
      */
-    public function testRenderValue($value, $description)
+    public function testRenderValue($value, string $description) : void
     {
         $result = $this->fh->renderValue($value, []);
         $this->assertEquals($value, $result, "Value rendering is broken for: $description");
     }
 
-    public function testGetSearchOptions()
+    public function testGetSearchOptions() : void
     {
         $result = $this->fh->getSearchOptions();
 

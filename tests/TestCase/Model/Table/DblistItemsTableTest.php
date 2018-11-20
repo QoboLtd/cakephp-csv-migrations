@@ -20,11 +20,6 @@ class DblistItemsTableTest extends TestCase
         'plugin.CsvMigrations.DblistItems',
     ];
 
-    /**
-     * Test subject
-     *
-     * @var \CsvMigrations\Model\Table\DblistItemsTable
-     */
     public $DblistItems;
 
     /**
@@ -32,7 +27,7 @@ class DblistItemsTableTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $config = TableRegistry::exists('DblistItems') ? [] : ['className' => 'CsvMigrations\Model\Table\DblistItemsTable'];
@@ -44,7 +39,7 @@ class DblistItemsTableTest extends TestCase
      *
      * @return void
      */
-    public function testInitialize()
+    public function testInitialize() : void
     {
         $displayField = $this->DblistItems->getDisplayField();
         $this->assertEquals('name', $displayField, 'Display field is the name');
@@ -53,7 +48,6 @@ class DblistItemsTableTest extends TestCase
         $this->assertTrue($this->DblistItems->hasBehavior('Timestamp'), 'Missing behavior Timestamp');
         $this->assertTrue($this->DblistItems->hasBehavior('Tree'), 'Missing behavior Tree');
         $assoc = $this->DblistItems->getAssociation('Dblists');
-        $this->assertFalse(is_null($assoc), 'DblistItems cannot be found');
         $this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $assoc, 'DblistItems\'s association with Dblists should be belongsTo');
     }
 
@@ -63,7 +57,7 @@ class DblistItemsTableTest extends TestCase
      *
      * @return void
      */
-    public function testValidationDefault($fieldName)
+    public function testValidationDefault(string $fieldName) : void
     {
         $validator = $this->DblistItems->getValidator();
         $this->assertTrue($validator->hasField($fieldName), 'Missing validation for ' . $fieldName);
@@ -72,9 +66,9 @@ class DblistItemsTableTest extends TestCase
     /**
      * Data provider of testValidationDefault
      *
-     * @return array Field names
+     * @return mixed[] Field names
      */
-    public function validationDefaultProvider()
+    public function validationDefaultProvider() : array
     {
         return [
             ['id'],
@@ -88,7 +82,7 @@ class DblistItemsTableTest extends TestCase
      *
      * @return void
      */
-    public function testTreeEntities()
+    public function testTreeEntities() : void
     {
         $id = '35ded6f1-e886-4f3e-bcdd-47d9c55c3ce4';
         $query = $this->DblistItems->find('treeEntities', ['listId' => $id]);
@@ -109,7 +103,7 @@ class DblistItemsTableTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown() : void
     {
         unset($this->DblistItems);
 

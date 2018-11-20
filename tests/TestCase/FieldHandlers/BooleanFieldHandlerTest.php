@@ -14,13 +14,13 @@ class BooleanFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
         $this->fh = new FieldHandler($config);
     }
 
-    public function testRenderInput()
+    public function testRenderInput() : void
     {
         $result = $this->fh->renderInput(null);
 
@@ -31,7 +31,7 @@ class BooleanFieldHandlerTest extends TestCase
         $this->assertContains('value="1"', $result);
     }
 
-    public function testFieldToDb()
+    public function testFieldToDb() : void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
@@ -47,7 +47,10 @@ class BooleanFieldHandlerTest extends TestCase
         $this->assertEquals($this->type, $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
     }
 
-    public function getValues()
+    /**
+     * @return mixed[]
+     */
+    public function getValues() : array
     {
         return [
             [null, 'No', 'Null'],
@@ -61,14 +64,15 @@ class BooleanFieldHandlerTest extends TestCase
 
     /**
      * @dataProvider getValues
+     * @param mixed $value
      */
-    public function testRenderValue($value, $expected, $description)
+    public function testRenderValue($value, string $expected, string $description) : void
     {
         $result = $this->fh->renderValue($value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 
-    public function testGetSearchOptions()
+    public function testGetSearchOptions() : void
     {
         $result = $this->fh->getSearchOptions();
 

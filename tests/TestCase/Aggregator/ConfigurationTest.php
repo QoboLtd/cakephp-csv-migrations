@@ -14,49 +14,44 @@ class ConfigurationTest extends TestCase
         'plugin.CsvMigrations.foo'
     ];
 
-    public function testConstructor()
+    public function testConstructor() : void
     {
         $result = new Configuration(TableRegistry::get('tableName'), 'field');
 
         $this->assertInstanceOf(Configuration::class, $result);
     }
 
-    public function testConstructorWithInvalidConfig()
+    public function testJoinMode() : void
     {
-        $this->expectException(InvalidArgumentException::class);
-
-        // invalid second parameter, string expected
-        new Configuration(TableRegistry::get('tableName'), ['field']);
-    }
-
-    public function testJoinMode()
-    {
+        $table = TableRegistry::get('Foo');
+        /** @var \Cake\Datasource\EntityInterface */
+        $entity = $table->find()
+            ->enableHydration(true)
+            ->firstOrFail();
         $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
-        $configuration->setJoinData(
-            TableRegistry::get('Foo'),
-            TableRegistry::get('Foo')->find()->first()
-        );
+
+        $configuration->setJoinData($table, $entity);
         $this->assertTrue($configuration->joinMode());
 
         $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
         $this->assertFalse($configuration->joinMode());
     }
 
-    public function testGetTable()
+    public function testGetTable() : void
     {
         $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
 
         $this->assertInstanceOf(RepositoryInterface::class, $configuration->getTable());
     }
 
-    public function testGetField()
+    public function testGetField() : void
     {
         $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
 
         $this->assertEquals('field', $configuration->getField());
     }
 
-    public function testSetGetDisplayField()
+    public function testSetGetDisplayField() : void
     {
         $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
         $configuration->setDisplayField('displayField');
@@ -64,42 +59,46 @@ class ConfigurationTest extends TestCase
         $this->assertEquals('displayField', $configuration->getDisplayField());
     }
 
-    public function testSetDisplayFieldWithWrongParameter()
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
-        $configuration->setDisplayField(['wrong_parameter']);
-    }
-
-    public function testGetJoinTable()
+    public function testGetJoinTable() : void
     {
         $table = TableRegistry::get('Foo');
+        /** @var \Cake\Datasource\EntityInterface */
+        $entity = $table->find()
+            ->enableHydration(true)
+            ->firstOrFail();
         $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
-        $configuration->setJoinData($table, $table->find()->first());
+        $configuration->setJoinData($table, $entity);
 
         $this->assertSame($table, $configuration->getJoinTable());
     }
 
-    public function testGetEntity()
+    public function testGetEntity() : void
     {
         $table = TableRegistry::get('Foo');
-        $entity = $table->find()->first();
+        /** @var \Cake\Datasource\EntityInterface */
+        $entity = $table->find()
+            ->enableHydration(true)
+            ->firstOrFail();
         $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
         $configuration->setJoinData($table, $entity);
 
         $this->assertSame($entity, $configuration->getEntity());
     }
 
-    public function testSetJoinDataWithoutInvalidEntity()
+    public function testSetJoinDataWithoutInvalidEntity() : void
     {
         $this->expectException(InvalidArgumentException::class);
 
+        $table = TableRegistry::get('Foo');
+        /** @var \Cake\Datasource\EntityInterface */
+        $entity = TableRegistry::get('Articles')
+            ->find()
+            ->enableHydration(true)
+            ->firstOrFail();
+
         $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
-        $configuration->setJoinData(
-            TableRegistry::get('Foo'),
-            // using entity from another table, instead of the configured join table (Foo)
-            TableRegistry::get('Articles')->find()->first()
-        );
+
+        // using entity from another table, instead of the configured join table (Foo)
+        $configuration->setJoinData($table, $entity);
     }
 }

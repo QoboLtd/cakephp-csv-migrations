@@ -11,8 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
-use InvalidArgumentException;
-
 /**
  * DblistRenderer
  *
@@ -45,9 +43,8 @@ class DblistRenderer extends AbstractRenderer
             return parent::provide($data, $options);
         }
 
-        $view = $this->config->getView();
-        $result = (string)$view->cell('CsvMigrations.Dblist::renderValue', [$data, $listName])->render('renderValue');
-
-        return $result;
+        return $this->config->getView()
+            ->cell('CsvMigrations.Dblist::renderValue', [$data, $listName])
+            ->render('renderValue');
     }
 }

@@ -15,7 +15,9 @@ class FilesRendererTest extends TestCase
 
     public $fixtures = ['plugin.CsvMigrations.file_storage'];
 
-    public function setUp()
+    private $renderer;
+
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -30,14 +32,17 @@ class FilesRendererTest extends TestCase
         ]));
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         unset($this->renderer);
 
         parent::tearDown();
     }
 
-    public function getValues()
+    /**
+     * @return mixed[]
+     */
+    public function getValues() : array
     {
         return [
             [true, ''],
@@ -50,7 +55,7 @@ class FilesRendererTest extends TestCase
         ];
     }
 
-    public function testRenderValue()
+    public function testRenderValue() : void
     {
         $expected = '/tests/img/qobo.png';
         $result = $this->renderer->provide('00000000-0000-0000-0000-000000000003');
@@ -60,8 +65,9 @@ class FilesRendererTest extends TestCase
 
     /**
      * @dataProvider getValues
+     * @param mixed $value
      */
-    public function testRenderValueWithInvalidValue($value, $expected)
+    public function testRenderValueWithInvalidValue($value, string $expected) : void
     {
         $result = $this->renderer->provide($value);
         $this->assertSame($expected, $result);

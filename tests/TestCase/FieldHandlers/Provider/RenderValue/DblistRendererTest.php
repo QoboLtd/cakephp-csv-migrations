@@ -1,11 +1,9 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\FieldHandlers\Config\DblistConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\DblistRenderer;
-use CsvMigrations\Model\Table\DblistsTable;
 
 class DblistRendererTest extends TestCase
 {
@@ -21,19 +19,22 @@ class DblistRendererTest extends TestCase
 
     protected $renderer;
 
-    public function setUp()
+    public function setUp() : void
     {
         $config = new DblistConfig('dblist');
         $this->renderer = new DblistRenderer($config);
     }
 
-    public function testInterface()
+    public function testInterface() : void
     {
         $implementedInterfaces = array_keys(class_implements($this->renderer));
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\Provider\ProviderInterface', $implementedInterfaces), "ProviderInterface is not implemented");
     }
 
-    public function basicValues()
+    /**
+     * @return mixed[]
+     */
+    public function basicValues() : array
     {
         return [
             ['text', 'text', 'Text'],
@@ -45,13 +46,13 @@ class DblistRendererTest extends TestCase
     /**
      * @dataProvider basicValues
      */
-    public function testRenderValueBasic($value, $expected, $description)
+    public function testRenderValueBasic(string $value, string $expected, string $description) : void
     {
         $result = $this->renderer->provide($value, ['listName' => null]);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 
-    public function testRenderValue()
+    public function testRenderValue() : void
     {
         $result = $this->renderer->provide('individual', ['listName' => 'categories']);
         $this->assertEquals('Individual', $result, "Value rendering is broken for dblist parent value");

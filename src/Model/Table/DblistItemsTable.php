@@ -11,7 +11,7 @@
  */
 namespace CsvMigrations\Model\Table;
 
-use Cake\ORM\Query;
+use Cake\Datasource\QueryInterface;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -40,7 +40,7 @@ class DblistItemsTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config) : void
     {
         parent::initialize($config);
 
@@ -64,7 +64,7 @@ class DblistItemsTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
+    public function validationDefault(Validator $validator) : Validator
     {
         $validator
             ->uuid('id')
@@ -92,7 +92,7 @@ class DblistItemsTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules)
+    public function buildRules(RulesChecker $rules) : RulesChecker
     {
         $rules->add($rules->existsIn(['dblist_id'], 'Dblists'));
         $rules->add(
@@ -111,20 +111,21 @@ class DblistItemsTable extends Table
      * Options should be
      * - listId: List Id to fetch its items.
      *
-     * @see  Cake\ORM\Behavior\TreeBehavior::findTreeList
-     * @param  Query  $query   [description]
-     * @param  array  $options [description]
-     * @return [type]          [description]
+     * @see  \Cake\ORM\Behavior\TreeBehavior::findTreeList
+     * @param \Cake\Datasource\QueryInterface $query The query
+     * @param mixed[] $options Query options
+     * @return \Cake\Datasource\QueryInterface
      */
-    public function findTreeEntities(Query $query, array $options)
+    public function findTreeEntities(QueryInterface $query, array $options) : QueryInterface
     {
-        $query = $query
-            ->where(['dblist_id' => $options['listId']])
+        $query = $query->where(['dblist_id' => $options['listId']])
             ->order(['lft' => 'asc']);
-        //Workaround for getting spacer.
+
+        // workaround for getting spacer.
         $tree = $this->find('treeList', ['spacer' => '&nbsp;&nbsp;&nbsp;&nbsp;'])
                 ->toArray();
-        foreach ($query as $item) {
+
+        foreach ($query->all() as $item) {
             $id = $item->get('id');
             if (in_array($id, array_keys($tree))) {
                 $item->set('spacer', $tree[$id]);

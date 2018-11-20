@@ -8,7 +8,7 @@ class PanelTest extends TestCase
 {
     protected $config;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -19,14 +19,14 @@ class PanelTest extends TestCase
         ];
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         unset($this->config);
 
         parent::tearDown();
     }
 
-    public function testgetName()
+    public function testgetName() : void
     {
         $panel = new Panel('Foobar', $this->config);
         $this->assertEquals('Foobar', $panel->getName());
@@ -35,13 +35,13 @@ class PanelTest extends TestCase
     /**
      * @expectedException RuntimeException
      */
-    public function testSetNameException()
+    public function testSetNameException() : void
     {
         $panel = new Panel('Foobar', $this->config);
         $panel->setName();
     }
 
-    public function testGetExpression()
+    public function testGetExpression() : void
     {
         $panel = new Panel('Foobar', $this->config);
         $result = $panel->getExpression();
@@ -55,7 +55,7 @@ class PanelTest extends TestCase
         $this->assertNotContains(Panel::EXP_TOKEN, $result, 'Expression contains tokens');
     }
 
-    public function testGetFields()
+    public function testGetFields() : void
     {
         $panel = new Panel('Foobar', $this->config);
         $result = $panel->getFields();
@@ -69,12 +69,12 @@ class PanelTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testSetFields()
+    public function testSetFields() : void
     {
         $panel = new Panel('Foobar', ['panels' => ['Foobar' => '(this is not a valid expression)']]);
     }
 
-    public function testGetFieldValues()
+    public function testGetFieldValues() : void
     {
         $panel = new Panel('Foobar', $this->config);
         $data = ['type' => 'company', 'name' => 'amazon', 'dummy' => 'foo'];
@@ -90,8 +90,9 @@ class PanelTest extends TestCase
 
     /**
      * @dataProvider evalExpressionScenariosProvider
+     * @param mixed[] $data
      */
-    public function testEvalExpression($scenario, $expression, $data, $expected)
+    public function testEvalExpression(string $scenario, string $expression, array $data, bool $expected) : void
     {
         $panelName = 'Foobar';
         $config['panels']['Foobar'] = $expression;
@@ -100,7 +101,10 @@ class PanelTest extends TestCase
         unset($panel);
     }
 
-    public function evalExpressionScenariosProvider()
+    /**
+     * @return mixed[]
+     */
+    public function evalExpressionScenariosProvider() : array
     {
         return [
             [
@@ -136,7 +140,7 @@ class PanelTest extends TestCase
         ];
     }
 
-    public function testGetPanels()
+    public function testGetPanels() : void
     {
         $config['panels']['Company'] = "(%%type%% == 'individual')";
         $config['panels']['Personal'] = "(%%type%% == 'company')";

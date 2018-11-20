@@ -11,7 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
-use Cake\Core\Configure;
 use CsvMigrations\Utility\FileUpload;
 
 /**
@@ -38,6 +37,7 @@ class FilesRenderer extends AbstractRenderer
             return '';
         }
 
+        /** @var \Cake\ORM\Table&\Cake\Datasource\RepositoryInterface */
         $table = $this->config->getTable();
         $field = $this->config->getField();
 

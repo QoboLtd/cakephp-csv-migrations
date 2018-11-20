@@ -11,13 +11,14 @@
  */
 namespace CsvMigrations;
 
+use Cake\Log\LogTrait;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
-use Exception;
 use Migrations\AbstractMigration;
 use Migrations\Table;
+use Psr\Log\LogLevel;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
@@ -26,26 +27,28 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
  */
 class CsvMigration extends AbstractMigration
 {
+    use LogTrait;
+
     /**
      * Migrations table object
      *
      * @var \Migrations\Table
      */
-    protected $_table;
+    private $table;
 
     /**
-     * Field handler factory instance
+     * Field handler factory instance.
      *
-     * @var object
+     * @var \CsvMigrations\FieldHandlers\FieldHandlerFactory
      */
-    protected $_fhf;
+    private $factory;
 
     public $autoId = false;
 
     /**
      * Required table fields
      *
-     * @var array
+     * @var mixed[]
      */
     protected static $_requiredFields = [
         'id' => [
@@ -93,51 +96,60 @@ class CsvMigration extends AbstractMigration
     ];
 
     /**
-     * Method that handles migrations using csv file.
+     * Method that handles migrations using JSON file.
      *
-     * @param  \Migrations\Table $table Migrations table object
-     * @param  string            $path  csv file path
+     * @param \Migrations\Table $table Migrations table object
+     * @param string $path JSON File path
      * @return \Migrations\Table
      */
-    public function csv(Table $table, $path = '')
+    public function csv(Table $table, string $path = '') : Table
     {
-        $this->_fhf = new FieldHandlerFactory();
-        $this->_table = $table;
-        $this->_handleCsv();
+        $this->factory = new FieldHandlerFactory();
+        $this->table = $table;
+        $this->handleCsv();
 
-        return $this->_table;
+        return $this->table;
     }
 
     /**
-     * Apply changes from the CSV file
+     * Apply changes from the JSON file
      *
      * @return void
      */
-    protected function _handleCsv()
+    private function handleCsv() : void
     {
-        $tableName = Inflector::pluralize(Inflector::classify($this->_table->getName()));
+        $tableName = Inflector::pluralize(Inflector::classify($this->table->getName()));
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $tableName);
-        $csvData = (array)json_decode(json_encode($mc->parse()), true);
-        $csvData = array_merge($csvData, self::$_requiredFields);
+        $data = json_encode($mc->parse());
+        if (false === $data) {
+            $this->log(sprintf('No data found for %s module', $tableName), LogLevel::ERROR);
 
-        $tableFields = $this->_getTableFields();
-
-        if (empty($tableFields)) {
-            $this->_createFromCsv($csvData, $tableName);
-        } else {
-            $this->_updateFromCsv($csvData, $tableName, $tableFields);
+            return;
         }
+        $data = json_decode($data, true);
+        $data = array_merge($data, self::$_requiredFields);
+
+        $tableFields = $this->table->getColumns();
+
+        empty($tableFields) ?
+            $this->createFromCsv($data, $tableName) :
+            $this->updateFromCsv($data, $tableName, $tableFields);
     }
 
     /**
      * Method that creates joined tables for Many to Many relationships.
      *
-     * @param  string $tableName current table name
-     * @return array             phinx table instances
+     * @param string $tableName current table name
+     * @return mixed[]  phinx table instances
      * @deprecated 28.0.2 Kept for BC, already baked csv migration files are using this method.
      */
-    public function joins($tableName)
+    public function joins(string $tableName) : array
     {
+        trigger_error(
+            __METHOD__ . '() is deprecated. See https://github.com/QoboLtd/cakephp-csv-migrations/pull/535',
+            E_USER_DEPRECATED
+        );
+
         return [];
     }
 
@@ -147,7 +159,7 @@ class CsvMigration extends AbstractMigration
      * Returns either just the field names or with their schema definition.
      *
      * @param bool $withSchema Schema inclusion flag
-     * @return array
+     * @return mixed[]|string[]
      */
     public static function getRequiredFields(bool $withSchema = false) : array
     {
@@ -155,65 +167,49 @@ class CsvMigration extends AbstractMigration
     }
 
     /**
-     * Get existing table fields.
+     * Create new fields from JSON data.
      *
-     * @return array table fields objects
-     */
-    protected function _getTableFields()
-    {
-        $result = [];
-        try {
-            $result = $this->_table->getColumns($this->_table->getName());
-        } catch (Exception $e) {
-            //
-        }
-
-        return $result;
-    }
-
-    /**
-     * Create new fields from csv data
-     *
-     * @param  array $csvData CSV data
-     * @param  string $table  Table name
+     * @param mixed[] $data JSON data
+     * @param string $table Table name
      * @return void
      */
-    protected function _createFromCsv(array $csvData, $table)
+    private function createFromCsv(array $data, string $table) : void
     {
-        foreach ($csvData as $col) {
+        foreach ($data as $col) {
             $csvField = new CsvField($col);
-            $dbFields = $this->_fhf->fieldToDb($csvField, $table);
+            $dbFields = $this->factory->fieldToDb($csvField, $table);
 
             if (empty($dbFields)) {
                 continue;
             }
 
             foreach ($dbFields as $dbField) {
-                $this->_createColumn($dbField);
+                $this->createColumn($dbField);
             }
         }
     }
 
     /**
-     * Update (modify/delete) table fields in comparison to the CSV data
+     * Update (modify/delete) table fields in comparison to the JSON data.
      *
-     * @param  array  $csvData     CSV data
-     * @param  string $table       Table name
-     * @param  array  $tableFields Existing table fields
+     * @param mixed[] $data JSON data
+     * @param string $table Table name
+     * @param \Phinx\Db\Table\Column[] $fields Existing table fields
      * @return void
      */
-    protected function _updateFromCsv(array $csvData, $table, array $tableFields)
+    private function updateFromCsv(array $data, string $table, array $fields) : void
     {
+        $tableFields = [];
         // get existing table column names
-        foreach ($tableFields as &$tableField) {
-            $tableField = $tableField->getName();
+        foreach ($fields as $field) {
+            $tableFields[] = $field->getName();
         }
 
         // keep track of edited columns
         $editedColumns = [];
-        foreach ($csvData as $col) {
+        foreach ($data as $col) {
             $csvField = new CsvField($col);
-            $dbFields = $this->_fhf->fieldToDb($csvField, $table);
+            $dbFields = $this->factory->fieldToDb($csvField, $table);
 
             if (empty($dbFields)) {
                 continue;
@@ -223,61 +219,61 @@ class CsvMigration extends AbstractMigration
                 // edit existing column
                 if (in_array($dbField->getName(), $tableFields)) {
                     $editedColumns[] = $dbField->getName();
-                    $this->_updateColumn($dbField);
+                    $this->updateColumn($dbField);
                 } else { // add new column
-                    $this->_createColumn($dbField);
+                    $this->createColumn($dbField);
                 }
             }
         }
 
         // remove unneeded columns
         foreach (array_diff($tableFields, $editedColumns) as $fieldName) {
-            $this->_deleteColumn($fieldName);
+            $this->deleteColumn($fieldName);
         }
     }
 
     /**
      * Method used for creating new DB table column.
      *
-     * @param  \CsvMigrations\FieldHandlers\DbField $dbField DbField object
+     * @param \CsvMigrations\FieldHandlers\DbField $dbField DbField object
      * @return void
      */
-    protected function _createColumn(DbField $dbField)
+    private function createColumn(DbField $dbField) : void
     {
-        $this->_table->addColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
+        $this->table->addColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
 
         // set id as primary key
         if ('id' === $dbField->getName()) {
-            $this->_table->addPrimaryKey([
+            $this->table->addPrimaryKey([
                 $dbField->getName(),
             ]);
         }
 
-        $this->_addIndexes($dbField, false);
+        $this->addIndexes($dbField, false);
     }
 
     /**
      * Method used for updating an existing DB table column.
      *
-     * @param  \CsvMigrations\FieldHandlers\DbField $dbField DbField object
+     * @param \CsvMigrations\FieldHandlers\DbField $dbField DbField object
      * @return void
      */
-    protected function _updateColumn(DbField $dbField)
+    private function updateColumn(DbField $dbField) : void
     {
-        $this->_table->changeColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
+        $this->table->changeColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
         // set field as unique
         if ($dbField->getUnique()) {
             // avoid creation of duplicate indexes
-            if (!$this->_table->hasIndex($dbField->getName())) {
-                $this->_table->addIndex([$dbField->getName()], ['unique' => true]);
+            if (!$this->table->hasIndex($dbField->getName())) {
+                $this->table->addIndex([$dbField->getName()], ['unique' => true]);
             }
         } else {
-            if ($this->_table->hasIndex($dbField->getName())) {
-                $this->_table->removeIndexByName($dbField->getName());
+            if ($this->table->hasIndex($dbField->getName())) {
+                $this->table->removeIndexByName($dbField->getName());
             }
         }
 
-        $this->_addIndexes($dbField);
+        $this->addIndexes($dbField);
     }
 
     /**
@@ -287,21 +283,21 @@ class CsvMigration extends AbstractMigration
      * @param bool $exists Table exists flag
      * @return void
      */
-    protected function _addIndexes(DbField $dbField, $exists = true)
+    private function addIndexes(DbField $dbField, bool $exists = true) : void
     {
         if ('id' === $dbField->getName()) {
             return;
         }
 
-        $this->_removeIndexes($dbField, $exists);
+        $this->removeIndexes($dbField, $exists);
 
         $added = false;
         if ($dbField->getUnique()) {
-            $added = $this->_addIndex($dbField, 'unique', $exists);
+            $added = $this->addIndex($dbField, 'unique', $exists);
         }
 
         if (!$added && 'uuid' === $dbField->getType()) {
-            $this->_addIndex($dbField, 'lookup', $exists);
+            $this->addIndex($dbField, 'lookup', $exists);
         }
     }
 
@@ -312,25 +308,25 @@ class CsvMigration extends AbstractMigration
      * @param bool $exists Table exists flag
      * @return void
      */
-    protected function _removeIndexes(DbField $dbField, $exists = true)
+    private function removeIndexes(DbField $dbField, bool $exists = true) : void
     {
-        if (!(bool)$exists) {
+        if (! $exists) {
             return;
         }
 
         // remove legacy index
-        $this->_table->removeIndexByName($dbField->getName());
+        $this->table->removeIndexByName($dbField->getName());
 
         // remove unique index
-        if (!$dbField->getUnique() && $this->_table->hasIndex($dbField->getName())) {
+        if (!$dbField->getUnique() && $this->table->hasIndex($dbField->getName())) {
             $indexName = 'unique_' . $dbField->getName();
-            $this->_table->removeIndexByName($indexName);
+            $this->table->removeIndexByName($indexName);
         }
 
         // remove lookup index
-        if ('uuid' !== $dbField->getType() && $this->_table->hasIndex($dbField->getName())) {
+        if ('uuid' !== $dbField->getType() && $this->table->hasIndex($dbField->getName())) {
             $indexName = 'lookup_' . $dbField->getName();
-            $this->_table->removeIndexByName($indexName);
+            $this->table->removeIndexByName($indexName);
         }
     }
 
@@ -342,14 +338,14 @@ class CsvMigration extends AbstractMigration
      * @param bool $exists Table exists flag
      * @return bool
      */
-    protected function _addIndex(DbField $dbField, $type, $exists = true)
+    private function addIndex(DbField $dbField, string $type, bool $exists = true) : bool
     {
         if (empty($type) || !is_string($type)) {
             return false;
         }
 
         // skip if table exists and has specified index
-        if ($exists && $this->_table->hasIndex($dbField->getName())) {
+        if ($exists && $this->table->hasIndex($dbField->getName())) {
             return false;
         }
 
@@ -359,7 +355,7 @@ class CsvMigration extends AbstractMigration
             $options['unique'] = true;
         }
 
-        $this->_table->addIndex($dbField->getName(), $options);
+        $this->table->addIndex($dbField->getName(), $options);
 
         return true;
     }
@@ -367,11 +363,11 @@ class CsvMigration extends AbstractMigration
     /**
      * Method used for deleting an existing DB table column.
      *
-     * @param  string $fieldName Table column name
+     * @param string $fieldName Table column name
      * @return void
      */
-    protected function _deleteColumn($fieldName)
+    private function deleteColumn(string $fieldName) : void
     {
-        $this->_table->removeColumn($fieldName);
+        $this->table->removeColumn($fieldName);
     }
 }

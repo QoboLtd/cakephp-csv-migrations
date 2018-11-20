@@ -19,7 +19,10 @@ class FileUploadTest extends TestCase
         'plugin.CsvMigrations.file_storage'
     ];
 
-    public function setUp() :void
+    private $table;
+    private $fileUpload;
+
+    public function setUp() : void
     {
         parent::setUp();
         StorageManager::setConfig('Local', [
@@ -131,6 +134,6 @@ class FileUploadTest extends TestCase
             'small' => 'tests/img/qobo.png',
             'tiny' => 'tests/img/qobo.png'
         ];
-        $this->assertSame($expected, $result->first()->get('thumbnails'));
+        $this->assertSame($expected, $result->firstOrFail()->get('thumbnails'));
     }
 }

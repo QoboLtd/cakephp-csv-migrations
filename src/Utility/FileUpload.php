@@ -56,7 +56,7 @@ final class FileUpload
     /**
      * Table instance.
      *
-     * @var \Cake\Datasource\RepositoryInterface
+     * @var \Cake\ORM\Table
      */
     private $table;
 
@@ -77,7 +77,7 @@ final class FileUpload
     /**
      * Contructor method.
      *
-     * @param \Cake\Datasource\RepositoryInterface $table Table Instance
+     * @param \Cake\ORM\Table $table Table Instance
      * @return void
      */
     public function __construct(RepositoryInterface $table)
@@ -120,7 +120,7 @@ final class FileUpload
      *
      * @see  https://github.com/QoboLtd/cakephp-utils/blob/v9.2.0/src/ModuleConfig/Parser/Schema/fields.json#L30-L40
      * @param string $field Field name
-     * @return array
+     * @return mixed[]
      */
     private function getOrderClause(string $field) : array
     {
@@ -187,14 +187,14 @@ final class FileUpload
     {
         $versions = (array)Configure::read('FileStorage.imageHashes.file_storage');
         if (empty($versions)) {
-            return str_replace(DS, '/', $entity->path);
+            return str_replace(DS, '/', $entity->get('path'));
         }
 
         if (! array_key_exists($version, $versions)) {
-            return str_replace(DS, '/', $entity->path);
+            return str_replace(DS, '/', $entity->get('path'));
         }
 
-        $path = in_array($entity->extension, self::IMAGE_EXTENSIONS) ?
+        $path = in_array($entity->get('extension'), self::IMAGE_EXTENSIONS) ?
             $this->getImagePath($entity, $version) :
             $this->getIconPath($entity, $version);
 
@@ -212,7 +212,7 @@ final class FileUpload
     {
         $hash = (string)Configure::read(sprintf('FileStorage.imageHashes.file_storage.%s', $version));
         if (empty($hash)) {
-            return $entity->path;
+            return $entity->get('path');
         }
 
         $event = new Event('ImageVersion.getVersions', $this, [
@@ -226,12 +226,12 @@ final class FileUpload
         EventManager::instance()->dispatch($event);
 
         if (! $event->getResult()) {
-            return $entity->path;
+            return $entity->get('path');
         }
 
         return file_exists(WWW_ROOT . trim($event->getResult(), DS)) ?
             $event->getResult() :
-            $entity->path;
+            $entity->get('path');
     }
 
     /**
@@ -243,7 +243,7 @@ final class FileUpload
      */
     private function getIconPath(FileStorage $entity, string $version) : string
     {
-        $imgSizes = (array)Configure::read(sprintf('FileStorage.imageSizes.%s', $entity->model));
+        $imgSizes = (array)Configure::read(sprintf('FileStorage.imageSizes.%s', $entity->get('model')));
 
         // no image sizes, return default
         if (empty($imgSizes)) {
@@ -295,10 +295,10 @@ final class FileUpload
      * Creates FileStorage entities.
      *
      * @param string $field Field name
-     * @param array $files Uploaded files info
+     * @param mixed[] $files Uploaded files info
      * @return \Burzum\FileStorage\Model\Entity\FileStorage[] $result
      */
-    public function saveAll(string $field, array $files)
+    public function saveAll(string $field, array $files) : array
     {
         if (empty($files)) {
             return [];
@@ -328,7 +328,7 @@ final class FileUpload
      * Creates FileStorage entity.
      *
      * @param string $field Field name
-     * @param array $file Uploaded file info
+     * @param mixed[] $file Uploaded file info
      * @return \Burzum\FileStorage\Model\Entity\FileStorage|null New entity or null on unsuccesful attempts.
      */
     public function save(string $field, array $file) : ?FileStorage
@@ -348,8 +348,14 @@ final class FileUpload
             return null;
         }
 
+        /** @var \Burzum\FileStorage\Model\Entity\FileStorage */
         $entity = $this->storageTable->newEntity(['file' => $file]);
-        // upload does not know anything about the entity it relates to, as it is not yet created
+        /**
+         * Field foreign_key is not set here because upload does not know
+         * anything about the entity it relates to, as it is not yet created.
+         *
+         * @var \Burzum\FileStorage\Model\Entity\FileStorage
+         */
         $entity = $this->storageTable->patchEntity($entity, [
             'model' => $this->table->getTable(),
             'model_field' => $field
@@ -361,8 +367,8 @@ final class FileUpload
             return null;
         }
 
-        // create thumbnails for image files
-        if (in_array($entity->extension, self::IMAGE_EXTENSIONS)) {
+        // generate thumbnails for image files
+        if (in_array($entity->get('extension'), self::IMAGE_EXTENSIONS)) {
             $this->createThumbnails($entity);
         }
 
@@ -373,7 +379,7 @@ final class FileUpload
      * Links provided entity with file(s) found in the request data.
      *
      * @param string $id Entity id
-     * @param array $data Request data
+     * @param mixed[] $data Request data
      * @return int Returns count of the affected rows.
      */
     public function link(string $id, array $data) : int
@@ -401,7 +407,12 @@ final class FileUpload
     private function getFileFields() : array
     {
         $config = new ModuleConfig(ConfigType::MIGRATION(), $this->table->getAlias());
-        $fields = json_decode(json_encode($config->parse()), true);
+        $config = json_encode($config->parse());
+        if (false === $config) {
+            return [];
+        }
+
+        $fields = json_decode($config, true);
 
         if (empty($fields)) {
             return [];
@@ -420,9 +431,9 @@ final class FileUpload
      * - Articles.photos_ids
      * -photos_ids
      *
-     * @param array $data Request data
-     * @param array $field Field name
-     * @return array
+     * @param mixed[] $data Request data
+     * @param string $field Field name
+     * @return mixed[]
      */
     private function getFileIdsByField(array $data, string $field) : array
     {
@@ -494,15 +505,15 @@ final class FileUpload
      */
     private function handleThumbnails(FileStorage $entity, string $eventName) : bool
     {
-        if (! in_array(strtolower($entity->extension), self::IMAGE_EXTENSIONS)) {
+        if (! in_array(strtolower($entity->get('extension')), self::IMAGE_EXTENSIONS)) {
             return false;
         }
 
-        $imgSizes = (array)Configure::read(sprintf('FileStorage.imageSizes.%s', $entity->model));
+        $imgSizes = (array)Configure::read(sprintf('FileStorage.imageSizes.%s', $entity->get('model')));
 
         if (empty($imgSizes)) {
             $this->log(
-                sprintf('Failed to %s: no image sizes defined for model "%s"', $eventName, $entity->model),
+                sprintf('Failed to %s: no image sizes defined for model "%s"', $eventName, $entity->get('model')),
                 'warning'
             );
 

@@ -11,14 +11,15 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
-use BadMethodCallException;
 use Cake\Core\Configure;
+use Cake\Datasource\EntityInterface;
+use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
-use CsvMigrations\FieldHandlers\RelatedFieldHandler;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use RuntimeException;
 
 trait RelatedFieldTrait
 {
@@ -32,32 +33,40 @@ trait RelatedFieldTrait
     /**
      * Get related model's parent model properties.
      *
-     * @param  array $relatedProperties related model properties
-     * @return mixed $result containing parent properties
+     * @param mixed[] $relatedProperties related model properties
+     * @return mixed[] $result containing parent properties
      */
-    protected function _getRelatedParentProperties($relatedProperties)
+    protected function _getRelatedParentProperties(array $relatedProperties) : array
     {
-        $result = [];
-        $parentTable = TableRegistry::get($relatedProperties['config']['parent']['module']);
-        $modelName = $relatedProperties['controller'];
-
-        /*
-        prepend plugin name
-         */
-        if (!is_null($relatedProperties['plugin'])) {
-            $modelName = $relatedProperties['plugin'] . '.' . $modelName;
+        if (empty($relatedProperties['entity']) ||
+            empty($relatedProperties['controller']) ||
+            empty($relatedProperties['config']['parent']['module'])
+        ) {
+            return [];
         }
 
-        $foreignKey = $this->_getForeignKey($parentTable, $modelName);
+        $foreignKey = $this->_getForeignKey(
+            TableRegistry::get($relatedProperties['config']['parent']['module']),
+            empty($relatedProperties['plugin']) ?
+                $relatedProperties['controller'] :
+                sprintf('%s.%s', $relatedProperties['plugin'], $relatedProperties['controller'])
+        );
 
-        if (empty($relatedProperties['entity']) || empty($relatedProperties['entity']->{$foreignKey})) {
-            return $result;
+        if ('' === $foreignKey) {
+            return [];
         }
 
-        $related = $this->_getRelatedProperties($parentTable, $relatedProperties['entity']->{$foreignKey});
+        if (empty($relatedProperties['entity']->get($foreignKey))) {
+            return [];
+        }
 
-        if (!empty($related['entity'])) {
-            $result = $related;
+        $result = $this->_getRelatedProperties(
+            $relatedProperties['config']['parent']['module'],
+            $relatedProperties['entity']->get($foreignKey)
+        );
+
+        if (null === $result['entity']) {
+            return [];
         }
 
         return $result;
@@ -66,46 +75,41 @@ trait RelatedFieldTrait
     /**
      * Get related model's properties.
      *
-     * @param  mixed $table related table instance or name
-     * @param  sting $data  query parameter value
-     * @return mixed
+     * @param string $tableName Related table name
+     * @param string $data query parameter value
+     * @return mixed[]
      */
-    protected function _getRelatedProperties($table, $data)
+    protected function _getRelatedProperties(string $tableName, string $data) : array
     {
-        if (!is_object($table)) {
-            $tableName = $table;
-            $table = TableRegistry::get($tableName);
-        } else {
-            $tableName = $table->getRegistryAlias();
-        }
+        $table = TableRegistry::get($tableName);
 
-        $result['id'] = $data;
-
-        $result['config'] = json_decode(
-            json_encode((new ModuleConfig(ConfigType::MODULE(), $table->getRegistryAlias()))->parse()),
-            true
-        );
-        // display field
-        $result['displayField'] = $table->getDisplayField();
-        // get associated entity record
-        $result['entity'] = $this->_getAssociatedRecord($table, $data);
-        // get related table's displayField value
-        if (!empty($result['entity'])) {
-            // Pass the value through related field handler
-            // to properly display the user-friendly label.
-            $fhf = new FieldHandlerFactory();
-            $dispFieldVal = $fhf->renderValue(
+        $config = (new ModuleConfig(ConfigType::MODULE(), $tableName))->parse();
+        $config = json_encode($config);
+        $config = false === $config ? [] : json_decode($config, true);
+        $entity = $this->_getAssociatedRecord($table, $data);
+        $displayField = $table->getDisplayField();
+        $displayFieldValue = '';
+        if (null !== $entity) {
+            // get related table's display field value by rendering it through field handler factory
+            $value = (new FieldHandlerFactory())->renderValue(
                 $table,
-                $table->getDisplayField(),
-                $result['entity']->{$table->getDisplayField()},
+                $displayField,
+                $entity->get($displayField),
                 ['renderAs' => Setting::RENDER_PLAIN_VALUE_RELATED()]
             );
-            $result['dispFieldVal'] = empty($dispFieldVal) ? 'N/A' : $dispFieldVal;
-        } else {
-            $result['dispFieldVal'] = null;
+            $displayFieldValue = '' === $value ? 'N/A' : $value;
         }
+
+        $result = [
+            'id' => $data,
+            'config' => $config,
+            'displayField' => $displayField,
+            'entity' => $entity,
+            'dispFieldVal' => $displayFieldValue
+        ];
+
         // get plugin and controller names
-        list($result['plugin'], $result['controller']) = pluginSplit($tableName);
+        list($result['plugin'], $result['controller']) = pluginSplit($table->getAlias());
 
         return $result;
     }
@@ -113,44 +117,58 @@ trait RelatedFieldTrait
     /**
      * Get parent model association's foreign key.
      *
-     * @param  \Cake\ORM\Table $table     Table instance
-     * @param  string          $modelName Model name
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
+     * @param string $modelName Model name
      * @return string
      */
-    protected function _getForeignKey(Table $table, $modelName)
+    protected function _getForeignKey(RepositoryInterface $table, string $modelName) : string
     {
-        $result = null;
+        /** @var \Cake\ORM\Table */
+        $table = $table;
+
         foreach ($table->associations() as $association) {
-            if ($modelName === $association->className()) {
-                $result = $association->getForeignKey();
+            if ($modelName !== $association->className()) {
+                continue;
             }
+
+            $primaryKey = $association->getForeignKey();
+            if (! is_string($primaryKey)) {
+                throw new RuntimeException('Primary key must be a string');
+            }
+
+            return $primaryKey;
         }
 
-        return $result;
+        return '';
     }
 
     /**
      * Retrieve and return associated record Entity, by primary key value.
      * If the record has been trashed - query will return NULL.
      *
-     * @param  \Cake\ORM\Table $table Table instance
-     * @param  string          $value Primary key value
-     * @return object
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
+     * @param string $value Primary key value
+     * @return \Cake\Datasource\EntityInterface|null
      */
-    protected function _getAssociatedRecord(Table $table, $value)
+    protected function _getAssociatedRecord(RepositoryInterface $table, string $value) : ?EntityInterface
     {
-        $options = [
-            'conditions' => [$table->aliasField($table->getPrimaryKey()) => $value],
-            'limit' => 1
-        ];
-        // try to fetch with trashed if finder method exists, otherwise fallback to find all
-        try {
-            $query = $table->find('withTrashed', $options);
-        } catch (BadMethodCallException $e) {
-            $query = $table->find('all', $options);
+        /** @var \Cake\ORM\Table */
+        $table = $table;
+
+        $primaryKey = $table->getPrimaryKey();
+        if (! is_string($primaryKey)) {
+            throw new RuntimeException('Primary key must be a string');
         }
 
-        return $query->first();
+        // try to fetch with trashed if finder method exists, otherwise fallback to find all
+        $finderMethod = $table->hasBehavior('Trash') ? 'withTrashed' : 'all';
+
+        /** @var \Cake\Datasource\EntityInterface|null */
+        $entity = $table->find($finderMethod, ['conditions' => [$table->aliasField($primaryKey) => $value]])
+            ->enableHydration(true)
+            ->first();
+
+        return $entity;
     }
 
     /**
@@ -158,48 +176,50 @@ trait RelatedFieldTrait
      *
      * Can be used as a value for placeholder or title attributes.
      *
-     * @param array $properties Input properties
+     * @param mixed[] $properties Input properties
      * @return string
      */
-    protected function _getInputHelp($properties)
+    protected function _getInputHelp(array $properties) : string
     {
         $config = (new ModuleConfig(ConfigType::MODULE(), $properties['controller']))->parse();
-        $fields = $config->table->typeahead_fields;
-        $virtualFields = $config->virtualFields;
-
-        // if typeahead fields were not defined, use display field
-        if (empty($fields)) {
-            $fields = [$properties['displayField']];
+        $typeaheadFields = isset($config->table->typeahead_fields) ? $config->table->typeahead_fields : [];
+        // if no typeahead fields, use display field
+        if (empty($typeaheadFields)) {
+            $typeaheadFields = [$properties['displayField']];
         }
 
-        // extract virtual fields if any
-        $typeaheadFields = [];
-        foreach ($fields as $fieldName) {
-            if (isset($virtualFields->{$fieldName})) {
-                $typeaheadFields = array_merge($typeaheadFields, $virtualFields->{$fieldName});
-            } else {
-                $typeaheadFields[] = $fieldName;
-            }
+        $virtualFields = isset($config->virtualFields) ? $config->virtualFields : [];
+
+        // extract virtual fields, if any
+        $result = [];
+        foreach ($typeaheadFields as $typeaheadField) {
+            $fields = property_exists($virtualFields, $typeaheadField) ?
+                (array)$virtualFields->{$typeaheadField} :
+                [$typeaheadField];
+
+            $result = array_merge($result, $fields);
         }
 
-        // use typeahead fields
         return implode(', or ', array_map(function ($value) {
             return Inflector::humanize($value);
-        }, $typeaheadFields));
+        }, $result));
     }
 
     /**
      * Get input field associated icon
      *
-     * @param array $properties Input properties
+     * @param mixed[] $properties Input properties
      * @return string
      */
-    protected function _getInputIcon($properties)
+    protected function _getInputIcon(array $properties) : string
     {
         $config = (new ModuleConfig(ConfigType::MODULE(), $properties['controller']))->parse();
 
-        // return default icon if none is defined
-        if (empty($config->table->icon)) {
+        if (! property_exists($config, 'table')) {
+            return Configure::read('CsvMigrations.default_icon');
+        }
+
+        if (! property_exists($config->table, 'icon')) {
             return Configure::read('CsvMigrations.default_icon');
         }
 

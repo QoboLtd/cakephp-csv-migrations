@@ -35,9 +35,12 @@ class CsvViewComponent extends Component
      * @return void
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeFilter(Event $event)
+    public function beforeFilter(Event $event) : void
     {
-        $table = $event->getSubject()->{$event->getSubject()->getName()};
+        /** @var \Cake\Controller\Controller */
+        $controller = $event->getSubject();
+
+        $table = $controller->loadModel();
 
         // skip passing table fields if action is not supported by the plugin
         if (in_array($this->request->getParam('action'), Configure::readOrFail('CsvMigrations.actions'))) {
@@ -45,8 +48,8 @@ class CsvViewComponent extends Component
             $panels = in_array($this->request->getParam('action'), (array)Configure::read('CsvMigrations.panels.actions'));
             $fields = Field::getCsvView($table, $this->request->getParam('action'), true, $panels);
 
-            $event->getSubject()->set('fields', $fields);
-            $event->getSubject()->set('_serialize', ['fields']);
+            $controller->set('fields', $fields);
+            $controller->set('_serialize', ['fields']);
         }
     }
 
@@ -56,7 +59,7 @@ class CsvViewComponent extends Component
      * @param \Cake\Event\Event $event Event instance
      * @return void
      */
-    public function beforeRender(Event $event)
+    public function beforeRender(Event $event) : void
     {
         $this->filterFields($event);
     }
@@ -67,7 +70,7 @@ class CsvViewComponent extends Component
      * @param \Cake\Event\Event $event Event instance
      * @return void
      */
-    protected function filterFields(Event $event)
+    protected function filterFields(Event $event) : void
     {
         $panelActions = (array)Configure::read('CsvMigrations.panels.actions');
         $dynamicPanelActions = (array)Configure::read('CsvMigrations.panels.dynamic_actions');
@@ -75,14 +78,18 @@ class CsvViewComponent extends Component
             return;
         }
 
-        $config = new ModuleConfig(ConfigType::MODULE(), $event->getSubject()->getName());
-        $tableConfig = json_decode(json_encode($config->parse()), true);
+        /** @var \Cake\Controller\Controller */
+        $controller = $event->getSubject();
 
-        $panels = $this->getPanels($tableConfig, $event->getSubject()->viewVars['entity']->toArray());
-        if (!empty($panels['fail'])) {
+        $config = new ModuleConfig(ConfigType::MODULE(), $controller->getName());
+        $config = json_encode($config->parse());
+        $config = false === $config ? [] : json_decode($config, true);
+
+        $panels = $this->getPanels($config, $controller->viewVars['entity']->toArray());
+        if (! empty($panels['fail'])) {
             // filter out fields of hidden panels
-            $event->getSubject()->viewVars['fields'] = array_diff_key(
-                $event->getSubject()->viewVars['fields'],
+            $controller->viewVars['fields'] = array_diff_key(
+                $controller->viewVars['fields'],
                 array_flip($panels['fail'])
             );
         }
@@ -98,10 +105,11 @@ class CsvViewComponent extends Component
      * @param \Cake\Event\Event $event Event instance
      * @return void
      */
-    protected function filterBatchFields(Event $event)
+    protected function filterBatchFields(Event $event) : void
     {
         $config = new ModuleConfig(ConfigType::MIGRATION(), $this->request->getParam('controller'));
-        $fields = json_decode(json_encode($config->parse()), true);
+        $config = json_encode($config->parse());
+        $fields = false === $config ? [] : json_decode($config, true);
 
         $batchFields = (array)Configure::read('CsvMigrations.batch.types');
 
@@ -119,7 +127,10 @@ class CsvViewComponent extends Component
             return;
         }
 
-        $fields = $event->getSubject()->viewVars['fields'];
+        /** @var \Cake\Controller\Controller */
+        $controller = $event->getSubject();
+
+        $fields = $controller->viewVars['fields'];
         foreach ($fields as $panel => $panelFields) {
             foreach ($panelFields as $section => $sectionFields) {
                 foreach ($sectionFields as $key => $field) {
@@ -132,6 +143,6 @@ class CsvViewComponent extends Component
             }
         }
 
-        $event->getSubject()->viewVars['fields'] = $fields;
+        $controller->viewVars['fields'] = $fields;
     }
 }

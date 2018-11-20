@@ -17,13 +17,13 @@ class MoneyFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
         $this->fh = new FieldHandler($config);
     }
 
-    public function testRenderValue()
+    public function testRenderValue() : void
     {
         $options['entity'] = new Entity(['field_money_amount' => 150, 'field_money_currency' => 'eur']);
         $options['fieldDefinitions'] = new CsvField([
@@ -39,7 +39,7 @@ class MoneyFieldHandlerTest extends TestCase
         $this->assertEquals('150.00&nbsp;EUR', $result);
     }
 
-    public function testRenderInput()
+    public function testRenderInput() : void
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
@@ -51,8 +51,10 @@ class MoneyFieldHandlerTest extends TestCase
 
         $result = $this->fh->renderInput(null, $options);
 
-        $mc = new ModuleConfig(ConfigType::LISTS(), null, 'countries');
-        foreach ($mc->parse()->items as $key => $item) {
+        $mc = new ModuleConfig(ConfigType::LISTS(), '', 'countries');
+        $config = $mc->parse();
+        $items = property_exists($config, 'items') ? $config->items : [];
+        foreach ($items as $key => $item) {
             if ((bool)$item['inactive']) {
                 $this->assertNotContains('value="' . $key . '"', $result);
                 $this->assertNotContains($item['label'], $result);
@@ -63,7 +65,7 @@ class MoneyFieldHandlerTest extends TestCase
         }
     }
 
-    public function testFieldToDb()
+    public function testFieldToDb() : void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => 'money(money)']);
         $fh = $this->fh;
@@ -88,7 +90,7 @@ class MoneyFieldHandlerTest extends TestCase
         $this->assertEquals(255, $result[$fieldName]->getLimit(), "fieldToDb() did not return correct limit for DbField instance");
     }
 
-    public function testGetSearchOptions()
+    public function testGetSearchOptions() : void
     {
         $result = $this->fh->getSearchOptions();
         $this->assertTrue(is_array($result), "getSearchOptions() did not return an array");

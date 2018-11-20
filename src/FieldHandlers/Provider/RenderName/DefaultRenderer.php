@@ -53,19 +53,21 @@ class DefaultRenderer extends AbstractProvider
      * @param string $name Field name
      * @return string
      */
-    protected function cleanName($name)
+    protected function cleanName(string $name) : string
     {
-        if (substr($name, -5) === '._ids') {
+        if ('._ids' === substr($name, -5)) {
             $name = substr($name, 0, -5);
         }
-        if (strpos($name, '.') !== false) {
+
+        if (false !== strpos($name, '.')) {
             $fieldElements = explode('.', $name);
-            $name = array_pop($fieldElements);
+            $name = false !== end($fieldElements) ? end($fieldElements) : $name;
         }
+
         if (substr($name, -3) === '_id') {
             $name = substr($name, 0, -3);
         }
-        $name = __(Inflector::humanize(Inflector::underscore($name)));
+        $name = Inflector::humanize(Inflector::underscore($name));
 
         return $name;
     }

@@ -10,19 +10,19 @@ class MoneyCombinedFieldsTest extends TestCase
     protected $field = 'salary';
     protected $provider;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $config = new MoneyConfig($this->field);
         $this->provider = new MoneyCombinedFields($config);
     }
 
-    public function testInterface()
+    public function testInterface() : void
     {
         $implementedInterfaces = array_keys(class_implements($this->provider));
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\Provider\ProviderInterface', $implementedInterfaces), "ProviderInterface is not implemented");
     }
 
-    public function testProvide()
+    public function testProvide() : void
     {
         $result = $this->provider->provide();
         $this->assertTrue(is_array($result), "Provder returned a non-array result");

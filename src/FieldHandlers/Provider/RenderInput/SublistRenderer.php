@@ -29,6 +29,7 @@ class SublistRenderer extends AbstractRenderer
     public function provide($data = null, array $options = [])
     {
         $field = $this->config->getField();
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->config->getTable();
 
         $fieldName = $table->aliasField($field);
@@ -66,10 +67,10 @@ class SublistRenderer extends AbstractRenderer
      * Converts list options to supported dynamiSelect lib structure
      *
      * @link https://github.com/sorites/dynamic-select
-     * @param array $options List options
-     * @return array
+     * @param mixed[] $options List options
+     * @return mixed[]
      */
-    protected function _dynamicSelectStructure($options)
+    protected function _dynamicSelectStructure(array $options) : array
     {
         $result = [];
         foreach ($options as $k => $v) {

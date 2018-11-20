@@ -33,6 +33,7 @@ class CombinedRenderer extends AbstractRenderer
         $combinedFields = new $combinedFields($this->config);
         $combinedFields = $combinedFields->provide($data, $options);
 
+        $result = [];
         $view = $this->config->getView();
         foreach ($combinedFields as $suffix => $fieldOptions) {
             $fieldName = $this->config->getField() . '_' . $suffix;
@@ -41,15 +42,12 @@ class CombinedRenderer extends AbstractRenderer
                 $data = $options['entity'];
             }
             $config = new $fieldOptions['config']($fieldName, $this->config->getTable());
-            if ($view) {
-                $config->setView($view);
-            }
+            $config->setView($view);
+
             $handler = new FieldHandler($config);
             $result[] = $handler->renderValue($data, $options);
         }
 
-        $result = implode('&nbsp;', $result);
-
-        return $result;
+        return implode('&nbsp;', $result);
     }
 }

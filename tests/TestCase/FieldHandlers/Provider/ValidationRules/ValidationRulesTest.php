@@ -54,8 +54,10 @@ class ValidationRulesTest extends TestCase
 
     /**
      * @dataProvider getValdationRulesByType
+     * @param mixed[] $fieldConfig
+     * @param mixed[] $rulesConfig
      */
-    public function testProvide($providerClass, $configClass, $fieldConfig, $rulesConfig)
+    public function testProvide(string $providerClass, string $configClass, array $fieldConfig, array $rulesConfig) : void
     {
         $provider = new $providerClass(new $configClass($fieldConfig['name']));
         $result = $provider->provide(new Validator(), [
@@ -79,8 +81,10 @@ class ValidationRulesTest extends TestCase
 
     /**
      * @dataProvider getValdationRulesByType
+     * @param mixed[] $fieldConfig
+     * @param mixed[] $rulesConfig
      */
-    public function testProvideWithRequired($providerClass, $configClass, $fieldConfig, $rulesConfig)
+    public function testProvideWithRequired(string $providerClass, string $configClass, array $fieldConfig, array $rulesConfig) : void
     {
         $provider = new $providerClass(new $configClass($fieldConfig['name']));
         $result = $provider->provide(new Validator(), [
@@ -108,7 +112,7 @@ class ValidationRulesTest extends TestCase
         $this->assertEquals($expected, $validatorRules);
     }
 
-    public function testProvideWithoutValidationRules()
+    public function testProvideWithoutValidationRules() : void
     {
         $provider = new AggregatedValidationRules(new AggregatedConfig('aggregated_field'));
         $validator = new Validator();
@@ -122,7 +126,10 @@ class ValidationRulesTest extends TestCase
         $this->assertSame($validator, $result);
     }
 
-    public function getValdationRulesByType()
+    /**
+     * @return mixed[]
+     */
+    public function getValdationRulesByType() : array
     {
         return [
             [

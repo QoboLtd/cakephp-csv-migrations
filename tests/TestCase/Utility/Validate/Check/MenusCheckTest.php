@@ -12,30 +12,30 @@ class MenusCheckTest extends TestCase
 {
     protected $check;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->check = new MenusCheck();
     }
 
-    public function testConstruct()
+    public function testConstruct() : void
     {
         $this->assertTrue($this->check instanceof CheckInterface, "MenusCheck class does not implement CheckInterface");
     }
 
-    public function testRun()
+    public function testRun() : void
     {
         $result = $this->check->run('Users');
         $this->assertTrue(is_int($result), "run() returned a non-integer result");
     }
 
-    public function testGetWarnings()
+    public function testGetWarnings() : void
     {
         $result = $this->check->run('Users');
         $result = $this->check->getWarnings();
         $this->assertTrue(is_array($result), "getWarnings() returned a non-array result");
     }
 
-    public function testGetErrors()
+    public function testGetErrors() : void
     {
         $result = $this->check->run('Users');
         $result = $this->check->getErrors();

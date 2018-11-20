@@ -11,6 +11,8 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
+use InvalidArgumentException;
+
 /**
  * CsvField
  *
@@ -110,7 +112,7 @@ class CsvField
     /**
      * Field limit
      *
-     * @var int
+     * @var int|null
      */
     protected $_limit;
 
@@ -138,7 +140,7 @@ class CsvField
     /**
      * Constructor
      *
-     * @param array string $row CSV row
+     * @param mixed[] $row CSV row
      */
     public function __construct(array $row)
     {
@@ -157,9 +159,9 @@ class CsvField
     /**
      * Get default values
      *
-     * @return array
+     * @return mixed[]
      */
-    protected function _getDefaults()
+    protected function _getDefaults() : array
     {
         $result = [
             static::FIELD_TYPE => static::DEFAULT_FIELD_TYPE,
@@ -187,11 +189,11 @@ class CsvField
      * @param  string $type field type
      * @return string       field type
      */
-    protected function _extractType($type)
+    protected function _extractType(string $type) : string
     {
         if (preg_match(static::PATTERN_TYPE, $type, $matches)) {
-            if (!empty($matches[1])) {
-                $type = $matches[1];
+            if (! empty($matches[1])) {
+                return $matches[1];
             }
         }
 
@@ -202,28 +204,27 @@ class CsvField
      * Extract field limit from type value
      *
      * Field type can be either simple or combined
-     * with limit.  For example:
+     * with limit. For example:
      *
      * * Simple: uuid, string, date.
      * * Combined: string(100), list(Foo).
      *
      * In case of a simple type, the default limit is
-     * retured.  For the combined typed, the type is
+     * returned. For the combined typed, the type is
      * stripped out and a limit only is returned.
      *
      * @param  string $type field type
      * @return mixed        field limit
      */
-    protected function _extractLimit($type)
+    protected function _extractLimit(string $type)
     {
-        $limit = static::DEFAULT_FIELD_LIMIT;
         if (preg_match(static::PATTERN_TYPE, $type, $matches)) {
-            if (!empty($matches[2])) {
-                $limit = $matches[2];
+            if (! empty($matches[2])) {
+                return $matches[2];
             }
         }
 
-        return $limit;
+        return static::DEFAULT_FIELD_LIMIT;
     }
 
     /**
@@ -233,11 +234,10 @@ class CsvField
      * @param string $name field name
      * @return void
      */
-    public function setName($name)
+    public function setName(string $name) : void
     {
-        $name = (string)$name;
         if (empty($name)) {
-            throw new \InvalidArgumentException('Empty field name is not allowed');
+            throw new InvalidArgumentException('Empty field name is not allowed');
         }
 
         $this->_name = $name;
@@ -248,7 +248,7 @@ class CsvField
      *
      * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return $this->_name;
     }
@@ -260,11 +260,10 @@ class CsvField
      * @param  string $type field type
      * @return void
      */
-    public function setType($type)
+    public function setType(string $type) : void
     {
-        $type = (string)$type;
         if (empty($type)) {
-            throw new \InvalidArgumentException('Empty field type is not allowed: ' . $this->getName());
+            throw new InvalidArgumentException('Empty field type is not allowed: ' . $this->getName());
         }
 
         $this->_type = $this->_extractType($type);
@@ -275,7 +274,7 @@ class CsvField
      *
      * @return string
      */
-    public function getType()
+    public function getType() : string
     {
         return $this->_type;
     }
@@ -289,10 +288,10 @@ class CsvField
      * a string defining field type, and limit needs to be
      * extracted.
      *
-     * @param mixed $limit field limit
+     * @param int|string|null $limit field limit
      * @return void
      */
-    public function setLimit($limit)
+    public function setLimit($limit) : void
     {
         if ($limit === null) {
             $this->_limit = $limit;
@@ -300,28 +299,24 @@ class CsvField
             return;
         }
 
-        if (is_int($limit) || is_numeric($limit)) {
-            $result = abs($limit);
-            if ($result == 0) {
-                $result = null;
-            }
-            $this->_limit = $result;
+        if (is_int($limit)) {
+            $limit = abs($limit);
+            $this->_limit = $limit === 0 ? null : $limit;
 
             return;
         }
 
-        $result = (string)$limit;
-        if (empty($result)) {
-            throw new \InvalidArgumentException('Empty field type is not allowed: ' . $this->getName());
+        if (empty($limit)) {
+            throw new InvalidArgumentException('Empty field type is not allowed: ' . $this->getName());
         }
 
-        $this->_limit = $this->_extractLimit($result);
+        $this->_limit = $this->_extractLimit($limit);
     }
 
     /**
      * Get field limit
      *
-     * @return int|null
+     * @return int|string|null
      */
     public function getLimit()
     {
@@ -336,9 +331,9 @@ class CsvField
      * @see CsvField::getLimit
      * @return string
      */
-    public function getListName()
+    public function getListName() : string
     {
-        return $this->getLimit();
+        return (string)$this->getLimit();
     }
 
     /**
@@ -347,11 +342,11 @@ class CsvField
      * This is an alias of getLimit().
      *
      * @see CsvField::getLimit
-     * @return int
+     * @return string
      */
-    public function getAssocCsvModule()
+    public function getAssocCsvModule() : string
     {
-        return $this->getLimit();
+        return (string)$this->getLimit();
     }
 
     /**
@@ -360,9 +355,9 @@ class CsvField
      * @param bool $required field required flag
      * @return void
      */
-    public function setRequired($required)
+    public function setRequired(bool $required) : void
     {
-        $this->_required = (bool)$required;
+        $this->_required = $required;
     }
 
     /**
@@ -370,7 +365,7 @@ class CsvField
      *
      * @return bool
      */
-    public function getRequired()
+    public function getRequired() : bool
     {
         return $this->_required;
     }
@@ -381,9 +376,9 @@ class CsvField
      * @param bool $nonSearchable Field non-searchable flag
      * @return void
      */
-    public function setNonSearchable($nonSearchable)
+    public function setNonSearchable(bool $nonSearchable) : void
     {
-        $this->_nonSearchable = (bool)$nonSearchable;
+        $this->_nonSearchable = $nonSearchable;
     }
 
     /**
@@ -391,7 +386,7 @@ class CsvField
      *
      * @return bool
      */
-    public function getNonSearchable()
+    public function getNonSearchable() : bool
     {
         return $this->_nonSearchable;
     }
@@ -402,9 +397,9 @@ class CsvField
      * @param bool $unique field unique flag
      * @return void
      */
-    public function setUnique($unique)
+    public function setUnique(bool $unique) : void
     {
-        $this->_unique = (bool)$unique;
+        $this->_unique = $unique;
     }
 
     /**
@@ -412,7 +407,7 @@ class CsvField
      *
      * @return bool
      */
-    public function getUnique()
+    public function getUnique() : bool
     {
         return $this->_unique;
     }

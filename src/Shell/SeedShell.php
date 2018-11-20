@@ -15,6 +15,7 @@ use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Faker\Factory;
+use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility;
@@ -77,7 +78,7 @@ class SeedShell extends Shell
      *
      * @return void
      */
-    public function main()
+    public function main() : void
     {
         // If outgoing emails are not disabled, creating numerous records
         // can cause a potential email flood due to 'assigned_to' and
@@ -120,32 +121,32 @@ class SeedShell extends Shell
     /**
      * Return a list of module names that do not have relations.
      *
-     * @param array $modules modules.
-     * @return array
+     * @param mixed[] $modules modules.
+     * @return mixed[]
      */
-    public function getModulesWithoutRelations(array $modules = [])
+    public function getModulesWithoutRelations(array $modules) : array
     {
-        $noRelation = [];
+        $result = [];
         foreach ($modules as $moduleName => $module) {
-            if (!empty($module['relations']) && !(is_array($module['relations'] && count($module['relations']) > 0))) {
+            if (isset($module['relations']) && is_array($module['relations']) && ! empty($module['relations'])) {
                 continue;
             }
-            $noRelation[] = $moduleName;
+            $result[] = $moduleName;
         }
 
-        return $noRelation;
+        return $result;
     }
 
     /**
      * Get all the csv module's properties
      *
      * @param string $moduleName module name.
-     * @return mixed|null
+     * @return mixed[]
      */
-    protected function getCSVModuleAttr($moduleName)
+    protected function getCSVModuleAttr(string $moduleName) : array
     {
         if (empty($this->modules[$moduleName])) {
-            return null;
+            return [];
         }
 
         return $this->modules[$moduleName];
@@ -159,7 +160,7 @@ class SeedShell extends Shell
      * @param string $listName listName.
      * @return null|string
      */
-    protected function getFieldValueBasedOnType($type = '', $moduleName = '', $listName = '')
+    protected function getFieldValueBasedOnType(string $type, string $moduleName = '', string $listName = '') : ?string
     {
         $faker = Factory::create();
 
@@ -237,9 +238,9 @@ class SeedShell extends Shell
      * @param string $type type.
      * @param string $moduleName moduleName.
      * @param string $fieldName fieldName.
-     * @return array
+     * @return mixed[]
      */
-    protected function getCombinedFieldValueBasedOnType($type = '', $moduleName = '', $fieldName = '')
+    protected function getCombinedFieldValueBasedOnType(string $type, string $moduleName, string $fieldName) : array
     {
         $values = [];
 
@@ -259,57 +260,61 @@ class SeedShell extends Shell
      * Get Module ids in an array.
      *
      * @param string $moduleName module name
-     * @return array
+     * @return string[]
      */
-    protected function getModuleIds($moduleName)
+    protected function getModuleIds(string $moduleName) : array
     {
         $table = TableRegistry::get($moduleName);
-        $query = $table->find()->limit(100)->select($table->getPrimaryKey())->toArray();
+        $query = $table->find()
+            ->limit(100)
+            ->select($table->getPrimaryKey());
 
-        $keysArray = [];
-        foreach ($query as $data) {
-            $keysArray[] = $data->id;
+        $result = [];
+        foreach ($query->all() as $entity) {
+            $result[] = $entity->get($table->getPrimaryKey());
         }
 
-        return $keysArray;
+        return $result;
     }
 
     /**
      * Get Active List (csv list) data.
      * @param string $module module name.
      * @param string $listName list name.
-     * @return array
+     * @return string[]
      */
-    protected function getListData($module, $listName)
+    protected function getListData(string $module, string $listName) : array
     {
-        $listData = [];
+        $mc = new ModuleConfig(ConfigType::LISTS(), $module, $listName);
         try {
-            $mc = new ModuleConfig(ConfigType::LISTS(), $module, $listName);
-            $listData = $mc->parse()->items;
-        } catch (\Exception $e) {
-        }
-        if (count($listData) == 0) {
-            return $listData;
+            $config = $mc->parse();
+            $listData = property_exists($config, 'items') ? $config->items : [];
+        } catch (InvalidArgumentException $e) {
+            return [];
         }
 
-        $keysArray = [];
+        if (empty($listData)) {
+            return [];
+        }
+
+        $result = [];
         foreach ($listData as $key => $data) {
             if ($data['inactive'] == '1') {
                 continue;
             }
-            $keysArray[] = $key;
+            $result[] = $key;
         }
 
-        return $keysArray;
+        return $result;
     }
 
     /**
      * Check module relations.
      *
-     * @param array $modules modules
-     * @return array
+     * @param string[] $modules modules
+     * @return mixed[]
      */
-    protected function checkModuleRelations(array $modules = [])
+    protected function checkModuleRelations(array $modules) : array
     {
         $modulesWithRelations = [];
 
@@ -334,9 +339,9 @@ class SeedShell extends Shell
     /**
      * Get string enclosed in parenthesis.
      * @param string $str string word.
-     * @return mixed
+     * @return string
      */
-    protected function getStringEnclosedInParenthesis($str = '')
+    protected function getStringEnclosedInParenthesis(string $str = '') : string
     {
         preg_match_all('/\((.+?)\)/', $str, $match);
 
@@ -345,23 +350,30 @@ class SeedShell extends Shell
 
     /**
      * Get module csv data.
-     * @param array $modules modules
-     * @return array
+     * @param string[] $modules modules
+     * @return mixed[]
      */
-    protected function getModuleCsvData(array $modules = [])
+    protected function getModuleCsvData(array $modules) : array
     {
         $csvFiles = [];
 
         foreach ($modules as $module) {
             $mc = new ModuleConfig(ConfigType::MIGRATION(), $module);
-            $config = (array)json_decode(json_encode($mc->parse()), true);
 
+            $config = json_encode($mc->parse());
+            if (false === $config) {
+                continue;
+            }
+
+            $config = json_decode($config, true);
             if (empty($config)) {
                 continue;
             }
-            if (!isset($csvFiles[$module])) {
+
+            if (! isset($csvFiles[$module])) {
                 $csvFiles[$module] = [];
             }
+
             $csvFiles[$module] = $config;
         }
 
@@ -374,9 +386,9 @@ class SeedShell extends Shell
      * @param string $moduleName module name.
      * @return void
      */
-    protected function populateDataInModule($moduleName)
+    protected function populateDataInModule(string $moduleName) : void
     {
-        if (empty($moduleName)) {
+        if ('' === $moduleName) {
             return;
         }
 
@@ -430,7 +442,7 @@ class SeedShell extends Shell
      * @param string $type type.
      * @return bool
      */
-    public function isCombinedField($type = '')
+    public function isCombinedField(string $type) : bool
     {
         $result = false;
 
@@ -444,18 +456,24 @@ class SeedShell extends Shell
     /**
      * Create relation index between modules.
      *
-     * @param array $modules modules.
-     * @return array
+     * @param string[] $modules modules.
+     * @return mixed[]
      */
-    protected function createRelationIndex(array $modules = [])
+    protected function createRelationIndex(array $modules) : array
     {
         $index = [];
 
         foreach ($modules as $moduleName => $module) {
-            if (empty($module['relations']) || ! is_array($module['relations'])) {
+            if (! isset($module['relations'])) {
                 $index[$moduleName] = [];
                 continue;
             }
+
+            if (! is_array($module['relations'])) {
+                $index[$moduleName] = [];
+                continue;
+            }
+
             foreach ($module['relations'] as $relatedModule) {
                 if (!empty($index[$relatedModule][$moduleName])) {
                     continue;
@@ -470,10 +488,10 @@ class SeedShell extends Shell
     /**
      * Hierarchical insert data into modules (based on index hierarchy).
      *
-     * @param array $index index.
+     * @param mixed[] $index index.
      * @return void
      */
-    protected function hierarchicalPopulateDataIntoModules(array $index = [])
+    protected function hierarchicalPopulateDataIntoModules(array $index) : void
     {
         foreach ($index as $moduleName => $relationModule) {
             $this->checkHierarchyForModule($moduleName, $index);
@@ -484,12 +502,12 @@ class SeedShell extends Shell
      * Check the hierarchy for each module recursively and populate data.
      *
      * @param string $moduleName module name.
-     * @param array $index index.
+     * @param mixed[] $index index.
      * @return void
      */
-    protected function checkHierarchyForModule($moduleName, array $index = [])
+    protected function checkHierarchyForModule(string $moduleName, array $index) : void
     {
-        if (empty($moduleName)) {
+        if ('' === $moduleName) {
             return;
         }
 
@@ -508,7 +526,7 @@ class SeedShell extends Shell
         }
 
         //checking the case that the module do not has any relations.
-        if (!empty($index[$moduleName]) && is_array($index[$moduleName])) {
+        if (! empty($index[$moduleName]) && is_array($index[$moduleName])) {
             foreach ($index[$moduleName] as $relatedModule) {
                 $this->checkHierarchyForModule($relatedModule, $index);
             }

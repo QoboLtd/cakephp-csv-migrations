@@ -17,13 +17,13 @@ class RelatedFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    public function setUp()
+    public function setUp() : void
     {
         $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
         $this->fh = new FieldHandler($config);
     }
 
-    public function testRenderValue()
+    public function testRenderValue() : void
     {
         $id = '00000000-0000-0000-0000-000000000001';
         $options['fieldDefinitions'] = new CsvField([
@@ -43,7 +43,7 @@ class RelatedFieldHandlerTest extends TestCase
         $this->assertContains($entity->{$fieldName}, $result);
     }
 
-    public function testRenderInput()
+    public function testRenderInput() : void
     {
         $id = '00000000-0000-0000-0000-000000000001';
         $options['fieldDefinitions'] = new CsvField([
@@ -73,7 +73,7 @@ class RelatedFieldHandlerTest extends TestCase
         $this->assertNotContains('data-target="#field_related_modal"', $result);
     }
 
-    public function testRenderInputWithEmbeddedModal()
+    public function testRenderInputWithEmbeddedModal() : void
     {
         $id = '00000000-0000-0000-0000-000000000001';
         $options = [
@@ -93,7 +93,7 @@ class RelatedFieldHandlerTest extends TestCase
         $this->assertContains('data-target="#field_related_modal"', $result);
     }
 
-    public function testFieldToDb()
+    public function testFieldToDb() : void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => 'related(Foo)']);
         $fh = $this->fh;
@@ -109,7 +109,7 @@ class RelatedFieldHandlerTest extends TestCase
         $this->assertEquals('uuid', $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
     }
 
-    public function testGetSearchOptions()
+    public function testGetSearchOptions() : void
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,

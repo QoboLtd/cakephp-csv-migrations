@@ -3,7 +3,6 @@ namespace CsvMigrations\Test\TestCase\Controller;
 
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestCase;
-use CsvMigrations\Controller\DblistsController;
 
 /**
  * CsvMigrations\Controller\DblistsController Test Case
@@ -15,7 +14,9 @@ class DblistsControllerTest extends IntegrationTestCase
         'plugin.CsvMigrations.dblist_items'
     ];
 
-    public function setUp()
+    private $table;
+
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -31,20 +32,20 @@ class DblistsControllerTest extends IntegrationTestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         unset($this->table);
 
         parent::tearDown();
     }
 
-    public function testIndex()
+    public function testIndex() : void
     {
         $this->get('/csv-migrations/dblists');
         $this->assertResponseOk();
     }
 
-    public function testAdd()
+    public function testAdd() : void
     {
         $data = ['name' => 'some really really random name'];
 
@@ -58,7 +59,7 @@ class DblistsControllerTest extends IntegrationTestCase
         $this->assertEquals(1, $query->count());
     }
 
-    public function testAddWithInvalidData()
+    public function testAddWithInvalidData() : void
     {
         $this->enableRetainFlashMessages();
 
@@ -71,7 +72,7 @@ class DblistsControllerTest extends IntegrationTestCase
         $this->assertSession('The database list could not be saved. Please, try again.', 'Flash.flash.0.message');
     }
 
-    public function testEdit()
+    public function testEdit() : void
     {
         $id = '35ded6f1-e886-4f3e-bcdd-47d9c55c3ce4';
         $data = ['name' => 'some random name'];
@@ -86,7 +87,7 @@ class DblistsControllerTest extends IntegrationTestCase
         $this->assertEquals($data['name'], $entity->get('name'));
     }
 
-    public function testEditWithInvalidData()
+    public function testEditWithInvalidData() : void
     {
         $this->enableRetainFlashMessages();
 
@@ -105,7 +106,7 @@ class DblistsControllerTest extends IntegrationTestCase
         $this->assertSession('The database list could not be saved. Please, try again.', 'Flash.flash.0.message');
     }
 
-    public function testDelete()
+    public function testDelete() : void
     {
         $id = '35ded6f1-e886-4f3e-bcdd-47d9c55c3ce4';
 

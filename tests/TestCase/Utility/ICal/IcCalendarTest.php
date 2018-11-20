@@ -10,7 +10,7 @@ use CsvMigrations\Utility\ICal\IcEvent;
  */
 class IcCalendarTest extends TestCase
 {
-    public function testGetCalendar()
+    public function testGetCalendar() : void
     {
         $calendar = new IcCalendar();
         $result = $calendar->getCalendar();
@@ -18,7 +18,7 @@ class IcCalendarTest extends TestCase
         $this->assertTrue(is_object($result), "getCalendar() returned a non-object");
     }
 
-    public function testAddEvent()
+    public function testAddEvent() : void
     {
         $event = new IcEvent(['summary' => 'foobar']);
         $event = $event->getEvent();

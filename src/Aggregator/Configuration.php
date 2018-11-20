@@ -13,7 +13,7 @@ final class Configuration
     /**
      * Aggregation table.
      *
-     * @var Cake\Datasource\RepositoryInterface
+     * @var \Cake\Datasource\RepositoryInterface
      */
     private $table;
 
@@ -27,7 +27,7 @@ final class Configuration
     /**
      * Join table instance. Optional as it is used only in limited mode.
      *
-     * @var Cake\Datasource\RepositoryInterface
+     * @var \Cake\Datasource\RepositoryInterface|null
      */
     private $joinTable = null;
 
@@ -54,7 +54,7 @@ final class Configuration
      * @param string $field Aggregate field name
      * @return void
      */
-    public function __construct(RepositoryInterface $table, $field)
+    public function __construct(RepositoryInterface $table, string $field)
     {
         // string validation, this can be removed on PHP 7 with string typehinting.
         if (! is_string($field)) {
@@ -74,7 +74,7 @@ final class Configuration
      *
      * @return bool
      */
-    public function joinMode()
+    public function joinMode() : bool
     {
         return null !== $this->joinTable;
     }
@@ -84,7 +84,7 @@ final class Configuration
      *
      * @return \Cake\Datasource\RepositoryInterface
      */
-    public function getTable()
+    public function getTable() : RepositoryInterface
     {
         return $this->table;
     }
@@ -94,7 +94,7 @@ final class Configuration
      *
      * @return string
      */
-    public function getField()
+    public function getField() : string
     {
         return $this->field;
     }
@@ -104,7 +104,7 @@ final class Configuration
      *
      * @return string
      */
-    public function getDisplayField()
+    public function getDisplayField() : string
     {
         if ('' === trim($this->displayField)) {
             return $this->field;
@@ -119,7 +119,7 @@ final class Configuration
      * @param string $displayField Display field name
      * @return self
      */
-    public function setDisplayField($displayField)
+    public function setDisplayField(string $displayField) : self
     {
         // string validation, this can be removed on PHP 7 with string typehinting.
         if (! is_string($displayField)) {
@@ -138,9 +138,9 @@ final class Configuration
     /**
      * Join table getter.
      *
-     * @return \Cake\Datasource\RepositoryInterface
+     * @return \Cake\Datasource\RepositoryInterface|null
      */
-    public function getJoinTable()
+    public function getJoinTable() : ?RepositoryInterface
     {
         return $this->joinTable;
     }
@@ -148,9 +148,9 @@ final class Configuration
     /**
      * Entity getter.
      *
-     * @return \Cake\Datasource\EntityInterface
+     * @return \Cake\Datasource\EntityInterface|null
      */
-    public function getEntity()
+    public function getEntity() : ?EntityInterface
     {
         return $this->entity;
     }
@@ -162,8 +162,11 @@ final class Configuration
      * @param \Cake\Datasource\EntityInterface $entity Entity instance from join table
      * @return self
      */
-    public function setJoinData(RepositoryInterface $table, EntityInterface $entity)
+    public function setJoinData(RepositoryInterface $table, EntityInterface $entity) : self
     {
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $table;
+
         $entityClass = $table->getEntityClass();
         if (! $entity instanceof $entityClass) {
             throw new InvalidArgumentException(sprintf(

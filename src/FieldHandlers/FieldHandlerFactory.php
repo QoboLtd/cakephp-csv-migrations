@@ -13,8 +13,8 @@ namespace CsvMigrations\FieldHandlers;
 
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
+use Cake\View\View;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use InvalidArgumentException;
 use RuntimeException;
@@ -24,30 +24,30 @@ class FieldHandlerFactory
     /**
      * View instance.
      *
-     * @var \Cake\View\View
+     * @var \Cake\View\View|null
      */
     public $cakeView = null;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param mixed $cakeView View object or null
+     * @param \Cake\View\View|null $cakeView CakePHP view instance
      */
-    public function __construct($cakeView = null)
+    public function __construct(?View $cakeView = null)
     {
         $this->cakeView = $cakeView;
     }
 
     /**
-     * Get an instance of field handler for given table field
+     * Get an instance of field handler for given table field.
      *
      * @param mixed $table Table name or instance of \Cake\ORM\Table
      * @param string $field Field name
-     * @param array $options Field handler options
-     * @param mixed $view Optional CakePHP view instance
+     * @param mixed[] $options Field handler options
+     * @param \Cake\View\View|null $view CakePHP view instance
      * @return \CsvMigrations\FieldHandlers\FieldHandlerInterface
      */
-    public static function getByTableField($table, $field, array $options = [], $view = null)
+    public static function getByTableField($table, string $field, array $options = [], ?View $view = null) : FieldHandlerInterface
     {
         $table = is_string($table) ? TableRegistry::get($table) : $table;
         $handler = self::getHandler($table, $field, $options, $view);
@@ -56,15 +56,15 @@ class FieldHandlerFactory
     }
 
     /**
-     * Render field form input
+     * Render field form input.
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string          field input
+     * @param mixed $table Name or instance of the Table
+     * @param string $field Field name
+     * @param string $data Field data
+     * @param mixed[] $options Field options
+     * @return string Field input
      */
-    public function renderInput($table, $field, $data = '', array $options = [])
+    public function renderInput($table, string $field, string $data = '', array $options = []) : string
     {
         $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
@@ -72,14 +72,14 @@ class FieldHandlerFactory
     }
 
     /**
-     * Render field form label
+     * Render field form label.
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  array  $options field options
-     * @return string          field input
+     * @param mixed $table Name or instance of the Table
+     * @param string $field Field name
+     * @param mixed[] $options Field options
+     * @return string Field input
      */
-    public function renderName($table, $field, array $options = [])
+    public function renderName($table, string $field, array $options = []) : string
     {
         $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
@@ -87,14 +87,14 @@ class FieldHandlerFactory
     }
 
     /**
-     * Get search options
+     * Get search options.
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  array  $options field options
-     * @return array           Array of fields and their options
+     * @param mixed $table Name or instance of the Table
+     * @param string $field Field name
+     * @param mixed[] $options Field options
+     * @return mixed[] Array of fields and their options
      */
-    public function getSearchOptions($table, $field, array $options = [])
+    public function getSearchOptions($table, string $field, array $options = []) : array
     {
         $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
@@ -102,15 +102,15 @@ class FieldHandlerFactory
     }
 
     /**
-     * Render field value
+     * Render field value.
      *
-     * @param  mixed  $table   name or instance of the Table
-     * @param  string $field   field name
-     * @param  string $data    field data
-     * @param  array  $options field options
-     * @return string          list field value
+     * @param mixed $table Name or instance of the Table
+     * @param string $field Field name
+     * @param string $data Field data
+     * @param mixed[] $options Field options
+     * @return string
      */
-    public function renderValue($table, $field, $data, array $options = [])
+    public function renderValue($table, string $field, string $data, array $options = []) : string
     {
         $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
@@ -123,10 +123,10 @@ class FieldHandlerFactory
      * @param mixed $table Name or instance of the Table
      * @param string $field Field name
      * @param \Cake\Validation\Validator $validator Validator instance
-     * @param array $options Field options
+     * @param mixed[] $options Field options
      * @return \Cake\Validation\Validator
      */
-    public function setValidationRules($table, $field, Validator $validator, array $options = [])
+    public function setValidationRules($table, string $field, Validator $validator, array $options = []) : Validator
     {
         $handler = self::getByTableField($table, $field);
         $validator = $handler->setValidationRules($validator, $options);
@@ -147,14 +147,14 @@ class FieldHandlerFactory
      *          of the FieldHandlerFactory class into a proper (and simple)
      *          factory.
      *
-     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @param  mixed                                 $table    Name or instance of the Table
-     * @param  string                                $field    Field name
-     * @return array list of DbField instances
+     * @param \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @param mixed $table Name or instance of the Table
+     * @param string $field Field name
+     * @return mixed[] list of DbField instances
      */
-    public function fieldToDb(CsvField $csvField, $table, $field = null)
+    public function fieldToDb(CsvField $csvField, $table, string $field = '') : array
     {
-        if (empty($field)) {
+        if ('' === $field) {
             $field = $csvField->getName();
         }
         // No options or view is necessary for the fieldToDb currently
@@ -170,13 +170,13 @@ class FieldHandlerFactory
      * FieldHandler class.
      *
      * @throws \RuntimeException when failed to instantiate field handler
-     * @param  Table         $table   Table instance
-     * @param  string|array  $field   Field name
-     * @param  array         $options Field options
-     * @param  object        $view    Optional CakePHP view instance
-     * @return object                 FieldHandler instance
+     * @param Table $table Table instance
+     * @param string|array $field Field name
+     * @param mixed[] $options Field options
+     * @param \Cake\View\View $view Optional CakePHP view instance
+     * @return \CsvMigrations\FieldHandlers\FieldHandlerInterface
      */
-    protected static function getHandler(Table $table, $field, array $options = [], $view = null)
+    protected static function getHandler(Table $table, $field, array $options = [], View $view = null) : FieldHandlerInterface
     {
         if (empty($field)) {
             throw new InvalidArgumentException("Field parameter is empty");
@@ -231,18 +231,16 @@ class FieldHandlerFactory
      * Get stub fields from a field name string
      *
      * @param string $fieldName Field name
-     * @return array Stub fields
+     * @return mixed[] Stub fields
      */
-    protected static function getStubFromString($fieldName)
+    protected static function getStubFromString(string $fieldName) : array
     {
-        $result = [
+        return [
             $fieldName => [
                 'name' => $fieldName,
                 'type' => 'string',
             ],
         ];
-
-        return $result;
     }
 
     /**
@@ -250,10 +248,10 @@ class FieldHandlerFactory
      *
      * @throws \InvalidArgumentException when field name or type are missing
      * @param string $fieldName Field name
-     * @param array $field Field array
-     * @return array Stub fields
+     * @param mixed[] $field Field array
+     * @return mixed[] Stub fields
      */
-    protected static function getStubFromArray($fieldName, array $field)
+    protected static function getStubFromArray(string $fieldName, array $field) : array
     {
         // Try our best to find the field name
         if (empty($field['name']) && !empty($fieldName)) {
@@ -266,11 +264,9 @@ class FieldHandlerFactory
         if (empty($field['type'])) {
             throw new InvalidArgumentException("Field array is missing 'type' key");
         }
-        $fieldName = $field['name'];
-        $result = [
-            $fieldName => $field,
-        ];
 
-        return $result;
+        return [
+            $field['name'] => $field,
+        ];
     }
 }

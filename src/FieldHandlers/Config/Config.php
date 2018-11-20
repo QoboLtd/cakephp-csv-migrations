@@ -11,6 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers\Config;
 
+use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\View\View;
@@ -36,7 +37,7 @@ class Config implements ConfigInterface
     protected $field;
 
     /**
-     * @var object $table Table intance
+     * @var \Cake\Datasource\RepositoryInterface $table Table intance
      */
     protected $table;
 
@@ -79,7 +80,7 @@ class Config implements ConfigInterface
      * @param mixed $table Table name or instance
      * @param array $options Options
      */
-    public function __construct($field, $table = null, array $options = [])
+    public function __construct(string $field, $table = null, array $options = [])
     {
         $this->setField($field);
         $this->setTable($table);
@@ -93,7 +94,7 @@ class Config implements ConfigInterface
      * @param string $field Field name
      * @return void
      */
-    public function setField($field)
+    public function setField(string $field) : void
     {
         if (!is_string($field)) {
             throw new InvalidArgumentException("Field is not a string");
@@ -112,7 +113,7 @@ class Config implements ConfigInterface
      *
      * @return string
      */
-    public function getField()
+    public function getField() : string
     {
         return $this->field;
     }
@@ -120,12 +121,12 @@ class Config implements ConfigInterface
     /**
      * Set table
      *
-     * @param mixed $table Table name or instance
+     * @param \Cake\Datasource\RepositoryInterface|string $table Table name or instance
      * @return void
      */
-    public function setTable($table = null)
+    public function setTable($table = '') : void
     {
-        if (empty($table)) {
+        if ('' === $table) {
             $table = 'dummy';
         }
 
@@ -133,7 +134,7 @@ class Config implements ConfigInterface
             $table = TableRegistry::get($table);
         }
 
-        if (!$table instanceof Table) {
+        if (! $table instanceof RepositoryInterface) {
             throw new InvalidArgumentException("Given table is not an instance of ORM Table");
         }
 
@@ -143,9 +144,9 @@ class Config implements ConfigInterface
     /**
      * Get table
      *
-     * @return object
+     * @return \Cake\Datasource\RepositoryInterface
      */
-    public function getTable()
+    public function getTable() : RepositoryInterface
     {
         return $this->table;
     }
@@ -156,7 +157,7 @@ class Config implements ConfigInterface
      * @param array $options Options
      * @return void
      */
-    public function setOptions(array $options = [])
+    public function setOptions(array $options = []) : void
     {
         $this->options = $options;
     }
@@ -166,7 +167,7 @@ class Config implements ConfigInterface
      *
      * @return array
      */
-    public function getOptions()
+    public function getOptions() : array
     {
         return $this->options;
     }
@@ -177,7 +178,7 @@ class Config implements ConfigInterface
      * @param \Cake\View\View $view View instance
      * @return void
      */
-    public function setView(View $view)
+    public function setView(View $view) : void
     {
         $this->view = $view;
     }
@@ -187,7 +188,7 @@ class Config implements ConfigInterface
      *
      * @return \Cake\View\View
      */
-    public function getView()
+    public function getView() : View
     {
         if (empty($this->view)) {
             $this->setView(new AppView());
@@ -203,7 +204,7 @@ class Config implements ConfigInterface
      * @param array $providers List of provider names and classes
      * @return void
      */
-    public function setProviders(array $providers)
+    public function setProviders(array $providers) : void
     {
         $this->validateProviders($providers);
         $this->providers = $providers;
@@ -215,7 +216,7 @@ class Config implements ConfigInterface
      * @throws \InvalidArgumentException for invalid provider
      * @return array
      */
-    public function getProviders()
+    public function getProviders() : array
     {
         $this->validateProviders($this->providers);
 
@@ -227,9 +228,9 @@ class Config implements ConfigInterface
      *
      * @throws \InvalidArgumentException for invalid provider
      * @param string $name Name of the provider to get
-     * @return array
+     * @return string
      */
-    public function getProvider($name)
+    public function getProvider(string $name) : string
     {
         $providers = $this->getProviders();
         if (!in_array($name, array_keys($providers))) {
@@ -246,7 +247,7 @@ class Config implements ConfigInterface
      * @param array $providers List of provider names and classes
      * @return void
      */
-    public function validateProviders(array $providers)
+    public function validateProviders(array $providers) : void
     {
         foreach ($providers as $name => $class) {
             if (!is_string($class)) {

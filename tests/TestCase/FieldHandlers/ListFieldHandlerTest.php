@@ -15,7 +15,7 @@ class ListFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $dir = dirname(__DIR__) . DS . '..' . DS . 'config' . DS . 'Modules' . DS;
         Configure::write('CsvMigrations.modules.path', $dir);
@@ -24,7 +24,10 @@ class ListFieldHandlerTest extends TestCase
         $this->fh = new FieldHandler($config);
     }
 
-    public function getRenderedValues()
+    /**
+     * @return mixed[]
+     */
+    public function getRenderedValues() : array
     {
         return [
             ['', ''],
@@ -34,7 +37,10 @@ class ListFieldHandlerTest extends TestCase
         ];
     }
 
-    public function getInputValues()
+    /**
+     * @return mixed[]
+     */
+    public function getInputValues() : array
     {
         return [
             ['', ' -- Please choose -- '],
@@ -47,7 +53,7 @@ class ListFieldHandlerTest extends TestCase
     /**
      * @dataProvider getRenderedValues
      */
-    public function testRenderValue($value, $expected)
+    public function testRenderValue(string $value, string $expected) : void
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
@@ -62,7 +68,7 @@ class ListFieldHandlerTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testRenderValueNested()
+    public function testRenderValueNested() : void
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
@@ -77,7 +83,7 @@ class ListFieldHandlerTest extends TestCase
         $this->assertEquals('First level 1 - Second level 1 -  - Third level 1', $result);
     }
 
-    public function testRenderValueWithWrongValue()
+    public function testRenderValueWithWrongValue() : void
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
@@ -92,21 +98,21 @@ class ListFieldHandlerTest extends TestCase
         $this->assertNotEquals('non-existing-value', $result);
     }
 
-    public function testRenderValueEmptyData()
+    public function testRenderValueEmptyData() : void
     {
         $result = $this->fh->renderValue('', []);
 
         $this->assertEquals('', $result);
     }
 
-    public function testRenderValueSetListItems()
+    public function testRenderValueSetListItems() : void
     {
         $result = $this->fh->renderValue('foo', ['listItems' => ['foo' => 'Foo']]);
 
         $this->assertEquals('Foo', $result);
     }
 
-    public function testRenderValueWithPlainFlag()
+    public function testRenderValueWithPlainFlag() : void
     {
         $result = $this->fh->renderValue('foo', ['listItems' => ['foo' => 'Foo'], 'renderAs' => 'plain']);
         $this->assertEquals('foo', $result);
@@ -115,7 +121,7 @@ class ListFieldHandlerTest extends TestCase
     /**
      * @dataProvider getInputValues
      */
-    public function testRenderInput($value, $label)
+    public function testRenderInput(string $value, string $label) : void
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
@@ -135,7 +141,7 @@ class ListFieldHandlerTest extends TestCase
         }
     }
 
-    public function testFieldToDb()
+    public function testFieldToDb() : void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
@@ -152,7 +158,7 @@ class ListFieldHandlerTest extends TestCase
         $this->assertEquals(255, $result[$this->field]->getLimit(), "fieldToDb() did not return correct limit for DbField instance");
     }
 
-    public function testGetSearchOptions()
+    public function testGetSearchOptions() : void
     {
         $result = $this->fh->getSearchOptions();
 

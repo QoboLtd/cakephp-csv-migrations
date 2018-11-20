@@ -14,13 +14,13 @@ class PrimaryKeyFieldValueTest extends TestCase
         'plugin.csv_migrations.foo'
     ];
 
-    public function testConstruct()
+    public function testConstruct() : void
     {
         $provider = new PrimaryKeyFieldValue(new FilesConfig('foobar'));
         $this->assertInstanceOf(ProviderInterface::class, $provider);
     }
 
-    public function testProvideWithExistingTable()
+    public function testProvideWithExistingTable() : void
     {
         // field name is not used within PrimaryKeyFieldValue provider
         $fieldName = 'foobar';
@@ -34,9 +34,10 @@ class PrimaryKeyFieldValueTest extends TestCase
     }
 
     /**
+     * @param mixed $value
      * @dataProvider valuesDataProvider
      */
-    public function testProvideWithDummyTable($value)
+    public function testProvideWithDummyTable($value) : void
     {
         // field name is not used within PrimaryKeyFieldValue provider
         $fieldName = 'foobar';
@@ -47,9 +48,10 @@ class PrimaryKeyFieldValueTest extends TestCase
     }
 
     /**
+     * @param mixed $value
      * @dataProvider valuesDataProvider
      */
-    public function testProvideWithDummyTableWithoutEntity($value)
+    public function testProvideWithDummyTableWithoutEntity($value) : void
     {
         // field name is not used within PrimaryKeyFieldValue provider
         $fieldName = 'foobar';
@@ -59,7 +61,10 @@ class PrimaryKeyFieldValueTest extends TestCase
         $this->assertEquals(null, $provider->provide($value));
     }
 
-    public function valuesDataProvider()
+    /**
+     * @return mixed[]
+     */
+    public function valuesDataProvider() : array
     {
         return [
             [null],

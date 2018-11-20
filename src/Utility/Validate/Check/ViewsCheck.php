@@ -14,7 +14,7 @@ namespace CsvMigrations\Utility\Validate\Check;
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\Utility\Validate\Utility;
-use Exception;
+use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
@@ -27,24 +27,20 @@ class ViewsCheck extends AbstractCheck
      * @param array $options Check options
      * @return int Number of encountered errors
      */
-    public function run($module, array $options = [])
+    public function run($module, array $options = []) : int
     {
         $views = Configure::read('CsvMigrations.actions');
 
         $viewCounter = 0;
         foreach ($views as $view) {
             $path = '';
+            $mc = new ModuleConfig(ConfigType::VIEW(), $module, $view, ['cacheSkip' => true]);
             try {
-                $mc = new ModuleConfig(ConfigType::VIEW(), $module, $view, ['cacheSkip' => true]);
                 $path = $mc->find();
-            } catch (Exception $e) {
+            } catch (InvalidArgumentException $e) {
                 // It's OK for view files to be missing.
                 // For example, Files and Users modules.
-            }
-
-            if ('' === trim($path) || ! file_exists($path)) {
                 $this->warnings[] = sprintf('%s module [%s] view file is missing', $module, $view);
-
                 continue;
             }
 
@@ -54,14 +50,17 @@ class ViewsCheck extends AbstractCheck
             $viewCounter++;
             $fields = [];
             try {
-                $fields = $mc->parse()->items;
-            } catch (Exception $e) {
-                // We need errors and warnings irrelevant of the exception
+                $config = $mc->parse();
+                $fields = property_exists($config, 'items') ? $config->items : [];
+            } catch (InvalidArgumentException $e) {
+                $this->errors = array_merge($this->errors, $mc->getErrors());
+                $this->warnings = array_merge($this->warnings, $mc->getWarnings());
+
+                continue;
             }
-            $this->errors = array_merge($this->errors, $mc->getErrors());
-            $this->warnings = array_merge($this->warnings, $mc->getWarnings());
 
             if (empty($fields)) {
+                $this->warnings[] = sprintf('%s module [%s] view file is empty', $module, $view);
                 continue;
             }
 
@@ -155,7 +154,7 @@ class ViewsCheck extends AbstractCheck
 
         // Warn if the module is missing standard views
         if ($viewCounter < count($views)) {
-            $this->warnings[] = sprintf('%s module has only %d views.', $module, (int)$viewCounter);
+            $this->warnings[] = sprintf('%s module has only %d views.', $module, $viewCounter);
         }
 
         return count($this->errors);

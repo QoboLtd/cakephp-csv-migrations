@@ -32,9 +32,9 @@ class EventTest extends IntegrationTestCase
      * Find all event classes in a given path and return
      * them as full class names with namespace.
      *
-     * @return array
+     * @return mixed[]
      */
-    public function classProvider()
+    public function classProvider() : array
     {
         $result = [];
 
@@ -74,7 +74,7 @@ class EventTest extends IntegrationTestCase
      *
      * @dataProvider classProvider
      */
-    public function testEvents($class)
+    public function testEvents(string $class) : void
     {
         $reflection = new ReflectionClass($class);
         // Avoid checking abstract classes, interfaces, and the like

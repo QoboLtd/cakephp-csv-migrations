@@ -7,7 +7,10 @@ use PHPUnit\Framework\TestCase;
 
 class ConfigFactoryTest extends TestCase
 {
-    public function supportedTypesProvider()
+    /**
+     * @return mixed[]
+     */
+    public function supportedTypesProvider() : array
     {
         return [
             ['blob'],
@@ -38,7 +41,7 @@ class ConfigFactoryTest extends TestCase
     /**
      * @dataProvider supportedTypesProvider
      */
-    public function testGetByType($type)
+    public function testGetByType(string $type) : void
     {
         $field = 'foo';
         $result = ConfigFactory::getByType($type, $field);
@@ -50,7 +53,7 @@ class ConfigFactoryTest extends TestCase
     /**
      * @expectedException \RuntimeException
      */
-    public function testGetByTypeException()
+    public function testGetByTypeException() : void
     {
         $result = ConfigFactory::getByType('unsupported_type', 'foo');
     }

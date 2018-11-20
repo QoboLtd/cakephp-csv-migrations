@@ -43,12 +43,12 @@ class IcEvent
     /**
      * Constructor
      *
-     * @param mixed $event Event (null, or array of settings, or Event instane)
+     * @param mixed $event Event: null, or array of settings, or Event instance
      */
     public function __construct($event = null)
     {
         $params = [];
-        if (is_array($event) && !empty($event)) {
+        if (is_array($event) && ! empty($event)) {
             $params = $event;
             $event = new Event();
         }
@@ -64,10 +64,10 @@ class IcEvent
     /**
      * Configure Event parameters
      *
-     * @param array $params Event parameters
+     * @param mixed[] $params Event parameters
      * @return void
      */
-    public function configureEvent(array $params = [])
+    public function configureEvent(array $params = []) : void
     {
         $params = array_merge($this->defaultParams, $params);
         foreach ($params as $name => $value) {
@@ -87,7 +87,7 @@ class IcEvent
      * @param \Eluceo\iCal\Component\Event $event Instance of Event to use
      * @return void
      */
-    public function setEvent(Event $event)
+    public function setEvent(Event $event) : void
     {
         $this->event = $event;
     }
@@ -97,7 +97,7 @@ class IcEvent
      *
      * @return \Eluceo\iCal\Component\Event
      */
-    public function getEvent()
+    public function getEvent() : Event
     {
         return $this->event;
     }
@@ -108,10 +108,9 @@ class IcEvent
      * @param string $id Unique ID for event
      * @return void
      */
-    public function setId($id)
+    public function setId(string $id) : void
     {
-        $id = (string)$id;
-        if (!empty($id)) {
+        if ('' !== $id) {
             $this->event->setUniqueId($id);
         }
     }
@@ -125,26 +124,23 @@ class IcEvent
      * @param int $sequence Event sequence
      * @return void
      */
-    public function setSequence($sequence)
+    public function setSequence(int $sequence) : void
     {
-        $sequence = (int)$sequence;
         $this->event->setSequence($sequence);
     }
 
     /**
      * Set Event organizer
      *
-     * @param string $organizer Organizer email
+     * @param string $email Organizer email
      * @return void
      */
-    public function setOrganizer($organizer)
+    public function setOrganizer(string $email) : void
     {
-        $organizer = (string)$organizer;
-        $params = ['MAILTO' => $organizer];
-
-        if (!empty($organizer)) {
-            $organizer = new Organizer($organizer, $params);
-            $this->event->setOrganizer($organizer);
+        if ('' !== $email) {
+            $this->event->setOrganizer(
+                new Organizer($email, ['MAILTO' => $email])
+            );
         }
     }
 
@@ -154,9 +150,8 @@ class IcEvent
      * @param string $summary Event subject/summary
      * @return void
      */
-    public function setSummary($summary)
+    public function setSummary(string $summary) : void
     {
-        $summary = (string)$summary;
         $this->event->setSummary($summary);
     }
 
@@ -166,9 +161,8 @@ class IcEvent
      * @param string $description Event description
      * @return void
      */
-    public function setDescription($description)
+    public function setDescription(string $description) : void
     {
-        $description = (string)$description;
         $this->event->setDescription($description);
     }
 
@@ -178,7 +172,7 @@ class IcEvent
      * @param \DateTime $time Start time in UTC
      * @return void
      */
-    public function setStartTime(DateTime $time)
+    public function setStartTime(DateTime $time) : void
     {
         $this->event->setDtStart($time);
     }
@@ -189,7 +183,7 @@ class IcEvent
      * @param \DateTime $time End time in UTC
      * @return void
      */
-    public function setEndTime(DateTime $time)
+    public function setEndTime(DateTime $time) : void
     {
         $this->event->SetDtEnd($time);
     }
@@ -200,10 +194,9 @@ class IcEvent
      * @param string $location Event location
      * @return void
      */
-    public function setLocation($location)
+    public function setLocation(string $location) : void
     {
-        $location = (string)$location;
-        if (!empty($location)) {
+        if ('' !== $location) {
             $this->event->setLocation($location, "Location:");
         }
     }
@@ -211,10 +204,10 @@ class IcEvent
     /**
      * Set Event attendees
      *
-     * @param array $attendees A list of attendees' emails
+     * @param string[] $attendees A list of attendees' emails
      * @return void
      */
-    public function setAttendees(array $attendees = [])
+    public function setAttendees(array $attendees = []) : void
     {
         $iCalAttendees = new Attendees();
         foreach ($attendees as $email) {

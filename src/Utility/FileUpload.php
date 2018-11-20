@@ -437,7 +437,7 @@ final class FileUpload
      */
     private function getFileIdsByField(array $data, string $field) : array
     {
-        $result = Hash::extract($data, sprintf('%s.%s_ids', $this->table->alias(), $field));
+        $result = Hash::extract($data, sprintf('%s.%s_ids', $this->table->getAlias(), $field));
         $result = empty($result) ? Hash::extract($data, sprintf('%s_ids', $field)) : $result;
         $result = array_filter((array)$result);
 

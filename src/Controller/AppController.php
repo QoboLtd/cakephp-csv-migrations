@@ -69,10 +69,9 @@ class AppController extends BaseController
      * View method
      *
      * @param string $id Entity id.
-     * @return void
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     * @return \Cake\Http\Response|void|null
      */
-    public function view(string $id) : void
+    public function view(string $id)
     {
         $entity = $this->fetchEntity($id);
 
@@ -84,9 +83,9 @@ class AppController extends BaseController
     /**
      * Add method
      *
-     * @return \Cake\Http\Response|null
+     * @return \Cake\Http\Response|void|null
      */
-    public function add() : ?Response
+    public function add()
     {
         /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
@@ -111,11 +110,10 @@ class AppController extends BaseController
     /**
      * Edit method
      *
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
      * @param string $id Entity id.
-     * @return \Cake\Http\Response|null
+     * @return \Cake\Http\Response|void|null
      */
-    public function edit(string $id) : ?Response
+    public function edit(string $id)
     {
         /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
@@ -246,10 +244,10 @@ class AppController extends BaseController
      * Delete method
      *
      * @param string $id Entity id.
-     * @return \Cake\Http\Response|null Redirects to index.
+     * @return \Cake\Http\Response|void|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete(string $id) : ?Response
+    public function delete(string $id)
     {
         $this->request->allowMethod(['post', 'delete']);
         $model = $this->loadModel();
@@ -276,10 +274,10 @@ class AppController extends BaseController
      * @param string $id Entity id.
      * @param string $assocName Association Name.
      * @param string $assocId Associated Entity id.
-     * @return \Cake\Http\Response|null Redirects to referer.
+     * @return \Cake\Http\Response|void|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function unlink(string $id, string $assocName, string $assocId) : ?Response
+    public function unlink(string $id, string $assocName, string $assocId)
     {
         $this->request->allowMethod(['post']);
 
@@ -306,10 +304,10 @@ class AppController extends BaseController
      *
      * @param string $id Entity id.
      * @param string $associationName Association Name.
-     * @return \Cake\Http\Response|null Redirects to referer.
+     * @return \Cake\Http\Response|void|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function link(string $id, string $associationName) : ?Response
+    public function link(string $id, string $associationName)
     {
         $this->request->allowMethod(['post']);
 
@@ -349,9 +347,9 @@ class AppController extends BaseController
      * Batch operations action.
      *
      * @param string $operation Batch operation.
-     * @return \Cake\Http\Response|null Redirects to referer.
+     * @return \Cake\Http\Response|void|null Redirects to referer.
      */
-    public function batch(string $operation) : ?Response
+    public function batch(string $operation)
     {
         $this->request->allowMethod(['post']);
 

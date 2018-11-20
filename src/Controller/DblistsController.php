@@ -25,9 +25,9 @@ class DblistsController extends BaseController
     /**
      * Index method
      *
-     * @return void
+     * @return \Cake\Http\Response|void|null
      */
-    public function index() : void
+    public function index()
     {
         $entities = $this->Dblists->find('all');
 
@@ -38,9 +38,9 @@ class DblistsController extends BaseController
     /**
      * Add method
      *
-     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     * @return \Cake\Http\Response|void|null Redirects on successful add, renders view otherwise.
      */
-    public function add() : ?Response
+    public function add()
     {
         $entity = $this->Dblists->newEntity();
         if ($this->request->is('post')) {
@@ -62,10 +62,10 @@ class DblistsController extends BaseController
      * Edit method
      *
      * @param string $id Dblist id.
-     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @return \Cake\Http\Response|void|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit(string $id) : ?Response
+    public function edit(string $id)
     {
         $entity = $this->Dblists->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -87,10 +87,10 @@ class DblistsController extends BaseController
      * Delete method
      *
      * @param string $id Dblist id.
-     * @return \Cake\Http\Response|null Redirects to index.
+     * @return \Cake\Http\Response|void|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete(string $id) : ?Response
+    public function delete(string $id)
     {
         $this->request->allowMethod(['post', 'delete']);
         $dblist = $this->Dblists->get($id);

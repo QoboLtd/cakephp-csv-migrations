@@ -26,9 +26,9 @@ class DblistItemsController extends BaseController
      * Index method
      *
      * @param string $id Associated Dblist id
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Http\Response|void|null
      */
-    public function index(string $id) : ?Response
+    public function index(string $id)
     {
         $list = $this->DblistItems->Dblists->get($id);
         $query = $this->DblistItems->find('treeEntities', ['listId' => $id]);
@@ -47,9 +47,9 @@ class DblistItemsController extends BaseController
      * Add method
      *
      * @param string $id Associated Dblist id
-     * @return \Cake\Http\Response|null
+     * @return \Cake\Http\Response|void|null
      */
-    public function add(string $id) : ?Response
+    public function add(string $id)
     {
         $entity = $this->DblistItems->newEntity();
 
@@ -76,10 +76,10 @@ class DblistItemsController extends BaseController
      * Edit method
      *
      * @param string $id Dblist Item id.
-     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @return \Cake\Http\Response|void|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit(string $id) : ?Response
+    public function edit(string $id)
     {
         $entity = $this->DblistItems->get($id);
 
@@ -106,10 +106,10 @@ class DblistItemsController extends BaseController
      * Delete method
      *
      * @param string $id Dblist Item id.
-     * @return \Cake\Http\Response|null Redirects to index.
+     * @return \Cake\Http\Response|void|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete(string $id) : ?Response
+    public function delete(string $id)
     {
         $this->request->allowMethod(['post', 'delete']);
         $entity = $this->DblistItems->get($id);
@@ -129,9 +129,9 @@ class DblistItemsController extends BaseController
      * @param string $id listitem id
      * @param string $action move action
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     * @return \Cake\Http\Response|null
+     * @return \Cake\Http\Response|void|null
      */
-    public function moveNode(string $id, string $action = '') : ?Response
+    public function moveNode(string $id, string $action = '')
     {
         $this->request->allowMethod('post');
 

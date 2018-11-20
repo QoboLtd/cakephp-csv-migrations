@@ -10,8 +10,8 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-use Cake\Core\Plugin;
-use Qobo\Utils\Utility;
+use Cake\Utility\Hash;
+use CsvMigrations\Utility\FileUpload;
 
 $uuid = $this->Text->uuid();
 $limit = 3;
@@ -35,7 +35,10 @@ $limit = 3;
     <div class="col-xs-4">
         <a href="<?= $entity->get('path') ?>" target="_blank">
             <div class="thumbnail" title="<?= $entity->get('filename') ?>">
-                <?= $this->Html->image(Utility::getFileTypeIcon($entity->get('extension'), '48px')) ?>
+                <?= $this->Html->image(Hash::get(
+                    $entity->get('thumbnails'),
+                    in_array($entity->extension, FileUpload::IMAGE_EXTENSIONS) ? 'small' : 'huge'
+                )) ?>
                 <div class="caption">
                     <p class="small text-center no-margin" style="white-space: nowrap; text-overflow: ellipsis;overflow: hidden;">
                         <?= $entity->get('filename') ?>
@@ -49,7 +52,8 @@ $limit = 3;
     </div>
 <?php endif; ?>
 </div>
-<?php if ($limit < $entities->count()) {
+<?php
+if ($limit < $entities->count()) {
     echo $this->Html->scriptBlock(
         '$("a[href=\'#collapseFiles' . $uuid . '\']").click(function () {
             $(this).children().hasClass("dropdown") ?
@@ -59,4 +63,3 @@ $limit = 3;
         ['block' => 'scriptBottom']
     );
 }
-?>

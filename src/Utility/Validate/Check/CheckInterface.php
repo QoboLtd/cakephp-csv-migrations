@@ -17,22 +17,22 @@ interface CheckInterface
      * Execute a check
      *
      * @param string $module Module name
-     * @param array $options Check options
+     * @param mixed[] $options Check options
      * @return int Number of encountered errors
      */
-    public function run($module, array $options = []);
+    public function run(string $module, array $options = []) : int;
 
     /**
      * Get errors
      *
-     * @return array List of errors
+     * @return string[] List of errors
      */
-    public function getErrors();
+    public function getErrors() : array;
 
     /**
      * Get warnings
      *
-     * @return array List of warnings
+     * @return string[] List of warnings
      */
-    public function getWarnings();
+    public function getWarnings() : array;
 }

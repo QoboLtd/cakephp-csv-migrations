@@ -32,7 +32,7 @@ interface ProviderInterface
      * Provide
      *
      * @param mixed $data Data to use for provision
-     * @param array $options Options to use for provision
+     * @param mixed[] $options Options to use for provision
      * @return mixed
      */
     public function provide($data = null, array $options = []);

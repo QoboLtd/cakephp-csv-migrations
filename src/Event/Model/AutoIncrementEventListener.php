@@ -42,43 +42,51 @@ class AutoIncrementEventListener implements EventListenerInterface
      * @param  \ArrayObject $options entity options
      * @return void
      */
-    public function autoIncrementFieldValue(Event $event, EntityInterface $entity, ArrayObject $options)
+    public function autoIncrementFieldValue(Event $event, EntityInterface $entity, ArrayObject $options) : void
     {
-        $table = $event->subject();
+        $table = $event->getSubject();
 
         if (!$table instanceof Table) {
             return;
         }
 
-        $autoIncrementFields = $this->_getAutoIncrementFields($table);
+        $fields = $this->getAutoIncrementFields($table);
 
         // skip if no auto-increment fields are defined
-        if (empty($autoIncrementFields)) {
+        if (empty($fields)) {
             return;
         }
 
         // skip modifying auto-increment field(s) on existing records.
-        if (!$entity->isNew()) {
-            foreach (array_keys($autoIncrementFields) as $field) {
+        if (! $entity->isNew()) {
+            foreach (array_keys($fields) as $field) {
                 $entity->unsetProperty($field);
             }
 
             return;
         }
 
-        foreach ($autoIncrementFields as $field => $options) {
+        foreach ($fields as $field => $options) {
             // get max value
-            $query = $event->subject()->find('withTrashed');
-            $query->select([$field => $query->func()->max($field)]);
-            $max = $query->first()->toArray();
-            $max = (float)$max[$field];
+            $query = $table->find('withTrashed');
+
+            /** @var \Cake\Datasource\EntityInterface|null */
+            $max = $query->select([$field => $query->func()->max($field)])
+                ->enableHydration(true)
+                ->first();
+
+            $max = null === $max ? 0 : (float)$max->get($field);
 
             if (empty($options['min'])) {
-                $entity->{$field} = $max + 1;
-            } else {
-                // if value is less than the allowed minimum, then set it to the minimum.
-                $entity->{$field} = $max < $options['min'] ? $options['min'] : $max + 1;
+                $entity->set($field, $max + 1);
+
+                continue;
             }
+
+            // if value is less than the allowed minimum, then set it to the minimum.
+            $max = $max < $options['min'] ? $options['min'] : $max + 1;
+
+            $entity->set($field, $max);
         }
     }
 
@@ -89,22 +97,21 @@ class AutoIncrementEventListener implements EventListenerInterface
      * related properties (such as 'min' value).
      *
      * @param \CsvMigrations\Table $table Table instance
-     * @return array
+     * @return mixed[]
      */
-    protected function _getAutoIncrementFields(table $table)
+    private function getAutoIncrementFields(Table $table) : array
     {
-        $result = [];
-
         $moduleName = Inflector::camelize($table->table());
         $mc = new ModuleConfig(ConfigType::FIELDS(), $moduleName);
-        $config = (array)json_decode(json_encode($mc->parse()), true);
+        $config = json_encode($mc->parse());
+        $config = false === $config ? [] : json_decode($config, true);
 
         if (empty($config)) {
-            return $result;
+            return [];
         }
 
-        $moduleFields = $table->getFieldsDefinitions();
-        foreach (array_keys($moduleFields) as $field) {
+        $result = [];
+        foreach (array_keys($table->getFieldsDefinitions()) as $field) {
             $autoIncrement = empty($config[$field]['auto-increment']) ? false : (bool)$config[$field]['auto-increment'];
             if (!$autoIncrement) {
                 continue;

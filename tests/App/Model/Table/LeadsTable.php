@@ -5,12 +5,12 @@ use CsvMigrations\Table;
 
 class LeadsTable extends Table
 {
-    public function initialize(array $config)
+    public function initialize(array $config) : void
     {
         parent::initialize($config);
 
-        $this->table('leads');
-        $this->primaryKey('id');
+        $this->setTable('leads');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
     }

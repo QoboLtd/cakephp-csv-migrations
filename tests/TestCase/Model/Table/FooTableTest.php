@@ -18,12 +18,14 @@ class FooTableTest extends TestCase
 {
     public $fixtures = ['plugin.CsvMigrations.Foo'];
 
+    private $table;
+
     /**
      * setUp method
      *
      * @return void
      */
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -38,14 +40,14 @@ class FooTableTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown() : void
     {
         unset($this->table);
 
         parent::tearDown();
     }
 
-    public function testInitialize()
+    public function testInitialize() : void
     {
         $this->assertInstanceOf(Table::class, $this->table);
         $this->assertInstanceOf(RepositoryInterface::class, $this->table);
@@ -62,7 +64,7 @@ class FooTableTest extends TestCase
         $this->assertTrue($this->table->hasBehavior('Footprint'));
     }
 
-    public function testSaveWithMissingRequiredFields()
+    public function testSaveWithMissingRequiredFields() : void
     {
         $entity = $this->table->newEntity(['description' => 'some random text']);
 
@@ -74,14 +76,14 @@ class FooTableTest extends TestCase
         ));
     }
 
-    public function testSaveWithInvalidListItem()
+    public function testSaveWithInvalidListItem() : void
     {
         $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'invalid_value', 'type' => 'bronze.new']);
 
         $this->assertFalse($this->table->save($entity));
     }
 
-    public function testSaveWithFootprint()
+    public function testSaveWithFootprint() : void
     {
         $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'active', 'type' => 'bronze.new']);
 
@@ -94,21 +96,22 @@ class FooTableTest extends TestCase
         $this->assertEquals($expected, $entity->get('modified_by'));
     }
 
-    public function testGetParentRedirectUrl()
+    public function testGetParentRedirectUrl() : void
     {
-        $result = $this->table->getParentRedirectUrl($this->table, $this->table->find()->first());
+        $result = $this->table->getParentRedirectUrl($this->table, $this->table->find()->firstOrFail());
         $this->assertTrue(is_array($result));
     }
 
     /**
      * @dataProvider csvProvider
+     * @param mixed[] $expected
      */
-    public function testGetFieldsDefinitions($name, $expected)
+    public function testGetFieldsDefinitions(string $name, array $expected) : void
     {
         $this->assertEquals($expected, $this->table->getFieldsDefinitions());
     }
 
-    public function testFieldsOptionsRenderer()
+    public function testFieldsOptionsRenderer() : void
     {
         $fhf = new FieldHandlerFactory();
         $result = $fhf->renderValue($this->table, 'status', 'active');
@@ -118,7 +121,10 @@ class FooTableTest extends TestCase
         $this->assertEquals('Male', $result, "Field options are ignored during rendering (renderer not set)");
     }
 
-    public function csvProvider()
+    /**
+     * @return mixed[]
+     */
+    public function csvProvider() : array
     {
         return [
             [

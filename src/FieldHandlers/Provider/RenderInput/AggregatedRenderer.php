@@ -50,7 +50,7 @@ class AggregatedRenderer extends AbstractRenderer
     /**
      * Aggregated value getter.
      *
-     * @param array $options Options to use for provision
+     * @param mixed[] $options Options to use for provision
      * @return mixed
      */
     private function getAggregatedValue(array $options)

@@ -9,14 +9,14 @@ use CsvMigrations\Utility\Validate\Utility;
  */
 class UtilityTest extends TestCase
 {
-    public function testGetModules()
+    public function testGetModules() : void
     {
         $result = Utility::getModules();
         $this->assertTrue(is_array($result), "getModules() returned a non-array result");
         $this->assertFalse(empty($result), "getModules() returned an empty result");
     }
 
-    public function testIsValidModule()
+    public function testIsValidModule() : void
     {
         $modules = Utility::getModules();
         // This is just a safety net in case test setup changes
@@ -36,7 +36,7 @@ class UtilityTest extends TestCase
         $this->assertFalse($result, "isValidModule() returned true for a non-valid module");
     }
 
-    public function testIsValidList()
+    public function testIsValidList() : void
     {
         $result = Utility::isValidList('currencies');
         $this->assertTrue(is_bool($result), "isValidList() returned a non-boolean result");
@@ -51,25 +51,25 @@ class UtilityTest extends TestCase
         $this->assertFalse($result, "isValidList() returned true for a non-valid list");
     }
 
-    public function testIsRealModuleField()
+    public function testIsRealModuleField() : void
     {
         $result = Utility::isRealModuleField('Users', 'id');
         $this->assertTrue(is_bool($result), "isRealModuleField() returned a non-boolean result");
     }
 
-    public function testIsVirtualModuleField()
+    public function testIsVirtualModuleField() : void
     {
         $result = Utility::isVirtualModuleField('Users', 'id');
         $this->assertTrue(is_bool($result), "isVirtualModuleField() returned a non-boolean result");
     }
 
-    public function testIsValidModuleField()
+    public function testIsValidModuleField() : void
     {
         $result = Utility::isValidModuleField('Users', 'id');
         $this->assertTrue(is_bool($result), "isValidModuleField() returned a non-boolean result");
     }
 
-    public function testIsValidFieldType()
+    public function testIsValidFieldType() : void
     {
         $result = Utility::isValidFieldType('uuid');
         $this->assertTrue(is_bool($result), "isValidFieldType() returned a non-boolean result");

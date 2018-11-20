@@ -40,7 +40,7 @@ $attributes += [
         <div class="input-group-addon" title="<?= $relatedProperties['controller'] ?>">
             <span class="fa fa-<?= $icon ?>"></span>
         </div>
-        <?= $this->Form->input($name, $attributes);
+        <?= $this->Form->control($name, $attributes);
         ?>
     <?php if ($embedded) : ?>
         <div class="input-group-btn">

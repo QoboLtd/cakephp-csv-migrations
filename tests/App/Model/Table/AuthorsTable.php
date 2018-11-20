@@ -5,12 +5,12 @@ use CsvMigrations\Table;
 
 class AuthorsTable extends Table
 {
-    public function initialize(array $config)
+    public function initialize(array $config) : void
     {
         parent::initialize($config);
 
-        $this->table('authors');
-        $this->primaryKey('id');
+        $this->setTable('authors');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
     }

@@ -16,13 +16,13 @@ class SublistFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
         $this->fh = new FieldHandler($config);
     }
 
-    public function testRenderInput()
+    public function testRenderInput() : void
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
@@ -32,7 +32,7 @@ class SublistFieldHandlerTest extends TestCase
             'unique' => false
         ]);
 
-        $result = $this->fh->renderInput(null, $options);
+        $result = $this->fh->renderInput('', $options);
 
         $this->assertContains('data-type="dynamic-select"', $result);
         $this->assertContains('data-target', $result);
@@ -40,8 +40,11 @@ class SublistFieldHandlerTest extends TestCase
         $this->assertContains('data-option-values', $result);
         $this->assertContains('data-selectors', $result);
 
-        $mc = new ModuleConfig(ConfigType::LISTS(), null, 'countries');
-        foreach ($mc->parse()->items as $key => $item) {
+        $mc = new ModuleConfig(ConfigType::LISTS(), '', 'countries');
+        $config = json_encode($mc->parse());
+        $config = false !== $config ? json_decode($config, true) : [];
+        $items = isset($config['items']) ? $config['items'] : [];
+        foreach ($items as $key => $item) {
             if ((bool)$item['inactive']) {
                 $this->assertNotContains(h('"' . $key . '"'), $result);
                 $this->assertNotContains(h('"' . $item['label'] . '"'), $result);
@@ -52,7 +55,7 @@ class SublistFieldHandlerTest extends TestCase
         }
     }
 
-    public function testFieldToDb()
+    public function testFieldToDb() : void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
@@ -69,7 +72,7 @@ class SublistFieldHandlerTest extends TestCase
         $this->assertEquals(255, $result[$this->field]->getLimit(), "fieldToDb() did not return correct limit for DbField instance");
     }
 
-    public function testGetSearchOptions()
+    public function testGetSearchOptions() : void
     {
         $result = $this->fh->getSearchOptions();
 

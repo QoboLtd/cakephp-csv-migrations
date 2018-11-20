@@ -15,6 +15,7 @@ use Cake\Database\Exception;
 use Cake\Datasource\EntityInterface;
 use Cake\Http\ServerRequest;
 use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
+use InvalidArgumentException;
 
 /**
  * PrimaryKeyFieldValue
@@ -38,11 +39,18 @@ class PrimaryKeyFieldValue extends AbstractProvider
             return null;
         }
 
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $this->config->getTable();
+
         // return null in cases where no table or a dummy table was provided by the config class
         try {
-            $primaryKey = $this->config->getTable()->getPrimaryKey();
+            $primaryKey = $table->getPrimaryKey();
         } catch (Exception $e) {
             return null;
+        }
+
+        if (! is_string($primaryKey)) {
+            throw new InvalidArgumentException('Primary key must be a string');
         }
 
         if ($options['entity'] instanceof EntityInterface) {

@@ -1,7 +1,6 @@
 <?php
 namespace CsvMigrations\Test\TestCase\Controller\Traits;
 
-use Cake\Core\Configure;
 use Cake\ORM\ResultSet;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestCase;
@@ -26,7 +25,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         'plugin.csv_migrations.import_results'
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -35,7 +34,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         $this->session(['Auth.User.id' => '00000000-0000-0000-0000-000000000001']);
     }
 
-    public function testImportGet()
+    public function testImportGet() : void
     {
         $this->get('/articles/import');
 
@@ -48,7 +47,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         $this->assertFalse($existingImports->isEmpty());
     }
 
-    public function testImportGetExisting()
+    public function testImportGetExisting() : void
     {
         $this->get('/articles/import/00000000-0000-0000-0000-000000000001');
 
@@ -56,11 +55,11 @@ class ImportIntegrationTest extends IntegrationTestCase
 
         $this->assertInstanceOf(Import::class, $this->viewVariable('import'));
 
-        $this->assertEquals(['name', 'category', 'author', 'status'], $this->viewVariable('columns'));
+        $this->assertEquals(['name', 'category', 'author', 'status', 'main_article', 'image'], $this->viewVariable('columns'));
         $this->assertEquals(['Name', 'Author', 'Status'], $this->viewVariable('headers'));
     }
 
-    public function testImportGetExistingMapped()
+    public function testImportGetExistingMapped() : void
     {
         $this->get('/articles/import/00000000-0000-0000-0000-000000000002');
 
@@ -73,12 +72,13 @@ class ImportIntegrationTest extends IntegrationTestCase
         $this->assertEquals(1, $this->viewVariable('importCount'));
     }
 
-    public function testImportPost()
+    public function testImportPost() : void
     {
         $this->markTestSkipped();
 
-        $stub = $this->getMockBuilder(ImportUtility::class, ['moveUploadedFile'])
+        $stub = $this->getMockBuilder(ImportUtility::class)
             ->disableOriginalConstructor()
+            ->setMethods(['moveUploadedFile'])
             ->getMock();
 
         // Copy the file instead of 'moveUploadedFile' to allow testing
@@ -101,7 +101,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         $this->assertSession('Please choose a file to upload', 'Flash.flash.0.message');
     }
 
-    public function testImportPostWithoutFile()
+    public function testImportPostWithoutFile() : void
     {
         $data = [];
         $this->post('/articles/import', $data);
@@ -110,7 +110,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         $this->assertSession('Please choose a file to upload.', 'Flash.flash.0.message');
     }
 
-    public function testImportPostInvalidFile()
+    public function testImportPostInvalidFile() : void
     {
         $data = [
             'file' => [
@@ -123,7 +123,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         $this->assertSession('Unable to upload file, unsupported file provided.', 'Flash.flash.0.message');
     }
 
-    public function testImportPut()
+    public function testImportPut() : void
     {
         $id = '00000000-0000-0000-0000-000000000001';
         $data = [

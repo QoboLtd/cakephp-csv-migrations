@@ -74,14 +74,14 @@ class DbField
     /**
      * Constructor
      *
-     * @param string $name          field name
-     * @param string $type          field type
-     * @param int    $limit         field limit
-     * @param bool   $required      field required flag
-     * @param bool   $nonSearchable field non-searchable flag
-     * @param bool   $unique        field unique flag
+     * @param string $name Field name
+     * @param string $type Field type
+     * @param int|string|null $limit Field limit
+     * @param bool $required Field required flag
+     * @param bool $nonSearchable Field non-searchable flag
+     * @param bool $unique Field unique flag
      */
-    public function __construct($name, $type, $limit, $required, $nonSearchable, $unique)
+    public function __construct(string $name, string $type, $limit, bool $required, bool $nonSearchable, bool $unique)
     {
         $this->setName($name);
         $this->setType($type);
@@ -96,10 +96,10 @@ class DbField
     /**
      * Construct a new instance from CsvField
      *
-     * @param CsvField $csvField CsvField instance
-     * @return DbField
+     * @param \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @return \CsvMigrations\FieldHandlers\DbField
      */
-    public static function fromCsvField(CsvField $csvField)
+    public static function fromCsvField(CsvField $csvField) : DbField
     {
         return new self(
             $csvField->getName(),
@@ -116,31 +116,31 @@ class DbField
      *
      * @return void
      */
-    protected function setDefaultOptions()
+    protected function setDefaultOptions() : void
     {
         $type = $this->getType();
-        if (!empty($this->defaultOptions[$type])) {
+        if (! empty($this->defaultOptions[$type])) {
             $this->options = $this->defaultOptions[$type];
         }
     }
 
     /**
-     * Set options
+     * Set options.
      *
-     * @param array $options Options to set
+     * @param mixed[] $options Options to set
      * @return void
      */
-    public function setOptions(array $options = [])
+    public function setOptions(array $options = []) : void
     {
         $this->options = $options;
     }
 
     /**
-     * Get options
+     * Get options.
      *
-     * @return array
+     * @return mixed[]
      */
-    public function getOptions()
+    public function getOptions() : array
     {
         return $this->options;
     }
@@ -151,7 +151,7 @@ class DbField
      * @param string $name field name
      * @return void
      */
-    protected function setName($name)
+    protected function setName(string $name) : void
     {
         if (empty($name)) {
             throw new InvalidArgumentException('Empty field name is not allowed');
@@ -165,7 +165,7 @@ class DbField
      *
      * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
@@ -176,13 +176,13 @@ class DbField
      * @param string $type field type
      * @return void
      */
-    protected function setType($type)
+    protected function setType(string $type) : void
     {
         if (empty($type)) {
             throw new InvalidArgumentException(__CLASS__ . ': Empty field type is not allowed');
         }
 
-        if (!in_array($type, array_keys($this->defaultOptions))) {
+        if (! in_array($type, array_keys($this->defaultOptions))) {
             throw new InvalidArgumentException(__CLASS__ . ': Unsupported field type: ' . $type);
         }
 
@@ -194,7 +194,7 @@ class DbField
      *
      * @return string
      */
-    public function getType()
+    public function getType() : string
     {
         return $this->type;
     }
@@ -202,10 +202,10 @@ class DbField
     /**
      * Field limit setter.
      *
-     * @param int $limit field limit
+     * @param int|string|null $limit field limit
      * @return void
      */
-    public function setLimit($limit = null)
+    public function setLimit($limit = null) : void
     {
         if ($limit !== null) {
             $this->options['limit'] = $limit;
@@ -215,7 +215,7 @@ class DbField
     /**
      * Field limit getter.
      *
-     * @return int
+     * @return int|string|null
      */
     public function getLimit()
     {
@@ -233,12 +233,10 @@ class DbField
      * @param bool $required field required flag
      * @return void
      */
-    public function setRequired($required = null)
+    public function setRequired(bool $required) : void
     {
-        if ($required !== null) {
-            // Flip $required into allow null flag
-            $this->options['null'] = !$required;
-        }
+        // flip $required into allow null flag
+        $this->options['null'] = ! $required;
     }
 
     /**
@@ -246,15 +244,11 @@ class DbField
      *
      * @return bool
      */
-    public function getRequired()
+    public function getRequired() : bool
     {
-        $result = null;
-        if (isset($this->options['null'])) {
-            // Flip allow null flag into $required
-            $result = !$this->options['null'];
-        }
-
-        return $result;
+        return isset($this->options['null']) ?
+            ! $this->options['null'] : // flip allow null flag into $required
+            false;
     }
 
     /**
@@ -263,7 +257,7 @@ class DbField
      * @param bool $nonSearchable field non-searchable flag
      * @return void
      */
-    public function setNonSearchable($nonSearchable)
+    public function setNonSearchable(bool $nonSearchable) : void
     {
         $this->nonSearchable = $nonSearchable;
     }
@@ -273,7 +267,7 @@ class DbField
      *
      * @return bool
      */
-    public function getNonSearchable()
+    public function getNonSearchable() : bool
     {
         return $this->nonSearchable;
     }
@@ -281,10 +275,10 @@ class DbField
     /**
      * Field unique flag setter.
      *
-     * @param string $unique field unique flag
+     * @param bool $unique field unique flag
      * @return void
      */
-    public function setUnique($unique)
+    public function setUnique(bool $unique) : void
     {
         $this->unique = $unique;
     }
@@ -294,7 +288,7 @@ class DbField
      *
      * @return bool
      */
-    public function getUnique()
+    public function getUnique() : bool
     {
         return $this->unique;
     }

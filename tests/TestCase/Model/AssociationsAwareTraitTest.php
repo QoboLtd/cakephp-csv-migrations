@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class AssociationsAwareTraitTest extends TestCase
 {
-    public function setUp()
+    public function setUp() : void
     {
         // clear table registry to avoid ambiguous table instances during test runs
         TableRegistry::clear();
@@ -19,7 +19,7 @@ class AssociationsAwareTraitTest extends TestCase
     /**
      * @dataProvider associationNameProvider
      */
-    public function testCreateAssociationName($expected, $module, $foreignKey)
+    public function testCreateAssociationName(string $expected, string $module, string $foreignKey) : void
     {
         $this->assertEquals($expected, AssociationsAwareTrait::generateAssociationName($module, $foreignKey));
     }
@@ -27,9 +27,10 @@ class AssociationsAwareTraitTest extends TestCase
     /**
      * @dataProvider associationsProvider
      */
-    public function testAssociations($table, $name, $type, $joinTable = '')
+    public function testAssociations(string $table, string $name, string $type, string $joinTable = '') : void
     {
-        $association = TableRegistry::get($table)->association($name);
+        /** @var \Cake\ORM\Association\BelongsToMany */
+        $association = TableRegistry::get($table)->getAssociation($name);
 
         $this->assertInstanceOf($type, $association);
 
@@ -43,12 +44,12 @@ class AssociationsAwareTraitTest extends TestCase
      *
      * @return void
      */
-    public function testAssociationsStrict()
+    public function testAssociationsStrict() : void
     {
         $data = [];
         // normalize data
         foreach ($this->associationsProvider() as $value) {
-            $data[$value[0]][] = strtolower($value[1]);
+            $data[(string)$value[0]][] = strtolower($value[1]);
         }
 
         foreach ($data as $tableName => $associations) {
@@ -57,7 +58,10 @@ class AssociationsAwareTraitTest extends TestCase
         }
     }
 
-    public function associationNameProvider()
+    /**
+     * @return mixed[]
+     */
+    public function associationNameProvider() : array
     {
         return [
             ['BarFoo', 'Foo', 'bar'],
@@ -69,11 +73,15 @@ class AssociationsAwareTraitTest extends TestCase
         ];
     }
 
-    public function associationsProvider()
+    /**
+     * @return mixed[]
+     */
+    public function associationsProvider() : array
     {
         return [
             ['Articles', 'AuthorAuthors', BelongsTo::class],
             ['Articles', 'CategoryCategories', BelongsTo::class],
+            ['Articles', 'ImageFileStorageFileStorage', HasMany::class],
             ['Articles', 'MainArticleArticles', BelongsTo::class],
             ['Authors', 'AuthorArticles', HasMany::class],
             ['Authors', 'OwnerPosts', HasMany::class],

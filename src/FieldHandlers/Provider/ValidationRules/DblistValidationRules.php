@@ -28,10 +28,14 @@ class DblistValidationRules extends AbstractValidationRules
         $validator = parent::provide($validator, $options);
         $validator->scalar($options['fieldDefinitions']->getName());
 
+        /** @var \CsvMigrations\Model\Table\DblistsTable */
         $table = TableRegistry::getTableLocator()->get('CsvMigrations.Dblists');
-        $listOptions = $table->find('options', ['name' => $options['fieldDefinitions']->getLimit()]);
+        $listOptions = $table->getOptions($options['fieldDefinitions']->getLimit());
 
-        $validator->inList($options['fieldDefinitions']->getName(), array_keys($listOptions));
+        $validator->inList(
+            $options['fieldDefinitions']->getName(),
+            array_keys($listOptions)
+        );
 
         return $validator;
     }

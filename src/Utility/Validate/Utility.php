@@ -13,7 +13,7 @@ namespace CsvMigrations\Utility\Validate;
 
 use Cake\Core\Configure;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
-use Exception;
+use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility as QoboUtility;
@@ -30,9 +30,9 @@ class Utility
     /**
      * Get the list of all modules
      *
-     * @return array
+     * @return string[]
      */
-    public static function getModules()
+    public static function getModules() : array
     {
         $path = Configure::read('CsvMigrations.modules.path');
         $result = QoboUtility::findDirs($path);
@@ -46,48 +46,40 @@ class Utility
      * @param string $module Module name to check
      * @return bool True if module is valid, false otherwise
      */
-    public static function isValidModule($module)
+    public static function isValidModule(string $module) : bool
     {
-        $result = false;
-
-        $modules = static::getModules();
-        if (in_array($module, $modules)) {
-            $result = true;
-        }
-
-        return $result;
+        return in_array($module, static::getModules());
     }
 
     /**
      * Check if the given list is valid
      *
-     * Lists with no items are assumed to be
-     * invalid.
+     * Lists with no items are assumed to be invalid.
      *
      * @param string $list List name to check
      * @param string $module Module name to check the list in
-     * @return bool True if valid, false is otherwise
+     * @return bool True if valid, false otherwise
      */
-    public static function isValidList($list, $module = null)
+    public static function isValidList(string $list, string $module = '') : bool
     {
-        $result = false;
-
         if (strpos($list, '.') !== false) {
             list($module, $list) = explode('.', $list, 2);
         }
-        $listItems = [];
+
+        $listItems = null;
         try {
             $mc = new ModuleConfig(ConfigType::LISTS(), $module, $list, ['cacheSkip' => true]);
-            $listItems = $mc->parse()->items;
-        } catch (Exception $e) {
-            // We don't care about the specifics of the failure
+            $config = $mc->parse();
+            $listItems = property_exists($config, 'items') ? $config->items : null;
+        } catch (InvalidArgumentException $e) {
+            return false;
         }
 
-        if ($listItems) {
-            $result = true;
+        if (null === $listItems) {
+            return false;
         }
 
-        return $result;
+        return true;
     }
 
     /**
@@ -102,16 +94,19 @@ class Utility
      * @param string $field Field to check
      * @return bool True if field is real, false otherwise
      */
-    public static function isRealModuleField($module, $field)
+    public static function isRealModuleField(string $module, string $field) : bool
     {
-        $result = false;
-
         $moduleFields = [];
         try {
             $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
-            $moduleFields = json_decode(json_encode($mc->parse()), true);
-        } catch (Exception $e) {
+            $moduleFields = json_encode($mc->parse());
+            if (false === $moduleFields) {
+                return false;
+            }
+            $moduleFields = json_decode($moduleFields, true);
+        } catch (InvalidArgumentException $e) {
             // We already report issues with migration in _checkMigrationPresence()
+            return true;
         }
 
         // If we couldn't get the migration, we cannot verify if the
@@ -127,7 +122,7 @@ class Utility
             }
         }
 
-        return $result;
+        return false;
     }
 
     /**
@@ -141,37 +136,33 @@ class Utility
      * @param string $field Field to check
      * @return bool True if field is real, false otherwise
      */
-    public static function isVirtualModuleField($module, $field)
+    public static function isVirtualModuleField(string $module, string $field) : bool
     {
-        $result = false;
-
         $config = [];
         try {
             $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
-            $config = (array)json_decode(json_encode($mc->parse()), true);
-        } catch (Exception $e) {
-            return $result;
+            $config = json_encode($mc->parse());
+            if (false === $config) {
+                return false;
+            }
+            $config = (array)json_decode($config, true);
+        } catch (InvalidArgumentException $e) {
+            return false;
         }
 
         if (empty($config)) {
-            return $result;
+            return false;
         }
 
         if (empty($config['virtualFields'])) {
-            return $result;
+            return false;
         }
 
-        if (!is_array($config['virtualFields'])) {
-            return $result;
+        if (! is_array($config['virtualFields'])) {
+            return false;
         }
 
-        foreach ($config['virtualFields'] as $virtualField => $realFields) {
-            if ($virtualField == $field) {
-                return true;
-            }
-        }
-
-        return $result;
+        return in_array($field, array_keys($config['virtualFields']));
     }
 
     /**
@@ -184,15 +175,9 @@ class Utility
      * @param string $field Field to check
      * @return bool True if field is valid, false otherwise
      */
-    public static function isValidModuleField($module, $field)
+    public static function isValidModuleField(string $module, string $field) : bool
     {
-        $result = false;
-
-        if (static::isRealModuleField($module, $field) || static::isVirtualModuleField($module, $field)) {
-            $result = true;
-        }
-
-        return $result;
+        return static::isRealModuleField($module, $field) || static::isVirtualModuleField($module, $field);
     }
 
     /**
@@ -203,18 +188,14 @@ class Utility
      * @param string $type Field type
      * @return bool True if valid, false otherwise
      */
-    public static function isValidFieldType($type)
+    public static function isValidFieldType(string $type) : bool
     {
-        $result = false;
-
         try {
             $config = ConfigFactory::getByType($type, 'dummy_field');
-        } catch (Exception $e) {
-            return $result;
+        } catch (InvalidArgumentException $e) {
+            return false;
         }
 
-        $result = true;
-
-        return $result;
+        return true;
     }
 }

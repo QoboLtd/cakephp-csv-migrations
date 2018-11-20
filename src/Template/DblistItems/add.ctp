@@ -28,20 +28,20 @@
                 <?= $this->Form->create($entity); ?>
                     <div class="row">
                         <div class="col-md-6">
-                            <?= $this->Form->input('parent_id', ['options' => $tree, 'escape' => false, 'empty' => true]); ?>
+                            <?= $this->Form->control('parent_id', ['options' => $tree, 'escape' => false, 'empty' => true]); ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
-                            <?= $this->Form->input('name'); ?>
+                            <?= $this->Form->control('name'); ?>
                         </div>
                         <div class="col-md-6">
-                            <?= $this->Form->input('value'); ?>
+                            <?= $this->Form->control('value'); ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
-                            <?= $this->Form->input('active', ['checked' => 'checked']); ?>
+                            <?= $this->Form->control('active', ['checked' => 'checked']); ?>
                         </div>
                     </div>
                 <?= $this->Form->button(__d('CsvMigrations', "Submit"), ['class' => 'btn btn-primary']); ?>

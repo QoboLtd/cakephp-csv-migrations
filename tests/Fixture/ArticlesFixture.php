@@ -16,6 +16,8 @@ class ArticlesFixture extends TestFixture
         'category' => ['type' => 'string', 'length' => 36, 'null' => true],
         'author' => ['type' => 'string', 'length' => 36, 'null' => true],
         'status' => ['type' => 'string', 'length' => 100, 'null' => true],
+        'main_article' => ['type' => 'uuid', 'null' => true],
+        'image' => ['type' => 'uuid', 'null' => true],
         'created' => ['type' => 'datetime', 'null' => true],
         'modified' => ['type' => 'datetime', 'null' => true],
         'trashed' => ['type' => 'datetime', 'null' => true],
@@ -45,6 +47,17 @@ class ArticlesFixture extends TestFixture
             'status' => 'published',
             'created' => '2016-07-02 10:39:23',
             'modified' => '2016-07-02 10:41:31'
+        ],
+        [
+            'id' => '00000000-0000-0000-0000-000000000003',
+            'name' => 'Article with image',
+            'category' => '00000000-0000-0000-0000-000000000001',
+            'author' => '00000000-0000-0000-0000-000000000001',
+            'trashed' => null,
+            'status' => 'published',
+            'image' => null,
+            'created' => '2018-10-26 10:39:23',
+            'modified' => '2018-10-26 10:41:31'
         ]
     ];
 }

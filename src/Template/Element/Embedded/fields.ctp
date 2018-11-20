@@ -11,7 +11,7 @@
  */
 
 use Cake\Datasource\Exception\RecordNotFoundException;
-use Cake\Network\Exception\ForbiddenException;
+use Cake\Http\Exception\ForbiddenException;
 use Cake\Utility\Inflector;
 
 // Fetch embedded module(s) using CakePHP's requestAction() method

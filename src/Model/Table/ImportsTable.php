@@ -12,8 +12,6 @@
 namespace CsvMigrations\Model\Table;
 
 use Cake\Database\Schema\TableSchema;
-use Cake\ORM\Query;
-use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
@@ -126,7 +124,7 @@ class ImportsTable extends Table
      */
     protected function _initializeSchema(TableSchema $schema)
     {
-        $schema->columnType('options', 'json');
+        $schema->setColumnType('options', 'json');
 
         return $schema;
     }

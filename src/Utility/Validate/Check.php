@@ -29,9 +29,9 @@ class Check
      * @param string $checkClass Name of the check class
      * @return \CsvMigrations\Utility\Validate\Check\CheckInterface
      */
-    public static function getInstance($checkClass)
+    public static function getInstance(string $checkClass) : CheckInterface
     {
-        $checkClass = (string)$checkClass;
+        $checkClass = $checkClass;
 
         if (!class_exists($checkClass)) {
             throw new RuntimeException("Check class [$checkClass] does not exist");
@@ -52,9 +52,9 @@ class Check
      * '_default').
      *
      * @param string $module Module name
-     * @return  array
+     * @return mixed[]
      */
-    public static function getList($module)
+    public static function getList(string $module) : array
     {
         $default = Configure::read('CsvMigrations.ValidateShell.module._default');
         $result = Configure::read('CsvMigrations.ValidateShell.module.' . $module);

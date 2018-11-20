@@ -3,7 +3,6 @@ namespace CsvMigrations\Test\TestCase\Model\Table;
 
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use CsvMigrations\Model\Table\DblistsTable;
 
 /**
  * CsvMigrations\Model\Table\DblistsTable Test Case
@@ -21,11 +20,6 @@ class DblistsTableTest extends TestCase
         'plugin.CsvMigrations.DblistItems',
     ];
 
-    /**
-     * Test subject
-     *
-     * @var \CsvMigrations\Model\Table\DblistsTable
-     */
     public $Dblists;
 
     /**
@@ -33,7 +27,7 @@ class DblistsTableTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $config = TableRegistry::exists('Dblists') ? [] : ['className' => 'CsvMigrations\Model\Table\DblistsTable'];
@@ -45,11 +39,10 @@ class DblistsTableTest extends TestCase
      *
      * @return void
      */
-    public function testInitialize()
+    public function testInitialize() : void
     {
         $this->assertTrue($this->Dblists->hasBehavior('Timestamp'), 'Missing behavior Timestamp.');
-        $assoc = $this->Dblists->association('DblistItems');
-        $this->assertFalse(is_null($assoc), 'DblistItems cannot be found');
+        $assoc = $this->Dblists->getAssociation('DblistItems');
         $this->assertInstanceOf('Cake\ORM\Association\HasMany', $assoc, 'Dblists\'s association with DblistItems should be hasMany');
     }
 
@@ -58,9 +51,9 @@ class DblistsTableTest extends TestCase
      *
      * @return void
      */
-    public function testValidationDefault()
+    public function testValidationDefault() : void
     {
-        $validator = $this->Dblists->validator();
+        $validator = $this->Dblists->getValidator();
         $this->assertTrue($validator->hasField('id'), 'Missing validation for id');
         $this->assertTrue($validator->hasField('name'), 'Missing validation for name');
     }
@@ -70,31 +63,14 @@ class DblistsTableTest extends TestCase
      *
      * @return void
      */
-    public function testOptions()
+    public function testGetOptions() : void
     {
-        $expected = [
-            'corporate' => 'Corporate',
-            'leonid' => ' - Leonid',
-            'individual' => 'Individual',
-            'antonis' => ' - Antonis',
-            'george' => ' - George'
-        ];
-        $list = 'categories';
+        $result = $this->Dblists->getOptions('categories');
+        $this->assertInternalType('array', $result);
+        $this->assertNotEmpty($result);
 
-        $this->assertSame($expected, $this->Dblists->find('options', ['name' => $list]));
-    }
-
-    /**
-     * Test Options query.
-     *
-     * @return void
-     */
-    public function testOptionsWithInvalidListName()
-    {
-        $expected = [];
-        $list = 'some-invalid-list-name';
-
-        $this->assertSame($expected, $this->Dblists->find('options', ['name' => $list]));
+        $result = $this->Dblists->getOptions('');
+        $this->assertSame([], $result);
     }
 
     /**
@@ -102,7 +78,7 @@ class DblistsTableTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown() : void
     {
         unset($this->Dblists);
 

@@ -5,25 +5,28 @@ use Cake\I18n\Time;
 use CsvMigrations\FieldHandlers\Config\DateConfig;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\DateRenderer;
 use PHPUnit\Framework\TestCase;
-use StdClass;
+use stdClass;
 
 class DateRendererTest extends TestCase
 {
     protected $renderer;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $config = new DateConfig('date');
         $this->renderer = new DateRenderer($config);
     }
 
-    public function testInterface()
+    public function testInterface() : void
     {
         $implementedInterfaces = array_keys(class_implements($this->renderer));
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\Provider\ProviderInterface', $implementedInterfaces), "ProviderInterface is not implemented");
     }
 
-    public function getValues()
+    /**
+     * @return mixed[]
+     */
+    public function getValues() : array
     {
         return [
             ['2017-07-06 14:20:00', '2017-07-06 14:20:00', 'Date time string'],
@@ -38,14 +41,16 @@ class DateRendererTest extends TestCase
 
     /**
      * @dataProvider getValues
+     * @param mixed $value
+     * @param mixed $expected
      */
-    public function testRenderValue($value, $expected, $description)
+    public function testRenderValue($value, $expected, string $description) : void
     {
         $result = $this->renderer->provide($value);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 
-    public function testRenderValueFormat()
+    public function testRenderValueFormat() : void
     {
         $result = $this->renderer->provide(Time::parse('2017-07-06 14:20:00'), ['format' => 'yyyy']);
         $this->assertEquals('2017', $result, "Value rendering is broken for custom format");
@@ -54,8 +59,8 @@ class DateRendererTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testRenderValueException()
+    public function testRenderValueException() : void
     {
-        $result = $this->renderer->provide(new StdClass());
+        $result = $this->renderer->provide(new stdClass());
     }
 }

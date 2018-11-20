@@ -14,13 +14,13 @@ class TextFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
         $this->fh = new FieldHandler($config);
     }
 
-    public function testFieldToDb()
+    public function testFieldToDb() : void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
@@ -37,7 +37,10 @@ class TextFieldHandlerTest extends TestCase
         $this->assertGreaterThan(100000000, $result[$this->field]->getLimit(), "fieldToDb() did not return correct limit for DbField instance");
     }
 
-    public function getValues()
+    /**
+     * @return mixed[]
+     */
+    public function getValues() : array
     {
         return [
             [true, "<p>1</p>\n", 'Boolean true'],
@@ -55,20 +58,22 @@ class TextFieldHandlerTest extends TestCase
 
     /**
      * @dataProvider getValues
+     * @param mixed $value
+     * @param mixed $expected
      */
-    public function testRenderValue($value, $expected, $description)
+    public function testRenderValue($value, $expected, string $description) : void
     {
         $result = $this->fh->renderValue($value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 
-    public function testRenderValueWithPlainFlag()
+    public function testRenderValueWithPlainFlag() : void
     {
         $result = $this->fh->renderValue('Hello World!', ['renderAs' => 'plain']);
         $this->assertEquals('Hello World!', $result);
     }
 
-    public function testGetSearchOptions()
+    public function testGetSearchOptions() : void
     {
         $result = $this->fh->getSearchOptions();
 

@@ -17,7 +17,7 @@ use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Table as Table;
-use Exception;
+use Eluceo\iCal\Component\Calendar;
 use InvalidArgumentException;
 use Qobo\Utils\Utility\User;
 
@@ -63,11 +63,11 @@ class IcEmail
      * @param string $to Destination email address
      * @param string $subject Email subject
      * @param string $content Email message content
-     * @param array $eventOptions Event options for calendar attachment
+     * @param mixed[] $eventOptions Event options for calendar attachment
      * @param string $config Email config to use ('default' if omitted)
-     * @return array Result of Email::send()
+     * @return mixed[] Result of \Cake\Mailer\Email::send()
      */
-    public function sendCalendarEmail($to, $subject, $content, array $eventOptions, $config = 'default')
+    public function sendCalendarEmail(string $to, string $subject, string $content, array $eventOptions, string $config = 'default') : array
     {
         // Get iCal calendar
         $calendar = $this->getEventCalendar($eventOptions);
@@ -77,37 +77,34 @@ class IcEmail
         $headers .= 'Content-Disposition: attachment; filename="event.ics"';
 
         $emailer = new Email($config);
-        $emailer->to($to)
+        $emailer->setTo($to)
             ->setHeaders([$headers])
-            ->subject($subject)
-            ->attachments(['event.ics' => [
+            ->setSubject($subject)
+            ->addAttachments(['event.ics' => [
                 'contentDisposition' => true,
                 'mimetype' => 'text/calendar',
                 'data' => $calendar->render()
             ]]);
-        $result = $emailer->send($content);
 
-        return $result;
+        return $emailer->send($content);
     }
 
     /**
      * Get iCal calendar with given event
      *
-     * @param array $eventOptions Options for event creation
-     * @return object Whatever IcCalendar::getCalendar() returns
+     * @param mixed[] $eventOptions Options for event creation
+     * @return \Eluceo\iCal\Component\Calendar Whatever IcCalendar::getCalendar() returns
      */
-    protected function getEventCalendar(array $eventOptions)
+    protected function getEventCalendar(array $eventOptions) : Calendar
     {
         // New iCal event
-        $event = new IcEvent($eventOptions);
-        $event = $event->getEvent();
+        $event = (new IcEvent($eventOptions))->getEvent();
 
         // New iCal calendar
         $calendar = new IcCalendar();
         $calendar->addEvent($event);
-        $calendar = $calendar->getCalendar();
 
-        return $calendar;
+        return $calendar->getCalendar();
     }
 
     /**
@@ -115,18 +112,15 @@ class IcEmail
      *
      * @return string
      */
-    protected function getDisplayValue()
+    protected function getDisplayValue() : string
     {
         try {
-            $displayField = $this->table->displayField();
-            $displayValue = $this->entity->{$displayField};
+            $displayField = $this->table->getDisplayField();
+            $displayValue = $this->entity->get($displayField);
 
-            $fhf = new FieldHandlerFactory();
-            $result = $fhf->renderValue($this->table, $displayField, $displayValue, [ 'renderAs' => 'plain']);
-            if (empty($result) || !is_string($result)) {
-                throw new InvalidArgumentException("Failed to get entity display value");
-            }
-        } catch (Exception $e) {
+            $factory = new FieldHandlerFactory();
+            $result = $factory->renderValue($this->table, $displayField, $displayValue, [ 'renderAs' => 'plain']);
+        } catch (InvalidArgumentException $e) {
             $result = 'reminder';
         }
 
@@ -138,14 +132,16 @@ class IcEmail
      *
      * @return string
      */
-    public function getEmailSubject()
+    public function getEmailSubject() : string
     {
-        $module = Inflector::singularize($this->table->alias());
-        $displayValue = $this->getDisplayValue();
-        $result = $module . ": " . $displayValue;
+        $result = sprintf(
+            '%s: %s',
+            Inflector::singularize($this->table->getAlias()),
+            $this->getDisplayValue()
+        );
 
-        if (!$this->entity->isNew()) {
-            $result = "(Updated) " . $result;
+        if (! $this->entity->isNew()) {
+            $result = sprintf('(Updated) %s', $result);
         }
 
         return $result;
@@ -156,11 +152,11 @@ class IcEmail
      *
      * @return string
      */
-    public function getEmailContent()
+    public function getEmailContent() : string
     {
         $result = '';
 
-        $module = Inflector::singularize($this->table->alias());
+        $module = Inflector::singularize($this->table->getAlias());
         $displayValue = $this->getDisplayValue();
         $user = $this->getUserString();
         $action = $this->entity->isNew() ? 'created' : 'updated';
@@ -189,7 +185,7 @@ class IcEmail
      *
      * @return string
      */
-    public function getEventSubject()
+    public function getEventSubject() : string
     {
         return $this->getEmailSubject();
     }
@@ -199,7 +195,7 @@ class IcEmail
      *
      * @return string
      */
-    public function getEventContent()
+    public function getEventContent() : string
     {
         $result = '';
 
@@ -230,12 +226,12 @@ class IcEmail
      *
      * @return string
      */
-    public function getEntityUrl()
+    public function getEntityUrl() : string
     {
         $result = Router::url(
             [
                 'prefix' => false,
-                'controller' => $this->table->table(),
+                'controller' => $this->table->getTable(),
                 'action' => 'view',
                 $this->entity->id
             ],
@@ -250,7 +246,7 @@ class IcEmail
      *
      * @return string
      */
-    protected function getUserString()
+    protected function getUserString() : string
     {
         $result = 'System';
 
@@ -284,7 +280,7 @@ class IcEmail
      *
      * @return string
      */
-    protected function getChangelog()
+    protected function getChangelog() : string
     {
         $result = '';
 

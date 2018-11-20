@@ -10,9 +10,16 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\ORM\Association;
+
 $associations = [];
 foreach ($table->associations() as $association) {
-    if (!in_array($association->type(), ['manyToMany', 'oneToMany'])) {
+    // skip association(s) with Burzum/FileStorage, because it is rendered within the respective field handler
+    if ('Burzum/FileStorage.FileStorage' === $association->className()) {
+        continue;
+    }
+
+    if (!in_array($association->type(), [Association::MANY_TO_MANY, Association::ONE_TO_MANY])) {
         continue;
     }
 

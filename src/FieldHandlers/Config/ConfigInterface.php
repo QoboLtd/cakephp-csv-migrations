@@ -11,6 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers\Config;
 
+use Cake\Datasource\RepositoryInterface;
 use Cake\View\View;
 
 /**
@@ -26,9 +27,9 @@ interface ConfigInterface
      *
      * @param string $field Field name
      * @param mixed $table Table name or instance
-     * @param array $options Options
+     * @param mixed[] $options Options
      */
-    public function __construct($field, $table = null, array $options = []);
+    public function __construct(string $field, $table = null, array $options = []);
 
     /**
      * Set field
@@ -37,44 +38,44 @@ interface ConfigInterface
      * @param string $field Field name
      * @return void
      */
-    public function setField($field);
+    public function setField(string $field) : void;
 
     /**
      * Get field
      *
      * @return string
      */
-    public function getField();
+    public function getField() : string;
 
     /**
      * Set table
      *
-     * @param mixed $table Table name or instance
+     * @param \Cake\Datasource\RepositoryInterface|string $table Table name or instance
      * @return void
      */
-    public function setTable($table = null);
+    public function setTable($table = '') : void;
 
     /**
      * Get table
      *
-     * @return object
+     * @return \Cake\Datasource\RepositoryInterface
      */
-    public function getTable();
+    public function getTable() : RepositoryInterface;
 
     /**
      * Set options
      *
-     * @param array $options Options
+     * @param mixed[] $options Options
      * @return void
      */
-    public function setOptions(array $options = []);
+    public function setOptions(array $options = []) : void;
 
     /**
      * Get options
      *
-     * @return array
+     * @return mixed[]
      */
-    public function getOptions();
+    public function getOptions() : array;
 
     /**
      * Set view
@@ -82,47 +83,47 @@ interface ConfigInterface
      * @param \Cake\View\View $view View instance
      * @return void
      */
-    public function setView(View $view);
+    public function setView(View $view) : void;
 
     /**
      * Get view
      *
      * @return \Cake\View\View
      */
-    public function getView();
+    public function getView() : View;
 
     /**
      * Set providers
      *
      * @throws \InvalidArgumentException for invalid providers
-     * @param array $providers List of provider names and classes
+     * @param mixed[] $providers List of provider names and classes
      * @return void
      */
-    public function setProviders(array $providers);
+    public function setProviders(array $providers) : void;
 
     /**
      * Get providers
      *
      * @throws \InvalidArgumentException for invalid providers
-     * @return array
+     * @return mixed[]
      */
-    public function getProviders();
+    public function getProviders() : array;
 
     /**
      * Get provider by name
      *
      * @throws \InvalidArgumentException for invalid provider
      * @param string $name Name of the provider to get
-     * @return array
+     * @return string
      */
-    public function getProvider($name);
+    public function getProvider(string $name) : string;
 
     /**
      * Validate providers
      *
      * @throws \InvalidArgumentException for invalid providers
-     * @param array $providers List of provider names and classes
+     * @param mixed[] $providers List of provider names and classes
      * @return void
      */
-    public function validateProviders(array $providers);
+    public function validateProviders(array $providers) : void;
 }

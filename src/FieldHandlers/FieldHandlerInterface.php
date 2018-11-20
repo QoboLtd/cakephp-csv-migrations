@@ -11,6 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\Validation\Validator;
 use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 
 /**
@@ -33,7 +34,7 @@ interface FieldHandlerInterface
      *
      * @return \CsvMigrations\FieldHandlers\Config\ConfigInterface
      */
-    public function getConfig();
+    public function getConfig() : ConfigInterface;
 
     /**
      * Config instance setter
@@ -41,7 +42,7 @@ interface FieldHandlerInterface
      * @param \CsvMigrations\FieldHandlers\Config\ConfigInterface $config Instance of field handler config
      * @return void
      */
-    public function setConfig(ConfigInterface $config);
+    public function setConfig(ConfigInterface $config) : void;
 
     /**
      * Render field input
@@ -51,11 +52,11 @@ interface FieldHandlerInterface
      * and so on.  The result can be controlled via the variety
      * of options.
      *
-     * @param  string $data    Field data
-     * @param  array  $options Field options
-     * @return string          Field input HTML
+     * @param mixed $data Field data
+     * @param mixed[] $options Field options
+     * @return string Field input HTML
      */
-    public function renderInput($data = '', array $options = []);
+    public function renderInput($data = '', array $options = []) : string;
 
     /**
      * Get options for field search
@@ -64,10 +65,10 @@ interface FieldHandlerInterface
      * label, form input, supported search operators, etc.  The result
      * can be controlled with a variety of options.
      *
-     * @param  array  $options Field options
-     * @return array           Array of field input HTML, pre and post CSS, JS, etc
+     * @param mixed[] $options Field options
+     * @return mixed[] Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function getSearchOptions(array $options = []);
+    public function getSearchOptions(array $options = []) : array;
 
     /**
      * Render field value
@@ -76,18 +77,18 @@ interface FieldHandlerInterface
      * field.  The result can be controlled via the variety of
      * options.
      *
-     * @param  string $data    Field data
-     * @param  array  $options Field options
-     * @return string          Field value
+     * @param mixed $data Field data
+     * @param mixed[] $options Field options
+     * @return string Field value
      */
-    public function renderValue($data, array $options = []);
+    public function renderValue($data, array $options = []) : string;
 
     /**
      * Render field name
      *
      * @return string
      */
-    public function renderName();
+    public function renderName() : string;
 
     /**
      * Convert CsvField to one or more DbField instances
@@ -96,8 +97,19 @@ interface FieldHandlerInterface
      * the database fields.  More complex fields can combine
      * multiple database fields for a single CSV entry.
      *
-     * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
-     * @return array                                           DbField instances
+     * @param \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
+     * @return \CsvMigrations\FieldHandlers\CsvField[]
      */
-    public static function fieldToDb(CsvField $csvField);
+    public static function fieldToDb(CsvField $csvField) : array;
+
+    /**
+     * Validation rules setter.
+     *
+     * Sets Table validation rules based on the provided field-type.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance
+     * @param mixed[] $options Field options
+     * @return \Cake\Validation\Validator
+     */
+    public function setValidationRules(Validator $validator, array $options = []) : Validator;
 }

@@ -11,9 +11,9 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\FieldValue;
 
-use Cake\Network\Request;
-use Cake\ORM\Entity;
+use Cake\Datasource\EntityInterface;
 use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * MixedFieldValue
@@ -33,15 +33,15 @@ class MixedFieldValue extends AbstractProvider
      */
     public function provide($data = null, array $options = [])
     {
-        if (empty($data) && !empty($options['entity'])) {
+        if (empty($data) && ! empty($options['entity'])) {
             $data = $options['entity'];
         }
 
-        if ($data instanceof Entity) {
+        if ($data instanceof EntityInterface) {
             return $this->provideFromEntity($data, $this->config->getField());
         }
 
-        if ($data instanceof Request) {
+        if ($data instanceof RequestInterface) {
             return $this->provideFromRequest($data, $this->config->getField());
         }
 
@@ -53,18 +53,13 @@ class MixedFieldValue extends AbstractProvider
      *
      * Use $entity->$field if available.
      *
-     * @param \Cake\ORM\Entity $entity Entity to look for field value in
+     * @param \Cake\Datasource\EntityInterface $entity Entity to look for field value in
      * @param string $field Field name
-     * @return mixed Field value
+     * @return string Field value
      */
-    protected function provideFromEntity(Entity $entity, $field)
+    protected function provideFromEntity(EntityInterface $entity, string $field) : string
     {
-        $result = null;
-        if (isset($entity->$field)) {
-            $result = $entity->$field;
-        }
-
-        return $result;
+        return $entity->has($field) ? $entity->get($field) : '';
     }
 
     /**
@@ -72,17 +67,17 @@ class MixedFieldValue extends AbstractProvider
      *
      * Use $request->data[$field] if available.
      *
-     * @param \Cake\Network\Request $request Request to look for field value in
+     * @param \Psr\Http\Message\RequestInterface $request Request to look for field value in
      * @param string $field Field name
-     * @return mixed Field value
+     * @return string Field value
      */
-    protected function provideFromRequest(Request $request, $field)
+    protected function provideFromRequest(RequestInterface $request, string $field) : string
     {
-        $result = null;
-        if (is_array($request->data) && array_key_exists($field, $request->data)) {
-            $result = $request->data[$field];
-        }
+        /** @var \Cake\Http\ServerRequest */
+        $request = $request;
 
-        return $result;
+        $data = $request->getData();
+
+        return is_array($data) && array_key_exists($field, $data) ? $data[$field] : '';
     }
 }

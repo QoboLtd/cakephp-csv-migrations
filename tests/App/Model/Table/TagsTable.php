@@ -5,12 +5,12 @@ use CsvMigrations\Table;
 
 class TagsTable extends Table
 {
-    public function initialize(array $config)
+    public function initialize(array $config) : void
     {
         parent::initialize($config);
 
-        $this->table('tags');
-        $this->primaryKey('id');
+        $this->setTable('tags');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
     }

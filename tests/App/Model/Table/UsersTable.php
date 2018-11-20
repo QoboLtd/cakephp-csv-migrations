@@ -11,12 +11,12 @@ class UsersTable extends Table
 {
     use AssociationsAwareTrait;
 
-    public function initialize(array $config)
+    public function initialize(array $config) : void
     {
         parent::initialize($config);
 
-        $this->table('users');
-        $this->primaryKey('id');
+        $this->setTable('users');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
         $this->addBehavior('Qobo/Utils.Footprint');

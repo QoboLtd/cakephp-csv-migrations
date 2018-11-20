@@ -20,14 +20,18 @@ class AggregateTest extends TestCase
         'plugin.CsvMigrations.leads'
     ];
 
-    public function setUp()
+    private $articlesTable;
+    private $fooTable;
+    private $leadsTable;
+
+    public function setUp() : void
     {
         $this->articlesTable = TableRegistry::get('Articles');
         $this->fooTable = TableRegistry::get('Foo');
         $this->leadsTable = TableRegistry::get('Leads');
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         unset($this->leadsTable);
         unset($this->fooTable);
@@ -35,16 +39,20 @@ class AggregateTest extends TestCase
     }
 
     /**
+     * @param  mixed $expected
      * @dataProvider aggregatorResultProvider
      */
-    public function testGetResult($aggregatorClass, $field, $expected)
+    public function testGetResult(string $aggregatorClass, string $field, $expected) : void
     {
         $aggregator = new $aggregatorClass(new Configuration($this->fooTable, $field));
 
         $this->assertEquals($expected, AggregateResult::get($aggregator));
     }
 
-    public function aggregatorResultProvider()
+    /**
+     * @return mixed[]
+     */
+    public function aggregatorResultProvider() : array
     {
         return [
             [SumAggregator::class, 'cost_amount', 3300.3],
@@ -60,7 +68,7 @@ class AggregateTest extends TestCase
     /**
      * @dataProvider aggregatorResultProviderWithJoin
      */
-    public function testGetResultWithJoin($aggregatorClass, $expected)
+    public function testGetResultWithJoin(string $aggregatorClass, float $expected) : void
     {
         $entity = $this->leadsTable->get('00000000-0000-0000-0000-000000000001');
         $configuration = new Configuration($this->fooTable, 'cost_amount');
@@ -70,7 +78,10 @@ class AggregateTest extends TestCase
         $this->assertSame($expected, AggregateResult::get($aggregator));
     }
 
-    public function aggregatorResultProviderWithJoin()
+    /**
+     * @return mixed[]
+     */
+    public function aggregatorResultProviderWithJoin() : array
     {
         return [
             [SumAggregator::class, 3000.2],
@@ -80,7 +91,7 @@ class AggregateTest extends TestCase
         ];
     }
 
-    public function testGetResultWithEmptyReturnedValue()
+    public function testGetResultWithEmptyReturnedValue() : void
     {
         // this lead has no foo records associated with it
         $entity = $this->leadsTable->get('00000000-0000-0000-0000-000000000003');
@@ -92,7 +103,7 @@ class AggregateTest extends TestCase
         $this->assertSame('', AggregateResult::get($aggregator));
     }
 
-    public function testGetResultWithNonAssociatedTable()
+    public function testGetResultWithNonAssociatedTable() : void
     {
         $this->expectException(RuntimeException::class);
 
@@ -104,7 +115,7 @@ class AggregateTest extends TestCase
         AggregateResult::get($aggregator);
     }
 
-    public function testGetResultWithUnsupportedAssociation()
+    public function testGetResultWithUnsupportedAssociation() : void
     {
         $this->expectException(RuntimeException::class);
 

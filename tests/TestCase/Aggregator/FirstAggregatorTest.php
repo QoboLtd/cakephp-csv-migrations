@@ -15,31 +15,33 @@ class FirstAggregatorTest extends TestCase
         'plugin.CsvMigrations.foo'
     ];
 
-    public function setUp()
+    private $table;
+
+    public function setUp() : void
     {
         $this->table = TableRegistry::get('Foo');
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         unset($this->table);
     }
 
-    public function testAliasMinAggregator()
+    public function testAliasMinAggregator() : void
     {
         $result = new MinAggregator(new Configuration($this->table, 'cost_amount'));
 
         $this->assertInstanceOf(FirstAggregator::class, $result);
     }
 
-    public function testValidateWithNonExistingField()
+    public function testValidateWithNonExistingField() : void
     {
         $this->expectException(RuntimeException::class);
 
         new FirstAggregator(new Configuration($this->table, 'non-existing-field'));
     }
 
-    public function testApplyConditions()
+    public function testApplyConditions() : void
     {
         $aggregator = new FirstAggregator(new Configuration($this->table, 'cost_amount'));
 
@@ -52,7 +54,7 @@ class FirstAggregatorTest extends TestCase
         $this->assertNotEquals($expected, $query);
     }
 
-    public function testGetResultWithDecimal()
+    public function testGetResultWithDecimal() : void
     {
         $configuration = new Configuration($this->table, 'cost_amount');
         $aggregator = new FirstAggregator($configuration);
@@ -63,7 +65,7 @@ class FirstAggregatorTest extends TestCase
         $this->assertSame(300.10, $aggregator->getResult($query->first()));
     }
 
-    public function testGetResultWithString()
+    public function testGetResultWithString() : void
     {
         $configuration = new Configuration($this->table, 'created');
         $configuration->setDisplayField('status');
@@ -75,7 +77,7 @@ class FirstAggregatorTest extends TestCase
         $this->assertSame('active', $aggregator->getResult($query->first()));
     }
 
-    public function testGetResultWithDatetime()
+    public function testGetResultWithDatetime() : void
     {
         $configuration = new Configuration($this->table, 'created');
         $aggregator = new FirstAggregator($configuration);
@@ -88,7 +90,7 @@ class FirstAggregatorTest extends TestCase
         $this->assertSame('2016-07-01 10:39:23', $result->i18nFormat('yyyy-MM-dd HH:mm:ss'));
     }
 
-    public function testGetConfig()
+    public function testGetConfig() : void
     {
         $aggregator = new FirstAggregator(new Configuration($this->table, 'cost_amount'));
 

@@ -40,14 +40,12 @@ abstract class AbstractProvider implements ProviderInterface
      * Render element
      *
      * @param string $name Element name
-     * @param array $options Options to pass to the element
+     * @param mixed[] $options Options to pass to the element
      * @return string
      */
-    protected function renderElement($name, array $options = [])
+    protected function renderElement(string $name, array $options = []) : string
     {
-        $view = $this->config->getView();
-        $result = $view->element($name, $options);
-
-        return $result;
+        return $this->config->getView()
+            ->element($name, $options);
     }
 }

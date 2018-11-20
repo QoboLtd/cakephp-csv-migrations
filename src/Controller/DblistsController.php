@@ -12,6 +12,7 @@
 namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
+use Cake\Http\Response;
 
 /**
  * Dblists Controller
@@ -24,7 +25,7 @@ class DblistsController extends BaseController
     /**
      * Index method
      *
-     * @return void
+     * @return \Cake\Http\Response|void|null
      */
     public function index()
     {
@@ -37,20 +38,20 @@ class DblistsController extends BaseController
     /**
      * Add method
      *
-     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
+     * @return \Cake\Http\Response|void|null Redirects on successful add, renders view otherwise.
      */
     public function add()
     {
         $entity = $this->Dblists->newEntity();
         if ($this->request->is('post')) {
-            $entity = $this->Dblists->patchEntity($entity, $this->request->data);
+            $entity = $this->Dblists->patchEntity($entity, (array)$this->request->getData());
             if ($this->Dblists->save($entity)) {
-                $this->Flash->success(__('The database list has been saved.'));
+                $this->Flash->success('The database list has been saved.');
 
                 return $this->redirect(['action' => 'index']);
             }
 
-            $this->Flash->error(__('The database list could not be saved. Please, try again.'));
+            $this->Flash->error('The database list could not be saved. Please, try again.');
         }
 
         $this->set(compact('entity'));
@@ -61,21 +62,21 @@ class DblistsController extends BaseController
      * Edit method
      *
      * @param string $id Dblist id.
-     * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     * @return \Cake\Http\Response|void|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id)
+    public function edit(string $id)
     {
         $entity = $this->Dblists->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $entity = $this->Dblists->patchEntity($entity, $this->request->data);
+            $entity = $this->Dblists->patchEntity($entity, (array)$this->request->getData());
             if ($this->Dblists->save($entity)) {
-                $this->Flash->success(__('The database list has been saved.'));
+                $this->Flash->success('The database list has been saved.');
 
                 return $this->redirect(['action' => 'index']);
             }
 
-            $this->Flash->error(__('The database list could not be saved. Please, try again.'));
+            $this->Flash->error('The database list could not be saved. Please, try again.');
         }
 
         $this->set(compact('entity'));
@@ -85,18 +86,18 @@ class DblistsController extends BaseController
     /**
      * Delete method
      *
-     * @param string|null $id Dblist id.
-     * @return \Cake\Network\Response|null Redirects to index.
+     * @param string $id Dblist id.
+     * @return \Cake\Http\Response|void|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(string $id)
     {
         $this->request->allowMethod(['post', 'delete']);
         $dblist = $this->Dblists->get($id);
         if ($this->Dblists->delete($dblist)) {
-            $this->Flash->success(__('The database list has been deleted.'));
+            $this->Flash->success('The database list has been deleted.');
         } else {
-            $this->Flash->error(__('The database list could not be deleted. Please, try again.'));
+            $this->Flash->error('The database list could not be deleted. Please, try again.');
         }
 
         return $this->redirect(['action' => 'index']);

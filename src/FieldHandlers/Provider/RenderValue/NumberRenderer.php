@@ -40,19 +40,13 @@ class NumberRenderer extends AbstractRenderer
     public function provide($data = null, array $options = [])
     {
         // Sanitize
-        $result = filter_var($data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-        if ($result === false) {
-            throw new InvalidArgumentException("Failed to sanitize number");
+        $number = filter_var($data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+
+        if ($number === false) {
+            throw new InvalidArgumentException('Failed to sanitize number');
         }
+        $decimals = isset($options['precision']) ? $options['precision'] : static::PRECISION;
 
-        $result = (float)$result;
-
-        if (!isset($options['precision'])) {
-            $options['precision'] = static::PRECISION;
-        }
-
-        $result = is_numeric($result) ? number_format($result, $options['precision']) : (string)$result;
-
-        return $result;
+        return number_format((float)$number, $decimals);
     }
 }

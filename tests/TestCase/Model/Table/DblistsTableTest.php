@@ -65,12 +65,16 @@ class DblistsTableTest extends TestCase
      */
     public function testGetOptions() : void
     {
-        $result = $this->Dblists->getOptions('categories');
-        $this->assertInternalType('array', $result);
-        $this->assertNotEmpty($result);
+        $expected = [
+            'corporate' => 'Corporate',
+            'leonid' => ' - Leonid',
+            'individual' => 'Individual',
+            'antonis' => ' - Antonis',
+            'george' => ' - George'
+        ];
+        $this->assertSame($expected, $this->Dblists->getOptions('categories'));
 
-        $result = $this->Dblists->getOptions('');
-        $this->assertSame([], $result);
+        $this->assertSame([], $this->Dblists->getOptions(''));
     }
 
     /**

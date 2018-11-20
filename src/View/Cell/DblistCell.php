@@ -47,12 +47,12 @@ class DblistCell extends Cell
 
         $query = $table->find()
             ->enableHydration(true)
-            ->where(['name' => $list])
+            ->where([$table->aliasField('name') => $list])
             ->matching('DblistItems', function ($q) use ($value) {
                 return $q->where(['DblistItems.value' => $value]);
             });
 
-        /** @var  \Cake\Datasource\EntityInterface|null */
+        /** @var \Cake\Datasource\EntityInterface|null */
         $entity = $query->first();
 
         if (null === $entity) {

@@ -77,10 +77,10 @@ class Config implements ConfigInterface
      * Constructor
      *
      * @param string $field Field name
-     * @param mixed $table Table name or instance
+     * @param \Cake\Datasource\RepositoryInterface|string $table Table name or instance
      * @param array $options Options
      */
-    public function __construct(string $field, $table = null, array $options = [])
+    public function __construct(string $field, $table = '', array $options = [])
     {
         $this->setField($field);
         $this->setTable($table);

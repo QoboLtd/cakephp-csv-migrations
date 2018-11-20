@@ -238,7 +238,7 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         $associations = [];
         foreach ($table->associations() as $association) {
-            if (in_array(Inflector::humanize($association->target()->table()), $modules)) {
+            if (in_array(Inflector::humanize($association->getTarget()->getTable()), $modules)) {
                 $associations[] = $association;
             }
         }
@@ -275,7 +275,7 @@ class ModelAfterSaveListener implements EventListenerInterface
     protected function isRequiredModified(EntityInterface $entity, array $requiredFields) : bool
     {
         foreach ($requiredFields as $field) {
-            if ($entity->dirty($field)) {
+            if ($entity->isDirty($field)) {
                 return true;
             }
         }
@@ -383,11 +383,11 @@ class ModelAfterSaveListener implements EventListenerInterface
         $mailer = new IcEmail($table, $entity);
 
         $result = [
-            'id' => $entity->id,
+            'id' => $entity->get('id'),
             'sequence' => $entity->isNew() ? 0 : time(),
             'summary' => $mailer->getEventSubject(),
             'description' => $mailer->getEventContent(),
-            'location' => $entity->get('location'),
+            'location' => (string)$entity->get('location'),
             'startTime' => $eventTimes['start'],
             'endTime' => $eventTimes['end'],
         ];

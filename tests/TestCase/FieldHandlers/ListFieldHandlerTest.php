@@ -131,7 +131,7 @@ class ListFieldHandlerTest extends TestCase
             'unique' => false
         ]);
 
-        $result = $this->fh->renderInput(null, $options);
+        $result = $this->fh->renderInput('', $options);
 
         $this->assertContains('"' . $value . '"', $result);
         $this->assertContains($label, $result);

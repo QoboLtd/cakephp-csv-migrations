@@ -26,7 +26,7 @@ class BlobFieldHandlerTest extends TestCase
 
     public function testRenderInput() : void
     {
-        $result = $this->fh->renderInput(null);
+        $result = $this->fh->renderInput('');
 
         $this->assertContains('name="' . $this->table . '[' . $this->field . ']"', $result);
         $this->assertContains('<textarea', $result);

@@ -1,6 +1,7 @@
 <?php
 use Cake\Core\Configure;
 use Cake\Filesystem\Folder;
+use Cake\Mailer\Email;
 use Cake\Utility\Security;
 
 $pluginName = 'CsvMigrations';
@@ -46,8 +47,11 @@ define('CAKE', CORE_PATH . 'src' . DS);
 require ROOT . '/vendor/autoload.php';
 require CORE_PATH . 'config/bootstrap.php';
 
+mb_internal_encoding('UTF-8');
+
 Configure::write('App', [
     'namespace' => $pluginName . '\Test\App',
+    'encoding' => 'UTF-8',
     'paths' => [
         'templates' => [
             APP . 'Template' . DS
@@ -116,3 +120,28 @@ Cake\Core\Plugin::load($pluginName, ['path' => ROOT . DS, 'autoload' => true, 'r
 // Load configuration file(s)
 Configure::load('CsvMigrations.csv_migrations');
 Configure::load('CsvMigrations.importer');
+
+/**
+ * Borrowed from CakePHP (3.6.13)
+ *
+ * @link https://github.com/cakephp/cakephp/blob/3.6.13/tests/TestCase/Mailer/EmailTest.php#L131-L138
+ */
+Email::setConfigTransport([
+    'debug' => [
+        'className' => 'Debug',
+    ],
+]);
+
+/**
+ * Borrowed from CakePHP (3.6.13)
+ *
+ * @link https://github.com/cakephp/cakephp/blob/3.6.13/tests/TestCase/Mailer/EmailTest.php#L2245-L2248
+ */
+Email::setConfig([
+    'default' => [
+        'from' => ['some@example.com' => 'My website'],
+        'to' => 'test@example.com',
+        'subject' => 'Test mail subject',
+        'transport' => 'debug',
+    ]
+]);

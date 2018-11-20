@@ -352,12 +352,12 @@ class CsvField
     /**
      * Set field required flag
      *
-     * @param bool $required field required flag
+     * @param mixed $required field required flag
      * @return void
      */
-    public function setRequired(bool $required) : void
+    public function setRequired($required) : void
     {
-        $this->_required = $required;
+        $this->_required = (bool)$required;
     }
 
     /**
@@ -373,12 +373,12 @@ class CsvField
     /**
      * Set field non-searchable flag
      *
-     * @param bool $nonSearchable Field non-searchable flag
+     * @param mixed $nonSearchable Field non-searchable flag
      * @return void
      */
-    public function setNonSearchable(bool $nonSearchable) : void
+    public function setNonSearchable($nonSearchable) : void
     {
-        $this->_nonSearchable = $nonSearchable;
+        $this->_nonSearchable = (bool)$nonSearchable;
     }
 
     /**
@@ -394,12 +394,12 @@ class CsvField
     /**
      * Set field unique flag
      *
-     * @param bool $unique field unique flag
+     * @param mixed $unique field unique flag
      * @return void
      */
-    public function setUnique(bool $unique) : void
+    public function setUnique($unique) : void
     {
-        $this->_unique = $unique;
+        $this->_unique = (bool)$unique;
     }
 
     /**

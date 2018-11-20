@@ -33,7 +33,7 @@ class IcEvent
      * @var array $defaultParams Default event configuration parameters
      */
     protected $defaultParams = [
-        'id' => null,
+        'id' => '',
         'sequence' => 0,
         'summary' => 'Reminder',
         'description' => '',

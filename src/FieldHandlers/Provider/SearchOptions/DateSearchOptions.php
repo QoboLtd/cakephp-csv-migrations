@@ -54,7 +54,7 @@ class DateSearchOptions extends AbstractSearchOptions
                 ]
             ]);
         } else {
-            $template = $view->Form->input('{{name}}', [
+            $template = $view->Form->control('{{name}}', [
                 'value' => '{{value}}',
                 'type' => 'text',
                 'data-provide' => 'datepicker',

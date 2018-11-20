@@ -32,7 +32,7 @@ class SublistFieldHandlerTest extends TestCase
             'unique' => false
         ]);
 
-        $result = $this->fh->renderInput(null, $options);
+        $result = $this->fh->renderInput('', $options);
 
         $this->assertContains('data-type="dynamic-select"', $result);
         $this->assertContains('data-target', $result);
@@ -41,8 +41,9 @@ class SublistFieldHandlerTest extends TestCase
         $this->assertContains('data-selectors', $result);
 
         $mc = new ModuleConfig(ConfigType::LISTS(), '', 'countries');
-        $config = $mc->parse();
-        $items = property_exists($config, 'items') ? $config->items : [];
+        $config = json_encode($mc->parse());
+        $config = false !== $config ? json_decode($config, true) : [];
+        $items = isset($config['items']) ? $config['items'] : [];
         foreach ($items as $key => $item) {
             if ((bool)$item['inactive']) {
                 $this->assertNotContains(h('"' . $key . '"'), $result);

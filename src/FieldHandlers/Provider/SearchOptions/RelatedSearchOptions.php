@@ -55,7 +55,7 @@ class RelatedSearchOptions extends AbstractSearchOptions
         $content = sprintf(
             static::HTML_INPUT,
             $this->_getInputIcon($relatedProperties),
-            $view->Form->input($field, [
+            $view->Form->control($field, [
                 'label' => false,
                 'name' => '{{name}}',
                 'id' => $field,

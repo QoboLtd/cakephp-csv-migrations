@@ -87,7 +87,7 @@ class Table extends BaseTable
         $factory = new FieldHandlerFactory();
 
         foreach ($config as $column) {
-            $validator = $factory->setValidationRules($this, $column->name, $validator);
+            $validator = $factory->setValidationRules($this, $column['name'], $validator);
         }
 
         return $validator;
@@ -151,7 +151,7 @@ class Table extends BaseTable
         if ('self' === $config->parent->redirect) {
             $values = [];
             foreach ((array)$table->getPrimaryKey() as $primaryKey) {
-                $values = $entity->get($primaryKey);
+                $values[] = $entity->get($primaryKey);
             }
 
             return array_merge(['action' => 'view'], $values);

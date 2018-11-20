@@ -234,11 +234,11 @@ class FieldHandler implements FieldHandlerInterface
      * and so on.  The result can be controlled via the variety
      * of options.
      *
-     * @param  string $data    Field data
+     * @param  mixed $data    Field data
      * @param  array  $options Field options
      * @return string          Field input HTML
      */
-    public function renderInput(string $data = '', array $options = []) : string
+    public function renderInput($data = '', array $options = []) : string
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
 
@@ -313,11 +313,11 @@ class FieldHandler implements FieldHandlerInterface
      * field.  The result can be controlled via the variety of
      * options.
      *
-     * @param  string $data    Field data
+     * @param  mixed $data    Field data
      * @param  array  $options Field options
      * @return string          Field value
      */
-    public function renderValue(string $data, array $options = []) : string
+    public function renderValue($data, array $options = []) : string
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $result = $this->getFieldValueFromData($data, $options);
@@ -403,11 +403,11 @@ class FieldHandler implements FieldHandlerInterface
     /**
      * Get field value from given data
      *
-     * @param string $data Variable to extract value from
+     * @param mixed $data Variable to extract value from
      * @param mixed[] $options Field options
      * @return mixed
      */
-    protected function getFieldValueFromData(string $data, array $options)
+    protected function getFieldValueFromData($data, array $options)
     {
         $fieldValue = $this->config->getProvider('fieldValue');
         $fieldValue = new $fieldValue($this->config);

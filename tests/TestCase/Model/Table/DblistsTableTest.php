@@ -63,15 +63,13 @@ class DblistsTableTest extends TestCase
      *
      * @return void
      */
-    public function testOptions() : void
+    public function testGetOptions() : void
     {
-        $list = 'categories';
-        $query = $this->Dblists->find('options', ['name' => $list]);
-        $this->assertInstanceOf('Cake\ORM\Query', $query);
-        $this->assertFalse($query->isEmpty());
+        $result = $this->Dblists->getOptions('categories');
+        $this->assertInternalType('array', $result);
+        $this->assertNotEmpty($result);
 
-        $list = null;
-        $result = $this->Dblists->find('options', ['name' => $list]);
+        $result = $this->Dblists->getOptions('');
         $this->assertSame([], $result);
     }
 

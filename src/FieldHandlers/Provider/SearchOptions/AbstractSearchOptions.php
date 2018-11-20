@@ -66,7 +66,7 @@ abstract class AbstractSearchOptions extends AbstractProvider
     protected function getBasicTemplate(string $type) : string
     {
         $view = $this->config->getView();
-        $result = $view->Form->input('{{name}}', [
+        $result = $view->Form->control('{{name}}', [
             'value' => '{{value}}',
             'type' => $type,
             'label' => false

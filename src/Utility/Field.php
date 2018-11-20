@@ -167,8 +167,9 @@ class Field
 
         $config = new ModuleConfig(ConfigType::LISTS(), $moduleName, $listName, ['flatten' => $flat]);
         try {
-            $config = $config->parse();
-            $items = property_exists($config, 'items') ? $config->items : [];
+            $config = json_encode($config->parse());
+            $config = false !== $config ? json_decode($config, true) : [];
+            $items = isset($config['items']) ? $config['items'] : [];
         } catch (InvalidArgumentException $e) {
             return [];
         }

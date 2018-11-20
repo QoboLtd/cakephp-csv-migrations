@@ -34,7 +34,7 @@ class MoneyFieldHandlerTest extends TestCase
             'unique' => false
         ]);
 
-        $result = $this->fh->renderValue(null, $options);
+        $result = $this->fh->renderValue('', $options);
 
         $this->assertEquals('150.00&nbsp;EUR', $result);
     }
@@ -49,11 +49,12 @@ class MoneyFieldHandlerTest extends TestCase
             'unique' => false
         ]);
 
-        $result = $this->fh->renderInput(null, $options);
+        $result = $this->fh->renderInput('', $options);
 
         $mc = new ModuleConfig(ConfigType::LISTS(), '', 'countries');
-        $config = $mc->parse();
-        $items = property_exists($config, 'items') ? $config->items : [];
+        $config = json_encode($mc->parse());
+        $config = false !== $config ? json_decode($config, true) : [];
+        $items = isset($config['items']) ? $config['items'] : [];
         foreach ($items as $key => $item) {
             if ((bool)$item['inactive']) {
                 $this->assertNotContains('value="' . $key . '"', $result);

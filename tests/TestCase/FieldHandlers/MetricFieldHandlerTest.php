@@ -34,7 +34,7 @@ class MetricFieldHandlerTest extends TestCase
             'unique' => false
         ]);
 
-        $result = $this->fh->renderValue(null, $options);
+        $result = $this->fh->renderValue('', $options);
 
         $this->assertEquals('135.50&nbsp;ft&sup2;', $result);
     }
@@ -49,11 +49,12 @@ class MetricFieldHandlerTest extends TestCase
             'unique' => false
         ]);
 
-        $result = $this->fh->renderInput(null, $options);
+        $result = $this->fh->renderInput('', $options);
 
         $mc = new ModuleConfig(ConfigType::LISTS(), '', 'units_area');
-        $config = $mc->parse();
-        $items = property_exists($config, 'items') ? $config->items : [];
+        $config = json_encode($mc->parse());
+        $config = false !== $config ? json_decode($config, true) : [];
+        $items = isset($config['items']) ? $config['items'] : [];
         foreach ($items as $key => $item) {
             if ((bool)$item['inactive']) {
                 $this->assertNotContains('value="' . $key . '"', $result);

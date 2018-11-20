@@ -136,7 +136,7 @@ class IcEmail
     {
         $result = sprintf(
             '%s: %s',
-            Inflector::singularize($this->table->alias()),
+            Inflector::singularize($this->table->getAlias()),
             $this->getDisplayValue()
         );
 
@@ -156,7 +156,7 @@ class IcEmail
     {
         $result = '';
 
-        $module = Inflector::singularize($this->table->alias());
+        $module = Inflector::singularize($this->table->getAlias());
         $displayValue = $this->getDisplayValue();
         $user = $this->getUserString();
         $action = $this->entity->isNew() ? 'created' : 'updated';
@@ -231,7 +231,7 @@ class IcEmail
         $result = Router::url(
             [
                 'prefix' => false,
-                'controller' => $this->table->table(),
+                'controller' => $this->table->getTable(),
                 'action' => 'view',
                 $this->entity->id
             ],

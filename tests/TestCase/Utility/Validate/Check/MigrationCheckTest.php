@@ -32,7 +32,18 @@ class MigrationCheckTest extends TestCase
     public function testRunMissingName(): void
     {
         $this->check->run('Foo', ['configFile' => 'missing_name_migration.json']);
-        $this->assertNotEmpty($this->check->getErrors());
+        $errors = $this->check->getErrors();
+        $this->assertNotEmpty($errors);
+        $this->assertEquals("[Foo][migration] parse : [missing_name_migration.json] : Validation failed", $errors[0]);
+
+    }
+
+    public function testRunDuplicatedName(): void
+    {
+        $this->check->run('Foo', ['configFile' => 'duplicated_name_migration.json']);
+        $errors = $this->check->getErrors();
+        $this->assertNotEmpty($errors);
+        $this->assertEquals("Foo migration specifies field 'id' more than once", $errors[0]);
     }
 
     public function testGetWarnings() : void

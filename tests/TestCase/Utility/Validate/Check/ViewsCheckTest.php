@@ -30,6 +30,12 @@ class ViewsCheckTest extends TestCase
         $this->assertTrue(is_int($result), "run() returned a non-integer result");
     }
 
+    public function testRunNonEmpty() : void
+    {
+        $result = $this->check->run('Foo');
+        $this->assertTrue(is_int($result), "run() returned a non-integer result");
+    }
+
     public function testRunTooManyColumns() : void
     {
         Configure::write('CsvMigrations.actions', ['too_many_columns']);

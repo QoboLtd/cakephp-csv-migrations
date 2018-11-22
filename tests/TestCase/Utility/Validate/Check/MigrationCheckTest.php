@@ -10,6 +10,7 @@ use CsvMigrations\Utility\Validate\Check\MigrationCheck;
  */
 class MigrationCheckTest extends TestCase
 {
+    /** @var MigrationCheck */
     protected $check;
 
     public function setUp() : void
@@ -26,6 +27,12 @@ class MigrationCheckTest extends TestCase
     {
         $result = $this->check->run('Users');
         $this->assertTrue(is_int($result), "run() returned a non-integer result");
+    }
+
+    public function testRunMissingName(): void
+    {
+        $this->check->run('Foo', ['configFile' => 'missing_name_migration.json']);
+        $this->assertNotEmpty($this->check->getErrors());
     }
 
     public function testGetWarnings() : void

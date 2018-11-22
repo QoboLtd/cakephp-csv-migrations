@@ -53,11 +53,11 @@ if ($options['hasPanels']) {
 if (!empty($this->request->getQuery('embedded'))) {
     $formOptions['url']['prefix'] = 'api';
 
-    $embeddedTableName = $this->request->controller;
+    $embeddedTableName = $this->request->getParam('controller');
     if (!empty($this->request->getParam('plugin'))) {
         $embeddedTableName = $this->request->getParam('plugin') . '.' . $embeddedTableName;
     }
-    $formOptions['data-embedded-display-field'] = TableRegistry::get($embeddedTableName)->displayField();
+    $formOptions['data-embedded-display-field'] = TableRegistry::get($embeddedTableName)->getDisplayField();
     $formOptions['data-embedded-field-id'] = $this->request->getQuery('foreign_key');
     $formOptions['data-embedded'] = true;
     $formOptions['data-embedded-association-name'] = $this->request->getQuery('embedded');

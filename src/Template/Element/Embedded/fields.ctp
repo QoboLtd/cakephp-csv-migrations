@@ -42,7 +42,7 @@ foreach ($fields as $field) {
     list($plugin, $controller) = pluginSplit($tableName);
     try {
         echo $this->requestAction(
-            ['plugin' => $plugin, 'controller' => $controller, 'action' => $this->request->action],
+            ['plugin' => $plugin, 'controller' => $controller, 'action' => $this->request->getParam('action')],
             [
                 'query' => ['embedded' => $this->name . '.' . $associationName],
                 'pass' => [$options['entity']->get($fieldName)]

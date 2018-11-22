@@ -24,7 +24,7 @@ $fields = array_column($config, 0);
 $options = [
     'associationName' => $association->getName(),
     'originTable' => $table->getTable(),
-    'id' => $this->request->param('pass.0'),
+    'id' => $this->request->getParam('pass.0'),
     'format' => 'pretty',
     'menus' => true
 ];

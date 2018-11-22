@@ -32,7 +32,7 @@ trait ImportTrait
 
         // AJAX logic
         if ($this->request->accepts('application/json')) { // Import/progress.ctp
-            $this->viewBuilder()->className('Json');
+            $this->viewBuilder()->setClassName('Json');
             $utility = new ImportUtility($this->{$this->name}, $this->request, $this->Flash);
             $columns = ['row_number', 'status', 'status_message'];
             /** @var \Cake\Datasource\QueryInterface&\Cake\ORM\Query */

@@ -160,7 +160,7 @@ class Import
         $sortCol = Hash::get($this->request->getQueryParams(), 'order.0.column', 0);
         $sortCol = array_key_exists($sortCol, $columns) ? $columns[$sortCol] : current($columns);
 
-        $sortDir = $this->request->query('order.0.dir') ?: 'asc';
+        $sortDir = Hash::get($this->request->getQueryParams(), 'order.0.dir', 'asc');
         if (!in_array($sortDir, ['asc', 'desc'])) {
             $sortDir = 'asc';
         }

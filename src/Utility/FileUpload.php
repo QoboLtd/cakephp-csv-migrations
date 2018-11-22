@@ -56,7 +56,7 @@ final class FileUpload
     /**
      * Table instance.
      *
-     * @var \Cake\ORM\Table
+     * @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table
      */
     private $table;
 
@@ -77,11 +77,14 @@ final class FileUpload
     /**
      * Contructor method.
      *
-     * @param \Cake\ORM\Table $table Table Instance
+     * @param \Cake\Datasource\RepositoryInterface $table Table Instance
      * @return void
      */
     public function __construct(RepositoryInterface $table)
     {
+        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
+        $table = $table;
+
         $this->table = $table;
         $this->storageTable = TableRegistry::get(self::FILE_STORAGE_TABLE_NAME);
 

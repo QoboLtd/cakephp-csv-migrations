@@ -96,22 +96,20 @@ class ModelAfterSaveListener implements EventListenerInterface
         // get attendees Table for the event (example: Users)
         $remindersTo = $this->getRemindersToModules($table);
         if (empty($remindersTo)) {
-            $this->log('Failed to find reminder modules', LogLevel::ERROR);
-
             return [];
         }
 
         // figure out which field is a reminder one (example: start_date)
         $reminderField = $this->getReminderField($table);
         if ('' === $reminderField) {
-            $this->log('Failed to find reminder fields', LogLevel::ERROR);
+            $this->log('Failed to find reminder fields', LogLevel::NOTICE);
 
             return [];
         }
 
         // skip sending email if reminder field is empty
         if (empty($entity->get($reminderField))) {
-            $this->log('Reminder field has no value', LogLevel::ERROR);
+            $this->log('Reminder field has no value', LogLevel::INFO);
 
             return [];
         }
@@ -119,7 +117,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         // find attendee fields (example: assigned_to)
         $attendeesFields = $this->getAttendeesFields($table, $remindersTo);
         if (empty($attendeesFields)) {
-            $this->log('Failed to find attendee fields', LogLevel::ERROR);
+            $this->log('Failed to find attendee fields', LogLevel::NOTICE);
 
             return [];
         }
@@ -128,7 +126,7 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         // skip if none of the required fields was modified
         if (! $this->isRequiredModified($entity, $requiredFields)) {
-            $this->log('None of the required fields were modified', LogLevel::ERROR);
+            $this->log('None of the required fields were modified', LogLevel::INFO);
 
             return [];
         }
@@ -136,7 +134,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         // get attendee emails
         $emails = $this->getAttendees($table, $entity, $attendeesFields);
         if (empty($emails)) {
-            $this->log('Failed to find attendee emails', LogLevel::ERROR);
+            $this->log('Failed to find attendee emails', LogLevel::NOTICE);
 
             return [];
         }

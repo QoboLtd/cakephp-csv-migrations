@@ -33,7 +33,7 @@ class ValidateShell extends Shell
     public function getOptionParser()
     {
         $parser = new ConsoleOptionParser('console');
-        $parser->description('Validate modules configuration');
+        $parser->setDescription('Validate modules configuration');
         $parser->addArgument('modules', [
             'help' => 'Comma-separated list of modules to validate.  All will be checked if omitted.',
         ]);
@@ -47,7 +47,7 @@ class ValidateShell extends Shell
      * @param string $modules Comma-separated list of module names to validate
      * @return void
      */
-    public function main(string $modules)
+    public function main(string $modules = '')
     {
         $this->info('Checking modules configuration');
         $this->hr();

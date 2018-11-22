@@ -28,8 +28,8 @@ $modalBody = $this->requestAction(
         'query' => [
             'embedded' => $association->getName(),
             'foreign_key' => $association->getForeignKey(),
-            'related_model' => Inflector::delimit($this->request->controller, '-'),
-            'related_id' => $this->request->pass[0],
+            'related_model' => Inflector::delimit($this->request->getParam('controller'), '-'),
+            'related_id' => $this->request->getParam('pass.0'),
         ]
     ]
 );

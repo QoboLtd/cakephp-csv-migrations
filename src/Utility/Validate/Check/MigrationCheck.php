@@ -54,12 +54,6 @@ class MigrationCheck extends AbstractCheck
 
         // Check each field one by one
         foreach ($fields as $field) {
-            // Field name is required
-            if (empty($field['name'])) {
-                $this->errors[] = $module . " migration has a field without a name";
-                continue;
-            }
-
             // Check for field duplicates
             if (in_array($field['name'], $seenFields)) {
                 $this->errors[] = $module . " migration specifies field '" . $field['name'] . "' more than once";

@@ -53,7 +53,7 @@ if ($options['hasPanels']) {
 if (!empty($this->request->getQuery('embedded'))) {
     $formOptions['url']['prefix'] = 'api';
 
-    $embeddedTableName = $this->request->controller;
+    $embeddedTableName = $this->request->getParam('controller');
     if (!empty($this->request->getParam('plugin'))) {
         $embeddedTableName = $this->request->getParam('plugin') . '.' . $embeddedTableName;
     }

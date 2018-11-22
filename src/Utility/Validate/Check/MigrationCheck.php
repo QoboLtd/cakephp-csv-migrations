@@ -27,7 +27,9 @@ class MigrationCheck extends AbstractCheck
      */
     public function run(string $module, array $options = []) : int
     {
-        $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
+        $configFile = empty($options['configFile']) ? null : $options['configFile'];
+
+        $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, $configFile, ['cacheSkip' => true]);
         $fields = [];
         try {
             $config = json_encode($mc->parse());

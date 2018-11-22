@@ -10,7 +10,7 @@ use CsvMigrations\Utility\Validate\Check\MigrationCheck;
  */
 class MigrationCheckTest extends TestCase
 {
-    /** @var MigrationCheck */
+    /** @var \CsvMigrations\Utility\Validate\Check\MigrationCheck */
     protected $check;
 
     public function setUp() : void

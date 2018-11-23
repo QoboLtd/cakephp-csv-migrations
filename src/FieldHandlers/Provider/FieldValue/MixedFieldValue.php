@@ -55,11 +55,11 @@ class MixedFieldValue extends AbstractProvider
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity to look for field value in
      * @param string $field Field name
-     * @return string Field value
+     * @return mixed Field value
      */
-    protected function provideFromEntity(EntityInterface $entity, string $field) : string
+    protected function provideFromEntity(EntityInterface $entity, string $field)
     {
-        return $entity->has($field) ? $entity->get($field) : '';
+        return $entity->get($field);
     }
 
     /**

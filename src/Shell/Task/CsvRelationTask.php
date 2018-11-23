@@ -19,6 +19,8 @@ use Qobo\Utils\Utility;
 
 /**
  * This class is responsible for baking relation's bootstrap configuration files.
+ *
+ * @property \Bake\Shell\Task\BakeTemplateTask $BakeTemplate
  */
 class CsvRelationTask extends BakeTask
 {
@@ -39,11 +41,6 @@ class CsvRelationTask extends BakeTask
     ];
 
     /**
-     * @var \Bake\Shell\Task\BakeTemplateTask
-     */
-    public $BakeTemplate;
-
-    /**
      * Configure option parser
      *
      * @return \Cake\Console\ConsoleOptionParser
@@ -51,9 +48,7 @@ class CsvRelationTask extends BakeTask
     public function getOptionParser()
     {
         $parser = parent::getOptionParser();
-        $parser->description(
-            'Bakes Relation bootstrap configuration files'
-        );
+        $parser->setDescription('Bakes Relation bootstrap configuration files');
 
         return $parser;
     }

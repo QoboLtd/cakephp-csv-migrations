@@ -62,7 +62,7 @@ class SeedShell extends Shell
     public function getOptionParser()
     {
         $parser = parent::getOptionParser();
-        $parser->description('CSV Migration Seeder');
+        $parser->setDescription('CSV Migration Seeder');
 
         $parser->addOption('numberofrecords', [
             'short' => 'n',
@@ -158,9 +158,9 @@ class SeedShell extends Shell
      * @param string $type type.
      * @param string $moduleName module name.
      * @param string $listName listName.
-     * @return null|string
+     * @return mixed
      */
-    protected function getFieldValueBasedOnType(string $type, string $moduleName = '', string $listName = '') : ?string
+    protected function getFieldValueBasedOnType(string $type, string $moduleName = '', string $listName = '')
     {
         $faker = Factory::create();
 
@@ -287,8 +287,8 @@ class SeedShell extends Shell
     {
         $mc = new ModuleConfig(ConfigType::LISTS(), $module, $listName);
         try {
-            $config = $mc->parse();
-            $listData = property_exists($config, 'items') ? $config->items : [];
+            $config = $mc->parseToArray();
+            $listData = array_key_exists('items', $config) ? $config['items'] : [];
         } catch (InvalidArgumentException $e) {
             return [];
         }

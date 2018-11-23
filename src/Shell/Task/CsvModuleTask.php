@@ -18,6 +18,8 @@ use Qobo\Utils\Utility;
 
 /**
  * This class is responsible for baking module's bootstrap configuration files and MVC classes.
+ *
+ * @property \Bake\Shell\Task\BakeTemplateTask $BakeTemplate
  */
 class CsvModuleTask extends BakeTask
 {
@@ -38,11 +40,6 @@ class CsvModuleTask extends BakeTask
     ];
 
     /**
-     * @var \Bake\Shell\Task\BakeTemplateTask
-     */
-    public $BakeTemplate;
-
-    /**
      * Configure option parser
      *
      * @return \Cake\Console\ConsoleOptionParser
@@ -50,9 +47,7 @@ class CsvModuleTask extends BakeTask
     public function getOptionParser()
     {
         $parser = parent::getOptionParser();
-        $parser->description(
-            'Bakes Module bootstrap configuration files and MVC classes'
-        );
+        $parser->setDescription('Bakes Module bootstrap configuration files and MVC classes');
         $parser->addArgument('name', [
             'help' => 'The Module name to bake',
             'required' => true

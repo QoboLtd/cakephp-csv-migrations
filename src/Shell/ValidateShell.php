@@ -83,8 +83,8 @@ class ValidateShell extends Shell
             $moduleResult = $this->runModuleChecks($module);
 
             $result += count($moduleResult['errors']);
-            $this->printMessages('warning', $moduleResult['warnings']);
-            $this->printMessages('error', $moduleResult['errors']);
+            $this->printMessages('warn', $moduleResult['warnings']);
+            $this->printMessages('err', $moduleResult['errors']);
             $this->hr();
         }
 
@@ -156,7 +156,7 @@ class ValidateShell extends Shell
             return;
         }
 
-        $this->out($this->wrapMessageWithType('error', 'FAIL'));
+        $this->err('FAIL');
     }
 
     /**
@@ -181,7 +181,7 @@ class ValidateShell extends Shell
         $messages = array_unique($messages);
 
         $plural = ucfirst($plural);
-        $this->out($this->wrapMessageWithType($type, "$plural (" . count($messages) . "):"));
+        $this->{$type}("$plural (" . count($messages) . "):");
 
         // Remove ROOT path for shorter output
         $messages = preg_replace('#' . ROOT . DS . '#', '', $messages);
@@ -195,6 +195,6 @@ class ValidateShell extends Shell
             return;
         }
 
-        $this->out($this->wrapMessageWithType($type, $messages));
+        $this->{$type}($messages);
     }
 }

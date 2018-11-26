@@ -35,7 +35,6 @@ class MigrationCheckTest extends TestCase
         $errors = $this->check->getErrors();
         $this->assertNotEmpty($errors);
         $this->assertEquals("[Foo][migration] parse : [missing_name_migration.json] : Validation failed", $errors[0]);
-
     }
 
     public function testRunDuplicatedName(): void

@@ -1,0 +1,13 @@
+{
+    "items": [
+        [
+            "Details",
+            "status",
+            "EMBEDDED(Users.name)",
+            "EMBEDDED(Users)",
+            "EMBEDDED(name)",
+            "EMBEDDED(Use.name)",
+            "EMBEDDED(Users.)"
+        ]
+    ]
+}

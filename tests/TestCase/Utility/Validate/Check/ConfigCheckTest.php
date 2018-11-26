@@ -41,4 +41,24 @@ class ConfigCheckTest extends TestCase
         $result = $this->check->getErrors();
         $this->assertTrue(is_array($result), "getErrors() returned a non-array result");
     }
+
+    /**
+     * Test an invalid module
+     */
+    public function testInvalidModule() : void
+    {
+        $result = $this->check->run('Users1');
+        $result = $this->check->getErrors();
+        $this->assertTrue(is_array($result), "getErrors() returned a non-array result");
+    }
+
+    /**
+     * Test an invalid configuration module file
+     */
+    public function testInvalidConfig() : void
+    {
+        $result = $this->check->run('Books', [ 'icon_bad_values' => ['cube'], 'display_field_bad_values' => ["title2"] ]);
+        $result = $this->check->getErrors();
+        $this->assertTrue(is_array($result), "getErrors() returned a non-array result");
+    }
 }

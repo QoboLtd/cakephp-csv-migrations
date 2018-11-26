@@ -27,7 +27,9 @@ class MigrationCheck extends AbstractCheck
      */
     public function run(string $module, array $options = []) : int
     {
-        $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
+        $configFile = empty($options['configFile']) ? null : $options['configFile'];
+
+        $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, $configFile, ['cacheSkip' => true]);
         $fields = [];
         try {
             $config = json_encode($mc->parse());
@@ -52,12 +54,6 @@ class MigrationCheck extends AbstractCheck
 
         // Check each field one by one
         foreach ($fields as $field) {
-            // Field name is required
-            if (empty($field['name'])) {
-                $this->errors[] = $module . " migration has a field without a name";
-                continue;
-            }
-
             // Check for field duplicates
             if (in_array($field['name'], $seenFields)) {
                 $this->errors[] = $module . " migration specifies field '" . $field['name'] . "' more than once";

@@ -1,0 +1,51 @@
+{
+    "table": {
+        "searchable": true,
+        "display_field": "title2",
+        "lookup_fields": [
+            "title"
+        ],
+        "typeahead_fields": [
+            "title"
+        ],
+        "icon": "cube",
+        "basic_search_fields": [],
+        "allow_reminders": [],
+        "translatable": false,
+        "permissions_parent_modules": []
+    },
+    "parent": {
+        "module": "CategoriesWrong",
+        "redirect": "parent",
+        "relation": "document_id"
+    },
+    "virtualFields": {
+        "name": [
+            "first_name",
+            "last_name"
+        ]
+    },
+    "associations": {
+        "hide_associations": []
+    },
+    "panels": {
+        "Details": "(%%type%%=='draft')",
+        "Details": "(%%type%%=='published')",
+        "Details": "(%%type%%=='')"
+    },
+    "associationLabels": {},
+    "notifications": {
+        "enable": false,
+        "ignored_fields": "title,title2"
+    },
+    "conversion":{
+        "modules": "Users",
+        "inherit": "Users",
+        "field": "id"
+    },
+    "manyToMany": {
+        "modules": [
+            "Users"
+        ]
+    }
+}

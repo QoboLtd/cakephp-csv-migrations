@@ -65,11 +65,6 @@ class ViewsCheck extends AbstractCheck
             }
 
             foreach ($fields as $field) {
-                if (count($field) > 13) { // Panel name + 12 fields of the grid maximum
-                    $this->errors[] = $module . " module [$view] view has more than 12 columns";
-                    continue;
-                }
-
                 if (count($field) === 1) {
                     // index view
                     if ($field[0] && !Utility::isValidModuleField($module, $field[0])) {

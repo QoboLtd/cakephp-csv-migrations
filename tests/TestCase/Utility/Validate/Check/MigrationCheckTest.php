@@ -10,6 +10,7 @@ use CsvMigrations\Utility\Validate\Check\MigrationCheck;
  */
 class MigrationCheckTest extends TestCase
 {
+    /** @var \CsvMigrations\Utility\Validate\Check\MigrationCheck */
     protected $check;
 
     public function setUp() : void
@@ -26,6 +27,22 @@ class MigrationCheckTest extends TestCase
     {
         $result = $this->check->run('Users');
         $this->assertTrue(is_int($result), "run() returned a non-integer result");
+    }
+
+    public function testRunMissingName(): void
+    {
+        $this->check->run('Foo', ['configFile' => 'missing_name_migration.json']);
+        $errors = $this->check->getErrors();
+        $this->assertNotEmpty($errors);
+        $this->assertEquals("[Foo][migration] parse : [missing_name_migration.json] : Validation failed", $errors[0]);
+    }
+
+    public function testRunDuplicatedName(): void
+    {
+        $this->check->run('Foo', ['configFile' => 'duplicated_name_migration.json']);
+        $errors = $this->check->getErrors();
+        $this->assertNotEmpty($errors);
+        $this->assertEquals("Foo migration specifies field 'id' more than once", $errors[0]);
     }
 
     public function testGetWarnings() : void

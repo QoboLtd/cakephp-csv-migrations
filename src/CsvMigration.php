@@ -18,6 +18,7 @@ use CsvMigrations\FieldHandlers\DbField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use Migrations\AbstractMigration;
 use Migrations\Table;
+use PDOException;
 use Psr\Log\LogLevel;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
@@ -129,7 +130,11 @@ class CsvMigration extends AbstractMigration
         $data = json_decode($data, true);
         $data = array_merge($data, self::$_requiredFields);
 
-        $tableFields = $this->table->getColumns();
+        try {
+            $tableFields = $this->table->getColumns();
+        } catch (PDOException $e) {
+            $tableFields = [];
+        }
 
         empty($tableFields) ?
             $this->createFromCsv($data, $tableName) :

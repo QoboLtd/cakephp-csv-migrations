@@ -1,8 +1,6 @@
 <?php
 namespace CsvMigrations\Test\TestCase\Utility\Validate\Check;
 
-use Cake\Core\Configure;
-use Cake\Core\Configure\Engine\IniConfig;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\Utility\Validate\Check\CheckInterface;
 use CsvMigrations\Utility\Validate\Check\ConfigCheck;

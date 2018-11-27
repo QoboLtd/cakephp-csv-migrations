@@ -42,7 +42,7 @@ echo $this->Html->scriptBlock(
 );
 
 echo $this->Html->scriptBlock(
-    'var tinymce_init_config = ' . json_encode(Configure::read('TinyMCE')) . ';',
+    'var tinymce_init_config = ' . json_encode(Configure::read('CsvMigrations.TinyMCE')) . ';',
     ['block' => 'scriptBottom']
 );
 

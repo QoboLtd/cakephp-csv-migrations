@@ -41,6 +41,11 @@ echo $this->Html->scriptBlock(
     ['block' => 'scriptBottom']
 );
 
+echo $this->Html->scriptBlock(
+    'var tinymce_init_config = ' . json_encode(Configure::read('CsvMigrations.TinyMCE')) . ';',
+    ['block' => 'scriptBottom']
+);
+
 echo $this->Html->script(
     [
         'CsvMigrations.dom-observer',
@@ -64,6 +69,8 @@ echo $this->Html->script(
         'AdminLTE./plugins/select2/select2.full.min',
         'CsvMigrations.select2.init',
         'CsvMigrations.plugin',
+        'Qobo/Utils./plugins/tinymce/tinymce.min',
+        'CsvMigrations.tinymce.init',
     ],
     [
         'block' => 'scriptBottom'

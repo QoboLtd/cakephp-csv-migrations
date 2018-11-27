@@ -51,6 +51,18 @@ return [
             'id' => '[data-type="select2"]',
             'limit' => 10
         ],
+        // TinyMCE plugin configuration
+        'TinyMCE' => [
+            'selector' => 'textarea.tinymce',
+            'relative_urls' => false,
+            'plugins' => ['link'],
+            'menubar' => false,
+            'toolbar' => 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent link',
+            'browser_spellcheck' => true,
+            'file_browser_callback_types' => '',
+            'theme' => 'modern',
+            'height' => 300
+        ],
         // bootstrap-fileinput configuration
         // link: https://github.com/kartik-v/bootstrap-fileinput
         'BootstrapFileInput' => [

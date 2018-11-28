@@ -28,7 +28,7 @@ class CountryRenderer extends AbstractRenderer
     /**
      * Icon html
      */
-    const ICON_HTML = '<span class="flag-icon flag-icon-%s"></span>';
+    const ICON_HTML = '<span class="flag-icon flag-icon-%s flag-icon-default"></span>&nbsp;&nbsp;%s';
 
     /**
      * Provide rendered value
@@ -79,6 +79,6 @@ class CountryRenderer extends AbstractRenderer
             $result .= isset($listItems[$path]) ? $listItems[$path] : '';
         }
 
-        return sprintf(static::ICON_HTML, strtolower($data)) . ' ' . $result;
+        return sprintf(static::ICON_HTML, strtolower($data), $result);
     }
 }

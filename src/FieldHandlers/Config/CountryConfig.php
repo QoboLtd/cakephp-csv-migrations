@@ -30,7 +30,7 @@ class CountryConfig extends FixedConfig
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\ListSearchOperators',
         'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\ListSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\ListSelectOptions',
-        'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\ListRenderer',
+        'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\CountryRenderer',
         'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\CountryRenderer',
         'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
         'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\ListValidationRules',

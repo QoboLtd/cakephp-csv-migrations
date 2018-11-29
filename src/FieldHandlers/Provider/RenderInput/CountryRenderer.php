@@ -11,7 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
 
-use CsvMigrations\FieldHandlers\Setting;
+use CsvMigrations\FieldHandlers\Provider\RenderValue\CountryRenderer as CountryValueRenderer;
 
 /**
  * CountryRenderer
@@ -19,15 +19,10 @@ use CsvMigrations\FieldHandlers\Setting;
  * Country renderer provides the functionality
  * for rendering list inputs.
  */
-class CountryRenderer extends AbstractRenderer
+class CountryRenderer extends ListRenderer
 {
     /**
-     * Icon html
-     */
-    const ICON_HTML = '<span class="flag-icon flag-icon-%s flag-icon-default"></span>&nbsp;&nbsp;%s';
-
-    /**
-     * Provide
+     * Extend parent provide
      *
      * @param mixed $data Data to use for provision
      * @param array $options Options to use for provision
@@ -35,42 +30,18 @@ class CountryRenderer extends AbstractRenderer
      */
     public function provide($data = null, array $options = [])
     {
-        $field = $this->config->getField();
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
-        $table = $this->config->getTable();
-        $fieldName = $table->aliasField($field);
-        $selectOptions = ['' => Setting::EMPTY_OPTION_LABEL()];
+        $selectListItems = $this->config->getProvider('selectOptions');
+        $selectListItems = new $selectListItems($this->config);
+        $listName = $options['fieldDefinitions']->getLimit();
 
-        // if select options are not pre-defined
-        if (empty($options['selectOptions'])) {
-            $selectListItems = $this->config->getProvider('selectOptions');
-            $selectListItems = new $selectListItems($this->config);
-            $listName = $options['fieldDefinitions']->getLimit();
-            $listOptions = [];
-
-            $selectOptions += $selectListItems->provide($listName, $listOptions);
-            foreach ($selectOptions as $k => $v) {
-                $selectOptions[$k] = sprintf(static::ICON_HTML, strtolower($k), $v);
-            }
-        } else {
-            $selectOptions += $options['selectOptions'];
+        $selectOptions = $selectListItems->provide($listName, []);
+        foreach ($selectOptions as $k => $v) {
+            $selectOptions[$k] = sprintf(CountryValueRenderer::ICON_HTML, strtolower($k), $v);
         }
 
-        $params = [
-            'field' => $field,
-            'name' => $fieldName,
-            'type' => 'select',
-            'label' => $options['label'],
-            'required' => $options['fieldDefinitions']->getRequired(),
-            'value' => $data,
-            'options' => $selectOptions,
-            'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
-            'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
-        ];
+        $options['selectOptions'] = $selectOptions;
+        $options['element'] = 'CsvMigrations.FieldHandlers/CountryFieldHandler/input';
 
-        $defaultElement = 'CsvMigrations.FieldHandlers/CountryFieldHandler/input';
-        $element = empty($options['element']) ? $defaultElement : $options['element'];
-
-        return $this->renderElement($element, $params);
+        return parent::provide($data, $options);
     }
 }

@@ -48,17 +48,21 @@ class Table extends BaseTable
     {
         parent::initialize($config);
 
-        $this->addBehavior('Muffin/Trash.Trash');
         $this->addBehavior('Qobo/Utils.Footprint');
 
         $config = (new ModuleConfig(
             ConfigType::MODULE(),
             App::shortName($config['className'], 'Model/Table', 'Table')
-        ))->parse();
+        ))->parseToArray();
+
+        // Set trash behavior
+        if (!isset($config['table']['trash']) || $config['table']['trash'] === true) {
+            $this->addBehavior('Muffin/Trash.Trash');
+        }
 
         // set display field from config
-        if (property_exists($config, 'table') && property_exists($config->table, 'display_field')) {
-            $this->setDisplayField($config->table->display_field);
+        if (isset($config['table']['display_field'])) {
+            $this->setDisplayField($config['table']['display_field']);
         }
 
         $this->setAssociations();

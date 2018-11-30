@@ -23,7 +23,8 @@ echo $this->Html->css(
         'CsvMigrations.style',
         'Qobo/Utils./plugins/datatables/css/dataTables.bootstrap.min',
         'Qobo/Utils.select2-bootstrap.min',
-        'Qobo/Utils.select2-style'
+        'Qobo/Utils.select2-style',
+        'Qobo/Utils./img/icons/flags/css/flag-icon.css'
     ],
     [
         'block' => 'css'

@@ -97,7 +97,9 @@ class ViewsCheckTest extends TestCase
         $this->check->run('Foo', ['configFile' => 'missing_name_migration.json']);
         $errors = $this->check->getErrors();
         $this->assertNotEmpty($errors);
-        $this->assertEquals("[Foo][view] parse : [too_many_columns.json] : Validation failed", $errors[0]);
+        $this->assertCount(2, $errors);
+        $this->assertEquals("[Foo][view] parse : [too_many_columns.json] : Failed to validate json data against the schema.", $errors[0]);
+        $this->assertEquals("[Foo][view] parse : [/items/0]: There must be a maximum of 13 items in the array", $errors[1]);
     }
 
     /**

@@ -16,6 +16,8 @@ use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
+use Qobo\Utils\ModuleConfig\Parser\Parser;
+
 class ConfigCheck extends AbstractCheck
 {
     /**
@@ -27,7 +29,8 @@ class ConfigCheck extends AbstractCheck
      */
     public function run(string $module, array $options = []) : int
     {
-        $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
+        $mc = $this->getModuleConfig($module, $options);
+
         $config = [];
         try {
             $conf = json_encode($mc->parse());
@@ -42,65 +45,97 @@ class ConfigCheck extends AbstractCheck
             return count($this->errors);
         }
 
-        //
-        // Check configuration sections
-        //
-        $this->checkTable($module, $options, $config);
+        // Extra parent validation
         $this->checkParent($module, $options, $config);
-        $this->checkVirtualFields($module, $options, $config);
-        $this->checkManyToMany($module, $options, $config);
-        $this->checkNotifications($module, $options, $config);
-        $this->checkConversion($module, $options, $config);
 
         return count($this->errors);
     }
 
     /**
-     * Check table section of the configuration
+     * Creates a custom instance of `ModuleConfig` with a parser, schema and
+     * extra validation.
      *
-     * @param string $module Module name
-     * @param mixed[] $options Check options
-     * @param mixed[] $config Configuration
-     * @return void
+     * @param string $module Module.
+     * @param string[] $options Options.
+     * @return ModuleConfig Module Config.
      */
-    protected function checkTable(string $module, array $options = [], array $config = []) : void
+    protected function getModuleConfig(string $module, array $options = []): ModuleConfig
     {
-        if (empty($config['table'])) {
-            return;
-        }
+        $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
+        /** @var \Qobo\Utils\ModuleConfig\Parser\SchemaInterface&\Cake\Core\InstanceConfigTrait */
+        $schema = $mc->createSchema();
+        $schema->setConfig(['lint' => true]);
+        $schema->setCallback(function (array $schema) use ($module, $options) {
+            $schema = $this->addFieldsToSchema($schema, $module);
+            $schema = $this->addVirtualFieldsToSchema($schema, $module);
+            $schema = $this->addModulesToSchema($schema, $module);
+            $schema = $this->addConversionToSchema($schema);
+            $schema = $this->addDisplayFieldValidationToSchema($schema, $options['display_field_bad_values'] ?? []);
+            $schema = $this->addIconValidationToSchema($schema, $options['icon_bad_values'] ?? []);
 
-        // 'display_field' key is optional, but must contain valid field if specified
-        if (!empty($config['table']['display_field'])) {
-            if (!Utility::isValidModuleField($module, $config['table']['display_field'])) {
-                $this->errors[] = $module . " config [table] section references unknown field '" . $config['table']['display_field'] . "' in 'display_field' key";
-            }
-            if (!empty($options['display_field_bad_values']) && in_array($config['table']['display_field'], $options['display_field_bad_values'])) {
-                $this->errors[] = $module . " config [table] section uses bad value '" . $config['table']['display_field'] . "' in 'display_field' key";
-            }
-        }
-        // 'icon' key is optional, but must contain good values if specified
-        if (!empty($config['table']['icon'])) {
-            if (!empty($options['icon_bad_values']) && in_array($config['table']['icon'], $options['icon_bad_values'])) {
-                $this->errors[] = $module . " config [table] section uses bad value '" . $config['table']['icon'] . "' in 'icon' key";
-            }
-        }
+            return $schema;
+        });
 
-        // 'typeahead_fields' key is optional, but must contain valid fields if specified
-        if (!empty($config['table']['typeahead_fields'])) {
-            foreach ($config['table']['typeahead_fields'] as $typeaheadField) {
-                if (!Utility::isValidModuleField($module, $typeaheadField)) {
-                    $this->errors[] = $module . " config [table] section references unknown field '" . $typeaheadField . "' in 'typeahead_fields' key";
+        $mc->setParser(new Parser($schema, ['lint' => true]));
+
+        return $mc;
+    }
+
+    /**
+     * Expand `conversionItem` sceham definition to include all available
+     * modules.
+     *
+     * This is a workaround regarding the issue with schema whereby we can't
+     * validate object key names reliably.
+     *
+     * @param string[] $schema Schema.
+     * @return string[] Schema.
+     */
+    protected function addConversionToSchema(array $schema): array
+    {
+        if (isset($schema['definitions']['conversionItem'])) {
+            if (!empty($modules)) {
+                $rule = $schema['definitions']['conversionItem']['properties']['modules']['additionalProperties']['anyOf'][0];
+                foreach ($modules as $module) {
+                    $schema['definitions']['conversionItem']['properties']['modules']['additionalProperties'] = false;
+                    $schema['definitions']['conversionItem']['properties']['modules']['properties'][$module] = $rule;
                 }
             }
         }
-        // 'lookup_fields' key is optional, but must contain valid fields if specified
-        if (!empty($config['table']['lookup_fields'])) {
-            foreach ($config['table']['lookup_fields'] as $lookupField) {
-                if (!Utility::isValidModuleField($module, $lookupField)) {
-                    $this->errors[] = $module . " config [table] section references unknown field '" . $lookupField . "' in 'lookup_fields' key";
-                }
-            }
+
+        return $schema;
+    }
+
+    /**
+     * Validate `display_field` values.
+     *
+     * @param string[] $schema Schema.
+     * @param string[] $values Bad values for display field.
+     * @return string[] Schema.
+     */
+    protected function addDisplayFieldValidationToSchema(array $schema, array $values = []): array
+    {
+        if (!empty($values)) {
+            $schema['definitions']['displayFieldBad']['enum'] = $values;
         }
+
+        return $schema;
+    }
+
+    /**
+     * Validate `icon` values.
+     *
+     * @param string[] $schema Schema.
+     * @param string[] $values Bad values for icon.
+     * @return string[] Schema.
+     */
+    protected function addIconValidationToSchema(array $schema, array $values = []): array
+    {
+        if (!empty($values)) {
+            $schema['definitions']['iconBad']['enum'] = $values;
+        }
+
+        return $schema;
     }
 
     /**
@@ -117,21 +152,7 @@ class ConfigCheck extends AbstractCheck
             return;
         }
 
-        if (!empty($config['parent']['module'])) {
-            if (!Utility::isValidModule($config['parent']['module'])) {
-                $this->errors[] = $module . " config [parent] section references unknown module '" . $config['parent']['module'] . "' in 'module' key";
-            }
-        }
-        if (!empty($config['parent']['relation'])) {
-            if (!Utility::isRealModuleField($config['parent']['relation'], $module)) {
-                $this->errors[] = $module . " config [parent] section references non-real field '" . $config['parent']['relation'] . "' in 'relation' key";
-            }
-        }
         if (!empty($config['parent']['redirect'])) {
-            if (!in_array($config['parent']['redirect'], ['self', 'parent'])) {
-                $this->errors[] = $module . " config [parent] section references unknown redirect type '" . $config['parent']['redirect'] . "' in 'redirect key";
-            }
-
             //if redirect = parent, we force the user to mention the relation and module
             if (in_array($config['parent']['redirect'], ['parent'])) {
                 if (empty($config['parent']['module'])) {
@@ -141,129 +162,6 @@ class ConfigCheck extends AbstractCheck
                 if (empty($config['parent']['relation'])) {
                     $this->errors[] = $module . " config [parent] requires 'relation' when redirect = parent.";
                 }
-            }
-        }
-    }
-
-    /**
-     * Check virtualFields section of the configuration
-     *
-     * @param string $module Module name
-     * @param mixed[] $options Check options
-     * @param mixed[] $config Configuration
-     * @return void
-     */
-    protected function checkVirtualFields(string $module, array $options = [], array $config = []) : void
-    {
-        if (empty($config['virtualFields'])) {
-            return;
-        }
-
-        foreach ($config['virtualFields'] as $virtualField => $realFields) {
-            if (empty($realFields)) {
-                $this->errors[] = $module . " config [virtualFields] section does not define real fields for '$virtualField' virtual field";
-                continue;
-            }
-            foreach ($realFields as $realField) {
-                if (!Utility::isRealModuleField($module, $realField)) {
-                    $this->errors[] = $module . " config [virtualFields] section uses a non-real field in '$virtualField' virtual field";
-                }
-            }
-        }
-    }
-
-    /**
-     * Check manyToMany section of the configuration
-     *
-     * @param string $module Module name
-     * @param mixed[] $options Check options
-     * @param mixed[] $config Configuration
-     * @return void
-     */
-    protected function checkManyToMany(string $module, array $options = [], array $config = []) : void
-    {
-        if (empty($config['manyToMany'])) {
-            return;
-        }
-
-        // 'modules' key is required and must contain valid modules
-        if (!empty($config['manyToMany']['modules'])) {
-            $manyToManyModules = $config['manyToMany']['modules'];
-            foreach ($manyToManyModules as $manyToManyModule) {
-                if (!Utility::isValidModule($manyToManyModule)) {
-                    $this->errors[] = $module . " config [manyToMany] section references unknown module '$manyToManyModule' in 'modules' key";
-                }
-            }
-        }
-    }
-
-    /**
-     * Check notifications section of the configuration
-     *
-     * @param string $module Module name
-     * @param mixed[] $options Check options
-     * @param mixed[] $config Configuration
-     * @return void
-     */
-    protected function checkNotifications(string $module, array $options = [], array $config = []) : void
-    {
-        if (empty($config['notifications'])) {
-            return;
-        }
-
-        // 'ignored_fields' key is optional, but must contain valid fields if specified
-        if (!empty($config['notifications']['ignored_fields'])) {
-            $ignoredFields = explode(',', trim($config['notifications']['ignored_fields']));
-            foreach ($ignoredFields as $ignoredField) {
-                if (!Utility::isValidModuleField($module, $ignoredField)) {
-                    $this->errors[] = $module . " config [notifications] section references unknown field '" . $ignoredField . "' in 'typeahead_fields' key";
-                }
-            }
-        }
-    }
-
-    /**
-     * Check conversion section of the configuration
-     *
-     * @param string $module Module name
-     * @param mixed[] $options Check options
-     * @param mixed[] $config Configuration
-     * @return void
-     */
-    protected function checkConversion(string $module, array $options = [], array $config = []) : void
-    {
-        if (empty($config['conversion'])) {
-            return;
-        }
-
-        // 'module' key is required and must contain valid modules
-        if (!empty($config['conversion']['modules'])) {
-            $conversionModules = explode(',', $config['conversion']['modules']);
-            foreach ($conversionModules as $conversionModule) {
-                // Only check for simple modules, not the vendor/plugin ones
-                if (preg_match('/^\w+$/', $conversionModule) && !Utility::isValidModule($conversionModule)) {
-                    $this->errors[] = $module . " config [conversion] section references unknown module '$conversionModule' in 'modules' key";
-                }
-            }
-        }
-        // 'inherit' key is optional, but must contain valid modules if defined
-        if (!empty($config['conversion']['inherit'])) {
-            $inheritModules = explode(',', $config['conversion']['inherit']);
-            foreach ($inheritModules as $inheritModule) {
-                if (!Utility::isValidModule($inheritModule)) {
-                    $this->errors[] = $module . " config [conversion] section references unknown module '$inheritModule' in 'inherit' key";
-                }
-            }
-        }
-        // 'field' key is optional, but must contain valid field and 'value' if defined
-        if (!empty($config['conversion']['field'])) {
-            // 'field' key is optional, but must contain valid field is specified
-            if (!Utility::isValidModuleField($module, $config['conversion']['field'])) {
-                $this->errors[] = $module . " config [conversion] section references unknown field '" . $config['conversion']['field'] . "' in 'field' key";
-            }
-            // 'value' key must be set
-            if (!isset($config['conversion']['value'])) {
-                $this->errors[] = $module . " config [conversion] section references 'field' but does not set a 'value' key";
             }
         }
     }

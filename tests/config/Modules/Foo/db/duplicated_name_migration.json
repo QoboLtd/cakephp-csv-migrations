@@ -2,15 +2,15 @@
   "id": {
     "type": "uuid",
     "name": "id",
-    "required": null,
-    "non-searchable": null,
-    "unique": null
+    "required": false,
+    "non-searchable": false,
+    "unique": false
   },
   "id2": {
     "type": "uuid",
     "name": "id",
-    "required": null,
-    "non-searchable": null,
-    "unique": null
+    "required": false,
+    "non-searchable": false,
+    "unique": false
   }
 }

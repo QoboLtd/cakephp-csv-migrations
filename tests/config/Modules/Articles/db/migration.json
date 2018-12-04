@@ -2,50 +2,50 @@
     "id": {
         "name": "id",
         "type": "uuid",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "name": {
         "name": "name",
         "type": "string",
-        "required": "1",
-        "non-searchable": null,
-        "unique": null
+        "required": true,
+        "non-searchable": false,
+        "unique": false
     },
     "status": {
         "name": "status",
         "type": "list(article_statuses)",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "author": {
         "name": "author",
         "type": "related(Authors)",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "main_article": {
         "name": "main_article",
         "type": "related(Articles)",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "category": {
         "name": "category",
         "type": "related(Categories)",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "image": {
         "name": "image",
         "type": "files",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     }
 }

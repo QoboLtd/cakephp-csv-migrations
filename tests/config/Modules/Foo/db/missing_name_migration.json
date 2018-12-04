@@ -1,8 +1,8 @@
 {
   "id": {
     "type": "uuid",
-    "required": null,
-    "non-searchable": null,
-    "unique": null
+    "required": false,
+    "non-searchable": false,
+    "unique": false
   }
 }

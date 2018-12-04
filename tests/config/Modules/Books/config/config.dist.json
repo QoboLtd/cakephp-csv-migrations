@@ -36,7 +36,10 @@
     "associationLabels": {},
     "notifications": {
         "enable": false,
-        "ignored_fields": "title,title2"
+        "ignored_fields": [
+            "title",
+            "title2"
+        ]
     },
     "conversion":{
         "modules": "Users",

@@ -34,7 +34,9 @@ class MigrationCheckTest extends TestCase
         $this->check->run('Foo', ['configFile' => 'missing_name_migration.json']);
         $errors = $this->check->getErrors();
         $this->assertNotEmpty($errors);
+        $this->assertTrue(count($errors) >= 2, 'Expected 2 or more errors');
         $this->assertEquals("[Foo][migration] parse : [missing_name_migration.json] : Failed to validate json data against the schema.", $errors[0]);
+        $this->assertContains('The property name is required', $errors[1]);
     }
 
     public function testRunDuplicatedName(): void

@@ -4,5 +4,19 @@
     "required": false,
     "non-searchable": false,
     "unique": false
+  },
+  "created": {
+    "name": "created",
+    "type": "datetime",
+    "required": false,
+    "non-searchable": false,
+    "unique": false
+  },
+  "modified": {
+    "name": "modified",
+    "type": "datetime",
+    "required": false,
+    "non-searchable": false,
+    "unique": false
   }
 }

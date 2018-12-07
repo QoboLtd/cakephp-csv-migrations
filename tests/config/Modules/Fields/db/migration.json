@@ -1,4 +1,11 @@
 {
+    "id": {
+        "name": "id",
+        "type": "uuid",
+        "required": false,
+        "non-searchable": false,
+        "unique": false
+    },
     "field_blob": {
         "name": "field_blob",
         "type": "blob",
@@ -142,6 +149,20 @@
     "field_uuid": {
         "name": "field_uuid",
         "type": "uuid",
+        "required": false,
+        "non-searchable": false,
+        "unique": false
+    },
+    "created": {
+        "name": "created",
+        "type": "datetime",
+        "required": false,
+        "non-searchable": false,
+        "unique": false
+    },
+    "modified": {
+        "name": "modified",
+        "type": "datetime",
         "required": false,
         "non-searchable": false,
         "unique": false

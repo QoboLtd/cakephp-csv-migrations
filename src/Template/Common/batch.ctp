@@ -31,7 +31,7 @@ $options = [
             'disabled' => true
         ]
     ],
-    'hasPanels' => property_exists($config, 'panels')
+    'hasPanels' => false
 ];
 echo $this->element('CsvMigrations.View/post', ['options' => $options]);
 

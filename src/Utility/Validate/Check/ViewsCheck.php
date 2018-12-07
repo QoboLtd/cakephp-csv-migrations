@@ -171,8 +171,7 @@ class ViewsCheck extends AbstractCheck
     {
         $mc = new ModuleConfig(ConfigType::VIEW(), $module, $view, ['cacheSkip' => true]);
         /** @var \Qobo\Utils\ModuleConfig\Parser\SchemaInterface&\Cake\Core\InstanceConfigTrait */
-        $schema = $mc->createSchema();
-        $schema->setConfig(['lint' => true]);
+        $schema = $mc->createSchema(['lint' => true]);
         $schema->setCallback(function (array $schema) use ($module) {
             $schema = $this->addFieldsToSchema($schema, $module);
 

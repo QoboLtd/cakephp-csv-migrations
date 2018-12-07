@@ -63,15 +63,18 @@ class ConfigCheck extends AbstractCheck
     {
         $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
         /** @var \Qobo\Utils\ModuleConfig\Parser\SchemaInterface&\Cake\Core\InstanceConfigTrait */
-        $schema = $mc->createSchema();
-        $schema->setConfig(['lint' => true]);
+        $schema = $mc->createSchema(['lint' => true]);
         $schema->setCallback(function (array $schema) use ($module, $options) {
+            // phpstan
+            $displayBad = !empty($options['display_field_bad_values'])? (array)$options['display_field_bad_values'] : [];
+            $iconBad = !empty($options['icon_bad_values'])? (array)$options['icon_bad_values'] : [];
+
             $schema = $this->addFieldsToSchema($schema, $module);
             $schema = $this->addVirtualFieldsToSchema($schema, $module);
             $schema = $this->addModulesToSchema($schema, $module);
             $schema = $this->addConversionToSchema($schema);
-            $schema = $this->addDisplayFieldValidationToSchema($schema, $options['display_field_bad_values'] ?? []);
-            $schema = $this->addIconValidationToSchema($schema, $options['icon_bad_values'] ?? []);
+            $schema = $this->addDisplayFieldValidationToSchema($schema, $displayBad);
+            $schema = $this->addIconValidationToSchema($schema, $iconBad);
 
             return $schema;
         });
@@ -94,6 +97,7 @@ class ConfigCheck extends AbstractCheck
     protected function addConversionToSchema(array $schema): array
     {
         if (isset($schema['definitions']['conversionItem'])) {
+            $modules = Utility::getModules();
             if (!empty($modules)) {
                 $rule = $schema['definitions']['conversionItem']['properties']['modules']['additionalProperties']['anyOf'][0];
                 foreach ($modules as $module) {

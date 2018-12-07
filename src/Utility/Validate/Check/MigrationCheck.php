@@ -121,8 +121,7 @@ class MigrationCheck extends AbstractCheck
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, $configFile, ['cacheSkip' => true]);
 
         /** @var \Qobo\Utils\ModuleConfig\Parser\SchemaInterface&\Cake\Core\InstanceConfigTrait */
-        $schema = $mc->createSchema();
-        $schema->setConfig(['lint' => true]);
+        $schema = $mc->createSchema(['lint' => true]);
         $mc->setParser(new Parser($schema, ['lint' => true]));
 
         return $mc;

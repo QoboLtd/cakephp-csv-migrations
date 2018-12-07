@@ -115,14 +115,15 @@ class Utility
      * Returns a list of fields defined in `migration.json`.
      *
      * @param string $module Module name.
+     * @param bool $validate Should the data be validated against the schema.
      * @return string[] List of fields.
      */
-    public static function getRealModuleFields(string $module) : array
+    public static function getRealModuleFields(string $module, bool $validate = true) : array
     {
         $moduleFields = [];
 
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
-        $mc->setParser(new Parser($mc->createSchema(), ['validate' => false]));
+        $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
         $moduleFields = Convert::objectToArray($mc->parse());
         $fields = Hash::extract($moduleFields, '{*}.name');
 
@@ -133,14 +134,15 @@ class Utility
      * Returns a list of virtual fields in `config.json`.
      *
      * @param string $module Module name.
+     * @param bool $validate Should the data be validated against the schema.
      * @return string[] list of virtual fields.
      */
-    public static function getVirtualModuleFields(string $module) : array
+    public static function getVirtualModuleFields(string $module, bool $validate = true) : array
     {
         $fields = [];
 
         $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
-        $mc->setParser(new Parser($mc->createSchema(), ['validate' => false]));
+        $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
         $virtualFields = Convert::objectToArray($mc->parse());
 
         if (isset($virtualFields['virtualFields'])) {

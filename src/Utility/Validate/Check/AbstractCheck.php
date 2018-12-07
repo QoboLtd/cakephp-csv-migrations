@@ -28,7 +28,7 @@ abstract class AbstractCheck implements CheckInterface
     protected function addFieldsToSchema(array $schema, string $module): array
     {
         if (isset($schema['definitions']['fieldName'])) {
-            $fields = Utility::getRealModuleFields($module);
+            $fields = Utility::getRealModuleFields($module, false);
             if (!empty($fields)) {
                 $schema['definitions']['fieldName']['enum'] = $fields;
             }
@@ -47,7 +47,7 @@ abstract class AbstractCheck implements CheckInterface
     protected function addVirtualFieldsToSchema(array $schema, string $module): array
     {
         if (isset($schema['definitions']['virtualFieldName'])) {
-            $virtualFields = Utility::getVirtualModuleFields($module);
+            $virtualFields = Utility::getVirtualModuleFields($module, false);
             if (!empty($virtualFields)) {
                 $schema['definitions']['virtualFieldName']['enum'] = array_keys($virtualFields);
             }

@@ -17,6 +17,7 @@ use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\ModuleConfig\Parser\Parser;
 use Qobo\Utils\Utility as QoboUtility;
 use Qobo\Utils\Utility\Convert;
 
@@ -121,6 +122,7 @@ class Utility
         $moduleFields = [];
 
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
+        $mc->setParser(new Parser($mc->createSchema(), ['validate' => false]));
         $moduleFields = Convert::objectToArray($mc->parse());
         $fields = Hash::extract($moduleFields, '{*}.name');
 
@@ -138,6 +140,7 @@ class Utility
         $fields = [];
 
         $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
+        $mc->setParser(new Parser($mc->createSchema(), ['validate' => false]));
         $virtualFields = Convert::objectToArray($mc->parse());
 
         if (isset($virtualFields['virtualFields'])) {

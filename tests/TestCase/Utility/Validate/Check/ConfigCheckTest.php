@@ -74,7 +74,6 @@ class ConfigCheckTest extends TestCase
     public function testFooConfigWithParentErrors(): void
     {
         $result = $this->check->run('Foo');
-        var_dump($this->check->getErrors());
         $this->assertEmpty($this->check->getErrors(), 'Unexpected errors were raised');
     }
 }

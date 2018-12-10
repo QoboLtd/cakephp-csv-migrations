@@ -48,7 +48,20 @@ class MigrationCheck extends AbstractCheck
         //
         // Check fields
         //
+        $this->checkFields($module, $fields);
 
+        return count($this->errors);
+    }
+
+    /**
+     * Check fields and their types.
+     *
+     * @param string $module Module name.
+     * @param mixed[] $fields List of field definitions.
+     * @return void
+     */
+    public function checkFields(string $module, array $fields = []): void
+    {
         $seenFields = [];
 
         // Check each field one by one
@@ -103,8 +116,6 @@ class MigrationCheck extends AbstractCheck
                     break;
             }
         }
-
-        return count($this->errors);
     }
 
     /**

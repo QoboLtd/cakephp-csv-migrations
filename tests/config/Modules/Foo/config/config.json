@@ -5,20 +5,20 @@
         "display_field": "name",
         "typeahead_fields": [
             "name",
-            "foobar"
+            "gender"
         ],
         "lookup_fields": [
-            "foo",
-            "bar",
-            "baz"
+            "status",
+            "type",
+            "city"
         ],
         "allow_reminders": [
             "Users",
-            "Contacts"
+            "Articles"
         ],
         "basic_search_fields": [
-            "first_name",
-            "last_name"
+            "name",
+            "city"
         ],
         "icon": "user",
         "translatable": false,
@@ -26,8 +26,8 @@
     },
     "virtualFields": {
         "name": [
-            "foo",
-            "bar"
+            "id",
+            "created"
         ]
     },
     "manyToMany": {
@@ -37,7 +37,8 @@
     },
     "parent": {
         "module": "Leads",
-        "redirect": "self"
+        "relation": "lead",
+        "redirect": "parent"
     },
     "associations": {
         "hide_associations": [

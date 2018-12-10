@@ -54,11 +54,6 @@ class FieldsCheck extends AbstractCheck
 
         /** @var \Qobo\Utils\ModuleConfig\Parser\SchemaInterface&\Cake\Core\InstanceConfigTrait */
         $schema = $mc->createSchema(['lint' => true]);
-        $schema->setCallback(function (array $schema) use ($module) {
-            // $schema = $this->addFieldOptionsToSchema($schema, $module);
-
-            return $schema;
-        });
         $mc->setParser(new Parser($schema, ['lint' => true]));
 
         return $mc;

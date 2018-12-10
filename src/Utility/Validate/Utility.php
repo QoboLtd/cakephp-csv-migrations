@@ -12,11 +12,14 @@
 namespace CsvMigrations\Utility\Validate;
 
 use Cake\Core\Configure;
+use Cake\Utility\Hash;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\ModuleConfig\Parser\Parser;
 use Qobo\Utils\Utility as QoboUtility;
+use Qobo\Utils\Utility\Convert;
 
 /**
  * Utility Class
@@ -96,33 +99,57 @@ class Utility
      */
     public static function isRealModuleField(string $module, string $field) : bool
     {
-        $moduleFields = [];
-        try {
-            $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
-            $moduleFields = json_encode($mc->parse());
-            if (false === $moduleFields) {
-                return false;
-            }
-            $moduleFields = json_decode($moduleFields, true);
-        } catch (InvalidArgumentException $e) {
-            // We already report issues with migration in _checkMigrationPresence()
-            return true;
-        }
+        $fields = self::getRealModuleFields($module);
 
         // If we couldn't get the migration, we cannot verify if the
         // field is real or not.  To avoid unnecessary fails, we
         // assume that it's real.
-        if (empty($moduleFields)) {
+        if (empty($fields)) {
             return true;
         }
 
-        foreach ($moduleFields as $moduleField) {
-            if ($field == $moduleField['name']) {
-                return true;
-            }
+        return in_array($field, $fields);
+    }
+
+    /**
+     * Returns a list of fields defined in `migration.json`.
+     *
+     * @param string $module Module name.
+     * @param bool $validate Should the data be validated against the schema.
+     * @return string[] List of fields.
+     */
+    public static function getRealModuleFields(string $module, bool $validate = true) : array
+    {
+        $moduleFields = [];
+
+        $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
+        $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
+        $moduleFields = Convert::objectToArray($mc->parse());
+        $fields = Hash::extract($moduleFields, '{*}.name');
+
+        return (array)$fields;
+    }
+
+    /**
+     * Returns a list of virtual fields in `config.json`.
+     *
+     * @param string $module Module name.
+     * @param bool $validate Should the data be validated against the schema.
+     * @return string[] list of virtual fields.
+     */
+    public static function getVirtualModuleFields(string $module, bool $validate = true) : array
+    {
+        $fields = [];
+
+        $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
+        $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
+        $virtualFields = Convert::objectToArray($mc->parse());
+
+        if (isset($virtualFields['virtualFields'])) {
+            $fields = $virtualFields['virtualFields'];
         }
 
-        return false;
+        return $fields;
     }
 
     /**
@@ -138,31 +165,13 @@ class Utility
      */
     public static function isVirtualModuleField(string $module, string $field) : bool
     {
-        $config = [];
-        try {
-            $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
-            $config = json_encode($mc->parse());
-            if (false === $config) {
-                return false;
-            }
-            $config = (array)json_decode($config, true);
-        } catch (InvalidArgumentException $e) {
+        $config = self::getVirtualModuleFields($module);
+
+        if (empty($config) || !is_array($config)) {
             return false;
         }
 
-        if (empty($config)) {
-            return false;
-        }
-
-        if (empty($config['virtualFields'])) {
-            return false;
-        }
-
-        if (! is_array($config['virtualFields'])) {
-            return false;
-        }
-
-        return in_array($field, array_keys($config['virtualFields']));
+        return in_array($field, array_keys($config));
     }
 
     /**

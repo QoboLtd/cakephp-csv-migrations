@@ -2,141 +2,141 @@
     "id": {
         "name": "id",
         "type": "uuid",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "description": {
         "name": "description",
         "type": "text",
-        "required": "",
-        "non-searchable": "1",
-        "unique": null
+        "required": false,
+        "non-searchable": true,
+        "unique": false
     },
     "name": {
         "name": "name",
         "type": "string",
-        "required": "1",
-        "non-searchable": "",
-        "unique": "1"
+        "required": true,
+        "non-searchable": false,
+        "unique": true
     },
     "status": {
         "name": "status",
         "type": "list(foo_statuses)",
-        "required": "1",
-        "non-searchable": null,
-        "unique": null
+        "required": true,
+        "non-searchable": false,
+        "unique": false
     },
     "type": {
         "name": "type",
         "type": "list(foo_types)",
-        "required": "1",
-        "non-searchable": null,
-        "unique": null
+        "required": true,
+        "non-searchable": false,
+        "unique": false
     },
     "gender": {
         "name": "gender",
         "type": "list(genders)",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "city": {
         "name": "city",
         "type": "list(cities)",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "country": {
         "name": "country",
         "type": "list(countries)",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "cost": {
         "name": "cost",
         "type": "money(currencies)",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "birthdate": {
         "name": "birthdate",
         "type": "date",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "reminder_date": {
         "name": "reminder_date",
         "type": "reminder",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "created": {
         "name": "created",
         "type": "datetime",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "modified": {
         "name": "modified",
         "type": "datetime",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "garden_area": {
         "name": "garden_area",
         "type": "metric(units_area)",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "is_primary": {
         "name": "is_primary",
         "type": "boolean",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "start_time": {
         "name": "start_time",
         "type": "time",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "balance": {
         "name": "balance",
         "type": "decimal(12.4)",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "lead": {
         "name": "lead",
         "type": "related(Leads)",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "created_by": {
         "name": "created_by",
         "type": "related(Users)",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "modified_by": {
         "name": "modified_by",
         "type": "related(Users)",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     }
 }

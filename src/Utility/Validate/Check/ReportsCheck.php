@@ -14,6 +14,7 @@ namespace CsvMigrations\Utility\Validate\Check;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\ModuleConfig\Parser\Parser;
 
 class ReportsCheck extends AbstractCheck
 {
@@ -27,6 +28,11 @@ class ReportsCheck extends AbstractCheck
     public function run(string $module, array $options = []) : int
     {
         $mc = new ModuleConfig(ConfigType::REPORTS(), $module, null, ['cacheSkip' => true]);
+
+        /** @var \Qobo\Utils\ModuleConfig\Parser\SchemaInterface&\Cake\Core\InstanceConfigTrait */
+        $schema = $mc->createSchema(['lint' => true]);
+        $mc->setParser(new Parser($schema, ['lint' => true]));
+
         try {
             $mc->parse();
         } catch (InvalidArgumentException $e) {

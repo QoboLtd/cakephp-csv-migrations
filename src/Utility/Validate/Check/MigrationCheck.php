@@ -15,6 +15,7 @@ use CsvMigrations\Utility\Validate\Utility;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\ModuleConfig\Parser\Parser;
 
 class MigrationCheck extends AbstractCheck
 {
@@ -27,9 +28,7 @@ class MigrationCheck extends AbstractCheck
      */
     public function run(string $module, array $options = []) : int
     {
-        $configFile = empty($options['configFile']) ? null : $options['configFile'];
-
-        $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, $configFile, ['cacheSkip' => true]);
+        $mc = $this->getModuleConfig($module, $options);
         $fields = [];
         try {
             $config = json_encode($mc->parse());
@@ -49,7 +48,20 @@ class MigrationCheck extends AbstractCheck
         //
         // Check fields
         //
+        $this->checkFields($module, $fields);
 
+        return count($this->errors);
+    }
+
+    /**
+     * Check fields and their types.
+     *
+     * @param string $module Module name.
+     * @param mixed[] $fields List of field definitions.
+     * @return void
+     */
+    public function checkFields(string $module, array $fields = []): void
+    {
         $seenFields = [];
 
         // Check each field one by one
@@ -61,18 +73,6 @@ class MigrationCheck extends AbstractCheck
             }
 
             $seenFields[] = $field['name'];
-
-            // Disallow unique on non-required fields
-            $unique = isset($field['unique']) ? (bool)$field['unique'] : false;
-            $required = isset($field['required']) ? (bool)$field['required'] : false;
-            if ($unique && !$required) {
-                $this->errors[] = $module . " migration forces unique values for a non-required field '" . $field['name'] . "'";
-            }
-
-            // Field type is required
-            if (empty($field['type'])) {
-                $this->errors[] = $module . " migration does not specify type for field  '" . $field['name'] . "'";
-            }
 
             $type = $field['type'];
             $limit = null;
@@ -116,20 +116,25 @@ class MigrationCheck extends AbstractCheck
                     break;
             }
         }
+    }
 
-        // Check for the required fields
-        // TODO: Allow specifying the required fields as the command line argument (for things like trashed)
-        $requiredFields = [
-            'id',
-            'created',
-            'modified',
-        ];
-        foreach ($requiredFields as $requiredField) {
-            if (!in_array($requiredField, $seenFields)) {
-                $this->errors[] = $module . " migration is missing a required field '$requiredField'";
-            }
-        }
+    /**
+     * Creates a custom instance of `ModuleConfig` with a parser, schema and
+     * extra validation.
+     *
+     * @param string $module Module.
+     * @param string[] $options Options.
+     * @return ModuleConfig Module Config.
+     */
+    protected function getModuleConfig(string $module, array $options = []): ModuleConfig
+    {
+        $configFile = empty($options['configFile']) ? null : $options['configFile'];
+        $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, $configFile, ['cacheSkip' => true]);
 
-        return count($this->errors);
+        /** @var \Qobo\Utils\ModuleConfig\Parser\SchemaInterface&\Cake\Core\InstanceConfigTrait */
+        $schema = $mc->createSchema(['lint' => true]);
+        $mc->setParser(new Parser($schema, ['lint' => true]));
+
+        return $mc;
     }
 }

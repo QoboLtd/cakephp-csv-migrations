@@ -17,6 +17,7 @@ use CsvMigrations\Utility\Validate\Utility;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\ModuleConfig\Parser\Parser;
 
 class ViewsCheck extends AbstractCheck
 {
@@ -34,7 +35,8 @@ class ViewsCheck extends AbstractCheck
         $viewCounter = 0;
         foreach ($views as $view) {
             $path = '';
-            $mc = new ModuleConfig(ConfigType::VIEW(), $module, $view, ['cacheSkip' => true]);
+            $mc = $this->getModuleConfig($module, $view, $options);
+
             try {
                 $path = $mc->find();
             } catch (InvalidArgumentException $e) {
@@ -84,6 +86,7 @@ class ViewsCheck extends AbstractCheck
 
                     // embedded field detection
                     preg_match(CsvField::PATTERN_TYPE, $column, $matches);
+
                     // embedded field flag
                     $isEmbedded = ! empty($matches[1]) && 'EMBEDDED' === $matches[1];
 
@@ -153,5 +156,30 @@ class ViewsCheck extends AbstractCheck
         }
 
         return count($this->errors);
+    }
+
+    /**
+     * Creates a custom instance of `ModuleConfig` with a parser, schema and
+     * extra validation.
+     *
+     * @param string $module Module.
+     * @param string $view View.
+     * @param string[] $options Options.
+     * @return ModuleConfig Module Config.
+     */
+    protected function getModuleConfig(string $module, string $view, array $options = []): ModuleConfig
+    {
+        $mc = new ModuleConfig(ConfigType::VIEW(), $module, $view, ['cacheSkip' => true]);
+        /** @var \Qobo\Utils\ModuleConfig\Parser\SchemaInterface&\Cake\Core\InstanceConfigTrait */
+        $schema = $mc->createSchema(['lint' => true]);
+        $schema->setCallback(function (array $schema) use ($module) {
+            $schema = $this->addFieldsToSchema($schema, $module);
+
+            return $schema;
+        });
+
+        $mc->setParser(new Parser($schema, ['lint' => true]));
+
+        return $mc;
     }
 }

@@ -36,7 +36,11 @@ class ViewsCheckTest extends TestCase
     public function testRun() : void
     {
         $result = $this->check->run('Users');
+        $warnings = $this->check->getWarnings();
+
         $this->assertTrue(is_int($result), "run() returned an integer result");
+        $this->assertEmpty($this->check->getErrors(), 'Unexpected errors were raised');
+        $this->assertContains('Users module has only 0 views.', end($warnings));
     }
 
     /**
@@ -46,6 +50,8 @@ class ViewsCheckTest extends TestCase
     {
         $result = $this->check->run('Foo');
         $this->assertTrue(is_int($result), "run() returned a non-integer result");
+        $this->assertEmpty($this->check->getErrors(), 'Unexpected errors were raised');
+        $this->assertEmpty($this->check->getWarnings(), 'Unexpected warnings were raised');
     }
 
     /**
@@ -56,6 +62,7 @@ class ViewsCheckTest extends TestCase
         Configure::write('CsvMigrations.actions', ['no_columns']);
         $result = $this->check->run('Foo');
         $this->assertTrue(is_int($result), "run() returned a non-integer result");
+        $this->assertEquals('Foo module [no_columns] view file is empty', $this->check->getWarnings()[0]);
     }
 
     /**
@@ -66,6 +73,7 @@ class ViewsCheckTest extends TestCase
         Configure::write('CsvMigrations.actions', ['unkown_field_many']);
         $result = $this->check->run('Foo');
         $this->assertTrue(is_int($result), "run() returned a non-integer result");
+        $this->assertEquals('Foo module [unkown_field_many] view references unknown field \'type_format\'', $this->check->getErrors()[0]);
     }
 
     /**
@@ -75,7 +83,11 @@ class ViewsCheckTest extends TestCase
     {
         Configure::write('CsvMigrations.actions', ['unkown_field']);
         $result = $this->check->run('Foo');
+        $errors = $this->check->getErrors();
+
         $this->assertTrue(is_int($result), "run() returned a non-integer result");
+        $this->assertEquals('[Foo][view] parse : [unkown_field.json] : Failed to validate json data against the schema.', $errors[0]);
+        $this->assertEquals('[Foo][view] parse : [/items/0/2]: Failed to match at least one schema', end($errors));
     }
 
     /**
@@ -85,7 +97,15 @@ class ViewsCheckTest extends TestCase
     {
         Configure::write('CsvMigrations.actions', ['embedded']);
         $result = $this->check->run('Foo');
+        $errors = $this->check->getErrors();
+
         $this->assertTrue(is_int($result), "run() returned a non-integer result");
+        $this->assertCount(5, $errors, 'Expected 5 errors to be raised.');
+        $this->assertContains('Foo module [embedded] view reference EMBEDDED column without a module', $errors);
+        $this->assertContains('Foo module [embedded] view reference EMBEDDED column with unknown field "Users" of module ""', $errors);
+        $this->assertContains('Foo module [embedded] view reference EMBEDDED column without a module', $errors);
+        $this->assertContains('Foo module [embedded] view reference EMBEDDED column with unknown module "Use"', $errors);
+        $this->assertContains('Foo module [embedded] view reference EMBEDDED column without a module field', $errors);
     }
 
     /**
@@ -97,7 +117,9 @@ class ViewsCheckTest extends TestCase
         $this->check->run('Foo', ['configFile' => 'missing_name_migration.json']);
         $errors = $this->check->getErrors();
         $this->assertNotEmpty($errors);
-        $this->assertEquals("[Foo][view] parse : [too_many_columns.json] : Validation failed", $errors[0]);
+        $this->assertCount(2, $errors);
+        $this->assertEquals("[Foo][view] parse : [too_many_columns.json] : Failed to validate json data against the schema.", $errors[0]);
+        $this->assertEquals("[Foo][view] parse : [/items/0]: There must be a maximum of 13 items in the array", $errors[1]);
     }
 
     /**

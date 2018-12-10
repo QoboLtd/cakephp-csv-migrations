@@ -51,7 +51,7 @@ class FieldTest extends TestCase
         $table = TableRegistry::get('Articles');
 
         $result = Field::getCsv($table);
-        $expected = ['id', 'name', 'status', 'author', 'main_article', 'category', 'image'];
+        $expected = ['id', 'name', 'status', 'author', 'main_article', 'category', 'image', 'created', 'modified'];
         $this->assertSame($expected, array_keys($result));
 
         foreach ($result as $csvField) {
@@ -85,7 +85,7 @@ class FieldTest extends TestCase
 
     public function testGetVirtual() : void
     {
-        $this->assertSame(['name' => ['foo', 'bar']], Field::getVirtual(TableRegistry::get('Foo')));
+        $this->assertSame(['name' => ['id', 'created']], Field::getVirtual(TableRegistry::get('Foo')));
     }
 
     public function testGetVirtualEmpty() : void

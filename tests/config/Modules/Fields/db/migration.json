@@ -1,149 +1,170 @@
 {
+    "id": {
+        "name": "id",
+        "type": "uuid",
+        "required": false,
+        "non-searchable": false,
+        "unique": false
+    },
     "field_blob": {
         "name": "field_blob",
         "type": "blob",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_boolean": {
         "name": "field_boolean",
         "type": "boolean",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_date": {
         "name": "field_date",
         "type": "date",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_datetime": {
         "name": "field_datetime",
         "type": "datetime",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_dblist": {
         "name": "field_dblist",
         "type": "dblist('dblist')",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_decimal": {
         "name": "field_decimal",
         "type": "decimal",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_email": {
         "name": "field_email",
         "type": "email",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_files": {
         "name": "field_files",
         "type": "files",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_integer": {
         "name": "field_integer",
         "type": "integer",
-        "required": "",
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_list": {
         "name": "field_list",
         "type": "list('list')",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_metric": {
         "name": "field_metric",
         "type": "metric('metric')",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_money": {
         "name": "field_money",
         "type": "money('money')",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_phone": {
         "name": "field_phone",
         "type": "phone",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_related": {
         "name": "field_related",
         "type": "related('Fields')",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_reminder": {
         "name": "field_reminder",
         "type": "reminder",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_string": {
         "name": "field_string",
         "type": "string",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_sublist": {
         "name": "field_sublist",
         "type": "sublist('sublist')",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_text": {
         "name": "field_text",
         "type": "text",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_time": {
         "name": "field_time",
         "type": "time",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_url": {
         "name": "field_url",
         "type": "url",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "field_uuid": {
         "name": "field_uuid",
         "type": "uuid",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
+    },
+    "created": {
+        "name": "created",
+        "type": "datetime",
+        "required": false,
+        "non-searchable": false,
+        "unique": false
+    },
+    "modified": {
+        "name": "modified",
+        "type": "datetime",
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     }
 }

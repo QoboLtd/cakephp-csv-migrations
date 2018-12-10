@@ -10,6 +10,9 @@ use CsvMigrations\Utility\Validate\Check\ConfigCheck;
  */
 class ConfigCheckTest extends TestCase
 {
+    /**
+     * @var \CsvMigrations\Utility\Validate\Check\ConfigCheck
+     */
     protected $check;
 
     public function setUp() : void
@@ -59,6 +62,18 @@ class ConfigCheckTest extends TestCase
     {
         $result = $this->check->run('Books', [ 'icon_bad_values' => ['cube'], 'display_field_bad_values' => ["title2"] ]);
         $result = $this->check->getErrors();
+
         $this->assertTrue(is_array($result), "getErrors() returned a non-array result");
+        $this->assertContains('[Books][config] parse : [/table/icon]: Matched a schema which it should not', $result);
+        $this->assertContains('[Books][config] parse : [/table/display_field]: Matched a schema which it should not', $result);
+    }
+
+    /**
+     * Test parent
+     */
+    public function testFooConfigWithParentErrors(): void
+    {
+        $result = $this->check->run('Foo');
+        $this->assertEmpty($this->check->getErrors(), 'Unexpected errors were raised');
     }
 }

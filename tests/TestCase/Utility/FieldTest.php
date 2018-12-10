@@ -85,7 +85,7 @@ class FieldTest extends TestCase
 
     public function testGetVirtual() : void
     {
-        $this->assertSame(['name' => ['foo', 'bar']], Field::getVirtual(TableRegistry::get('Foo')));
+        $this->assertSame(['name' => ['id', 'created']], Field::getVirtual(TableRegistry::get('Foo')));
     }
 
     public function testGetVirtualEmpty() : void

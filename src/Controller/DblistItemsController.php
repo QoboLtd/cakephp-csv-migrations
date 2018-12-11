@@ -12,7 +12,7 @@
 namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
-use Cake\Http\Response;
+use InvalidArgumentException;
 
 /**
  * DblistItems Controller
@@ -25,11 +25,16 @@ class DblistItemsController extends BaseController
     /**
      * Index method
      *
-     * @param string $id Associated Dblist id
+     * @param string|null $id Associated Dblist id
      * @return \Cake\Http\Response|void|null
+     * @throws \InvalidArgumentException
      */
-    public function index(string $id)
+    public function index(string $id = null)
     {
+        if (empty($id)) {
+            throw new InvalidArgumentException();
+        }
+
         $list = $this->DblistItems->Dblists->get($id);
         $query = $this->DblistItems->find('treeEntities', ['listId' => $id]);
 

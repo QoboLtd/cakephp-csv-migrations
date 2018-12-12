@@ -28,7 +28,7 @@ class CountryConfig extends FixedConfig
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
         'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\ListFieldToDb',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\ListSearchOperators',
-        'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\ListSearchOptions',
+        'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\CountrySearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\ListSelectOptions',
         'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\CountryRenderer',
         'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\CountryRenderer',

@@ -1,0 +1,89 @@
+<?php
+/**
+ * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
+namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
+
+use CsvMigrations\FieldHandlers\Provider\RenderValue\CountryRenderer as CountryValueRenderer;
+use CsvMigrations\FieldHandlers\Setting;
+
+/**
+ * CountrySearchOptions
+ *
+ * Country search options
+ */
+class CountrySearchOptions extends AbstractSearchOptions
+{
+    /**
+     * Provide search options
+     *
+     * @param mixed $data Data to use for provision
+     * @param array $options Options to use for provision
+     * @return mixed
+     */
+    public function provide($data = null, array $options = [])
+    {
+        $field = $this->config->getField();
+
+        $template = $this->getBasicTemplate('text');
+
+        $defaultOptions = $this->getDefaultOptions($data, $options);
+        $defaultOptions['input'] = ['content' => $template];
+
+        $result[$field] = $defaultOptions;
+
+        $selectListItems = $this->config->getProvider('selectOptions');
+        $selectListItems = new $selectListItems($this->config);
+        $listName = $options['fieldDefinitions']->getLimit();
+        $selectOptions = ['' => Setting::EMPTY_OPTION_LABEL()];
+        $optionList = $selectListItems->provide($listName, []);
+        foreach ($optionList as $k => $v) {
+            $selectOptions[$k] = sprintf(CountryValueRenderer::ICON_HTML, strtolower($k), $v);
+        }
+
+        $view = $this->config->getView();
+
+        $attributes = [
+            'class' => 'form-control',
+            'label' => false,
+            'data-class' => 'select2',
+        ];
+
+        $content = $view->Form->select('{{name}}', $selectOptions, $attributes);
+
+        $result[$field]['source'] = $options['fieldDefinitions']->getLimit();
+        $result[$field]['input'] = [
+            'content' => $content,
+            'post' => [
+                [
+                    'type' => 'script',
+                    'content' => [
+                        'CsvMigrations.dom-observer',
+                        'AdminLTE./plugins/select2/select2.full.min',
+                        'CsvMigrations.select2.init'
+                    ],
+                    'block' => 'scriptBottom'
+                ],
+                [
+                    'type' => 'css',
+                    'content' => [
+                        'AdminLTE./plugins/select2/select2.min',
+                        'Qobo/Utils.select2-bootstrap.min',
+                        'Qobo/Utils.select2-style',
+                        'Qobo/Utils./img/icons/flags/css/flag-icon.css'
+                    ],
+                    'block' => 'css'
+                ]
+            ]
+        ];
+
+        return $result;
+    }
+}

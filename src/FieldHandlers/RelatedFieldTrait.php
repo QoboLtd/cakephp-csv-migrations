@@ -181,13 +181,13 @@ trait RelatedFieldTrait
     protected function _getInputHelp(array $properties) : string
     {
         $config = (new ModuleConfig(ConfigType::MODULE(), $properties['controller']))->parseToArray();
-        $typeaheadFields = isset($config['table']['typeahead_fields']) ? $config['table']['typeahead_fields'] : [];
+        $typeaheadFields = !empty($config['table']['typeahead_fields']) ? $config['table']['typeahead_fields'] : [];
         // if no typeahead fields, use display field
         if (empty($typeaheadFields)) {
             $typeaheadFields = [$properties['displayField']];
         }
 
-        $virtualFields = isset($config['virtualFields']) ? $config['virtualFields'] : [];
+        $virtualFields = !empty($config['virtualFields']) ? $config['virtualFields'] : [];
 
         // extract virtual fields, if any
         $result = [];

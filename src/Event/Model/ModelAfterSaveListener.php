@@ -17,6 +17,7 @@ use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\I18n\Time;
 use Cake\Log\LogTrait;
+use Cake\Network\Exception\SocketException;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use CsvMigrations\Event\EventName;
@@ -158,6 +159,10 @@ class ModelAfterSaveListener implements EventListenerInterface
                 $sent = $mailer->sendCalendarEmail($email, $emailSubject, $emailContent, $eventOptions);
             } catch (BadMethodCallException $e) {
                 $sent = $e;
+                $this->log(sprintf('Failed to send email: %s', $e->getMessage()), LogLevel::ERROR);
+            } catch (SocketException $e) {
+                $sent = $e;
+                $this->log(sprintf('Failed to send email: %s', $e->getMessage()), LogLevel::ERROR);
             }
 
             $result[$email] = $sent;

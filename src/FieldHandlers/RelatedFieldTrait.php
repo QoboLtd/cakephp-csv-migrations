@@ -83,9 +83,8 @@ trait RelatedFieldTrait
     {
         $table = TableRegistry::get($tableName);
 
-        $config = (new ModuleConfig(ConfigType::MODULE(), $tableName))->parse();
-        $config = json_encode($config);
-        $config = false === $config ? [] : json_decode($config, true);
+        $config = (new ModuleConfig(ConfigType::MODULE(), $tableName))->parseToArray();
+
         $entity = $this->_getAssociatedRecord($table, $data);
         $displayField = $table->getDisplayField();
         $displayFieldValue = '';
@@ -181,20 +180,20 @@ trait RelatedFieldTrait
      */
     protected function _getInputHelp(array $properties) : string
     {
-        $config = (new ModuleConfig(ConfigType::MODULE(), $properties['controller']))->parse();
-        $typeaheadFields = isset($config->table->typeahead_fields) ? $config->table->typeahead_fields : [];
+        $config = (new ModuleConfig(ConfigType::MODULE(), $properties['controller']))->parseToArray();
+        $typeaheadFields = !empty($config['table']['typeahead_fields']) ? $config['table']['typeahead_fields'] : [];
         // if no typeahead fields, use display field
         if (empty($typeaheadFields)) {
             $typeaheadFields = [$properties['displayField']];
         }
 
-        $virtualFields = isset($config->virtualFields) ? $config->virtualFields : [];
+        $virtualFields = !empty($config['virtualFields']) ? $config['virtualFields'] : [];
 
         // extract virtual fields, if any
         $result = [];
         foreach ($typeaheadFields as $typeaheadField) {
-            $fields = property_exists($virtualFields, $typeaheadField) ?
-                (array)$virtualFields->{$typeaheadField} :
+            $fields = isset($virtualFields[$typeaheadField]) ?
+                (array)$virtualFields[$typeaheadField] :
                 [$typeaheadField];
 
             $result = array_merge($result, $fields);
@@ -213,16 +212,16 @@ trait RelatedFieldTrait
      */
     protected function _getInputIcon(array $properties) : string
     {
-        $config = (new ModuleConfig(ConfigType::MODULE(), $properties['controller']))->parse();
+        $config = (new ModuleConfig(ConfigType::MODULE(), $properties['controller']))->parseToArray();
 
-        if (! property_exists($config, 'table')) {
+        if (! isset($config['table'])) {
             return Configure::read('CsvMigrations.default_icon');
         }
 
-        if (! property_exists($config->table, 'icon')) {
+        if (! isset($config['table']['icon'])) {
             return Configure::read('CsvMigrations.default_icon');
         }
 
-        return $config->table->icon;
+        return $config['table']['icon'];
     }
 }

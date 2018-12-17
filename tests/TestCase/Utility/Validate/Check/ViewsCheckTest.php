@@ -127,12 +127,14 @@ class ViewsCheckTest extends TestCase
      */
     public function testDuplicateColumns() : void
     {
-        Configure::write('CsvMigrations.actions', ['duplicate_field']);
-        $this->check->run('Foo', ['configFile' => 'missing_name_migration.json']);
+        $config = 'duplicate_field';
+
+        Configure::write('CsvMigrations.actions', [$config]);
+        $this->check->run('Foo', ['duplicateCheck' => [$config]]);
         $errors = $this->check->getErrors();
         $this->assertNotEmpty($errors);
         $this->assertCount(1, $errors);
-        $this->assertContains("Foo module [duplicate_field] specifies field 'name' more than once", $errors);
+        $this->assertContains("Foo module [$config] specifies field 'name' more than once", $errors);
     }
 
     /**

@@ -31,6 +31,7 @@ class ViewsCheck extends AbstractCheck
     public function run(string $module, array $options = []) : int
     {
         $views = Configure::read('CsvMigrations.actions');
+        $options = $this->applyOptionDefaults($options);
 
         $viewCounter = 0;
         foreach ($views as $view) {
@@ -98,9 +99,11 @@ class ViewsCheck extends AbstractCheck
                     }
 
                     // Check for field duplicates
-                    if (in_array($column, $seenFields)) {
-                        $this->errors[] = $module . " module [$view] specifies field '" . $column . "' more than once";
-                        continue;
+                    if (in_array($view, $options['duplicateCheck'])) {
+                        if (in_array($column, $seenFields)) {
+                            $this->errors[] = $module . " module [$view] specifies field '" . $column . "' more than once";
+                            continue;
+                        }
                     }
                     $seenFields[] = $column;
 
@@ -183,5 +186,26 @@ class ViewsCheck extends AbstractCheck
         $mc->setParser(new Parser($schema, ['lint' => true]));
 
         return $mc;
+    }
+
+    /**
+     * Applies default values to the options array.
+     *
+     * Options:
+     *  - duplicateCheck: array of view files where duplicate fields check is enabled.
+     *
+     * @param mixed[] $options Options
+     * @return mixed[] Options with applied defaults
+     */
+    protected function applyOptionDefaults(array $options): array
+    {
+        $defaults = [
+            'duplicateCheck' => [
+                // By default only the index view performs unique field check
+                'index'
+            ],
+        ];
+
+        return $options + $defaults;
     }
 }

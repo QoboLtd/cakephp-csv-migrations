@@ -73,7 +73,7 @@ class ViewsCheckTest extends TestCase
         Configure::write('CsvMigrations.actions', ['unkown_field_many']);
         $result = $this->check->run('Foo');
         $this->assertTrue(is_int($result), "run() returned a non-integer result");
-        $this->assertEquals('Foo module [unkown_field_many] view references unknown field \'type_format\'', $this->check->getErrors()[0]);
+        $this->assertEquals('Foo module [unkown_field_many] view references unknown field "type_format"', $this->check->getErrors()[0]);
     }
 
     /**
@@ -120,6 +120,21 @@ class ViewsCheckTest extends TestCase
         $this->assertCount(2, $errors);
         $this->assertEquals("[Foo][view] parse : [too_many_columns.json] : Failed to validate json data against the schema.", $errors[0]);
         $this->assertEquals("[Foo][view] parse : [/items/0]: There must be a maximum of 13 items in the array", $errors[1]);
+    }
+
+    /**
+     * Test that there are duplicate columns in the fields array
+     */
+    public function testDuplicateColumns() : void
+    {
+        $config = 'duplicate_field';
+
+        Configure::write('CsvMigrations.actions', [$config]);
+        $this->check->run('Foo', ['duplicateCheck' => [$config]]);
+        $errors = $this->check->getErrors();
+        $this->assertNotEmpty($errors);
+        $this->assertCount(1, $errors);
+        $this->assertContains("Foo module [$config] specifies field 'name' more than once", $errors);
     }
 
     /**

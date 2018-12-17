@@ -31,6 +31,7 @@ class ViewsCheck extends AbstractCheck
     public function run(string $module, array $options = []) : int
     {
         $views = Configure::read('CsvMigrations.actions');
+        $options = $this->applyOptionDefaults($options);
 
         $viewCounter = 0;
         foreach ($views as $view) {
@@ -50,7 +51,7 @@ class ViewsCheck extends AbstractCheck
              * If the view file does exist, it has to be parseable.
              */
             $viewCounter++;
-            $fields = [];
+            $seenFields = $fields = [];
             try {
                 $config = $mc->parse();
                 $fields = property_exists($config, 'items') ? $config->items : [];
@@ -67,20 +68,15 @@ class ViewsCheck extends AbstractCheck
             }
 
             foreach ($fields as $field) {
-                if (count($field) === 1) {
-                    // index view
-                    if ($field[0] && !Utility::isValidModuleField($module, $field[0])) {
-                        $this->errors[] = $module . " module [$view] view references unknown field '" . $field[0] . "'";
-                    }
-
-                    continue;
-                }
+                $field = array_map('trim', $field);
 
                 // Get rid of the first column, which is the panel name
-                array_shift($field);
+                if (count($field) > 1) {
+                    array_shift($field);
+                }
+
                 foreach ($field as $column) {
-                    // skip empty columns
-                    if ('' === trim($column)) {
+                    if ($column === '') {
                         continue;
                     }
 
@@ -101,6 +97,15 @@ class ViewsCheck extends AbstractCheck
 
                         continue;
                     }
+
+                    // Check for field duplicates
+                    if (in_array($view, $options['duplicateCheck'])) {
+                        if (in_array($column, $seenFields)) {
+                            $this->errors[] = $module . " module [$view] specifies field '" . $column . "' more than once";
+                            continue;
+                        }
+                    }
+                    $seenFields[] = $column;
 
                     // skip for non-embedded field
                     if (! $isEmbedded) {
@@ -181,5 +186,26 @@ class ViewsCheck extends AbstractCheck
         $mc->setParser(new Parser($schema, ['lint' => true]));
 
         return $mc;
+    }
+
+    /**
+     * Applies default values to the options array.
+     *
+     * Options:
+     *  - duplicateCheck: array of view files where duplicate fields check is enabled.
+     *
+     * @param mixed[] $options Options
+     * @return mixed[] Options with applied defaults
+     */
+    protected function applyOptionDefaults(array $options): array
+    {
+        $defaults = [
+            'duplicateCheck' => [
+                // By default only the index view performs unique field check
+                'index'
+            ],
+        ];
+
+        return $options + $defaults;
     }
 }

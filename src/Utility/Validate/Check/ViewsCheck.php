@@ -50,7 +50,7 @@ class ViewsCheck extends AbstractCheck
              * If the view file does exist, it has to be parseable.
              */
             $viewCounter++;
-            $fields = [];
+            $seenFields = $fields = [];
             try {
                 $config = $mc->parse();
                 $fields = property_exists($config, 'items') ? $config->items : [];
@@ -67,22 +67,33 @@ class ViewsCheck extends AbstractCheck
             }
 
             foreach ($fields as $field) {
-                if (count($field) === 1) {
-                    // index view
-                    if ($field[0] && !Utility::isValidModuleField($module, $field[0])) {
-                        $this->errors[] = $module . " module [$view] view references unknown field '" . $field[0] . "'";
-                    }
-
-                    continue;
-                }
+                $field = array_map('trim', $field);
 
                 // Get rid of the first column, which is the panel name
-                array_shift($field);
+                if (count($field) > 1) {
+                    array_shift($field);
+                }
+
                 foreach ($field as $column) {
-                    // skip empty columns
-                    if ('' === trim($column)) {
+                    if ($column === '') {
                         continue;
                     }
+
+                    // index view
+                    if (count($field) === 1) {
+                        if (!Utility::isValidModuleField($module, $column)) {
+                            $this->errors[] = $module . " module [$view] view references unknown field '" . $column . "'";
+                        }
+
+                        continue;
+                    }
+
+                    // Check for field duplicates
+                    if (in_array($column, $seenFields)) {
+                        $this->errors[] = $module . " module [$view] specifies field '" . $column . "' more than once";
+                        continue;
+                    }
+                    $seenFields[] = $column;
 
                     // embedded field detection
                     preg_match(CsvField::PATTERN_TYPE, $column, $matches);

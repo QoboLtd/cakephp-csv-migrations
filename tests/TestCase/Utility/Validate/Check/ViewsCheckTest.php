@@ -73,7 +73,7 @@ class ViewsCheckTest extends TestCase
         Configure::write('CsvMigrations.actions', ['unkown_field_many']);
         $result = $this->check->run('Foo');
         $this->assertTrue(is_int($result), "run() returned a non-integer result");
-        $this->assertEquals('Foo module [unkown_field_many] view references unknown field \'type_format\'', $this->check->getErrors()[0]);
+        $this->assertEquals('Foo module [unkown_field_many] view references unknown field "type_format"', $this->check->getErrors()[0]);
     }
 
     /**

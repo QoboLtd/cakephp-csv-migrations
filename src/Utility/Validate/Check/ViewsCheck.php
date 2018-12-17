@@ -79,22 +79,6 @@ class ViewsCheck extends AbstractCheck
                         continue;
                     }
 
-                    // index view
-                    if (count($field) === 1) {
-                        if (!Utility::isValidModuleField($module, $column)) {
-                            $this->errors[] = $module . " module [$view] view references unknown field '" . $column . "'";
-                        }
-
-                        continue;
-                    }
-
-                    // Check for field duplicates
-                    if (in_array($column, $seenFields)) {
-                        $this->errors[] = $module . " module [$view] specifies field '" . $column . "' more than once";
-                        continue;
-                    }
-                    $seenFields[] = $column;
-
                     // embedded field detection
                     preg_match(CsvField::PATTERN_TYPE, $column, $matches);
 
@@ -112,6 +96,13 @@ class ViewsCheck extends AbstractCheck
 
                         continue;
                     }
+
+                    // Check for field duplicates
+                    if (in_array($column, $seenFields)) {
+                        $this->errors[] = $module . " module [$view] specifies field '" . $column . "' more than once";
+                        continue;
+                    }
+                    $seenFields[] = $column;
 
                     // skip for non-embedded field
                     if (! $isEmbedded) {

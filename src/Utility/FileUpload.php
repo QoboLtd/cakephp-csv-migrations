@@ -20,6 +20,7 @@ use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\Log\LogTrait;
 use Cake\ORM\TableRegistry;
+use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\View\Helper\UrlHelper;
 use Cake\View\View;
@@ -202,6 +203,50 @@ final class FileUpload
             $this->getIconPath($entity, $version);
 
         return str_replace(DS, '/', $path);
+    }
+
+    /**
+     * Return the full path of all the files, of selected fields, of a foreign key
+     * ex: getUrls('uuid-property','photos','small'), getUrls('uuid-documents','file')
+     *
+     * @param string $id Foreign key value (UUID)
+     * @param string $mediaSource Field value (photos, featured_photo, file, etc..)
+     * @param string $mediaSize Size of photo
+     * @return mixed[]
+     */
+    public function getFilesUrls(string $id, string $mediaSource, string $mediaSize = null): array
+    {
+        if (empty($mediaSource) && !in_array($mediaSource, $this->getFileFields())) {
+            return [];
+        }
+
+        $files = $this->getFiles($mediaSource, $id);
+        $thumbs = $files->extract($mediaSize ? 'thumbnails.' . $mediaSize : 'path')->map(function ($thumb) {
+            return Router::fullBaseUrl() . $thumb;
+        })->toArray();
+
+        return $thumbs;
+    }
+
+    /**
+     * Return all the available sizes for thumbnails
+     *
+     * @return mixed[]
+     */
+    public function getThumbnailSizeList(): array
+    {
+        $thumbnails = [];
+        $versions = Configure::read('ThumbnailVersions', []);
+        foreach ($versions as $version => $definition) {
+            $thumbnails[$version] = sprintf(
+                '%s (%d x %d)',
+                ucfirst($version),
+                $definition['thumbnail']['width'],
+                $definition['thumbnail']['height']
+            );
+        }
+
+        return $thumbnails;
     }
 
     /**

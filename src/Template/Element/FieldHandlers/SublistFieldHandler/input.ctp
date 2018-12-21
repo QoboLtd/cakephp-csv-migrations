@@ -49,6 +49,7 @@ for ($i = 0; $i <= $levels; $i++) {
         $options['data-selectors'] = json_encode($selectors);
         $options['data-hide-next'] = true;
         $options['data-previous-default-value'] = true;
+        $options['label'] = $label;
     } else {
         $options['label'] = false;
     }

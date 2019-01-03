@@ -66,7 +66,7 @@ class CountrySearchOptions extends AbstractSearchOptions
                     'type' => 'script',
                     'content' => [
                         'CsvMigrations.dom-observer',
-                        'AdminLTE./plugins/select2/select2.full.min',
+                        'AdminLTE./bower_components/select2/dist/js/select2.full.min',
                         'CsvMigrations.select2.init'
                     ],
                     'block' => 'scriptBottom'
@@ -74,7 +74,7 @@ class CountrySearchOptions extends AbstractSearchOptions
                 [
                     'type' => 'css',
                     'content' => [
-                        'AdminLTE./plugins/select2/select2.min',
+                        'AdminLTE./bower_components/select2/dist/css/select2.min',
                         'Qobo/Utils.select2-bootstrap.min',
                         'Qobo/Utils.select2-style',
                         'Qobo/Utils./img/icons/flags/css/flag-icon.css'

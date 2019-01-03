@@ -78,15 +78,15 @@ class DatetimeSearchOptions extends AbstractSearchOptions
                     'type' => 'script',
                     'content' => [
                         'CsvMigrations.dom-observer',
-                        'AdminLTE./plugins/daterangepicker/moment.min',
-                        'AdminLTE./plugins/daterangepicker/daterangepicker',
+                        'AdminLTE./bower_components/moment/min/moment.min',
+                        'AdminLTE./bower_components/bootstrap-daterangepicker/daterangepicker',
                         'CsvMigrations.datetimepicker.init'
                     ],
                     'block' => 'scriptBottom'
                 ],
                 [
                     'type' => 'css',
-                    'content' => 'AdminLTE./plugins/daterangepicker/daterangepicker',
+                    'content' => 'AdminLTE./bower_components/bootstrap-daterangepicker/daterangepicker',
                     'block' => 'css'
                 ]
             ]

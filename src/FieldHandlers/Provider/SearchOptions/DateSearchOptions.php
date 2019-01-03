@@ -77,14 +77,14 @@ class DateSearchOptions extends AbstractSearchOptions
                     'type' => 'script',
                     'content' => [
                         'CsvMigrations.dom-observer',
-                        'AdminLTE./plugins/datepicker/bootstrap-datepicker',
+                        'AdminLTE./bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min',
                         'CsvMigrations.datepicker.init'
                     ],
                     'block' => 'scriptBottom'
                 ],
                 [
                     'type' => 'css',
-                    'content' => 'AdminLTE./plugins/datepicker/datepicker3',
+                    'content' => 'AdminLTE./bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min',
                     'block' => 'css'
                 ]
             ]

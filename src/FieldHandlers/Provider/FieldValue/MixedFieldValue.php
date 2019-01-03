@@ -78,6 +78,8 @@ class MixedFieldValue extends AbstractProvider
 
         $data = $request->getData();
 
-        return is_array($data) && array_key_exists($field, $data) ? $data[$field] : '';
+        $result = is_array($data) && array_key_exists($field, $data) ? (string)$data[$field] : '';
+
+        return $result;
     }
 }

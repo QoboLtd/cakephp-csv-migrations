@@ -9,11 +9,10 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-
 ?>
 <?php foreach ($panelFields as $subFields) : ?>
     <?php $fieldCount = 12 < count($subFields) ? 12 : count($subFields); ?>
-<div class="row">
+    <div class="row">
     <?php foreach ($subFields as $field) : ?>
         <?= $this->element('CsvMigrations.Field/input', [
             'factory' => $factory,
@@ -22,5 +21,5 @@
             'options' => $options
         ]) ?>
     <?php endforeach ?>
-</div>
+    </div>
 <?php endforeach ?>

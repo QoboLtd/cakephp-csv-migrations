@@ -2,36 +2,36 @@
     "id": {
         "name": "id",
         "type": "uuid",
-        "required": "1",
-        "non-searchable": null,
-        "unique": "1"
+        "required": true,
+        "non-searchable": false,
+        "unique": true
     },
     "created": {
         "name": "created",
         "type": "datetime",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "modified": {
         "name": "modified",
         "type": "datetime",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "created_by": {
         "name": "created_by",
         "type": "related(Users)",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     },
     "modified_by": {
         "name": "modified_by",
         "type": "related(Users)",
-        "required": null,
-        "non-searchable": null,
-        "unique": null
+        "required": false,
+        "non-searchable": false,
+        "unique": false
     }
 }

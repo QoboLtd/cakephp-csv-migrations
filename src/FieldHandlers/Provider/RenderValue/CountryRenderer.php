@@ -33,9 +33,10 @@ class CountryRenderer extends ListRenderer
     public function provide($data = null, array $options = [])
     {
         $result = parent::provide($data, $options);
-        $hasError = sprintf(parent::VALUE_NOT_FOUND_HTML, $data);
+        $errorResponse = sprintf(parent::VALUE_NOT_FOUND_HTML, $data);
 
-        if ($hasError == $result) {
+        //In case the result is the same with the errorResponse then return the error
+        if ($errorResponse == $result) {
             return $result;
         } else {
             return sprintf(static::ICON_HTML, strtolower($data), $result);

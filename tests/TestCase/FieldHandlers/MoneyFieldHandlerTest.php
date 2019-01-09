@@ -25,7 +25,7 @@ class MoneyFieldHandlerTest extends TestCase
 
     public function testRenderValue() : void
     {
-        $options['entity'] = new Entity(['field_money_amount' => 150, 'field_money_currency' => 'eur']);
+        $options['entity'] = new Entity(['field_money_amount' => 150, 'field_money_currency' => 'EUR']);
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
             'type' => 'money(currencies)',
@@ -36,7 +36,7 @@ class MoneyFieldHandlerTest extends TestCase
 
         $result = $this->fh->renderValue('', $options);
 
-        $this->assertEquals('150.00&nbsp;EUR', $result);
+        $this->assertEquals('150.00&nbsp;<span title="Euro">€&nbsp;(EUR)</span>', $result);
     }
 
     public function testRenderInput() : void

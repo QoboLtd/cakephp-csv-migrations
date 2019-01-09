@@ -56,7 +56,11 @@ class CurrencyRenderer extends ListRenderer
     public static function getIcon($key, $value): string
     {
         $currenciesList = Configure::readOrFail('Currencies.list');
+        //Check if the key exist in currencies list else return just the value
+        if (!array_key_exists($key, $currenciesList)) {
+            return $value;
+        }
 
-        return sprintf(static::ICON_HTML, $currenciesList[$key]['description'], quotemeta($currenciesList[$key]['symbol']), $value);
+        return sprintf(static::ICON_HTML, $currenciesList[$key]['description'], $currenciesList[$key]['symbol'], $value);
     }
 }

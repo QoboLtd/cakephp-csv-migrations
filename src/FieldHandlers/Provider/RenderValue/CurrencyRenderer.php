@@ -53,7 +53,7 @@ class CurrencyRenderer extends ListRenderer
      *
      * @return     string  The icon.
      */
-    public static function getIcon($key, $value): string
+    public static function getIcon(string $key, string $value): string
     {
         $currenciesList = Configure::readOrFail('Currencies.list');
         //Check if the key exist in currencies list else return just the value

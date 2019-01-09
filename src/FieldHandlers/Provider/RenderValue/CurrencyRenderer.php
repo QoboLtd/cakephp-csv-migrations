@@ -1,0 +1,61 @@
+<?php
+/**
+ * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
+namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
+
+use Cake\Core\Configure;
+
+/**
+ * CurrencyRenderer
+ *
+ * Render value as list item
+ */
+class CurrencyRenderer extends ListRenderer
+{
+    /**
+     * Icon html
+     */
+    const ICON_HTML = '<span title="%s">%s&nbsp;(%s)</span>';
+
+    /**
+     * Provide rendered value
+     *
+     * @param mixed $data Data to use for provision
+     * @param array $options Options to use for provision
+     * @return mixed
+     */
+    public function provide($data = null, array $options = [])
+    {
+        $result = parent::provide($data, $options);
+        $hasError = sprintf(parent::VALUE_NOT_FOUND_HTML, $data);
+
+        if ($hasError == $result) {
+            return $result;
+        } else {
+            return static::getIcon($data, $result);
+        }
+    }
+
+    /**
+     * Get Icon html
+     *
+     * @param      string  $key    The key
+     * @param      string  $value  The value
+     *
+     * @return     string  The icon.
+     */
+    public static function getIcon($key, $value): string
+    {
+        $currenciesList = Configure::readOrFail('Currencies.list');
+
+        return sprintf(static::ICON_HTML, $currenciesList[$key]['description'], quotemeta($currenciesList[$key]['symbol']), $value);
+    }
+}

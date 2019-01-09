@@ -60,7 +60,7 @@ class RelatedRenderer extends AbstractRenderer
             'relatedProperties' => $relatedProperties,
             'embedded' => isset($options['embeddedModal']) ? (bool)$options['embeddedModal'] : false,
             'icon' => $this->_getInputIcon($relatedProperties),
-            'title' => $this->_getInputHelp($relatedProperties),
+            'title' => (!empty($options['placeholder']) ? $options['placeholder'] : $this->_getInputHelp($relatedProperties)),
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
         ];

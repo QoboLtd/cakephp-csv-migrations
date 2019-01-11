@@ -27,7 +27,7 @@ class MoneyCombinedFields extends AbstractCombinedFields
             'config' => 'CsvMigrations\\FieldHandlers\\Config\\DecimalConfig'
         ],
         'currency' => [
-            'config' => 'CsvMigrations\\FieldHandlers\\Config\\ListConfig'
+            'config' => 'CsvMigrations\\FieldHandlers\\Config\\CurrencyConfig'
         ]
     ];
 }

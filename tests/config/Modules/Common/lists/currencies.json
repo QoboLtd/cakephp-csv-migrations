@@ -1,19 +1,19 @@
 {
     "items": [
         {
-            "value": "eur",
+            "value": "EUR",
             "label": "EUR",
             "inactive": "",
             "children": []
         },
         {
-            "value": "usd",
+            "value": "USD",
             "label": "USD",
             "inactive": "",
             "children": []
         },
         {
-            "value": "gpb",
+            "value": "GPB",
             "label": "GPB",
             "inactive": "",
             "children": []

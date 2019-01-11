@@ -13,6 +13,7 @@ $config = $config ? $config : [];
 
 // load default plugin config
 Configure::load('CsvMigrations.csv_migrations');
+Configure::load('CsvMigrations.currencies');
 
 // overwrite default plugin config by app level config
 Configure::write('CsvMigrations', array_replace_recursive(

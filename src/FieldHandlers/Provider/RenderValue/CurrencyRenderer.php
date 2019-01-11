@@ -11,17 +11,19 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
+use Cake\Core\Configure;
+
 /**
- * CountryRenderer
+ * CurrencyRenderer
  *
  * Render value as list item
  */
-class CountryRenderer extends ListRenderer
+class CurrencyRenderer extends ListRenderer
 {
     /**
      * Icon html
      */
-    const ICON_HTML = '<span class="flag-icon flag-icon-%s flag-icon-default"></span>&nbsp;&nbsp;%s';
+    const ICON_HTML = '<span title="%s">%s&nbsp;(%s)</span>';
 
     /**
      * Provide rendered value
@@ -39,7 +41,26 @@ class CountryRenderer extends ListRenderer
         if ($errorResponse == $result) {
             return $result;
         } else {
-            return sprintf(static::ICON_HTML, strtolower($data), $result);
+            return static::getIcon($data, $result);
         }
+    }
+
+    /**
+     * Get Icon html
+     *
+     * @param      string  $key    The key
+     * @param      string  $value  The value
+     *
+     * @return     string  The icon.
+     */
+    public static function getIcon(string $key, string $value): string
+    {
+        $currenciesList = Configure::readOrFail('Currencies.list');
+        //Check if the key exist in currencies list else return just the value
+        if (!array_key_exists($key, $currenciesList)) {
+            return $value;
+        }
+
+        return sprintf(static::ICON_HTML, $currenciesList[$key]['description'], $currenciesList[$key]['symbol'], $value);
     }
 }

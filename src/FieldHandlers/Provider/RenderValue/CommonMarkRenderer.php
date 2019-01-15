@@ -12,7 +12,6 @@
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
 use League\CommonMark\CommonMarkConverter;
-use League\CommonMark\Environment;
 
 /**
  * CommonMarkRenderer
@@ -36,7 +35,7 @@ class CommonMarkRenderer extends AbstractRenderer
             return $result;
         }
 
-        $converter = new CommonMarkConverter();
+        $converter = new CommonMarkConverter(['html_input' => 'escape']);
 
         return $converter->convertToHtml($result);
     }

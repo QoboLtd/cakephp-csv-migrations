@@ -26,6 +26,11 @@ class ValidateShell extends Shell
     protected $modules;
 
     /**
+     * @var bool $skipWarnings Skip warning messages
+     */
+    protected $skipWarnings;
+
+    /**
      * Set shell description and command line options
      *
      * @return ConsoleOptionParser
@@ -36,6 +41,12 @@ class ValidateShell extends Shell
         $parser->setDescription('Validate modules configuration');
         $parser->addArgument('modules', [
             'help' => 'Comma-separated list of modules to validate.  All will be checked if omitted.',
+        ]);
+        $parser->addOption('no-warnings', [
+            'short' => 'n',
+            'help' => 'Skip warnings (display only errors)',
+            'default' => false,
+            'boolean' => true,
         ]);
 
         return $parser;
@@ -53,6 +64,7 @@ class ValidateShell extends Shell
         $this->hr();
 
         $this->modules = Utility::getModules();
+        $this->skipWarnings = $this->param('no-warnings');
 
         if (empty($this->modules)) {
             $this->warn('Did not find any modules');
@@ -83,7 +95,10 @@ class ValidateShell extends Shell
             $moduleResult = $this->runModuleChecks($module);
 
             $result += count($moduleResult['errors']);
-            $this->printMessages('warn', $moduleResult['warnings']);
+            if (!$this->skipWarnings) {
+                $this->printMessages('warn', $moduleResult['warnings']);
+            }
+
             $this->printMessages('err', $moduleResult['errors']);
             $this->hr();
         }

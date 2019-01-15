@@ -35,7 +35,12 @@ class CommonMarkRenderer extends AbstractRenderer
             return $result;
         }
 
-        $converter = new CommonMarkConverter(['html_input' => 'escape']);
+        $config = [
+            'html_input' => 'escape',
+            'allow_unsafe_links' => false
+        ];
+
+        $converter = new CommonMarkConverter($config);
 
         return $converter->convertToHtml($result);
     }

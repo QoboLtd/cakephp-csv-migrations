@@ -64,7 +64,7 @@ class ValidateShell extends Shell
         $this->hr();
 
         $this->modules = Utility::getModules();
-        $this->skipWarnings = $this->param('no-warnings');
+        $this->skipWarnings = (bool)$this->param('no-warnings');
 
         if (empty($this->modules)) {
             $this->warn('Did not find any modules');

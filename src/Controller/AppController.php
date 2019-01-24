@@ -147,7 +147,7 @@ class AppController extends BaseController
      * @return \Cake\Datasource\EntityInterface
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When the record is not found
      */
-    private function fetchEntity(string $id) : EntityInterface
+    protected function fetchEntity(string $id) : EntityInterface
     {
         /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
@@ -193,7 +193,7 @@ class AppController extends BaseController
      * @param mixed[] $options Patch options
      * @return \Cake\Http\Response|null
      */
-    private function persistEntity(EntityInterface $entity, array $data, array $options = []) : ?Response
+    protected function persistEntity(EntityInterface $entity, array $data, array $options = []) : ?Response
     {
         /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();

@@ -3,13 +3,13 @@
         {
             "value": "m",
             "label": "m&sup2;",
-            "inactive": "",
+            "inactive": false,
             "children": []
         },
         {
             "value": "ft",
             "label": "ft&sup2;",
-            "inactive": "",
+            "inactive": false,
             "children": []
         }
     ]

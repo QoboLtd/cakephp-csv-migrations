@@ -3,19 +3,19 @@
         {
             "value": "limassol",
             "label": "Limassol",
-            "inactive": "",
+            "inactive": false,
             "children": []
         },
         {
             "value": "new_york",
             "label": "New York",
-            "inactive": "",
+            "inactive": false,
             "children": []
         },
         {
             "value": "london",
             "label": "London",
-            "inactive": "",
+            "inactive": false,
             "children": []
         }
     ]

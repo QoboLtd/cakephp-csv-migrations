@@ -146,7 +146,7 @@ class CsvMigration extends AbstractMigration
      *
      * @param string $tableName current table name
      * @return mixed[]  phinx table instances
-     * @deprecated 28.0.2 Kept for BC, already baked csv migration files are using this method.
+     * @deprecated 28.0.2 Kept for BC, already baked csv migration files are using this method. This should disappear after cakephp-migrations v2.
      */
     public function joins(string $tableName) : array
     {

@@ -3,13 +3,13 @@
         {
             "value": "m",
             "label": "Male",
-            "inactive": "",
+            "inactive": false,
             "children": []
         },
         {
             "value": "f",
             "label": "Female",
-            "inactive": "",
+            "inactive": false,
             "children": []
         }
     ]

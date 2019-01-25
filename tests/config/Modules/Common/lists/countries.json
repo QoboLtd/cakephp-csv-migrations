@@ -3,19 +3,19 @@
         {
             "value": "cy",
             "label": "Cyprus",
-            "inactive": "",
+            "inactive": false,
             "children": []
         },
         {
             "value": "usa",
             "label": "USA",
-            "inactive": "",
+            "inactive": false,
             "children": []
         },
         {
             "value": "uk",
             "label": "United Kingdom",
-            "inactive": "",
+            "inactive": false,
             "children": []
         }
     ]

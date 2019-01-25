@@ -3,17 +3,17 @@
         {
             "value": "first_level_1",
             "label": "First level 1",
-            "inactive": "",
+            "inactive": false,
             "children": [
                 {
                     "value": "second_level_1",
                     "label": "Second level 1",
-                    "inactive": "",
+                    "inactive": false,
                     "children": [
                         {
                             "value": "third_level_1",
                             "label": "Third level 1",
-                            "inactive": "",
+                            "inactive": false,
                             "children": []
                         }
                     ]
@@ -23,7 +23,7 @@
         {
             "value": "first_level_2",
             "label": "First level 2",
-            "inactive": "",
+            "inactive": false,
             "children": []
         }
     ]

@@ -3,13 +3,13 @@
         {
             "value": "active",
             "label": "Active",
-            "inactive": "",
+            "inactive": false,
             "children": []
         },
         {
             "value": "inactive",
             "label": "Inactive",
-            "inactive": "",
+            "inactive": false,
             "children": []
         }
     ]

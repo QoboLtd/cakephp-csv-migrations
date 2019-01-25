@@ -3,13 +3,13 @@
         {
             "value": "draft",
             "label": "Draft",
-            "inactive": "",
+            "inactive": false,
             "children": []
         },
         {
             "value": "published",
             "label": "Published",
-            "inactive": "",
+            "inactive": false,
             "children": []
         }
     ]

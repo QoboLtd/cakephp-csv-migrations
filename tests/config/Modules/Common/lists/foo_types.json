@@ -3,18 +3,18 @@
         {
             "value": "bronze",
             "label": "Bronze",
-            "inactive": "",
+            "inactive": false,
             "children": [
                 {
                     "value": "new",
                     "label": "New",
-                    "inactive": "",
+                    "inactive": false,
                     "children": []
                 },
                 {
                     "value": "used",
                     "label": "Used",
-                    "inactive": "",
+                    "inactive": false,
                     "children": []
                 }
             ]
@@ -22,18 +22,18 @@
         {
             "value": "silver",
             "label": "Silver",
-            "inactive": "",
+            "inactive": false,
             "children": [
                 {
                     "value": "new",
                     "label": "New",
-                    "inactive": "",
+                    "inactive": false,
                     "children": []
                 },
                 {
                     "value": "used",
                     "label": "Used",
-                    "inactive": "",
+                    "inactive": false,
                     "children": []
                 }
             ]
@@ -41,18 +41,18 @@
         {
             "value": "gold",
             "label": "Gold",
-            "inactive": "",
+            "inactive": false,
             "children": [
                 {
                     "value": "new",
                     "label": "New",
-                    "inactive": "",
+                    "inactive": false,
                     "children": []
                 },
                 {
                     "value": "used",
                     "label": "Used",
-                    "inactive": "",
+                    "inactive": false,
                     "children": []
                 }
             ]

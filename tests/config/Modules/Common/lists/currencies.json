@@ -3,19 +3,19 @@
         {
             "value": "EUR",
             "label": "EUR",
-            "inactive": "",
+            "inactive": false,
             "children": []
         },
         {
             "value": "USD",
             "label": "USD",
-            "inactive": "",
+            "inactive": false,
             "children": []
         },
         {
             "value": "GPB",
             "label": "GPB",
-            "inactive": "",
+            "inactive": false,
             "children": []
         }
     ]

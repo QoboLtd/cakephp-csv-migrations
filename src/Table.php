@@ -36,7 +36,6 @@ use Qobo\Utils\Utility\User;
 class Table extends BaseTable
 {
     use AssociationsAwareTrait;
-    use MigrationTrait;
 
     /**
      * Cached CSV field definitions for the current module

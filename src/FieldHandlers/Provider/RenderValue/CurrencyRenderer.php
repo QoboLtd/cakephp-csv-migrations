@@ -38,7 +38,7 @@ class CurrencyRenderer extends ListRenderer
         $errorResponse = sprintf(parent::VALUE_NOT_FOUND_HTML, $data);
 
         //In case the result is the same with the errorResponse then return the error
-        if ($errorResponse == $result) {
+        if (empty($result) || $errorResponse == $result) {
             return $result;
         } else {
             return static::getIcon($data, $result);

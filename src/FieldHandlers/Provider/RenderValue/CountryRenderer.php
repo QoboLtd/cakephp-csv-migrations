@@ -35,8 +35,8 @@ class CountryRenderer extends ListRenderer
         $result = parent::provide($data, $options);
         $errorResponse = sprintf(parent::VALUE_NOT_FOUND_HTML, $data);
 
-        //In case the result is the same with the errorResponse then return the error
-        if ($errorResponse == $result) {
+        //In case the result is empty or its the same with the errorResponse then return the result
+        if (empty($result) || $errorResponse == $result) {
             return $result;
         } else {
             return sprintf(static::ICON_HTML, strtolower($data), $result);

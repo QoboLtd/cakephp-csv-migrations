@@ -37,7 +37,7 @@ class ListRenderer extends AbstractRenderer
         $result = '';
         $data = (string)$data;
 
-        if (empty($data)) {
+        if ('' === trim($data)) {
             return $result;
         }
 

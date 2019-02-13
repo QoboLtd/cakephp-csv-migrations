@@ -80,6 +80,12 @@ class RelatedSearchOptions extends AbstractSearchOptions
         );
 
         $result[$field]['source'] = $options['fieldDefinitions']->getLimit();
+        $result[$field]['url'] = $view->Url->build([
+            'prefix' => 'api',
+            'plugin' => $relatedProperties['plugin'],
+            'controller' => $relatedProperties['controller'],
+            'action' => 'lookup.json'
+        ]);
         $result[$field]['input'] = [
             'content' => $content,
             'post' => [

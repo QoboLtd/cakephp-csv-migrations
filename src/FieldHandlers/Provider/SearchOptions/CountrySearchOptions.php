@@ -39,12 +39,10 @@ class CountrySearchOptions extends AbstractSearchOptions
 
         $result[$field] = $defaultOptions;
 
-        $selectListItems = $this->config->getProvider('selectOptions');
-        $selectListItems = new $selectListItems($this->config);
-        $listName = $options['fieldDefinitions']->getLimit();
-        $selectOptions = ['' => Setting::EMPTY_OPTION_LABEL()];
-        $optionList = $selectListItems->provide($listName, []);
-        foreach ($optionList as $k => $v) {
+        $className = $this->config->getProvider('selectOptions');
+        $provider = new $className($this->config);
+        $selectOptions = [];
+        foreach ($provider->provide($options['fieldDefinitions']->getLimit()) as $k => $v) {
             $selectOptions[$k] = sprintf(CountryValueRenderer::ICON_HTML, strtolower($k), $v);
         }
 
@@ -59,6 +57,7 @@ class CountrySearchOptions extends AbstractSearchOptions
         $content = $view->Form->select('{{name}}', $selectOptions, $attributes);
 
         $result[$field]['source'] = $options['fieldDefinitions']->getLimit();
+        $result[$field]['options'] = $selectOptions;
         $result[$field]['input'] = [
             'content' => $content,
             'post' => [

@@ -35,15 +35,10 @@ class ListSearchOptions extends AbstractSearchOptions
 
         $result[$this->config->getField()] = $defaultOptions;
 
-        $selectListItems = $this->config->getProvider('selectOptions');
-        $selectListItems = new $selectListItems($this->config);
-        $listName = $options['fieldDefinitions']->getLimit();
-        $listOptions = [];
+        $className = $this->config->getProvider('selectOptions');
+        $provider = new $className($this->config);
 
-        $selectOptions = ['' => Setting::EMPTY_OPTION_LABEL()];
-        $selectOptions += $selectListItems->provide($listName, $listOptions);
-
-        $options['listItems'] = $selectOptions;
+        $selectOptions = $provider->provide($options['fieldDefinitions']->getLimit());
 
         $view = $this->config->getView();
         $content = $view->Form->select('{{name}}', $selectOptions, [
@@ -51,9 +46,8 @@ class ListSearchOptions extends AbstractSearchOptions
             'label' => false
         ]);
 
-        $result[$this->config->getField()]['input'] = [
-            'content' => $content
-        ];
+        $result[$this->config->getField()]['options'] = $selectOptions;
+        $result[$this->config->getField()]['input'] = ['content' => $content];
 
         return $result;
     }

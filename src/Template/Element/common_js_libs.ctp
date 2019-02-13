@@ -72,6 +72,7 @@ echo $this->Html->script(
         'CsvMigrations.plugin',
         'Qobo/Utils./plugins/tinymce/tinymce.min',
         'CsvMigrations.tinymce.init',
+        'Qobo/Utils.select2.init',
     ],
     [
         'block' => 'scriptBottom'

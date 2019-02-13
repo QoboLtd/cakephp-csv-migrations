@@ -10,25 +10,6 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-$this->Html->script(
-    [
-        'AdminLTE./bower_components/select2/dist/js/select2.full.min',
-        'Qobo/Utils.select2.init',
-        'RolesCapabilities.switch-target',
-        'RolesCapabilities.permissions',
-    ],
-    ['block' => 'scriptBottom']
-);
-
-$this->Html->css(
-    [
-        'AdminLTE./bower_components/select2/dist/css/select2.min',
-        'Qobo/Utils.select2-bootstrap.min',
-        'Qobo/Utils.select2-style'
-    ],
-    ['block' => 'css']
-);
-
 $attributes = isset($attributes) ? $attributes : [];
 
 $attributes += [

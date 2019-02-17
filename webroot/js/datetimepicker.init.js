@@ -81,7 +81,7 @@
                 timePicker: true,
                 minYear: 1900,
                 maxYear: 2050,
-                drops: 'down',
+                drops: 'up',
                 autoUpdateInput: false,
                 timePicker24Hour: true,
                 timePickerIncrement: 5,

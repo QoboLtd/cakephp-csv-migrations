@@ -6,7 +6,6 @@ $(document).ready(function () {
         this.html = this.staticHtml;
         this.api_token = api_options.hasOwnProperty('token') ? api_options.token : null;
         this.options = {};
-
         if (typeof files === 'object') {
             this.initialPreview(files);
             this.initialPreviewConfig(files);
@@ -104,7 +103,8 @@ $(document).ready(function () {
                 if (file !== undefined) {
                     var options = {
                         key: file.id,
-                        url: '/api/file-storage/delete/' + file.id
+                        url: '/api/file-storage/delete/' + file.id,
+                        size: file.size
                     };
                     filesOptions.push(options);
                 }
@@ -118,10 +118,13 @@ $(document).ready(function () {
 
     FileInput.prototype.addDeleteUrls = function (ids) {
         var opts = [];
-
         if (ids.length) {
-            ids.forEach(function (id) {
-                opts.push({key: id, url: '/api/file-storage/delete/' + id});
+            ids.forEach(function (element) {
+                opts.push({
+                    key: element.id,
+                    url: '/api/file-storage/delete/' + element.id,
+                    size: element.size
+                });
             });
         }
 
@@ -192,7 +195,11 @@ $(document).ready(function () {
             if (true === data.response.success) {
                 var input = this;
                 data.response.data.forEach(function (file) {
-                    ids.push(file.id);
+                    let tmp = {
+                        'id': file.id,
+                        'size': (file.hasOwnProperty('filesize') ? file.filesize : 0)
+                    };
+                    ids.push(tmp);
                     paths.push(file.path);
                     that.addHiddenFileId(input, file.id);
                 });

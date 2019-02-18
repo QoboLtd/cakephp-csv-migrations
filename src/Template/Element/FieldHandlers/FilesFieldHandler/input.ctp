@@ -24,13 +24,13 @@ if ($value && $entities && $entities->count()) {
     foreach ($entities as $entity) {
         $files[] = [
             'id' => $entity->id,
-            'path' => $entity->path
+            'path' => $entity->path,
+            'size' => $entity->get('filesize'),
         ];
     }
     //passed to generate previews
     $options['data-files'] = json_encode($files);
 }
-
 $attributes += $options;
 ?>
 <div class="form-group <?= $required ? 'required' : '' ?> <?= $this->Form->isFieldError($name) ? 'has-error' : '' ?>">

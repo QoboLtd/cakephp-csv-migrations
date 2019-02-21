@@ -4,7 +4,9 @@ namespace CsvMigrations\Aggregator;
 use Cake\Datasource\QueryInterface;
 use Cake\Log\Log;
 use Cake\ORM\Association;
+use Cake\ORM\Query;
 use RuntimeException;
+use Webmozart\Assert\Assert;
 
 final class AggregateResult
 {
@@ -18,7 +20,6 @@ final class AggregateResult
     {
         $config = $aggregator->getConfig();
 
-        /** @var \Cake\Datasource\QueryInterface&\Cake\Database\Query */
         $query = $config->getTable()->find('all');
         $query = $aggregator->applyConditions($query);
         $query = static::join($aggregator, $query);
@@ -47,16 +48,12 @@ final class AggregateResult
             return $query;
         }
 
-        /** @var \Cake\Datasource\QueryInterface&\Cake\ORM\Query */
-        $query = $query;
-
+        Assert::isInstanceOf($query, Query::class);
         $association = static::findAssociation($aggregator);
 
         // limit to record's associated data
         $query->innerJoinWith($association->getName(), function ($q) use ($association, $config) {
-            /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
             $table = $config->getJoinTable();
-
             $primaryKey = $table->getPrimaryKey();
             if (! is_string($primaryKey)) {
                 Log::error('Failed to apply inner join for aggregated field value: primary key must be a string', [
@@ -69,7 +66,6 @@ final class AggregateResult
                 return $q;
             }
 
-            /** @var \Cake\Datasource\EntityInterface */
             $entity = $config->getEntity();
 
             return $q->where([
@@ -92,9 +88,7 @@ final class AggregateResult
     private static function findAssociation(AggregatorInterface $aggregator) : Association
     {
         $config = $aggregator->getConfig();
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $config->getTable();
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $joinTable = $config->getJoinTable();
 
         foreach ($table->associations() as $association) {

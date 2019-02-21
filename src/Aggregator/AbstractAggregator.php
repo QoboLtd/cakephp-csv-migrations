@@ -45,9 +45,7 @@ abstract class AbstractAggregator implements AggregatorInterface
      */
     public function validate() : bool
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->getConfig()->getTable();
-
         foreach ([$this->config->getField(), $this->config->getDisplayField()] as $field) {
             if ($table->getSchema()->hasColumn($field)) {
                 continue;

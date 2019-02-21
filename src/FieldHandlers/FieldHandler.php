@@ -99,13 +99,11 @@ class FieldHandler implements FieldHandlerInterface
      */
     protected function setDefaultFieldOptions() : void
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->config->getTable();
         $field = $this->config->getField();
 
         $mc = new ModuleConfig(ConfigType::FIELDS(), Inflector::camelize($table->getTable()));
-        $config = json_encode($mc->parse());
-        $config = false !== $config ? json_decode($config, true) : [];
+        $config = $mc->parseToArray();
         if (! empty($config[$field])) {
             $this->defaultOptions = array_replace_recursive($this->defaultOptions, $config[$field]);
         }

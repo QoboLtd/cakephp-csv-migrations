@@ -22,7 +22,6 @@ final class SumAggregator extends AbstractAggregator
             return false;
         }
 
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->getConfig()->getTable();
 
         $type = $table->getSchema()
@@ -49,7 +48,6 @@ final class SumAggregator extends AbstractAggregator
         /** @var \Cake\Datasource\QueryInterface&\Cake\Database\Query */
         $query = $query;
 
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->getConfig()->getTable();
 
         $aggregateField = $table->aliasField($this->getConfig()->getField());

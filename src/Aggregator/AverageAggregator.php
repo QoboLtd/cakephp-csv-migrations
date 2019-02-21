@@ -3,6 +3,8 @@ namespace CsvMigrations\Aggregator;
 
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\QueryInterface;
+use Cake\ORM\Query;
+use Webmozart\Assert\Assert;
 
 final class AverageAggregator extends AbstractAggregator
 {
@@ -22,7 +24,6 @@ final class AverageAggregator extends AbstractAggregator
             return false;
         }
 
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->getConfig()->getTable();
 
         $type = $table->getSchema()
@@ -46,11 +47,8 @@ final class AverageAggregator extends AbstractAggregator
      */
     public function applyConditions(QueryInterface $query) : QueryInterface
     {
-        /** @var \Cake\Datasource\QueryInterface&\Cake\Database\Query */
-        $query = $query;
-
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->getConfig()->getTable();
+        Assert::isInstanceOf($query, Query::class);
 
         $aggregateField = $table->aliasField($this->getConfig()->getField());
 

@@ -34,7 +34,6 @@ final class LastAggregator extends AbstractAggregator
      */
     private function applyConditionsWithOrder(QueryInterface $query) : QueryInterface
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->getConfig()->getTable();
 
         $aggregateField = $table->aliasField($this->getConfig()->getField());
@@ -58,7 +57,6 @@ final class LastAggregator extends AbstractAggregator
         /** @var \Cake\Datasource\QueryInterface&\Cake\Database\Query */
         $query = $query;
 
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->getConfig()->getTable();
 
         $aggregateField = $table->aliasField($this->getConfig()->getField());

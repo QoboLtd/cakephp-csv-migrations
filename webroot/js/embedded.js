@@ -174,8 +174,10 @@ var embedded = embedded || {};
         });
     };
 
-    embedded = new Embedded([]);
+    $(document).ready(function () {
+        embedded = new Embedded([]);
 
-    embedded.init();
+        embedded.init();
+    });
 
 })(jQuery);

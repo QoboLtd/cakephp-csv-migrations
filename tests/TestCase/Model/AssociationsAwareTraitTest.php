@@ -31,7 +31,7 @@ class AssociationsAwareTraitTest extends TestCase
     public function testAssociations(string $table, string $name, string $type, string $joinTable = '') : void
     {
         $association = TableRegistry::get($table)->getAssociation($name);
-        
+
         $this->assertInstanceOf($type, $association);
 
         if ($association instanceof BelongsToMany) {

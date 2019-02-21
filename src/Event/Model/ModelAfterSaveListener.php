@@ -366,7 +366,7 @@ class ModelAfterSaveListener implements EventListenerInterface
             }
         }
 
-        Assert::allIsInstanceOf($result,EntityInterface::class);
+        Assert::allIsInstanceOf($result, EntityInterface::class);
 
         return $result;
     }

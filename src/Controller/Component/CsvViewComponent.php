@@ -129,7 +129,6 @@ class CsvViewComponent extends Component
             return;
         }
 
-
         $controller = $event->getSubject();
         Assert::isInstanceOf($controller, Controller::class);
 

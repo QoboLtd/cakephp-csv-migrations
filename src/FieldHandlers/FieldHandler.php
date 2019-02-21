@@ -17,6 +17,7 @@ use Cake\Validation\Validator;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\Config\ConfigInterface;
+use CsvMigrations\HasFieldsInterface;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
@@ -141,7 +142,7 @@ class FieldHandler implements FieldHandlerInterface
                 'type' => $dbFieldType,
             ],
         ];
-        if (method_exists($table, 'getFieldsDefinitions') && is_callable([$table, 'getFieldsDefinitions'])) {
+        if ($table instanceof HasFieldsInterface) {
             $fieldDefinitions = $table->getFieldsDefinitions($stubFields);
             $this->defaultOptions['fieldDefinitions'] = new CsvField($fieldDefinitions[$field]);
         }

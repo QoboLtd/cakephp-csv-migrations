@@ -19,7 +19,7 @@ use Cake\Log\Log;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validation;
-use CsvMigrations\BadPrimaryKeyException;
+use CsvMigrations\UnsupportedPrimaryKeyException;
 use CsvMigrations\Controller\Traits\ImportTrait;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\Table;
@@ -153,7 +153,7 @@ class AppController extends BaseController
 
         $primaryKey = $table->getPrimaryKey();
         if (! is_string($primaryKey)) {
-            throw new BadPrimaryKeyException();
+            throw new UnsupportedPrimaryKeyException();
         }
 
         try {
@@ -220,7 +220,7 @@ class AppController extends BaseController
 
             $primaryKey = $table->getPrimaryKey();
             if (! is_string($primaryKey)) {
-                throw new BadPrimaryKeyException();
+                throw new UnsupportedPrimaryKeyException();
             }
 
             // handle file uploads if found in the request data
@@ -324,7 +324,7 @@ class AppController extends BaseController
 
         $primaryKey = $association->getPrimaryKey();
         if (!is_string($primaryKey)) {
-            throw new BadPrimaryKeyException();
+            throw new UnsupportedPrimaryKeyException();
         }
 
         $query = $association->find('all')
@@ -391,7 +391,7 @@ class AppController extends BaseController
         if ('delete' === $operation) {
             $primaryKey = $table->getPrimaryKey();
             if (! is_string($primaryKey)) {
-                throw new BadPrimaryKeyException();
+                throw new UnsupportedPrimaryKeyException();
             }
 
             $conditions = [$primaryKey . ' IN' => $batchIds];
@@ -417,7 +417,7 @@ class AppController extends BaseController
 
             $primaryKey = $table->getPrimaryKey();
             if (! is_string($primaryKey)) {
-                throw new BadPrimaryKeyException();
+                throw new UnsupportedPrimaryKeyException();
             }
 
             $conditions = [$primaryKey . ' IN' => $batchIds];

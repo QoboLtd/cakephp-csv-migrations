@@ -21,8 +21,8 @@ use Cake\Log\LogTrait;
 use Cake\Network\Exception\SocketException;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
-use CsvMigrations\BadForeignKeyException;
-use CsvMigrations\BadPrimaryKeyException;
+use CsvMigrations\UnsupportedForeignKeyException;
+use CsvMigrations\UnsupportedPrimaryKeyException;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\Table as CsvTable;
 use CsvMigrations\Utility\DTZone;
@@ -254,7 +254,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         foreach ($associations as $association) {
             $foreignKey = $association->getForeignKey();
             if (!is_string($foreignKey)) {
-                throw new BadForeignKeyException();
+                throw new UnsupportedForeignKeyException();
             }
             if (in_array($foreignKey, $this->skipAttendeesIn)) {
                 continue;
@@ -348,12 +348,12 @@ class ModelAfterSaveListener implements EventListenerInterface
 
             $primaryKey = $association->getTarget()->getPrimaryKey();
             if (! is_string($primaryKey)) {
-                throw new BadPrimaryKeyException();
+                throw new UnsupportedPrimaryKeyException();
             }
 
             $foreignKey = $association->getForeignKey();
             if (!is_string($foreignKey)) {
-                throw new BadForeignKeyException();
+                throw new UnsupportedForeignKeyException();
             }
 
             try {

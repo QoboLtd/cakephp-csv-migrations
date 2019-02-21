@@ -26,7 +26,7 @@ use Cake\I18n\Time;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Shell\Helper\ProgressHelper;
-use CsvMigrations\BadPrimaryKeyException;
+use CsvMigrations\UnsupportedPrimaryKeyException;
 use CsvMigrations\Model\Entity\Import;
 use CsvMigrations\Model\Entity\ImportResult;
 use CsvMigrations\Model\Table\ImportResultsTable;
@@ -490,7 +490,7 @@ class ImportShell extends Shell
 
             $primaryKey = $targetTable->getPrimaryKey();
             if (! is_string($primaryKey)) {
-                throw new BadPrimaryKeyException();
+                throw new UnsupportedPrimaryKeyException();
             }
 
             // combine lookup fields with primary key and display field

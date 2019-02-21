@@ -14,7 +14,7 @@ namespace CsvMigrations;
 use RuntimeException;
 use Throwable;
 
-class BadForeignKeyException extends RuntimeException
+class UnsupportedForeignKeyException extends RuntimeException
 {
     /**
      * @param string $message Exception message

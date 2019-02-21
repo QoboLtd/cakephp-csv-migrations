@@ -14,7 +14,7 @@ namespace CsvMigrations;
 use RuntimeException;
 use Throwable;
 
-class BadPrimaryKeyException extends RuntimeException
+class UnsupportedPrimaryKeyException extends RuntimeException
 {
     /**
      * @param string $message Exception message

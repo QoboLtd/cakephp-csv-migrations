@@ -14,7 +14,7 @@ namespace CsvMigrations\FieldHandlers\Provider\FieldValue;
 use Cake\Database\Exception;
 use Cake\Datasource\EntityInterface;
 use Cake\Http\ServerRequest;
-use CsvMigrations\BadPrimaryKeyException;
+use CsvMigrations\UnsupportedPrimaryKeyException;
 use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
 
 /**
@@ -49,7 +49,7 @@ class PrimaryKeyFieldValue extends AbstractProvider
         }
 
         if (! is_string($primaryKey)) {
-            throw new BadPrimaryKeyException();
+            throw new UnsupportedPrimaryKeyException();
         }
 
         if ($options['entity'] instanceof EntityInterface) {

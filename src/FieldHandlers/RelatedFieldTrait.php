@@ -17,7 +17,7 @@ use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
-use CsvMigrations\BadPrimaryKeyException;
+use CsvMigrations\UnsupportedPrimaryKeyException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use RuntimeException;
@@ -157,7 +157,7 @@ trait RelatedFieldTrait
     {
         $primaryKey = $table->getPrimaryKey();
         if (! is_string($primaryKey)) {
-            throw new BadPrimaryKeyException();
+            throw new UnsupportedPrimaryKeyException();
         }
 
         // try to fetch with trashed if finder method exists, otherwise fallback to find all

@@ -16,7 +16,6 @@ use Cake\Datasource\EntityInterface;
 use Cake\Http\ServerRequest;
 use CsvMigrations\BadPrimaryKeyException;
 use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
-use InvalidArgumentException;
 
 /**
  * PrimaryKeyFieldValue

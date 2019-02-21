@@ -39,7 +39,6 @@ use NinjaMutex\MutexException;
 use PDOException;
 use Qobo\Utils\Utility\Lock\FileLock;
 use Qobo\Utils\Utility\User;
-use RuntimeException;
 use Webmozart\Assert\Assert;
 
 class ImportShell extends Shell

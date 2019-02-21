@@ -3,7 +3,7 @@ namespace CsvMigrations\Aggregator;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Table;
-use CsvMigrations\MissingJoinException;
+use CsvMigrations\Exception\MissingJoinException;
 use InvalidArgumentException;
 
 /**

@@ -17,7 +17,7 @@ use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
-use CsvMigrations\UnsupportedPrimaryKeyException;
+use CsvMigrations\Exception\UnsupportedPrimaryKeyException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use RuntimeException;

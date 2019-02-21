@@ -14,7 +14,7 @@ namespace CsvMigrations\FieldHandlers\Provider\FieldValue;
 use Cake\Database\Exception;
 use Cake\Datasource\EntityInterface;
 use Cake\Http\ServerRequest;
-use CsvMigrations\UnsupportedPrimaryKeyException;
+use CsvMigrations\Exception\UnsupportedPrimaryKeyException;
 use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
 
 /**

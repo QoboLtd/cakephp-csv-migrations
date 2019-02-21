@@ -19,7 +19,7 @@ use Cake\Log\Log;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validation;
-use CsvMigrations\UnsupportedPrimaryKeyException;
+use CsvMigrations\Exception\UnsupportedPrimaryKeyException;
 use CsvMigrations\Controller\Traits\ImportTrait;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\Table;

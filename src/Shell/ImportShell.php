@@ -26,7 +26,7 @@ use Cake\I18n\Time;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Shell\Helper\ProgressHelper;
-use CsvMigrations\UnsupportedPrimaryKeyException;
+use CsvMigrations\Exception\UnsupportedPrimaryKeyException;
 use CsvMigrations\Model\Entity\Import;
 use CsvMigrations\Model\Entity\ImportResult;
 use CsvMigrations\Model\Table\ImportResultsTable;

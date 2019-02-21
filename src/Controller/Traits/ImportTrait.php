@@ -12,6 +12,7 @@
 namespace CsvMigrations\Controller\Traits;
 
 use Cake\Http\Response;
+use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use CsvMigrations\Model\Entity\Import;
 use CsvMigrations\Model\Table\ImportsTable;
@@ -38,8 +39,8 @@ trait ImportTrait
             $this->viewBuilder()->setClassName('Json');
             $utility = new ImportUtility($this->{$this->name}, $this->request, $this->Flash);
             $columns = ['row_number', 'status', 'status_message'];
-            /** @var \Cake\Datasource\QueryInterface&\Cake\ORM\Query */
             $query = $utility->getImportResults($entity, $columns);
+            Assert::isInstanceOf($query, Query::class);
 
             $pagination = [
                 'count' => $query->count()

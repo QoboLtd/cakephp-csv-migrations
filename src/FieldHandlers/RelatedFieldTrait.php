@@ -13,6 +13,7 @@ namespace CsvMigrations\FieldHandlers;
 
 use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -20,6 +21,7 @@ use Cake\Utility\Inflector;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use RuntimeException;
+use Webmozart\Assert\Assert;
 
 trait RelatedFieldTrait
 {
@@ -85,10 +87,12 @@ trait RelatedFieldTrait
 
         $config = (new ModuleConfig(ConfigType::MODULE(), $tableName))->parseToArray();
 
-        $entity = $this->_getAssociatedRecord($table, $data);
         $displayField = $table->getDisplayField();
         $displayFieldValue = '';
-        if (null !== $entity) {
+
+        try {
+            $entity = $this->_getAssociatedRecord($table, $data);
+
             // get related table's display field value by rendering it through field handler factory
             $value = (new FieldHandlerFactory())->renderValue(
                 $table,
@@ -97,6 +101,9 @@ trait RelatedFieldTrait
                 ['renderAs' => Setting::RENDER_PLAIN_VALUE_RELATED()]
             );
             $displayFieldValue = '' === $value ? 'N/A' : $value;
+        } catch (RecordNotFoundException $e) {
+            // @todo rethrow the exception
+            $entity = null;
         }
 
         $result = [
@@ -144,9 +151,9 @@ trait RelatedFieldTrait
      *
      * @param \Cake\ORM\Table $table Table instance
      * @param string $value Primary key value
-     * @return \Cake\Datasource\EntityInterface|null
+     * @return \Cake\Datasource\EntityInterface
      */
-    protected function _getAssociatedRecord(Table $table, string $value) : ?EntityInterface
+    protected function _getAssociatedRecord(Table $table, string $value) : EntityInterface
     {
         $primaryKey = $table->getPrimaryKey();
         if (! is_string($primaryKey)) {
@@ -156,10 +163,10 @@ trait RelatedFieldTrait
         // try to fetch with trashed if finder method exists, otherwise fallback to find all
         $finderMethod = $table->hasBehavior('Trash') ? 'withTrashed' : 'all';
 
-        /** @var \Cake\Datasource\EntityInterface|null */
         $entity = $table->find($finderMethod, ['conditions' => [$table->aliasField($primaryKey) => $value]])
             ->enableHydration(true)
-            ->first();
+            ->firstOrFail();
+        Assert::isInstanceOf($entity, EntityInterface::class);
 
         return $entity;
     }

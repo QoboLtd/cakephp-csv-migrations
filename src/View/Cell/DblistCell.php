@@ -11,8 +11,11 @@
  */
 namespace CsvMigrations\View\Cell;
 
+use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\View\Cell;
 use CsvMigrations\FieldHandlers\Provider\RenderValue\ListRenderer;
+use Webmozart\Assert\Assert;
 
 /**
  * DbList cell
@@ -52,15 +55,15 @@ class DblistCell extends Cell
                 return $q->where(['DblistItems.value' => $value]);
             });
 
-        /** @var \Cake\Datasource\EntityInterface|null */
-        $entity = $query->first();
-
-        if (null === $entity) {
+        try {
+            $entity = $query->firstOrFail();
+        } catch (RecordNotFoundException $e) {
             $this->set('data', '' !== trim($value) ? sprintf(ListRenderer::VALUE_NOT_FOUND_HTML, $value) : '');
 
             return;
         }
 
+        Assert::isInstanceOf($entity, EntityInterface::class);
         $this->set('data', $entity->get('_matchingData')['DblistItems']->get('name'));
     }
 

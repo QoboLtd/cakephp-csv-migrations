@@ -4,9 +4,11 @@ namespace CsvMigrations\Test\TestCase\Shell;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 use CsvMigrations\Shell\ImportShell;
+use Webmozart\Assert\Assert;
 
 /**
  * CsvMigrations\Shell\ImportShell Test Case
@@ -92,22 +94,22 @@ class ImportShellTest extends ConsoleIntegrationTestCase
 
         $this->assertSame($initialCount + 2, $table->find()->count());
 
-        /** @var \Cake\Datasource\EntityInterface */
         $entity = $table->find()
             ->where(['name' => 'John Doe [import]'])
             ->select(['name', 'author', 'status'])
             ->firstOrFail();
+        Assert::isInstanceOf($entity, EntityInterface::class);
 
         $this->assertEquals(
             ['name' => 'John Doe [import]', 'author' => '00000000-0000-0000-0000-000000000001', 'status' => 'draft'],
             $entity->toArray()
         );
 
-        /** @var \Cake\Datasource\EntityInterface */
         $entity = $table->find()
             ->where(['name' => 'John Smith [import]'])
             ->select(['name', 'author', 'status'])
             ->firstOrFail();
+        Assert::isInstanceOf($entity, EntityInterface::class);
 
         $this->assertEquals(
             ['name' => 'John Smith [import]', 'author' => '00000000-0000-0000-0000-000000000002', 'status' => 'published'],

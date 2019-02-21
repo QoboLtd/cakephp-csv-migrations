@@ -11,10 +11,13 @@
  */
 namespace CsvMigrations\Model\Table;
 
+use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Webmozart\Assert\Assert;
 
 /**
  * Dblists Model
@@ -111,12 +114,12 @@ class DblistsTable extends Table
      */
     public function getOptions(string $listName) : array
     {
-        /** @var \CsvMigrations\Model\Entity\Dblist|null */
-        $entity = $this->find('all')
-            ->enableHydration(true)
-            ->where(['name' => $listName])
-            ->first();
-        if (null === $entity) {
+        try {
+            $entity = $this->find('all')
+                ->enableHydration(true)
+                ->where(['name' => $listName])
+                ->firstOrFail();
+        } catch (RecordNotFoundException $e) {
             return [];
         }
 
@@ -125,6 +128,8 @@ class DblistsTable extends Table
             'valuePath' => 'name',
             'spacer' => ' - '
         ];
+
+        Assert::isInstanceOf($entity, EntityInterface::class);
 
         return $this->DblistItems->find('treeList', $treeOptions)
             ->where(['dblist_id' => $entity->get('id')])

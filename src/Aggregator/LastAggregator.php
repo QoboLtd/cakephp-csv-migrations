@@ -3,6 +3,7 @@ namespace CsvMigrations\Aggregator;
 
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\QueryInterface;
+use Cake\ORM\Query;
 
 final class LastAggregator extends AbstractAggregator
 {
@@ -58,7 +59,9 @@ final class LastAggregator extends AbstractAggregator
 
         $aggregateField = $table->aliasField($this->getConfig()->getField());
 
-        $query->select([$this->getConfig()->getDisplayField() => $query->func()->max($aggregateField)]);
+        if ($query instanceof Query) {
+            $query->select([$this->getConfig()->getDisplayField() => $query->func()->max($aggregateField)]);
+        }
 
         return $query;
     }

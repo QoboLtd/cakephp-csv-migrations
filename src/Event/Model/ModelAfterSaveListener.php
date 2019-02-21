@@ -11,11 +11,12 @@
  */
 namespace CsvMigrations\Event\Model;
 
+use BadMethodCallException;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
-use Cake\I18n\Time;
 use Cake\Log\LogTrait;
 use Cake\Network\Exception\SocketException;
 use Cake\ORM\Table;
@@ -26,10 +27,10 @@ use CsvMigrations\Utility\DTZone;
 use CsvMigrations\Utility\ICal\IcEmail;
 use DateTimeZone;
 use InvalidArgumentException;
-use PHPUnit\Framework\MockObject\BadMethodCallException;
 use Psr\Log\LogLevel;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Webmozart\Assert\Assert;
 
 class ModelAfterSaveListener implements EventListenerInterface
 {
@@ -249,8 +250,10 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         $result = [];
         foreach ($associations as $association) {
-            /** @var string */
             $foreignKey = $association->getForeignKey();
+            if (!is_string($foreignKey)) {
+                throw new InvalidArgumentException('Composite keys are not supported');
+            }
             if (in_array($foreignKey, $this->skipAttendeesIn)) {
                 continue;
             }
@@ -346,20 +349,24 @@ class ModelAfterSaveListener implements EventListenerInterface
                 throw new InvalidArgumentException('Primary key must be a string');
             }
 
-            /** @var string */
             $foreignKey = $association->getForeignKey();
+            if (!is_string($foreignKey)) {
+                throw new InvalidArgumentException('Composite keys are not supported');
+            }
 
-            /** @var \Cake\Datasource\EntityInterface|null */
-            $relatedEntity = $association->getTarget()
-                ->find('all')
-                ->where([$primaryKey => $entity->get($foreignKey)])
-                ->enableHydration(true)
-                ->first();
-
-            if (null !== $relatedEntity) {
+            try {
+                $relatedEntity = $association->getTarget()
+                    ->find('all')
+                    ->where([$primaryKey => $entity->get($foreignKey)])
+                    ->enableHydration(true)
+                    ->firstOrFail();
                 $result[] = $relatedEntity;
+            } catch (RecordNotFoundException $e) {
+                // @ignoreException
             }
         }
+
+        Assert::allIsInstanceOf($result,EntityInterface::class);
 
         return $result;
     }

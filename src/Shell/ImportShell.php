@@ -12,6 +12,8 @@
 namespace CsvMigrations\Shell;
 
 use AuditStash\Meta\RequestMetadata;
+use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Shell\Helper\ProgressHelper;
 use CakeDC\Users\Controller\Traits\CustomUsersTableTrait;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
@@ -255,8 +257,8 @@ class ImportShell extends Shell
         $this->createImportResults($import, $count);
 
         $this->out('Importing records ..');
-        /** @var \Cake\Shell\Helper\ProgressHelper */
         $progress = $this->helper('Progress');
+        Assert::isInstanceOf($progress, ProgressHelper::class);
         $progress->init();
 
         $headers = ImportUtility::getUploadHeaders($import);
@@ -293,8 +295,8 @@ class ImportShell extends Shell
     {
         $this->out('Preparing records ..');
 
-        /** @var \Cake\Shell\Helper\ProgressHelper */
         $progress = $this->helper('Progress');
+        Assert::isInstanceOf($progress, ProgressHelper::class);
         $progress->init();
 
         $table = TableRegistry::get('CsvMigrations.ImportResults');
@@ -345,15 +347,18 @@ class ImportShell extends Shell
     {
         $importTable = TableRegistry::get('CsvMigrations.ImportResults');
         Assert::isInstanceOf($importTable, ImportResultsTable::class);
+
         $query = $importTable->find('all')
             ->enableHydration(true)
             ->where(['import_id' => $import->get('id'), 'row_number' => $rowNumber]);
 
-        /** @var \CsvMigrations\Model\Entity\ImportResult|null */
-        $importResult = $query->first();
-        if (null === $importResult) {
+        try {
+            $importResult = $query->firstOrFail();
+        } catch (RecordNotFoundException $e) {
             return;
         }
+
+        Assert::isInstanceOf($importResult, ImportResult::class);
 
         // skip successful imports
         if ($importTable::STATUS_SUCCESS === $importResult->get('status')) {
@@ -511,11 +516,13 @@ class ImportShell extends Shell
                 ->select([$targetTable->aliasField($primaryKey)])
                 ->where(['OR' => array_combine($lookupFields, $lookupValues)]);
 
-            /** @var \Cake\Datasource\EntityInterface|null */
-            $entity = $query->first();
-            if (null === $entity) {
+            try {
+                $entity = $query->firstOrFail();
+            } catch (RecordNotFoundException $e) {
                 continue;
             }
+
+            Assert::isInstanceOf($entity, EntityInterface::class);
 
             return $entity->get($primaryKey);
         }

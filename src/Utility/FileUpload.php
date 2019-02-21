@@ -28,6 +28,7 @@ use Cake\View\View;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility;
+use Webmozart\Assert\Assert;
 
 final class FileUpload
 {
@@ -58,7 +59,7 @@ final class FileUpload
     /**
      * Table instance.
      *
-     * @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table
+     * @var \Cake\ORM\Table
      */
     private $table;
 
@@ -83,9 +84,6 @@ final class FileUpload
      */
     public function __construct(Table $table)
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
-        $table = $table;
-
         $this->table = $table;
         $this->storageTable = TableRegistry::get(self::FILE_STORAGE_TABLE_NAME);
 
@@ -396,8 +394,9 @@ final class FileUpload
             return null;
         }
 
-        /** @var \Burzum\FileStorage\Model\Entity\FileStorage */
         $entity = $this->storageTable->newEntity(['file' => $file]);
+        Assert::isInstanceOf($entity, FileStorage::class);
+
         /**
          * Field foreign_key is not set here because upload does not know
          * anything about the entity it relates to, as it is not yet created.

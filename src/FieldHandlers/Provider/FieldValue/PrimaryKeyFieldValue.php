@@ -39,7 +39,6 @@ class PrimaryKeyFieldValue extends AbstractProvider
             return null;
         }
 
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->config->getTable();
 
         // return null in cases where no table or a dummy table was provided by the config class

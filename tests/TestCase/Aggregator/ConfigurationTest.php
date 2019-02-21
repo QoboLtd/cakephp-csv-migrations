@@ -1,11 +1,13 @@
 <?php
 namespace CsvMigrations\Test\TestCase\Aggregator;
 
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\Aggregator\Configuration;
 use InvalidArgumentException;
+use Webmozart\Assert\Assert;
 
 class ConfigurationTest extends TestCase
 {
@@ -24,10 +26,10 @@ class ConfigurationTest extends TestCase
     public function testJoinMode() : void
     {
         $table = TableRegistry::get('Foo');
-        /** @var \Cake\Datasource\EntityInterface */
         $entity = $table->find()
             ->enableHydration(true)
             ->firstOrFail();
+        Assert::isInstanceOf($entity, EntityInterface::class);
         $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
 
         $configuration->setJoinData($table, $entity);
@@ -62,10 +64,10 @@ class ConfigurationTest extends TestCase
     public function testGetJoinTable() : void
     {
         $table = TableRegistry::get('Foo');
-        /** @var \Cake\Datasource\EntityInterface */
         $entity = $table->find()
             ->enableHydration(true)
             ->firstOrFail();
+        Assert::isInstanceOf($entity, EntityInterface::class);
         $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
         $configuration->setJoinData($table, $entity);
 
@@ -75,10 +77,10 @@ class ConfigurationTest extends TestCase
     public function testGetEntity() : void
     {
         $table = TableRegistry::get('Foo');
-        /** @var \Cake\Datasource\EntityInterface */
         $entity = $table->find()
             ->enableHydration(true)
             ->firstOrFail();
+        Assert::isInstanceOf($entity, EntityInterface::class);
         $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
         $configuration->setJoinData($table, $entity);
 
@@ -90,11 +92,11 @@ class ConfigurationTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $table = TableRegistry::get('Foo');
-        /** @var \Cake\Datasource\EntityInterface */
         $entity = TableRegistry::get('Articles')
             ->find()
             ->enableHydration(true)
             ->firstOrFail();
+        Assert::isInstanceOf($entity, EntityInterface::class);
 
         $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
 

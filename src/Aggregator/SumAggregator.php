@@ -3,6 +3,7 @@ namespace CsvMigrations\Aggregator;
 
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\QueryInterface;
+use Cake\ORM\Query;
 
 final class SumAggregator extends AbstractAggregator
 {
@@ -49,7 +50,9 @@ final class SumAggregator extends AbstractAggregator
 
         $aggregateField = $table->aliasField($this->getConfig()->getField());
 
-        $query->select(['sum' => $query->func()->sum($aggregateField)]);
+        if ($query instanceof Query) {
+            $query->select(['sum' => $query->func()->sum($aggregateField)]);
+        }
 
         return $query;
     }

@@ -116,15 +116,12 @@ trait RelatedFieldTrait
     /**
      * Get parent model association's foreign key.
      *
-     * @param \Cake\Datasource\RepositoryInterface $table Table instance
+     * @param \Cake\ORM\Table $table Table instance
      * @param string $modelName Model name
      * @return string
      */
-    protected function _getForeignKey(RepositoryInterface $table, string $modelName) : string
+    protected function _getForeignKey(Table $table, string $modelName) : string
     {
-        /** @var \Cake\ORM\Table */
-        $table = $table;
-
         foreach ($table->associations() as $association) {
             if ($modelName !== $association->className()) {
                 continue;
@@ -145,15 +142,12 @@ trait RelatedFieldTrait
      * Retrieve and return associated record Entity, by primary key value.
      * If the record has been trashed - query will return NULL.
      *
-     * @param \Cake\Datasource\RepositoryInterface $table Table instance
+     * @param \Cake\ORM\Table $table Table instance
      * @param string $value Primary key value
      * @return \Cake\Datasource\EntityInterface|null
      */
-    protected function _getAssociatedRecord(RepositoryInterface $table, string $value) : ?EntityInterface
+    protected function _getAssociatedRecord(Table $table, string $value) : ?EntityInterface
     {
-        /** @var \Cake\ORM\Table */
-        $table = $table;
-
         $primaryKey = $table->getPrimaryKey();
         if (! is_string($primaryKey)) {
             throw new RuntimeException('Primary key must be a string');

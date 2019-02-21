@@ -230,15 +230,12 @@ class ModelAfterSaveListener implements EventListenerInterface
     /**
      * Retrieve attendees fields from current Table's associations.
      *
-     * @param \Cake\Datasource\RepositoryInterface $table Table instance
+     * @param \Cake\ORM\Table $table Table instance
      * @param string[] $modules Reminder to modules
      * @return string[]
      */
-    protected function getAttendeesFields(RepositoryInterface $table, array $modules) : array
+    protected function getAttendeesFields(Table $table, array $modules) : array
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
-        $table = $table;
-
         $associations = [];
         foreach ($table->associations() as $association) {
             if (in_array(Inflector::humanize($association->getTarget()->getTable()), $modules)) {
@@ -331,16 +328,13 @@ class ModelAfterSaveListener implements EventListenerInterface
      *
      * gets all Entities associated with the record
      *
-     * @param \Cake\Datasource\RepositoryInterface $table of the record
+     * @param \Cake\ORM\Table $table of the record
      * @param \Cake\Datasource\EntityInterface $entity extra options
      * @param string[] $fields Attendees fields
      * @return \Cake\Datasource\EntityInterface[] $entities
      */
-    public function getAssignedAssociations(RepositoryInterface $table, EntityInterface $entity, array $fields) : array
+    public function getAssignedAssociations(Table $table, EntityInterface $entity, array $fields) : array
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
-        $table = $table;
-
         $result = [];
         foreach ($table->associations() as $association) {
             if (! in_array($association->getForeignKey(), $fields)) {

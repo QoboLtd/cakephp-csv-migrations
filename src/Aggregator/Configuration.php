@@ -112,15 +112,6 @@ final class Configuration
      */
     public function setDisplayField(string $displayField) : self
     {
-        // string validation, this can be removed on PHP 7 with string typehinting.
-        if (! is_string($displayField)) {
-            throw new InvalidArgumentException(sprintf(
-                'Argument 1 passed to %s() must be of the type string, %s given.',
-                __METHOD__,
-                gettype($displayField)
-            ));
-        }
-
         $this->displayField = $displayField;
 
         return $this;

@@ -27,6 +27,7 @@ use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use CsvMigrations\Model\Entity\Import;
 use CsvMigrations\Model\Entity\ImportResult;
+use CsvMigrations\Model\Table\ImportResultsTable;
 use CsvMigrations\Model\Table\ImportsTable;
 use CsvMigrations\Utility\Field as FieldUtility;
 use CsvMigrations\Utility\Import as ImportUtility;
@@ -37,6 +38,7 @@ use PDOException;
 use Qobo\Utils\Utility\Lock\FileLock;
 use Qobo\Utils\Utility\User;
 use RuntimeException;
+use Webmozart\Assert\Assert;
 
 class ImportShell extends Shell
 {
@@ -76,8 +78,8 @@ class ImportShell extends Shell
             return;
         }
 
-        /** @var \CsvMigrations\Model\Table\ImportsTable */
         $table = TableRegistry::get('CsvMigrations.Imports');
+        Assert::isInstanceOf($table, ImportsTable::class);
         $query = $table->find('all')
             ->where([
                 'status IN' => [$table::STATUS_PENDING, $table::STATUS_IN_PROGRESS],
@@ -295,8 +297,8 @@ class ImportShell extends Shell
         $progress = $this->helper('Progress');
         $progress->init();
 
-        /** @var \CsvMigrations\Model\Table\ImportResultsTable */
         $table = TableRegistry::get('CsvMigrations.ImportResults');
+        Assert::isInstanceOf($table, ImportResultsTable::class);
 
         $query = $table->find('all')->where(['import_id' => $import->get('id')]);
         $queryCount = $query->count();
@@ -341,8 +343,8 @@ class ImportShell extends Shell
      */
     protected function _importResult(Import $import, array $headers, int $rowNumber, array $data) : void
     {
-        /** @var \CsvMigrations\Model\Table\ImportResultsTable */
         $importTable = TableRegistry::get('CsvMigrations.ImportResults');
+        Assert::isInstanceOf($importTable, ImportResultsTable::class);
         $query = $importTable->find('all')
             ->enableHydration(true)
             ->where(['import_id' => $import->get('id'), 'row_number' => $rowNumber]);
@@ -566,8 +568,8 @@ class ImportShell extends Shell
      */
     protected function _importFail(ImportResult $entity, array $errors) : bool
     {
-        /** @var \CsvMigrations\Model\Table\ImportResultsTable */
         $table = TableRegistry::get('CsvMigrations.ImportResults');
+        Assert::isInstanceOf($table, ImportResultsTable::class);
 
         $entity->set('status', $table::STATUS_FAIL);
         $message = sprintf($table::STATUS_FAIL_MESSAGE, json_encode($errors));
@@ -585,8 +587,8 @@ class ImportShell extends Shell
      */
     protected function _importSuccess(ImportResult $importResult, EntityInterface $entity) : bool
     {
-        /** @var \CsvMigrations\Model\Table\ImportResultsTable */
         $table = TableRegistry::get('CsvMigrations.ImportResults');
+        Assert::isInstanceOf($table, ImportResultsTable::class);
 
         $importResult->set('model_id', $entity->get('id'));
         $importResult->set('status', $table::STATUS_SUCCESS);

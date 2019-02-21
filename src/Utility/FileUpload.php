@@ -19,6 +19,7 @@ use Cake\Datasource\ResultSetInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\Log\LogTrait;
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -78,10 +79,9 @@ final class FileUpload
     /**
      * Contructor method.
      *
-     * @param \Cake\Datasource\RepositoryInterface $table Table Instance
-     * @return void
+     * @param \Cake\ORM\Table $table Table Instance
      */
-    public function __construct(RepositoryInterface $table)
+    public function __construct(Table $table)
     {
         /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $table;

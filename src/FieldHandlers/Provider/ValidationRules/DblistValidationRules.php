@@ -12,6 +12,8 @@
 namespace CsvMigrations\FieldHandlers\Provider\ValidationRules;
 
 use Cake\ORM\TableRegistry;
+use CsvMigrations\Model\Table\DblistsTable;
+use Webmozart\Assert\Assert;
 
 /**
  * DblistValidationRules
@@ -28,8 +30,8 @@ class DblistValidationRules extends AbstractValidationRules
         $validator = parent::provide($validator, $options);
         $validator->scalar($options['fieldDefinitions']->getName());
 
-        /** @var \CsvMigrations\Model\Table\DblistsTable */
         $table = TableRegistry::getTableLocator()->get('CsvMigrations.Dblists');
+        Assert::isInstanceOf($table, DblistsTable::class);
         $listOptions = $table->getOptions($options['fieldDefinitions']->getLimit());
 
         $validator->inList(

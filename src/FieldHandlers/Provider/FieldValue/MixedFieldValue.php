@@ -12,8 +12,10 @@
 namespace CsvMigrations\FieldHandlers\Provider\FieldValue;
 
 use Cake\Datasource\EntityInterface;
+use Cake\Http\ServerRequest;
 use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
 use Psr\Http\Message\RequestInterface;
+use Webmozart\Assert\Assert;
 
 /**
  * MixedFieldValue
@@ -73,8 +75,7 @@ class MixedFieldValue extends AbstractProvider
      */
     protected function provideFromRequest(RequestInterface $request, string $field) : string
     {
-        /** @var \Cake\Http\ServerRequest */
-        $request = $request;
+        Assert::isInstanceOf($request, ServerRequest::class);
 
         $data = $request->getData();
 

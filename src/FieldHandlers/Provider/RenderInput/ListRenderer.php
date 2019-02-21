@@ -31,7 +31,6 @@ class ListRenderer extends AbstractRenderer
     public function provide($data = null, array $options = [])
     {
         $field = $this->config->getField();
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->config->getTable();
         $fieldName = $table->aliasField($field);
         $selectOptions = ['' => Setting::EMPTY_OPTION_LABEL()];

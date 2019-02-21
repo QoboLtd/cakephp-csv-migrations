@@ -7,6 +7,7 @@ use Cake\ORM\Association\HasMany;
 use Cake\ORM\TableRegistry;
 use CsvMigrations\Model\AssociationsAwareTrait;
 use PHPUnit\Framework\TestCase;
+use Webmozart\Assert\Assert;
 
 class AssociationsAwareTraitTest extends TestCase
 {
@@ -29,8 +30,8 @@ class AssociationsAwareTraitTest extends TestCase
      */
     public function testAssociations(string $table, string $name, string $type, string $joinTable = '') : void
     {
-        /** @var \Cake\ORM\Association\BelongsToMany */
         $association = TableRegistry::get($table)->getAssociation($name);
+        Assert::isInstanceOf($association, BelongsToMany::class);
 
         $this->assertInstanceOf($type, $association);
 

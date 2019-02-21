@@ -11,7 +11,6 @@
  */
 namespace CsvMigrations\FieldHandlers\Config;
 
-use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\View\View;

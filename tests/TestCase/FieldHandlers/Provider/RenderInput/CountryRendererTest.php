@@ -5,7 +5,6 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\FieldHandlers\Config\CountryConfig;
 use CsvMigrations\FieldHandlers\CsvField;
-use CsvMigrations\FieldHandlers\Provider\ProviderInterface;
 use CsvMigrations\FieldHandlers\Provider\RenderInput\CountryRenderer;
 
 class CountryRendererTest extends TestCase

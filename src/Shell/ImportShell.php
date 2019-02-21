@@ -35,6 +35,7 @@ use CsvMigrations\Utility\Import as ImportUtility;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use NinjaMutex\MutexException;
+use PDOException;
 use Qobo\Utils\Utility\Lock\FileLock;
 use Qobo\Utils\Utility\User;
 use RuntimeException;

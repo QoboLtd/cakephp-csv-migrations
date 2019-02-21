@@ -17,6 +17,7 @@ use Cake\ORM\TableRegistry;
 use Cake\View\View;
 use CsvMigrations\View\AppView;
 use InvalidArgumentException;
+use Webmozart\Assert\Assert;
 
 /**
  * Config
@@ -37,7 +38,7 @@ class Config implements ConfigInterface
     protected $field;
 
     /**
-     * @var \Cake\Datasource\RepositoryInterface $table Table intance
+     * @var \Cake\ORM\Table $table Table intance
      */
     protected $table;
 
@@ -134,9 +135,7 @@ class Config implements ConfigInterface
             $table = TableRegistry::get($table);
         }
 
-        if (! $table instanceof RepositoryInterface) {
-            throw new InvalidArgumentException("Given table is not an instance of ORM Table");
-        }
+        Assert::isInstanceOf($table, Table::class);
 
         $this->table = $table;
     }
@@ -144,9 +143,9 @@ class Config implements ConfigInterface
     /**
      * Get table
      *
-     * @return \Cake\Datasource\RepositoryInterface
+     * @return \Cake\ORM\Table
      */
-    public function getTable() : RepositoryInterface
+    public function getTable() : Table
     {
         return $this->table;
     }

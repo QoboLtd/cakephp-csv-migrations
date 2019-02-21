@@ -54,9 +54,6 @@ final class LastAggregator extends AbstractAggregator
      */
     private function applyConditionsWithMax(QueryInterface $query) : QueryInterface
     {
-        /** @var \Cake\Datasource\QueryInterface&\Cake\Database\Query */
-        $query = $query;
-
         $table = $this->getConfig()->getTable();
 
         $aggregateField = $table->aliasField($this->getConfig()->getField());

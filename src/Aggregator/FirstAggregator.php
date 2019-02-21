@@ -54,9 +54,6 @@ final class FirstAggregator extends AbstractAggregator
      */
     private function applyConditionsWithMin(QueryInterface $query) : QueryInterface
     {
-        /** @var \Cake\Datasource\QueryInterface&\Cake\Database\Query */
-        $query = $query;
-
         $table = $this->getConfig()->getTable();
 
         $aggregateField = $table->aliasField($this->getConfig()->getField());

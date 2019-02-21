@@ -29,6 +29,7 @@ use InvalidArgumentException;
 use PDOException;
 use Psr\Http\Message\ResponseInterface;
 use Qobo\Utils\Utility\User;
+use Webmozart\Assert\Assert;
 
 class AppController extends BaseController
 {
@@ -87,7 +88,6 @@ class AppController extends BaseController
      */
     public function add()
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
 
         $entity = $table->newEntity();
@@ -115,7 +115,6 @@ class AppController extends BaseController
      */
     public function edit(string $id)
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
 
         $entity = $this->fetchEntity($id);
@@ -149,8 +148,8 @@ class AppController extends BaseController
      */
     protected function fetchEntity(string $id) : EntityInterface
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
+        Assert::isInstanceOf($table, Table::class);
 
         $primaryKey = $table->getPrimaryKey();
         if (! is_string($primaryKey)) {
@@ -158,11 +157,11 @@ class AppController extends BaseController
         }
 
         try {
-            /** @var \Cake\Datasource\EntityInterface */
             $entity = $table->find()
                 ->where([$table->aliasField($primaryKey) => $id])
                 ->enableHydration(true)
                 ->firstOrFail();
+            Assert::isInstanceOf($entity, EntityInterface::class);
 
             return $entity;
         } catch (Exception $e) {
@@ -195,8 +194,8 @@ class AppController extends BaseController
      */
     protected function persistEntity(EntityInterface $entity, array $data, array $options = []) : ?Response
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
+        Assert::isInstanceOf($table, Table::class);
 
         $options = array_merge($options, ['lookup' => true]);
         $entity = $table->patchEntity($entity, $data, $options);
@@ -281,8 +280,8 @@ class AppController extends BaseController
     {
         $this->request->allowMethod(['post']);
 
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
+        Assert::isInstanceOf($table, Table::class);
 
         $entity = $table->get($id);
         $assocEntity = $table->{$assocName}->get($assocId);
@@ -311,8 +310,8 @@ class AppController extends BaseController
     {
         $this->request->allowMethod(['post']);
 
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
+        Assert::isInstanceOf($table, Table::class);
 
         $association = $table->{$associationName};
         $ids = (array)$this->request->getData($associationName . '._ids');
@@ -353,8 +352,8 @@ class AppController extends BaseController
     {
         $this->request->allowMethod(['post']);
 
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
+        Assert::isInstanceOf($table, Table::class);
 
         $redirectUrl = $this->getBatchRedirectUrl();
 

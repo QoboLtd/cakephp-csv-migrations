@@ -80,11 +80,13 @@ echo $this->Html->script(
 );
 
 echo $this->Html->scriptBlock(
-    'csv_migrations_select2.setup(' . json_encode(
-        array_merge(
-            Configure::read('CsvMigrations.select2'),
-            Configure::read('CsvMigrations.api')
-        )
-    ) . ');',
+    '$(document).ready(function() {
+        csv_migrations_select2.setup(' . json_encode(
+            array_merge(
+                Configure::read('CsvMigrations.select2'),
+                Configure::read('CsvMigrations.api')
+            )
+        ) . ');
+    });',
     ['block' => 'scriptBottom']
 );

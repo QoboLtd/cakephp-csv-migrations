@@ -21,6 +21,8 @@ use Cake\Log\LogTrait;
 use Cake\Network\Exception\SocketException;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
+use CsvMigrations\BadForeignKeyException;
+use CsvMigrations\BadPrimaryKeyException;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\Table as CsvTable;
 use CsvMigrations\Utility\DTZone;
@@ -252,7 +254,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         foreach ($associations as $association) {
             $foreignKey = $association->getForeignKey();
             if (!is_string($foreignKey)) {
-                throw new InvalidArgumentException('Composite keys are not supported');
+                throw new BadForeignKeyException();
             }
             if (in_array($foreignKey, $this->skipAttendeesIn)) {
                 continue;
@@ -346,12 +348,12 @@ class ModelAfterSaveListener implements EventListenerInterface
 
             $primaryKey = $association->getTarget()->getPrimaryKey();
             if (! is_string($primaryKey)) {
-                throw new InvalidArgumentException('Primary key must be a string');
+                throw new BadPrimaryKeyException();
             }
 
             $foreignKey = $association->getForeignKey();
             if (!is_string($foreignKey)) {
-                throw new InvalidArgumentException('Composite keys are not supported');
+                throw new BadForeignKeyException();
             }
 
             try {

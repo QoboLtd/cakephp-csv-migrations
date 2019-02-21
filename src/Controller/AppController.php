@@ -13,12 +13,14 @@ namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Log\Log;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validation;
+use CsvMigrations\BadPrimaryKeyException;
 use CsvMigrations\Controller\Traits\ImportTrait;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\Table;
@@ -153,7 +155,7 @@ class AppController extends BaseController
 
         $primaryKey = $table->getPrimaryKey();
         if (! is_string($primaryKey)) {
-            throw new InvalidArgumentException('Primary key must be a string');
+            throw new BadPrimaryKeyException();
         }
 
         try {
@@ -220,7 +222,7 @@ class AppController extends BaseController
 
             $primaryKey = $table->getPrimaryKey();
             if (! is_string($primaryKey)) {
-                throw new InvalidArgumentException('Primary key must be a string');
+                throw new BadPrimaryKeyException();
             }
 
             // handle file uploads if found in the request data
@@ -322,6 +324,11 @@ class AppController extends BaseController
             return $this->redirect($this->referer());
         }
 
+        $primaryKey = $association->getPrimaryKey();
+        if (!is_string($primaryKey)) {
+            throw new BadPrimaryKeyException();
+        }
+
         $query = $association->find('all')
             ->where([$association->getPrimaryKey() . ' IN' => $ids]);
 
@@ -386,7 +393,7 @@ class AppController extends BaseController
         if ('delete' === $operation) {
             $primaryKey = $table->getPrimaryKey();
             if (! is_string($primaryKey)) {
-                throw new InvalidArgumentException('Primary key must be a string');
+                throw new BadPrimaryKeyException();
             }
 
             $conditions = [$primaryKey . ' IN' => $batchIds];
@@ -412,7 +419,7 @@ class AppController extends BaseController
 
             $primaryKey = $table->getPrimaryKey();
             if (! is_string($primaryKey)) {
-                throw new InvalidArgumentException('Primary key must be a string');
+                throw new BadPrimaryKeyException();
             }
 
             $conditions = [$primaryKey . ' IN' => $batchIds];

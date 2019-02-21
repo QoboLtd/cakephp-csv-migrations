@@ -96,10 +96,6 @@ class Config implements ConfigInterface
      */
     public function setField(string $field) : void
     {
-        if (!is_string($field)) {
-            throw new InvalidArgumentException("Field is not a string");
-        }
-
         $field = trim($field);
         if (empty($field)) {
             throw new InvalidArgumentException("Field is empty");
@@ -247,24 +243,8 @@ class Config implements ConfigInterface
      */
     public function validateProviders(array $providers) : void
     {
-        foreach ($providers as $name => $class) {
-            if (!is_string($class)) {
-                throw new InvalidArgumentException("Provider class for [$name] is not a string");
-            }
-
-            $class = trim($class);
-            if (empty($class)) {
-                throw new InvalidArgumentException("Provider class for [$name] is an empty string");
-            }
-
-            if (!class_exists($class)) {
-                throw new InvalidArgumentException("Provider class [$class] for [$name] does not exist");
-            }
-
-            if (!in_array(self::PROVIDER_INTERFACE, class_implements($class))) {
-                throw new InvalidArgumentException("Provider class [$class] for [$name] does not implement [" . self::PROVIDER_INTERFACE . "] interface");
-            }
-        }
+        Assert::allClassExists($providers);
+        Assert::allImplementsInterface($providers, self::PROVIDER_INTERFACE);
 
         foreach ($this->requiredProviders as $name) {
             if (!in_array($name, array_keys($providers))) {

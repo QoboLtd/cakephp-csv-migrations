@@ -345,7 +345,7 @@ class CsvMigration extends AbstractMigration
      */
     private function addIndex(DbField $dbField, string $type, bool $exists = true) : bool
     {
-        if (empty($type) || !is_string($type)) {
+        if (empty($type)) {
             return false;
         }
 

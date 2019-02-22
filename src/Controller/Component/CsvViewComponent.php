@@ -12,6 +12,7 @@
 namespace CsvMigrations\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use CsvMigrations\Controller\Traits\PanelsTrait;
@@ -19,6 +20,7 @@ use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\Utility\Field;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Webmozart\Assert\Assert;
 
 /**
  * CsvView component
@@ -37,8 +39,8 @@ class CsvViewComponent extends Component
      */
     public function beforeFilter(Event $event) : void
     {
-        /** @var \Cake\Controller\Controller */
         $controller = $event->getSubject();
+        Assert::isInstanceOf($controller, Controller::class);
 
         $table = $controller->loadModel();
 
@@ -78,8 +80,8 @@ class CsvViewComponent extends Component
             return;
         }
 
-        /** @var \Cake\Controller\Controller */
         $controller = $event->getSubject();
+        Assert::isInstanceOf($controller, Controller::class);
 
         $config = new ModuleConfig(ConfigType::MODULE(), $controller->getName());
         $config = json_encode($config->parse());
@@ -127,8 +129,8 @@ class CsvViewComponent extends Component
             return;
         }
 
-        /** @var \Cake\Controller\Controller */
         $controller = $event->getSubject();
+        Assert::isInstanceOf($controller, Controller::class);
 
         $fields = $controller->viewVars['fields'];
         foreach ($fields as $panel => $panelFields) {

@@ -13,12 +13,14 @@ namespace CsvMigrations\Event\Model;
 
 use ArrayObject;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Utility\Inflector;
 use CsvMigrations\Table;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Webmozart\Assert\Assert;
 
 class AutoIncrementEventListener implements EventListenerInterface
 {
@@ -70,12 +72,15 @@ class AutoIncrementEventListener implements EventListenerInterface
             // get max value
             $query = $table->find('withTrashed');
 
-            /** @var \Cake\Datasource\EntityInterface|null */
-            $max = $query->select([$field => $query->func()->max($field)])
-                ->enableHydration(true)
-                ->first();
-
-            $max = null === $max ? 0 : (float)$max->get($field);
+            try {
+                $max = $query->select([$field => $query->func()->max($field)])
+                    ->enableHydration(true)
+                    ->firstOrFail();
+                Assert::isInstanceOf($max, EntityInterface::class);
+                $max = (float)$max->get($field);
+            } catch (RecordNotFoundException $e) {
+                $max = 0;
+            }
 
             if (empty($options['min'])) {
                 $entity->set($field, $max + 1);

@@ -12,8 +12,12 @@
 namespace CsvMigrations\Controller\Traits;
 
 use Cake\Http\Response;
+use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
+use CsvMigrations\Model\Entity\Import;
+use CsvMigrations\Model\Table\ImportsTable;
 use CsvMigrations\Utility\Import as ImportUtility;
+use Webmozart\Assert\Assert;
 
 trait ImportTrait
 {
@@ -25,8 +29,8 @@ trait ImportTrait
      */
     public function import(string $id = '')
     {
-        /** @var \CsvMigrations\Model\Table\ImportsTable */
         $table = TableRegistry::get('CsvMigrations.Imports');
+        Assert::isInstanceOf($table, ImportsTable::class);
 
         $entity = '' === $id ? $table->newEntity() : $table->get($id);
 
@@ -35,8 +39,8 @@ trait ImportTrait
             $this->viewBuilder()->setClassName('Json');
             $utility = new ImportUtility($this->{$this->name}, $this->request, $this->Flash);
             $columns = ['row_number', 'status', 'status_message'];
-            /** @var \Cake\Datasource\QueryInterface&\Cake\ORM\Query */
             $query = $utility->getImportResults($entity, $columns);
+            Assert::isInstanceOf($query, Query::class);
 
             $pagination = [
                 'count' => $query->count()
@@ -119,8 +123,8 @@ trait ImportTrait
     public function importDownload(string $id, string $type = 'original') : Response
     {
         $table = TableRegistry::get('CsvMigrations.Imports');
-        /** @var \CsvMigrations\Model\Entity\Import */
         $entity = $table->get($id);
+        Assert::isInstanceOf($entity, Import::class);
 
         $path = $entity->get('filename');
         if ('processed' === $type) {

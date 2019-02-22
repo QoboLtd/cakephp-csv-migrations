@@ -13,12 +13,14 @@ namespace CsvMigrations\Model;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\ORM\Behavior;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\Utility\FileUpload;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility;
+use Webmozart\Assert\Assert;
 
 /**
  * This Trait is responsible for automagically generating Model/Table associations,
@@ -250,8 +252,8 @@ trait AssociationsAwareTrait
             return false;
         }
 
-        /** @var \Cake\ORM\Behavior */
         $behavior = $this->behaviors()->get('Footprint');
+        Assert::isInstanceOf($behavior, Behavior::class);
 
         return in_array($field->getName(), $behavior->getConfig());
     }

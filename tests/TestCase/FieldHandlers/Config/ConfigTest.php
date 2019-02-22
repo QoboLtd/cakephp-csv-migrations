@@ -5,7 +5,6 @@ use Cake\ORM\Table;
 use CsvMigrations\FieldHandlers\Config\Config;
 use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 class ConfigTest extends TestCase
 {

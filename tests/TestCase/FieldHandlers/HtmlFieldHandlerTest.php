@@ -13,7 +13,9 @@ class HtmlFieldHandlerTest extends TestCase
     protected $field = 'field_html';
     protected $type = 'html';
 
-    /** @var \CsvMigrations\FieldHandlers\FieldHandler */
+    /**
+     * @var \CsvMigrations\FieldHandlers\FieldHandler
+     */
     protected $fh;
 
     protected function setUp() : void

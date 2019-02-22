@@ -3,6 +3,7 @@ namespace CsvMigrations\Aggregator;
 
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\QueryInterface;
+use Cake\ORM\Query;
 
 final class LastAggregator extends AbstractAggregator
 {
@@ -34,7 +35,6 @@ final class LastAggregator extends AbstractAggregator
      */
     private function applyConditionsWithOrder(QueryInterface $query) : QueryInterface
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->getConfig()->getTable();
 
         $aggregateField = $table->aliasField($this->getConfig()->getField());
@@ -55,15 +55,13 @@ final class LastAggregator extends AbstractAggregator
      */
     private function applyConditionsWithMax(QueryInterface $query) : QueryInterface
     {
-        /** @var \Cake\Datasource\QueryInterface&\Cake\Database\Query */
-        $query = $query;
-
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->getConfig()->getTable();
 
         $aggregateField = $table->aliasField($this->getConfig()->getField());
 
-        $query->select([$this->getConfig()->getDisplayField() => $query->func()->max($aggregateField)]);
+        if ($query instanceof Query) {
+            $query->select([$this->getConfig()->getDisplayField() => $query->func()->max($aggregateField)]);
+        }
 
         return $query;
     }

@@ -13,6 +13,8 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
 
 use Cake\ORM\TableRegistry;
 use CsvMigrations\FieldHandlers\Setting;
+use CsvMigrations\Model\Table\DblistsTable;
+use Webmozart\Assert\Assert;
 
 /**
  * DblistRenderer
@@ -32,14 +34,13 @@ class DblistRenderer extends AbstractRenderer
     public function provide($data = null, array $options = [])
     {
         $field = $this->config->getField();
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->config->getTable();
 
         $fieldName = $table->aliasField($field);
 
         $list = $options['fieldDefinitions']->getListName();
-        /** @var \CsvMigrations\Model\Table\DblistsTable */
         $table = TableRegistry::get('CsvMigrations.Dblists');
+        Assert::isInstanceOf($table, DblistsTable::class);
 
         $params = [
             'field' => $field,

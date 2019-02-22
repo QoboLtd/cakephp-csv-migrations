@@ -16,6 +16,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Validation\Validator;
 use Cake\View\View;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
+use CsvMigrations\HasFieldsInterface;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -208,7 +209,7 @@ class FieldHandlerFactory
         }
 
         $fieldDefinitions = $stubFields;
-        if (method_exists($table, 'getFieldsDefinitions') && is_callable([$table, 'getFieldsDefinitions'])) {
+        if ($table instanceof HasFieldsInterface) {
             $fieldDefinitions = $table->getFieldsDefinitions($stubFields);
         }
 

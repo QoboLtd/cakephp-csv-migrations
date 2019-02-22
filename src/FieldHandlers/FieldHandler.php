@@ -17,6 +17,7 @@ use Cake\Validation\Validator;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\Config\ConfigInterface;
+use CsvMigrations\HasFieldsInterface;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
@@ -99,13 +100,11 @@ class FieldHandler implements FieldHandlerInterface
      */
     protected function setDefaultFieldOptions() : void
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->config->getTable();
         $field = $this->config->getField();
 
         $mc = new ModuleConfig(ConfigType::FIELDS(), Inflector::camelize($table->getTable()));
-        $config = json_encode($mc->parse());
-        $config = false !== $config ? json_decode($config, true) : [];
+        $config = $mc->parseToArray();
         if (! empty($config[$field])) {
             $this->defaultOptions = array_replace_recursive($this->defaultOptions, $config[$field]);
         }
@@ -143,7 +142,7 @@ class FieldHandler implements FieldHandlerInterface
                 'type' => $dbFieldType,
             ],
         ];
-        if (method_exists($table, 'getFieldsDefinitions') && is_callable([$table, 'getFieldsDefinitions'])) {
+        if ($table instanceof HasFieldsInterface) {
             $fieldDefinitions = $table->getFieldsDefinitions($stubFields);
             $this->defaultOptions['fieldDefinitions'] = new CsvField($fieldDefinitions[$field]);
         }

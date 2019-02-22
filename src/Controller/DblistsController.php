@@ -12,7 +12,6 @@
 namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
-use Cake\Http\Response;
 
 /**
  * Dblists Controller

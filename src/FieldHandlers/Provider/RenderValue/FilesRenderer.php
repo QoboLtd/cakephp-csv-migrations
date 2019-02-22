@@ -37,7 +37,6 @@ class FilesRenderer extends AbstractRenderer
             return '';
         }
 
-        /** @var \Cake\ORM\Table&\Cake\Datasource\RepositoryInterface */
         $table = $this->config->getTable();
         $field = $this->config->getField();
 

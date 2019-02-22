@@ -21,14 +21,15 @@ use Cake\Utility\Inflector;
 use Cake\Validation\Validation;
 use CsvMigrations\Controller\Traits\ImportTrait;
 use CsvMigrations\Event\EventName;
+use CsvMigrations\Exception\UnsupportedPrimaryKeyException;
 use CsvMigrations\Table;
 use CsvMigrations\Utility\Field;
 use CsvMigrations\Utility\FileUpload;
 use Exception;
-use InvalidArgumentException;
 use PDOException;
 use Psr\Http\Message\ResponseInterface;
 use Qobo\Utils\Utility\User;
+use Webmozart\Assert\Assert;
 
 class AppController extends BaseController
 {
@@ -87,7 +88,6 @@ class AppController extends BaseController
      */
     public function add()
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
 
         $entity = $table->newEntity();
@@ -115,7 +115,6 @@ class AppController extends BaseController
      */
     public function edit(string $id)
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
 
         $entity = $this->fetchEntity($id);
@@ -149,20 +148,20 @@ class AppController extends BaseController
      */
     protected function fetchEntity(string $id) : EntityInterface
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
+        Assert::isInstanceOf($table, Table::class);
 
         $primaryKey = $table->getPrimaryKey();
         if (! is_string($primaryKey)) {
-            throw new InvalidArgumentException('Primary key must be a string');
+            throw new UnsupportedPrimaryKeyException();
         }
 
         try {
-            /** @var \Cake\Datasource\EntityInterface */
             $entity = $table->find()
                 ->where([$table->aliasField($primaryKey) => $id])
                 ->enableHydration(true)
                 ->firstOrFail();
+            Assert::isInstanceOf($entity, EntityInterface::class);
 
             return $entity;
         } catch (Exception $e) {
@@ -195,8 +194,8 @@ class AppController extends BaseController
      */
     protected function persistEntity(EntityInterface $entity, array $data, array $options = []) : ?Response
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
+        Assert::isInstanceOf($table, Table::class);
 
         $options = array_merge($options, ['lookup' => true]);
         $entity = $table->patchEntity($entity, $data, $options);
@@ -221,7 +220,7 @@ class AppController extends BaseController
 
             $primaryKey = $table->getPrimaryKey();
             if (! is_string($primaryKey)) {
-                throw new InvalidArgumentException('Primary key must be a string');
+                throw new UnsupportedPrimaryKeyException();
             }
 
             // handle file uploads if found in the request data
@@ -281,8 +280,8 @@ class AppController extends BaseController
     {
         $this->request->allowMethod(['post']);
 
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
+        Assert::isInstanceOf($table, Table::class);
 
         $entity = $table->get($id);
         $assocEntity = $table->{$assocName}->get($assocId);
@@ -311,8 +310,8 @@ class AppController extends BaseController
     {
         $this->request->allowMethod(['post']);
 
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
+        Assert::isInstanceOf($table, Table::class);
 
         $association = $table->{$associationName};
         $ids = (array)$this->request->getData($associationName . '._ids');
@@ -321,6 +320,11 @@ class AppController extends BaseController
             $this->Flash->error((string)__('No records provided for linking.'));
 
             return $this->redirect($this->referer());
+        }
+
+        $primaryKey = $association->getPrimaryKey();
+        if (!is_string($primaryKey)) {
+            throw new UnsupportedPrimaryKeyException();
         }
 
         $query = $association->find('all')
@@ -353,8 +357,8 @@ class AppController extends BaseController
     {
         $this->request->allowMethod(['post']);
 
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->loadModel();
+        Assert::isInstanceOf($table, Table::class);
 
         $redirectUrl = $this->getBatchRedirectUrl();
 
@@ -387,7 +391,7 @@ class AppController extends BaseController
         if ('delete' === $operation) {
             $primaryKey = $table->getPrimaryKey();
             if (! is_string($primaryKey)) {
-                throw new InvalidArgumentException('Primary key must be a string');
+                throw new UnsupportedPrimaryKeyException();
             }
 
             $conditions = [$primaryKey . ' IN' => $batchIds];
@@ -413,7 +417,7 @@ class AppController extends BaseController
 
             $primaryKey = $table->getPrimaryKey();
             if (! is_string($primaryKey)) {
-                throw new InvalidArgumentException('Primary key must be a string');
+                throw new UnsupportedPrimaryKeyException();
             }
 
             $conditions = [$primaryKey . ' IN' => $batchIds];

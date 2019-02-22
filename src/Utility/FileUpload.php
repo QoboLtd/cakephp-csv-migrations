@@ -14,11 +14,11 @@ namespace CsvMigrations\Utility;
 use Burzum\FileStorage\Model\Entity\FileStorage;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\Log\LogTrait;
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -27,6 +27,7 @@ use Cake\View\View;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility;
+use Webmozart\Assert\Assert;
 
 final class FileUpload
 {
@@ -57,7 +58,7 @@ final class FileUpload
     /**
      * Table instance.
      *
-     * @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table
+     * @var \Cake\ORM\Table
      */
     private $table;
 
@@ -78,14 +79,10 @@ final class FileUpload
     /**
      * Contructor method.
      *
-     * @param \Cake\Datasource\RepositoryInterface $table Table Instance
-     * @return void
+     * @param \Cake\ORM\Table $table Table Instance
      */
-    public function __construct(RepositoryInterface $table)
+    public function __construct(Table $table)
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
-        $table = $table;
-
         $this->table = $table;
         $this->storageTable = TableRegistry::get(self::FILE_STORAGE_TABLE_NAME);
 
@@ -396,8 +393,9 @@ final class FileUpload
             return null;
         }
 
-        /** @var \Burzum\FileStorage\Model\Entity\FileStorage */
         $entity = $this->storageTable->newEntity(['file' => $file]);
+        Assert::isInstanceOf($entity, FileStorage::class);
+
         /**
          * Field foreign_key is not set here because upload does not know
          * anything about the entity it relates to, as it is not yet created.

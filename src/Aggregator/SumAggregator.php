@@ -3,6 +3,7 @@ namespace CsvMigrations\Aggregator;
 
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\QueryInterface;
+use Cake\ORM\Query;
 
 final class SumAggregator extends AbstractAggregator
 {
@@ -22,7 +23,6 @@ final class SumAggregator extends AbstractAggregator
             return false;
         }
 
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->getConfig()->getTable();
 
         $type = $table->getSchema()
@@ -46,15 +46,13 @@ final class SumAggregator extends AbstractAggregator
      */
     public function applyConditions(QueryInterface $query) : QueryInterface
     {
-        /** @var \Cake\Datasource\QueryInterface&\Cake\Database\Query */
-        $query = $query;
-
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->getConfig()->getTable();
 
         $aggregateField = $table->aliasField($this->getConfig()->getField());
 
-        $query->select(['sum' => $query->func()->sum($aggregateField)]);
+        if ($query instanceof Query) {
+            $query->select(['sum' => $query->func()->sum($aggregateField)]);
+        }
 
         return $query;
     }

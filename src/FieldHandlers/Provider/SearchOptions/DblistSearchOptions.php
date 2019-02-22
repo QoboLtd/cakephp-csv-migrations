@@ -12,6 +12,8 @@
 namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
 
 use Cake\ORM\TableRegistry;
+use CsvMigrations\Model\Table\DblistsTable;
+use Webmozart\Assert\Assert;
 
 /**
  * DblistSearchOptions
@@ -39,8 +41,8 @@ class DblistSearchOptions extends AbstractSearchOptions
 
         $list = $options['fieldDefinitions']->getListName();
 
-        /** @var \CsvMigrations\Model\Table\DblistsTable */
         $table = TableRegistry::get('CsvMigrations.Dblists');
+        Assert::isInstanceOf($table, DblistsTable::class);
 
         $params = [
             'field' => $field,

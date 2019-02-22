@@ -52,7 +52,6 @@ class FieldsCheck extends AbstractCheck
     {
         $mc = new ModuleConfig(ConfigType::FIELDS(), $module, null, ['cacheSkip' => true]);
 
-        /** @var \Qobo\Utils\ModuleConfig\Parser\SchemaInterface&\Cake\Core\InstanceConfigTrait */
         $schema = $mc->createSchema(['lint' => true]);
         $mc->setParser(new Parser($schema, ['lint' => true]));
 

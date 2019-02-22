@@ -33,7 +33,7 @@ use Qobo\Utils\Utility\User;
  * All CSV modules should extend this Table
  * class for configuration and functionality.
  */
-class Table extends BaseTable
+class Table extends BaseTable implements HasFieldsInterface
 {
     use AssociationsAwareTrait;
 

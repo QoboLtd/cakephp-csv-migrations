@@ -13,13 +13,15 @@ namespace CsvMigrations\FieldHandlers;
 
 use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\RepositoryInterface;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use CsvMigrations\Exception\UnsupportedPrimaryKeyException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use RuntimeException;
+use Webmozart\Assert\Assert;
 
 trait RelatedFieldTrait
 {
@@ -85,10 +87,12 @@ trait RelatedFieldTrait
 
         $config = (new ModuleConfig(ConfigType::MODULE(), $tableName))->parseToArray();
 
-        $entity = $this->_getAssociatedRecord($table, $data);
         $displayField = $table->getDisplayField();
         $displayFieldValue = '';
-        if (null !== $entity) {
+
+        try {
+            $entity = $this->_getAssociatedRecord($table, $data);
+
             // get related table's display field value by rendering it through field handler factory
             $value = (new FieldHandlerFactory())->renderValue(
                 $table,
@@ -97,6 +101,9 @@ trait RelatedFieldTrait
                 ['renderAs' => Setting::RENDER_PLAIN_VALUE_RELATED()]
             );
             $displayFieldValue = '' === $value ? 'N/A' : $value;
+        } catch (RecordNotFoundException $e) {
+            // @todo rethrow the exception
+            $entity = null;
         }
 
         $result = [
@@ -116,15 +123,12 @@ trait RelatedFieldTrait
     /**
      * Get parent model association's foreign key.
      *
-     * @param \Cake\Datasource\RepositoryInterface $table Table instance
+     * @param \Cake\ORM\Table $table Table instance
      * @param string $modelName Model name
      * @return string
      */
-    protected function _getForeignKey(RepositoryInterface $table, string $modelName) : string
+    protected function _getForeignKey(Table $table, string $modelName) : string
     {
-        /** @var \Cake\ORM\Table */
-        $table = $table;
-
         foreach ($table->associations() as $association) {
             if ($modelName !== $association->className()) {
                 continue;
@@ -145,27 +149,24 @@ trait RelatedFieldTrait
      * Retrieve and return associated record Entity, by primary key value.
      * If the record has been trashed - query will return NULL.
      *
-     * @param \Cake\Datasource\RepositoryInterface $table Table instance
+     * @param \Cake\ORM\Table $table Table instance
      * @param string $value Primary key value
-     * @return \Cake\Datasource\EntityInterface|null
+     * @return \Cake\Datasource\EntityInterface
      */
-    protected function _getAssociatedRecord(RepositoryInterface $table, string $value) : ?EntityInterface
+    protected function _getAssociatedRecord(Table $table, string $value) : EntityInterface
     {
-        /** @var \Cake\ORM\Table */
-        $table = $table;
-
         $primaryKey = $table->getPrimaryKey();
         if (! is_string($primaryKey)) {
-            throw new RuntimeException('Primary key must be a string');
+            throw new UnsupportedPrimaryKeyException();
         }
 
         // try to fetch with trashed if finder method exists, otherwise fallback to find all
         $finderMethod = $table->hasBehavior('Trash') ? 'withTrashed' : 'all';
 
-        /** @var \Cake\Datasource\EntityInterface|null */
         $entity = $table->find($finderMethod, ['conditions' => [$table->aliasField($primaryKey) => $value]])
             ->enableHydration(true)
-            ->first();
+            ->firstOrFail();
+        Assert::isInstanceOf($entity, EntityInterface::class);
 
         return $entity;
     }

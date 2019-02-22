@@ -11,7 +11,9 @@ use CsvMigrations\Utility\Validate\Check\ViewsCheck;
  */
 class ViewsCheckTest extends TestCase
 {
-    /** @var \CsvMigrations\Utility\Validate\Check\ViewsCheck */
+    /**
+     * @var \CsvMigrations\Utility\Validate\Check\ViewsCheck
+     */
     protected $check;
 
     /**

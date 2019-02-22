@@ -2,7 +2,8 @@
 namespace CsvMigrations\Aggregator;
 
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\RepositoryInterface;
+use Cake\ORM\Table;
+use CsvMigrations\Exception\MissingJoinException;
 use InvalidArgumentException;
 
 /**
@@ -13,7 +14,7 @@ final class Configuration
     /**
      * Aggregation table.
      *
-     * @var \Cake\Datasource\RepositoryInterface
+     * @var \Cake\ORM\Table
      */
     private $table;
 
@@ -27,7 +28,7 @@ final class Configuration
     /**
      * Join table instance. Optional as it is used only in limited mode.
      *
-     * @var \Cake\Datasource\RepositoryInterface|null
+     * @var \Cake\ORM\Table|null
      */
     private $joinTable = null;
 
@@ -50,21 +51,11 @@ final class Configuration
      *
      * Mostly used for properties assignment and data validation.
      *
-     * @param \Cake\Datasource\RepositoryInterface $table Aggregate table instance
+     * @param \Cake\ORM\Table $table Aggregate table instance
      * @param string $field Aggregate field name
-     * @return void
      */
-    public function __construct(RepositoryInterface $table, string $field)
+    public function __construct(Table $table, string $field)
     {
-        // string validation, this can be removed on PHP 7 with string typehinting.
-        if (! is_string($field)) {
-            throw new InvalidArgumentException(sprintf(
-                'Argument 2 passed to %s() must be of the type string, %s given.',
-                __METHOD__,
-                gettype($field)
-            ));
-        }
-
         $this->table = $table;
         $this->field = $field;
     }
@@ -82,9 +73,9 @@ final class Configuration
     /**
      * Aggregate table getter.
      *
-     * @return \Cake\Datasource\RepositoryInterface
+     * @return \Cake\ORM\Table
      */
-    public function getTable() : RepositoryInterface
+    public function getTable() : Table
     {
         return $this->table;
     }
@@ -121,15 +112,6 @@ final class Configuration
      */
     public function setDisplayField(string $displayField) : self
     {
-        // string validation, this can be removed on PHP 7 with string typehinting.
-        if (! is_string($displayField)) {
-            throw new InvalidArgumentException(sprintf(
-                'Argument 1 passed to %s() must be of the type string, %s given.',
-                __METHOD__,
-                gettype($displayField)
-            ));
-        }
-
         $this->displayField = $displayField;
 
         return $this;
@@ -138,35 +120,40 @@ final class Configuration
     /**
      * Join table getter.
      *
-     * @return \Cake\Datasource\RepositoryInterface|null
+     * @return \Cake\ORM\Table
      */
-    public function getJoinTable() : ?RepositoryInterface
+    public function getJoinTable() : Table
     {
-        return $this->joinTable;
+        if ($this->joinTable instanceof Table) {
+            return $this->joinTable;
+        }
+
+        throw new MissingJoinException('No join table has been defined');
     }
 
     /**
      * Entity getter.
      *
-     * @return \Cake\Datasource\EntityInterface|null
+     * @return \Cake\Datasource\EntityInterface
      */
-    public function getEntity() : ?EntityInterface
+    public function getEntity() : EntityInterface
     {
-        return $this->entity;
+        if ($this->entity instanceof EntityInterface) {
+            return $this->entity;
+        }
+
+        throw new MissingJoinException('No join table has been defined');
     }
 
     /**
      * Join data setter.
      *
-     * @param \Cake\Datasource\RepositoryInterface $table Join table intsance
+     * @param \Cake\ORM\Table $table Join table intsance
      * @param \Cake\Datasource\EntityInterface $entity Entity instance from join table
      * @return self
      */
-    public function setJoinData(RepositoryInterface $table, EntityInterface $entity) : self
+    public function setJoinData(Table $table, EntityInterface $entity) : self
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
-        $table = $table;
-
         $entityClass = $table->getEntityClass();
         if (! $entity instanceof $entityClass) {
             throw new InvalidArgumentException(sprintf(

@@ -14,8 +14,8 @@ namespace CsvMigrations\FieldHandlers\Provider\FieldValue;
 use Cake\Database\Exception;
 use Cake\Datasource\EntityInterface;
 use Cake\Http\ServerRequest;
+use CsvMigrations\Exception\UnsupportedPrimaryKeyException;
 use CsvMigrations\FieldHandlers\Provider\AbstractProvider;
-use InvalidArgumentException;
 
 /**
  * PrimaryKeyFieldValue
@@ -39,7 +39,6 @@ class PrimaryKeyFieldValue extends AbstractProvider
             return null;
         }
 
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
         $table = $this->config->getTable();
 
         // return null in cases where no table or a dummy table was provided by the config class
@@ -50,7 +49,7 @@ class PrimaryKeyFieldValue extends AbstractProvider
         }
 
         if (! is_string($primaryKey)) {
-            throw new InvalidArgumentException('Primary key must be a string');
+            throw new UnsupportedPrimaryKeyException();
         }
 
         if ($options['entity'] instanceof EntityInterface) {

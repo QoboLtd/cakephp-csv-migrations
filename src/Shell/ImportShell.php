@@ -18,15 +18,18 @@ use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\EventManager;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\Shell\Helper\ProgressHelper;
+use CsvMigrations\Exception\UnsupportedPrimaryKeyException;
 use CsvMigrations\Model\Entity\Import;
 use CsvMigrations\Model\Entity\ImportResult;
+use CsvMigrations\Model\Table\ImportResultsTable;
 use CsvMigrations\Model\Table\ImportsTable;
 use CsvMigrations\Utility\Field as FieldUtility;
 use CsvMigrations\Utility\Import as ImportUtility;
@@ -36,7 +39,7 @@ use NinjaMutex\MutexException;
 use PDOException;
 use Qobo\Utils\Utility\Lock\FileLock;
 use Qobo\Utils\Utility\User;
-use RuntimeException;
+use Webmozart\Assert\Assert;
 
 class ImportShell extends Shell
 {
@@ -76,8 +79,8 @@ class ImportShell extends Shell
             return;
         }
 
-        /** @var \CsvMigrations\Model\Table\ImportsTable */
         $table = TableRegistry::get('CsvMigrations.Imports');
+        Assert::isInstanceOf($table, ImportsTable::class);
         $query = $table->find('all')
             ->where([
                 'status IN' => [$table::STATUS_PENDING, $table::STATUS_IN_PROGRESS],
@@ -253,8 +256,8 @@ class ImportShell extends Shell
         $this->createImportResults($import, $count);
 
         $this->out('Importing records ..');
-        /** @var \Cake\Shell\Helper\ProgressHelper */
         $progress = $this->helper('Progress');
+        Assert::isInstanceOf($progress, ProgressHelper::class);
         $progress->init();
 
         $headers = ImportUtility::getUploadHeaders($import);
@@ -291,12 +294,12 @@ class ImportShell extends Shell
     {
         $this->out('Preparing records ..');
 
-        /** @var \Cake\Shell\Helper\ProgressHelper */
         $progress = $this->helper('Progress');
+        Assert::isInstanceOf($progress, ProgressHelper::class);
         $progress->init();
 
-        /** @var \CsvMigrations\Model\Table\ImportResultsTable */
         $table = TableRegistry::get('CsvMigrations.ImportResults');
+        Assert::isInstanceOf($table, ImportResultsTable::class);
 
         $query = $table->find('all')->where(['import_id' => $import->get('id')]);
         $queryCount = $query->count();
@@ -341,17 +344,20 @@ class ImportShell extends Shell
      */
     protected function _importResult(Import $import, array $headers, int $rowNumber, array $data) : void
     {
-        /** @var \CsvMigrations\Model\Table\ImportResultsTable */
         $importTable = TableRegistry::get('CsvMigrations.ImportResults');
+        Assert::isInstanceOf($importTable, ImportResultsTable::class);
+
         $query = $importTable->find('all')
             ->enableHydration(true)
             ->where(['import_id' => $import->get('id'), 'row_number' => $rowNumber]);
 
-        /** @var \CsvMigrations\Model\Entity\ImportResult|null */
-        $importResult = $query->first();
-        if (null === $importResult) {
+        try {
+            $importResult = $query->firstOrFail();
+        } catch (RecordNotFoundException $e) {
             return;
         }
+
+        Assert::isInstanceOf($importResult, ImportResult::class);
 
         // skip successful imports
         if ($importTable::STATUS_SUCCESS === $importResult->get('status')) {
@@ -484,7 +490,7 @@ class ImportShell extends Shell
 
             $primaryKey = $targetTable->getPrimaryKey();
             if (! is_string($primaryKey)) {
-                throw new RuntimeException('Primary key must be a string');
+                throw new UnsupportedPrimaryKeyException();
             }
 
             // combine lookup fields with primary key and display field
@@ -509,11 +515,13 @@ class ImportShell extends Shell
                 ->select([$targetTable->aliasField($primaryKey)])
                 ->where(['OR' => array_combine($lookupFields, $lookupValues)]);
 
-            /** @var \Cake\Datasource\EntityInterface|null */
-            $entity = $query->first();
-            if (null === $entity) {
+            try {
+                $entity = $query->firstOrFail();
+            } catch (RecordNotFoundException $e) {
                 continue;
             }
+
+            Assert::isInstanceOf($entity, EntityInterface::class);
 
             return $entity->get($primaryKey);
         }
@@ -566,8 +574,8 @@ class ImportShell extends Shell
      */
     protected function _importFail(ImportResult $entity, array $errors) : bool
     {
-        /** @var \CsvMigrations\Model\Table\ImportResultsTable */
         $table = TableRegistry::get('CsvMigrations.ImportResults');
+        Assert::isInstanceOf($table, ImportResultsTable::class);
 
         $entity->set('status', $table::STATUS_FAIL);
         $message = sprintf($table::STATUS_FAIL_MESSAGE, json_encode($errors));
@@ -585,8 +593,8 @@ class ImportShell extends Shell
      */
     protected function _importSuccess(ImportResult $importResult, EntityInterface $entity) : bool
     {
-        /** @var \CsvMigrations\Model\Table\ImportResultsTable */
         $table = TableRegistry::get('CsvMigrations.ImportResults');
+        Assert::isInstanceOf($table, ImportResultsTable::class);
 
         $importResult->set('model_id', $entity->get('id'));
         $importResult->set('status', $table::STATUS_SUCCESS);

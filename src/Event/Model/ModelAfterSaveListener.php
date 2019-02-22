@@ -11,25 +11,28 @@
  */
 namespace CsvMigrations\Event\Model;
 
+use BadMethodCallException;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
-use Cake\I18n\Time;
 use Cake\Log\LogTrait;
 use Cake\Network\Exception\SocketException;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use CsvMigrations\Event\EventName;
+use CsvMigrations\Exception\UnsupportedForeignKeyException;
+use CsvMigrations\Exception\UnsupportedPrimaryKeyException;
 use CsvMigrations\Table as CsvTable;
 use CsvMigrations\Utility\DTZone;
 use CsvMigrations\Utility\ICal\IcEmail;
 use DateTimeZone;
 use InvalidArgumentException;
-use PHPUnit\Framework\MockObject\BadMethodCallException;
 use Psr\Log\LogLevel;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Webmozart\Assert\Assert;
 
 class ModelAfterSaveListener implements EventListenerInterface
 {
@@ -230,15 +233,12 @@ class ModelAfterSaveListener implements EventListenerInterface
     /**
      * Retrieve attendees fields from current Table's associations.
      *
-     * @param \Cake\Datasource\RepositoryInterface $table Table instance
+     * @param \Cake\ORM\Table $table Table instance
      * @param string[] $modules Reminder to modules
      * @return string[]
      */
-    protected function getAttendeesFields(RepositoryInterface $table, array $modules) : array
+    protected function getAttendeesFields(Table $table, array $modules) : array
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
-        $table = $table;
-
         $associations = [];
         foreach ($table->associations() as $association) {
             if (in_array(Inflector::humanize($association->getTarget()->getTable()), $modules)) {
@@ -252,8 +252,10 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         $result = [];
         foreach ($associations as $association) {
-            /** @var string */
             $foreignKey = $association->getForeignKey();
+            if (!is_string($foreignKey)) {
+                throw new UnsupportedForeignKeyException();
+            }
             if (in_array($foreignKey, $this->skipAttendeesIn)) {
                 continue;
             }
@@ -331,16 +333,13 @@ class ModelAfterSaveListener implements EventListenerInterface
      *
      * gets all Entities associated with the record
      *
-     * @param \Cake\Datasource\RepositoryInterface $table of the record
+     * @param \Cake\ORM\Table $table of the record
      * @param \Cake\Datasource\EntityInterface $entity extra options
      * @param string[] $fields Attendees fields
      * @return \Cake\Datasource\EntityInterface[] $entities
      */
-    public function getAssignedAssociations(RepositoryInterface $table, EntityInterface $entity, array $fields) : array
+    public function getAssignedAssociations(Table $table, EntityInterface $entity, array $fields) : array
     {
-        /** @var \Cake\Datasource\RepositoryInterface&\Cake\ORM\Table */
-        $table = $table;
-
         $result = [];
         foreach ($table->associations() as $association) {
             if (! in_array($association->getForeignKey(), $fields)) {
@@ -349,23 +348,27 @@ class ModelAfterSaveListener implements EventListenerInterface
 
             $primaryKey = $association->getTarget()->getPrimaryKey();
             if (! is_string($primaryKey)) {
-                throw new InvalidArgumentException('Primary key must be a string');
+                throw new UnsupportedPrimaryKeyException();
             }
 
-            /** @var string */
             $foreignKey = $association->getForeignKey();
+            if (!is_string($foreignKey)) {
+                throw new UnsupportedForeignKeyException();
+            }
 
-            /** @var \Cake\Datasource\EntityInterface|null */
-            $relatedEntity = $association->getTarget()
-                ->find('all')
-                ->where([$primaryKey => $entity->get($foreignKey)])
-                ->enableHydration(true)
-                ->first();
-
-            if (null !== $relatedEntity) {
+            try {
+                $relatedEntity = $association->getTarget()
+                    ->find('all')
+                    ->where([$primaryKey => $entity->get($foreignKey)])
+                    ->enableHydration(true)
+                    ->firstOrFail();
                 $result[] = $relatedEntity;
+            } catch (RecordNotFoundException $e) {
+                // @ignoreException
             }
         }
+
+        Assert::allIsInstanceOf($result, EntityInterface::class);
 
         return $result;
     }

@@ -11,10 +11,10 @@
  */
 namespace CsvMigrations\Exception;
 
-use RuntimeException;
+use InvalidArgumentException;
 use Throwable;
 
-class UnsupportedForeignKeyException extends RuntimeException
+class UnsupportedForeignKeyException extends InvalidArgumentException
 {
     /**
      * @param string $message Exception message

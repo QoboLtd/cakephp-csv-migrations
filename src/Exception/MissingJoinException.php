@@ -11,8 +11,8 @@
  */
 namespace CsvMigrations\Exception;
 
-use RuntimeException;
+use BadMethodCallException;
 
-class MissingJoinException extends RuntimeException
+class MissingJoinException extends BadMethodCallException
 {
 }

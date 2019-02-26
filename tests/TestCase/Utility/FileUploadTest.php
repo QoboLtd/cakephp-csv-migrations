@@ -83,6 +83,7 @@ class FileUploadTest extends TestCase
 
         $result = $this->fileUpload->save('image', $data);
 
+        $this->assertSame('png', $result->get('extension'));
         $this->assertEventFired('ImageVersion.createVersion');
     }
 

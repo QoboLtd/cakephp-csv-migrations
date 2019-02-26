@@ -195,7 +195,7 @@ final class FileUpload
             return str_replace(DS, '/', $entity->get('path'));
         }
 
-        $path = in_array($entity->get('extension'), self::IMAGE_EXTENSIONS) ?
+        $path = in_array(strtolower($entity->get('extension')), self::IMAGE_EXTENSIONS) ?
             $this->getImagePath($entity, $version) :
             $this->getIconPath($entity, $version);
 
@@ -407,6 +407,9 @@ final class FileUpload
             'model_field' => $field
         ]);
 
+        // always store extension in lowercased format
+        $entity->set('extension', strtolower($entity->get('extension')));
+
         if (! $this->storageTable->save($entity)) {
             $this->log(sprintf('Failed to save file with name: %s', $file['name']), 'error');
 
@@ -414,7 +417,7 @@ final class FileUpload
         }
 
         // generate thumbnails for image files
-        if (in_array($entity->get('extension'), self::IMAGE_EXTENSIONS)) {
+        if (in_array(strtolower($entity->get('extension')), self::IMAGE_EXTENSIONS)) {
             $this->createThumbnails($entity);
         }
 

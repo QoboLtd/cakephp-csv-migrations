@@ -407,6 +407,9 @@ final class FileUpload
             'model_field' => $field
         ]);
 
+        // always store extension in lowercased format
+        $entity->set('extension', strtolower($entity->get('extension')));
+
         if (! $this->storageTable->save($entity)) {
             $this->log(sprintf('Failed to save file with name: %s', $file['name']), 'error');
 

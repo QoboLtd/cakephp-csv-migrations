@@ -5,6 +5,7 @@ use Burzum\FileStorage\Model\Entity\FileStorage;
 use Burzum\FileStorage\Storage\Listener\LocalListener;
 use Burzum\FileStorage\Storage\StorageManager;
 use Cake\Datasource\ResultSetInterface;
+use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -25,6 +26,9 @@ class FileUploadTest extends TestCase
     public function setUp() : void
     {
         parent::setUp();
+
+        EventManager::instance()->setEventList(new EventList());
+
         StorageManager::config('Local', [
             'adapterOptions' => [TMP, true],
             'adapterClass' => '\Gaufrette\Adapter\Local',
@@ -65,6 +69,22 @@ class FileUploadTest extends TestCase
 
         $this->assertInstanceOf(FileStorage::class, $result);
         $this->assertTrue(file_exists(TMP . $result->get('path')));
+    }
+
+    public function testSaveWithUppercasedExtension() : void
+    {
+        $data = [
+            'tmp_name' => TESTS . 'img' . DS . 'qobo.PNG',
+            'error' => 0,
+            'name' => 'qobo.PNG',
+            'type' => 'image/png',
+            'size' => 1186
+        ];
+
+        $result = $this->fileUpload->save('image', $data);
+
+        $this->assertSame('png', $result->get('extension'));
+        $this->assertEventFired('ImageVersion.createVersion');
     }
 
     public function testSaveAll() : void
@@ -133,6 +153,23 @@ class FileUploadTest extends TestCase
             'medium' => 'tests/img/qobo.png',
             'small' => 'tests/img/qobo.png',
             'tiny' => 'tests/img/qobo.png'
+        ];
+        $this->assertSame($expected, $result->first()->get('thumbnails'));
+    }
+
+    public function testGetFilesWithUppercasedExtension() : void
+    {
+        $result = $this->fileUpload->getFiles('image', '00000000-0000-0000-0000-000000000004');
+
+        $this->assertInstanceOf(ResultSetInterface::class, $result);
+        $this->assertFalse($result->isEmpty());
+
+        $expected = [
+            'huge' => 'tests/img/qobo.PNG',
+            'large' => 'tests/img/qobo.PNG',
+            'medium' => 'tests/img/qobo.PNG',
+            'small' => 'tests/img/qobo.PNG',
+            'tiny' => 'tests/img/qobo.PNG'
         ];
         $this->assertSame($expected, $result->first()->get('thumbnails'));
     }

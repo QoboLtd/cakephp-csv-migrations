@@ -42,6 +42,22 @@ class FileStorageFixture extends BaseFixture
             'model_field' => 'image',
             'created' => '2018-10-26 12:00:00',
             'modified' => '2012-10-26 12:00:00',
+        ],
+        [
+            'id' => '00000000-0000-0000-0000-000000000002',
+            'user_id' => '00000000-0000-0000-0000-000000000001',
+            'foreign_key' => '00000000-0000-0000-0000-000000000004',
+            'model' => 'articles',
+            'filename' => 'qobo.PNG',
+            'filesize' => '1186',
+            'mime_type' => 'image/png',
+            'extension' => 'PNG',
+            'hash' => null,
+            'path' => 'tests/img/qobo.PNG',
+            'adapter' => 'Local',
+            'model_field' => 'image',
+            'created' => '2018-10-26 12:00:00',
+            'modified' => '2012-10-26 12:00:00',
         ]
     ];
 }

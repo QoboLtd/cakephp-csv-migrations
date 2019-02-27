@@ -113,8 +113,6 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         // skip sending email if reminder field is empty
         if (empty($entity->get($reminderField))) {
-            $this->log('Reminder field has no value', LogLevel::INFO);
-
             return [];
         }
 
@@ -130,8 +128,6 @@ class ModelAfterSaveListener implements EventListenerInterface
 
         // skip if none of the required fields was modified
         if (! $this->isRequiredModified($entity, $requiredFields)) {
-            $this->log('None of the required fields were modified', LogLevel::INFO);
-
             return [];
         }
 

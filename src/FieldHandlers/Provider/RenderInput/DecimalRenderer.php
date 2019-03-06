@@ -11,6 +11,8 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
 
+use CsvMigrations\FieldHandlers\Setting;
+
 /**
  * DecimalRenderer
  *
@@ -40,8 +42,9 @@ class DecimalRenderer extends AbstractRenderer
             'label' => $options['label'],
             'required' => $options['fieldDefinitions']->getRequired(),
             'value' => $data,
-            'step' => 'any',
-            'max' => '99999999.99',
+            'step' => $options['step'] ?? Setting::DEFAULT_STEP_FOR_NUMBER,
+            'max' => $options['max'] ?? Setting::MAX_VALUE_FOR_NUMBER,
+            'min' => $options['min'] ?? Setting::MIN_VALUE_FOR_NUMBER,
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
             'placeholder' => (!empty($options['placeholder']) ? $options['placeholder'] : '')

@@ -11,6 +11,8 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
 
+use CsvMigrations\FieldHandlers\Setting;
+
 /**
  * IntegerSearchOptions
  *
@@ -36,8 +38,9 @@ class IntegerSearchOptions extends AbstractSearchOptions
             'name' => '{{name}}',
             'value' => '{{value}}',
             'type' => 'number',
-            'step' => 1,
-            'max' => '99999999999',
+            'step' => $options['step'] ?? Setting::DEFAULT_STEP_FOR_NUMBER,
+            'max' => $options['max'] ?? Setting::MAX_VALUE_FOR_NUMBER,
+            'min' => $options['min'] ?? Setting::MIN_VALUE_FOR_NUMBER,
             'label' => false
         ]);
 

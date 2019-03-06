@@ -19,6 +19,7 @@ $attributes += [
     'value' => $value,
     'step' => $step,
     'max' => $max,
+    'min' => $min,
     'placeholder' => $placeholder,
 ];
 

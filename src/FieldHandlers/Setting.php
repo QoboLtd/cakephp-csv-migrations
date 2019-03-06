@@ -32,4 +32,19 @@ class Setting extends Enum
      * Plain rendering to use for related (recursive) values
      */
     const RENDER_PLAIN_VALUE_RELATED = 'relatedPlain';
+
+    /**
+     * Maximum value for numbers
+     */
+    const MAX_VALUE_FOR_NUMBER = 99999999;
+
+    /**
+     * Minimum value for numbers
+     */
+    const MIN_VALUE_FOR_NUMBER = '';
+
+    /**
+     * Default step for numbers
+     */
+    const DEFAULT_STEP_FOR_NUMBER = 'any';
 }

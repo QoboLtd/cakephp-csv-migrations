@@ -120,36 +120,56 @@ trait AssociationsAwareTrait
             return;
         }
 
-        $isSelfRelated = $this->isSelfRelated($fields);
+        $selfrelated = $this->isSelfRelated($fields);
+        if (!empty($selfrelated)) {
+            $this->setByTypeSelfRelationField($module, $selfrelated);
+
+            return;
+        }
 
         foreach ($fields as $field) {
-            $this->setByTypeRelationField($module, $field, $moduleField, $isSelfRelated);
+            $this->setByTypeRelationField($module, $field, $moduleField);
         }
     }
 
     /**
-     * Check if there is two related field to the some module.
+     * Check if the relation module is "self-related" : is true when
+     * two related fields point to the some module. In this case will
+     * be return an array with two CsvField object.
      *
      * @param  mixed[] $fields Module fields
-     * @return bool
+     * @return CsvMigrations\FieldHandlers\CsvField[]|null
+     * @throws Exception in case there are more than two fields pointing the some module.
      */
-    private function isSelfRelated(array $fields) : bool
+    private function isSelfRelated(array $fields)
     {
+        $selfrelated = [];
         $duplicate = '';
         foreach ($fields as $field) {
-            if ($this->isFootprintField($field)) {
+            if ($this->isFootprintField($field) || !$this->isRelatedType($field)) {
                 continue;
             }
             $first = $field->getAssocCsvModule();
 
-            if ($first === $duplicate && !empty($first)) {
-                return true;
+            if ($duplicate === $first) {
+                $selfrelated[] = $field;
+                continue;
+            }
+
+            if (empty($selfrelated)) {
+                $selfrelated[] = $field;
             }
 
             $duplicate = $first;
         }
 
-        return false;
+        if (count($selfrelated) === 2) {
+            return $selfrelated;
+        }
+
+        if (count($selfrelated) > 2) {
+            throw new Exception('Related table with more than two fields');
+        }
     }
 
     /**
@@ -232,22 +252,56 @@ trait AssociationsAwareTrait
     }
 
     /**
+     * Set associations for "self relation" type Modules.
+     *
+     * @param string $module Module name
+     * @param \CsvMigrations\FieldHandlers\CsvField[] $fields CSV Fields
+     * @return void
+     */
+    private function setByTypeSelfRelationField(string $module, array $fields) : void
+    {
+        $first = $fields[0];
+        $second = $fields[1];
+
+        $this->setAssociation(
+            'belongsToMany',
+            static::generateAssociationName($module, $first->getName()),
+            [
+                'joinTable' => Inflector::tableize($module),
+                'className' => $first->getAssocCsvModule(),
+                'foreignKey' => $second->getName(),
+                'targetForeignKey' => $first->getName()
+            ]
+        );
+
+        $this->setAssociation(
+            'belongsToMany',
+            static::generateAssociationName($module, $second->getName()),
+            [
+                'joinTable' => Inflector::tableize($module),
+                'className' => $second->getAssocCsvModule(),
+                'foreignKey' => $first->getName(),
+                'targetForeignKey' => $second->getName()
+            ]
+        );
+    }
+
+    /**
      * Set associations by field, for "relation" type Modules.
      *
      * @param string $module Module name
      * @param \CsvMigrations\FieldHandlers\CsvField $field CSV Field instance
      * @param \CsvMigrations\FieldHandlers\CsvField $moduleField Module related CSV Field instance
-     * @param bool $selfrelated The module is a relation to itself
      * @return void
      */
-    private function setByTypeRelationField(string $module, CsvField $field, CsvField $moduleField, bool $selfrelated = false) : void
+    private function setByTypeRelationField(string $module, CsvField $field, CsvField $moduleField) : void
     {
         if (! $this->isRelatedType($field)) {
             return;
         }
 
         // skip for field with type "related(Articles)" when current module is "Articles"
-        if (!$selfrelated && $this->getTableName() === $field->getAssocCsvModule()) {
+        if ($this->getTableName() === $field->getAssocCsvModule()) {
             return;
         }
 

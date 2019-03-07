@@ -120,8 +120,10 @@ trait AssociationsAwareTrait
             return;
         }
 
+        $isSelfRelated = $this->isSelfRelated($fields);
+
         foreach ($fields as $field) {
-            $this->setByTypeRelationField($module, $field, $moduleField, $this->isSelfRelated($fields));
+            $this->setByTypeRelationField($module, $field, $moduleField, $isSelfRelated);
         }
     }
 

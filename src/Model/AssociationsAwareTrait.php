@@ -128,7 +128,7 @@ trait AssociationsAwareTrait
     /**
      * Check if there is two related field to the some module.
      *
-     * @param  array $fields Module fields
+     * @param  mixed[] $fields Module fields
      * @return bool
      */
     private function isSelfRelated(array $fields) : bool

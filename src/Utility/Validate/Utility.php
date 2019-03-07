@@ -164,7 +164,7 @@ class Utility
             $relation[] = $association->getName();
         }
 
-        return (array)$relation;
+        return $relation;
     }
 
     /**

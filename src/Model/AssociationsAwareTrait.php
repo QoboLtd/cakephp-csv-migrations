@@ -121,8 +121,33 @@ trait AssociationsAwareTrait
         }
 
         foreach ($fields as $field) {
-            $this->setByTypeRelationField($module, $field, $moduleField);
+            $this->setByTypeRelationField($module, $field, $moduleField, $this->isSelfRelated($fields));
         }
+    }
+
+    /**
+     * Check if there is two related field to the some module.
+     *
+     * @param  array $fields Module fields
+     * @return bool
+     */
+    private function isSelfRelated(array $fields) : bool
+    {
+        $duplicate = '';
+        foreach ($fields as $field) {
+            if ($this->isFootprintField($field)) {
+                continue;
+            }
+            $first = $field->getAssocCsvModule();
+
+            if ($first === $duplicate && !empty($first)) {
+                return true;
+            }
+
+            $duplicate = $first;
+        }
+
+        return false;
     }
 
     /**
@@ -210,16 +235,17 @@ trait AssociationsAwareTrait
      * @param string $module Module name
      * @param \CsvMigrations\FieldHandlers\CsvField $field CSV Field instance
      * @param \CsvMigrations\FieldHandlers\CsvField $moduleField Module related CSV Field instance
+     * @param bool $selfrelated The module is a relation to itself
      * @return void
      */
-    private function setByTypeRelationField(string $module, CsvField $field, CsvField $moduleField) : void
+    private function setByTypeRelationField(string $module, CsvField $field, CsvField $moduleField, bool $selfrelated = false) : void
     {
         if (! $this->isRelatedType($field)) {
             return;
         }
 
         // skip for field with type "related(Articles)" when current module is "Articles"
-        if ($this->getTableName() === $field->getAssocCsvModule()) {
+        if (!$selfrelated && $this->getTableName() === $field->getAssocCsvModule()) {
             return;
         }
 

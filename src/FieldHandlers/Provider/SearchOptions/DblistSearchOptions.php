@@ -61,7 +61,9 @@ class DblistSearchOptions extends AbstractSearchOptions
         $defaultElement = 'CsvMigrations.FieldHandlers/DblistFieldHandler/input';
         $element = empty($options['element']) ? $defaultElement : $options['element'];
 
-        $result[$field]['options'] = $selectOptions;
+        foreach ($selectOptions as $key => $value) {
+            $result[$field]['options'][] = ['value' => $key, 'label' => $value];
+        }
         $result[$field]['input'] = ['content' => $this->renderElement($element, $params)];
 
         return $result;

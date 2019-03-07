@@ -46,7 +46,9 @@ class ListSearchOptions extends AbstractSearchOptions
             'label' => false
         ]);
 
-        $result[$this->config->getField()]['options'] = $selectOptions;
+        foreach ($selectOptions as $key => $value) {
+            $result[$this->config->getField()]['options'][] = ['value' => $key, 'label' => $value];
+        }
         $result[$this->config->getField()]['input'] = ['content' => $content];
 
         return $result;

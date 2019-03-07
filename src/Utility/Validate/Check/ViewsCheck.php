@@ -178,7 +178,10 @@ class ViewsCheck extends AbstractCheck
 
         $schema = $mc->createSchema(['lint' => true]);
         $schema->setCallback(function (array $schema) use ($module) {
+            //Add fields from migration file
             $schema = $this->addFieldsToSchema($schema, $module);
+            //Add relation fields
+            $schema = $this->addRelationToSchema($schema, $module);
 
             return $schema;
         });

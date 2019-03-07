@@ -74,4 +74,23 @@ abstract class AbstractCheck implements CheckInterface
 
         return $schema;
     }
+
+    /**
+     * Add relation fields
+     *
+     * @param string[] $schema Schema.
+     * @param string $module Module name
+     * @return string[] Schema.
+     */
+    protected function addRelationToSchema(array $schema, string $module): array
+    {
+        if (isset($schema['definitions']['relation'])) {
+            $relations = Utility::getRealRelationFields($module);
+            if (!empty($relations)) {
+                $schema['definitions']['relation']['enum'] = $relations;
+            }
+        }
+
+        return $schema;
+    }
 }

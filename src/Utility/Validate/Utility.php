@@ -12,6 +12,7 @@
 namespace CsvMigrations\Utility\Validate;
 
 use Cake\Core\Configure;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use InvalidArgumentException;
@@ -131,6 +132,42 @@ class Utility
     }
 
     /**
+     * Check if the field is defined in the relation fields list
+     *
+     * @param string $module Module to check in
+     * @param string $field Field to check
+     * @return bool True if field is real, false otherwise
+     */
+    public static function isRealRelationField(string $module, string $field) : bool
+    {
+        $fields = self::getRealRelationFields($module);
+
+        if (empty($fields)) {
+            return false;
+        }
+
+        return in_array($field, $fields);
+    }
+
+    /**
+     * Returns a list of relation fields.
+     *
+     * @param string $module Module name.
+     * @return string[] List of relation fields.
+     */
+    public static function getRealRelationFields(string $module) : array
+    {
+        $relation = [];
+
+        $table = TableRegistry::getTableLocator()->get($module);
+        foreach ($table->associations() as $association) {
+            $relation[] = $association->getName();
+        }
+
+        return $relation;
+    }
+
+    /**
      * Returns a list of virtual fields in `config.json`.
      *
      * @param string $module Module name.
@@ -186,7 +223,7 @@ class Utility
      */
     public static function isValidModuleField(string $module, string $field) : bool
     {
-        return static::isRealModuleField($module, $field) || static::isVirtualModuleField($module, $field);
+        return static::isRealModuleField($module, $field) || static::isVirtualModuleField($module, $field) || static::isRealRelationField($module, $field);
     }
 
     /**

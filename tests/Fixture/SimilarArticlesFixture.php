@@ -26,7 +26,7 @@ class SimilarArticlesFixture extends TestFixture
     public $records = [
         [
             'id' => '00000000-0000-0000-0000-000000000001',
-            'main_article_id' => '00000000-0000-0000-0000-000000000001',
+            'main_article_id' => '00000000-0000-0000-0000-000000000003',
             'similar_article_id' => '00000000-0000-0000-0000-000000000002',
             'trashed' => null,
             'created' => '2016-07-01 10:39:23',

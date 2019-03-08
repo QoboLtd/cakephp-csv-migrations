@@ -36,9 +36,10 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertRedirectContains('/users/login');
     }
 
-    public function testView() : void
+    public function AtestView() : void
     {
         $this->get('/articles/view/00000000-0000-0000-0000-000000000001');
+        // dd($this->_response);
         $this->assertResponseOk();
         $this->assertResponseContains('Name:');
         $this->assertResponseContains('Created:');

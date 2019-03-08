@@ -20,6 +20,7 @@ use CsvMigrations\Utility\FileUpload;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility;
+use RuntimeException;
 use Webmozart\Assert\Assert;
 
 /**
@@ -120,7 +121,7 @@ trait AssociationsAwareTrait
             return;
         }
 
-        $selfrelated = $this->isSelfRelated($fields);
+        $selfrelated = $this->getSelfRelated($fields);
         if (!empty($selfrelated)) {
             $this->setByTypeSelfRelationField($module, $selfrelated);
 
@@ -133,15 +134,14 @@ trait AssociationsAwareTrait
     }
 
     /**
-     * Check if the relation module is "self-related" : is true when
+     * Check if the relation module is self-related : is true when
      * two related fields point to the some module. In this case will
      * be return an array with two CsvField object.
      *
-     * @param  mixed[] $fields Module fields
-     * @return CsvMigrations\FieldHandlers\CsvField[]|null
-     * @throws Exception in case there are more than two fields pointing the some module.
+     * @param mixed[] $fields Module fields
+     * @return mixed[]|void
      */
-    private function isSelfRelated(array $fields)
+    private function getSelfRelated(array $fields) : ?array
     {
         $selfrelated = [];
         $duplicate = '';
@@ -168,7 +168,7 @@ trait AssociationsAwareTrait
         }
 
         if (count($selfrelated) > 2) {
-            throw new Exception('Related table with more than two fields');
+            throw new RuntimeException('Many-to-many self-association with more than two fields is not supported.');
         }
     }
 
@@ -255,7 +255,7 @@ trait AssociationsAwareTrait
      * Set associations for "self relation" type Modules.
      *
      * @param string $module Module name
-     * @param \CsvMigrations\FieldHandlers\CsvField[] $fields CSV Fields
+     * @param mixed[] $fields CSV Fields
      * @return void
      */
     private function setByTypeSelfRelationField(string $module, array $fields) : void

@@ -1,0 +1,7 @@
+{
+    "table": {
+        "type": "relation",
+        "display_field": "main_article_id",
+        "icon": "connectdevelop"
+    }
+}

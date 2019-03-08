@@ -1,0 +1,37 @@
+{
+    "id": {
+        "name": "id",
+        "type": "uuid",
+        "required": true,
+        "non-searchable": false,
+        "unique": false
+    },
+    "main_article_id": {
+        "name": "main_article_id",
+        "type": "related(Articles)",
+        "required": true,
+        "non-searchable": false,
+        "unique": false
+    },
+    "similar_article_id": {
+        "name": "similar_article_id",
+        "type": "related(Articles)",
+        "required": true,
+        "non-searchable": false,
+        "unique": false
+    },
+    "created": {
+        "name": "created",
+        "type": "datetime",
+        "required": false,
+        "non-searchable": false,
+        "unique": false
+    },
+    "modified": {
+        "name": "modified",
+        "type": "datetime",
+        "required": false,
+        "non-searchable": false,
+        "unique": false
+    }
+}

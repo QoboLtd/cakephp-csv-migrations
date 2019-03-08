@@ -139,9 +139,10 @@ trait AssociationsAwareTrait
      * be return an array with two CsvField object.
      *
      * @param mixed[] $fields Module fields
-     * @return mixed[]|void
+     * @throws RuntimeException in case there are more than two fields pointing the some module.
+     * @return mixed[]
      */
-    private function getSelfRelated(array $fields) : ?array
+    private function getSelfRelated(array $fields) : array
     {
         $selfrelated = [];
         $duplicate = '';
@@ -170,6 +171,8 @@ trait AssociationsAwareTrait
         if (count($selfrelated) > 2) {
             throw new RuntimeException('Many-to-many self-association with more than two fields is not supported.');
         }
+
+        return [];
     }
 
     /**

@@ -36,10 +36,13 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertRedirectContains('/users/login');
     }
 
-    public function AtestView() : void
+    public function testView() : void
     {
         $this->get('/articles/view/00000000-0000-0000-0000-000000000001');
-        // dd($this->_response);
+        $this->markTestSkipped(
+            'The viewVariable() method is affected by the deprecated method requestAction().' .
+            ' Once the deprecated method is handled this test can be re-enabled.'
+        );
         $this->assertResponseOk();
         $this->assertResponseContains('Name:');
         $this->assertResponseContains('Created:');

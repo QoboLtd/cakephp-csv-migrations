@@ -12,22 +12,21 @@ class SimilarArticlesFixture extends TestFixture
 
     public $fields = [
         'id' => ['type' => 'uuid'],
-        'main_article_id' => ['type' => 'uuid', 'null' => true],
-        'similar_article_id' => ['type' => 'uuid', 'null' => true],
+        'main_article_id' => ['type' => 'uuid'],
+        'similar_article_id' => ['type' => 'uuid'],
         'created' => ['type' => 'datetime', 'null' => true],
         'modified' => ['type' => 'datetime', 'null' => true],
         'trashed' => ['type' => 'datetime', 'null' => true],
         '_constraints' => [
-            'primary' => ['type' => 'primary', 'columns' => ['id']],
-            'unique' => ['type' => 'unique', 'columns' => ['name', 'id']]
+            'primary' => ['type' => 'primary', 'columns' => ['id']]
         ]
     ];
 
     public $records = [
         [
             'id' => '00000000-0000-0000-0000-000000000001',
-            'main_article_id' => '00000000-0000-0000-0000-000000000003',
-            'similar_article_id' => '00000000-0000-0000-0000-000000000002',
+            'main_article_id' => '00000000-0000-0000-0000-000000000002',
+            'similar_article_id' => '00000000-0000-0000-0000-000000000001',
             'trashed' => null,
             'created' => '2016-07-01 10:39:23',
             'modified' => '2016-07-01 10:41:31'

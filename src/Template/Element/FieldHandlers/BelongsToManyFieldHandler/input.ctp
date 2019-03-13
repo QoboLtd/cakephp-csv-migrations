@@ -45,7 +45,7 @@ $modalId = Inflector::underscore($association->className() . '_' . $association-
         <?= $this->Form->control($association->getTarget()->aliasField('_ids'), $attributes); ?>
 
     <div class="input-group-btn">
-        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#<?= $modalId ?>_modal">
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#<?= $modalId ?>_modal_association">
             <i class="fa fa-plus" aria-hidden="true"></i>
         </button>
     </div>

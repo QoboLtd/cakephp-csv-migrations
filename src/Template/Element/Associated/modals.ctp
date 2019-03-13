@@ -55,7 +55,7 @@ $fieldName = '';
     }
     ?>
 <!-- Modal -->
-<div id="<?= $fieldName ?>_modal" class="modal fade" tabindex="-1" role="dialog">
+<div id="<?= $fieldName ?>_modal_association" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-body"><?= $modalBody ?></div>

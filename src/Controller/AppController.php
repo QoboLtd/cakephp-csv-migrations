@@ -12,10 +12,12 @@
 namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
+use Assert\Assertion;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Log\Log;
+use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
@@ -101,7 +103,7 @@ class AppController extends BaseController
 
             $response = $this->persistEntity($entity, $post_data);
             if ($response) {
-                $this->saveAssociations($table, $entity, $post_data);
+                $this->saveAssociations($entity, $post_data);
 
                 return $response;
             }
@@ -133,7 +135,7 @@ class AppController extends BaseController
 
             $response = $this->persistEntity($entity, $post_data, $options);
             if ($response) {
-                $this->saveAssociations($table, $entity, $post_data);
+                $this->saveAssociations($entity, $post_data);
 
                 return $response;
             }
@@ -147,18 +149,24 @@ class AppController extends BaseController
     /**
      * Save associations
      *
-     * @param object $table The table
-     * @param object $entity The entity
+     * @param \Cake\Datasource\EntityInterface $entity The entity
      * @param mixed[] $post_data The post data
      */
-    public function saveAssociations($table, $entity, array $post_data): void
+    public function saveAssociations(EntityInterface $entity, array $post_data): void
     {
+        $table = $this->loadModel();
+        Assert::isInstanceOf($table, Table::class);
+
         $tableAssociations = $table->associations();
         if (empty($tableAssociations)) {
             return;
         }
 
         foreach ($tableAssociations as $association) {
+            if ('manyToMany' !== $association->type()) {
+                continue;
+            }
+
             if (!array_key_exists($association->getName(), $post_data)) {
                 continue;
             }
@@ -170,6 +178,7 @@ class AppController extends BaseController
                 }
             }
 
+            Assert::isInstanceOf($association, BelongsToMany::class);
             $association->replaceLinks($entity, $associationData);
         }
     }

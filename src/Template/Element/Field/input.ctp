@@ -11,6 +11,7 @@
  */
 
 use CsvMigrations\FieldHandlers\CsvField;
+use Cake\ORM\TableRegistry;
 
 $value = '&nbsp;';
 if ('' !== trim($field['name'])) {
@@ -22,6 +23,17 @@ if ('' !== trim($field['name'])) {
         $handlerOptions['embeddedModal'] = true;
         $field['name'] = explode('.', $matches[2]);
         $field['name'] = end($field['name']);
+    } elseif (! empty($matches[1]) && 'ASSOCIATION' === $matches[1]) {
+        $handlerOptions['embeddedModal'] = true;
+        $field['name'] = $matches[2];
+
+        //Get table object in order to find the association
+        $table = TableRegistry::getTableLocator()->get($field['model']);
+        if ($table->hasAssociation($field['name'])) {
+            $association = $table->getAssociation($field['name']);
+            $handlerOptions['association'] = $association;
+            $handlerOptions['fieldDefinitions']['type'] = 'belongsToMany(' . $association->className() .  ')';
+        }
     }
 
     // non-embedded field

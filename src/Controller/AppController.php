@@ -12,7 +12,6 @@
 namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
-use Assert\Assertion;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Http\Response;

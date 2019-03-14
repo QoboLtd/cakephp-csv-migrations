@@ -17,8 +17,8 @@ use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 /**
  * BelongsToManyRenderer
  *
- * HasMany renderer provides the functionality
- * for rendering HasMany inputs.
+ * BelongsToMany renderer provides the functionality
+ * for rendering BelongsToMany inputs.
  */
 class BelongsToManyRenderer extends AbstractRenderer
 {
@@ -37,7 +37,7 @@ class BelongsToManyRenderer extends AbstractRenderer
         $table = $this->config->getTable();
 
         $fieldName = $table->aliasField($field);
-        // echo '<pre>'.print_r( $fieldName, true ).'</pre>';die();
+
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), (string)$data);
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
             $relatedParentProperties = $this->_getRelatedParentProperties($relatedProperties);

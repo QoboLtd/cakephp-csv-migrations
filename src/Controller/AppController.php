@@ -151,6 +151,7 @@ class AppController extends BaseController
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity
      * @param mixed[] $post_data The post data
+     * @return void
      */
     public function saveAssociations(EntityInterface $entity, array $post_data): void
     {

@@ -12,7 +12,6 @@
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
 use Cake\ORM\TableRegistry;
-use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 
 /**
  * BelongsToManyRenderer
@@ -21,8 +20,6 @@ use CsvMigrations\FieldHandlers\RelatedFieldTrait;
  */
 class BelongsToManyRenderer extends AbstractRenderer
 {
-    use RelatedFieldTrait;
-
     /**
      * Provide rendered value
      *
@@ -39,6 +36,7 @@ class BelongsToManyRenderer extends AbstractRenderer
         $association = $options['association'];
         $contactsData = TableRegistry::getTableLocator()->get($entity->getSource())->get($entity->get('id'), ['contain' => $association->getName()]);
         $associationData = $contactsData[$association->getProperty()];
+        $associationList = [];
         if (!empty($associationData)) {
             foreach ($associationData as $associationRow) {
                 $associationList[$associationRow->get('id')] = $associationRow->get($relatedProperties['displayField']);

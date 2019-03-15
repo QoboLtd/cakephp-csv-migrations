@@ -12,6 +12,7 @@
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
 use Cake\ORM\TableRegistry;
+use CsvMigrations\FieldHandlers\RelatedFieldTrait;
 
 /**
  * BelongsToManyRenderer
@@ -20,6 +21,8 @@ use Cake\ORM\TableRegistry;
  */
 class BelongsToManyRenderer extends AbstractRenderer
 {
+    use RelatedFieldTrait;
+
     /**
      * Provide rendered value
      *

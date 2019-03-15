@@ -20,6 +20,7 @@ use CsvMigrations\Utility\FileUpload;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility;
+use RuntimeException;
 use Webmozart\Assert\Assert;
 
 /**
@@ -120,9 +121,58 @@ trait AssociationsAwareTrait
             return;
         }
 
+        $selfrelated = $this->getSelfRelated($fields);
+        if (!empty($selfrelated)) {
+            $this->setByTypeSelfRelationField($module, $selfrelated);
+
+            return;
+        }
+
         foreach ($fields as $field) {
             $this->setByTypeRelationField($module, $field, $moduleField);
         }
+    }
+
+    /**
+     * Check if the relation module is self-related : is true when
+     * two related fields point to the some module. In this case will
+     * be return an array with two CsvField object.
+     *
+     * @param mixed[] $fields Module fields
+     * @throws RuntimeException in case there are more than two fields pointing the some module.
+     * @return mixed[]
+     */
+    private function getSelfRelated(array $fields) : array
+    {
+        $selfrelated = [];
+        $duplicate = '';
+        foreach ($fields as $field) {
+            if ($this->isFootprintField($field) || !$this->isRelatedType($field)) {
+                continue;
+            }
+            $first = $field->getAssocCsvModule();
+
+            if ($duplicate === $first) {
+                $selfrelated[] = $field;
+                continue;
+            }
+
+            if (empty($selfrelated)) {
+                $selfrelated[] = $field;
+            }
+
+            $duplicate = $first;
+        }
+
+        if (count($selfrelated) === 2) {
+            return $selfrelated;
+        }
+
+        if (count($selfrelated) > 2) {
+            throw new RuntimeException('Many-to-many self-association with more than two fields is not supported.');
+        }
+
+        return [];
     }
 
     /**
@@ -201,6 +251,41 @@ trait AssociationsAwareTrait
             $associationType,
             static::generateAssociationName($className, $field->getName()),
             ['className' => $className, 'foreignKey' => $field->getName()]
+        );
+    }
+
+    /**
+     * Set associations for "self relation" type Modules.
+     *
+     * @param string $module Module name
+     * @param mixed[] $fields CSV Fields
+     * @return void
+     */
+    private function setByTypeSelfRelationField(string $module, array $fields) : void
+    {
+        $first = $fields[0];
+        $second = $fields[1];
+
+        $this->setAssociation(
+            'belongsToMany',
+            static::generateAssociationName($module, $first->getName()),
+            [
+                'joinTable' => Inflector::tableize($module),
+                'className' => $first->getAssocCsvModule(),
+                'foreignKey' => $second->getName(),
+                'targetForeignKey' => $first->getName()
+            ]
+        );
+
+        $this->setAssociation(
+            'belongsToMany',
+            static::generateAssociationName($module, $second->getName()),
+            [
+                'joinTable' => Inflector::tableize($module),
+                'className' => $second->getAssocCsvModule(),
+                'foreignKey' => $first->getName(),
+                'targetForeignKey' => $second->getName()
+            ]
         );
     }
 

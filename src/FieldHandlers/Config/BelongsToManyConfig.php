@@ -12,10 +12,10 @@
 namespace CsvMigrations\FieldHandlers\Config;
 
 /**
- * HasManyConfig
+ * BelongsToManyConfig
  *
  * This class provides the predefined configuration
- * for HasMany field handlers.
+ * for BelongsToMany field handlers.
  */
 class BelongsToManyConfig extends FixedConfig
 {
@@ -31,7 +31,7 @@ class BelongsToManyConfig extends FixedConfig
         'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\NullSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
         'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\BelongsToManyRenderer',
-        'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\RelatedRenderer',
+        'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\BelongsToManyRenderer',
         'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
         'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\StringValidationRules',
     ];

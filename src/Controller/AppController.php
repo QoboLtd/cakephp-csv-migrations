@@ -16,6 +16,8 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Log\Log;
+use Cake\ORM\Association\BelongsToMany;
+use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validation;
@@ -93,11 +95,15 @@ class AppController extends BaseController
         $entity = $table->newEntity();
 
         if ($this->request->is('post')) {
-            $response = $this->persistEntity($entity, $this->request->getParam(
+            $post_data = $this->request->getParam(
                 'data',
                 (array)$this->request->getData()
-            ));
+            );
+
+            $response = $this->persistEntity($entity, $post_data);
             if ($response) {
+                $this->saveAssociations($entity, $post_data);
+
                 return $response;
             }
         }
@@ -120,12 +126,16 @@ class AppController extends BaseController
         $entity = $this->fetchEntity($id);
 
         if ($this->request->is(['patch', 'post', 'put'])) {
+            $post_data = (array)$this->request->getData();
+
             // enable accessibility to associated entity's primary key
             // to avoid associated entity getting flagged as new
             $options = $table instanceof Table ? $table->enablePrimaryKeyAccess() : [];
 
-            $response = $this->persistEntity($entity, (array)$this->request->getData(), $options);
+            $response = $this->persistEntity($entity, $post_data, $options);
             if ($response) {
+                $this->saveAssociations($entity, $post_data);
+
                 return $response;
             }
         }
@@ -133,6 +143,44 @@ class AppController extends BaseController
         $this->set('entity', $entity);
         $this->render('CsvMigrations.Common/edit');
         $this->set('_serialize', ['entity']);
+    }
+
+    /**
+     * Save associations
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity
+     * @param mixed[] $post_data The post data
+     * @return void
+     */
+    public function saveAssociations(EntityInterface $entity, array $post_data): void
+    {
+        $table = $this->loadModel();
+        Assert::isInstanceOf($table, Table::class);
+
+        $tableAssociations = $table->associations();
+        if (empty($tableAssociations)) {
+            return;
+        }
+
+        foreach ($tableAssociations as $association) {
+            if ('manyToMany' !== $association->type()) {
+                continue;
+            }
+
+            if (!array_key_exists($association->getName(), $post_data)) {
+                continue;
+            }
+
+            $associationData = [];
+            if (is_array($post_data[$association->getName()]) && array_key_exists('_ids', $post_data[$association->getName()]) && !empty($post_data[$association->getName()]['_ids'])) {
+                foreach ($post_data[$association->getName()]['_ids'] as $id) {
+                    $associationData[] = TableRegistry::getTableLocator()->get($association->className())->get($id);
+                }
+            }
+
+            Assert::isInstanceOf($association, BelongsToMany::class);
+            $association->replaceLinks($entity, $associationData);
+        }
     }
 
     /**

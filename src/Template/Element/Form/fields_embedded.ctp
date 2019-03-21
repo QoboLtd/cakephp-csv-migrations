@@ -13,6 +13,8 @@
 use CsvMigrations\FieldHandlers\CsvField;
 
 $embeddedFields = [];
+$associationFields = [];
+
 foreach ($fields as $panelFields) {
     foreach ($panelFields as $subFields) {
         foreach ($subFields as $field) {
@@ -23,13 +25,19 @@ foreach ($fields as $panelFields) {
             // embedded field detection
             preg_match(CsvField::PATTERN_TYPE, $field['name'], $matches);
 
-            if (empty($matches[1]) || 'EMBEDDED' !== $matches[1]) {
+            if (empty($matches[1]) || !in_array($matches[1], ['EMBEDDED','ASSOCIATION'])) {
                 continue;
             }
 
             $field['name'] = $matches[2];
+            $field['type'] = $matches[1];
 
-            $embeddedFields[] = $field;
+            if ('EMBEDDED' === $matches[1]) {
+                $embeddedFields[] = $field;
+            }else{
+                $associationFields[] = $field;
+            }
+            
         }
     }
 }
@@ -37,5 +45,11 @@ foreach ($fields as $panelFields) {
 if (!empty($embeddedFields)) {
     echo $this->element('CsvMigrations.Embedded/modals', [
         'fields' => $embeddedFields
+    ]);
+}
+
+if (!empty($associationFields)) {
+    echo $this->element('CsvMigrations.Associated/modals', [
+        'fields' => $associationFields
     ]);
 }

@@ -10,6 +10,9 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use CsvMigrations\FieldHandlers\CsvField;
+use Cake\ORM\TableRegistry;
+
 $tableName = $field['model'];
 if ($field['plugin']) {
     $tableName = $field['plugin'] . '.' . $tableName;
@@ -18,6 +21,25 @@ if ($field['plugin']) {
 $renderOptions = ['entity' => $options['entity']];
 
 $label = $factory->renderName($tableName, $field['name'], $renderOptions);
+
+if ('' !== trim($field['name'])) {
+	// association field detection
+    preg_match(CsvField::PATTERN_TYPE, $field['name'], $matches);
+    if (! empty($matches[1]) && 'ASSOCIATION' === $matches[1]) {
+        $field['name'] = $matches[2];
+        //Get table object in order to find the association
+        $table = TableRegistry::getTableLocator()->get($field['model']);
+        if ($table->hasAssociation($field['name'])) {
+        	$renderOptions['embeddedModal'] = true;
+            $association = $table->getAssociation($field['name']);
+            $renderOptions['association'] = $association;
+            $renderOptions['fieldDefinitions']['type'] = 'belongsToMany(' . $association->className() .  ')';
+            $label = $association->className();
+        }
+    }
+}
+
+
 $value = $factory->renderValue($tableName, $field['name'], $options['entity'], $renderOptions);
 $value = empty($value) ? '&nbsp;' : $value;
 

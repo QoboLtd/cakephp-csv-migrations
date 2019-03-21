@@ -65,6 +65,13 @@
                 $(this).on('cancel.daterangepicker', function (ev, picker) {
                     $(this).val('');
                 });
+
+                $(this).on('showCalendar.daterangepicker', function (ev, picker) {
+                    let diff = $(document).height() - $(this).offset().top;
+                    if (diff < 350) {
+                        picker.drops = 'up';
+                    }
+                });
             });
         },
 
@@ -75,15 +82,13 @@
          * @return {object}
          */
         getOptions: function (input, args) {
-            let drops = $(input).offset().top > 360 ? 'up' : 'down;'
-
             var options = {
                 singleDatePicker: true,
                 showDropdowns: true,
                 timePicker: true,
                 minYear: 1900,
                 maxYear: 2050,
-                drops: drops,
+                drops: 'down',
                 autoUpdateInput: false,
                 timePicker24Hour: true,
                 timePickerIncrement: 5,

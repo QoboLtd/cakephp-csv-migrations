@@ -56,8 +56,11 @@ class CountrySearchOptions extends AbstractSearchOptions
 
         $content = $view->Form->select('{{name}}', $selectOptions, $attributes);
 
+        foreach ($selectOptions as $key => $value) {
+            $result[$field]['options'][] = ['value' => $key, 'label' => $value];
+        }
+
         $result[$field]['source'] = $options['fieldDefinitions']->getLimit();
-        $result[$field]['options'] = $selectOptions;
         $result[$field]['input'] = [
             'content' => $content,
             'post' => [

@@ -75,13 +75,15 @@
          * @return {object}
          */
         getOptions: function (input, args) {
+            let drops = $(input).offset().top > 360 ? 'up' : 'down;'
+
             var options = {
                 singleDatePicker: true,
                 showDropdowns: true,
                 timePicker: true,
                 minYear: 1900,
                 maxYear: 2050,
-                drops: 'up',
+                drops: drops,
                 autoUpdateInput: false,
                 timePicker24Hour: true,
                 timePickerIncrement: 5,

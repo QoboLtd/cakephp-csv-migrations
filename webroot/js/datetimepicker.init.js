@@ -58,6 +58,11 @@
                 // date range picker (used for datetime fields)
                 $(this).daterangepicker(that.getOptions(this, options), that.getCallback(this, hiddenInput));
 
+
+                if ($(this).data('magic-value')) {
+                    $($(this).data('daterangepicker').container).find('.ranges ul').show();
+                }
+
                 $(this).on('apply.daterangepicker', function (ev, picker) {
                     $(this).val(picker.startDate.format(picker.locale.format));
                 });
@@ -105,7 +110,7 @@
             options.locale.format = options.timePicker ? this.format.datetime : this.format.date;
 
             if ($(input).data('magic-value')) {
-                options.ranges = [];
+                options.ranges = {};
                 this.magicValues.forEach(function (item) {
                     // add custom ranges for magic value logic
                     options.ranges[item.name] = item.value;

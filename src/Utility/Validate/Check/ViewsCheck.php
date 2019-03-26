@@ -136,6 +136,7 @@ class ViewsCheck extends AbstractCheck
      * @param string $embeddedValue Value enclosed by EMBEDDED(...)
      * @param string $module Module's name
      * @param string $view View's name
+     * @return void
      */
     protected function validateEmbedded(string $embeddedValue, string $module, string $view): void
     {
@@ -186,6 +187,7 @@ class ViewsCheck extends AbstractCheck
      * @param string $associationValue Value enclosed by ASSOCIATION(...)
      * @param string $module Module's name
      * @param string $view View's name
+     * @return void
      */
     protected function validateAssociation(string $associationValue, string $module, string $view): void
     {

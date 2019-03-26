@@ -111,6 +111,20 @@ class ViewsCheckTest extends TestCase
     }
 
     /**
+     * Test scenario when fields are embedded
+     */
+    public function testRunAssociations() : void
+    {
+        Configure::write('CsvMigrations.actions', ['association']);
+        $result = $this->check->run('Foo');
+        $errors = $this->check->getErrors();
+
+        $this->assertTrue(is_int($result), "run() returned a non-integer result");
+        $this->assertCount(1, $errors, 'Expected 1 errors to be raised.');
+        $this->assertContains('Foo module [association] view reference ASSOCIATION column with unknown association "Users"', $errors);
+    }
+
+    /**
      * Test that there are too many columns in fields array
      */
     public function testRunTooManyColumns() : void

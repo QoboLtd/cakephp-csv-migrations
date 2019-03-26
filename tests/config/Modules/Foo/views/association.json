@@ -1,0 +1,9 @@
+{
+    "items": [
+        [
+            "Details",
+            "ASSOCIATION(ModifiedByUsers)",
+            "ASSOCIATION(Users)"
+        ]
+    ]
+}

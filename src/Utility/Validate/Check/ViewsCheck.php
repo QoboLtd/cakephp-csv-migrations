@@ -12,6 +12,7 @@
 namespace CsvMigrations\Utility\Validate\Check;
 
 use Cake\Core\Configure;
+use Cake\ORM\TableRegistry;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\Utility\Validate\Utility;
 use InvalidArgumentException;
@@ -86,8 +87,11 @@ class ViewsCheck extends AbstractCheck
                     // embedded field flag
                     $isEmbedded = ! empty($matches[1]) && 'EMBEDDED' === $matches[1];
 
+                    // association field flag
+                    $isAssociation = ! empty($matches[1]) && 'ASSOCIATION' === $matches[1];
+
                     // normal field
-                    if (! $isEmbedded && ! Utility::isValidModuleField($module, $column)) {
+                    if (! $isAssociation && ! $isEmbedded && ! Utility::isValidModuleField($module, $column)) {
                         $this->errors[] = sprintf(
                             '%s module [%s] view references unknown field "%s"',
                             $module,
@@ -107,49 +111,12 @@ class ViewsCheck extends AbstractCheck
                     }
                     $seenFields[] = $column;
 
-                    // skip for non-embedded field
-                    if (! $isEmbedded) {
-                        continue;
+                    if ($isEmbedded) {
+                        $this->validateEmbedded($matches[2], $module, $view);
                     }
 
-                    // extract embedded module and field
-                    list($embeddedModule, $embeddedModuleField) = false !== strpos($matches[2], '.') ?
-                        explode('.', $matches[2]) :
-                        [null, $matches[2]];
-
-                    if (empty($embeddedModule)) {
-                        $this->errors[] = sprintf(
-                            '%s module [%s] view reference EMBEDDED column without a module',
-                            $module,
-                            $view
-                        );
-                    }
-
-                    if (! empty($embeddedModule) && ! Utility::isValidModule($embeddedModule)) {
-                        $this->errors[] = sprintf(
-                            '%s module [%s] view reference EMBEDDED column with unknown module "%s"',
-                            $module,
-                            $view,
-                            $embeddedModule
-                        );
-                    }
-
-                    if (empty($embeddedModuleField)) {
-                        $this->errors[] = sprintf(
-                            '%s module [%s] view reference EMBEDDED column without a module field',
-                            $module,
-                            $view
-                        );
-                    }
-
-                    if (! empty($embeddedModuleField) && ! Utility::isValidModuleField($module, $embeddedModuleField)) {
-                        $this->errors[] = sprintf(
-                            '%s module [%s] view reference EMBEDDED column with unknown field "%s" of module "%s"',
-                            $module,
-                            $view,
-                            $embeddedModuleField,
-                            $embeddedModule
-                        );
+                    if ($isAssociation) {
+                        $this->validateAssociation($matches[2], $module, $view);
                     }
                 }
             }
@@ -161,6 +128,76 @@ class ViewsCheck extends AbstractCheck
         }
 
         return count($this->errors);
+    }
+
+    /**
+     * Validates values enclosed in EMBEDDED
+     *
+     * @param string $embeddedValue Value enclosed by EMBEDDED(...)
+     * @param string $module Module's name
+     * @param string $view View's name
+     */
+    protected function validateEmbedded(string $embeddedValue, string $module, string $view): void
+    {
+        // extract embedded module and field
+        list($embeddedModule, $embeddedModuleField) = false !== strpos($embeddedValue, '.') ?
+            explode('.', $embeddedValue) :
+            [null, $embeddedValue];
+
+        if (empty($embeddedModule)) {
+            $this->errors[] = sprintf(
+                '%s module [%s] view reference EMBEDDED column without a module',
+                $module,
+                $view
+            );
+        }
+
+        if (! empty($embeddedModule) && ! Utility::isValidModule($embeddedModule)) {
+            $this->errors[] = sprintf(
+                '%s module [%s] view reference EMBEDDED column with unknown module "%s"',
+                $module,
+                $view,
+                $embeddedModule
+            );
+        }
+
+        if (empty($embeddedModuleField)) {
+            $this->errors[] = sprintf(
+                '%s module [%s] view reference EMBEDDED column without a module field',
+                $module,
+                $view
+            );
+        }
+
+        if (! empty($embeddedModuleField) && ! Utility::isValidModuleField($module, $embeddedModuleField)) {
+            $this->errors[] = sprintf(
+                '%s module [%s] view reference EMBEDDED column with unknown field "%s" of module "%s"',
+                $module,
+                $view,
+                $embeddedModuleField,
+                $embeddedModule
+            );
+        }
+    }
+
+    /**
+     * Validates values enclosed in ASSOCIATION
+     *
+     * @param string $associationValue Value enclosed by ASSOCIATION(...)
+     * @param string $module Module's name
+     * @param string $view View's name
+     */
+    protected function validateAssociation(string $associationValue, string $module, string $view): void
+    {
+        $table = TableRegistry::getTableLocator()->get($module);
+        if (!$table->hasAssociation($associationValue)) {
+            $this->errors[] = sprintf(
+                '%s module [%s] view reference ASSOCIATION column with unknown association "%s"',
+                $module,
+                $view,
+                $associationValue
+            );
+        }
     }
 
     /**

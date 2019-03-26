@@ -115,7 +115,7 @@ class ViewsCheckTest extends TestCase
      */
     public function testRunAssociations() : void
     {
-        Configure::write('CsvMigrations.actions', ['associations']);
+        Configure::write('CsvMigrations.actions', ['association']);
         $result = $this->check->run('Foo');
         $errors = $this->check->getErrors();
 

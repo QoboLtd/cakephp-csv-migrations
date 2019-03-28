@@ -59,11 +59,9 @@ class ImportShell extends Shell
     }
 
     /**
-     * Main method for shell execution
-     *
-     * @return void
+     * @{inheritDoc}
      */
-    public function main() : void
+    public function main()
     {
         try {
             $lock = new FileLock('import_' . md5(__FILE__) . '.lock');

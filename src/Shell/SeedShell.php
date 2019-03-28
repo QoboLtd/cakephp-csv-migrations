@@ -76,9 +76,9 @@ class SeedShell extends Shell
     /**
      * Main shell method
      *
-     * @return void
+     * @return bool|int|null
      */
-    public function main() : void
+    public function main()
     {
         // If outgoing emails are not disabled, creating numerous records
         // can cause a potential email flood due to 'assigned_to' and
@@ -318,6 +318,7 @@ class SeedShell extends Shell
     {
         $modulesWithRelations = [];
 
+        /** @var mixed[] $module */
         foreach ($modules as $name => $module) {
             $module['relations'] = [];
             foreach ($module as $field) {
@@ -414,7 +415,7 @@ class SeedShell extends Shell
                 }
 
                 if ($this->isCombinedField($fieldData['type'])) {
-                    $fields = $this->getCombinedFieldValueBasedOnType($fieldData['type'], '', $fieldName);
+                    $fields = $this->getCombinedFieldValueBasedOnType($fieldData['type'], '', (string)$fieldName);
                     foreach ($fields as $field => $value) {
                         $data[$field] = $value;
                     }
@@ -463,6 +464,7 @@ class SeedShell extends Shell
     {
         $index = [];
 
+        /** @var mixed[] $module */
         foreach ($modules as $moduleName => $module) {
             if (! isset($module['relations'])) {
                 $index[$moduleName] = [];

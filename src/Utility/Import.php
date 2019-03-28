@@ -91,7 +91,12 @@ class Import
     {
         $pathInfo = pathinfo($import->get('filename'));
 
-        $result = $pathInfo['filename'] . static::PROCESSED_FILE_SUFFIX . '.' . $pathInfo['extension'];
+        $result = $pathInfo['filename'] . static::PROCESSED_FILE_SUFFIX;
+
+        if (!empty($pathInfo['extension'])) {
+            $result .= '.' . $pathInfo['extension'];
+        }
+
         if (!$fullBase) {
             return $result;
         }
@@ -401,12 +406,14 @@ class Import
         $filename = (string)preg_replace('/_+/', '_', $filename);
         $filename = trim($filename, '_');
 
+        $extension = !empty($pathInfo['extension']) ? $pathInfo['extension'] : '';
+
         $path = sprintf(
             '%s%s_%s.%s',
             $uploadPath,
             (new Time())->i18nFormat('yyyyMMddHHmmss'),
             $filename,
-            $pathInfo['extension']
+            $extension
         );
 
         if (! move_uploaded_file($this->request->getData('file.tmp_name'), $path)) {

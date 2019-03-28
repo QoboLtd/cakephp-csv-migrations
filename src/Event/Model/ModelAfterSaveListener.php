@@ -182,12 +182,12 @@ class ModelAfterSaveListener implements EventListenerInterface
      */
     protected function getRemindersToModules(RepositoryInterface $table) : array
     {
-        $config = (new ModuleConfig(ConfigType::MODULE(), $table->getRegistryAlias()))->parse();
-        if (empty($config->table->allow_reminders)) {
+        $config = (new ModuleConfig(ConfigType::MODULE(), $table->getRegistryAlias()))->parseToArray();
+        if (empty($config['table']['allow_reminders'])) {
             return [];
         }
 
-        return $config->table->allow_reminders;
+        return $config['table']['allow_reminders'];
     }
 
     /**

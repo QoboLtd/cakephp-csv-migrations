@@ -278,7 +278,7 @@ class AppController extends BaseController
                 (array)$this->request->getData()
             );
 
-            $url = $table instanceof Table ? $table->getParentRedirectUrl($table, $entity) : [];
+            $url = $table->getParentRedirectUrl($table, $entity);
             $url = ! empty($url) ? $url : ['action' => 'view', $entity->get($primaryKey)];
 
             return $this->redirect($url);

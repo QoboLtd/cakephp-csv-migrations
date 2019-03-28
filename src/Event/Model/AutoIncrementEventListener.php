@@ -61,6 +61,7 @@ class AutoIncrementEventListener implements EventListenerInterface
 
         // skip modifying auto-increment field(s) on existing records.
         if (! $entity->isNew()) {
+            /** @var mixed[] $field */
             foreach (array_keys($fields) as $field) {
                 $entity->unsetProperty($field);
             }
@@ -68,6 +69,7 @@ class AutoIncrementEventListener implements EventListenerInterface
             return;
         }
 
+        /** @var string $field */
         foreach ($fields as $field => $options) {
             // get max value
             $query = $table->find('withTrashed');

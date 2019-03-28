@@ -56,7 +56,7 @@ class ValidateShell extends Shell
      * Main method for shell execution
      *
      * @param string $modules Comma-separated list of module names to validate
-     * @return void
+     * @return bool|int|null
      */
     public function main(string $modules = '')
     {
@@ -137,7 +137,7 @@ class ValidateShell extends Shell
             $this->out(" - Running $check ... ", 0);
 
             try {
-                $check = Check::getInstance($check);
+                $check = Check::getInstance((string)$check);
                 $checkResult = $check->run($module, $options);
             } catch (InvalidArgumentException $e) {
                 $result['errors'][] = $e->getMessage();

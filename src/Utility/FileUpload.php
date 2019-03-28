@@ -171,7 +171,7 @@ final class FileUpload
 
         $result = [];
         foreach (array_keys($versions) as $version) {
-            $result[$version] = $this->getThumbnail($entity, $version);
+            $result[$version] = $this->getThumbnail($entity, (string)$version);
         }
 
         return $result;
@@ -451,7 +451,7 @@ final class FileUpload
     /**
      * File-type fields getter.
      *
-     * @return string[]
+     * @return mixed[]
      */
     private function getFileFields() : array
     {

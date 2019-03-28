@@ -77,6 +77,8 @@ class ValidateShell extends Shell
             $this->abort("Errors found: $errorsCount.  Validation failed!");
         }
         $this->success('No errors found. Validation passed!');
+
+        return;
     }
 
     /**

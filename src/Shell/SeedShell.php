@@ -115,9 +115,9 @@ class SeedShell extends Shell
         //populate data to modules with relations
         $this->hierarchicalPopulateDataIntoModules($relationsIndex);
 
-        $this->out("Done!");
+        $this->success("Done!");
 
-        return;
+        return true;
     }
 
     /**

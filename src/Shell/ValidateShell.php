@@ -78,7 +78,7 @@ class ValidateShell extends Shell
         }
         $this->success('No errors found. Validation passed!');
 
-        return;
+        return true;
     }
 
     /**

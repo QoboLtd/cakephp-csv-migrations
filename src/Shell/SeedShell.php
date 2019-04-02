@@ -74,11 +74,9 @@ class SeedShell extends Shell
     }
 
     /**
-     * Main shell method
-     *
-     * @return void
+     * {@inheritDoc}
      */
-    public function main() : void
+    public function main()
     {
         // If outgoing emails are not disabled, creating numerous records
         // can cause a potential email flood due to 'assigned_to' and
@@ -311,7 +309,7 @@ class SeedShell extends Shell
     /**
      * Check module relations.
      *
-     * @param string[] $modules modules
+     * @param mixed[] $modules modules
      * @return mixed[]
      */
     protected function checkModuleRelations(array $modules) : array
@@ -414,7 +412,7 @@ class SeedShell extends Shell
                 }
 
                 if ($this->isCombinedField($fieldData['type'])) {
-                    $fields = $this->getCombinedFieldValueBasedOnType($fieldData['type'], '', $fieldName);
+                    $fields = $this->getCombinedFieldValueBasedOnType($fieldData['type'], '', (string)$fieldName);
                     foreach ($fields as $field => $value) {
                         $data[$field] = $value;
                     }
@@ -456,7 +454,7 @@ class SeedShell extends Shell
     /**
      * Create relation index between modules.
      *
-     * @param string[] $modules modules.
+     * @param mixed[] $modules modules.
      * @return mixed[]
      */
     protected function createRelationIndex(array $modules) : array

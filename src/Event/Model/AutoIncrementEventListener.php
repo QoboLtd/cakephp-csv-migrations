@@ -62,7 +62,7 @@ class AutoIncrementEventListener implements EventListenerInterface
         // skip modifying auto-increment field(s) on existing records.
         if (! $entity->isNew()) {
             foreach (array_keys($fields) as $field) {
-                $entity->unsetProperty($field);
+                $entity->unsetProperty((string)$field);
             }
 
             return;
@@ -77,13 +77,13 @@ class AutoIncrementEventListener implements EventListenerInterface
                     ->enableHydration(true)
                     ->firstOrFail();
                 Assert::isInstanceOf($max, EntityInterface::class);
-                $max = (float)$max->get($field);
+                $max = (float)$max->get((string)$field);
             } catch (RecordNotFoundException $e) {
                 $max = 0;
             }
 
             if (empty($options['min'])) {
-                $entity->set($field, $max + 1);
+                $entity->set((string)$field, $max + 1);
 
                 continue;
             }
@@ -91,7 +91,7 @@ class AutoIncrementEventListener implements EventListenerInterface
             // if value is less than the allowed minimum, then set it to the minimum.
             $max = $max < $options['min'] ? $options['min'] : $max + 1;
 
-            $entity->set($field, $max);
+            $entity->set((string)$field, $max);
         }
     }
 

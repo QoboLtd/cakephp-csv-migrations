@@ -75,7 +75,7 @@ class Table extends BaseTable implements HasFieldsInterface
     }
 
     /**
-     * Set Table validation rules.
+     * Set Table validation rules if the validation is globally enabled.
      *
      * @param \Cake\Validation\Validator $validator Validator instance
      * @return \Cake\Validation\Validator
@@ -84,9 +84,21 @@ class Table extends BaseTable implements HasFieldsInterface
     {
         // configurable in config/csv_migrations.php
         if (! Configure::read('CsvMigrations.tableValidation')) {
+
             return $validator;
         }
 
+        return $this->validationEnabled($validator);
+    }
+
+    /**
+     * Set Table validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance
+     * @return \Cake\Validation\Validator
+     */
+    public function validationEnabled(Validator $validator) : Validator
+    {
         $className = App::shortName(get_class($this), 'Model/Table', 'Table');
         $config = (new ModuleConfig(ConfigType::MIGRATION(), $className))->parse();
         $config = json_encode($config);

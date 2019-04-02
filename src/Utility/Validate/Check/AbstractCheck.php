@@ -21,7 +21,7 @@ abstract class AbstractCheck implements CheckInterface
     /**
      * Add fields from migration config to schema.
      *
-     * @param string[] $schema Schema.
+     * @param mixed[] $schema Schema.
      * @param string $module Module name
      * @return string[] Schema.
      */
@@ -40,7 +40,7 @@ abstract class AbstractCheck implements CheckInterface
     /**
      * Add virtual fields from migration config to schema.
      *
-     * @param string[] $schema Schema.
+     * @param mixed[] $schema Schema.
      * @param string $module Module name
      * @return string[] Schema.
      */
@@ -59,7 +59,7 @@ abstract class AbstractCheck implements CheckInterface
     /**
      * Add available modules to schema.
      *
-     * @param string[] $schema Schema.
+     * @param mixed[] $schema Schema.
      * @param string $module Module name
      * @return string[] Schema.
      */
@@ -78,7 +78,7 @@ abstract class AbstractCheck implements CheckInterface
     /**
      * Add relation fields
      *
-     * @param string[] $schema Schema.
+     * @param mixed[] $schema Schema.
      * @param string $module Module name
      * @return string[] Schema.
      */

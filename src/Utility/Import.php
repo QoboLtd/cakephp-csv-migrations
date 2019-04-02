@@ -90,8 +90,12 @@ class Import
     public static function getProcessedFile(ImportEntity $import, bool $fullBase = true) : string
     {
         $pathInfo = pathinfo($import->get('filename'));
+        $extension = $pathInfo['extension'] ?? '';
+        if (!empty($extension)) {
+            $extension = '.' . $extension;
+        }
 
-        $result = $pathInfo['filename'] . static::PROCESSED_FILE_SUFFIX . '.' . $pathInfo['extension'];
+        $result = $pathInfo['filename'] . static::PROCESSED_FILE_SUFFIX . $extension;
         if (!$fullBase) {
             return $result;
         }
@@ -400,13 +404,17 @@ class Import
         $filename = (string)preg_replace('/\W/', '_', $pathInfo['filename']);
         $filename = (string)preg_replace('/_+/', '_', $filename);
         $filename = trim($filename, '_');
+        $extension = $pathInfo['extension'] ?? '';
+        if (!empty($extension)) {
+            $extension = '.' . $extension;
+        }
 
         $path = sprintf(
-            '%s%s_%s.%s',
+            '%s%s_%s%s',
             $uploadPath,
             (new Time())->i18nFormat('yyyyMMddHHmmss'),
             $filename,
-            $pathInfo['extension']
+            $extension
         );
 
         if (! move_uploaded_file($this->request->getData('file.tmp_name'), $path)) {

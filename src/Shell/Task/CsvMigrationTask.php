@@ -33,7 +33,7 @@ class CsvMigrationTask extends MigrationTask
     /**
      * {@inheritDoc}
      */
-    public function main($name = null) : void
+    public function main($name = null)
     {
         if (empty(Configure::read('CsvMigrations.modules.path'))) {
             $this->abort('CSV modules path is not defined.');
@@ -47,13 +47,13 @@ class CsvMigrationTask extends MigrationTask
         }
 
         // output system's available csv modules
-        if (!in_array($this->_camelize($name), $modules)) {
+        if (!in_array($this->_camelize((string)$name), $modules)) {
             $this->out('Possible modules based on your current csv configuration:');
             foreach ($modules as $module) {
                 $this->out('- ' . $module);
             }
 
-            return;
+            return 0;
         }
 
         parent::main($name);

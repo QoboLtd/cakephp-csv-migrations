@@ -84,7 +84,6 @@ class Table extends BaseTable implements HasFieldsInterface
     {
         // configurable in config/csv_migrations.php
         if (! Configure::read('CsvMigrations.tableValidation')) {
-
             return $validator;
         }
 

@@ -37,12 +37,14 @@ class DblistSearchOptions extends AbstractSearchOptions
         $defaultOptions = $this->getDefaultOptions($data, $options);
         $defaultOptions['input'] = ['content' => $template];
 
-        $result[$this->config->getField()] = $defaultOptions;
+        $result[$field] = $defaultOptions;
 
         $list = $options['fieldDefinitions']->getListName();
 
         $table = TableRegistry::get('CsvMigrations.Dblists');
         Assert::isInstanceOf($table, DblistsTable::class);
+
+        $selectOptions = $table->getOptions($list);
 
         $params = [
             'field' => $field,
@@ -51,7 +53,7 @@ class DblistSearchOptions extends AbstractSearchOptions
             'label' => false,
             'required' => $options['fieldDefinitions']->getRequired(),
             'value' => '{{value}}',
-            'options' => $table->getOptions($list),
+            'options' => $selectOptions,
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
         ];
@@ -59,9 +61,10 @@ class DblistSearchOptions extends AbstractSearchOptions
         $defaultElement = 'CsvMigrations.FieldHandlers/DblistFieldHandler/input';
         $element = empty($options['element']) ? $defaultElement : $options['element'];
 
-        $result[$field]['input'] = [
-            'content' => $this->renderElement($element, $params)
-        ];
+        foreach ($selectOptions as $key => $value) {
+            $result[$field]['options'][] = ['value' => $key, 'label' => $value];
+        }
+        $result[$field]['input'] = ['content' => $this->renderElement($element, $params)];
 
         return $result;
     }

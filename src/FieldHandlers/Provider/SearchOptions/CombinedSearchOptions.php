@@ -11,6 +11,8 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
 
+use Cake\Utility\Inflector;
+
 /**
  * CombinedSearchOptions
  *
@@ -45,6 +47,10 @@ class CombinedSearchOptions extends AbstractSearchOptions
 
             $provider = $config->getProvider('searchOptions');
             $provider = new $provider($config);
+
+            $type = Inflector::underscore(str_replace('Config', '', (new \ReflectionClass($config))->getShortName()));
+            $options['fieldDefinitions']->setName($fieldName);
+            $options['fieldDefinitions']->setType($type);
 
             $result = array_merge($result, (array)$provider->provide($data, $options));
         }

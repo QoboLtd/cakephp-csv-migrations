@@ -39,12 +39,10 @@ class CurrencySearchOptions extends AbstractSearchOptions
 
         $result[$field] = $defaultOptions;
 
-        $selectListItems = $this->config->getProvider('selectOptions');
-        $selectListItems = new $selectListItems($this->config);
-        $listName = $options['fieldDefinitions']->getLimit();
-        $selectOptions = ['' => Setting::EMPTY_OPTION_LABEL()];
-        $optionList = $selectListItems->provide($listName, []);
-        foreach ($optionList as $k => $v) {
+        $className = $this->config->getProvider('selectOptions');
+        $provider = new $className($this->config);
+        $selectOptions = [];
+        foreach ($provider->provide($options['fieldDefinitions']->getLimit()) as $k => $v) {
             $selectOptions[$k] = CurrencyValueRenderer::getIcon($k, $v);
         }
 
@@ -57,6 +55,10 @@ class CurrencySearchOptions extends AbstractSearchOptions
         ];
 
         $content = $view->Form->select('{{name}}', $selectOptions, $attributes);
+
+        foreach ($selectOptions as $key => $value) {
+            $result[$field]['options'][] = ['value' => $key, 'label' => $value];
+        }
 
         $result[$field]['source'] = $options['fieldDefinitions']->getLimit();
         $result[$field]['input'] = [

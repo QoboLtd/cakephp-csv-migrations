@@ -90,7 +90,7 @@ class ConfigCheck extends AbstractCheck
      * This is a workaround regarding the issue with schema whereby we can't
      * validate object key names reliably.
      *
-     * @param string[] $schema Schema.
+     * @param mixed[] $schema Schema.
      * @return string[] Schema.
      */
     protected function addConversionToSchema(array $schema): array

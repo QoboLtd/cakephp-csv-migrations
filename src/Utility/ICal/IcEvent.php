@@ -71,7 +71,7 @@ class IcEvent
     {
         $params = array_merge($this->defaultParams, $params);
         foreach ($params as $name => $value) {
-            $method = 'set' . ucfirst($name);
+            $method = 'set' . ucfirst((string)$name);
             if (method_exists($this, $method) && is_callable([$this, $method])) {
                 $this->$method($value);
             }

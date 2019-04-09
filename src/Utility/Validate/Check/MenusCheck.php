@@ -30,7 +30,7 @@ class MenusCheck extends AbstractCheck
         $mc = new ModuleConfig(ConfigType::MENUS(), $module, null, ['cacheSkip' => true]);
 
         $schema = $mc->createSchema(['lint' => true]);
-        $mc->setParser(new Parser($schema, ['lint' => true]));
+        $mc->setParser(new Parser($schema, ['lint' => true, 'validate' => true]));
 
         try {
             $mc->parse();

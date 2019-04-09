@@ -53,7 +53,7 @@ class FieldsCheck extends AbstractCheck
         $mc = new ModuleConfig(ConfigType::FIELDS(), $module, null, ['cacheSkip' => true]);
 
         $schema = $mc->createSchema(['lint' => true]);
-        $mc->setParser(new Parser($schema, ['lint' => true]));
+        $mc->setParser(new Parser($schema, ['lint' => true, 'validate' => true]));
 
         return $mc;
     }

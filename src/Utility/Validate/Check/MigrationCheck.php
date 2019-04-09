@@ -132,7 +132,7 @@ class MigrationCheck extends AbstractCheck
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, $configFile, ['cacheSkip' => true]);
 
         $schema = $mc->createSchema(['lint' => true]);
-        $mc->setParser(new Parser($schema, ['lint' => true]));
+        $mc->setParser(new Parser($schema, ['lint' => true, 'validate' => true]));
 
         return $mc;
     }

@@ -78,7 +78,7 @@ class ConfigCheck extends AbstractCheck
             return $schema;
         });
 
-        $mc->setParser(new Parser($schema, ['lint' => true]));
+        $mc->setParser(new Parser($schema, ['lint' => true, 'validate' => true]));
 
         return $mc;
     }

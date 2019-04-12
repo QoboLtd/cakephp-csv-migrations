@@ -11,6 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers\Provider\SelectOptions;
 
+use Cake\Core\App;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
@@ -34,7 +35,9 @@ class ListSelectOptions extends AbstractSelectOptions
         $spacer = isset($options['spacer']) ? (string)$options['spacer'] : ' - ';
         $flatten = isset($options['flatten']) ? (bool)$options['flatten'] : true;
 
-        list($module, $list) = false !== strpos($data, '.') ? explode('.', $data, 2) : [$this->config->getTable()->getAlias(), $data];
+        list($module, $list) = false !== strpos($data, '.') ?
+            explode('.', $data, 2) :
+            [App::shortName(get_class($this->config->getTable()), 'Model/Table', 'Table'), $data];
 
         $result = [];
         try {

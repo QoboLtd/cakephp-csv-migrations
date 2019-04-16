@@ -27,7 +27,7 @@ class Validator
      * @param string $item List item.
      * @param string $moduleName Module name.
      * @param string $listName List name.
-     * @return bool|string True if list item is enabled, error string otherwise.
+     * @return string|true True if list item is enabled, error string otherwise.
      */
     public function inModuleList(string $item, string $moduleName, string $listName)
     {
@@ -39,10 +39,10 @@ class Validator
 
         /** @var mixed[]|null $config */
         $inactive = $items['items'][$item]['inactive'] ?? null;
-        if ($inactive === null) {
+        if ($inactive === null || $inactive === true) {
             return (string)__('Invalid list item: `{0}`', $item);
         }
 
-        return !(bool)$inactive;
+        return true;
     }
 }

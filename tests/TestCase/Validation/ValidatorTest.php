@@ -3,7 +3,6 @@ namespace CsvMigrations\Test\TestCase\Validation;
 
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator as CakeValidator;
-
 use CsvMigrations\Validation\Validator;
 
 class ValidatorTest extends TestCase
@@ -71,7 +70,7 @@ class ValidatorTest extends TestCase
      *
      * @return void
      */
-    public function testInModuleListModuleConfigError(): void
+    public function testInModuleListModuleConfigErrorIsCaught(): void
     {
         $result = $this->Validator->inModuleList('EUR', 'Common', 'bad_currencies_list');
         $this->assertTrue(is_string($result), 'Expected error string');

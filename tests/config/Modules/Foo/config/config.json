@@ -1,5 +1,6 @@
 {
     "table": {
+        "type": "module",
         "alias": "Foobar",
         "searchable": true,
         "display_field": "name",

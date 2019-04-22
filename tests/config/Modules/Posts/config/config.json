@@ -1,5 +1,6 @@
 {
     "table": {
+        "type": "module",
         "alias": "Articles",
         "display_field": "id",
         "icon": "cube",

@@ -1,5 +1,6 @@
 {
     "table": {
+        "type": "module",
         "searchable": true,
         "display_field": "name",
         "lookup_fields": [

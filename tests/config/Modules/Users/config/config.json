@@ -1,5 +1,6 @@
 {
     "table": {
+        "type": "module",
         "display_field": "name",
         "lookup_fields": [
             "username",

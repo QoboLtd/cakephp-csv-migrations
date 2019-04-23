@@ -48,6 +48,21 @@ if (!$options['title']) {
 sort($columns);
 
 echo $this->element('CsvMigrations.common_js_libs', ['scriptBlock' => 'bottom']);
+echo $this->Html->scriptBlock(
+    '(function ($) {
+        $(\'.form-control[data-class="select2"]\').select2({
+            theme: \'bootstrap\',
+            width: \'100%\',
+            placeholder: \'-- Please choose --\',
+            escapeMarkup: function (text) {
+                return text;
+            }
+        }).val(null).trigger(\'change\');
+    })(jQuery);
+',
+    ['block' => 'scriptBottom']
+);
+
 ?>
 <section class="content-header">
     <div class="row">
@@ -102,7 +117,7 @@ echo $this->element('CsvMigrations.common_js_libs', ['scriptBlock' => 'bottom'])
                                 'type' => 'select',
                                 'value' => array_key_exists($column, $headerOptions) ? $headerOptions[$column] : false,
                                 'options' => array_combine($headers, $headers),
-                                'class' => 'form-control'
+                                'class' => 'form-control select2'
                             ]) ?>
                         </div>
                         <div class="col-md-4">

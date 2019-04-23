@@ -446,6 +446,9 @@ class ImportShell extends Shell
                     case 'list':
                         $data[$field] = $this->_findListValue($table, $csvFields[$field]->getLimit(), $value);
                         break;
+                    case 'country':
+                        $data[$field] = $this->_findListValue($table, 'countries', $value);
+                        break;
                 }
             } else {
                 if ('uuid' === $schema->columnType($field)) {

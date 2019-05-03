@@ -82,7 +82,7 @@ class LinkRenderer extends AbstractRenderer
         }
 
         // Only link to URLs with schema, to avoid unpredictable behavior
-        if (filter_var($options['linkTo'], FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED) === false) {
+        if (filter_var($options['linkTo'], FILTER_VALIDATE_URL) === false) {
             return $result;
         }
 

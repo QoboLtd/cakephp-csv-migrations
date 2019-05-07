@@ -119,7 +119,14 @@ class IcEmail
             $displayValue = $this->entity->get($displayField);
 
             $factory = new FieldHandlerFactory();
-            $result = $factory->renderValue($this->table, $displayField, $displayValue, [ 'renderAs' => 'plain']);
+
+            $renderAs = 'plain';
+            if (!empty($this->table->getFieldsDefinitions()[$displayField]['type']) && preg_match("/^related\(/", $this->table->getFieldsDefinitions()[$displayField]['type'])) {
+                $renderAs = 'related';
+            }
+
+            $result = $factory->renderValue($this->table, $displayField, $displayValue, [ 'renderAs' => $renderAs]);
+            $result = trim(strip_tags(html_entity_decode($result, ENT_QUOTES)), " \t\n\r\0\x0B\xC2\xA0");
         } catch (InvalidArgumentException $e) {
             $result = 'reminder';
         }
@@ -161,8 +168,8 @@ class IcEmail
         $user = $this->getUserString();
         $action = $this->entity->isNew() ? 'created' : 'updated';
 
-        // Example: Lead Foobar created by System
-        $result = sprintf("%s %s %s by %s", $module, $displayValue, $action, $user);
+        // Example: Lead "Foobar" created by System
+        $result = sprintf("%s \"%s\" %s by %s", $module, $displayValue, $action, $user);
 
         $changeLog = $this->getChangelog();
         if (!empty($changeLog)) {

@@ -101,13 +101,12 @@
     $(document).ready(function () {
         if ($('input[name=formPanel]').val() != undefined ) {
             $('input[name=formPanel]').each(function (i) {
-                let url = $(this).data('panels-url')
-                let form = $(this).closest('form')
+                let url = $(this).data('panels-url');
+                let form = $(this).closest('form');
 
                 new Panel(form, url);
             });
-        }
-        else {
+        } else {
             $('form[data-panels-url]').each(function (i) {
                 new Panel(this);
             });

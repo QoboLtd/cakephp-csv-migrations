@@ -106,7 +106,7 @@ class FieldHandler implements FieldHandlerInterface
         $mc = new ModuleConfig(ConfigType::FIELDS(), Inflector::camelize($table->getTable()));
         $config = $mc->parseToArray();
         if (! empty($config[$field])) {
-            $this->defaultOptions = array_replace_recursive($this->defaultOptions, $config[$field]);
+            $this->defaultOptions = (array)array_replace_recursive($this->defaultOptions, $config[$field]);
         }
     }
 

@@ -66,9 +66,19 @@ if (!empty($this->request->getQuery('embedded'))) {
         $formOptions['data-embedded-related-id'] = $this->request->getQuery('related_id');
     }
 }
+
+$linkTitle = is_array($options['title']) ? $this->Html->link(
+            $options['title']['alias'],
+            [
+                'plugin' => $this->plugin,
+                'controller' => $options['title']['link'],
+                'action' => 'index'
+            ]
+        ) . ' &raquo; ' . $options['title']['page'] : (string)$options['title'];
+
 ?>
 <section class="content-header">
-    <h4><?= $options['title'] ?></h4>
+    <h4><?= $linkTitle ?></h4>
 </section>
 <section class="content">
     <?php
@@ -76,6 +86,7 @@ if (!empty($this->request->getQuery('embedded'))) {
      * Conversion logic
      * @todo probably this has to be moved to another plugin
      */
+
     if (!$this->request->getParam('pass.conversion')) {
         echo $this->Form->create($options['entity'], $formOptions);
     }

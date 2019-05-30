@@ -16,14 +16,18 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 $config = (new ModuleConfig(ConfigType::MODULE(), $this->name))->parse();
 
-$title = Inflector::singularize(
+$alias = Inflector::singularize(
     isset($config->table->alias) ? $config->table->alias : Inflector::humanize(Inflector::underscore($this->name))
 );
 
 $options = [
     'entity' => $entity,
     'fields' => $fields,
-    'title' => __('Create {0}', $title),
+    'title' => [
+        'page' => 'Create',
+        'alias' => $alias,
+        'link' => $this->request->getParam('controller')
+    ],
     'handlerOptions' => ['entity' => $this->request],
     'hasPanels' => property_exists($config, 'panels')
 ];

@@ -1,9 +1,9 @@
 (function ($) {
     'use strict';
 
-    var Panel = function (form) {
+    var Panel = function (form, url) {
         this.form = form;
-        this.url = $(form).data('panels-url');
+        this.url = url ? url : $(form).data('panels-url');
 
         if (!this.url) {
             return false;
@@ -99,9 +99,18 @@
     };
 
     $(document).ready(function () {
-        $('form[data-panels-url]').each(function (i) {
-            new Panel(this);
-        });
+        if ($('input[name=formPanel]').val() != undefined ) {
+            $('input[name=formPanel]').each(function (i) {
+                let url = $(this).data('panels-url');
+                let form = $(this).closest('form');
+
+                new Panel(form, url);
+            });
+        } else {
+            $('form[data-panels-url]').each(function (i) {
+                new Panel(this);
+            });
+        }
     });
 
 })(jQuery);

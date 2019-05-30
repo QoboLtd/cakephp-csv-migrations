@@ -18,9 +18,7 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 $config = (new ModuleConfig(ConfigType::MODULE(), $this->name))->parse();
 
-$alias = Inflector::singularize(
-    isset($config->table->alias) ? $config->table->alias : Inflector::humanize(Inflector::underscore($this->name))
-);
+$alias = isset($config->table->alias) ? $config->table->alias : Inflector::humanize(Inflector::underscore($this->name));
 
 $table = TableRegistry::get(empty($this->plugin) ? $this->name : $this->plugin . '.' . $tableName);
 $displayField = (new FieldHandlerFactory($this))->renderValue(

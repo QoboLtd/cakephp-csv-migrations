@@ -15,14 +15,10 @@ use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 $config = (new ModuleConfig(ConfigType::MODULE(), $this->name))->parse();
-
-$title = __(
-    'Batch edit {0}',
-    isset($config->table->alias) ? $config->table->alias : Inflector::humanize(Inflector::underscore($this->name))
-);
+$alias = __( isset($config->table->alias) ? $config->table->alias : Inflector::humanize(Inflector::underscore($this->name)));
 
 $options = [
-    'title' => $title,
+    'title' => ['page' => __('Batch Edit'), 'alias' => $alias, 'link' => $this->request->getParam('controller')],
     'entity' => $entity,
     'fields' => $fields,
     'handlerOptions' => [

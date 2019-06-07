@@ -10,20 +10,28 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 $config = (new ModuleConfig(ConfigType::MODULE(), $this->name))->parse();
 
-$title = Inflector::singularize(
-    isset($config->table->alias) ? $config->table->alias : Inflector::humanize(Inflector::underscore($this->name))
+$alias = isset($config->table->alias) ? $config->table->alias : Inflector::humanize(Inflector::underscore($this->name));
+
+$table = TableRegistry::get(empty($this->plugin) ? $this->name : $this->plugin . '.' . $tableName);
+$displayField = (new FieldHandlerFactory($this))->renderValue(
+    $table,
+    $table->getDisplayField(),
+    $entity->get($table->getDisplayField()),
+    ['entity' => $entity]
 );
 
 $options = [
     'entity' => $entity,
     'fields' => $fields,
-    'title' => __('Edit {0}', $title),
+    'title' => ['page' => __('Edit {0} ', $displayField), 'alias' => $alias, 'link' => $this->request->getParam('controller')],
     'handlerOptions' => ['entity' => $entity],
     'hasPanels' => property_exists($config, 'panels')
 ];

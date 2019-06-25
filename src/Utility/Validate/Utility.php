@@ -12,7 +12,6 @@
 namespace CsvMigrations\Utility\Validate;
 
 use Cake\Core\Configure;
-use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use InvalidArgumentException;
@@ -31,6 +30,8 @@ use Qobo\Utils\Utility\Convert;
  */
 class Utility
 {
+    private static $cache = [];
+
     /**
      * Get the list of all modules
      *
@@ -123,48 +124,17 @@ class Utility
     {
         $moduleFields = [];
 
+        $cacheKey = implode('.', [ConfigType::MIGRATION(), $module, null]);
+        if (array_key_exists($cacheKey, self::$cache)) {
+            return self::$cache[$cacheKey];
+        }
+
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
         $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
         $moduleFields = Convert::objectToArray($mc->parse());
-        $fields = Hash::extract($moduleFields, '{*}.name');
+        self::$cache[$cacheKey] = (array)Hash::extract($moduleFields, '{*}.name');
 
-        return (array)$fields;
-    }
-
-    /**
-     * Check if the field is defined in the relation fields list
-     *
-     * @param string $module Module to check in
-     * @param string $field Field to check
-     * @return bool True if field is real, false otherwise
-     */
-    public static function isRealRelationField(string $module, string $field) : bool
-    {
-        $fields = self::getRealRelationFields($module);
-
-        if (empty($fields)) {
-            return false;
-        }
-
-        return in_array($field, $fields);
-    }
-
-    /**
-     * Returns a list of relation fields.
-     *
-     * @param string $module Module name.
-     * @return string[] List of relation fields.
-     */
-    public static function getRealRelationFields(string $module) : array
-    {
-        $relation = [];
-
-        $table = TableRegistry::getTableLocator()->get($module);
-        foreach ($table->associations() as $association) {
-            $relation[] = $association->getName();
-        }
-
-        return $relation;
+        return self::$cache[$cacheKey];
     }
 
     /**
@@ -178,10 +148,14 @@ class Utility
     {
         $fields = [];
 
-        $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
-        $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
-        $virtualFields = Convert::objectToArray($mc->parse());
+        $cacheKey = implode('.', [ConfigType::MODULE(), $module, null]);
+        if (!array_key_exists($cacheKey, self::$cache)) {
+            $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
+            $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
+            self::$cache[$cacheKey] = Convert::objectToArray($mc->parse());
+        }
 
+        $virtualFields = self::$cache[$cacheKey];
         if (isset($virtualFields['virtualFields'])) {
             $fields = $virtualFields['virtualFields'];
         }

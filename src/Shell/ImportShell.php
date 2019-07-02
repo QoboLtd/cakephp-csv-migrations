@@ -547,20 +547,16 @@ class ImportShell extends Shell
 
         // check against list options values
         foreach ($options as $val => $params) {
-            if ($val !== $value) {
-                continue;
+            if (strtolower($val) === strtolower(trim($value))) {
+                return $val;
             }
-
-            return $val;
         }
 
         // check against list options labels
         foreach ($options as $val => $params) {
-            if ($params['label'] !== $value) {
-                continue;
+            if (strtolower($params['label']) === strtolower(trim($value))) {
+                return $val;
             }
-
-            return $val;
         }
 
         return $value;

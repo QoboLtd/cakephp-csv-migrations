@@ -449,6 +449,9 @@ class ImportShell extends Shell
                     case 'country':
                         $data[$field] = $this->_findListValue($table, 'countries', $value);
                         break;
+                    case 'boolean':
+                        $data[$field] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                        break;
                 }
             } else {
                 if ('uuid' === $schema->columnType($field)) {

@@ -452,6 +452,20 @@ class ImportShell extends Shell
                     case 'boolean':
                         $data[$field] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
                         break;
+                    case 'datetime':
+                        try {
+                            $data[$field] = (new \DateTime($value))->format('Y-m-d H:i:s');
+                        } catch (\Exception $e) {
+                            //
+                        }
+                        break;
+                    case 'date':
+                        try {
+                            $data[$field] = (new \DateTime($value))->format('Y-m-d');
+                        } catch (\Exception $e) {
+                            //
+                        }
+                        break;
                 }
             } else {
                 if ('uuid' === $schema->columnType($field)) {

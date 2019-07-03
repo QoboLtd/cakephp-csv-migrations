@@ -468,7 +468,7 @@ class ImportShell extends Shell
                         break;
                 }
             } else {
-                if ('uuid' === $schema->columnType($field)) {
+                if ('uuid' === $schema->getColumnType($field)) {
                     $data[$field] = $this->_findRelatedRecord($table, $field, $value);
                 } else {
                     $data[$field] = $value;

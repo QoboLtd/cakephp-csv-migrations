@@ -55,8 +55,8 @@ class ImportIntegrationTest extends IntegrationTestCase
 
         $this->assertInstanceOf(Import::class, $this->viewVariable('import'));
 
-        $this->assertEquals(['name', 'category', 'author', 'status', 'main_article', 'image'], $this->viewVariable('columns'));
-        $this->assertEquals(['Name', 'Author', 'Status'], $this->viewVariable('headers'));
+        $this->assertEquals(['name', 'category', 'author', 'status', 'main_article', 'date', 'featured', 'image'], $this->viewVariable('columns'));
+        $this->assertEquals(['Name', 'Author', 'Status', 'Featured', 'Date'], $this->viewVariable('headers'));
     }
 
     public function testImportGetExistingMapped() : void
@@ -68,8 +68,8 @@ class ImportIntegrationTest extends IntegrationTestCase
         $this->assertInstanceOf(Import::class, $this->viewVariable('import'));
 
         $this->assertEquals(1, $this->viewVariable('failCount'));
-        $this->assertEquals(1, $this->viewVariable('pendingCount'));
-        $this->assertEquals(1, $this->viewVariable('importCount'));
+        $this->assertEquals(2, $this->viewVariable('pendingCount'));
+        $this->assertEquals(0, $this->viewVariable('importCount'));
     }
 
     public function testImportPost() : void

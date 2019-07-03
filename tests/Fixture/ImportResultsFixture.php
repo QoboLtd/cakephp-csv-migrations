@@ -86,7 +86,7 @@ class ImportResultsFixture extends TestFixture
             'row_number' => 3,
             'model_name' => 'Articles',
             'model_id' => null,
-            'status' => 'Success',
+            'status' => 'Pending',
             'status_message' => 'Lorem ipsum dolor sit amet, aliquet feugiat.',
             'created' => '2017-07-31 17:10:39',
             'modified' => '2017-07-31 17:10:39',

@@ -36,7 +36,7 @@ class Utility
     protected static $migrationJsonArray;
 
     /**
-     * We create a object that that set only once most of the json parsing
+     * Create an instance of the class where the json parsing are calculate only once
      * @param string $module Module name
      */
     public function __construct(string $module = '')
@@ -50,7 +50,8 @@ class Utility
     }
 
     /**
-     * Retrive and parse to array the config.json file
+     * Retrive and parse to array the config file
+     *
      * @param  string $module Module name
      * @param bool $validate Should the data be validated against the schema.
      * @return void
@@ -63,7 +64,8 @@ class Utility
     }
 
     /**
-     * Retrive and parse to array the migration.json file
+     * Retrive and parse to array the migration file
+     *
      * @param  string $module Module name
      * @param bool $validate Should the data be validated against the schema.
      * @return void

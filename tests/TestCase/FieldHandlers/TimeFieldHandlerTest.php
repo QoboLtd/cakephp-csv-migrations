@@ -81,7 +81,7 @@ class TimeFieldHandlerTest extends TestCase
 
     public function testRenderInputWithDateObject() : void
     {
-        $result = $this->fh->renderInput(new Date('13:30'));
+        $result = $this->fh->renderInput(new Date('2000-01-01 13:30'));
 
         $this->assertContains('value="13:30"', $result);
     }

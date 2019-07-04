@@ -56,7 +56,7 @@ class Utility
      * @param bool $validate Should the data be validated against the schema.
      * @return void
      */
-    public static function setConfigJsonArray($module, bool $validate = true)
+    public static function setConfigJsonArray(string $module, bool $validate = true): void
     {
         $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
         $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
@@ -70,7 +70,7 @@ class Utility
      * @param bool $validate Should the data be validated against the schema.
      * @return void
      */
-    public static function setMigrationJsonArray($module, bool $validate = true)
+    public static function setMigrationJsonArray(string $module, bool $validate = true): void
     {
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
         $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));

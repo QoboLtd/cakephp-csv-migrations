@@ -34,7 +34,7 @@ class ViewsCheck extends AbstractCheck
         $views = Configure::read('CsvMigrations.actions');
         $options = $this->applyOptionDefaults($options);
 
-        $validation = new Utility($module);
+        $validation = Utility::initStatic($module);
 
         $viewCounter = 0;
         foreach ($views as $view) {
@@ -93,7 +93,7 @@ class ViewsCheck extends AbstractCheck
                     $isAssociation = ! empty($matches[1]) && 'ASSOCIATION' === $matches[1];
 
                     // normal field
-                    if (! $isAssociation && ! $isEmbedded && ! $validation::isValidModuleField($module, $column)) {
+                    if (! $isAssociation && ! $isEmbedded && ! Utility::isValidModuleField($module, $column)) {
                         $this->errors[] = sprintf(
                             '%s module [%s] view references unknown field "%s"',
                             $module,

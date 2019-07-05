@@ -25,32 +25,32 @@ use Qobo\Utils\Utility\Convert;
 /**
  * Utility Class
  *
- * This class provices utility methods mostly
+ * This class provides utility methods mostly
  * useful for validation of the system setup
  * and configuration files.
  */
 class Utility
 {
+    protected static $module;
+
     protected static $configJsonArray;
 
     protected static $migrationJsonArray;
 
     /**
-     * Create an instance of the class where the json parsing are calculate only once
+     * Initialization of the static properties
      * @param string $module Module name
+     * @return void
      */
-    public function __construct(string $module = '')
+    public static function initStatic(string $module)
     {
-        if (empty($module)) {
-            return;
-        }
-
+        self::$module = $module;
         self::setConfigJsonArray($module);
         self::setMigrationJsonArray($module);
     }
 
     /**
-     * Retrive and parse to array the config file
+     * Retrieve and parse to array the config file
      *
      * @param  string $module Module name
      * @param bool $validate Should the data be validated against the schema.
@@ -64,9 +64,9 @@ class Utility
     }
 
     /**
-     * Retrive and parse to array the migration file
+     * Retrieve and parse to array the migration file
      *
-     * @param  string $module Module name
+     * @param string $module Module name
      * @param bool $validate Should the data be validated against the schema.
      * @return void
      */
@@ -169,7 +169,7 @@ class Utility
     {
         $moduleFields = [];
 
-        if (empty(self::$migrationJsonArray)) {
+        if (empty(self::$migrationJsonArray) && self::$module !== $module) {
             self::setMigrationJsonArray($module, $validate);
         }
 
@@ -225,7 +225,7 @@ class Utility
     {
         $fields = [];
 
-        if (empty(self::$configJsonArray)) {
+        if (empty(self::$configJsonArray) && self::$module !== $module) {
             self::setConfigJsonArray($module, $validate);
         }
 

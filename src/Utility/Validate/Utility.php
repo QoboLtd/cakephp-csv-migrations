@@ -25,12 +25,44 @@ use Qobo\Utils\Utility\Convert;
 /**
  * Utility Class
  *
- * This class provices utility methods mostly
+ * This class provides utility methods mostly
  * useful for validation of the system setup
  * and configuration files.
  */
 class Utility
 {
+    protected static $configJsonArray;
+
+    protected static $migrationJsonArray;
+
+    /**
+     * Retrieve and parse to array the config file
+     *
+     * @param  string $module Module name
+     * @param bool $validate Should the data be validated against the schema.
+     * @return void
+     */
+    public static function setConfigJsonArray(string $module, bool $validate = true): void
+    {
+        $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
+        $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
+        self::$configJsonArray[$module] = Convert::objectToArray($mc->parse());
+    }
+
+    /**
+     * Retrieve and parse to array the migration file
+     *
+     * @param string $module Module name
+     * @param bool $validate Should the data be validated against the schema.
+     * @return void
+     */
+    public static function setMigrationJsonArray(string $module, bool $validate = true): void
+    {
+        $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
+        $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
+        self::$migrationJsonArray[$module] = Convert::objectToArray($mc->parse());
+    }
+
     /**
      * Get the list of all modules
      *
@@ -123,10 +155,11 @@ class Utility
     {
         $moduleFields = [];
 
-        $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
-        $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
-        $moduleFields = Convert::objectToArray($mc->parse());
-        $fields = Hash::extract($moduleFields, '{*}.name');
+        if (empty(self::$migrationJsonArray[$module])) {
+            self::setMigrationJsonArray($module, $validate);
+        }
+
+        $fields = Hash::extract(self::$migrationJsonArray[$module], '{*}.name');
 
         return (array)$fields;
     }
@@ -178,12 +211,12 @@ class Utility
     {
         $fields = [];
 
-        $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
-        $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
-        $virtualFields = Convert::objectToArray($mc->parse());
+        if (empty(self::$configJsonArray[$module])) {
+            self::setConfigJsonArray($module, $validate);
+        }
 
-        if (isset($virtualFields['virtualFields'])) {
-            $fields = $virtualFields['virtualFields'];
+        if (isset(self::$configJsonArray[$module]['virtualFields'])) {
+            $fields = self::$configJsonArray[$module]['virtualFields'];
         }
 
         return $fields;

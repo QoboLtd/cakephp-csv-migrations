@@ -45,7 +45,7 @@ class ImportTest extends TestCase
             [1, 'Success', 'Lorem ipsum dolor sit amet, aliquet feugiat.'],
             [1, 'Fail', 'Lorem ipsum dolor sit amet, aliquet feugiat.'],
             [2, 'Pending', 'Lorem ipsum dolor sit amet, aliquet feugiat.'],
-            [3, 'Success', 'Lorem ipsum dolor sit amet, aliquet feugiat.']
+            [3, 'Pending', 'Lorem ipsum dolor sit amet, aliquet feugiat.']
         ];
         $result = Import::toDatatables($query->all(), $columns);
 

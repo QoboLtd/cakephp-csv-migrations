@@ -41,7 +41,7 @@ class ListSearchOptions extends AbstractSearchOptions
         $selectOptions = $provider->provide($options['fieldDefinitions']->getLimit());
 
         $view = $this->config->getView();
-        $content = $view->Form->select('{{name}}', $selectOptions, [
+        $content = $view->Form->select('{{name}}', array_merge(['' => Setting::EMPTY_OPTION_LABEL()], $selectOptions), [
             'class' => 'form-control',
             'label' => false
         ]);

@@ -9,6 +9,9 @@ parameters:
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort
+    ignoreErrors:
+        # This rule is ignored to avoid aborting early during import shell execution.
+        - '#In method "CsvMigrations\\Shell\\ImportShell::_processData", caught "Exception" must be rethrown.#'
 includes:
     - vendor/phpstan/phpstan-webmozart-assert/extension.neon
     - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon

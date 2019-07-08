@@ -1,6 +1,7 @@
 <?php
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
+use Cake\I18n\Date;
 use Cake\I18n\Time;
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\CsvField;
@@ -49,6 +50,7 @@ class DateFieldHandlerTest extends TestCase
             ['foobar', 'foobar', 'Non-date string'],
             [15, 15, 'Non-date integer'],
             [Time::parse('2017-07-06 14:20:00'), '2017-07-06', 'Date from object'],
+            [new Date('2017-07-06 14:20:00'), '2017-07-06', 'Date from object'],
         ];
     }
 

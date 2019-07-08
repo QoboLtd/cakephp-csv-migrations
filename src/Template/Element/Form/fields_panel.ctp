@@ -9,6 +9,8 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
+deprecationWarning('"CsvMigrations.Form/fields_panel" view is deprecated.');
 ?>
 <?php foreach ($panelFields as $subFields) : ?>
     <?php $fieldCount = 12 < count($subFields) ? 12 : count($subFields); ?>

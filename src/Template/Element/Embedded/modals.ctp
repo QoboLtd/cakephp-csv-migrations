@@ -9,6 +9,8 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
+deprecationWarning('"CsvMigrations.Embedded/modals" view is deprecated.');
 ?>
 <?php foreach ($fields as $field) : ?>
     <?php

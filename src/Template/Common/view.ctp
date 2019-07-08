@@ -9,8 +9,10 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+deprecationWarning('"CsvMigrations.View/view" view is deprecated.');
 
 use Cake\Utility\Inflector;
+
 
 $options = [
     'entity' => $entity,

@@ -9,6 +9,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+deprecationWarning('"CsvMigrations.View/post" view is deprecated.');
 
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;

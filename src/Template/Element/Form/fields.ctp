@@ -9,6 +9,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+deprecationWarning('"CsvMigrations.Form/fields" view is deprecated.');
 
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 

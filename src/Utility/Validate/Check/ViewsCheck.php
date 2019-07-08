@@ -34,8 +34,6 @@ class ViewsCheck extends AbstractCheck
         $views = Configure::read('CsvMigrations.actions');
         $options = $this->applyOptionDefaults($options);
 
-        $validation = Utility::initStatic($module);
-
         $viewCounter = 0;
         foreach ($views as $view) {
             $path = '';

@@ -31,23 +31,9 @@ use Qobo\Utils\Utility\Convert;
  */
 class Utility
 {
-    protected static $module;
-
     protected static $configJsonArray;
 
     protected static $migrationJsonArray;
-
-    /**
-     * Initialization of the static properties
-     * @param string $module Module name
-     * @return void
-     */
-    public static function initStatic(string $module)
-    {
-        self::$module = $module;
-        self::setConfigJsonArray($module);
-        self::setMigrationJsonArray($module);
-    }
 
     /**
      * Retrieve and parse to array the config file
@@ -60,7 +46,7 @@ class Utility
     {
         $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
         $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
-        self::$configJsonArray = Convert::objectToArray($mc->parse());
+        self::$configJsonArray[$module] = Convert::objectToArray($mc->parse());
     }
 
     /**
@@ -74,7 +60,7 @@ class Utility
     {
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
         $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
-        self::$migrationJsonArray = Convert::objectToArray($mc->parse());
+        self::$migrationJsonArray[$module] = Convert::objectToArray($mc->parse());
     }
 
     /**
@@ -169,11 +155,11 @@ class Utility
     {
         $moduleFields = [];
 
-        if (empty(self::$migrationJsonArray) && self::$module !== $module) {
+        if (empty(self::$migrationJsonArray[$module])) {
             self::setMigrationJsonArray($module, $validate);
         }
 
-        $fields = Hash::extract(self::$migrationJsonArray, '{*}.name');
+        $fields = Hash::extract(self::$migrationJsonArray[$module], '{*}.name');
 
         return (array)$fields;
     }
@@ -225,12 +211,12 @@ class Utility
     {
         $fields = [];
 
-        if (empty(self::$configJsonArray) && self::$module !== $module) {
+        if (empty(self::$configJsonArray[$module])) {
             self::setConfigJsonArray($module, $validate);
         }
 
-        if (isset(self::$configJsonArray['virtualFields'])) {
-            $fields = self::$configJsonArray['virtualFields'];
+        if (isset(self::$configJsonArray[$module]['virtualFields'])) {
+            $fields = self::$configJsonArray[$module]['virtualFields'];
         }
 
         return $fields;

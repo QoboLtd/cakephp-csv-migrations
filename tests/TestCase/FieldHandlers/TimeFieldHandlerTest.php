@@ -66,17 +66,17 @@ class TimeFieldHandlerTest extends TestCase
 
     public function testRenderInput() : void
     {
-        $result = $this->fh->renderInput('13:30');
-        $this->assertRegExp('/field_time/', $result, "Input rendering does not contain field name");
+        $result = $this->fh->renderInput('13:30:00');
+        $this->assertContains('name="' . $this->table . '[' . $this->field . ']"', $result);
+        $this->assertContains('data-provide="timepicker"', $result);
+        $this->assertContains('value="13:30:00"', $result);
     }
 
     public function testRenderInputWithTimeObject() : void
     {
         $result = $this->fh->renderInput(new Time('13:30'));
 
-        $this->assertContains('name="' . $this->table . '[' . $this->field . ']"', $result);
         $this->assertContains('value="13:30"', $result);
-        $this->assertContains('data-provide="timepicker"', $result);
     }
 
     public function testRenderInputWithDateObject() : void

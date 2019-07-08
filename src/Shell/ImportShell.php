@@ -456,14 +456,14 @@ class ImportShell extends Shell
                         try {
                             $data[$field] = (new \DateTime($value))->format('Y-m-d H:i:s');
                         } catch (\Exception $e) {
-                            //
+                            // @ignoreException
                         }
                         break;
                     case 'date':
                         try {
                             $data[$field] = (new \DateTime($value))->format('Y-m-d');
                         } catch (\Exception $e) {
-                            //
+                            // @ignoreException
                         }
                         break;
                 }

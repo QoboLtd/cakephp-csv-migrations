@@ -34,6 +34,20 @@
         "non-searchable": false,
         "unique": false
     },
+    "date": {
+        "name": "date",
+        "type": "date",
+        "required": false,
+        "non-searchable": false,
+        "unique": false
+    },
+    "featured": {
+        "name": "featured",
+        "type": "boolean",
+        "required": false,
+        "non-searchable": false,
+        "unique": false
+    },
     "category": {
         "name": "category",
         "type": "related(Categories)",

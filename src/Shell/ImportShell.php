@@ -449,9 +449,26 @@ class ImportShell extends Shell
                     case 'country':
                         $data[$field] = $this->_findListValue($table, 'countries', $value);
                         break;
+                    case 'boolean':
+                        $data[$field] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                        break;
+                    case 'datetime':
+                        try {
+                            $data[$field] = (new \DateTime($value))->format('Y-m-d H:i:s');
+                        } catch (\Exception $e) {
+                            // @ignoreException
+                        }
+                        break;
+                    case 'date':
+                        try {
+                            $data[$field] = (new \DateTime($value))->format('Y-m-d');
+                        } catch (\Exception $e) {
+                            // @ignoreException
+                        }
+                        break;
                 }
             } else {
-                if ('uuid' === $schema->columnType($field)) {
+                if ('uuid' === $schema->getColumnType($field)) {
                     $data[$field] = $this->_findRelatedRecord($table, $field, $value);
                 } else {
                     $data[$field] = $value;
@@ -547,20 +564,16 @@ class ImportShell extends Shell
 
         // check against list options values
         foreach ($options as $val => $params) {
-            if ($val !== $value) {
-                continue;
+            if (strtolower($val) === strtolower(trim($value))) {
+                return $val;
             }
-
-            return $val;
         }
 
         // check against list options labels
         foreach ($options as $val => $params) {
-            if ($params['label'] !== $value) {
-                continue;
+            if (strtolower($params['label']) === strtolower(trim($value))) {
+                return $val;
             }
-
-            return $val;
         }
 
         return $value;

@@ -17,6 +17,8 @@ class ArticlesFixture extends TestFixture
         'author' => ['type' => 'string', 'length' => 36, 'null' => true],
         'status' => ['type' => 'string', 'length' => 100, 'null' => true],
         'main_article' => ['type' => 'uuid', 'null' => true],
+        'date' => ['type' => 'date', 'null' => true],
+        'featured' => ['type' => 'boolean', 'null' => true],
         'image' => ['type' => 'uuid', 'null' => true],
         'created' => ['type' => 'datetime', 'null' => true],
         'modified' => ['type' => 'datetime', 'null' => true],

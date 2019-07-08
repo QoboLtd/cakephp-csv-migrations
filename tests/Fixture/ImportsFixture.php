@@ -62,7 +62,7 @@ class ImportsFixture extends TestFixture
         [
             'id' => '00000000-0000-0000-0000-000000000002',
             'filename' => TESTS . 'uploads' . DS . 'imports' . DS . 'articles.csv',
-            'options' => '{"fields":{"name":{"column":"Name","default":""},"author":{"column":"Author","default":""},"status":{"column":"Status","default":""}}}',
+            'options' => '{"fields":{"name":{"column":"Name","default":""},"author":{"column":"Author","default":""},"status":{"column":"Status","default":""},"featured":{"column":"Featured","default":""},"date":{"column":"Date","default":""}}}',
             'created' => '2017-08-01 11:06:06',
             'modified' => '2017-08-01 11:06:06',
             'trashed' => null,

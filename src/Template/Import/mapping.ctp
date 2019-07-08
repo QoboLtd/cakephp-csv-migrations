@@ -24,8 +24,10 @@ if ($this->plugin) {
 
 $headerOptions = [];
 foreach ($headers as $header) {
-    $key = Inflector::underscore(str_replace(' ', '', trim($header)));
-    $headerOptions[$key] = $header;
+    $headerOptions = array_merge($headerOptions, [
+        strtolower(trim($header)) => $header,
+        Inflector::underscore(str_replace(' ', '', trim($header))) => $header
+    ]);
 }
 
 $options = [
@@ -62,7 +64,6 @@ echo $this->Html->scriptBlock(
 ',
     ['block' => 'scriptBottom']
 );
-
 ?>
 <section class="content-header">
     <div class="row">
@@ -94,6 +95,7 @@ echo $this->Html->scriptBlock(
                         'multiple' => false, // disable multi-selection
                         'magic-value' => false // disable magic values
                     ]);
+
                     // skip fields with no input markup
                     if (! isset($searchOptions[$column]['input']['content'])) {
                         continue;
@@ -104,18 +106,23 @@ echo $this->Html->scriptBlock(
                     <div class="row">
                         <div class="col-md-3">
                             <div class="visible-md visible-lg text-right">
-                                <?= $this->Form->label($label) ?>
+                                <?= $this->Form->label($column, $label) ?>
                             </div>
                             <div class="visible-xs visible-sm">
-                                <?= $this->Form->label($label) ?>
+                                <?= $this->Form->label($column, $label) ?>
                             </div>
                         </div>
                         <div class="col-md-4">
+                            <?php
+                            $selected = false;
+                            $selected = array_key_exists(strtolower($label), $headerOptions) ? $headerOptions[strtolower($label)] : $selected;
+                            $selected = array_key_exists($column, $headerOptions) ? $headerOptions[$column] : $selected;
+                            ?>
                             <?= $this->Form->control('options.fields.' . $column . '.column', [
                                 'empty' => true,
                                 'label' => false,
                                 'type' => 'select',
-                                'value' => array_key_exists($column, $headerOptions) ? $headerOptions[$column] : false,
+                                'value' => $selected,
                                 'options' => array_combine($headers, $headers),
                                 'class' => 'form-control select2'
                             ]) ?>

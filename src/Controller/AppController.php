@@ -11,6 +11,11 @@
  */
 namespace CsvMigrations\Controller;
 
+deprecationWarning(
+    '"CsvMigrations\Controller" class is deprecated. This functionality is ' .
+    'now handled by "\App\Controller\BaseModuleController"'
+);
+
 use App\Controller\AppController as BaseController;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;

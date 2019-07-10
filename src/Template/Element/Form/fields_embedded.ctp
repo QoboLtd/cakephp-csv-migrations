@@ -9,6 +9,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+deprecationWarning('"CsvMigrations.Form/fields_embedded" view is deprecated.');
 
 use CsvMigrations\FieldHandlers\CsvField;
 
@@ -37,7 +38,7 @@ foreach ($fields as $panelFields) {
             }else{
                 $associationFields[] = $field;
             }
-            
+
         }
     }
 }

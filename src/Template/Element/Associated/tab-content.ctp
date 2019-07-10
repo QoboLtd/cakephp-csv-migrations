@@ -9,6 +9,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+deprecationWarning('"CsvMigrations.Associated/tab-content" view is deprecated.');
 
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;

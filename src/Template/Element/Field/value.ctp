@@ -9,6 +9,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+deprecationWarning('"CsvMigrations.Field/value" view is deprecated.');
 
 use CsvMigrations\FieldHandlers\CsvField;
 use Cake\ORM\TableRegistry;

@@ -28,7 +28,7 @@
         }
     ],
     "require": {
-        "eluceo/ical": "^0.11.0",
+        "eluceo/ical": "^0.15.0",
         "qobo/cakephp-translations": "^10.0",
         "qobo/cakephp-utils": "^13.0",
         "league/commonmark": "^0.19",

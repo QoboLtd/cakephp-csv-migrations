@@ -52,6 +52,7 @@ class FilesRendererTest extends TestCase
             [-1, ''],
             ['', ''],
             ['foobar', ''],
+            [[], '', 'Array Value'],
         ];
     }
 

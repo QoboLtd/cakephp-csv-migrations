@@ -38,6 +38,7 @@ class EmailRendererTest extends TestCase
             ['foobar', 'foobar', 'String'],
             ['2017-07-05', '2017-07-05', 'Date'],
             ['user@example.com', '<a href="mailto:user@example.com" target="_blank">user@example.com</a>', 'Email'],
+            [[], '', 'Array Value'],
         ];
     }
 

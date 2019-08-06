@@ -37,6 +37,7 @@ class IntegerRendererTest extends TestCase
             ['foobar', '0', 'String'],
             ['foobar15', '15', 'String with number'],
             ['2017-07-05', '2,017', 'Date'],
+            [[], '0', 'Array Value'],
         ];
     }
 

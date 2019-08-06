@@ -39,7 +39,7 @@ class ListRendererTest extends TestCase
     public function testRenderValueBasic(string $value, string $expected, string $description) : void
     {
         $result = $this->renderer->provide($value, ['listItems' => [ $value => $expected ] ]);
-        $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
+        $this->assertSame($expected, $result, "Value rendering is broken for: $description");
     }
 
     public function testRenderValueZeroInt() : void

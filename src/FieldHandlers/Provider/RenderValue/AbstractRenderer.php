@@ -32,7 +32,11 @@ abstract class AbstractRenderer extends AbstractProvider
     public function provide($data = null, array $options = [])
     {
         // TODO: need to handle this better, type-casting to string will produce errors
-        $result = (string)$data;
+        if (!is_array($data)) {
+            $result = (string)$data;
+        } else {
+            $result = '';
+        }
 
         if (empty($result)) {
             return $result;

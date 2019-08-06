@@ -39,7 +39,6 @@ class NumberRenderer extends AbstractRenderer
      */
     public function provide($data = null, array $options = [])
     {
-
         /**
          * Return if $data is array
          */

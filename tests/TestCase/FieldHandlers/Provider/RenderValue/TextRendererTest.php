@@ -37,6 +37,7 @@ class TextRendererTest extends TestCase
             ['', '', 'Empty string'],
             ['foobar', "<p>foobar</p>\n", 'String'],
             ['2017-07-05', "<p>2017-07-05</p>\n", 'Date'],
+            [[], '', 'Array Value'],
         ];
     }
 

@@ -29,7 +29,15 @@ class EmailRenderer extends AbstractRenderer
      */
     public function provide($data = null, array $options = [])
     {
-        $result = (string)$data;
+
+        /**
+         * Return if $data is array
+         */
+        if (is_array($data)) {
+            return '';
+        } else {
+            $result = (string)$data;
+        }
 
         if (empty($result)) {
             return $result;

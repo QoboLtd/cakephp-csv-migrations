@@ -33,6 +33,7 @@ class BooleanRendererTest extends TestCase
             [0, '0', 'Integer false'],
             ['1', '1', 'String true'],
             ['0', '0', 'String false'],
+            [[], '0', 'Array Value'],
         ];
     }
 
@@ -44,7 +45,7 @@ class BooleanRendererTest extends TestCase
     public function testRenderValue($value, $expected, string $description) : void
     {
         $result = $this->renderer->provide($value);
-        $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
+        $this->assertSame($expected, $result, "Value rendering is broken for: $description");
     }
 
     public function testRenderValueLabels() : void

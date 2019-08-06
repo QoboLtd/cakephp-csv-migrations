@@ -36,6 +36,7 @@ class DateRendererTest extends TestCase
             [15, '15', 'Non-date integer'],
             [null, '', 'Null'],
             [Time::parse('2017-07-06 14:20:00'), '2017-07-06', 'Date from object'],
+            [[], '', 'Array Value'],
         ];
     }
 
@@ -47,7 +48,7 @@ class DateRendererTest extends TestCase
     public function testRenderValue($value, $expected, string $description) : void
     {
         $result = $this->renderer->provide($value);
-        $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
+        $this->assertSame($expected, $result, "Value rendering is broken for: $description");
     }
 
     public function testRenderValueFormat() : void

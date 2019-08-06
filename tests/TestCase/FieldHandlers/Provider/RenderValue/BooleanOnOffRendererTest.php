@@ -33,6 +33,7 @@ class BooleanOnOffRendererTest extends TestCase
             [0, 'Off', 'Integer false'],
             ['1', 'On', 'String true'],
             ['0', 'Off', 'String false'],
+            [[], 'Off', 'Array Value'],
         ];
     }
 
@@ -44,7 +45,7 @@ class BooleanOnOffRendererTest extends TestCase
     public function testRenderValue($value, $expected, string $description) : void
     {
         $result = $this->renderer->provide($value);
-        $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
+        $this->assertSame($expected, $result, "Value rendering is broken for: $description");
     }
 
     public function testRenderValueLabels() : void

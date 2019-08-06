@@ -39,6 +39,7 @@ class UrlRendererTest extends TestCase
             ['2017-07-05', '2017-07-05', 'Date'],
             ['www.google.com', 'www.google.com', 'URL without schema'],
             ['http://www.google.com', '<a href="http://www.google.com" target="_blank">http://www.google.com</a>', 'URL with schema'],
+            [[], '', 'Array Value'],
         ];
     }
 
@@ -50,7 +51,7 @@ class UrlRendererTest extends TestCase
     public function testRenderValue($value, $expected, string $description) : void
     {
         $result = $this->renderer->provide($value);
-        $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
+        $this->assertSame($expected, $result, "Value rendering is broken for: $description");
     }
 
     public function testRenderValueWithOptions() : void

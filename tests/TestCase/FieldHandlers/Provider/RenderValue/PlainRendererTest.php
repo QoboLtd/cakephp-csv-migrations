@@ -37,6 +37,7 @@ class PlainRendererTest extends TestCase
             ['', '', 'Empty string'],
             ['foobar', 'foobar', 'String'],
             ['2017-07-05', '2017-07-05', 'Date'],
+            [[], '', 'Array Value'],
         ];
     }
 
@@ -47,6 +48,6 @@ class PlainRendererTest extends TestCase
     public function testRenderValue($value, string $expected, string $description) : void
     {
         $result = $this->renderer->provide($value);
-        $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
+        $this->assertSame($expected, $result, "Value rendering is broken for: $description");
     }
 }

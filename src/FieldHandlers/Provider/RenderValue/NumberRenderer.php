@@ -39,6 +39,14 @@ class NumberRenderer extends AbstractRenderer
      */
     public function provide($data = null, array $options = [])
     {
+
+        /**
+         * Return if $data is array
+         */
+        if (is_array($data)) {
+            return '0';
+        }
+
         // Sanitize
         $number = filter_var($data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 

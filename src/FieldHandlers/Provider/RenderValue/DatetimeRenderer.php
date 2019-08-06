@@ -47,6 +47,13 @@ class DatetimeRenderer extends AbstractRenderer
             $options['format'] = static::FORMAT;
         }
 
+        /**
+         * Return if $data is array
+         */
+        if (is_array($data)) {
+            return '';
+        }
+
         // Format object timestamp
         if (is_object($data)) {
             if (method_exists($data, 'i18nFormat') && is_callable([$data, 'i18nFormat'])) {

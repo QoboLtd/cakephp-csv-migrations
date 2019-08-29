@@ -41,11 +41,11 @@
             }
 
             // time picker
-            $('[data-provide="timepicker"]').timepicker(defaults).on('changeTime.timepicker show.timepicker', function(e) {
+            $('[data-provide="timepicker"]').timepicker(defaults).on('changeTime.timepicker show.timepicker', function (e) {
                 // bugfix to prevent one digit hour
-                if(e.time.hours < 10) {
+                if (e.time.hours < 10) {
                         $(e.currentTarget).val('0' + e.time.hours + ':' + e.time.minutes);
-                    }
+                }
             });
 
         }

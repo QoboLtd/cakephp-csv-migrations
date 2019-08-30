@@ -17,7 +17,11 @@
                 });
             });
         });
-        $("body").find('[data-provide="timepicker"]').data('timepicker').update()
+
+        let items = $("body").find('[data-provide="timepicker"]')
+        if (items.length) {
+            items.data('timepicker').update()
+        }
     }
 
     TimePicker.prototype = {

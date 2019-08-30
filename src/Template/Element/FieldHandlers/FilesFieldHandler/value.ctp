@@ -37,7 +37,7 @@ $limit = 3;
             <div class="thumbnail" title="<?= $entity->get('filename') ?>">
                 <?= $this->Html->image(Hash::get(
                     $entity->get('thumbnails'),
-                    in_array($entity->extension, FileUpload::IMAGE_EXTENSIONS) ? 'small' : 'huge'
+                    in_array($entity->extension, FileUpload::IMAGE_EXTENSIONS) ? 'small' : 'large'
                 )) ?>
                 <div class="caption">
                     <p class="small text-center no-margin" style="white-space: nowrap; text-overflow: ellipsis;overflow: hidden;">

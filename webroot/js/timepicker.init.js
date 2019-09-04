@@ -20,7 +20,9 @@
 
         let items = $("body").find('[data-provide="timepicker"]')
         if (items.length) {
-            items.data('timepicker').update()
+            items.each(function () {
+                $(this).data('timepicker').update()
+            })
         }
     }
 
@@ -47,9 +49,16 @@
             // time picker
             $('[data-provide="timepicker"]').timepicker(defaults).on('changeTime.timepicker show.timepicker', function (e) {
                 // bugfix to prevent one digit hour
-                if (e.time.hours < 10) {
-                        $(e.currentTarget).val('0' + e.time.hours + ':' + e.time.minutes);
+                let hours = e.time.hours
+                let minutes = e.time.minutes
+
+                if (hours < 10) {
+                    hours = '0' + hours
                 }
+                if (minutes < 10) {
+                    minutes = '0' + minutes
+                }
+                $(e.currentTarget).val(hours + ':' + minutes);
             });
 
         }

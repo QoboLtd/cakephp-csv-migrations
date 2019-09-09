@@ -244,6 +244,12 @@ trait AssociationsAwareTrait
          */
         if ($field->getAssocCsvModule() === $module) {
             $className = $module;
+            // Set self related association
+            $this->setAssociation(
+                'hasMany',
+                static::generateAssociationName($field->getName(), $className),
+                ['className' => $className, 'foreignKey' => $field->getName()]
+            );
             $associationType = 'belongsTo';
         }
 

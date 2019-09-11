@@ -82,6 +82,7 @@ class AssociationsAwareTraitTest extends TestCase
             ['Articles', 'AuthorAuthors', BelongsTo::class],
             ['Articles', 'CategoryCategories', BelongsTo::class],
             ['Articles', 'ImageFileStorageFileStorage', HasMany::class],
+            ['Articles', 'Articlesmain_article', HasMany::class],
             ['Articles', 'MainArticleArticles', BelongsTo::class],
             ['Articles', 'MainArticleIdSimilarArticles', BelongsToMany::class, 'similar_articles'],
             ['Articles', 'SimilarArticleIdSimilarArticles', BelongsToMany::class, 'similar_articles'],

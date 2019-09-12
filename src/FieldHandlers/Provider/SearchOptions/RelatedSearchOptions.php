@@ -81,7 +81,7 @@ class RelatedSearchOptions extends AbstractSearchOptions
         );
 
         $result[$field]['display_field'] = $relatedProperties['displayField'];
-        $result[$field]['source'] = Inflector::tableize($relatedProperties['controller']);
+        $result[$field]['source'] = Inflector::dasherize($relatedProperties['controller']);
         $result[$field]['url'] = $view->Url->build([
             'prefix' => 'api',
             'plugin' => $relatedProperties['plugin'],

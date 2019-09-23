@@ -10,8 +10,6 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-use Cake\Core\Configure;
-
 echo $this->Html->css(
     [
         'Qobo/Utils./plugins/daterangepicker/css/daterangepicker',

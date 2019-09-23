@@ -12,17 +12,6 @@
 
 use Cake\Core\Configure;
 
-$attributes = isset($attributes) ? $attributes : [];
-
-$attributes += [
-    'type' => 'select',
-    'label' => $label ?: false,
-    'options' => $options,
-    'class' => 'form-control select2 ' . $extraClasses,
-    'required' => (bool)$required,
-    'value' => $value
-];
-
 
 echo $this->Html->css(
     [
@@ -35,6 +24,17 @@ echo $this->Html->css(
         'block' => 'css'
     ]
 );
+
+$attributes = isset($attributes) ? $attributes : [];
+
+$attributes += [
+    'type' => 'select',
+    'label' => $label ?: false,
+    'options' => $options,
+    'class' => 'form-control select2 ' . $extraClasses,
+    'required' => (bool)$required,
+    'value' => $value
+];
 
 echo $this->Form->control($name, $attributes);
 

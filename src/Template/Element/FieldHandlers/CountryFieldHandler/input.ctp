@@ -53,8 +53,7 @@ echo $this->Html->scriptBlock(
     '$(document).ready(function() {
         csv_migrations_select2.setup(' . json_encode(
             array_merge(
-                Configure::read('CsvMigrations.select2'),
-                Configure::read('CsvMigrations.api')
+                Configure::read('CsvMigrations.select2')
             )
         ) . ');
     });',

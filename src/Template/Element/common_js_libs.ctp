@@ -17,8 +17,7 @@ echo $this->Html->css(
         'AdminLTE./plugins/iCheck/all',
         'CsvMigrations.style',
         'Qobo/Utils./plugins/datatables/css/dataTables.bootstrap.min',
-
-
+        'Qobo/Utils./img/icons/flags/css/flag-icon.css'
     ],
     [
         'block' => 'css'

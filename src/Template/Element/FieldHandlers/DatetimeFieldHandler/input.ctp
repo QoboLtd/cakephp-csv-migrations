@@ -10,6 +10,19 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\Core\Configure;
+
+echo $this->Html->css(
+    [
+        'Qobo/Utils./plugins/daterangepicker/css/daterangepicker',
+        'AdminLTE./bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min',
+        'AdminLTE./plugins/timepicker/bootstrap-timepicker.min'
+    ],
+    [
+        'block' => 'css'
+    ]
+);
+
 $attributes = isset($attributes) ? $attributes : [];
 
 $attributes += [
@@ -42,3 +55,19 @@ if (isset($showMonthYearSelect)) {
 }
 
 echo $this->Form->control($name, $attributes);
+
+echo $this->Html->script(
+    [
+        'CsvMigrations.dom-observer',
+        'AdminLTE./bower_components/moment/min/moment.min',
+        'Qobo/Utils./plugins/daterangepicker/js/daterangepicker',
+        'CsvMigrations.datetimepicker.init',
+        'AdminLTE./bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min',
+        'CsvMigrations.datepicker.init',
+        'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
+        'CsvMigrations.timepicker.init'
+    ],
+    [
+        'block' => 'scriptBottom'
+    ]
+);

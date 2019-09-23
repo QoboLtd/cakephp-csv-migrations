@@ -10,6 +10,23 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\Core\Configure;
+
+echo $this->Html->css(
+    [
+        'CsvMigrations.fileinput.min'
+    ],
+    [
+        'block' => 'css'
+    ]
+);
+
+$fileInputOptions = Configure::read('CsvMigrations.BootstrapFileInput');
+echo $this->Html->scriptBlock(
+    'fileInputOptions = ' . json_encode($fileInputOptions) . ';',
+    ['block' => 'scriptBottom']
+);
+
 $attributes = isset($attributes) ? $attributes : [];
 
 $class = str_replace('.', '_', $name . '_ids');
@@ -56,4 +73,17 @@ $attributes += $options;
     ); ?>
 <?php endif; ?>
 <?php echo $this->Form->error($name) ?>
+<?php
+
+    echo $this->Html->script(
+        [
+            'CsvMigrations.fileinput.min',
+            'CsvMigrations.fileinput-load'
+        ],
+        [
+            'block' => 'scriptBottom'
+        ]
+    );
+
+?>
 </div>

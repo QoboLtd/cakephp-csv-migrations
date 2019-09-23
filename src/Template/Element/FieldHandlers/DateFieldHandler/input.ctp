@@ -10,6 +10,8 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\Core\Configure;
+
 $attributes = isset($attributes) ? $attributes : [];
 
 $attributes += [
@@ -31,3 +33,16 @@ $attributes += [
 ];
 
 echo $this->Form->control($name, $attributes);
+
+echo $this->Html->script(
+    [
+        'CsvMigrations.dom-observer',
+        'AdminLTE./bower_components/moment/min/moment.min',
+        'Qobo/Utils./plugins/daterangepicker/js/daterangepicker',
+        'AdminLTE./bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min',
+        'CsvMigrations.datepicker.init',
+    ],
+    [
+        'block' => 'scriptBottom'
+    ]
+);

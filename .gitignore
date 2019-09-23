@@ -1,6 +1,7 @@
 # Project specific files #
 ##########################
 build/
+/tmp/
 vendor/
 cghooks.lock
 

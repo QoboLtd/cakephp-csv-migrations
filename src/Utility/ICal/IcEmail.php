@@ -12,6 +12,7 @@
 namespace CsvMigrations\Utility\ICal;
 
 use Cake\Core\App;
+use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Mailer\Email;
 use Cake\Routing\Router;
@@ -300,33 +301,46 @@ class IcEmail
      */
     protected function getChangelog() : string
     {
-        $result = '';
-
-        // plain changelog if entity is new
         if ($this->entity->isNew()) {
-            return $result;
+            return '';
         }
 
-        // get entity's modified fields
-        $fields = $this->entity->extractOriginalChanged($this->entity->visibleProperties());
-
-        if (empty($fields)) {
-            return $result;
+        $modifiedFields = $this->entity->extractOriginalChanged($this->entity->visibleProperties());
+        if (empty($modifiedFields)) {
+            return '';
         }
 
-        // remove ignored fields
-        foreach ($this->ignoredFields as $field) {
-            if (array_key_exists($field, $fields)) {
-                unset($fields[$field]);
+        $modifiedFields = array_filter($modifiedFields, function ($item) {
+            return ! in_array($item, $this->ignoredFields);
+        }, ARRAY_FILTER_USE_KEY);
+
+        if (empty($modifiedFields)) {
+            return '';
+        }
+
+        $result = '';
+        foreach ($modifiedFields as $modifiedField => $originalValue) {
+            if (is_resource($originalValue)) {
+                continue;
             }
-        }
 
-        if (empty($fields)) {
-            return $result;
-        }
+            $columnType = $this->table->getSchema()->getColumnType($modifiedField);
+            $toPHP = Type::build($columnType)->toPHP(
+                $this->entity->get($modifiedField),
+                $this->table->getConnection()->getDriver()
+            );
 
-        foreach ($fields as $k => $v) {
-            $result .= sprintf(static::CHANGELOG, Inflector::humanize($k), $v, $this->entity->{$k});
+            // loose comparison on purpose
+            if ($toPHP == $originalValue) {
+                continue;
+            }
+
+            $toDatabase = Type::build($columnType)->toDatabase(
+                $originalValue,
+                $this->table->getConnection()->getDriver()
+            );
+
+            $result .= sprintf(static::CHANGELOG, Inflector::humanize($modifiedField), $originalValue, $toPHP);
         }
 
         return $result;

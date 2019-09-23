@@ -20,6 +20,12 @@ class IcEmailTest extends TestCase
         $this->table->patchEntity($this->entity, ['status' => 'published']);
     }
 
+    public function tearDown() : void
+    {
+        unset($this->entity);
+        unset($this->table);
+    }
+
     public function testGetEmailSubject() : void
     {
         $this->assertSame(

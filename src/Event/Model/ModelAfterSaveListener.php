@@ -12,6 +12,7 @@
 namespace CsvMigrations\Event\Model;
 
 use BadMethodCallException;
+use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\RepositoryInterface;
@@ -127,7 +128,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         $requiredFields = array_merge((array)$reminderField, $attendeesFields);
 
         // skip if none of the required fields was modified
-        if (! $this->isRequiredModified($entity, $requiredFields)) {
+        if (! $this->isRequiredModified($entity, $requiredFields, $table)) {
             return [];
         }
 
@@ -271,14 +272,31 @@ class ModelAfterSaveListener implements EventListenerInterface
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity instance
      * @param string[] $requiredFields Required fields list
+     * @param \Cake\ORM\Table $table Table instance
      * @return bool
      */
-    protected function isRequiredModified(EntityInterface $entity, array $requiredFields) : bool
+    protected function isRequiredModified(EntityInterface $entity, array $requiredFields, Table $table) : bool
     {
+        Assert::isInstanceOf($entity, \Cake\ORM\Entity::class);
+
         foreach ($requiredFields as $field) {
-            if ($entity->isDirty($field)) {
-                return true;
+            if (! $entity->isDirty($field)) {
+                continue;
             }
+
+            $columnType = $table->getSchema()->getColumnType($field);
+            if (null === $columnType) {
+                continue;
+            }
+
+            $toPHP = Type::build($columnType)->toPHP($entity->get($field), $table->getConnection()->getDriver());
+
+            // loose comparison on purpose
+            if ($toPHP == $entity->getOriginal($field)) {
+                continue;
+            }
+
+            return true;
         }
 
         return false;

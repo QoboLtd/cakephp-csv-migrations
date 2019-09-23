@@ -11,15 +11,21 @@
  */
 namespace CsvMigrations\Utility\ICal;
 
+use Cake\Core\App;
+use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Mailer\Email;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\FieldHandlers\Setting;
 use CsvMigrations\Table as Table;
 use Eluceo\iCal\Component\Calendar;
-use InvalidArgumentException;
+use Qobo\Utils\ModuleConfig\ConfigType;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility\User;
+use Webmozart\Assert\Assert;
 
 /**
  * Email class
@@ -114,24 +120,30 @@ class IcEmail
      */
     protected function getDisplayValue() : string
     {
-        try {
-            $displayField = $this->table->getDisplayField();
-            $displayValue = $this->entity->get($displayField);
-
-            $factory = new FieldHandlerFactory();
-
-            $renderAs = 'plain';
-            if (!empty($this->table->getFieldsDefinitions()[$displayField]['type']) && preg_match("/^related\(/", $this->table->getFieldsDefinitions()[$displayField]['type'])) {
-                $renderAs = 'related';
-            }
-
-            $result = $factory->renderValue($this->table, $displayField, $displayValue, [ 'renderAs' => $renderAs]);
-            $result = trim(strip_tags(html_entity_decode($result, ENT_QUOTES)), " \t\n\r\0\x0B\xC2\xA0");
-        } catch (InvalidArgumentException $e) {
-            $result = 'reminder';
+        $fallbackValue = 'reminder';
+        $displayField = $this->table->getDisplayField();
+        if (! $this->entity->get($displayField)) {
+            return $fallbackValue;
         }
 
-        return $result;
+        $factory = new FieldHandlerFactory();
+
+        $tableName = App::shortName(get_class($this->table), 'Model/Table', 'Table');
+        list(, $tableName) = pluginSplit($tableName);
+        $config = (new ModuleConfig(ConfigType::MIGRATION(), $tableName))->parseToArray();
+        Assert::keyExists($config, $displayField);
+
+        $renderedValue = $factory->renderValue($this->table, $displayField, $this->entity->get($displayField), [
+            'renderAs' => 'related' === (new CsvField($config[$displayField]))->getType() ?
+                Setting::RENDER_PLAIN_VALUE_RELATED :
+                Setting::RENDER_PLAIN_VALUE
+        ]);
+
+        if (! $renderedValue) {
+            return $fallbackValue;
+        }
+
+        return $renderedValue;
     }
 
     /**
@@ -235,12 +247,15 @@ class IcEmail
      */
     public function getEntityUrl() : string
     {
+        $primaryKey = $this->table->getPrimaryKey();
+        Assert::string($primaryKey);
+
         $result = Router::url(
             [
                 'prefix' => false,
                 'controller' => $this->table->getTable(),
                 'action' => 'view',
-                $this->entity->id
+                $this->entity->get($primaryKey)
             ],
             true
         );
@@ -289,33 +304,50 @@ class IcEmail
      */
     protected function getChangelog() : string
     {
-        $result = '';
-
-        // plain changelog if entity is new
         if ($this->entity->isNew()) {
-            return $result;
+            return '';
         }
 
-        // get entity's modified fields
-        $fields = $this->entity->extractOriginalChanged($this->entity->visibleProperties());
-
-        if (empty($fields)) {
-            return $result;
+        $modifiedFields = $this->entity->extractOriginalChanged($this->entity->visibleProperties());
+        if (empty($modifiedFields)) {
+            return '';
         }
 
-        // remove ignored fields
-        foreach ($this->ignoredFields as $field) {
-            if (array_key_exists($field, $fields)) {
-                unset($fields[$field]);
+        $modifiedFields = array_filter($modifiedFields, function ($item) {
+            return ! in_array($item, $this->ignoredFields);
+        }, ARRAY_FILTER_USE_KEY);
+
+        if (empty($modifiedFields)) {
+            return '';
+        }
+
+        $result = '';
+        foreach ($modifiedFields as $modifiedField => $originalValue) {
+            if (is_resource($originalValue)) {
+                continue;
             }
-        }
 
-        if (empty($fields)) {
-            return $result;
-        }
+            $columnType = $this->table->getSchema()->getColumnType($modifiedField);
+            if (null === $columnType) {
+                continue;
+            }
 
-        foreach ($fields as $k => $v) {
-            $result .= sprintf(static::CHANGELOG, Inflector::humanize($k), $v, $this->entity->{$k});
+            $toPHP = Type::build($columnType)->toPHP(
+                $this->entity->get($modifiedField),
+                $this->table->getConnection()->getDriver()
+            );
+
+            // loose comparison on purpose
+            if ($toPHP == $originalValue) {
+                continue;
+            }
+
+            $toDatabase = Type::build($columnType)->toDatabase(
+                $originalValue,
+                $this->table->getConnection()->getDriver()
+            );
+
+            $result .= sprintf(static::CHANGELOG, Inflector::humanize($modifiedField), $originalValue, $toPHP);
         }
 
         return $result;

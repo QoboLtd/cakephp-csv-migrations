@@ -325,6 +325,10 @@ class IcEmail
             }
 
             $columnType = $this->table->getSchema()->getColumnType($modifiedField);
+            if (null === $columnType) {
+                continue;
+            }
+
             $toPHP = Type::build($columnType)->toPHP(
                 $this->entity->get($modifiedField),
                 $this->table->getConnection()->getDriver()

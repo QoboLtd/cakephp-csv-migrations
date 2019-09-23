@@ -277,11 +277,18 @@ class ModelAfterSaveListener implements EventListenerInterface
      */
     protected function isRequiredModified(EntityInterface $entity, array $requiredFields, Table $table) : bool
     {
+        Assert::isInstanceOf($entity, \Cake\ORM\Entity::class);
+
         foreach ($requiredFields as $field) {
             if (! $entity->isDirty($field)) {
                 continue;
             }
+
             $columnType = $table->getSchema()->getColumnType($field);
+            if (null === $columnType) {
+                continue;
+            }
+
             $toPHP = Type::build($columnType)->toPHP($entity->get($field), $table->getConnection()->getDriver());
 
             // loose comparison on purpose

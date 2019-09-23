@@ -11,15 +11,20 @@
  */
 namespace CsvMigrations\Utility\ICal;
 
+use Cake\Core\App;
 use Cake\Datasource\EntityInterface;
 use Cake\Mailer\Email;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
+use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
+use CsvMigrations\FieldHandlers\Setting;
 use CsvMigrations\Table as Table;
 use Eluceo\iCal\Component\Calendar;
-use InvalidArgumentException;
+use Qobo\Utils\ModuleConfig\ConfigType;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility\User;
+use Webmozart\Assert\Assert;
 
 /**
  * Email class
@@ -114,24 +119,30 @@ class IcEmail
      */
     protected function getDisplayValue() : string
     {
-        try {
-            $displayField = $this->table->getDisplayField();
-            $displayValue = $this->entity->get($displayField);
-
-            $factory = new FieldHandlerFactory();
-
-            $renderAs = 'plain';
-            if (!empty($this->table->getFieldsDefinitions()[$displayField]['type']) && preg_match("/^related\(/", $this->table->getFieldsDefinitions()[$displayField]['type'])) {
-                $renderAs = 'related';
-            }
-
-            $result = $factory->renderValue($this->table, $displayField, $displayValue, [ 'renderAs' => $renderAs]);
-            $result = trim(strip_tags(html_entity_decode($result, ENT_QUOTES)), " \t\n\r\0\x0B\xC2\xA0");
-        } catch (InvalidArgumentException $e) {
-            $result = 'reminder';
+        $fallbackValue = 'reminder';
+        $displayField = $this->table->getDisplayField();
+        if (! $this->entity->get($displayField)) {
+            return $fallbackValue;
         }
 
-        return $result;
+        $factory = new FieldHandlerFactory();
+
+        $tableName = App::shortName(get_class($this->table), 'Model/Table', 'Table');
+        list(, $tableName) = pluginSplit($tableName);
+        $config = (new ModuleConfig(ConfigType::MIGRATION(), $tableName))->parseToArray();
+        Assert::keyExists($config, $displayField);
+
+        $renderedValue = $factory->renderValue($this->table, $displayField, $this->entity->get($displayField), [
+            'renderAs' => 'related' === (new CsvField($config[$displayField]))->getType() ?
+                Setting::RENDER_PLAIN_VALUE_RELATED :
+                Setting::RENDER_PLAIN_VALUE
+        ]);
+
+        if (! $renderedValue) {
+            return $fallbackValue;
+        }
+
+        return $renderedValue;
     }
 
     /**

@@ -247,12 +247,15 @@ class IcEmail
      */
     public function getEntityUrl() : string
     {
+        $primaryKey = $this->table->getPrimaryKey();
+        Assert::string($primaryKey);
+
         $result = Router::url(
             [
                 'prefix' => false,
                 'controller' => $this->table->getTable(),
                 'action' => 'view',
-                $this->entity->id
+                $this->entity->get($primaryKey)
             ],
             true
         );

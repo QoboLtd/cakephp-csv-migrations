@@ -62,4 +62,11 @@ class MigrationCheckTest extends TestCase
         $result = $this->check->getErrors();
         $this->assertTrue(is_array($result), "getErrors() returned a non-array result");
     }
+
+    public function testGetUnusedFields() : void
+    {
+        $result = $this->check->run('Foo');
+        $result = $this->check->getWarnings();
+        $this->assertTrue(in_array('Foo field \'reminder_date\' is not being used in any view', $result));
+    }
 }

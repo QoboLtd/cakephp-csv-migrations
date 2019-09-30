@@ -11,6 +11,7 @@
  */
 namespace CsvMigrations\Utility\Validate\Check;
 
+use Cake\Core\Configure;
 use CsvMigrations\Utility\Validate\Utility;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
@@ -63,6 +64,7 @@ class MigrationCheck extends AbstractCheck
     public function checkFields(string $module, array $fields = []): void
     {
         $seenFields = [];
+        $viewFields = $this->getViewFields($module);
 
         // Check each field one by one
         foreach ($fields as $field) {
@@ -70,6 +72,10 @@ class MigrationCheck extends AbstractCheck
             if (in_array($field['name'], $seenFields)) {
                 $this->errors[] = $module . " migration specifies field '" . $field['name'] . "' more than once";
                 continue;
+            }
+
+            if (!in_array($field['name'], $viewFields)) {
+                $this->warnings[] = $module . " field '" . $field['name'] . "' is not being used in any view";
             }
 
             $seenFields[] = $field['name'];
@@ -135,5 +141,56 @@ class MigrationCheck extends AbstractCheck
         $mc->setParser(new Parser($schema, ['lint' => true, 'validate' => true]));
 
         return $mc;
+    }
+
+    /**
+     * Returns all the fields currently used in module views
+     *
+     * @param string $module Module name
+     * @return string[]
+     */
+    protected function getViewFields(string $module): array
+    {
+        $fields = [];
+
+        $views = Configure::read('CsvMigrations.actions');
+        foreach ($views as $view) {
+            $mc = new ModuleConfig(ConfigType::VIEW(), $module, $view, ['cacheSkip' => true]);
+
+            try {
+                $mc->find();
+            } catch (InvalidArgumentException $e) {
+                continue;
+            }
+
+            /**
+             * If the view file does exist, it has to be parseable.
+             */
+            try {
+                $config = $mc->parse();
+                $viewRows = property_exists($config, 'items') ? $config->items : [];
+            } catch (InvalidArgumentException $e) {
+                continue;
+            }
+
+            if (empty($viewRows)) {
+                continue;
+            }
+
+            foreach ($viewRows as $rowFields) {
+                $rowFields = array_map('trim', $rowFields);
+
+                // Get rid of the first column, which is the panel name
+                if (count($rowFields) > 1) {
+                    array_shift($rowFields);
+                }
+
+                $fields = array_merge($fields, $rowFields);
+            }
+        }
+
+        $fields = array_filter(array_unique($fields));
+
+        return $fields;
     }
 }

@@ -200,9 +200,16 @@ trait RelatedFieldTrait
             $result = array_merge($result, $fields);
         }
 
-        return implode(', or ', array_map(function ($value) {
-            return Inflector::humanize($value);
+        if (2 > count($result)) {
+            return Inflector::humanize(implode('', $result));
+        }
+
+        $last = array_pop($result);
+        $first = implode(', ', array_map(function ($item) {
+            return Inflector::humanize($item);
         }, $result));
+
+        return sprintf('%s or %s', $first, Inflector::humanize($last));
     }
 
     /**

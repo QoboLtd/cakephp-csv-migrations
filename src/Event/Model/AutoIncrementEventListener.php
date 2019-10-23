@@ -17,6 +17,7 @@ use Cake\Datasource\EntityTrait;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\ORM\Entity;
 use Cake\Utility\Inflector;
 use CsvMigrations\Table;
 use Qobo\Utils\ModuleConfig\ConfigType;
@@ -65,7 +66,7 @@ class AutoIncrementEventListener implements EventListenerInterface
         // skip modifying auto-increment field(s) on existing records.
         if (! $entity->isNew()) {
             foreach (array_keys($fields) as $field) {
-                Assert::isInstanceOf($entity, EntityTrait::class);
+                Assert::isInstanceOf($entity, Entity::class);
                 $entity->set((string)$field, $entity->getOriginal((string)$field));
             }
 

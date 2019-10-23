@@ -13,6 +13,7 @@ namespace CsvMigrations\Event\Model;
 
 use ArrayObject;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\EntityTrait;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
@@ -24,6 +25,8 @@ use Webmozart\Assert\Assert;
 
 class AutoIncrementEventListener implements EventListenerInterface
 {
+    use EntityTrait;
+
     /**
      * Implemented Events
      *
@@ -62,7 +65,8 @@ class AutoIncrementEventListener implements EventListenerInterface
         // skip modifying auto-increment field(s) on existing records.
         if (! $entity->isNew()) {
             foreach (array_keys($fields) as $field) {
-                $entity->unsetProperty((string)$field);
+                Assert::isInstanceOf($entity, EntityTrait::class);
+                $entity->set((string)$field, $entity->getOriginal((string)$field));
             }
 
             return;

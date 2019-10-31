@@ -105,7 +105,11 @@ class Utility
         $listItems = null;
         try {
             $mc = new ModuleConfig(ConfigType::LISTS(), $module, $list, ['cacheSkip' => true]);
+
+            $schema = $mc->createSchema(['lint' => true]);
+            $mc->setParser(new Parser($schema, ['lint' => true, 'validate' => true]));
             $config = $mc->parse();
+
             $listItems = property_exists($config, 'items') ? $config->items : null;
         } catch (InvalidArgumentException $e) {
             return false;
@@ -113,6 +117,23 @@ class Utility
 
         if (null === $listItems) {
             return false;
+        }
+        $transitions = (array)Hash::extract($mc->parseToArray()['items'], '{n}.transitions');
+
+        if (!empty($transitions)) {
+            $listKeys = array_flip((array)Hash::extract($mc->parseToArray()['items'], '{n}.value'));
+
+            foreach ($transitions as $transition) {
+                if (empty($transition)) {
+                    continue;
+                }
+
+                foreach ($transition as $key => $value) {
+                    if ($value !== '' && !isset($listKeys[$value])) {
+                        return false;
+                    }
+                }
+            }
         }
 
         return true;

@@ -107,8 +107,6 @@ class ModelAfterSaveListener implements EventListenerInterface
         // figure out which field is a reminder one (example: start_date)
         $reminderField = $this->getReminderField($table);
         if ('' === $reminderField) {
-            $this->log('Failed to find reminder fields', LogLevel::NOTICE);
-
             return [];
         }
 

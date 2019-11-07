@@ -11,6 +11,7 @@
  */
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Validation\Validator;
@@ -138,6 +139,28 @@ class FieldHandlerFactory
         }
 
         return $validator;
+    }
+
+    /**
+     * Application rules setter.
+     *
+     * @param mixed $table Name or instance of the Table
+     * @param string $field Field name
+     * @param \Cake\ORM\RulesChecker $rules RulesChecker instance
+     * @param mixed[] $options Field options
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function setApplicationRules($table, string $field, RulesChecker $rules, array $options = []) : RulesChecker
+    {
+        $handler = self::getByTableField($table, $field);
+        $rules = $handler->setApplicationRules($rules, $options);
+        if (! $rules instanceof RulesChecker) {
+            throw new RuntimeException(
+                sprintf('Field Handler returned value must be an instance of %s.', RulesChecker::class)
+            );
+        }
+
+        return $rules;
     }
 
     /**

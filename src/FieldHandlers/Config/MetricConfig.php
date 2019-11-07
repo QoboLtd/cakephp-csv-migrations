@@ -23,6 +23,7 @@ class MetricConfig extends FixedConfig
      * @var array $providers List of provider names and classes
      */
     protected $providers = [
+        'applicationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ApplicationRules\\NullApplicationRules',
         'combinedFields' => '\\CsvMigrations\\FieldHandlers\\Provider\\CombinedFields\\MetricCombinedFields',
         'dbFieldType' => '\\CsvMigrations\\FieldHandlers\\Provider\\DbFieldType\\StringDbFieldType',
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',

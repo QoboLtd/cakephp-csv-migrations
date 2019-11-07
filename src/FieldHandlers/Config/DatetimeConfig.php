@@ -23,6 +23,7 @@ class DatetimeConfig extends FixedConfig
      * @var array $providers List of provider names and classes
      */
     protected $providers = [
+        'applicationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ApplicationRules\\NullApplicationRules',
         'combinedFields' => '\\CsvMigrations\\FieldHandlers\\Provider\\CombinedFields\\NullCombinedFields',
         'dbFieldType' => '\\CsvMigrations\\FieldHandlers\\Provider\\DbFieldType\\DatetimeDbFieldType',
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',

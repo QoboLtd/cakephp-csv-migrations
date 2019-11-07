@@ -18,6 +18,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\ORM\RulesChecker;
 use Cake\ORM\Table as BaseTable;
 use Cake\Validation\Validator;
 use CsvMigrations\Event\EventName;
@@ -112,6 +113,31 @@ class Table extends BaseTable implements HasFieldsInterface
         }
 
         return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules): RulesChecker
+    {
+        $className = App::shortName(get_class($this), 'Model/Table', 'Table');
+        $config = (new ModuleConfig(ConfigType::MIGRATION(), $className))->parse();
+        $config = json_encode($config);
+        if (false === $config) {
+            return $rules;
+        }
+        $config = json_decode($config, true);
+        $factory = new FieldHandlerFactory();
+
+        foreach ($config as $column) {
+            $rules = $factory->setApplicationRules($this, $column['name'], $rules);
+        }
+
+        return $rules;
     }
 
     /**

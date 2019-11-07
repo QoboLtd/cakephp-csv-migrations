@@ -60,6 +60,7 @@ class Config implements ConfigInterface
      * @var array $requiredProviders List of required providers
      */
     protected $requiredProviders = [
+        'applicationRules',
         'combinedFields',
         'dbFieldType',
         'fieldValue',

@@ -166,6 +166,10 @@ class FieldTest extends TestCase
             'two' => [
                 'label' => 'Two',
                 'inactive' => false
+            ],
+            'three' => [
+                'label' => 'Three',
+                'inactive' => false
             ]
         ];
 
@@ -181,6 +185,10 @@ class FieldTest extends TestCase
             ],
             'two' => [
                 'label' => 'Two',
+                'inactive' => false
+            ],
+            'three' => [
+                'label' => 'Three',
                 'inactive' => false
             ]
         ];

@@ -26,6 +26,7 @@ class ConfigTest extends TestCase
             [
                 [
                     'combinedFields' => true,
+                    'applicationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ApplicationRules\\NullApplicationRules',
                     'dbFieldType' => '\\CsvMigrations\\FieldHandlers\\Provider\\DbFieldType\\StringDbFieldType',
                     'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
                     'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\StringFieldToDb',
@@ -41,6 +42,7 @@ class ConfigTest extends TestCase
             [
                 [
                     'combinedFields' => '\\stdClass',
+                    'applicationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ApplicationRules\\NullApplicationRules',
                     'dbFieldType' => '\\CsvMigrations\\FieldHandlers\\Provider\\DbFieldType\\StringDbFieldType',
                     'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
                     'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\StringFieldToDb',
@@ -56,6 +58,7 @@ class ConfigTest extends TestCase
             [
                 [
                     'combinedFields' => '\\Foo\\Bar\\No\\Exist',
+                    'applicationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ApplicationRules\\NullApplicationRules',
                     'dbFieldType' => '\\CsvMigrations\\FieldHandlers\\Provider\\DbFieldType\\StringDbFieldType',
                     'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
                     'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\StringFieldToDb',
@@ -72,6 +75,7 @@ class ConfigTest extends TestCase
             [
                 [
                     'combinedFields' => ' ',
+                    'applicationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ApplicationRules\\NullApplicationRules',
                     'dbFieldType' => '\\CsvMigrations\\FieldHandlers\\Provider\\DbFieldType\\StringDbFieldType',
                     'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
                     'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\StringFieldToDb',
@@ -94,6 +98,7 @@ class ConfigTest extends TestCase
         return [
             [
                 [
+                    'applicationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ApplicationRules\\NullApplicationRules',
                     'combinedFields' => '\\CsvMigrations\\FieldHandlers\\Provider\\CombinedFields\\NullCombinedFields',
                     'dbFieldType' => '\\CsvMigrations\\FieldHandlers\\Provider\\DbFieldType\\StringDbFieldType',
                     'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',

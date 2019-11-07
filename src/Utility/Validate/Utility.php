@@ -118,10 +118,12 @@ class Utility
         if (null === $listItems) {
             return false;
         }
-        $transitions = (array)Hash::extract($mc->parseToArray()['items'], '{n}.transitions');
+
+        $array = Convert::objectToArray($config);
+        $transitions = (array)Hash::extract($array['items'], '{n}.transitions');
 
         if (!empty($transitions)) {
-            $listKeys = array_flip((array)Hash::extract($mc->parseToArray()['items'], '{n}.value'));
+            $listKeys = array_flip((array)Hash::extract($array['items'], '{n}.value'));
 
             foreach ($transitions as $transition) {
                 if (empty($transition)) {

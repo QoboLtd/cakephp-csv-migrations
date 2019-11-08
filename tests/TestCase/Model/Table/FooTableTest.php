@@ -83,6 +83,24 @@ class FooTableTest extends TestCase
         $this->assertFalse($this->table->save($entity));
     }
 
+    public function testSaveWithInvalidTransitionsListItem() : void
+    {
+        $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'inactive', 'type' => 'bronze.new']);
+        $this->table->save($entity);
+
+        $entity = $this->table->patchEntity($entity, ['status' => 'active']);
+        $this->assertFalse($this->table->save($entity));
+    }
+
+    public function testSaveWithValidTransitionsListItem() : void
+    {
+        $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'active', 'type' => 'bronze.new']);
+        $this->table->save($entity);
+
+        $entity = $this->table->patchEntity($entity, ['status' => 'inactive']);
+        $this->assertInstanceOf(EntityInterface::class, $this->table->save($entity));
+    }
+
     public function testSaveWithFootprint() : void
     {
         $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'active', 'type' => 'bronze.new']);

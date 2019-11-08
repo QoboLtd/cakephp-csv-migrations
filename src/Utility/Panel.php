@@ -11,8 +11,12 @@
  */
 namespace CsvMigrations\Utility;
 
+use ArrayObject;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\Utility\Hash;
+use CsvMigrations\Event\EventName;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -63,6 +67,13 @@ class Panel
         $this->setName($name);
         $this->setExpression($config);
         $this->setFields();
+
+        // Move all fields into an object
+        foreach ($this->getFields() as $field) {
+            $search = sprintf('%1$s%2$s%1$s', self::EXP_TOKEN, $field);
+            $replace = sprintf('%1$sfields.%2$s%1$s', self::EXP_TOKEN, $field);
+            $this->expression = str_replace($search, $replace, $this->expression);
+        }
     }
 
     /**
@@ -160,13 +171,23 @@ class Panel
      * Evaluate the expression.
      *
      * @param mixed[] $data to get the values for placeholders
+     * @param mixed[] $extras Extra variables to pass to expression language parser
      * @return bool True if it matches, false otherwise.
      */
-    public function evalExpression(array $data) : bool
+    public function evalExpression(array $data, array $extras = []) : bool
     {
+        $extraVariables = new ArrayObject($extras);
         $language = new ExpressionLanguage();
-        $values = $this->getFieldValues($data);
-        $eval = $language->evaluate($this->getExpression(true), $values);
+
+        // Make the fields properties of an internal object
+        $fields = $this->getFieldValues($data);
+        $fields = json_decode((string)json_encode($fields));
+
+        // Fire an event
+        $event = new Event((string)EventName::PANEL_POPULATE_EXTRAS(), null, $extraVariables);
+        EventManager::instance()->dispatch($event);
+
+        $eval = $language->evaluate($this->getExpression(true), compact('fields') + (array)$extraVariables);
 
         return $eval;
     }

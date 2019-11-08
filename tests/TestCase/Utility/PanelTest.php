@@ -155,4 +155,51 @@ class PanelTest extends TestCase
 
         $this->assertEquals($expected, $actual, 'On an empty config, the function should return an empty array.');
     }
+
+    /**
+     * Test expression evaluation with extra objects.
+     *
+     * @dataProvider evalExpressionScenariosWithExtrasProvider
+     * @param string $scenario Scenario name
+     * @param string $expression Expression to evaluate
+     * @param mixed[] $data Fields data
+     * @param mixed[] $extras Extra objects to be passed to expression evaluator
+     * @param bool $expected Expected result
+     * @return void
+     */
+    public function testEvalExpressionWithExtras(string $scenario, string $expression, array $data, array $extras, bool $expected) : void
+    {
+        $panelName = 'Foobar';
+        $config['panels']['Foobar'] = $expression;
+        $panel = new Panel($panelName, $config);
+        $this->assertEquals($expected, $panel->evalExpression($data, $extras), sprintf('%s - Expression evaluation failed', $scenario));
+        unset($panel);
+    }
+
+    /**
+     * Helper method for checking value in {@link self::testEvalExpressionWithExtras()}
+     *
+     * @param mixed $foo Value of foo
+     * @return bool True if bar
+     */
+    public function isReallyBar($foo): bool
+    {
+        return $foo === 'bar';
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function evalExpressionScenariosWithExtrasProvider() : array
+    {
+        return [
+            [
+                'Scenario 1 - Call function on custom object',
+                "%%hello%% == 'world' && object.isReallyBar(%%foo%%)",
+                ['foo' => 'bar', 'hello' => 'world'],
+                ['object' => $this],
+                true
+            ],
+        ];
+    }
 }

@@ -122,18 +122,16 @@ class Utility
         $array = Convert::objectToArray($config);
         $transitions = (array)Hash::extract($array['items'], '{n}.transitions');
 
-        if (!empty($transitions)) {
-            $listKeys = array_flip((array)Hash::extract($array['items'], '{n}.value'));
+        if (empty($transitions)) {
+            return true;
+        }
 
-            foreach ($transitions as $transition) {
-                if (empty($transition)) {
-                    continue;
-                }
+        $listKeys = array_flip((array)Hash::extract($array['items'], '{n}.value'));
 
-                foreach ($transition as $key => $value) {
-                    if ($value !== '' && !isset($listKeys[$value])) {
-                        return false;
-                    }
+        foreach ($transitions as $transition) {
+            foreach ($transition as $key => $value) {
+                if ($value !== '' && !isset($listKeys[$value])) {
+                    return false;
                 }
             }
         }

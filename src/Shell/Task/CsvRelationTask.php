@@ -212,14 +212,37 @@ class CsvRelationTask extends BakeTask
      */
     private function bakeDatabaseConfig(array $selection, string $path) : bool
     {
-        $fields = [];
+        $fields = [
+            'id' => [
+                'name' => 'id',
+                'type' => 'uuid',
+                'required' => true,
+                'non-searchable' => false,
+                'unique' => true
+            ],
+            'created' => [
+                'name' => 'created',
+                'type' => 'datetime',
+                'required' => false,
+                'non-searchable' => false,
+                'unique' => false
+            ],
+            'modified' => [
+                'name' => 'modified',
+                'type' => 'datetime',
+                'required' => false,
+                'non-searchable' => false,
+                'unique' => false
+            ],
+        ];
+
         foreach ($selection as $module) {
             $fields[$this->_modelKey($module)] = [
                 'name' => $this->_modelKey($module),
                 'type' => sprintf('related(%s)', $module),
-                'required' => '1',
-                'non-searchable' => null,
-                'unique' => null
+                'required' => true,
+                'non-searchable' => false,
+                'unique' => false
             ];
         }
 

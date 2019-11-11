@@ -217,9 +217,9 @@ class CsvRelationTask extends BakeTask
             $fields[$this->_modelKey($module)] = [
                 'name' => $this->_modelKey($module),
                 'type' => sprintf('related(%s)', $module),
-                'required' => '1',
-                'non-searchable' => null,
-                'unique' => null
+                'required' => true,
+                'non-searchable' => false,
+                'unique' => false
             ];
         }
 

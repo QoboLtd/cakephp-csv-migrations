@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Utility;
 
 use Burzum\FileStorage\Model\Entity\FileStorage;
@@ -23,7 +24,7 @@ class FileUploadTest extends TestCase
     private $table;
     private $fileUpload;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -47,7 +48,7 @@ class FileUploadTest extends TestCase
         $this->fileUpload = new FileUpload(TableRegistry::get('Articles'));
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->fileUpload);
         unset($this->table);
@@ -55,7 +56,7 @@ class FileUploadTest extends TestCase
         parent::tearDown();
     }
 
-    public function testSave() : void
+    public function testSave(): void
     {
         $data = [
             'tmp_name' => TESTS . 'img' . DS . 'qobo.png',
@@ -71,7 +72,7 @@ class FileUploadTest extends TestCase
         $this->assertTrue(file_exists(TMP . $result->get('path')));
     }
 
-    public function testSaveWithUppercasedExtension() : void
+    public function testSaveWithUppercasedExtension(): void
     {
         $data = [
             'tmp_name' => TESTS . 'img' . DS . 'qobo.PNG',
@@ -87,7 +88,7 @@ class FileUploadTest extends TestCase
         $this->assertEventFired('ImageVersion.createVersion');
     }
 
-    public function testSaveAll() : void
+    public function testSaveAll(): void
     {
         $data = [
             [
@@ -114,7 +115,7 @@ class FileUploadTest extends TestCase
         }
     }
 
-    public function testSaveWithMissingParameter() : void
+    public function testSaveWithMissingParameter(): void
     {
         $data = [
             'tmp_name' => TESTS . 'img' . DS . 'qobo.png',
@@ -127,7 +128,7 @@ class FileUploadTest extends TestCase
         $this->assertNull($this->fileUpload->save('image', $data));
     }
 
-    public function testSaveWithError() : void
+    public function testSaveWithError(): void
     {
         $data = [
             'tmp_name' => TESTS . 'img' . DS . 'qobo.png',
@@ -140,7 +141,7 @@ class FileUploadTest extends TestCase
         $this->assertNull($this->fileUpload->save('image', $data));
     }
 
-    public function testGetFiles() : void
+    public function testGetFiles(): void
     {
         $result = $this->fileUpload->getFiles('image', '00000000-0000-0000-0000-000000000003');
 
@@ -157,7 +158,7 @@ class FileUploadTest extends TestCase
         $this->assertSame($expected, $result->first()->get('thumbnails'));
     }
 
-    public function testGetFilesWithUppercasedExtension() : void
+    public function testGetFilesWithUppercasedExtension(): void
     {
         $result = $this->fileUpload->getFiles('image', '00000000-0000-0000-0000-000000000004');
 

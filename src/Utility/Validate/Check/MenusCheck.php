@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Utility\Validate\Check;
 
 use InvalidArgumentException;
@@ -25,7 +27,7 @@ class MenusCheck extends AbstractCheck
      * @param array $options Check options
      * @return int Number of encountered errors
      */
-    public function run(string $module, array $options = []) : int
+    public function run(string $module, array $options = []): int
     {
         $mc = new ModuleConfig(ConfigType::MENUS(), $module, null, ['cacheSkip' => true]);
 

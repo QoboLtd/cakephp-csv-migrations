@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Model\Table;
 
 use Cake\ORM\TableRegistry;
@@ -27,7 +28,7 @@ class ImportResultsTableTest extends TestCase
      *
      * @return void
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
         $config = TableRegistry::exists('ImportResults') ? [] : ['className' => ImportResultsTable::class];
@@ -40,7 +41,7 @@ class ImportResultsTableTest extends TestCase
      *
      * @return void
      */
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->ImportResults);
 
@@ -52,7 +53,7 @@ class ImportResultsTableTest extends TestCase
      *
      * @return void
      */
-    public function testInitialize() : void
+    public function testInitialize(): void
     {
         $this->assertTrue($this->ImportResults->hasBehavior('Timestamp'), 'Missing behavior Timestamp.');
         $this->assertTrue($this->ImportResults->hasBehavior('Trash'), 'Missing behavior Trash.');
@@ -65,7 +66,7 @@ class ImportResultsTableTest extends TestCase
      *
      * @return void
      */
-    public function testValidationDefault() : void
+    public function testValidationDefault(): void
     {
         $validator = new \Cake\Validation\Validator();
         $result = $this->ImportResults->validationDefault($validator);
@@ -78,7 +79,7 @@ class ImportResultsTableTest extends TestCase
      *
      * @return void
      */
-    public function testBuildRules() : void
+    public function testBuildRules(): void
     {
         $rules = new \Cake\ORM\RulesChecker();
         $result = $this->ImportResults->buildRules($rules);

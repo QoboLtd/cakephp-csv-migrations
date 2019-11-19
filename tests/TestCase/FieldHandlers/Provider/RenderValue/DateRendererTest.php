@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use Cake\I18n\Time;
@@ -11,13 +12,13 @@ class DateRendererTest extends TestCase
 {
     protected $renderer;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = new DateConfig('date');
         $this->renderer = new DateRenderer($config);
     }
 
-    public function testInterface() : void
+    public function testInterface(): void
     {
         $implementedInterfaces = array_keys(class_implements($this->renderer));
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\Provider\ProviderInterface', $implementedInterfaces), "ProviderInterface is not implemented");
@@ -26,7 +27,7 @@ class DateRendererTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function getValues() : array
+    public function getValues(): array
     {
         return [
             ['2017-07-06 14:20:00', '2017-07-06 14:20:00', 'Date time string'],
@@ -45,13 +46,13 @@ class DateRendererTest extends TestCase
      * @param mixed $value
      * @param mixed $expected
      */
-    public function testRenderValue($value, $expected, string $description) : void
+    public function testRenderValue($value, $expected, string $description): void
     {
         $result = $this->renderer->provide($value);
         $this->assertSame($expected, $result, "Value rendering is broken for: $description");
     }
 
-    public function testRenderValueFormat() : void
+    public function testRenderValueFormat(): void
     {
         $result = $this->renderer->provide(Time::parse('2017-07-06 14:20:00'), ['format' => 'yyyy']);
         $this->assertEquals('2017', $result, "Value rendering is broken for custom format");
@@ -60,7 +61,7 @@ class DateRendererTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testRenderValueException() : void
+    public function testRenderValueException(): void
     {
         $result = $this->renderer->provide(new stdClass());
     }

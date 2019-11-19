@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\View\Cell;
 
 use Cake\Datasource\EntityInterface;
@@ -40,7 +42,7 @@ class DblistCell extends Cell
      * @param string $list Name of the list
      * @return void
      */
-    public function renderValue(string $value, string $list) : void
+    public function renderValue(string $value, string $list): void
     {
         /**
          * @var \CsvMigrations\Model\Table\DblistsTable
@@ -75,7 +77,7 @@ class DblistCell extends Cell
      * @param string $name List name
      * @return bool
      */
-    protected function _createList(string $name) : bool
+    protected function _createList(string $name): bool
     {
         /**
          * @var \CsvMigrations\Model\Table\DblistsTable

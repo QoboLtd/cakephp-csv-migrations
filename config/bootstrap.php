@@ -1,12 +1,14 @@
 <?php
+
+/**
+ * Plugin configuration
+ */
+
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use CsvMigrations\Event\Model\AutoIncrementEventListener;
 use CsvMigrations\Event\Model\ModelAfterSaveListener;
 
-/**
- * Plugin configuration
- */
 // get app level config
 $config = Configure::read('CsvMigrations');
 $config = $config ? $config : [];

@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use CsvMigrations\FieldHandlers\Config\StringConfig;
@@ -9,13 +10,13 @@ class StringRendererTest extends TestCase
 {
     protected $renderer;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = new StringConfig('string');
         $this->renderer = new StringRenderer($config);
     }
 
-    public function testInterface() : void
+    public function testInterface(): void
     {
         $implementedInterfaces = array_keys(class_implements($this->renderer));
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\Provider\ProviderInterface', $implementedInterfaces), "ProviderInterface is not implemented");
@@ -24,7 +25,7 @@ class StringRendererTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function getValues() : array
+    public function getValues(): array
     {
         return [
             [true, '1', 'Boolean true'],
@@ -45,7 +46,7 @@ class StringRendererTest extends TestCase
      * @dataProvider getValues
      * @param mixed $value
      */
-    public function testRenderValue($value, string $expected, string $description) : void
+    public function testRenderValue($value, string $expected, string $description): void
     {
         $result = $this->renderer->provide($value);
         $this->assertSame($expected, $result, "Value rendering is broken for: $description");

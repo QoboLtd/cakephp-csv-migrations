@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\FieldToDb;
 
 use CsvMigrations\FieldHandlers\Config\StringConfig;
@@ -11,19 +12,19 @@ class DatetimeFieldToDbTest extends TestCase
 {
     protected $provider;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = new StringConfig('foobar');
         $this->provider = new DatetimeFieldToDb($config);
     }
 
-    public function testInterface() : void
+    public function testInterface(): void
     {
         $implementedInterfaces = array_keys(class_implements($this->provider));
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\Provider\ProviderInterface', $implementedInterfaces), "ProviderInterface is not implemented");
     }
 
-    public function testProvide() : void
+    public function testProvide(): void
     {
         $csvField = new CsvField(['name' => 'foobar']);
         $result = $this->provider->provide($csvField);
@@ -42,7 +43,7 @@ class DatetimeFieldToDbTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function invalidDataProvider() : array
+    public function invalidDataProvider(): array
     {
         return [
             [null],
@@ -59,7 +60,7 @@ class DatetimeFieldToDbTest extends TestCase
      * @dataProvider invalidDataProvider
      * @expectedException \InvalidArgumentException
      */
-    public function testProvideException($data) : void
+    public function testProvideException($data): void
     {
         $result = $this->provider->provide($data);
     }

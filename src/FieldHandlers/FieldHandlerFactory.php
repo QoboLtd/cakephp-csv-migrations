@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\ORM\Table;
@@ -48,7 +50,7 @@ class FieldHandlerFactory
      * @param \Cake\View\View|null $view CakePHP view instance
      * @return \CsvMigrations\FieldHandlers\FieldHandlerInterface
      */
-    public static function getByTableField($table, string $field, array $options = [], ?View $view = null) : FieldHandlerInterface
+    public static function getByTableField($table, string $field, array $options = [], ?View $view = null): FieldHandlerInterface
     {
         $table = is_string($table) ? TableRegistry::get($table) : $table;
         $handler = self::getHandler($table, $field, $options, $view);
@@ -65,7 +67,7 @@ class FieldHandlerFactory
      * @param mixed[] $options Field options
      * @return string Field input
      */
-    public function renderInput($table, string $field, $data = '', array $options = []) : string
+    public function renderInput($table, string $field, $data = '', array $options = []): string
     {
         $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
@@ -80,7 +82,7 @@ class FieldHandlerFactory
      * @param mixed[] $options Field options
      * @return string Field input
      */
-    public function renderName($table, string $field, array $options = []) : string
+    public function renderName($table, string $field, array $options = []): string
     {
         $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
@@ -95,7 +97,7 @@ class FieldHandlerFactory
      * @param mixed[] $options Field options
      * @return mixed[] Array of fields and their options
      */
-    public function getSearchOptions($table, string $field, array $options = []) : array
+    public function getSearchOptions($table, string $field, array $options = []): array
     {
         $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
@@ -111,7 +113,7 @@ class FieldHandlerFactory
      * @param mixed[] $options Field options
      * @return string
      */
-    public function renderValue($table, string $field, $data, array $options = []) : string
+    public function renderValue($table, string $field, $data, array $options = []): string
     {
         $handler = self::getByTableField($table, $field, $options, $this->cakeView);
 
@@ -127,7 +129,7 @@ class FieldHandlerFactory
      * @param mixed[] $options Field options
      * @return \Cake\Validation\Validator
      */
-    public function setValidationRules($table, string $field, Validator $validator, array $options = []) : Validator
+    public function setValidationRules($table, string $field, Validator $validator, array $options = []): Validator
     {
         $handler = self::getByTableField($table, $field);
         $validator = $handler->setValidationRules($validator, $options);
@@ -153,7 +155,7 @@ class FieldHandlerFactory
      * @param string $field Field name
      * @return mixed[] list of DbField instances
      */
-    public function fieldToDb(CsvField $csvField, $table, string $field = '') : array
+    public function fieldToDb(CsvField $csvField, $table, string $field = ''): array
     {
         if ('' === $field) {
             $field = $csvField->getName();
@@ -177,7 +179,7 @@ class FieldHandlerFactory
      * @param \Cake\View\View $view Optional CakePHP view instance
      * @return \CsvMigrations\FieldHandlers\FieldHandlerInterface
      */
-    protected static function getHandler(Table $table, $field, array $options = [], View $view = null) : FieldHandlerInterface
+    protected static function getHandler(Table $table, $field, array $options = [], View $view = null): FieldHandlerInterface
     {
         if (empty($field)) {
             throw new InvalidArgumentException("Field parameter is empty");
@@ -234,7 +236,7 @@ class FieldHandlerFactory
      * @param string $fieldName Field name
      * @return mixed[] Stub fields
      */
-    protected static function getStubFromString(string $fieldName) : array
+    protected static function getStubFromString(string $fieldName): array
     {
         return [
             $fieldName => [
@@ -252,7 +254,7 @@ class FieldHandlerFactory
      * @param mixed[] $field Field array
      * @return mixed[] Stub fields
      */
-    protected static function getStubFromArray(string $fieldName, array $field) : array
+    protected static function getStubFromArray(string $fieldName, array $field): array
     {
         // Try our best to find the field name
         if (empty($field['name']) && !empty($fieldName)) {

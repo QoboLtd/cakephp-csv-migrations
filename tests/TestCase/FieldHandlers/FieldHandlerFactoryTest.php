@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use Cake\Core\Configure;
@@ -45,7 +46,7 @@ class FieldHandlerFactoryTest extends TestCase
      *
      * @return void
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -66,7 +67,7 @@ class FieldHandlerFactoryTest extends TestCase
      *
      * @return void
      */
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->fhf);
         unset($this->table);
@@ -75,20 +76,20 @@ class FieldHandlerFactoryTest extends TestCase
         parent::tearDown();
     }
 
-    public function testGetByTableField() : void
+    public function testGetByTableField(): void
     {
         $result = FieldHandlerFactory::getByTableField($this->table, 'id');
         $this->assertFalse(empty($result), "FieldHandlerFactory returned an empty result");
         $this->assertTrue($result instanceof FieldHandlerInterface, "FieldHandlerFactory returned incorrect instance");
     }
 
-    public function testRenderInput() : void
+    public function testRenderInput(): void
     {
         $result = $this->fhf->renderInput($this->table, 'id');
         $this->assertRegexp('/input/i', $result, "Rendering input for 'id' field has no 'input'");
     }
 
-    public function testRenderName() : void
+    public function testRenderName(): void
     {
         $result = $this->fhf->renderName($this->table, 'testField');
         $this->assertEquals('Test Field', $result);
@@ -103,7 +104,7 @@ class FieldHandlerFactoryTest extends TestCase
         $this->assertEquals('Related Field', $result);
     }
 
-    public function testGetSearchOptions() : void
+    public function testGetSearchOptions(): void
     {
         $fieldDefinitions = [
             CsvField::FIELD_NAME => 'id',
@@ -115,13 +116,13 @@ class FieldHandlerFactoryTest extends TestCase
         $this->assertTrue(empty($result), "getSearchOptions() returned a non-empty result");
     }
 
-    public function testRenderValue() : void
+    public function testRenderValue(): void
     {
         $result = $this->fhf->renderValue($this->table, 'id', 'blah');
         $this->assertRegexp('/blah/i', $result, "Rendering value 'blah' for 'id' field has no 'blah'");
     }
 
-    public function testFieldToDb() : void
+    public function testFieldToDb(): void
     {
         $csvField = new CsvField(['name' => 'blah', 'type' => 'string']);
         $result = $this->fhf->fieldToDb($csvField, $this->table, 'id');
@@ -132,7 +133,7 @@ class FieldHandlerFactoryTest extends TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testFieldToDbException() : void
+    public function testFieldToDbException(): void
     {
         $csvField = new CsvField(['name' => 'blah', 'type' => 'foobar']);
         $result = $this->fhf->fieldToDb($csvField, $this->table, 'id');

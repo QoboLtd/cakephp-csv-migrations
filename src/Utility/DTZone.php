@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Utility;
 
 use Cake\I18n\Time;
@@ -33,7 +35,7 @@ class DTZone
      * @todo Move to \Qobo\Utils
      * @return string Timezone string, like UTC
      */
-    public static function getAppTimeZone() : string
+    public static function getAppTimeZone(): string
     {
         $appTimezone = Time::now()->format('e');
 
@@ -48,7 +50,7 @@ class DTZone
      * @param \DateTimeZone $dtz DateTimeZone instance
      * @return \DateTime
      */
-    public static function toDateTime($value, DateTimeZone $dtz) : DateTime
+    public static function toDateTime($value, DateTimeZone $dtz): DateTime
     {
         // TODO : Figure out where to move. Can vary for different source objects
         $format = 'Y-m-d H:i:s';
@@ -87,7 +89,7 @@ class DTZone
      * @param \DateTime $value DateTime value to offset
      * @return \DateTime
      */
-    public static function offsetToUtc(DateTime $value) : DateTime
+    public static function offsetToUtc(DateTime $value): DateTime
     {
         $result = $value;
 

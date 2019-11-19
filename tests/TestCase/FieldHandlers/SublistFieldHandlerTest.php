@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
@@ -16,13 +17,13 @@ class SublistFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
         $this->fh = new FieldHandler($config);
     }
 
-    public function testRenderInput() : void
+    public function testRenderInput(): void
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
@@ -55,7 +56,7 @@ class SublistFieldHandlerTest extends TestCase
         }
     }
 
-    public function testFieldToDb() : void
+    public function testFieldToDb(): void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
@@ -72,7 +73,7 @@ class SublistFieldHandlerTest extends TestCase
         $this->assertEquals(255, $result[$this->field]->getLimit(), "fieldToDb() did not return correct limit for DbField instance");
     }
 
-    public function testGetSearchOptions() : void
+    public function testGetSearchOptions(): void
     {
         $result = $this->fh->getSearchOptions();
 

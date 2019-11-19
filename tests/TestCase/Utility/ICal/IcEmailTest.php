@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Utility\ICal;
 
 use Cake\ORM\TableRegistry;
@@ -12,7 +13,7 @@ class IcEmailTest extends TestCase
     private $table;
     private $entity;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->table = TableRegistry::getTableLocator()->get('Articles');
         $this->entity = $this->table->newEntity(['name' => 'Hello World!', 'status' => 'draft']);
@@ -20,13 +21,13 @@ class IcEmailTest extends TestCase
         $this->table->patchEntity($this->entity, ['status' => 'published']);
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->entity);
         unset($this->table);
     }
 
-    public function testGetEmailSubject() : void
+    public function testGetEmailSubject(): void
     {
         $this->assertSame(
             '(Updated) Article: Hello World!',
@@ -34,7 +35,7 @@ class IcEmailTest extends TestCase
         );
     }
 
-    public function testGetEmailSubjectWithNewEntity() : void
+    public function testGetEmailSubjectWithNewEntity(): void
     {
         $this->assertSame(
             'Article: Foobar',
@@ -42,7 +43,7 @@ class IcEmailTest extends TestCase
         );
     }
 
-    public function testGetEventSubject() : void
+    public function testGetEventSubject(): void
     {
         $icEmail = new IcEmail($this->table, $this->entity);
 
@@ -52,7 +53,7 @@ class IcEmailTest extends TestCase
         );
     }
 
-    public function testGetEventSubjectWithNewEntity() : void
+    public function testGetEventSubjectWithNewEntity(): void
     {
         $icEmail = new IcEmail($this->table, $this->table->newEntity(['name' => 'Foobar']));
 
@@ -62,7 +63,7 @@ class IcEmailTest extends TestCase
         );
     }
 
-    public function testGetEntityUrl() : void
+    public function testGetEntityUrl(): void
     {
         $this->assertSame(
             '/articles/view/' . $this->entity->get('id'),
@@ -70,7 +71,7 @@ class IcEmailTest extends TestCase
         );
     }
 
-    public function testGetEntityUrlWithNewEntity() : void
+    public function testGetEntityUrlWithNewEntity(): void
     {
         $this->assertSame(
             '/articles/view',
@@ -78,7 +79,7 @@ class IcEmailTest extends TestCase
         );
     }
 
-    public function testGetEmailContent() : void
+    public function testGetEmailContent(): void
     {
         $this->assertSame(
             "Article \"Hello World!\" updated by System\n\n* Status: changed from \"draft\" to \"published\".\n\n\n\nSee more: /articles/view/" . $this->entity->get('id'),
@@ -86,7 +87,7 @@ class IcEmailTest extends TestCase
         );
     }
 
-    public function testGetEmailContentWithNewEntity() : void
+    public function testGetEmailContentWithNewEntity(): void
     {
         $this->assertSame(
             "Article \"Foobar\" created by System\n\nSee more: /articles/view",
@@ -94,7 +95,7 @@ class IcEmailTest extends TestCase
         );
     }
 
-    public function testGetEventContent() : void
+    public function testGetEventContent(): void
     {
         $this->assertSame(
             "\n\nSee more: /articles/view/" . $this->entity->get('id'),
@@ -102,7 +103,7 @@ class IcEmailTest extends TestCase
         );
     }
 
-    public function testSendCalendarEmail() : void
+    public function testSendCalendarEmail(): void
     {
         $icEmail = new IcEmail($this->table, $this->entity);
         $subject = $icEmail->getEmailSubject();

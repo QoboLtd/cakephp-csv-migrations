@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Shell;
 
 use Cake\Console\Shell;
@@ -122,7 +124,7 @@ class SeedShell extends Shell
      * @param mixed[] $modules modules.
      * @return mixed[]
      */
-    public function getModulesWithoutRelations(array $modules) : array
+    public function getModulesWithoutRelations(array $modules): array
     {
         $result = [];
         foreach ($modules as $moduleName => $module) {
@@ -141,7 +143,7 @@ class SeedShell extends Shell
      * @param string $moduleName module name.
      * @return mixed[]
      */
-    protected function getCSVModuleAttr(string $moduleName) : array
+    protected function getCSVModuleAttr(string $moduleName): array
     {
         if (empty($this->modules[$moduleName])) {
             return [];
@@ -238,7 +240,7 @@ class SeedShell extends Shell
      * @param string $fieldName fieldName.
      * @return mixed[]
      */
-    protected function getCombinedFieldValueBasedOnType(string $type, string $moduleName, string $fieldName) : array
+    protected function getCombinedFieldValueBasedOnType(string $type, string $moduleName, string $fieldName): array
     {
         $values = [];
 
@@ -260,7 +262,7 @@ class SeedShell extends Shell
      * @param string $moduleName module name
      * @return string[]
      */
-    protected function getModuleIds(string $moduleName) : array
+    protected function getModuleIds(string $moduleName): array
     {
         $table = TableRegistry::get($moduleName);
         $query = $table->find()
@@ -281,7 +283,7 @@ class SeedShell extends Shell
      * @param string $listName list name.
      * @return string[]
      */
-    protected function getListData(string $module, string $listName) : array
+    protected function getListData(string $module, string $listName): array
     {
         $mc = new ModuleConfig(ConfigType::LISTS(), $module, $listName);
         try {
@@ -312,7 +314,7 @@ class SeedShell extends Shell
      * @param mixed[] $modules modules
      * @return mixed[]
      */
-    protected function checkModuleRelations(array $modules) : array
+    protected function checkModuleRelations(array $modules): array
     {
         $modulesWithRelations = [];
 
@@ -339,7 +341,7 @@ class SeedShell extends Shell
      * @param string $str string word.
      * @return string
      */
-    protected function getStringEnclosedInParenthesis(string $str = '') : string
+    protected function getStringEnclosedInParenthesis(string $str = ''): string
     {
         preg_match_all('/\((.+?)\)/', $str, $match);
 
@@ -351,7 +353,7 @@ class SeedShell extends Shell
      * @param string[] $modules modules
      * @return mixed[]
      */
-    protected function getModuleCsvData(array $modules) : array
+    protected function getModuleCsvData(array $modules): array
     {
         $csvFiles = [];
 
@@ -384,7 +386,7 @@ class SeedShell extends Shell
      * @param string $moduleName module name.
      * @return void
      */
-    protected function populateDataInModule(string $moduleName) : void
+    protected function populateDataInModule(string $moduleName): void
     {
         if ('' === $moduleName) {
             return;
@@ -440,7 +442,7 @@ class SeedShell extends Shell
      * @param string $type type.
      * @return bool
      */
-    public function isCombinedField(string $type) : bool
+    public function isCombinedField(string $type): bool
     {
         $result = false;
 
@@ -457,7 +459,7 @@ class SeedShell extends Shell
      * @param mixed[] $modules modules.
      * @return mixed[]
      */
-    protected function createRelationIndex(array $modules) : array
+    protected function createRelationIndex(array $modules): array
     {
         $index = [];
 
@@ -489,7 +491,7 @@ class SeedShell extends Shell
      * @param mixed[] $index index.
      * @return void
      */
-    protected function hierarchicalPopulateDataIntoModules(array $index) : void
+    protected function hierarchicalPopulateDataIntoModules(array $index): void
     {
         foreach ($index as $moduleName => $relationModule) {
             $this->checkHierarchyForModule($moduleName, $index);
@@ -503,7 +505,7 @@ class SeedShell extends Shell
      * @param mixed[] $index index.
      * @return void
      */
-    protected function checkHierarchyForModule(string $moduleName, array $index) : void
+    protected function checkHierarchyForModule(string $moduleName, array $index): void
     {
         if ('' === $moduleName) {
             return;

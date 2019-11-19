@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\Core\Configure;
@@ -38,14 +40,17 @@ trait RelatedFieldTrait
      * @param mixed[] $relatedProperties related model properties
      * @return mixed[] $result containing parent properties
      */
-    protected function _getRelatedParentProperties(array $relatedProperties) : array
+    protected function _getRelatedParentProperties(array $relatedProperties): array
     {
-        if (empty($relatedProperties['entity']) ||
+        // @codingStandardsIgnoreStart
+        if (
+            empty($relatedProperties['entity']) ||
             empty($relatedProperties['controller']) ||
             empty($relatedProperties['config']['parent']['module'])
         ) {
             return [];
         }
+        // @codingStandardsIgnoreEnd
 
         $foreignKey = $this->_getForeignKey(
             TableRegistry::get($relatedProperties['config']['parent']['module']),
@@ -81,7 +86,7 @@ trait RelatedFieldTrait
      * @param string $data query parameter value
      * @return mixed[]
      */
-    protected function _getRelatedProperties(string $tableName, string $data) : array
+    protected function _getRelatedProperties(string $tableName, string $data): array
     {
         $table = TableRegistry::get($tableName);
 
@@ -127,7 +132,7 @@ trait RelatedFieldTrait
      * @param string $modelName Model name
      * @return string
      */
-    protected function _getForeignKey(Table $table, string $modelName) : string
+    protected function _getForeignKey(Table $table, string $modelName): string
     {
         foreach ($table->associations() as $association) {
             if ($modelName !== $association->className()) {
@@ -153,7 +158,7 @@ trait RelatedFieldTrait
      * @param string $value Primary key value
      * @return \Cake\Datasource\EntityInterface
      */
-    protected function _getAssociatedRecord(Table $table, string $value) : EntityInterface
+    protected function _getAssociatedRecord(Table $table, string $value): EntityInterface
     {
         $primaryKey = $table->getPrimaryKey();
         if (! is_string($primaryKey)) {
@@ -179,7 +184,7 @@ trait RelatedFieldTrait
      * @param mixed[] $properties Input properties
      * @return string
      */
-    protected function _getInputHelp(array $properties) : string
+    protected function _getInputHelp(array $properties): string
     {
         $config = (new ModuleConfig(ConfigType::MODULE(), $properties['controller']))->parseToArray();
         $typeaheadFields = !empty($config['table']['typeahead_fields']) ? $config['table']['typeahead_fields'] : [];
@@ -218,7 +223,7 @@ trait RelatedFieldTrait
      * @param mixed[] $properties Input properties
      * @return string
      */
-    protected function _getInputIcon(array $properties) : string
+    protected function _getInputIcon(array $properties): string
     {
         $config = (new ModuleConfig(ConfigType::MODULE(), $properties['controller']))->parseToArray();
 

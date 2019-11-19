@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\FieldValue;
 
 use Cake\Datasource\EntityInterface;
@@ -73,7 +75,7 @@ class MixedFieldValue extends AbstractProvider
      * @param string $field Field name
      * @return string Field value
      */
-    protected function provideFromRequest(RequestInterface $request, string $field) : string
+    protected function provideFromRequest(RequestInterface $request, string $field): string
     {
         Assert::isInstanceOf($request, ServerRequest::class);
 

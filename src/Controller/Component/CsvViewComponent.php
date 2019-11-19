@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Controller\Component;
 
 use Cake\Controller\Component;
@@ -37,7 +39,7 @@ class CsvViewComponent extends Component
      * @return void
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeFilter(Event $event) : void
+    public function beforeFilter(Event $event): void
     {
         $controller = $event->getSubject();
         Assert::isInstanceOf($controller, Controller::class);
@@ -61,7 +63,7 @@ class CsvViewComponent extends Component
      * @param \Cake\Event\Event $event Event instance
      * @return void
      */
-    public function beforeRender(Event $event) : void
+    public function beforeRender(Event $event): void
     {
         $this->filterFields($event);
     }
@@ -72,7 +74,7 @@ class CsvViewComponent extends Component
      * @param \Cake\Event\Event $event Event instance
      * @return void
      */
-    protected function filterFields(Event $event) : void
+    protected function filterFields(Event $event): void
     {
         $panelActions = (array)Configure::read('CsvMigrations.panels.actions');
         $dynamicPanelActions = (array)Configure::read('CsvMigrations.panels.dynamic_actions');
@@ -107,7 +109,7 @@ class CsvViewComponent extends Component
      * @param \Cake\Event\Event $event Event instance
      * @return void
      */
-    protected function filterBatchFields(Event $event) : void
+    protected function filterBatchFields(Event $event): void
     {
         $config = new ModuleConfig(ConfigType::MIGRATION(), $this->request->getParam('controller'));
         $config = json_encode($config->parse());

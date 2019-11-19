@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderInput;
 
 use Cake\ORM\TableRegistry;
@@ -18,24 +19,24 @@ class AggregatedRendererTest extends TestCase
     private $renderer;
     private $entity;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->renderer = new AggregatedRenderer(new AggregatedConfig('aggregated', 'Leads'));
         $this->entity = TableRegistry::get('Leads')->get('00000000-0000-0000-0000-000000000001');
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->entity);
         unset($this->renderer);
     }
 
-    public function testInterface() : void
+    public function testInterface(): void
     {
         $this->assertInstanceOf(ProviderInterface::class, $this->renderer);
     }
 
-    public function testProvide() : void
+    public function testProvide(): void
     {
         $options = [
             'entity' => $this->entity,
@@ -55,7 +56,7 @@ class AggregatedRendererTest extends TestCase
         $this->assertRegexp('/disabled="disabled"/', $html);
     }
 
-    public function testProvideWithoutEntity() : void
+    public function testProvideWithoutEntity(): void
     {
         $options = [
             'entity' => null,

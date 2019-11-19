@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Utility\ICal;
 
 use DateTime;
@@ -67,7 +69,7 @@ class IcEvent
      * @param mixed[] $params Event parameters
      * @return void
      */
-    public function configureEvent(array $params = []) : void
+    public function configureEvent(array $params = []): void
     {
         $params = array_merge($this->defaultParams, $params);
         foreach ($params as $name => $value) {
@@ -87,7 +89,7 @@ class IcEvent
      * @param \Eluceo\iCal\Component\Event $event Instance of Event to use
      * @return void
      */
-    public function setEvent(Event $event) : void
+    public function setEvent(Event $event): void
     {
         $this->event = $event;
     }
@@ -97,7 +99,7 @@ class IcEvent
      *
      * @return \Eluceo\iCal\Component\Event
      */
-    public function getEvent() : Event
+    public function getEvent(): Event
     {
         return $this->event;
     }
@@ -108,7 +110,7 @@ class IcEvent
      * @param string $id Unique ID for event
      * @return void
      */
-    public function setId(string $id) : void
+    public function setId(string $id): void
     {
         if ('' !== $id) {
             $this->event->setUniqueId($id);
@@ -124,7 +126,7 @@ class IcEvent
      * @param int $sequence Event sequence
      * @return void
      */
-    public function setSequence(int $sequence) : void
+    public function setSequence(int $sequence): void
     {
         $this->event->setSequence($sequence);
     }
@@ -135,7 +137,7 @@ class IcEvent
      * @param string $email Organizer email
      * @return void
      */
-    public function setOrganizer(string $email) : void
+    public function setOrganizer(string $email): void
     {
         if ('' !== $email) {
             $this->event->setOrganizer(
@@ -150,7 +152,7 @@ class IcEvent
      * @param string $summary Event subject/summary
      * @return void
      */
-    public function setSummary(string $summary) : void
+    public function setSummary(string $summary): void
     {
         $this->event->setSummary($summary);
     }
@@ -161,7 +163,7 @@ class IcEvent
      * @param string $description Event description
      * @return void
      */
-    public function setDescription(string $description) : void
+    public function setDescription(string $description): void
     {
         $this->event->setDescription($description);
     }
@@ -172,7 +174,7 @@ class IcEvent
      * @param \DateTime $time Start time in UTC
      * @return void
      */
-    public function setStartTime(DateTime $time) : void
+    public function setStartTime(DateTime $time): void
     {
         $this->event->setDtStart($time);
     }
@@ -183,7 +185,7 @@ class IcEvent
      * @param \DateTime $time End time in UTC
      * @return void
      */
-    public function setEndTime(DateTime $time) : void
+    public function setEndTime(DateTime $time): void
     {
         $this->event->SetDtEnd($time);
     }
@@ -194,7 +196,7 @@ class IcEvent
      * @param string $location Event location
      * @return void
      */
-    public function setLocation(string $location) : void
+    public function setLocation(string $location): void
     {
         if ('' !== $location) {
             $this->event->setLocation($location, "Location:");
@@ -207,7 +209,7 @@ class IcEvent
      * @param string[] $attendees A list of attendees' emails
      * @return void
      */
-    public function setAttendees(array $attendees = []) : void
+    public function setAttendees(array $attendees = []): void
     {
         $iCalAttendees = new Attendees();
         foreach ($attendees as $email) {

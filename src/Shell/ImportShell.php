@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Shell;
 
 use AuditStash\Meta\RequestMetadata;
@@ -149,7 +151,7 @@ class ImportShell extends Shell
      * @param \CsvMigrations\Model\Entity\Import $import Import entity
      * @return void
      */
-    protected function processImportFile(Import $import) : void
+    protected function processImportFile(Import $import): void
     {
         $this->out('Processing import file ..');
 
@@ -181,7 +183,7 @@ class ImportShell extends Shell
      * @param int $count Progress count
      * @return bool
      */
-    protected function _newImport(ImportsTable $table, Import $import, int $count) : bool
+    protected function _newImport(ImportsTable $table, Import $import, int $count): bool
     {
         $data = [
             'status' => $table::STATUS_IN_PROGRESS,
@@ -212,7 +214,7 @@ class ImportShell extends Shell
      * @param int $count Progress count
      * @return bool
      */
-    protected function _existingImport(ImportsTable $table, Import $import, int $count) : bool
+    protected function _existingImport(ImportsTable $table, Import $import, int $count): bool
     {
         $result = false;
 
@@ -248,7 +250,7 @@ class ImportShell extends Shell
      * @param int $count Progress count
      * @return void
      */
-    protected function _run(Import $import, int $count) : void
+    protected function _run(Import $import, int $count): void
     {
         // generate import results records
         $this->createImportResults($import, $count);
@@ -288,7 +290,7 @@ class ImportShell extends Shell
      * @param int $count Progress count
      * @return void
      */
-    protected function createImportResults(Import $import, int $count) : void
+    protected function createImportResults(Import $import, int $count): void
     {
         $this->out('Preparing records ..');
 
@@ -340,7 +342,7 @@ class ImportShell extends Shell
      * @param mixed[] $data Row data
      * @return void
      */
-    protected function _importResult(Import $import, array $headers, int $rowNumber, array $data) : void
+    protected function _importResult(Import $import, array $headers, int $rowNumber, array $data): void
     {
         $importTable = TableRegistry::get('CsvMigrations.ImportResults');
         Assert::isInstanceOf($importTable, ImportResultsTable::class);
@@ -397,7 +399,7 @@ class ImportShell extends Shell
      * @param mixed[] $data Row data
      * @return mixed[]
      */
-    protected function _prepareData(Import $import, array $headers, array $data) : array
+    protected function _prepareData(Import $import, array $headers, array $data): array
     {
         $result = [];
 
@@ -434,7 +436,7 @@ class ImportShell extends Shell
      * @param mixed[] $data Entity data
      * @return mixed[]
      */
-    protected function _processData(Table $table, array $csvFields, array $data) : array
+    protected function _processData(Table $table, array $csvFields, array $data): array
     {
         $schema = $table->getSchema();
         foreach ($data as $field => $value) {
@@ -487,7 +489,7 @@ class ImportShell extends Shell
      * @param string $value Field value
      * @return string
      */
-    protected function _findRelatedRecord(Table $table, string $field, string $value) : string
+    protected function _findRelatedRecord(Table $table, string $field, string $value): string
     {
         $csvField = FieldUtility::getCsvField($table, $field);
         if (null !== $csvField && 'related' === $csvField->getType()) {
@@ -558,7 +560,7 @@ class ImportShell extends Shell
      * @param string $value Field value
      * @return string
      */
-    protected function _findListValue(RepositoryInterface $table, string $listName, string $value) : string
+    protected function _findListValue(RepositoryInterface $table, string $listName, string $value): string
     {
         $options = FieldUtility::getList(sprintf('%s.%s', $table->getAlias(), $listName), true);
 
@@ -586,7 +588,7 @@ class ImportShell extends Shell
      * @param mixed[] $errors Fail errors
      * @return bool
      */
-    protected function _importFail(ImportResult $entity, array $errors) : bool
+    protected function _importFail(ImportResult $entity, array $errors): bool
     {
         $table = TableRegistry::get('CsvMigrations.ImportResults');
         Assert::isInstanceOf($table, ImportResultsTable::class);
@@ -605,7 +607,7 @@ class ImportShell extends Shell
      * @param \Cake\Datasource\EntityInterface $entity Newly created Entity
      * @return bool
      */
-    protected function _importSuccess(ImportResult $importResult, EntityInterface $entity) : bool
+    protected function _importSuccess(ImportResult $importResult, EntityInterface $entity): bool
     {
         $table = TableRegistry::get('CsvMigrations.ImportResults');
         Assert::isInstanceOf($table, ImportResultsTable::class);

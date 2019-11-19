@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Utility;
 
 use Burzum\FileStorage\Model\Entity\FileStorage;
@@ -102,7 +104,7 @@ final class FileUpload
      * @param string $id Foreign key value (UUID)
      * @return \Cake\Datasource\ResultSetInterface
      */
-    public function getFiles(string $field, string $id) : ResultSetInterface
+    public function getFiles(string $field, string $id): ResultSetInterface
     {
         $query = $this->storageTable->find('all')
             ->where([self::FILE_STORAGE_FOREIGN_KEY => $id, 'model' => $this->table->getTable(), 'model_field' => $field])
@@ -123,7 +125,7 @@ final class FileUpload
      * @param string $field Field name
      * @return mixed[]
      */
-    private function getOrderClause(string $field) : array
+    private function getOrderClause(string $field): array
     {
         $className = App::shortName(get_class($this->table), 'Model/Table', 'Table');
         $config = (new ModuleConfig(ConfigType::FIELDS(), $className))->parse();
@@ -149,7 +151,7 @@ final class FileUpload
      * @param \Burzum\FileStorage\Model\Entity\FileStorage $entity FileStorage entity
      * @return \Burzum\FileStorage\Model\Entity\FileStorage
      */
-    private function attachThumbnails(FileStorage $entity) : FileStorage
+    private function attachThumbnails(FileStorage $entity): FileStorage
     {
         $entity->set('thumbnails', $this->getThumbnails($entity));
 
@@ -162,7 +164,7 @@ final class FileUpload
      * @param \Burzum\FileStorage\Model\Entity\FileStorage $entity File storage entity
      * @return string[]
      */
-    public function getThumbnails(FileStorage $entity) : array
+    public function getThumbnails(FileStorage $entity): array
     {
         $versions = (array)Configure::read('FileStorage.imageHashes.file_storage');
         if (empty($versions)) {
@@ -184,7 +186,7 @@ final class FileUpload
      * @param string $version Version name
      * @return string
      */
-    public function getThumbnail(FileStorage $entity, string $version) : string
+    public function getThumbnail(FileStorage $entity, string $version): string
     {
         $versions = (array)Configure::read('FileStorage.imageHashes.file_storage');
         if (empty($versions)) {
@@ -253,7 +255,7 @@ final class FileUpload
      * @param string $version Version name
      * @return string
      */
-    private function getImagePath(FileStorage $entity, string $version) : string
+    private function getImagePath(FileStorage $entity, string $version): string
     {
         $hash = (string)Configure::read(sprintf('FileStorage.imageHashes.file_storage.%s', $version));
         if (empty($hash)) {
@@ -286,7 +288,7 @@ final class FileUpload
      * @param string $version Version name
      * @return string
      */
-    private function getIconPath(FileStorage $entity, string $version) : string
+    private function getIconPath(FileStorage $entity, string $version): string
     {
         $imgSizes = (array)Configure::read(sprintf('FileStorage.imageSizes.%s', $entity->get('model')));
 
@@ -325,7 +327,7 @@ final class FileUpload
      *
      * @return \Cake\View\Helper\UrlHelper
      */
-    private function getUrlHelper() : UrlHelper
+    private function getUrlHelper(): UrlHelper
     {
         if (null === $this->urlHelper) {
             $this->urlHelper = new UrlHelper(new View());
@@ -343,7 +345,7 @@ final class FileUpload
      * @param mixed[] $files Uploaded files info
      * @return \Burzum\FileStorage\Model\Entity\FileStorage[] $result
      */
-    public function saveAll(string $field, array $files) : array
+    public function saveAll(string $field, array $files): array
     {
         if (empty($files)) {
             return [];
@@ -376,7 +378,7 @@ final class FileUpload
      * @param mixed[] $file Uploaded file info
      * @return \Burzum\FileStorage\Model\Entity\FileStorage|null New entity or null on unsuccesful attempts.
      */
-    public function save(string $field, array $file) : ?FileStorage
+    public function save(string $field, array $file): ?FileStorage
     {
         $required = ['tmp_name', 'error', 'name', 'type', 'size'];
 
@@ -431,7 +433,7 @@ final class FileUpload
      * @param mixed[] $data Request data
      * @return int Returns count of the affected rows.
      */
-    public function link(string $id, array $data) : int
+    public function link(string $id, array $data): int
     {
         $ids = [];
         foreach ($this->getFileFields() as $field) {
@@ -453,7 +455,7 @@ final class FileUpload
      *
      * @return mixed[]
      */
-    private function getFileFields() : array
+    private function getFileFields(): array
     {
         $config = new ModuleConfig(ConfigType::MIGRATION(), $this->table->getAlias());
         $config = json_encode($config->parse());
@@ -484,7 +486,7 @@ final class FileUpload
      * @param string $field Field name
      * @return mixed[]
      */
-    private function getFileIdsByField(array $data, string $field) : array
+    private function getFileIdsByField(array $data, string $field): array
     {
         $result = Hash::extract($data, sprintf('%s.%s_ids', $this->table->getAlias(), $field));
         $result = empty($result) ? Hash::extract($data, sprintf('%s_ids', $field)) : $result;
@@ -500,7 +502,7 @@ final class FileUpload
      * @return bool
      * @todo seems like this code is no longer in use, even though it should, as it handles thumbnails removal.
      */
-    public function delete(string $id) : bool
+    public function delete(string $id): bool
     {
         $query = $this->storageTable->find('all', [
             'conditions' => [self::FILE_STORAGE_FOREIGN_KEY => $id]
@@ -526,7 +528,7 @@ final class FileUpload
      * @param \Burzum\FileStorage\Model\Entity\FileStorage $entity FileStorage entity
      * @return bool
      */
-    public function createThumbnails(FileStorage $entity) : bool
+    public function createThumbnails(FileStorage $entity): bool
     {
         return $this->handleThumbnails($entity, 'ImageVersion.createVersion');
     }
@@ -537,7 +539,7 @@ final class FileUpload
      * @param \Burzum\FileStorage\Model\Entity\FileStorage $entity FileStorage entity
      * @return bool
      */
-    public function removeThumbnails(FileStorage $entity) : bool
+    public function removeThumbnails(FileStorage $entity): bool
     {
         return $this->handleThumbnails($entity, 'ImageVersion.removeVersion');
     }
@@ -552,7 +554,7 @@ final class FileUpload
      * @param string $eventName Event name
      * @return bool
      */
-    private function handleThumbnails(FileStorage $entity, string $eventName) : bool
+    private function handleThumbnails(FileStorage $entity, string $eventName): bool
     {
         if (! in_array(strtolower($entity->get('extension')), self::IMAGE_EXTENSIONS)) {
             return false;

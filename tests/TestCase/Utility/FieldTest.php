@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Utility;
 
 use Cake\ORM\TableRegistry;
@@ -16,7 +17,7 @@ class FieldTest extends TestCase
      *
      * @return void
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
     }
@@ -26,12 +27,12 @@ class FieldTest extends TestCase
      *
      * @return void
      */
-    public function tearDown() : void
+    public function tearDown(): void
     {
         parent::tearDown();
     }
 
-    public function testGetLookup() : void
+    public function testGetLookup(): void
     {
         $table = TableRegistry::get('Articles');
 
@@ -39,14 +40,14 @@ class FieldTest extends TestCase
         $this->assertSame($expected, Field::getLookup($table));
     }
 
-    public function testGetLookupEmpty() : void
+    public function testGetLookupEmpty(): void
     {
         $table = TableRegistry::get('NonExistingTable');
 
         $this->assertSame([], Field::getLookup($table));
     }
 
-    public function testGetCsv() : void
+    public function testGetCsv(): void
     {
         $table = TableRegistry::get('Articles');
 
@@ -59,14 +60,14 @@ class FieldTest extends TestCase
         }
     }
 
-    public function testGetCsvEmpty() : void
+    public function testGetCsvEmpty(): void
     {
         $table = TableRegistry::get('NonExistingTable');
 
         $this->assertSame([], Field::getCsv($table));
     }
 
-    public function testGetCsvField() : void
+    public function testGetCsvField(): void
     {
         /** @var \CsvMigrations\FieldHandlers\CsvField */
         $result = Field::getCsvField(TableRegistry::get('Articles'), 'name');
@@ -76,24 +77,24 @@ class FieldTest extends TestCase
         $this->assertSame('string', $result->getType());
     }
 
-    public function testGetCsvFieldWithInvalidField() : void
+    public function testGetCsvFieldWithInvalidField(): void
     {
         $result = Field::getCsvField(TableRegistry::get('Articles'), 'non-existing-field');
 
         $this->assertNull($result);
     }
 
-    public function testGetVirtual() : void
+    public function testGetVirtual(): void
     {
         $this->assertSame(['name' => ['id', 'created']], Field::getVirtual(TableRegistry::get('Foo')));
     }
 
-    public function testGetVirtualEmpty() : void
+    public function testGetVirtualEmpty(): void
     {
         $this->assertSame([], Field::getVirtual(TableRegistry::get('Articles')));
     }
 
-    public function testGetCsvView() : void
+    public function testGetCsvView(): void
     {
         $expected = [
             ['Details', 'name', 'status'],
@@ -103,7 +104,7 @@ class FieldTest extends TestCase
         $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add'));
     }
 
-    public function testGetCsvViewWithIncludePluginModel() : void
+    public function testGetCsvViewWithIncludePluginModel(): void
     {
         $expected = [
             [
@@ -121,7 +122,7 @@ class FieldTest extends TestCase
         $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add', true));
     }
 
-    public function testGetCsvViewWithArrangeInPanels() : void
+    public function testGetCsvViewWithArrangeInPanels(): void
     {
         $expected = [
             'Details' => [
@@ -133,7 +134,7 @@ class FieldTest extends TestCase
         $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add', false, true));
     }
 
-    public function testGetCsvViewWithIncludePluginModelAndArrangeInPanels() : void
+    public function testGetCsvViewWithIncludePluginModelAndArrangeInPanels(): void
     {
         $expected = [
             'Details' => [
@@ -151,12 +152,12 @@ class FieldTest extends TestCase
         $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add', true, true));
     }
 
-    public function testGetCsvViewEmpty() : void
+    public function testGetCsvViewEmpty(): void
     {
         $this->assertSame([], Field::getCsvView(TableRegistry::get('NonExistingTable'), 'add', true, true));
     }
 
-    public function testGetList() : void
+    public function testGetList(): void
     {
         $expected = [
             'one' => [
@@ -172,7 +173,7 @@ class FieldTest extends TestCase
         $this->assertSame($expected, Field::getList('list'));
     }
 
-    public function testGetListWithModule() : void
+    public function testGetListWithModule(): void
     {
         $expected = [
             'one' => [
@@ -188,7 +189,7 @@ class FieldTest extends TestCase
         $this->assertSame($expected, Field::getList('Common.list'));
     }
 
-    public function testGetListWithChildren() : void
+    public function testGetListWithChildren(): void
     {
         $expected = [
             'first_level_1' => [
@@ -216,7 +217,7 @@ class FieldTest extends TestCase
         $this->assertSame($expected, Field::getList('nested'));
     }
 
-    public function testGetListWithChildrenFlatten() : void
+    public function testGetListWithChildrenFlatten(): void
     {
         $expected = [
             'first_level_1' => [
@@ -240,7 +241,7 @@ class FieldTest extends TestCase
         $this->assertSame($expected, Field::getList('nested', true));
     }
 
-    public function testGetListEmpty() : void
+    public function testGetListEmpty(): void
     {
         $this->assertSame([], Field::getList('non-existing-list'));
     }

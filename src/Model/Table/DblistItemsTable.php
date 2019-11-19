@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Model\Table;
 
 use Cake\Datasource\QueryInterface;
@@ -40,7 +42,7 @@ class DblistItemsTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config) : void
+    public function initialize(array $config): void
     {
         parent::initialize($config);
 
@@ -64,7 +66,7 @@ class DblistItemsTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator) : Validator
+    public function validationDefault(Validator $validator): Validator
     {
         $validator
             ->uuid('id')
@@ -92,7 +94,7 @@ class DblistItemsTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules) : RulesChecker
+    public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['dblist_id'], 'Dblists'));
         $rules->add(
@@ -116,7 +118,7 @@ class DblistItemsTable extends Table
      * @param mixed[] $options Query options
      * @return \Cake\Datasource\QueryInterface
      */
-    public function findTreeEntities(QueryInterface $query, array $options) : QueryInterface
+    public function findTreeEntities(QueryInterface $query, array $options): QueryInterface
     {
         $query = $query->where(['dblist_id' => $options['listId']])
             ->order(['lft' => 'asc']);

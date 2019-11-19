@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Shell\Task;
 
 use Bake\Shell\Task\BakeTask;
@@ -79,7 +81,7 @@ class CsvRelationTask extends BakeTask
      * @param string $path Modules root path
      * @return string[]
      */
-    private function selection(string $path) : array
+    private function selection(string $path): array
     {
         $modules = $this->getModules($path);
         if (empty($modules)) {
@@ -101,7 +103,7 @@ class CsvRelationTask extends BakeTask
      * @param string $path Modules root path
      * @return string[]
      */
-    private function getModules(string $path) : array
+    private function getModules(string $path): array
     {
         $result = [];
         foreach (Utility::findDirs($path) as $module) {
@@ -121,7 +123,7 @@ class CsvRelationTask extends BakeTask
      * @param string $module Module name
      * @return bool
      */
-    private function isModule(string $module) : bool
+    private function isModule(string $module): bool
     {
         $config = (new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]))->parse();
         $config = json_encode($config);
@@ -154,7 +156,7 @@ class CsvRelationTask extends BakeTask
      * @param string[] $selection User input
      * @return string[]
      */
-    private function normalize(array $selection) : array
+    private function normalize(array $selection): array
     {
         $result = [];
         foreach ($selection as $module) {
@@ -174,7 +176,7 @@ class CsvRelationTask extends BakeTask
      * @param string $path Modules root path
      * @return void
      */
-    private function validate(string $name, string $path) : void
+    private function validate(string $name, string $path): void
     {
         if (! ctype_alpha($name)) {
             $this->abort(sprintf('Invalid Relation name provided: %s', $name));
@@ -192,7 +194,7 @@ class CsvRelationTask extends BakeTask
      * @param string $path Modules root path
      * @return bool
      */
-    private function bakeModuleConfig(array $selection, string $path) : bool
+    private function bakeModuleConfig(array $selection, string $path): bool
     {
         reset($selection);
         $this->BakeTemplate->set(['display_field' => $this->_modelKey(current($selection))]);
@@ -210,7 +212,7 @@ class CsvRelationTask extends BakeTask
      * @param string $path Modules root path
      * @return bool
      */
-    private function bakeDatabaseConfig(array $selection, string $path) : bool
+    private function bakeDatabaseConfig(array $selection, string $path): bool
     {
         $fields = [
             'id' => [

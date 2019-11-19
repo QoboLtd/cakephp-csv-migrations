@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Aggregator;
 
 use RuntimeException;
@@ -43,7 +44,7 @@ abstract class AbstractAggregator implements AggregatorInterface
      *
      * @return bool
      */
-    public function validate() : bool
+    public function validate(): bool
     {
         $table = $this->getConfig()->getTable();
         foreach ([$this->config->getField(), $this->config->getDisplayField()] as $field) {
@@ -62,7 +63,7 @@ abstract class AbstractAggregator implements AggregatorInterface
      *
      * @return \CsvMigrations\Aggregator\Configuration
      */
-    final public function getConfig() : Configuration
+    final public function getConfig(): Configuration
     {
         return $this->config;
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Config;
 
 use InvalidArgumentException;
@@ -31,7 +33,7 @@ class ConfigFactory
      * @param mixed[] $options Configuration options
      * @return \CsvMigrations\FieldHandlers\Config\ConfigInterface
      */
-    public static function getByType(string $type, string $field, $table = '', array $options = []) : ConfigInterface
+    public static function getByType(string $type, string $field, $table = '', array $options = []): ConfigInterface
     {
         $configClass = __NAMESPACE__ . '\\' . ucfirst($type) . 'Config';
         if (!class_exists($configClass)) {

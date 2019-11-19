@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Validation;
 
 use Cake\TestSuite\TestCase;

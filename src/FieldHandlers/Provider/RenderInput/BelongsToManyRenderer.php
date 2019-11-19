@@ -52,7 +52,7 @@ class BelongsToManyRenderer extends AbstractRenderer
         }
 
         $entity = $options['entity'];
-        $entityClass = $table->entityClass();
+        $entityClass = $table->getEntityClass();
         $isNew = !(is_object($entity) && $entity instanceof $entityClass);
         $optionsSelected = [];
         if (!$isNew) {

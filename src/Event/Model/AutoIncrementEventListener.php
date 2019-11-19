@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,13 +10,16 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Event\Model;
 
 use ArrayObject;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\EntityTrait;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\ORM\Entity;
 use Cake\Utility\Inflector;
 use CsvMigrations\Table;
 use Qobo\Utils\ModuleConfig\ConfigType;
@@ -24,6 +28,8 @@ use Webmozart\Assert\Assert;
 
 class AutoIncrementEventListener implements EventListenerInterface
 {
+    use EntityTrait;
+
     /**
      * Implemented Events
      *
@@ -44,7 +50,7 @@ class AutoIncrementEventListener implements EventListenerInterface
      * @param  \ArrayObject $options entity options
      * @return void
      */
-    public function autoIncrementFieldValue(Event $event, EntityInterface $entity, ArrayObject $options) : void
+    public function autoIncrementFieldValue(Event $event, EntityInterface $entity, ArrayObject $options): void
     {
         $table = $event->getSubject();
 
@@ -62,7 +68,8 @@ class AutoIncrementEventListener implements EventListenerInterface
         // skip modifying auto-increment field(s) on existing records.
         if (! $entity->isNew()) {
             foreach (array_keys($fields) as $field) {
-                $entity->unsetProperty((string)$field);
+                Assert::isInstanceOf($entity, Entity::class);
+                $entity->set((string)$field, $entity->getOriginal((string)$field));
             }
 
             return;
@@ -104,7 +111,7 @@ class AutoIncrementEventListener implements EventListenerInterface
      * @param \CsvMigrations\Table $table Table instance
      * @return mixed[]
      */
-    private function getAutoIncrementFields(Table $table) : array
+    private function getAutoIncrementFields(Table $table): array
     {
         $moduleName = Inflector::camelize($table->getTable());
         $mc = new ModuleConfig(ConfigType::FIELDS(), $moduleName);

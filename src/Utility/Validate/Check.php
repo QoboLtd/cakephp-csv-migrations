@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Utility\Validate;
 
 use Cake\Core\Configure;
@@ -29,7 +31,7 @@ class Check
      * @param string $checkClass Name of the check class
      * @return \CsvMigrations\Utility\Validate\Check\CheckInterface
      */
-    public static function getInstance(string $checkClass) : CheckInterface
+    public static function getInstance(string $checkClass): CheckInterface
     {
         $checkClass = $checkClass;
 
@@ -54,7 +56,7 @@ class Check
      * @param string $module Module name
      * @return mixed[]
      */
-    public static function getList(string $module) : array
+    public static function getList(string $module): array
     {
         $default = Configure::read('CsvMigrations.ValidateShell.module._default');
         $result = Configure::read('CsvMigrations.ValidateShell.module.' . $module);

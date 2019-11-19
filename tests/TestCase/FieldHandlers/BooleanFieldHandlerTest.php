@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
@@ -14,13 +15,13 @@ class BooleanFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
         $this->fh = new FieldHandler($config);
     }
 
-    public function testRenderInput() : void
+    public function testRenderInput(): void
     {
         $result = $this->fh->renderInput('');
 
@@ -31,7 +32,7 @@ class BooleanFieldHandlerTest extends TestCase
         $this->assertContains('value="1"', $result);
     }
 
-    public function testFieldToDb() : void
+    public function testFieldToDb(): void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
@@ -50,7 +51,7 @@ class BooleanFieldHandlerTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function getValues() : array
+    public function getValues(): array
     {
         return [
             [null, 'No', 'Null'],
@@ -66,13 +67,13 @@ class BooleanFieldHandlerTest extends TestCase
      * @dataProvider getValues
      * @param mixed $value
      */
-    public function testRenderValue($value, string $expected, string $description) : void
+    public function testRenderValue($value, string $expected, string $description): void
     {
         $result = $this->fh->renderValue($value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 
-    public function testGetSearchOptions() : void
+    public function testGetSearchOptions(): void
     {
         $result = $this->fh->getSearchOptions();
 

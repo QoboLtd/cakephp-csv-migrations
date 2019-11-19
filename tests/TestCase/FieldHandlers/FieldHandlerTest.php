@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
@@ -16,19 +17,19 @@ class FieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
         $this->fh = new FieldHandler($config);
     }
 
-    public function testInterface() : void
+    public function testInterface(): void
     {
         $this->assertFalse(empty($this->fh), "FieldHandler is empty");
         $this->assertTrue($this->fh instanceof FieldHandlerInterface, "FieldHandler does not implement FieldHandlerInterface");
     }
 
-    public function testGetConfig() : void
+    public function testGetConfig(): void
     {
         $result = $this->fh->getConfig();
 
@@ -38,12 +39,12 @@ class FieldHandlerTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testRenderValueMissingRendererException() : void
+    public function testRenderValueMissingRendererException(): void
     {
         $result = $this->fh->renderValue('test', ['renderAs' => 'thisRendererDoesNotExist']);
     }
 
-    public function testGetSearchOptions() : void
+    public function testGetSearchOptions(): void
     {
         $result = $this->fh->getSearchOptions();
         $this->assertTrue(is_array($result), "getSearchOptions() returned a non-array result");

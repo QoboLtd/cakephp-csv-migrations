@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Utility\Validate\Check;
 
 interface CheckInterface
@@ -20,19 +22,19 @@ interface CheckInterface
      * @param mixed[] $options Check options
      * @return int Number of encountered errors
      */
-    public function run(string $module, array $options = []) : int;
+    public function run(string $module, array $options = []): int;
 
     /**
      * Get errors
      *
      * @return string[] List of errors
      */
-    public function getErrors() : array;
+    public function getErrors(): array;
 
     /**
      * Get warnings
      *
      * @return string[] List of warnings
      */
-    public function getWarnings() : array;
+    public function getWarnings(): array;
 }

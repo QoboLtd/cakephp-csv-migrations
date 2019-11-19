@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Utility;
 
 use Cake\TestSuite\TestCase;
@@ -8,7 +9,7 @@ class PanelTest extends TestCase
 {
     protected $config;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -19,14 +20,14 @@ class PanelTest extends TestCase
         ];
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->config);
 
         parent::tearDown();
     }
 
-    public function testgetName() : void
+    public function testgetName(): void
     {
         $panel = new Panel('Foobar', $this->config);
         $this->assertEquals('Foobar', $panel->getName());
@@ -35,13 +36,13 @@ class PanelTest extends TestCase
     /**
      * @expectedException RuntimeException
      */
-    public function testSetNameException() : void
+    public function testSetNameException(): void
     {
         $panel = new Panel('Foobar', $this->config);
         $panel->setName();
     }
 
-    public function testGetExpression() : void
+    public function testGetExpression(): void
     {
         $panel = new Panel('Foobar', $this->config);
         $result = $panel->getExpression();
@@ -55,7 +56,7 @@ class PanelTest extends TestCase
         $this->assertNotContains(Panel::EXP_TOKEN, $result, 'Expression contains tokens');
     }
 
-    public function testGetFields() : void
+    public function testGetFields(): void
     {
         $panel = new Panel('Foobar', $this->config);
         $result = $panel->getFields();
@@ -69,12 +70,12 @@ class PanelTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testSetFields() : void
+    public function testSetFields(): void
     {
         $panel = new Panel('Foobar', ['panels' => ['Foobar' => '(this is not a valid expression)']]);
     }
 
-    public function testGetFieldValues() : void
+    public function testGetFieldValues(): void
     {
         $panel = new Panel('Foobar', $this->config);
         $data = ['type' => 'company', 'name' => 'amazon', 'dummy' => 'foo'];
@@ -92,7 +93,7 @@ class PanelTest extends TestCase
      * @dataProvider evalExpressionScenariosProvider
      * @param mixed[] $data
      */
-    public function testEvalExpression(string $scenario, string $expression, array $data, bool $expected) : void
+    public function testEvalExpression(string $scenario, string $expression, array $data, bool $expected): void
     {
         $panelName = 'Foobar';
         $config['panels']['Foobar'] = $expression;
@@ -104,7 +105,7 @@ class PanelTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function evalExpressionScenariosProvider() : array
+    public function evalExpressionScenariosProvider(): array
     {
         return [
             [
@@ -140,7 +141,7 @@ class PanelTest extends TestCase
         ];
     }
 
-    public function testGetPanels() : void
+    public function testGetPanels(): void
     {
         $config['panels']['Company'] = "(%%type%% == 'individual')";
         $config['panels']['Personal'] = "(%%type%% == 'company')";
@@ -154,5 +155,52 @@ class PanelTest extends TestCase
         $expected = [];
 
         $this->assertEquals($expected, $actual, 'On an empty config, the function should return an empty array.');
+    }
+
+    /**
+     * Test expression evaluation with extra objects.
+     *
+     * @dataProvider evalExpressionScenariosWithExtrasProvider
+     * @param string $scenario Scenario name
+     * @param string $expression Expression to evaluate
+     * @param mixed[] $data Fields data
+     * @param mixed[] $extras Extra objects to be passed to expression evaluator
+     * @param bool $expected Expected result
+     * @return void
+     */
+    public function testEvalExpressionWithExtras(string $scenario, string $expression, array $data, array $extras, bool $expected): void
+    {
+        $panelName = 'Foobar';
+        $config['panels']['Foobar'] = $expression;
+        $panel = new Panel($panelName, $config);
+        $this->assertEquals($expected, $panel->evalExpression($data, $extras), sprintf('%s - Expression evaluation failed', $scenario));
+        unset($panel);
+    }
+
+    /**
+     * Helper method for checking value in {@link self::testEvalExpressionWithExtras()}
+     *
+     * @param mixed $foo Value of foo
+     * @return bool True if bar
+     */
+    public function isReallyBar($foo): bool
+    {
+        return $foo === 'bar';
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function evalExpressionScenariosWithExtrasProvider(): array
+    {
+        return [
+            [
+                'Scenario 1 - Call function on custom object',
+                "%%hello%% == 'world' && object.isReallyBar(%%foo%%)",
+                ['foo' => 'bar', 'hello' => 'world'],
+                ['object' => $this],
+                true
+            ],
+        ];
     }
 }

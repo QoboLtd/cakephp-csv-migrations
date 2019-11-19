@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Shell;
 
 use Cake\Console\ConsoleIo;
@@ -48,7 +49,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
         $io = new ConsoleIo(new ConsoleOutput());
@@ -61,7 +62,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->ImportShell);
 
@@ -73,7 +74,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function testGetOptionParser() : void
+    public function testGetOptionParser(): void
     {
         $parser = $this->ImportShell->getOptionParser();
 
@@ -86,7 +87,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function testMain() : void
+    public function testMain(): void
     {
         $table = TableRegistry::getTableLocator()->get('Articles');
         $initialCount = $table->find()->count();
@@ -150,7 +151,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function testMainWithInvalidDates() : void
+    public function testMainWithInvalidDates(): void
     {
         TableRegistry::getTableLocator()->get('CsvMigrations.ImportResults')->deleteAll([]);
 

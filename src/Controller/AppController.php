@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Controller;
 
 deprecationWarning(
@@ -199,7 +201,7 @@ class AppController extends BaseController
      * @return \Cake\Datasource\EntityInterface
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When the record is not found
      */
-    protected function fetchEntity(string $id) : EntityInterface
+    protected function fetchEntity(string $id): EntityInterface
     {
         $table = $this->loadModel();
         Assert::isInstanceOf($table, Table::class);
@@ -245,7 +247,7 @@ class AppController extends BaseController
      * @param mixed[] $options Patch options
      * @return \Cake\Http\Response|null
      */
-    protected function persistEntity(EntityInterface $entity, array $data, array $options = []) : ?Response
+    protected function persistEntity(EntityInterface $entity, array $data, array $options = []): ?Response
     {
         $table = $this->loadModel();
         Assert::isInstanceOf($table, Table::class);
@@ -499,7 +501,7 @@ class AppController extends BaseController
      *
      * @return string
      */
-    protected function getBatchRedirectUrl() : string
+    protected function getBatchRedirectUrl(): string
     {
         // default url
         $result = ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index'];

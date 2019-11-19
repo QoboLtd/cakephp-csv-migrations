@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations;
 
 use ArrayObject;
@@ -80,7 +82,7 @@ class Table extends BaseTable implements HasFieldsInterface
      * @param \Cake\Validation\Validator $validator Validator instance
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator) : Validator
+    public function validationDefault(Validator $validator): Validator
     {
         // configurable in config/csv_migrations.php
         if (! Configure::read('CsvMigrations.tableValidation')) {
@@ -96,7 +98,7 @@ class Table extends BaseTable implements HasFieldsInterface
      * @param \Cake\Validation\Validator $validator Validator instance
      * @return \Cake\Validation\Validator
      */
-    public function validationEnabled(Validator $validator) : Validator
+    public function validationEnabled(Validator $validator): Validator
     {
         $className = App::shortName(get_class($this), 'Model/Table', 'Table');
         $config = (new ModuleConfig(ConfigType::MIGRATION(), $className))->parse();
@@ -122,7 +124,7 @@ class Table extends BaseTable implements HasFieldsInterface
      * @param \ArrayObject $options from the parent afterSave
      * @return void
      */
-    public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options) : void
+    public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options): void
     {
         EventManager::instance()->dispatch(new Event(
             (string)EventName::MODEL_AFTER_SAVE(),
@@ -162,7 +164,7 @@ class Table extends BaseTable implements HasFieldsInterface
      * @param mixed[] $stubFields Stub fields
      * @return mixed[] Associative array of fields and their definitions
      */
-    public function getFieldsDefinitions(array $stubFields = []) : array
+    public function getFieldsDefinitions(array $stubFields = []): array
     {
         $result = [];
 
@@ -209,7 +211,7 @@ class Table extends BaseTable implements HasFieldsInterface
      *
      * @return mixed[] $result containing CakePHP-standard array for redirect.
      */
-    public function getParentRedirectUrl(RepositoryInterface $table, EntityInterface $entity) : array
+    public function getParentRedirectUrl(RepositoryInterface $table, EntityInterface $entity): array
     {
         $config = (new ModuleConfig(ConfigType::MODULE(), $this->getAlias()))->parse();
         if (! isset($config->parent)) {
@@ -256,7 +258,7 @@ class Table extends BaseTable implements HasFieldsInterface
      *
      * @return mixed[]
      */
-    public function enablePrimaryKeyAccess() : array
+    public function enablePrimaryKeyAccess(): array
     {
         $result = [];
         foreach ($this->associations() as $association) {

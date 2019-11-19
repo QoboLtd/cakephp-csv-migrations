@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use CsvMigrations\FieldHandlers\Config\CountryConfig;
@@ -9,7 +10,7 @@ class CountryRendererTest extends TestCase
 {
     protected $renderer;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = new CountryConfig('list');
         $this->renderer = new CountryRenderer($config);
@@ -18,7 +19,7 @@ class CountryRendererTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function basicValues() : array
+    public function basicValues(): array
     {
         return [
             ['cy', 'Cyprus']
@@ -28,7 +29,7 @@ class CountryRendererTest extends TestCase
     /**
      * @dataProvider basicValues
      */
-    public function testRenderValue(string $value, string $label) : void
+    public function testRenderValue(string $value, string $label): void
     {
         $result = $this->renderer->provide($value, ['listItems' => [$value => $label]]);
         $expected = sprintf(CountryRenderer::ICON_HTML, strtolower($value), $label);
@@ -39,7 +40,7 @@ class CountryRendererTest extends TestCase
     /**
      * @dataProvider basicValues
      */
-    public function testRenderValueNotFound(string $value, string $label) : void
+    public function testRenderValueNotFound(string $value, string $label): void
     {
         $result = $this->renderer->provide('ru', ['listItems' => [$value => $label]]);
         $expected = sprintf(CountryRenderer::VALUE_NOT_FOUND_HTML, 'ru');

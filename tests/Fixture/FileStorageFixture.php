@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\Fixture;
 
 use Burzum\FileStorage\Test\Fixture\FileStorageFixture as BaseFixture;

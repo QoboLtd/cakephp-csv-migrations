@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Utility\ICal;
 
 use Eluceo\iCal\Component\Calendar;
@@ -48,7 +50,7 @@ class IcCalendar
      * @param \Eluceo\iCal\Component\Calendar $calendar Calendar instance to set
      * @return void
      */
-    public function setCalendar(Calendar $calendar) : void
+    public function setCalendar(Calendar $calendar): void
     {
         $this->calendar = $calendar;
     }
@@ -58,7 +60,7 @@ class IcCalendar
      *
      * @return \Eluceo\iCal\Component\Calendar
      */
-    public function getCalendar() : Calendar
+    public function getCalendar(): Calendar
     {
         return $this->calendar;
     }
@@ -69,7 +71,7 @@ class IcCalendar
      * @param \Eluceo\iCal\Component\Event $event Event to add
      * @return void
      */
-    public function addEvent(Event $event) : void
+    public function addEvent(Event $event): void
     {
         $this->calendar->addComponent($event);
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations;
 
 interface HasFieldsInterface
@@ -22,5 +24,5 @@ interface HasFieldsInterface
      * @param mixed[] $stubFields Stub fields
      * @return mixed[] Associative array of fields and their definitions
      */
-    public function getFieldsDefinitions(array $stubFields = []) : array;
+    public function getFieldsDefinitions(array $stubFields = []): array;
 }

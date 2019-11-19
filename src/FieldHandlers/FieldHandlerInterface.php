@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\Validation\Validator;
@@ -34,7 +36,7 @@ interface FieldHandlerInterface
      *
      * @return \CsvMigrations\FieldHandlers\Config\ConfigInterface
      */
-    public function getConfig() : ConfigInterface;
+    public function getConfig(): ConfigInterface;
 
     /**
      * Config instance setter
@@ -42,7 +44,7 @@ interface FieldHandlerInterface
      * @param \CsvMigrations\FieldHandlers\Config\ConfigInterface $config Instance of field handler config
      * @return void
      */
-    public function setConfig(ConfigInterface $config) : void;
+    public function setConfig(ConfigInterface $config): void;
 
     /**
      * Render field input
@@ -56,7 +58,7 @@ interface FieldHandlerInterface
      * @param mixed[] $options Field options
      * @return string Field input HTML
      */
-    public function renderInput($data = '', array $options = []) : string;
+    public function renderInput($data = '', array $options = []): string;
 
     /**
      * Get options for field search
@@ -68,7 +70,7 @@ interface FieldHandlerInterface
      * @param mixed[] $options Field options
      * @return mixed[] Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function getSearchOptions(array $options = []) : array;
+    public function getSearchOptions(array $options = []): array;
 
     /**
      * Render field value
@@ -81,14 +83,14 @@ interface FieldHandlerInterface
      * @param mixed[] $options Field options
      * @return string Field value
      */
-    public function renderValue($data, array $options = []) : string;
+    public function renderValue($data, array $options = []): string;
 
     /**
      * Render field name
      *
      * @return string
      */
-    public function renderName() : string;
+    public function renderName(): string;
 
     /**
      * Convert CsvField to one or more DbField instances
@@ -100,7 +102,7 @@ interface FieldHandlerInterface
      * @param \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return \CsvMigrations\FieldHandlers\CsvField[]
      */
-    public static function fieldToDb(CsvField $csvField) : array;
+    public static function fieldToDb(CsvField $csvField): array;
 
     /**
      * Validation rules setter.
@@ -111,5 +113,5 @@ interface FieldHandlerInterface
      * @param mixed[] $options Field options
      * @return \Cake\Validation\Validator
      */
-    public function setValidationRules(Validator $validator, array $options = []) : Validator;
+    public function setValidationRules(Validator $validator, array $options = []): Validator;
 }

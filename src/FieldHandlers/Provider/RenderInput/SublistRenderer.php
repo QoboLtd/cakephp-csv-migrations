@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
 
 /**
@@ -69,7 +71,7 @@ class SublistRenderer extends AbstractRenderer
      * @param mixed[] $options List options
      * @return mixed[]
      */
-    protected function _dynamicSelectStructure(array $options) : array
+    protected function _dynamicSelectStructure(array $options): array
     {
         $result = [];
         foreach ($options as $k => $v) {

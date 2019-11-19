@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Event\Model;
 
 use BadMethodCallException;
@@ -82,7 +84,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      * @param \Cake\Datasource\EntityInterface $entity from the afterSave
      * @return mixed[] Associative array with tried emails as keys and results as values
      */
-    public function sendCalendarReminder(Event $event, EntityInterface $entity) : array
+    public function sendCalendarReminder(Event $event, EntityInterface $entity): array
     {
         /**
          * Get Table instance from the event.
@@ -107,8 +109,6 @@ class ModelAfterSaveListener implements EventListenerInterface
         // figure out which field is a reminder one (example: start_date)
         $reminderField = $this->getReminderField($table);
         if ('' === $reminderField) {
-            $this->log('Failed to find reminder fields', LogLevel::NOTICE);
-
             return [];
         }
 
@@ -181,7 +181,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      * @param \Cake\Datasource\RepositoryInterface $table Table to check
      * @return string[] List of modules
      */
-    protected function getRemindersToModules(RepositoryInterface $table) : array
+    protected function getRemindersToModules(RepositoryInterface $table): array
     {
         $config = (new ModuleConfig(ConfigType::MODULE(), $table->getRegistryAlias()))->parseToArray();
         if (empty($config['table']['allow_reminders'])) {
@@ -207,7 +207,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      * @param \Cake\Datasource\RepositoryInterface $table Table to use
      * @return string First reminder field name
      */
-    protected function getReminderField(RepositoryInterface $table) : string
+    protected function getReminderField(RepositoryInterface $table): string
     {
         $config = (new ModuleConfig(ConfigType::MIGRATION(), $table->getRegistryAlias()))->parse();
 
@@ -234,7 +234,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      * @param string[] $modules Reminder to modules
      * @return string[]
      */
-    protected function getAttendeesFields(Table $table, array $modules) : array
+    protected function getAttendeesFields(Table $table, array $modules): array
     {
         $associations = [];
         foreach ($table->associations() as $association) {
@@ -275,7 +275,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      * @param \Cake\ORM\Table $table Table instance
      * @return bool
      */
-    protected function isRequiredModified(EntityInterface $entity, array $requiredFields, Table $table) : bool
+    protected function isRequiredModified(EntityInterface $entity, array $requiredFields, Table $table): bool
     {
         Assert::isInstanceOf($entity, \Cake\ORM\Entity::class);
 
@@ -313,7 +313,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      * @param string[] $fields Attendees fields
      * @return string[]
      */
-    protected function getAttendees(CsvTable $table, EntityInterface $entity, array $fields) : array
+    protected function getAttendees(CsvTable $table, EntityInterface $entity, array $fields): array
     {
         try {
             $assignedEntities = $this->getAssignedAssociations($table, $entity, $fields);
@@ -352,7 +352,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      * @param string[] $fields Attendees fields
      * @return \Cake\Datasource\EntityInterface[] $entities
      */
-    public function getAssignedAssociations(Table $table, EntityInterface $entity, array $fields) : array
+    public function getAssignedAssociations(Table $table, EntityInterface $entity, array $fields): array
     {
         $result = [];
         foreach ($table->associations() as $association) {
@@ -395,7 +395,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      * @param string $startField Entity field to use for event start time
      * @return mixed[]
      */
-    protected function getEventOptions(CsvTable $table, EntityInterface $entity, string $startField) : array
+    protected function getEventOptions(CsvTable $table, EntityInterface $entity, string $startField): array
     {
         // Event start and end times
         $eventTimes = $this->getEventTime($entity, $startField);
@@ -426,7 +426,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      * @param string $startField Entity field to use for event start time
      * @return mixed[] Associative array of DateTimeZone instances for start and end
      */
-    protected function getEventTime(EntityInterface $entity, string $startField) : array
+    protected function getEventTime(EntityInterface $entity, string $startField): array
     {
         // Application timezone
         $dtz = new DateTimeZone(DTZone::getAppTimeZone());

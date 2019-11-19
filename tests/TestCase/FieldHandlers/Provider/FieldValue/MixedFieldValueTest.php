@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\FieldValue;
 
 use Cake\Http\ServerRequest;
@@ -10,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class MixedFieldValueTest extends TestCase
 {
-    public function testProvide() : void
+    public function testProvide(): void
     {
         $field = 'foobar';
         $config = new StringConfig($field);
@@ -35,7 +36,7 @@ class MixedFieldValueTest extends TestCase
         $this->assertEquals('blah', $result, "Data provider did not return correct data from Entity");
     }
 
-    public function testConstruct() : void
+    public function testConstruct(): void
     {
         $field = 'foobar';
         $config = new StringConfig($field);

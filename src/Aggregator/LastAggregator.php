@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Aggregator;
 
 use Cake\Datasource\EntityInterface;
@@ -10,7 +11,7 @@ final class LastAggregator extends AbstractAggregator
     /**
      * {@inheritDoc}
      */
-    public function validate() : bool
+    public function validate(): bool
     {
         return parent::validate();
     }
@@ -18,7 +19,7 @@ final class LastAggregator extends AbstractAggregator
     /**
      * {@inheritDoc}
      */
-    public function applyConditions(QueryInterface $query) : QueryInterface
+    public function applyConditions(QueryInterface $query): QueryInterface
     {
         return $this->getConfig()->getField() === $this->getConfig()->getDisplayField() ?
             $this->applyConditionsWithMax($query) :
@@ -33,7 +34,7 @@ final class LastAggregator extends AbstractAggregator
      * @return \Cake\Datasource\QueryInterface
      * @link https://stackoverflow.com/a/19411219/2562232
      */
-    private function applyConditionsWithOrder(QueryInterface $query) : QueryInterface
+    private function applyConditionsWithOrder(QueryInterface $query): QueryInterface
     {
         $table = $this->getConfig()->getTable();
 
@@ -53,7 +54,7 @@ final class LastAggregator extends AbstractAggregator
      * @return \Cake\Datasource\QueryInterface
      * @link https://stackoverflow.com/a/426785/2562232
      */
-    private function applyConditionsWithMax(QueryInterface $query) : QueryInterface
+    private function applyConditionsWithMax(QueryInterface $query): QueryInterface
     {
         $table = $this->getConfig()->getTable();
 

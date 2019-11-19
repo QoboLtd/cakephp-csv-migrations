@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Utility\Validate;
 
 use Cake\TestSuite\TestCase;
@@ -10,7 +11,7 @@ use CsvMigrations\Utility\Validate\Check\CheckInterface;
  */
 class CheckTest extends TestCase
 {
-    public function testGetInstance() : void
+    public function testGetInstance(): void
     {
         $checks = Check::getList('Users');
         // This is just a safety net in case test setup changes
@@ -29,7 +30,7 @@ class CheckTest extends TestCase
     /**
      * @expectedException \RuntimeException
      */
-    public function testGetInstanceExceptionMissingClass() : void
+    public function testGetInstanceExceptionMissingClass(): void
     {
         $result = Check::getInstance('this class does not exist');
     }
@@ -37,12 +38,12 @@ class CheckTest extends TestCase
     /**
      * @expectedException \RuntimeException
      */
-    public function testGetInstanceExceptionBadInterface() : void
+    public function testGetInstanceExceptionBadInterface(): void
     {
         $result = Check::getInstance(__CLASS__);
     }
 
-    public function testGetList() : void
+    public function testGetList(): void
     {
         $result = Check::getList('Users');
         $this->assertTrue(is_array($result), "getList() returned a non-array result");

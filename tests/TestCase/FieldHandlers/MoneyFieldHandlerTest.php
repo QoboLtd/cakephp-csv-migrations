@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use Cake\ORM\Entity;
@@ -17,13 +18,13 @@ class MoneyFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
         $this->fh = new FieldHandler($config);
     }
 
-    public function testRenderValue() : void
+    public function testRenderValue(): void
     {
         $options['entity'] = new Entity(['field_money_amount' => 150, 'field_money_currency' => 'EUR']);
         $options['fieldDefinitions'] = new CsvField([
@@ -39,7 +40,7 @@ class MoneyFieldHandlerTest extends TestCase
         $this->assertEquals('150.00&nbsp;<span title="Euro">€&nbsp;(EUR)</span>', $result);
     }
 
-    public function testRenderInput() : void
+    public function testRenderInput(): void
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
@@ -66,7 +67,7 @@ class MoneyFieldHandlerTest extends TestCase
         }
     }
 
-    public function testFieldToDb() : void
+    public function testFieldToDb(): void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => 'money(money)']);
         $fh = $this->fh;
@@ -91,7 +92,7 @@ class MoneyFieldHandlerTest extends TestCase
         $this->assertEquals(255, $result[$fieldName]->getLimit(), "fieldToDb() did not return correct limit for DbField instance");
     }
 
-    public function testGetSearchOptions() : void
+    public function testGetSearchOptions(): void
     {
         $result = $this->fh->getSearchOptions();
         $this->assertTrue(is_array($result), "getSearchOptions() did not return an array");

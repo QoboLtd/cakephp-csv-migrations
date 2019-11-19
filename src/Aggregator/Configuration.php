@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Aggregator;
 
 use Cake\Datasource\EntityInterface;
@@ -65,7 +66,7 @@ final class Configuration
      *
      * @return bool
      */
-    public function joinMode() : bool
+    public function joinMode(): bool
     {
         return null !== $this->joinTable;
     }
@@ -75,7 +76,7 @@ final class Configuration
      *
      * @return \Cake\ORM\Table
      */
-    public function getTable() : Table
+    public function getTable(): Table
     {
         return $this->table;
     }
@@ -85,7 +86,7 @@ final class Configuration
      *
      * @return string
      */
-    public function getField() : string
+    public function getField(): string
     {
         return $this->field;
     }
@@ -95,7 +96,7 @@ final class Configuration
      *
      * @return string
      */
-    public function getDisplayField() : string
+    public function getDisplayField(): string
     {
         if ('' === trim($this->displayField)) {
             return $this->field;
@@ -110,7 +111,7 @@ final class Configuration
      * @param string $displayField Display field name
      * @return self
      */
-    public function setDisplayField(string $displayField) : self
+    public function setDisplayField(string $displayField): self
     {
         $this->displayField = $displayField;
 
@@ -122,7 +123,7 @@ final class Configuration
      *
      * @return \Cake\ORM\Table
      */
-    public function getJoinTable() : Table
+    public function getJoinTable(): Table
     {
         if ($this->joinTable instanceof Table) {
             return $this->joinTable;
@@ -136,7 +137,7 @@ final class Configuration
      *
      * @return \Cake\Datasource\EntityInterface
      */
-    public function getEntity() : EntityInterface
+    public function getEntity(): EntityInterface
     {
         if ($this->entity instanceof EntityInterface) {
             return $this->entity;
@@ -152,7 +153,7 @@ final class Configuration
      * @param \Cake\Datasource\EntityInterface $entity Entity instance from join table
      * @return self
      */
-    public function setJoinData(Table $table, EntityInterface $entity) : self
+    public function setJoinData(Table $table, EntityInterface $entity): self
     {
         $entityClass = $table->getEntityClass();
         if (! $entity instanceof $entityClass) {

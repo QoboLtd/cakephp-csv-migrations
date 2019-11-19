@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
@@ -14,7 +15,7 @@ class IntegerFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
         $this->fh = new FieldHandler($config);
@@ -23,7 +24,7 @@ class IntegerFieldHandlerTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function getValues() : array
+    public function getValues(): array
     {
         return [
             [true, '1', 'Boolean true'],
@@ -43,13 +44,13 @@ class IntegerFieldHandlerTest extends TestCase
      * @param mixed $value
      * @param mixed $expected
      */
-    public function testRenderValue($value, $expected, string $description) : void
+    public function testRenderValue($value, $expected, string $description): void
     {
         $result = $this->fh->renderValue($value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 
-    public function testFieldToDb() : void
+    public function testFieldToDb(): void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
@@ -65,7 +66,7 @@ class IntegerFieldHandlerTest extends TestCase
         $this->assertEquals($this->type, $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
     }
 
-    public function testGetSearchOptions() : void
+    public function testGetSearchOptions(): void
     {
         $result = $this->fh->getSearchOptions();
 

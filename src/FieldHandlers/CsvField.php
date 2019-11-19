@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers;
 
 use InvalidArgumentException;
@@ -161,7 +163,7 @@ class CsvField
      *
      * @return mixed[]
      */
-    protected function _getDefaults() : array
+    protected function _getDefaults(): array
     {
         $result = [
             static::FIELD_TYPE => static::DEFAULT_FIELD_TYPE,
@@ -189,7 +191,7 @@ class CsvField
      * @param  string $type field type
      * @return string       field type
      */
-    protected function _extractType(string $type) : string
+    protected function _extractType(string $type): string
     {
         if (preg_match(static::PATTERN_TYPE, $type, $matches)) {
             if (! empty($matches[1])) {
@@ -234,7 +236,7 @@ class CsvField
      * @param string $name field name
      * @return void
      */
-    public function setName(string $name) : void
+    public function setName(string $name): void
     {
         if (empty($name)) {
             throw new InvalidArgumentException('Empty field name is not allowed');
@@ -248,7 +250,7 @@ class CsvField
      *
      * @return string
      */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->_name;
     }
@@ -260,7 +262,7 @@ class CsvField
      * @param  string $type field type
      * @return void
      */
-    public function setType(string $type) : void
+    public function setType(string $type): void
     {
         if (empty($type)) {
             throw new InvalidArgumentException('Empty field type is not allowed: ' . $this->getName());
@@ -274,7 +276,7 @@ class CsvField
      *
      * @return string
      */
-    public function getType() : string
+    public function getType(): string
     {
         return $this->_type;
     }
@@ -291,7 +293,7 @@ class CsvField
      * @param int|string|null $limit field limit
      * @return void
      */
-    public function setLimit($limit) : void
+    public function setLimit($limit): void
     {
         if ($limit === null) {
             $this->_limit = $limit;
@@ -331,7 +333,7 @@ class CsvField
      * @see CsvField::getLimit
      * @return string
      */
-    public function getListName() : string
+    public function getListName(): string
     {
         return (string)$this->getLimit();
     }
@@ -344,7 +346,7 @@ class CsvField
      * @see CsvField::getLimit
      * @return string
      */
-    public function getAssocCsvModule() : string
+    public function getAssocCsvModule(): string
     {
         return (string)$this->getLimit();
     }
@@ -355,7 +357,7 @@ class CsvField
      * @param mixed $required field required flag
      * @return void
      */
-    public function setRequired($required) : void
+    public function setRequired($required): void
     {
         $this->_required = (bool)$required;
     }
@@ -365,7 +367,7 @@ class CsvField
      *
      * @return bool
      */
-    public function getRequired() : bool
+    public function getRequired(): bool
     {
         return $this->_required;
     }
@@ -376,7 +378,7 @@ class CsvField
      * @param mixed $nonSearchable Field non-searchable flag
      * @return void
      */
-    public function setNonSearchable($nonSearchable) : void
+    public function setNonSearchable($nonSearchable): void
     {
         $this->_nonSearchable = (bool)$nonSearchable;
     }
@@ -386,7 +388,7 @@ class CsvField
      *
      * @return bool
      */
-    public function getNonSearchable() : bool
+    public function getNonSearchable(): bool
     {
         return $this->_nonSearchable;
     }
@@ -397,7 +399,7 @@ class CsvField
      * @param mixed $unique field unique flag
      * @return void
      */
-    public function setUnique($unique) : void
+    public function setUnique($unique): void
     {
         $this->_unique = (bool)$unique;
     }
@@ -407,7 +409,7 @@ class CsvField
      *
      * @return bool
      */
-    public function getUnique() : bool
+    public function getUnique(): bool
     {
         return $this->_unique;
     }

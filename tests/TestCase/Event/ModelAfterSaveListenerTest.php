@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Event;
 
 use Cake\Event\Event;
@@ -27,7 +28,7 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
         'plugin.csv_migrations.users',
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
         // Setup Articles table
@@ -41,7 +42,7 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
         $this->Users = TableRegistry::get('Users', $config);
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->Articles);
         unset($this->Users);
@@ -49,7 +50,7 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
         parent::tearDown();
     }
 
-    public function testSendCalendarReminderNonTable() : void
+    public function testSendCalendarReminderNonTable(): void
     {
         $event = new Event('CsvMigrations.Model.afterSave', $this);
         $entity = new Entity();
@@ -59,7 +60,7 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
         $this->assertTrue(empty($result), "sendCalendarReminder() returned a non-empty result");
     }
 
-    public function testSendCalendarReminderNonCsvTable() : void
+    public function testSendCalendarReminderNonCsvTable(): void
     {
         $event = new Event('CsvMigrations.Model.afterSave', $this->Users);
         $entity = $this->Users->find('all')->firstOrFail();
@@ -69,7 +70,7 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
         $this->assertTrue(empty($result), "sendCalendarReminder() returned a non-empty result");
     }
 
-    public function testSendCalendarReminderTableNoConfig() : void
+    public function testSendCalendarReminderTableNoConfig(): void
     {
         $event = new Event('CsvMigrations.Model.afterSave', $this->Articles);
         $entity = $this->Articles->find('all')->firstOrFail();
@@ -79,7 +80,7 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
         $this->assertTrue(empty($result), "sendCalendarReminder() returned a non-empty result");
     }
 
-    public function testSendCalendarReminderGoodAttempt() : void
+    public function testSendCalendarReminderGoodAttempt(): void
     {
         // FIXME : Figure out why this is not loaded from configuration
         $this->Leads->belongsTo('Users', [

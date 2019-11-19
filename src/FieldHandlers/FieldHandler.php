@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\Event\Event;
@@ -58,7 +60,7 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return \CsvMigrations\FieldHandlers\Config\ConfigInterface
      */
-    public function getConfig() : ConfigInterface
+    public function getConfig(): ConfigInterface
     {
         return $this->config;
     }
@@ -69,7 +71,7 @@ class FieldHandler implements FieldHandlerInterface
      * @param \CsvMigrations\FieldHandlers\Config\ConfigInterface $config Instance of field handler config
      * @return void
      */
-    public function setConfig(ConfigInterface $config) : void
+    public function setConfig(ConfigInterface $config): void
     {
         $this->config = $config;
     }
@@ -82,7 +84,7 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return void
      */
-    protected function setDefaultOptions() : void
+    protected function setDefaultOptions(): void
     {
         $this->setDefaultFieldOptions();
         $this->setDefaultFieldDefinitions();
@@ -98,7 +100,7 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return void
      */
-    protected function setDefaultFieldOptions() : void
+    protected function setDefaultFieldOptions(): void
     {
         $table = $this->config->getTable();
         $field = $this->config->getField();
@@ -119,7 +121,7 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return void
      */
-    protected function setDefaultLabel() : void
+    protected function setDefaultLabel(): void
     {
         $this->defaultOptions['label'] = $this->renderName();
     }
@@ -129,7 +131,7 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return void
      */
-    protected function setDefaultFieldDefinitions() : void
+    protected function setDefaultFieldDefinitions(): void
     {
         $table = $this->config->getTable();
         $field = $this->config->getField();
@@ -160,7 +162,7 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return void
      */
-    protected function setDefaultValue() : void
+    protected function setDefaultValue(): void
     {
         if (empty($this->defaultOptions['default'])) {
             return;
@@ -194,7 +196,7 @@ class FieldHandler implements FieldHandlerInterface
      * @param mixed[] $options Options to fix
      * @return mixed[] Fixed options
      */
-    protected function fixOptions(array $options = []) : array
+    protected function fixOptions(array $options = []): array
     {
         $result = $options;
         if (empty($result)) {
@@ -237,7 +239,7 @@ class FieldHandler implements FieldHandlerInterface
      * @param  array  $options Field options
      * @return string          Field input HTML
      */
-    public function renderInput($data = '', array $options = []) : string
+    public function renderInput($data = '', array $options = []): string
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
 
@@ -270,7 +272,7 @@ class FieldHandler implements FieldHandlerInterface
      * @param  array  $options Field options
      * @return array           Array of field input HTML, pre and post CSS, JS, etc
      */
-    public function getSearchOptions(array $options = []) : array
+    public function getSearchOptions(array $options = []): array
     {
         $result = [];
 
@@ -294,7 +296,7 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return string
      */
-    public function renderName() : string
+    public function renderName(): string
     {
         $label = !empty($this->defaultOptions['label']) ? $this->defaultOptions['label'] : '';
 
@@ -316,7 +318,7 @@ class FieldHandler implements FieldHandlerInterface
      * @param  array  $options Field options
      * @return string          Field value
      */
-    public function renderValue($data, array $options = []) : string
+    public function renderValue($data, array $options = []): string
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
         $result = $this->getFieldValueFromData($data, $options);
@@ -350,7 +352,7 @@ class FieldHandler implements FieldHandlerInterface
      * @param array $options Field options
      * @return \Cake\Validation\Validator
      */
-    public function setValidationRules(Validator $validator, array $options = []) : Validator
+    public function setValidationRules(Validator $validator, array $options = []): Validator
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
 
@@ -375,7 +377,7 @@ class FieldHandler implements FieldHandlerInterface
      * @param  \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return array                                           DbField instances
      */
-    public static function fieldToDb(CsvField $csvField) : array
+    public static function fieldToDb(CsvField $csvField): array
     {
         $config = ConfigFactory::getByType($csvField->getType(), $csvField->getName());
         $fieldToDb = $config->getProvider('fieldToDb');
@@ -390,7 +392,7 @@ class FieldHandler implements FieldHandlerInterface
      *
      * @return string
      */
-    public function getDbFieldType() : string
+    public function getDbFieldType(): string
     {
         $dbFieldType = $this->config->getProvider('dbFieldType');
         $dbFieldType = new $dbFieldType($this->config);

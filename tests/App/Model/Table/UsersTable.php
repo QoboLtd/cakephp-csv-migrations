@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\App\Model\Table;
 
 use Cake\ORM\Table;
@@ -11,7 +12,7 @@ class UsersTable extends Table
 {
     use AssociationsAwareTrait;
 
-    public function initialize(array $config) : void
+    public function initialize(array $config): void
     {
         parent::initialize($config);
 

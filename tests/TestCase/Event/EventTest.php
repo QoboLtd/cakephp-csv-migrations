@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Event;
 
 use Cake\Event\EventListenerInterface;
@@ -34,7 +35,7 @@ class EventTest extends IntegrationTestCase
      *
      * @return mixed[]
      */
-    public function classProvider() : array
+    public function classProvider(): array
     {
         $result = [];
 
@@ -74,7 +75,7 @@ class EventTest extends IntegrationTestCase
      *
      * @dataProvider classProvider
      */
-    public function testEvents(string $class) : void
+    public function testEvents(string $class): void
     {
         $reflection = new ReflectionClass($class);
         // Avoid checking abstract classes, interfaces, and the like

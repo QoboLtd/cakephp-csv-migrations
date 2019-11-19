@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use Cake\I18n\Date;
@@ -16,13 +17,13 @@ class TimeFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
         $this->fh = new FieldHandler($config);
     }
 
-    public function testFieldToDb() : void
+    public function testFieldToDb(): void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
@@ -41,7 +42,7 @@ class TimeFieldHandlerTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function getValues() : array
+    public function getValues(): array
     {
         return [
             ['2017-07-06 14:20:00', '2017-07-06 14:20:00', 'Date time string'],
@@ -58,13 +59,13 @@ class TimeFieldHandlerTest extends TestCase
      * @param mixed $value
      * @param mixed $expected
      */
-    public function testRenderValue($value, $expected, string $description) : void
+    public function testRenderValue($value, $expected, string $description): void
     {
         $result = $this->fh->renderValue($value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 
-    public function testRenderInput() : void
+    public function testRenderInput(): void
     {
         $result = $this->fh->renderInput('13:30:00');
         $this->assertContains('name="' . $this->table . '[' . $this->field . ']"', $result);
@@ -72,21 +73,21 @@ class TimeFieldHandlerTest extends TestCase
         $this->assertContains('value="13:30:00"', $result);
     }
 
-    public function testRenderInputWithTimeObject() : void
+    public function testRenderInputWithTimeObject(): void
     {
         $result = $this->fh->renderInput(new Time('13:30:00'));
 
         $this->assertContains('value="13:30"', $result);
     }
 
-    public function testRenderInputWithDateObject() : void
+    public function testRenderInputWithDateObject(): void
     {
         $result = $this->fh->renderInput(new Date('13:30:00'));
 
         $this->assertContains('value="00:00"', $result);
     }
 
-    public function testGetSearchOptions() : void
+    public function testGetSearchOptions(): void
     {
         $result = $this->fh->getSearchOptions();
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
@@ -14,13 +15,13 @@ class DecimalFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
         $this->fh = new FieldHandler($config);
     }
 
-    public function testFieldToDb() : void
+    public function testFieldToDb(): void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => 'decimal(12.4)']);
         $fh = $this->fh;
@@ -42,7 +43,7 @@ class DecimalFieldHandlerTest extends TestCase
         $this->assertEquals(true, $options['null']);
     }
 
-    public function testFieldToDbNoLimit() : void
+    public function testFieldToDbNoLimit(): void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => 'decimal']);
         $fh = $this->fh;
@@ -54,7 +55,7 @@ class DecimalFieldHandlerTest extends TestCase
         $this->assertEquals('2', $options['scale']);
     }
 
-    public function testFieldToDbWrongLimit() : void
+    public function testFieldToDbWrongLimit(): void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => 'decimal(15)']);
         $fh = $this->fh;
@@ -69,7 +70,7 @@ class DecimalFieldHandlerTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function getValues() : array
+    public function getValues(): array
     {
         return [
             [true, '1.00', 'Boolean true'],
@@ -91,13 +92,13 @@ class DecimalFieldHandlerTest extends TestCase
      * @param mixed $value
      * @param mixed $expected
      */
-    public function testRenderValue($value, $expected, string $description) : void
+    public function testRenderValue($value, $expected, string $description): void
     {
         $result = $this->fh->renderValue($value, []);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
     }
 
-    public function testGetSearchOptions() : void
+    public function testGetSearchOptions(): void
     {
         $result = $this->fh->getSearchOptions();
 

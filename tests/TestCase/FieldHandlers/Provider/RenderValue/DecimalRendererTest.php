@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use CsvMigrations\FieldHandlers\Config\DecimalConfig;
@@ -10,13 +11,13 @@ class DecimalRendererTest extends TestCase
 {
     protected $renderer;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = new DecimalConfig('decimal');
         $this->renderer = new DecimalRenderer($config);
     }
 
-    public function testInterface() : void
+    public function testInterface(): void
     {
         $implementedInterfaces = array_keys(class_implements($this->renderer));
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\Provider\ProviderInterface', $implementedInterfaces), "ProviderInterface is not implemented");
@@ -25,7 +26,7 @@ class DecimalRendererTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function getValues() : array
+    public function getValues(): array
     {
         return [
             [true, '1.00', 'Boolean true'],
@@ -47,7 +48,7 @@ class DecimalRendererTest extends TestCase
      * @param mixed $value
      * @param mixed $expected
      */
-    public function testRenderValue($value, $expected, string $description) : void
+    public function testRenderValue($value, $expected, string $description): void
     {
         $result = $this->renderer->provide($value);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
@@ -56,7 +57,7 @@ class DecimalRendererTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testRenderValueException() : void
+    public function testRenderValueException(): void
     {
         $result = $this->renderer->provide(new stdClass());
     }

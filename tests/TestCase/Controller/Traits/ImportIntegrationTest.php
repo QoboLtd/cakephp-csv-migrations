@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Controller\Traits;
 
 use Cake\ORM\ResultSet;
@@ -25,7 +26,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         'plugin.csv_migrations.import_results'
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -34,7 +35,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         $this->session(['Auth.User.id' => '00000000-0000-0000-0000-000000000001']);
     }
 
-    public function testImportGet() : void
+    public function testImportGet(): void
     {
         $this->get('/articles/import');
 
@@ -47,7 +48,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         $this->assertFalse($existingImports->isEmpty());
     }
 
-    public function testImportGetExisting() : void
+    public function testImportGetExisting(): void
     {
         $this->get('/articles/import/00000000-0000-0000-0000-000000000001');
 
@@ -59,7 +60,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         $this->assertEquals(['Name', 'Author', 'Status', 'Featured', 'Date'], $this->viewVariable('headers'));
     }
 
-    public function testImportGetExistingMapped() : void
+    public function testImportGetExistingMapped(): void
     {
         $this->get('/articles/import/00000000-0000-0000-0000-000000000002');
 
@@ -72,7 +73,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         $this->assertEquals(0, $this->viewVariable('importCount'));
     }
 
-    public function testImportPost() : void
+    public function testImportPost(): void
     {
         $this->markTestSkipped();
 
@@ -101,7 +102,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         $this->assertSession('Please choose a file to upload', 'Flash.flash.0.message');
     }
 
-    public function testImportPostWithoutFile() : void
+    public function testImportPostWithoutFile(): void
     {
         $data = [];
         $this->post('/articles/import', $data);
@@ -110,7 +111,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         $this->assertSession('Please choose a file to upload.', 'Flash.flash.0.message');
     }
 
-    public function testImportPostInvalidFile() : void
+    public function testImportPostInvalidFile(): void
     {
         $data = [
             'file' => [
@@ -123,7 +124,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         $this->assertSession('Unable to upload file, unsupported file provided.', 'Flash.flash.0.message');
     }
 
-    public function testImportPut() : void
+    public function testImportPut(): void
     {
         $id = '00000000-0000-0000-0000-000000000001';
         $data = [

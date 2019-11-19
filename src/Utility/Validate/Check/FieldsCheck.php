@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Utility\Validate\Check;
 
 use CsvMigrations\Utility\Validate\Utility;
@@ -26,7 +28,7 @@ class FieldsCheck extends AbstractCheck
      * @param array $options Check options
      * @return int Number of encountered errors
      */
-    public function run(string $module, array $options = []) : int
+    public function run(string $module, array $options = []): int
     {
         $mc = $this->getModuleConfig($module, $options);
         try {

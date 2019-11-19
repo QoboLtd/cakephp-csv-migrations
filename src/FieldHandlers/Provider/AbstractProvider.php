@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider;
 
 use CsvMigrations\FieldHandlers\Config\ConfigInterface;
@@ -43,7 +45,7 @@ abstract class AbstractProvider implements ProviderInterface
      * @param mixed[] $options Options to pass to the element
      * @return string
      */
-    protected function renderElement(string $name, array $options = []) : string
+    protected function renderElement(string $name, array $options = []): string
     {
         return $this->config->getView()
             ->element($name, $options);

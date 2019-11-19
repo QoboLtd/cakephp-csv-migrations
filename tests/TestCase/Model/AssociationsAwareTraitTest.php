@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Model;
 
 use Cake\ORM\Association\BelongsTo;
@@ -11,7 +12,7 @@ use Webmozart\Assert\Assert;
 
 class AssociationsAwareTraitTest extends TestCase
 {
-    public function setUp() : void
+    public function setUp(): void
     {
         // clear table registry to avoid ambiguous table instances during test runs
         TableRegistry::clear();
@@ -20,7 +21,7 @@ class AssociationsAwareTraitTest extends TestCase
     /**
      * @dataProvider associationNameProvider
      */
-    public function testCreateAssociationName(string $expected, string $module, string $foreignKey) : void
+    public function testCreateAssociationName(string $expected, string $module, string $foreignKey): void
     {
         $this->assertEquals($expected, AssociationsAwareTrait::generateAssociationName($module, $foreignKey));
     }
@@ -28,7 +29,7 @@ class AssociationsAwareTraitTest extends TestCase
     /**
      * @dataProvider associationsProvider
      */
-    public function testAssociations(string $table, string $name, string $type, string $joinTable = '') : void
+    public function testAssociations(string $table, string $name, string $type, string $joinTable = ''): void
     {
         $association = TableRegistry::get($table)->getAssociation($name);
 
@@ -44,7 +45,7 @@ class AssociationsAwareTraitTest extends TestCase
      *
      * @return void
      */
-    public function testAssociationsStrict() : void
+    public function testAssociationsStrict(): void
     {
         $data = [];
         // normalize data
@@ -61,7 +62,7 @@ class AssociationsAwareTraitTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function associationNameProvider() : array
+    public function associationNameProvider(): array
     {
         return [
             ['BarFoo', 'Foo', 'bar'],
@@ -76,7 +77,7 @@ class AssociationsAwareTraitTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function associationsProvider() : array
+    public function associationsProvider(): array
     {
         return [
             ['Articles', 'AuthorAuthors', BelongsTo::class],

@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Config;
 
 use CsvMigrations\FieldHandlers\Config\Config;
@@ -11,7 +12,7 @@ class StringConfigTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function invalidProvidersProvider() : array
+    public function invalidProvidersProvider(): array
     {
         return [
             // empty config
@@ -28,7 +29,7 @@ class StringConfigTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function validProvidersProvider() : array
+    public function validProvidersProvider(): array
     {
         return [
             [['searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\StringSearchOperators']],
@@ -40,7 +41,7 @@ class StringConfigTest extends TestCase
      * @dataProvider validProvidersProvider
      * @expectedException \InvalidArgumentException
      */
-    public function testSetProvidersException(array $providers) : void
+    public function testSetProvidersException(array $providers): void
     {
         $configInstance = new StringConfig('foo');
         $configInstance->setProviders($providers);
@@ -51,20 +52,20 @@ class StringConfigTest extends TestCase
      * @dataProvider invalidProvidersProvider
      * @expectedException \InvalidArgumentException
      */
-    public function testValidateProvidersException(array $providers) : void
+    public function testValidateProvidersException(array $providers): void
     {
         $configInstance = new StringConfig('foo');
         $configInstance->validateProviders($providers);
     }
 
-    public function testConstruct() : void
+    public function testConstruct(): void
     {
         $configInstance = new StringConfig('foo');
         $this->assertTrue(is_object($configInstance), "Failed to instantiate StringConfig object");
         $this->assertTrue($configInstance instanceof ConfigInterface, "StringConfig instance does not implement ConfigInterface");
     }
 
-    public function testGetProviders() : void
+    public function testGetProviders(): void
     {
         $configInstance = new StringConfig('foo');
         $actualProviders = $configInstance->getProviders();

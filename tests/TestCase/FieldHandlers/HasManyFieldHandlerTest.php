@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
@@ -14,13 +15,13 @@ class HasManyFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
         $this->fh = new FieldHandler($config);
     }
 
-    public function testFieldToDb() : void
+    public function testFieldToDb(): void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
@@ -36,7 +37,7 @@ class HasManyFieldHandlerTest extends TestCase
         $this->assertEquals('uuid', $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
     }
 
-    public function testGetSearchOptions() : void
+    public function testGetSearchOptions(): void
     {
         $result = $this->fh->getSearchOptions();
         $this->assertTrue(is_array($result), "getSearchOptions() did not return an array");

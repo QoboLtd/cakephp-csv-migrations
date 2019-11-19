@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Utility;
 
 use Cake\ORM\TableRegistry;
@@ -19,7 +20,7 @@ class ImportTest extends TestCase
      *
      * @return void
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
     }
@@ -29,12 +30,12 @@ class ImportTest extends TestCase
      *
      * @return void
      */
-    public function tearDown() : void
+    public function tearDown(): void
     {
         parent::tearDown();
     }
 
-    public function testToDatatables() : void
+    public function testToDatatables(): void
     {
         $table = TableRegistry::get('CsvMigrations.ImportResults');
         $query = $table->find();
@@ -52,7 +53,7 @@ class ImportTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public function testActionButtons() : void
+    public function testActionButtons(): void
     {
         $articlesTable = TableRegistry::get('CsvMigrations.Articles');
         $table = TableRegistry::get('CsvMigrations.ImportResults');
@@ -68,7 +69,7 @@ class ImportTest extends TestCase
         $this->assertContains($expected, end($result[0]));
     }
 
-    public function testSetStatusLabels() : void
+    public function testSetStatusLabels(): void
     {
         $articlesTable = TableRegistry::get('CsvMigrations.Articles');
         $table = TableRegistry::get('CsvMigrations.ImportResults');

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Controller\Traits;
 
 use CsvMigrations\Utility\Panel;
@@ -35,7 +37,7 @@ trait PanelsTrait
      * @param mixed[] $extraObjects Extra objects to use in expression language
      * @return mixed[] Evaluated panel list.
      */
-    public function getPanels(array $config, array $data, array $extraObjects = []) : array
+    public function getPanels(array $config, array $data, array $extraObjects = []): array
     {
         $result = ['success' => [], 'fail' => []];
 

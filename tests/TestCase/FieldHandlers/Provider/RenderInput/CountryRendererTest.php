@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderInput;
 
 use Cake\ORM\TableRegistry;
@@ -26,7 +27,7 @@ class CountryRendererTest extends TestCase
     /**
      * Setup method
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->renderer = new CountryRenderer(new CountryConfig('list'));
         $this->entity = TableRegistry::get('foo')->get('00000000-0000-0000-0000-000000000001');
@@ -35,7 +36,7 @@ class CountryRendererTest extends TestCase
     /**
      * TearDown method
      */
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->entity);
         unset($this->renderer);
@@ -44,7 +45,7 @@ class CountryRendererTest extends TestCase
     /**
      * Test provide method that is success
      */
-    public function testProvide() : void
+    public function testProvide(): void
     {
         $options = [
             'entity' => $this->entity,

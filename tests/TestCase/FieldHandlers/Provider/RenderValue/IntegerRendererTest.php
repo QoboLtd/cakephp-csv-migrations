@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use CsvMigrations\FieldHandlers\Config\IntegerConfig;
@@ -10,13 +11,13 @@ class IntegerRendererTest extends TestCase
 {
     protected $renderer;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = new IntegerConfig('integer');
         $this->renderer = new IntegerRenderer($config);
     }
 
-    public function testInterface() : void
+    public function testInterface(): void
     {
         $implementedInterfaces = array_keys(class_implements($this->renderer));
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\Provider\ProviderInterface', $implementedInterfaces), "ProviderInterface is not implemented");
@@ -25,7 +26,7 @@ class IntegerRendererTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function getValues() : array
+    public function getValues(): array
     {
         return [
             [true, '1', 'Boolean true'],
@@ -45,7 +46,7 @@ class IntegerRendererTest extends TestCase
      * @dataProvider getValues
      * @param mixed $value
      */
-    public function testRenderValue($value, string $expected, string $description) : void
+    public function testRenderValue($value, string $expected, string $description): void
     {
         $result = $this->renderer->provide($value);
         $this->assertEquals($expected, $result, "Value rendering is broken for: $description");
@@ -54,7 +55,7 @@ class IntegerRendererTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testRenderValueException() : void
+    public function testRenderValueException(): void
     {
         $result = $this->renderer->provide(new stdClass());
     }

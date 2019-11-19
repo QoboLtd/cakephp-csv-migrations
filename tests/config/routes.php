@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\App\Config;
 
 use Cake\Routing\Router;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations;
 
 use Cake\Log\LogTrait;
@@ -103,7 +105,7 @@ class CsvMigration extends AbstractMigration
      * @param string $path JSON File path
      * @return \Migrations\Table
      */
-    public function csv(Table $table, string $path = '') : Table
+    public function csv(Table $table, string $path = ''): Table
     {
         $this->factory = new FieldHandlerFactory();
         $this->table = $table;
@@ -117,7 +119,7 @@ class CsvMigration extends AbstractMigration
      *
      * @return void
      */
-    private function handleCsv() : void
+    private function handleCsv(): void
     {
         $tableName = Inflector::pluralize(Inflector::classify($this->table->getName()));
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $tableName);
@@ -148,7 +150,7 @@ class CsvMigration extends AbstractMigration
      * @return mixed[]  phinx table instances
      * @deprecated 28.0.2 Kept for BC, already baked csv migration files are using this method. This should disappear after cakephp-migrations v2.
      */
-    public function joins(string $tableName) : array
+    public function joins(string $tableName): array
     {
         trigger_error(
             __METHOD__ . '() is deprecated. See https://github.com/QoboLtd/cakephp-csv-migrations/pull/535',
@@ -166,7 +168,7 @@ class CsvMigration extends AbstractMigration
      * @param bool $withSchema Schema inclusion flag
      * @return mixed[]|string[]
      */
-    public static function getRequiredFields(bool $withSchema = false) : array
+    public static function getRequiredFields(bool $withSchema = false): array
     {
         return $withSchema ? self::$_requiredFields : array_keys(self::$_requiredFields);
     }
@@ -178,7 +180,7 @@ class CsvMigration extends AbstractMigration
      * @param string $table Table name
      * @return void
      */
-    private function createFromCsv(array $data, string $table) : void
+    private function createFromCsv(array $data, string $table): void
     {
         foreach ($data as $col) {
             $csvField = new CsvField($col);
@@ -202,7 +204,7 @@ class CsvMigration extends AbstractMigration
      * @param \Phinx\Db\Table\Column[] $fields Existing table fields
      * @return void
      */
-    private function updateFromCsv(array $data, string $table, array $fields) : void
+    private function updateFromCsv(array $data, string $table, array $fields): void
     {
         $tableFields = [];
         // get existing table column names
@@ -243,7 +245,7 @@ class CsvMigration extends AbstractMigration
      * @param \CsvMigrations\FieldHandlers\DbField $dbField DbField object
      * @return void
      */
-    private function createColumn(DbField $dbField) : void
+    private function createColumn(DbField $dbField): void
     {
         $this->table->addColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
 
@@ -263,7 +265,7 @@ class CsvMigration extends AbstractMigration
      * @param \CsvMigrations\FieldHandlers\DbField $dbField DbField object
      * @return void
      */
-    private function updateColumn(DbField $dbField) : void
+    private function updateColumn(DbField $dbField): void
     {
         $this->table->changeColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
         // set field as unique
@@ -288,7 +290,7 @@ class CsvMigration extends AbstractMigration
      * @param bool $exists Table exists flag
      * @return void
      */
-    private function addIndexes(DbField $dbField, bool $exists = true) : void
+    private function addIndexes(DbField $dbField, bool $exists = true): void
     {
         if ('id' === $dbField->getName()) {
             return;
@@ -313,7 +315,7 @@ class CsvMigration extends AbstractMigration
      * @param bool $exists Table exists flag
      * @return void
      */
-    private function removeIndexes(DbField $dbField, bool $exists = true) : void
+    private function removeIndexes(DbField $dbField, bool $exists = true): void
     {
         if (! $exists) {
             return;
@@ -343,7 +345,7 @@ class CsvMigration extends AbstractMigration
      * @param bool $exists Table exists flag
      * @return bool
      */
-    private function addIndex(DbField $dbField, string $type, bool $exists = true) : bool
+    private function addIndex(DbField $dbField, string $type, bool $exists = true): bool
     {
         if (empty($type)) {
             return false;
@@ -371,7 +373,7 @@ class CsvMigration extends AbstractMigration
      * @param string $fieldName Table column name
      * @return void
      */
-    private function deleteColumn(string $fieldName) : void
+    private function deleteColumn(string $fieldName): void
     {
         $this->table->removeColumn($fieldName);
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Aggregator;
 
 use Cake\Datasource\EntityInterface;
@@ -18,7 +19,7 @@ final class AverageAggregator extends AbstractAggregator
     /**
      * {@inheritDoc}
      */
-    public function validate() : bool
+    public function validate(): bool
     {
         if (! parent::validate()) {
             return false;
@@ -45,7 +46,7 @@ final class AverageAggregator extends AbstractAggregator
     /**
      * {@inheritDoc}
      */
-    public function applyConditions(QueryInterface $query) : QueryInterface
+    public function applyConditions(QueryInterface $query): QueryInterface
     {
         $table = $this->getConfig()->getTable();
         Assert::isInstanceOf($query, Query::class);

@@ -32,7 +32,7 @@
         "qobo/cakephp-translations": "^10.0",
         "qobo/cakephp-utils": "^13.0",
         "league/commonmark": "^0.19",
-        "symfony/expression-language": "^3.1"
+        "symfony/expression-language": "^5.0"
     },
     "require-dev": {
         "qobo/cakephp-composer-dev": "^v1.0"

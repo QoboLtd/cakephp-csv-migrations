@@ -44,7 +44,7 @@ if (!$options['title']) {
         ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index']
     );
     $options['title'] .= ' &raquo; ';
-    $options['title'] .= __('Import fields mapping');
+    $options['title'] .= __d('Qobo/CsvMigrations', 'Import fields mapping');
 }
 
 sort($columns);
@@ -84,9 +84,9 @@ echo $this->Html->scriptBlock(
                 <?= $this->Form->create($import) ?>
                 <div class="visible-md visible-lg text-center">
                     <div class="row">
-                        <div class="col-md-3"><h4><?= __('Field') ?></h4></div>
-                        <div class="col-md-4"><h4><?= __('File Column') ?></h4></div>
-                        <div class="col-md-4"><h4><?= __('Default Value') ?></h4></div>
+                        <div class="col-md-3"><h4><?= __d('Qobo/CsvMigrations', 'Field') ?></h4></div>
+                        <div class="col-md-4"><h4><?= __d('Qobo/CsvMigrations', 'File Column') ?></h4></div>
+                        <div class="col-md-4"><h4><?= __d('Qobo/CsvMigrations', 'Default Value') ?></h4></div>
                     </div>
                 </div>
                 <?php foreach ($columns as $column) : ?>
@@ -136,7 +136,7 @@ echo $this->Html->scriptBlock(
                         </div>
                     </div>
                 <?php endforeach ?>
-                <?= $this->Form->button(__('Submit'), ['type' => 'submit', 'class' => 'btn btn-primary']) ?>
+                <?= $this->Form->button(__d('Qobo/CsvMigrations', 'Submit'), ['type' => 'submit', 'class' => 'btn btn-primary']) ?>
                 <?= $this->Form->end() ?>
                 </div>
             </div>

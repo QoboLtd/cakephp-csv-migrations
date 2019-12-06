@@ -35,7 +35,7 @@ if (!$options['title']) {
         ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index']
     );
     $options['title'] .= ' &raquo; ';
-    $options['title'] .= __('Import Data');
+    $options['title'] .= __d('Qobo/CsvMigrations', 'Import Data');
 }
 ?>
 <section class="content-header">
@@ -55,16 +55,16 @@ if (!$options['title']) {
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">
-                        <?= __('File upload') ?>
+                        <?= __d('Qobo/CsvMigrations', 'File upload') ?>
                     </h3>
                 </div>
                 <div class="box-body">
                 <?= $this->Form->create($import, ['type' => 'file']) ?>
                     <div class="form-group">
                         <?= $this->Form->file('file', ['required' => true]) ?>
-                        <p class="help-block"><?= __('Supported file types: .csv') ?></p>
+                        <p class="help-block"><?= __d('Qobo/CsvMigrations', 'Supported file types: .csv') ?></p>
                     </div>
-                    <?= $this->Form->button(__('Submit'), ['type' => 'submit', 'class' => 'btn btn-primary']) ?>
+                    <?= $this->Form->button(__d('Qobo/CsvMigrations', 'Submit'), ['type' => 'submit', 'class' => 'btn btn-primary']) ?>
                 <?= $this->Form->end() ?>
                 </div>
             </div>
@@ -76,18 +76,18 @@ if (!$options['title']) {
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">
-                        <?= __('Existing imports') ?>
+                        <?= __d('Qobo/CsvMigrations', 'Existing imports') ?>
                     </h3>
                 </div>
                 <div class="box-body">
                     <table id="progress-table" class="table table-hover table-condensed table-vertical-align" width="100%">
                         <thead>
                             <tr>
-                                <th><?= __('Filename'); ?></th>
-                                <th><?= __('Status'); ?></th>
-                                <th><?= __('Attempts'); ?></th>
-                                <th><?= __('Last attempt'); ?></th>
-                                <th class="actions"><?= __('Actions'); ?></th>
+                                <th><?= __d('Qobo/CsvMigrations', 'Filename'); ?></th>
+                                <th><?= __d('Qobo/CsvMigrations', 'Status'); ?></th>
+                                <th><?= __d('Qobo/CsvMigrations', 'Attempts'); ?></th>
+                                <th><?= __d('Qobo/CsvMigrations', 'Last attempt'); ?></th>
+                                <th class="actions"><?= __d('Qobo/CsvMigrations', 'Actions'); ?></th>
                             </tr>
                             <?php foreach ($existingImports as $existingImport) : ?>
                                 <tr>
@@ -107,7 +107,7 @@ if (!$options['title']) {
                                         <?= $this->Html->link(
                                             '<i class="fa fa-eye"></i>',
                                             ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'import', $existingImport->id],
-                                            ['title' => __('View'), 'class' => 'btn btn-default btn-sm', 'escape' => false]
+                                            ['title' => __d('Qobo/CsvMigrations', 'View'), 'class' => 'btn btn-default btn-sm', 'escape' => false]
                                         ); ?>
                                         </div>
                                     </td>

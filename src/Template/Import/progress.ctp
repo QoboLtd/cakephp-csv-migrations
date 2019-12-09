@@ -103,7 +103,7 @@ if (!$options['title']) {
     );
     $options['title'] .= ' &raquo; ';
     $options['title'] .= $this->Html->link(
-        __('Imports'),
+        __d('Qobo/CsvMigrations', 'Imports'),
         ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'import']
     );
     $options['title'] .= ' &raquo; ';
@@ -123,41 +123,41 @@ if (!$options['title']) {
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">
-                        <?= __('Import progress') ?>
+                        <?= __d('Qobo/CsvMigrations', 'Import progress') ?>
                     </h3>
                 </div>
                 <div class="box-body">
                     <dl class="dl-horizontal">
-                        <dt><?= __('Filename') ?></dt>
+                        <dt><?= __d('Qobo/CsvMigrations', 'Filename') ?></dt>
                         <dd><?= basename($import->get('filename')) ?></dd>
-                        <dt><?= __('Download') ?></dt>
+                        <dt><?= __d('Qobo/CsvMigrations', 'Download') ?></dt>
                         <dd><?= $originalLink ?>&emsp;&emsp;<?= $processedLink ?></dd>
-                        <dt><?= __('Status') ?></dt>
+                        <dt><?= __d('Qobo/CsvMigrations', 'Status') ?></dt>
                         <dd>
                             <span class="label label-<?= $statusLabels[$import->get('status')] ?>">
                                 <?= $import->get('status') ?>
                             </span>
                         </dd>
-                        <dt><?= __('Total rows') ?></dt>
+                        <dt><?= __d('Qobo/CsvMigrations', 'Total rows') ?></dt>
                         <dd><?= number_format($totalRows) ?></dd>
-                        <dt><?= __('Total records') ?></dt>
+                        <dt><?= __d('Qobo/CsvMigrations', 'Total records') ?></dt>
                         <dd><?= number_format($totalRecords) ?></dd>
-                        <dt><?= __('Imported records') ?></dt>
+                        <dt><?= __d('Qobo/CsvMigrations', 'Imported records') ?></dt>
                         <dd><span class="label label-success"><?= number_format($importCount) ?></span></dd>
-                        <dt><?= __('Pending records') ?></dt>
+                        <dt><?= __d('Qobo/CsvMigrations', 'Pending records') ?></dt>
                         <dd><span class="label label-warning"><?= number_format($pendingCount) ?></span></dd>
-                        <dt><?= __('Failed records') ?></dt>
+                        <dt><?= __d('Qobo/CsvMigrations', 'Failed records') ?></dt>
                         <dd><span class="label label-danger"><?= number_format($failCount) ?></span></dd>
-                        <dt><?= __('Attempts') ?></dt>
+                        <dt><?= __d('Qobo/CsvMigrations', 'Attempts') ?></dt>
                         <dd><?= $import->attempts ?> / <?= Configure::read('Importer.max_attempts') ?></dd>
-                        <dt><?= __('Created') ?></dt>
+                        <dt><?= __d('Qobo/CsvMigrations', 'Created') ?></dt>
                         <dd><?= $import->created->i18nFormat('yyyy-MM-dd HH:mm:ss') ?></dd>
-                        <dt><?= __('Last Attempt') ?></dt>
+                        <dt><?= __d('Qobo/CsvMigrations', 'Last Attempt') ?></dt>
                         <dd><?= $import->get('attempted_date') ?
                             $import->attempted_date->i18nFormat('yyyy-MM-dd HH:mm:ss') :
                             '-'
                         ?></dd>
-                        <dt><?= __('Modified') ?></dt>
+                        <dt><?= __d('Qobo/CsvMigrations', 'Modified') ?></dt>
                         <dd><?= $import->modified->i18nFormat('yyyy-MM-dd HH:mm:ss') ?></dd>
                     </dl>
                     <div class="progress">
@@ -174,10 +174,10 @@ if (!$options['title']) {
             <table id="progress-table" class="table table-hover table-condensed table-vertical-align" width="100%">
                 <thead>
                     <tr>
-                        <th><?= __('Row'); ?></th>
-                        <th><?= __('Status'); ?></th>
-                        <th><?= __('Status Message'); ?></th>
-                        <th><?= __('Actions'); ?></th>
+                        <th><?= __d('Qobo/CsvMigrations', 'Row'); ?></th>
+                        <th><?= __d('Qobo/CsvMigrations', 'Status'); ?></th>
+                        <th><?= __d('Qobo/CsvMigrations', 'Status Message'); ?></th>
+                        <th><?= __d('Qobo/CsvMigrations', 'Actions'); ?></th>
                     </tr>
                 </thead>
             </table>

@@ -33,7 +33,7 @@ $displayField = (new FieldHandlerFactory($this))->renderValue(
 $options = [
     'entity' => $entity,
     'fields' => $fields,
-    'title' => ['page' => __('Edit {0} ', $displayField), 'alias' => $alias, 'link' => $this->request->getParam('controller')],
+    'title' => ['page' => __d('Qobo/CsvMigrations', 'Edit {0} ', $displayField), 'alias' => $alias, 'link' => $this->request->getParam('controller')],
     'handlerOptions' => ['entity' => $entity],
     'hasPanels' => property_exists($config, 'panels')
 ];

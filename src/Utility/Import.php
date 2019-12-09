@@ -322,7 +322,7 @@ class Import
                 $entity->get('model_id')
             ];
             $link = $view->Html->link('<i class="fa fa-eye"></i>', $url, [
-                'title' => __('View'),
+                'title' => __d('Qobo/CsvMigrations', 'View'),
                 'class' => 'btn btn-default',
                 'escape' => false
             ]);

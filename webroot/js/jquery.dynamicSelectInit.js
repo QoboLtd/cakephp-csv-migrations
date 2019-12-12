@@ -22,7 +22,7 @@
                 var hide_next = $(this).data('hide-next');
                 var previous_default_value = $(this).data('previous-default-value');
                 var fieldWrapperElement = $(this).closest(".field-wrapper");
-                $(fieldWwrapperElement).dynamicSelect({
+                $(fieldWrapperElement).dynamicSelect({
                     structure: structure,
                     optionValues: option_values,
                     selectors: selectors,

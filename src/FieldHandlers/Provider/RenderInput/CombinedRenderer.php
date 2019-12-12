@@ -62,7 +62,7 @@ class CombinedRenderer extends AbstractRenderer
             'field' => $this->config->getField(),
             'label' => $label,
             'required' => $options['fieldDefinitions']->getRequired(),
-            'inputs' => $inputs
+            'inputs' => $inputs,
         ];
 
         $defaultElement = 'CsvMigrations.FieldHandlers/CombinedFieldHandler/input';

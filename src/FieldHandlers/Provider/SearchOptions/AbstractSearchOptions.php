@@ -71,7 +71,7 @@ abstract class AbstractSearchOptions extends AbstractProvider
         $result = $view->Form->control('{{name}}', [
             'value' => '{{value}}',
             'type' => $type,
-            'label' => false
+            'label' => false,
         ]);
 
         return $result;

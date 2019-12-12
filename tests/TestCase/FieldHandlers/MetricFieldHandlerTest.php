@@ -32,7 +32,7 @@ class MetricFieldHandlerTest extends TestCase
             'type' => 'metric(units_area)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderValue('', $options);
@@ -47,7 +47,7 @@ class MetricFieldHandlerTest extends TestCase
             'type' => 'metric(units_area)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderInput('', $options);

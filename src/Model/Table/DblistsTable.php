@@ -83,7 +83,7 @@ class DblistsTable extends Table
                 [
                     'rule' => 'validateUnique',
                     'provider' => 'table',
-                    'message' => __d('CsvMigrations', 'Name MUST be unique')
+                    'message' => __d('CsvMigrations', 'Name MUST be unique'),
                 ]
             );
 
@@ -128,7 +128,7 @@ class DblistsTable extends Table
         $treeOptions = [
             'keyPath' => 'value',
             'valuePath' => 'name',
-            'spacer' => ' - '
+            'spacer' => ' - ',
         ];
 
         Assert::isInstanceOf($entity, EntityInterface::class);

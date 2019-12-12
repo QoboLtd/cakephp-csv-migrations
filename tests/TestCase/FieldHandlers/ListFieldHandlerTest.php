@@ -61,7 +61,7 @@ class ListFieldHandlerTest extends TestCase
             'type' => 'list(countries)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderValue($value, $options);
@@ -76,7 +76,7 @@ class ListFieldHandlerTest extends TestCase
             'type' => 'list(nested)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderValue('first_level_1.second_level_1.third_level_1', $options);
@@ -91,7 +91,7 @@ class ListFieldHandlerTest extends TestCase
             'type' => 'list(countries)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderValue('non-existing-value', $options);
@@ -129,7 +129,7 @@ class ListFieldHandlerTest extends TestCase
             'type' => 'list(countries)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderInput('', $options);

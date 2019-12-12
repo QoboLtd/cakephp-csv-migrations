@@ -39,7 +39,7 @@ class CommonMarkRenderer extends AbstractRenderer
 
         $config = [
             'html_input' => 'escape',
-            'allow_unsafe_links' => false
+            'allow_unsafe_links' => false,
         ];
 
         $converter = new CommonMarkConverter($config);

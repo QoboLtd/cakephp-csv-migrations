@@ -3,6 +3,6 @@
 return [
     'Importer' => [
         'path' => WWW_ROOT . 'uploads' . DS . 'imports' . DS,
-        'max_attempts' => 3
-    ]
+        'max_attempts' => 3,
+    ],
 ];

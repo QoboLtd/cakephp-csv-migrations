@@ -43,13 +43,13 @@ class DblistsFixture extends TestFixture
             'id' => '35ded6f1-e886-4f3e-bcdd-47d9c55c3ce4',
             'name' => 'categories',
             'created' => '2016-09-06 08:31:12',
-            'modified' => '2016-09-06 08:31:12'
+            'modified' => '2016-09-06 08:31:12',
         ],
         [
             'id' => '35ded6f1-e886-4f3e-bcdd-47d9c55c3ce5',
             'name' => 'companies',
             'created' => '2016-09-06 08:31:12',
-            'modified' => '2016-09-06 08:31:12'
+            'modified' => '2016-09-06 08:31:12',
         ],
     ];
 }

@@ -281,7 +281,7 @@ trait AssociationsAwareTrait
                 'joinTable' => Inflector::tableize($module),
                 'className' => $first->getAssocCsvModule(),
                 'foreignKey' => $second->getName(),
-                'targetForeignKey' => $first->getName()
+                'targetForeignKey' => $first->getName(),
             ]
         );
 
@@ -292,7 +292,7 @@ trait AssociationsAwareTrait
                 'joinTable' => Inflector::tableize($module),
                 'className' => $second->getAssocCsvModule(),
                 'foreignKey' => $first->getName(),
-                'targetForeignKey' => $second->getName()
+                'targetForeignKey' => $second->getName(),
             ]
         );
     }
@@ -328,7 +328,7 @@ trait AssociationsAwareTrait
                 'joinTable' => Inflector::tableize($module),
                 'className' => $field->getAssocCsvModule(),
                 'foreignKey' => $moduleField->getName(),
-                'targetForeignKey' => $field->getName()
+                'targetForeignKey' => $field->getName(),
             ]
         );
     }
@@ -369,7 +369,7 @@ trait AssociationsAwareTrait
             [
                 'className' => FileUpload::FILE_STORAGE_TABLE_NAME,
                 'foreignKey' => 'foreign_key',
-                'conditions' => ['model' => $this->getTable(), 'model_field' => $field->getName()]
+                'conditions' => ['model' => $this->getTable(), 'model_field' => $field->getName()],
             ]
         );
     }

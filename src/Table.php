@@ -234,7 +234,7 @@ class Table extends BaseTable implements HasFieldsInterface
             return [
                 'controller' => $config->parent->module,
                 'action' => $entity->get($config->parent->relation) ? 'view' : 'index',
-                $entity->get($config->parent->relation)
+                $entity->get($config->parent->relation),
             ];
         }
 
@@ -268,7 +268,7 @@ class Table extends BaseTable implements HasFieldsInterface
             }
 
             $result['associated'][$association->getName()] = [
-                'accessibleFields' => $accessibleFields
+                'accessibleFields' => $accessibleFields,
             ];
         }
 

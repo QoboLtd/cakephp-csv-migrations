@@ -38,7 +38,7 @@ class CsvModuleTask extends BakeTask
      * @var array
      */
     public $tasks = [
-        'Bake.BakeTemplate'
+        'Bake.BakeTemplate',
     ];
 
     /**
@@ -52,7 +52,7 @@ class CsvModuleTask extends BakeTask
         $parser->setDescription('Bakes Module bootstrap configuration files and MVC classes');
         $parser->addArgument('name', [
             'help' => 'The Module name to bake',
-            'required' => true
+            'required' => true,
         ]);
 
         return $parser;
@@ -132,7 +132,7 @@ class CsvModuleTask extends BakeTask
     {
         $options = [
             'path' => Configure::read('CsvMigrations.modules.path') . $name . DS . 'config' . DS,
-            'ext' => 'json'
+            'ext' => 'json',
         ];
 
         $this->bake('config.dist', 'Module/config/config', [], '', $options);
@@ -156,7 +156,7 @@ class CsvModuleTask extends BakeTask
     {
         $options = [
             'path' => Configure::read('CsvMigrations.modules.path') . $name . DS . 'db' . DS,
-            'ext' => 'json'
+            'ext' => 'json',
         ];
 
         $this->bake('migration.dist', 'Module/db/migration', [], '', $options);
@@ -172,7 +172,7 @@ class CsvModuleTask extends BakeTask
     {
         $options = [
             'path' => Configure::read('CsvMigrations.modules.path') . $name . DS . 'views' . DS,
-            'ext' => 'json'
+            'ext' => 'json',
         ];
 
         $this->bake('add.dist', 'Module/views/add', [], '', $options);

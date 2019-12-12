@@ -71,7 +71,7 @@ class DblistsTableTest extends TestCase
             'leonid' => ' - Leonid',
             'individual' => 'Individual',
             'antonis' => ' - Antonis',
-            'george' => ' - George'
+            'george' => ' - George',
         ];
         $this->assertSame($expected, $this->Dblists->getOptions('categories'));
 

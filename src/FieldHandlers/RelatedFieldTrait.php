@@ -116,7 +116,7 @@ trait RelatedFieldTrait
             'config' => $config,
             'displayField' => $displayField,
             'entity' => $entity,
-            'dispFieldVal' => $displayFieldValue
+            'dispFieldVal' => $displayFieldValue,
         ];
 
         // get plugin and controller names

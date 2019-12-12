@@ -18,7 +18,7 @@ class AggregateTest extends TestCase
     public $fixtures = [
         'plugin.CsvMigrations.articles',
         'plugin.CsvMigrations.foo',
-        'plugin.CsvMigrations.leads'
+        'plugin.CsvMigrations.leads',
     ];
 
     private $articlesTable;
@@ -62,7 +62,7 @@ class AggregateTest extends TestCase
             [LastAggregator::class, 'cost_amount', 2000.1],
             [LastAggregator::class, 'status', 'inactive'],
             [LastAggregator::class, 'created', new Time('2018-09-26 10:39:23')],
-            [LastAggregator::class, 'lead', '00000000-0000-0000-0000-000000000002']
+            [LastAggregator::class, 'lead', '00000000-0000-0000-0000-000000000002'],
         ];
     }
 
@@ -88,7 +88,7 @@ class AggregateTest extends TestCase
             [SumAggregator::class, 3000.2],
             [AverageAggregator::class, 1500.1],
             [MaxAggregator::class, 2000.1],
-            [LastAggregator::class, 2000.1]
+            [LastAggregator::class, 2000.1],
         ];
     }
 

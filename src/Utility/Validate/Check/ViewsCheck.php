@@ -246,7 +246,7 @@ class ViewsCheck extends AbstractCheck
         $defaults = [
             'duplicateCheck' => [
                 // By default only the index view performs unique field check
-                'index'
+                'index',
             ],
         ];
 

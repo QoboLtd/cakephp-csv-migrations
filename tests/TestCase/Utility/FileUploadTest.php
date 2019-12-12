@@ -18,7 +18,7 @@ use CsvMigrations\Utility\FileUpload;
 class FileUploadTest extends TestCase
 {
     public $fixtures = [
-        'plugin.CsvMigrations.file_storage'
+        'plugin.CsvMigrations.file_storage',
     ];
 
     private $table;
@@ -33,15 +33,15 @@ class FileUploadTest extends TestCase
         StorageManager::config('Local', [
             'adapterOptions' => [TMP, true],
             'adapterClass' => '\Gaufrette\Adapter\Local',
-            'class' => '\Gaufrette\Filesystem'
+            'class' => '\Gaufrette\Filesystem',
         ]);
 
         // @link https://github.com/burzum/cakephp-file-storage/blob/master/docs/Documentation/Included-Event-Listeners.md
         EventManager::instance()->on(new LocalListener([
             'imageProcessing' => true,
             'pathBuilderOptions' => [
-                'pathPrefix' => '/uploads'
-            ]
+                'pathPrefix' => '/uploads',
+            ],
         ]));
 
         $this->table = TableRegistry::get('Burzum/FileStorage.FileStorage');
@@ -63,7 +63,7 @@ class FileUploadTest extends TestCase
             'error' => 0,
             'name' => 'qobo.png',
             'type' => 'image/png',
-            'size' => 1186
+            'size' => 1186,
         ];
 
         $result = $this->fileUpload->save('image', $data);
@@ -79,7 +79,7 @@ class FileUploadTest extends TestCase
             'error' => 0,
             'name' => 'qobo.PNG',
             'type' => 'image/png',
-            'size' => 1186
+            'size' => 1186,
         ];
 
         $result = $this->fileUpload->save('image', $data);
@@ -96,15 +96,15 @@ class FileUploadTest extends TestCase
                 'error' => 0,
                 'name' => 'qobo.png',
                 'type' => 'image/png',
-                'size' => 1186
+                'size' => 1186,
             ],
             [
                 'tmp_name' => TESTS . 'img' . DS . 'qobo.png',
                 'error' => 0,
                 'name' => 'qobo.png',
                 'type' => 'image/png',
-                'size' => 1186
-            ]
+                'size' => 1186,
+            ],
         ];
 
         $result = $this->fileUpload->saveAll('image', $data);
@@ -135,7 +135,7 @@ class FileUploadTest extends TestCase
             'error' => 1,
             'name' => 'qobo.png',
             'type' => 'image/png',
-            'size' => 1186
+            'size' => 1186,
         ];
 
         $this->assertNull($this->fileUpload->save('image', $data));
@@ -153,7 +153,7 @@ class FileUploadTest extends TestCase
             'large' => 'tests/img/qobo.png',
             'medium' => 'tests/img/qobo.png',
             'small' => 'tests/img/qobo.png',
-            'tiny' => 'tests/img/qobo.png'
+            'tiny' => 'tests/img/qobo.png',
         ];
         $this->assertSame($expected, $result->first()->get('thumbnails'));
     }
@@ -170,7 +170,7 @@ class FileUploadTest extends TestCase
             'large' => 'tests/img/qobo.PNG',
             'medium' => 'tests/img/qobo.PNG',
             'small' => 'tests/img/qobo.PNG',
-            'tiny' => 'tests/img/qobo.PNG'
+            'tiny' => 'tests/img/qobo.PNG',
         ];
         $this->assertSame($expected, $result->first()->get('thumbnails'));
     }

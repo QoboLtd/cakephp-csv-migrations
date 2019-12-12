@@ -21,8 +21,8 @@ class LeadsFixture extends TestFixture
         'trashed' => ['type' => 'datetime', 'null' => true],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
-            'unique' => ['type' => 'unique', 'columns' => ['name', 'id']]
-        ]
+            'unique' => ['type' => 'unique', 'columns' => ['name', 'id']],
+        ],
     ];
 
     public $records = [
@@ -33,7 +33,7 @@ class LeadsFixture extends TestFixture
             'assigned_to' => '00000000-0000-0000-0000-000000000001',
             'trashed' => null,
             'created' => '2016-07-01 10:39:23',
-            'modified' => '2016-07-01 10:41:31'
+            'modified' => '2016-07-01 10:41:31',
         ],
         [
             'id' => '00000000-0000-0000-0000-000000000002',
@@ -42,7 +42,7 @@ class LeadsFixture extends TestFixture
             'assigned_to' => null,
             'trashed' => null,
             'created' => '2016-07-02 10:39:23',
-            'modified' => '2016-07-02 10:41:31'
+            'modified' => '2016-07-02 10:41:31',
         ],
         [
             'id' => '00000000-0000-0000-0000-000000000003',
@@ -51,7 +51,7 @@ class LeadsFixture extends TestFixture
             'assigned_to' => null,
             'trashed' => null,
             'created' => '2018-09-27 10:51:23',
-            'modified' => '2018-09-27 10:55:31'
-        ]
+            'modified' => '2018-09-27 10:55:31',
+        ],
     ];
 }

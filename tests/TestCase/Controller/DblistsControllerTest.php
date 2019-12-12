@@ -12,7 +12,7 @@ class DblistsControllerTest extends IntegrationTestCase
 {
     public $fixtures = [
         'plugin.CsvMigrations.dblists',
-        'plugin.CsvMigrations.dblist_items'
+        'plugin.CsvMigrations.dblist_items',
     ];
 
     private $table;
@@ -27,9 +27,9 @@ class DblistsControllerTest extends IntegrationTestCase
             'Auth' => [
                 'User' => [
                     'id' => '1',
-                    'username' => 'testing'
+                    'username' => 'testing',
                 ],
-            ]
+            ],
         ]);
     }
 

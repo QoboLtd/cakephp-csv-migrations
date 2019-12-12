@@ -21,8 +21,8 @@
                 var captions = $(this).data('captions');
                 var hide_next = $(this).data('hide-next');
                 var previous_default_value = $(this).data('previous-default-value');
-                var currentForm = $(this).closest("form");
-                $(currentForm).dynamicSelect({
+                var fieldWrapperElement = $(this).closest(".field-wrapper");
+                $(fieldWwrapperElement).dynamicSelect({
                     structure: structure,
                     optionValues: option_values,
                     selectors: selectors,

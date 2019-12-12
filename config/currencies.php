@@ -4,428 +4,428 @@ return [
         'list' => [
             'ALL' => [
                 'description' => 'Albania Lek',
-                'symbol' => 'Lek'
+                'symbol' => 'Lek',
             ],
             'AFN' => [
                 'description' => 'Afghanistan Afghani',
-                'symbol' => '؋'
+                'symbol' => '؋',
             ],
             'ARS' => [
                 'description' => 'Argentina Peso',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'AWG' => [
                 'description' => 'Aruba Guilder',
-                'symbol' => 'ƒ'
+                'symbol' => 'ƒ',
             ],
             'AUD' => [
                 'description' => 'Australia Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'BSD' => [
                 'description' => 'Bahamas Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'BBD' => [
                 'description' => 'Barbados Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'BYN' => [
                 'description' => 'Belarus Ruble',
-                'symbol' => 'Br'
+                'symbol' => 'Br',
             ],
             'BZD' => [
                 'description' => 'Belize Dollar',
-                'symbol' => 'BZ&#36;'
+                'symbol' => 'BZ&#36;',
             ],
             'BMD' => [
                 'description' => 'Bermuda Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'BOB' => [
                 'description' => 'Bolivia Bolíviano',
-                'symbol' => '&#36;b'
+                'symbol' => '&#36;b',
             ],
             'BAM' => [
                 'description' => 'Bosnia and Herzegovina Convertible Marka',
-                'symbol' => 'KM'
+                'symbol' => 'KM',
             ],
             'BWP' => [
                 'description' => 'Botswana Pula',
-                'symbol' => 'P'
+                'symbol' => 'P',
             ],
             'BGN' => [
                 'description' => 'Bulgaria Lev',
-                'symbol' => 'лв'
+                'symbol' => 'лв',
             ],
             'BRL' => [
                 'description' => 'Brazil Real',
-                'symbol' => 'R&#36;'
+                'symbol' => 'R&#36;',
             ],
             'BND' => [
                 'description' => 'Brunei Darussalam Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'KHR' => [
                 'description' => 'Cambodia Riel',
-                'symbol' => '៛'
+                'symbol' => '៛',
             ],
             'CAD' => [
                 'description' => 'Canada Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'KYD' => [
                 'description' => 'Cayman Islands Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'CLP' => [
                 'description' => 'Chile Peso',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'CNY' => [
                 'description' => 'China Yuan Renminbi',
-                'symbol' => '¥'
+                'symbol' => '¥',
             ],
             'COP' => [
                 'description' => 'Colombia Peso',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'CRC' => [
                 'description' => 'Costa Rica Colon',
-                'symbol' => '₡'
+                'symbol' => '₡',
             ],
             'HRK' => [
                 'description' => 'Croatia Kuna',
-                'symbol' => 'kn'
+                'symbol' => 'kn',
             ],
             'CUP' => [
                 'description' => 'Cuba Peso',
-                'symbol' => '₱'
+                'symbol' => '₱',
             ],
             'CZK' => [
                 'description' => 'Czech Republic Koruna',
-                'symbol' => 'Kč'
+                'symbol' => 'Kč',
             ],
             'DKK' => [
                 'description' => 'Denmark Krone',
-                'symbol' => 'kr'
+                'symbol' => 'kr',
             ],
             'DOP' => [
                 'description' => 'Dominican Republic Peso',
-                'symbol' => 'RD&#36;'
+                'symbol' => 'RD&#36;',
             ],
             'XCD' => [
                 'description' => 'East Caribbean Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'EGP' => [
                 'description' => 'Egypt Pound',
-                'symbol' => '£'
+                'symbol' => '£',
             ],
             'SVC' => [
                 'description' => 'El Salvador Colon',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'EUR' => [
                 'description' => 'Euro',
-                'symbol' => '€'
+                'symbol' => '€',
             ],
             'FKP' => [
                 'description' => 'Falkland Islands (Malvinas) Pound',
-                'symbol' => '£'
+                'symbol' => '£',
             ],
             'FJD' => [
                 'description' => 'Fiji Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'GHS' => [
                 'description' => 'Ghana Cedi',
-                'symbol' => '¢'
+                'symbol' => '¢',
             ],
             'GIP' => [
                 'description' => 'Gibraltar Pound',
-                'symbol' => '£'
+                'symbol' => '£',
             ],
             'GTQ' => [
                 'description' => 'Guatemala Quetzal',
-                'symbol' => 'Q'
+                'symbol' => 'Q',
             ],
             'GGP' => [
                 'description' => 'Guernsey Pound',
-                'symbol' => '£'
+                'symbol' => '£',
             ],
             'GYD' => [
                 'description' => 'Guyana Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'HNL' => [
                 'description' => 'Honduras Lempira',
-                'symbol' => 'L'
+                'symbol' => 'L',
             ],
             'HKD' => [
                 'description' => 'Hong Kong Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'HUF' => [
                 'description' => 'Hungary Forint',
-                'symbol' => 'Ft'
+                'symbol' => 'Ft',
             ],
             'ISK' => [
                 'description' => 'Iceland Krona',
-                'symbol' => 'kr'
+                'symbol' => 'kr',
             ],
             'IDR' => [
                 'description' => 'Indonesia Rupiah',
-                'symbol' => 'Rp'
+                'symbol' => 'Rp',
             ],
             'IRR' => [
                 'description' => 'Iran Rial',
-                'symbol' => '﷼'
+                'symbol' => '﷼',
             ],
             'IMP' => [
                 'description' => 'Isle of Man Pound',
-                'symbol' => '£'
+                'symbol' => '£',
             ],
             'ILS' => [
                 'description' => 'Israel Shekel',
-                'symbol' => '₪'
+                'symbol' => '₪',
             ],
             'JMD' => [
                 'description' => 'Jamaica Dollar',
-                'symbol' => 'J&#36;'
+                'symbol' => 'J&#36;',
             ],
             'JPY' => [
                 'description' => 'Japan Yen',
-                'symbol' => '¥'
+                'symbol' => '¥',
             ],
             'JEP' => [
                 'description' => 'Jersey Pound',
-                'symbol' => '£'
+                'symbol' => '£',
             ],
             'KZT' => [
                 'description' => 'Kazakhstan Tenge',
-                'symbol' => 'лв'
+                'symbol' => 'лв',
             ],
             'KPW' => [
                 'description' => 'Korea (North) Won',
-                'symbol' => '₩'
+                'symbol' => '₩',
             ],
             'KRW' => [
                 'description' => 'Korea (South) Won',
-                'symbol' => '₩'
+                'symbol' => '₩',
             ],
             'KGS' => [
                 'description' => 'Kyrgyzstan Som',
-                'symbol' => 'лв'
+                'symbol' => 'лв',
             ],
             'LAK' => [
                 'description' => 'Laos Kip',
-                'symbol' => '₭'
+                'symbol' => '₭',
             ],
             'LBP' => [
                 'description' => 'Lebanon Pound',
-                'symbol' => '£'
+                'symbol' => '£',
             ],
             'LRD' => [
                 'description' => 'Liberia Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'MKD' => [
                 'description' => 'Macedonia Denar',
-                'symbol' => 'ден'
+                'symbol' => 'ден',
             ],
             'MYR' => [
                 'description' => 'Malaysia Ringgit',
-                'symbol' => 'RM'
+                'symbol' => 'RM',
             ],
             'MUR' => [
                 'description' => 'Mauritius Rupee',
-                'symbol' => '₨'
+                'symbol' => '₨',
             ],
             'MXN' => [
                 'description' => 'Mexico Peso',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'MNT' => [
                 'description' => 'Mongolia Tughrik',
-                'symbol' => '₮'
+                'symbol' => '₮',
             ],
             'MZN' => [
                 'description' => 'Mozambique Metical',
-                'symbol' => 'MT'
+                'symbol' => 'MT',
             ],
             'NAD' => [
                 'description' => 'Namibia Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'NPR' => [
                 'description' => 'Nepal Rupee',
-                'symbol' => '₨'
+                'symbol' => '₨',
             ],
             'ANG' => [
                 'description' => 'Netherlands Antilles Guilder',
-                'symbol' => 'ƒ'
+                'symbol' => 'ƒ',
             ],
             'NZD' => [
                 'description' => 'New Zealand Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'NIO' => [
                 'description' => 'Nicaragua Cordoba',
-                'symbol' => 'C&#36;'
+                'symbol' => 'C&#36;',
             ],
             'NGN' => [
                 'description' => 'Nigeria Naira',
-                'symbol' => '₦'
+                'symbol' => '₦',
             ],
             'NOK' => [
                 'description' => 'Norway Krone',
-                'symbol' => 'kr'
+                'symbol' => 'kr',
             ],
             'OMR' => [
                 'description' => 'Oman Rial',
-                'symbol' => '﷼'
+                'symbol' => '﷼',
             ],
             'PKR' => [
                 'description' => 'Pakistan Rupee',
-                'symbol' => '₨'
+                'symbol' => '₨',
             ],
             'PAB' => [
                 'description' => 'Panama Balboa',
-                'symbol' => 'B/.'
+                'symbol' => 'B/.',
             ],
             'PYG' => [
                 'description' => 'Paraguay Guarani',
-                'symbol' => 'Gs'
+                'symbol' => 'Gs',
             ],
             'PEN' => [
                 'description' => 'Peru Sol',
-                'symbol' => 'S/.'
+                'symbol' => 'S/.',
             ],
             'PHP' => [
                 'description' => 'Philippines Peso',
-                'symbol' => '₱'
+                'symbol' => '₱',
             ],
             'PLN' => [
                 'description' => 'Poland Zloty',
-                'symbol' => 'zł'
+                'symbol' => 'zł',
             ],
             'QAR' => [
                 'description' => 'Qatar Riyal',
-                'symbol' => '﷼'
+                'symbol' => '﷼',
             ],
             'RON' => [
                 'description' => 'Romania Leu',
-                'symbol' => 'lei'
+                'symbol' => 'lei',
             ],
             'RUB' => [
                 'description' => 'Russia Ruble',
-                'symbol' => '₽'
+                'symbol' => '₽',
             ],
             'SHP' => [
                 'description' => 'Saint Helena Pound',
-                'symbol' => '£'
+                'symbol' => '£',
             ],
             'SAR' => [
                 'description' => 'Saudi Arabia Riyal',
-                'symbol' => '﷼'
+                'symbol' => '﷼',
             ],
             'RSD' => [
                 'description' => 'Serbia Dinar',
-                'symbol' => 'Дин.'
+                'symbol' => 'Дин.',
             ],
             'SCR' => [
                 'description' => 'Seychelles Rupee',
-                'symbol' => '₨'
+                'symbol' => '₨',
             ],
             'SGD' => [
                 'description' => 'Singapore Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'SBD' => [
                 'description' => 'Solomon Islands Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'SOS' => [
                 'description' => 'Somalia Shilling',
-                'symbol' => 'S'
+                'symbol' => 'S',
             ],
             'ZAR' => [
                 'description' => 'South Africa Rand',
-                'symbol' => 'R'
+                'symbol' => 'R',
             ],
             'LKR' => [
                 'description' => 'Sri Lanka Rupee',
-                'symbol' => '₨'
+                'symbol' => '₨',
             ],
             'SEK' => [
                 'description' => 'Sweden Krona',
-                'symbol' => 'kr'
+                'symbol' => 'kr',
             ],
             'CHF' => [
                 'description' => 'Switzerland Franc',
-                'symbol' => 'CHF'
+                'symbol' => 'CHF',
             ],
             'SRD' => [
                 'description' => 'Suriname Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'SYP' => [
                 'description' => 'Syria Pound',
-                'symbol' => '£'
+                'symbol' => '£',
             ],
             'TWD' => [
                 'description' => 'Taiwan New Dollar',
-                'symbol' => 'NT&#36;'
+                'symbol' => 'NT&#36;',
             ],
             'THB' => [
                 'description' => 'Thailand Baht',
-                'symbol' => '฿'
+                'symbol' => '฿',
             ],
             'TTD' => [
                 'description' => 'Trinidad and Tobago Dollar',
-                'symbol' => 'TT&#36;'
+                'symbol' => 'TT&#36;',
             ],
             'TVD' => [
                 'description' => 'Tuvalu Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'UAH' => [
                 'description' => 'Ukraine Hryvnia',
-                'symbol' => '₴'
+                'symbol' => '₴',
             ],
             'GBP' => [
                 'description' => 'United Kingdom Pound',
-                'symbol' => '£'
+                'symbol' => '£',
             ],
             'USD' => [
                 'description' => 'United States Dollar',
-                'symbol' => '&#36;'
+                'symbol' => '&#36;',
             ],
             'UYU' => [
                 'description' => 'Uruguay Peso',
-                'symbol' => '&#36;U'
+                'symbol' => '&#36;U',
             ],
             'UZS' => [
                 'description' => 'Uzbekistan Som',
-                'symbol' => 'лв'
+                'symbol' => 'лв',
             ],
             'VEF' => [
                 'description' => 'Venezuela Bolívar',
-                'symbol' => 'Bs'
+                'symbol' => 'Bs',
             ],
             'VND' => [
                 'description' => 'Viet Nam Dong',
-                'symbol' => '₫'
+                'symbol' => '₫',
             ],
             'YER' => [
                 'description' => 'Yemen Rial',
-                'symbol' => '﷼'
+                'symbol' => '﷼',
             ],
             'ZWD' => [
                 'description' => 'Zimbabwe Dollar',
-                'symbol' => 'Z&#36;'
-            ]
-        ]
-    ]
+                'symbol' => 'Z&#36;',
+            ],
+        ],
+    ],
 ];

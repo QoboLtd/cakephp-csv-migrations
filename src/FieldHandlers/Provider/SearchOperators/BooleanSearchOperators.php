@@ -29,16 +29,16 @@ class BooleanSearchOperators extends AbstractSearchOperators
             'operator' => 'IN',
             'emptyCriteria' => [
                 'aggregator' => 'OR',
-                'values' => ['IS NULL', '= ""', '= 0', '= false']
-            ]
+                'values' => ['IS NULL', '= ""', '= 0', '= false'],
+            ],
         ],
         'is_not' => [
             'label' => 'is not',
             'operator' => 'NOT IN',
             'emptyCriteria' => [
                 'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""', '!= 0', '!= false']
-            ]
+                'values' => ['IS NOT NULL', '!= ""', '!= 0', '!= false'],
+            ],
         ],
     ];
 }

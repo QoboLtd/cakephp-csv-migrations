@@ -32,7 +32,7 @@ class MoneyFieldHandlerTest extends TestCase
             'type' => 'money(currencies)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderValue('', $options);
@@ -47,7 +47,7 @@ class MoneyFieldHandlerTest extends TestCase
             'type' => 'money(countries)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderInput('', $options);

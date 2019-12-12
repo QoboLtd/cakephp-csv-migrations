@@ -13,7 +13,7 @@ class AggregatedRendererTest extends TestCase
 {
     public $fixtures = [
         'plugin.CsvMigrations.foo',
-        'plugin.CsvMigrations.leads'
+        'plugin.CsvMigrations.leads',
     ];
 
     private $renderer;
@@ -45,8 +45,8 @@ class AggregatedRendererTest extends TestCase
                 'type' => 'aggregated(CsvMigrations\\Aggregator\\MaxAggregator,Foo,cost_amount)',
                 'required' => false,
                 'non-searchable' => false,
-                'unique' => false
-            ])
+                'unique' => false,
+            ]),
         ];
 
         $this->assertSame('2000.1', $this->renderer->provide(null, $options));
@@ -61,8 +61,8 @@ class AggregatedRendererTest extends TestCase
                 'type' => 'aggregated(CsvMigrations\\Aggregator\\MaxAggregator,Foo,cost_amount,country)',
                 'required' => false,
                 'non-searchable' => false,
-                'unique' => false
-            ])
+                'unique' => false,
+            ]),
         ];
 
         $this->assertSame('Cyprus', $this->renderer->provide(null, $options));

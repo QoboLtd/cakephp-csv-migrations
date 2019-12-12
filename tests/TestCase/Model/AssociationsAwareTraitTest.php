@@ -70,7 +70,7 @@ class AssociationsAwareTraitTest extends TestCase
             ['Foobar', 'Foobar', ''],
             ['KeyFooBar', 'Foo.Bar', 'key'],
             ['ForeignKeyFooBar', 'Foo.Bar', 'foreign_key'],
-            ['KeyFooBar', 'Vendor/Foo.Bar', 'key']
+            ['KeyFooBar', 'Vendor/Foo.Bar', 'key'],
         ];
     }
 

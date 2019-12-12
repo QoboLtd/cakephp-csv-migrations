@@ -12,7 +12,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
 {
     public $fixtures = [
         'plugin.CsvMigrations.dblists',
-        'plugin.CsvMigrations.dblist_items'
+        'plugin.CsvMigrations.dblist_items',
     ];
 
     private $table;
@@ -27,9 +27,9 @@ class DblistItemsControllerTest extends IntegrationTestCase
             'Auth' => [
                 'User' => [
                     'id' => '1',
-                    'username' => 'testing'
+                    'username' => 'testing',
                 ],
-            ]
+            ],
         ]);
     }
 
@@ -68,7 +68,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $data = [
             'name' => 'some really really random name',
             'value' => 'some_really_really_random_name',
-            'dblist_id' => $id
+            'dblist_id' => $id,
         ];
 
         $this->get('/csv-migrations/dblist-items/add/' . $id);
@@ -118,7 +118,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $data = [
             'name' => 'some random name',
             'value' => 'some_random_name',
-            'dblist_id' => '35ded6f1-e886-4f3e-bcdd-47d9c55c3ce4'
+            'dblist_id' => '35ded6f1-e886-4f3e-bcdd-47d9c55c3ce4',
         ];
 
         // create and persist a new entity

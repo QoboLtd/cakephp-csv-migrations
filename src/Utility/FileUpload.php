@@ -267,7 +267,7 @@ final class FileUpload
             'image' => $entity,
             'version' => $version,
             'options' => [],
-            'pathType' => 'fullPath'
+            'pathType' => 'fullPath',
         ]);
 
         EventManager::instance()->dispatch($event);
@@ -406,7 +406,7 @@ final class FileUpload
          */
         $entity = $this->storageTable->patchEntity($entity, [
             'model' => $this->table->getTable(),
-            'model_field' => $field
+            'model_field' => $field,
         ]);
 
         // always store extension in lowercased format
@@ -505,7 +505,7 @@ final class FileUpload
     public function delete(string $id): bool
     {
         $query = $this->storageTable->find('all', [
-            'conditions' => [self::FILE_STORAGE_FOREIGN_KEY => $id]
+            'conditions' => [self::FILE_STORAGE_FOREIGN_KEY => $id],
         ]);
         $entity = $query->first();
 

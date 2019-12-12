@@ -11,7 +11,7 @@ use CsvMigrations\FieldHandlers\Provider\RenderInput\CountryRenderer;
 class CountryRendererTest extends TestCase
 {
     public $fixtures = [
-        'plugin.CsvMigrations.foo'
+        'plugin.CsvMigrations.foo',
     ];
 
     /**
@@ -55,8 +55,8 @@ class CountryRendererTest extends TestCase
                 'type' => 'country(countries)',
                 'required' => false,
                 'non-searchable' => false,
-                'unique' => false
-            ])
+                'unique' => false,
+            ]),
         ];
 
         $html = $this->renderer->provide(null, $options);

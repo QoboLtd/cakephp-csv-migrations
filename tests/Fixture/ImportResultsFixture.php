@@ -55,7 +55,7 @@ class ImportResultsFixture extends TestFixture
             'status_message' => 'Lorem ipsum dolor sit amet, aliquet feugiat.',
             'created' => '2017-07-31 17:10:39',
             'modified' => '2017-07-31 17:10:39',
-            'trashed' => null
+            'trashed' => null,
         ],
         [
             'id' => '00000000-0000-0000-0000-000000000002',
@@ -67,7 +67,7 @@ class ImportResultsFixture extends TestFixture
             'status_message' => 'Lorem ipsum dolor sit amet, aliquet feugiat.',
             'created' => '2017-07-31 17:10:39',
             'modified' => '2017-07-31 17:10:39',
-            'trashed' => null
+            'trashed' => null,
         ],
         [
             'id' => '00000000-0000-0000-0000-000000000003',
@@ -79,7 +79,7 @@ class ImportResultsFixture extends TestFixture
             'status_message' => 'Lorem ipsum dolor sit amet, aliquet feugiat.',
             'created' => '2017-07-31 17:10:39',
             'modified' => '2017-07-31 17:10:39',
-            'trashed' => null
+            'trashed' => null,
         ],
         [
             'id' => '00000000-0000-0000-0000-000000000004',
@@ -91,7 +91,7 @@ class ImportResultsFixture extends TestFixture
             'status_message' => 'Lorem ipsum dolor sit amet, aliquet feugiat.',
             'created' => '2017-07-31 17:10:39',
             'modified' => '2017-07-31 17:10:39',
-            'trashed' => null
+            'trashed' => null,
         ],
     ];
 }

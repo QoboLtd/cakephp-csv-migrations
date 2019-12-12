@@ -74,7 +74,7 @@ class ImportsTable extends Table
 
         $this->hasMany('ImportResults', [
             'foreignKey' => 'import_id',
-            'className' => 'CsvMigrations.ImportResults'
+            'className' => 'CsvMigrations.ImportResults',
         ]);
     }
 

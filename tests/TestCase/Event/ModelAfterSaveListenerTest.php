@@ -91,7 +91,7 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
 
         // Use Leads entity which is assigned to a user who has an email address
         $entity = $this->Leads->get('00000000-0000-0000-0000-000000000001', [
-            'contain' => ['Users']
+            'contain' => ['Users'],
         ]);
         // Check entity before we rely on it for the rest of the testing
         $expected = 'user1@example.com';

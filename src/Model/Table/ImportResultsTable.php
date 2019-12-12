@@ -85,7 +85,7 @@ class ImportResultsTable extends Table
         $this->belongsTo('Imports', [
             'foreignKey' => 'import_id',
             'joinType' => 'INNER',
-            'className' => 'CsvMigrations.Imports'
+            'className' => 'CsvMigrations.Imports',
         ]);
     }
 
@@ -150,7 +150,7 @@ class ImportResultsTable extends Table
     {
         $query->where([
             'import_id' => $options['import']->id,
-            'status' => static::STATUS_SUCCESS
+            'status' => static::STATUS_SUCCESS,
         ]);
 
         return $query;
@@ -167,7 +167,7 @@ class ImportResultsTable extends Table
     {
         $query->where([
             'import_id' => $options['import']->id,
-            'status' => static::STATUS_PENDING
+            'status' => static::STATUS_PENDING,
         ]);
 
         return $query;
@@ -184,7 +184,7 @@ class ImportResultsTable extends Table
     {
         $query->where([
             'import_id' => $options['import']->id,
-            'status' => static::STATUS_FAIL
+            'status' => static::STATUS_FAIL,
         ]);
 
         return $query;

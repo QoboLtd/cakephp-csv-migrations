@@ -150,9 +150,9 @@ class FooTableTest extends TestCase
                     'balance' => ['name' => 'balance', 'type' => 'decimal(12.4)', 'required' => '', 'non-searchable' => '', 'unique' => false],
                     'lead' => ['name' => 'lead', 'type' => 'related(Leads)', 'required' => '', 'non-searchable' => '', 'unique' => false],
                     'created_by' => ['name' => 'created_by', 'type' => 'related(Users)', 'required' => '', 'non-searchable' => '', 'unique' => false],
-                    'modified_by' => ['name' => 'modified_by', 'type' => 'related(Users)', 'required' => '', 'non-searchable' => '', 'unique' => false]
-                ]
-            ]
+                    'modified_by' => ['name' => 'modified_by', 'type' => 'related(Users)', 'required' => '', 'non-searchable' => '', 'unique' => false],
+                ],
+            ],
         ];
     }
 }

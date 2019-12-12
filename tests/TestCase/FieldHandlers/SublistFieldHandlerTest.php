@@ -30,7 +30,7 @@ class SublistFieldHandlerTest extends TestCase
             'type' => 'list(countries)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderInput('', $options);

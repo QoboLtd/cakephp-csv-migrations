@@ -45,7 +45,7 @@ class ListSearchOptions extends AbstractSearchOptions
         $view = $this->config->getView();
         $content = $view->Form->select('{{name}}', array_merge(['' => Setting::EMPTY_OPTION_LABEL()], $selectOptions), [
             'class' => 'form-control',
-            'label' => false
+            'label' => false,
         ]);
 
         foreach ($selectOptions as $key => $value) {

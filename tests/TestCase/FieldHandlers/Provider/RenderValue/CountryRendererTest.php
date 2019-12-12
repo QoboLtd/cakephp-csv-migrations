@@ -22,7 +22,7 @@ class CountryRendererTest extends TestCase
     public function basicValues(): array
     {
         return [
-            ['cy', 'Cyprus']
+            ['cy', 'Cyprus'],
         ];
     }
 

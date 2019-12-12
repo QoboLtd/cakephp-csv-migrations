@@ -72,7 +72,7 @@ class Config implements ConfigInterface
         'renderInput',
         'renderValue',
         'renderName',
-        'validationRules'
+        'validationRules',
     ];
 
     /**

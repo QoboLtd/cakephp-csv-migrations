@@ -30,8 +30,8 @@ class StringSearchOperators extends AbstractSearchOperators
             'pattern' => '%{{value}}%',
             'emptyCriteria' => [
                 'aggregator' => 'OR',
-                'values' => ['IS NULL', '= ""']
-            ]
+                'values' => ['IS NULL', '= ""'],
+            ],
         ],
         'not_contains' => [
             'label' => 'does not contain',
@@ -39,8 +39,8 @@ class StringSearchOperators extends AbstractSearchOperators
             'pattern' => '%{{value}}%',
             'emptyCriteria' => [
                 'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""']
-            ]
+                'values' => ['IS NOT NULL', '!= ""'],
+            ],
         ],
         'starts_with' => [
             'label' => 'starts with',
@@ -48,8 +48,8 @@ class StringSearchOperators extends AbstractSearchOperators
             'pattern' => '{{value}}%',
             'emptyCriteria' => [
                 'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""']
-            ]
+                'values' => ['IS NOT NULL', '!= ""'],
+            ],
         ],
         'ends_with' => [
             'label' => 'ends with',
@@ -57,8 +57,8 @@ class StringSearchOperators extends AbstractSearchOperators
             'pattern' => '%{{value}}',
             'emptyCriteria' => [
                 'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""']
-            ]
+                'values' => ['IS NOT NULL', '!= ""'],
+            ],
         ],
     ];
 }

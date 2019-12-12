@@ -43,11 +43,11 @@ class IntegerSearchOptions extends AbstractSearchOptions
             'step' => $options['step'] ?? Setting::DEFAULT_STEP_FOR_NUMBER,
             'max' => $options['max'] ?? Setting::MAX_VALUE_FOR_NUMBER,
             'min' => $options['min'] ?? Setting::MIN_VALUE_FOR_NUMBER,
-            'label' => false
+            'label' => false,
         ]);
 
         $defaultOptions['input'] = [
-            'content' => $content
+            'content' => $content,
         ];
 
         $result[$this->config->getField()] = $defaultOptions;

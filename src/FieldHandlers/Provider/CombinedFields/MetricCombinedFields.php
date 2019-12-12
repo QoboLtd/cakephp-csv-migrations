@@ -26,10 +26,10 @@ class MetricCombinedFields extends AbstractCombinedFields
      */
     protected $fields = [
         'amount' => [
-            'config' => '\\CsvMigrations\\FieldHandlers\\Config\\DecimalConfig'
+            'config' => '\\CsvMigrations\\FieldHandlers\\Config\\DecimalConfig',
         ],
         'unit' => [
-            'config' => '\\CsvMigrations\\FieldHandlers\\Config\\ListConfig'
-        ]
+            'config' => '\\CsvMigrations\\FieldHandlers\\Config\\ListConfig',
+        ],
     ];
 }

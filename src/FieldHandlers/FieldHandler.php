@@ -172,7 +172,7 @@ class FieldHandler implements FieldHandlerInterface
         // processing for magic/dynamic values like dates and usernames.
         $eventName = (string)EventName::FIELD_HANDLER_DEFAULT_VALUE();
         $event = new Event($eventName, $this, [
-            'default' => $this->defaultOptions['default']
+            'default' => $this->defaultOptions['default'],
         ]);
 
         $view = $this->config->getView();

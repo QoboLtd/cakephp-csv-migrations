@@ -12,7 +12,7 @@ use CsvMigrations\FieldHandlers\Provider\ProviderInterface;
 class PrimaryKeyFieldValueTest extends TestCase
 {
     public $fixtures = [
-        'plugin.csv_migrations.foo'
+        'plugin.csv_migrations.foo',
     ];
 
     public function testConstruct(): void
@@ -71,7 +71,7 @@ class PrimaryKeyFieldValueTest extends TestCase
             [null],
             ['here goes some string'],
             [new Entity()],
-            [new ServerRequest()]
+            [new ServerRequest()],
         ];
     }
 }

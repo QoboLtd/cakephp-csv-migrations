@@ -33,7 +33,7 @@
 
                 // set values on edit mode
                 selectors.forEach(function (el) {
-                    var value = $(el). data('value');
+                    var value = $(el).data('value');
                     if (!value) {
                         return;
                     }

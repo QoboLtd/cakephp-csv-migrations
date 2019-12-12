@@ -56,7 +56,7 @@ class DblistItemsTable extends Table
         $this->belongsTo('Dblists', [
             'foreignKey' => 'dblist_id',
             'joinType' => 'INNER',
-            'className' => 'CsvMigrations.Dblists'
+            'className' => 'CsvMigrations.Dblists',
         ]);
     }
 

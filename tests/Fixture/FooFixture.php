@@ -36,8 +36,8 @@ class FooFixture extends TestFixture
         'trashed' => ['type' => 'datetime', 'null' => true],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
-            'unique' => ['type' => 'unique', 'columns' => ['name', 'id']]
-        ]
+            'unique' => ['type' => 'unique', 'columns' => ['name', 'id']],
+        ],
     ];
 
     public $records = [
@@ -61,7 +61,7 @@ class FooFixture extends TestFixture
             'modified' => '2016-07-01 10:41:31',
             'trashed' => null,
             'balance' => 8.6727,
-            'is_primary' => 1
+            'is_primary' => 1,
         ],
         [
             'id' => '00000000-0000-0000-0000-000000000002',
@@ -83,7 +83,7 @@ class FooFixture extends TestFixture
             'modified' => '2018-09-26 10:41:31',
             'trashed' => null,
             'balance' => 8.6727,
-            'is_primary' => 1
+            'is_primary' => 1,
         ],
         [
             'id' => '00000000-0000-0000-0000-000000000003',
@@ -105,7 +105,7 @@ class FooFixture extends TestFixture
             'modified' => '2018-09-23 10:41:31',
             'trashed' => null,
             'balance' => 8.6727,
-            'is_primary' => 1
-        ]
+            'is_primary' => 1,
+        ],
     ];
 }

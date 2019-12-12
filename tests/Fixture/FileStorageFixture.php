@@ -24,7 +24,7 @@ class FileStorageFixture extends BaseFixture
         'model_field' => ['type' => 'string', 'null' => true, 'default' => null],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
-        ]
+        ],
     ];
 
     public $records = [
@@ -59,6 +59,6 @@ class FileStorageFixture extends BaseFixture
             'model_field' => 'image',
             'created' => '2018-10-26 12:00:00',
             'modified' => '2012-10-26 12:00:00',
-        ]
+        ],
     ];
 }

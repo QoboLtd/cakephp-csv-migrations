@@ -20,8 +20,8 @@ class AuthorsFixture extends TestFixture
         'trashed' => ['type' => 'datetime', 'null' => true],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
-            'unique' => ['type' => 'unique', 'columns' => ['name', 'id']]
-        ]
+            'unique' => ['type' => 'unique', 'columns' => ['name', 'id']],
+        ],
     ];
 
     public $records = [
@@ -40,6 +40,6 @@ class AuthorsFixture extends TestFixture
             'created' => '2016-07-02 10:39:23',
             'modified' => '2016-07-02 10:41:31',
             'trashed' => null,
-        ]
+        ],
     ];
 }

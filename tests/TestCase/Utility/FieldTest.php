@@ -98,7 +98,7 @@ class FieldTest extends TestCase
     {
         $expected = [
             ['Details', 'name', 'status'],
-            ['Details', 'author', '']
+            ['Details', 'author', ''],
         ];
 
         $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add'));
@@ -115,8 +115,8 @@ class FieldTest extends TestCase
             [
                 ['plugin' => null, 'model' => 'Articles', 'name' => 'Details'],
                 ['plugin' => null, 'model' => 'Articles', 'name' => 'author'],
-                ['plugin' => null, 'model' => 'Articles', 'name' => '']
-            ]
+                ['plugin' => null, 'model' => 'Articles', 'name' => ''],
+            ],
         ];
 
         $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add', true));
@@ -127,8 +127,8 @@ class FieldTest extends TestCase
         $expected = [
             'Details' => [
                 ['name', 'status'],
-                ['author', '']
-            ]
+                ['author', ''],
+            ],
         ];
 
         $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add', false, true));
@@ -144,9 +144,9 @@ class FieldTest extends TestCase
                 ],
                 [
                     ['plugin' => null, 'model' => 'Articles', 'name' => 'author'],
-                    ['plugin' => null, 'model' => 'Articles', 'name' => '']
-                ]
-            ]
+                    ['plugin' => null, 'model' => 'Articles', 'name' => ''],
+                ],
+            ],
         ];
 
         $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add', true, true));
@@ -162,12 +162,12 @@ class FieldTest extends TestCase
         $expected = [
             'one' => [
                 'label' => 'One',
-                'inactive' => false
+                'inactive' => false,
             ],
             'two' => [
                 'label' => 'Two',
-                'inactive' => false
-            ]
+                'inactive' => false,
+            ],
         ];
 
         $this->assertSame($expected, Field::getList('list'));
@@ -178,12 +178,12 @@ class FieldTest extends TestCase
         $expected = [
             'one' => [
                 'label' => 'One',
-                'inactive' => false
+                'inactive' => false,
             ],
             'two' => [
                 'label' => 'Two',
-                'inactive' => false
-            ]
+                'inactive' => false,
+            ],
         ];
 
         $this->assertSame($expected, Field::getList('Common.list'));
@@ -202,16 +202,16 @@ class FieldTest extends TestCase
                         'children' => [
                             'first_level_1.second_level_1.third_level_1' => [
                                 'label' => 'Third level 1',
-                                'inactive' => false
-                            ]
-                        ]
-                    ]
-                ]
+                                'inactive' => false,
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'first_level_2' => [
                 'label' => 'First level 2',
-                'inactive' => false
-            ]
+                'inactive' => false,
+            ],
         ];
 
         $this->assertSame($expected, Field::getList('nested'));
@@ -230,12 +230,12 @@ class FieldTest extends TestCase
             ],
             'first_level_1.second_level_1.third_level_1' => [
                 'label' => 'Third level 1',
-                'inactive' => false
+                'inactive' => false,
             ],
             'first_level_2' => [
                 'label' => 'First level 2',
-                'inactive' => false
-            ]
+                'inactive' => false,
+            ],
         ];
 
         $this->assertSame($expected, Field::getList('nested', true));

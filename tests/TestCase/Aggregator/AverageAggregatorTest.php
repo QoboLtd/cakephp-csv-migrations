@@ -11,7 +11,7 @@ use RuntimeException;
 class AverageAggregatorTest extends TestCase
 {
     public $fixtures = [
-        'plugin.CsvMigrations.foo'
+        'plugin.CsvMigrations.foo',
     ];
 
     private $table;
@@ -84,7 +84,7 @@ class AverageAggregatorTest extends TestCase
             ['start_time'],
             ['created'],
             ['birthdate'],
-            ['created_by']
+            ['created_by'],
         ];
     }
 }

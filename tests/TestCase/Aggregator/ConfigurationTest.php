@@ -14,7 +14,7 @@ class ConfigurationTest extends TestCase
 {
     public $fixtures = [
         'plugin.CsvMigrations.articles',
-        'plugin.CsvMigrations.foo'
+        'plugin.CsvMigrations.foo',
     ];
 
     public function testConstructor(): void

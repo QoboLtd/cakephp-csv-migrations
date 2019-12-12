@@ -49,7 +49,7 @@ class DecimalRenderer extends AbstractRenderer
             'min' => $options['min'] ?? Setting::MIN_VALUE_FOR_NUMBER,
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
-            'placeholder' => (!empty($options['placeholder']) ? $options['placeholder'] : '')
+            'placeholder' => (!empty($options['placeholder']) ? $options['placeholder'] : ''),
         ];
 
         $defaultElement = 'CsvMigrations.FieldHandlers/DecimalFieldHandler/input';

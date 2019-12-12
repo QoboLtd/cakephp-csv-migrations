@@ -29,16 +29,16 @@ class RelatedSearchOperators extends AbstractSearchOperators
             'operator' => 'IN',
             'emptyCriteria' => [
                 'aggregator' => 'OR',
-                'values' => ['IS NULL', '= ""']
-            ]
+                'values' => ['IS NULL', '= ""'],
+            ],
         ],
         'is_not' => [
             'label' => 'is not',
             'operator' => 'NOT IN',
             'emptyCriteria' => [
                 'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""']
-            ]
+                'values' => ['IS NOT NULL', '!= ""'],
+            ],
         ],
     ];
 }

@@ -45,7 +45,7 @@ trait ImportTrait
             Assert::isInstanceOf($query, Query::class);
 
             $pagination = [
-                'count' => $query->count()
+                'count' => $query->count(),
             ];
 
             $data = ImportUtility::toDatatables($this->paginate($query), $columns);
@@ -56,7 +56,7 @@ trait ImportTrait
                 'success' => true,
                 'data' => $data,
                 'pagination' => $pagination,
-                '_serialize' => ['success', 'data', 'pagination']
+                '_serialize' => ['success', 'data', 'pagination'],
             ]);
 
             return;

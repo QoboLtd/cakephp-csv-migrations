@@ -55,7 +55,7 @@ class DblistItemsFixture extends TestFixture
             'lft' => 1,
             'rght' => 4,
             'created' => '2016-09-21 10:13:21',
-            'modified' => '2016-09-21 10:13:21'
+            'modified' => '2016-09-21 10:13:21',
         ],
         [
             'id' => '8233ddc0-5b8a-47e6-9432-e90fcba73014',
@@ -67,7 +67,7 @@ class DblistItemsFixture extends TestFixture
             'lft' => 5,
             'rght' => 10,
             'created' => '2016-09-21 10:13:21',
-            'modified' => '2016-09-21 10:13:21'
+            'modified' => '2016-09-21 10:13:21',
         ],
         [
             'id' => '8233ddc0-5b8a-47e6-9432-e90fcba73024',
@@ -79,7 +79,7 @@ class DblistItemsFixture extends TestFixture
             'lft' => 6,
             'rght' => 7,
             'created' => '2016-09-21 10:13:21',
-            'modified' => '2016-09-21 10:13:21'
+            'modified' => '2016-09-21 10:13:21',
         ],
         [
             'id' => '8233ddc0-5b8a-47e6-9432-e90fcba73034',
@@ -91,7 +91,7 @@ class DblistItemsFixture extends TestFixture
             'lft' => 8,
             'rght' => 9,
             'created' => '2016-09-21 10:13:21',
-            'modified' => '2016-09-21 10:13:21'
+            'modified' => '2016-09-21 10:13:21',
         ],
         [
             'id' => '8233ddc0-5b8a-47e6-9432-e90fcba73044',
@@ -103,7 +103,7 @@ class DblistItemsFixture extends TestFixture
             'lft' => 2,
             'rght' => 3,
             'created' => '2016-09-21 10:13:21',
-            'modified' => '2016-09-21 10:13:21'
+            'modified' => '2016-09-21 10:13:21',
         ],
         [
             'id' => '8233ddc0-5b8a-47e6-9432-e90fcba73005',
@@ -115,7 +115,7 @@ class DblistItemsFixture extends TestFixture
             'lft' => 11,
             'rght' => 12,
             'created' => '2016-09-21 10:13:21',
-            'modified' => '2016-09-21 10:13:21'
+            'modified' => '2016-09-21 10:13:21',
         ],
         [
             'id' => '8233ddc0-5b8a-47e6-9432-e90fcba73004',
@@ -127,7 +127,7 @@ class DblistItemsFixture extends TestFixture
             'lft' => 13,
             'rght' => 14,
             'created' => '2016-09-21 10:13:21',
-            'modified' => '2016-09-21 10:13:21'
+            'modified' => '2016-09-21 10:13:21',
         ],
     ];
 }

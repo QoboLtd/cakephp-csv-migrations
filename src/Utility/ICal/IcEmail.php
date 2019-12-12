@@ -91,7 +91,7 @@ class IcEmail
             ->addAttachments(['event.ics' => [
                 'contentDisposition' => true,
                 'mimetype' => 'text/calendar',
-                'data' => $calendar->render()
+                'data' => $calendar->render(),
             ]]);
 
         return $emailer->send($content);
@@ -138,7 +138,7 @@ class IcEmail
         $renderedValue = $factory->renderValue($this->table, $displayField, $this->entity->get($displayField), [
             'renderAs' => 'related' === (new CsvField($config[$displayField]))->getType() ?
                 Setting::RENDER_PLAIN_VALUE_RELATED :
-                Setting::RENDER_PLAIN_VALUE
+                Setting::RENDER_PLAIN_VALUE,
         ]);
 
         if (! $renderedValue) {
@@ -257,7 +257,7 @@ class IcEmail
                 'prefix' => false,
                 'controller' => $this->table->getTable(),
                 'action' => 'view',
-                $this->entity->get($primaryKey)
+                $this->entity->get($primaryKey),
             ],
             true
         );

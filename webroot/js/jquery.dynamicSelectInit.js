@@ -21,7 +21,8 @@
                 var captions = $(this).data('captions');
                 var hide_next = $(this).data('hide-next');
                 var previous_default_value = $(this).data('previous-default-value');
-                $(selectors[0]).parent().parent().dynamicSelect({
+                var currentForm = $(this).closest("form");
+                $(currentForm).dynamicSelect({
                     structure: structure,
                     optionValues: option_values,
                     selectors: selectors,
@@ -32,7 +33,7 @@
 
                 // set values on edit mode
                 selectors.forEach(function (el) {
-                    var value = $(el).data('value');
+                    var value = $(el). data('value');
                     if (!value) {
                         return;
                     }

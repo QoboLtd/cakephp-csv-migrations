@@ -30,8 +30,8 @@ class CoordinatesValidationRules extends AbstractValidationRules
         $validator = parent::provide($validator, $options);
 
         $validator->add($options['fieldDefinitions']->getName(), 'validRegex', [
-            'rule' => ['custom', '/^(\-?\d+(\.\d+)?),(\-?\d+(\.\d+)?)$/Du'],
-            'message' => 'The provided coordinates are invalid (ie: "-90.000000,54.123456")'
+            'rule' => ['custom', '/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/Du'],
+            'message' => 'The provided coordinates are invalid (ie: "-90.000000,54.123456")',
         ]);
         $validator->allowEmpty($options['fieldDefinitions']->getName());
 

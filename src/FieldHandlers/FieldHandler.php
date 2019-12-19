@@ -254,6 +254,7 @@ class FieldHandler implements FieldHandlerInterface
         }
 
         $options['label'] = !isset($options['label']) ? $this->renderName() : $options['label'];
+        $options['label'] = __($options['label']);
 
         $searchOptions = $this->config->getProvider('renderInput');
         $searchOptions = new $searchOptions($this->config);
@@ -283,6 +284,7 @@ class FieldHandler implements FieldHandlerInterface
         }
 
         $options['label'] = empty($options['label']) ? $this->renderName() : $options['label'];
+        $options['label'] = __($options['label']);
 
         $searchOptions = $this->config->getProvider('searchOptions');
         $searchOptions = new $searchOptions($this->config);
@@ -299,6 +301,7 @@ class FieldHandler implements FieldHandlerInterface
     public function renderName(): string
     {
         $label = !empty($this->defaultOptions['label']) ? $this->defaultOptions['label'] : '';
+        $label = __($label);
 
         $renderer = $this->config->getProvider('renderName');
         $renderer = new $renderer($this->config);

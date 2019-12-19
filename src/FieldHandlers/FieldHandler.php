@@ -123,7 +123,7 @@ class FieldHandler implements FieldHandlerInterface
      */
     protected function setDefaultLabel(): void
     {
-        $this->defaultOptions['label'] = __($this->renderName());
+        $this->defaultOptions['label'] = __d('Qobo/CsvMigrations', "{0}", $this->renderName());
     }
 
     /**

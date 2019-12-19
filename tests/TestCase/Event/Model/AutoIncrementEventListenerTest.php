@@ -70,4 +70,20 @@ class AutoIncrementEventListenerTest extends TestCase
         $this->table->saveOrFail($existingEntity);
         $this->assertSame(10, $existingEntity->get($this->autoincrementField));
     }
+
+    public function testAutoIncrementWithExistingPartialEntity(): void
+    {
+        $newEntity = $this->table->newEntity($this->data);
+        $this->table->saveOrFail($newEntity);
+
+        $this->assertSame(10, $newEntity->get($this->autoincrementField));
+
+
+        $existingEntity = $this->table->get($newEntity->get('id'), ['fields' => ['id', 'name']]);
+        $this->table->patchEntity($existingEntity, ['status' => 'inactive']);
+        $this->table->saveOrFail($existingEntity);
+
+        $existingEntity = $this->table->get($existingEntity->get('id'));
+        $this->assertSame(10, $existingEntity->get($this->autoincrementField));
+    }
 }

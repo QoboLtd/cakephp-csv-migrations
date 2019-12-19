@@ -13,7 +13,7 @@ class ArticlesControllerTest extends IntegrationTestCase
 {
     public $fixtures = [
         'plugin.csv_migrations.articles',
-        'plugin.csv_migrations.authors'
+        'plugin.csv_migrations.authors',
     ];
 
     public function setUp(): void
@@ -23,7 +23,7 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->enableRetainFlashMessages();
 
         $this->session([
-            'Auth.User.id' => '00000000-0000-0000-0000-000000000001'
+            'Auth.User.id' => '00000000-0000-0000-0000-000000000001',
         ]);
     }
 
@@ -79,7 +79,7 @@ class ArticlesControllerTest extends IntegrationTestCase
     public function testAddPostData(): void
     {
         $data = [
-            'name' => 'Some Unique Name'
+            'name' => 'Some Unique Name',
         ];
 
         $this->post('/articles/add', $data);
@@ -122,7 +122,7 @@ class ArticlesControllerTest extends IntegrationTestCase
         $id = '00000000-0000-0000-0000-000000000001';
 
         $data = [
-            'name' => 'Some Unique Name'
+            'name' => 'Some Unique Name',
         ];
 
         $this->post('/articles/edit/' . $id, $data);
@@ -139,7 +139,7 @@ class ArticlesControllerTest extends IntegrationTestCase
         $id = '00000000-0000-0000-0000-000000000001';
 
         $data = [
-            'name' => 'Some Unique Name'
+            'name' => 'Some Unique Name',
         ];
 
         $this->put('/articles/edit/' . $id, $data);
@@ -206,9 +206,9 @@ class ArticlesControllerTest extends IntegrationTestCase
             'batch' => [
                 'ids' => [
                     '00000000-0000-0000-0000-000000000001',
-                    '00000000-0000-0000-0000-000000000002'
-                ]
-            ]
+                    '00000000-0000-0000-0000-000000000002',
+                ],
+            ],
         ];
 
         $this->post('/articles/batch/delete', $data);
@@ -231,9 +231,9 @@ class ArticlesControllerTest extends IntegrationTestCase
             'batch' => [
                 'ids' => [
                     '00000000-0000-0000-0000-000000000001',
-                    '00000000-0000-0000-0000-000000000002'
-                ]
-            ]
+                    '00000000-0000-0000-0000-000000000002',
+                ],
+            ],
         ];
         $this->post('/articles/batch/edit', $data);
         $this->assertResponseSuccess();
@@ -258,12 +258,12 @@ class ArticlesControllerTest extends IntegrationTestCase
                 'execute' => true,
                 'ids' => [
                     '00000000-0000-0000-0000-000000000001',
-                    '00000000-0000-0000-0000-000000000002'
-                ]
+                    '00000000-0000-0000-0000-000000000002',
+                ],
             ],
             'Articles' => [
-                'name' => 'Batch edit article name'
-            ]
+                'name' => 'Batch edit article name',
+            ],
         ];
 
         $this->post('/articles/batch/edit', $data);
@@ -280,8 +280,8 @@ class ArticlesControllerTest extends IntegrationTestCase
     {
         $data = [
             'batch' => [
-                'execute' => true
-            ]
+                'execute' => true,
+            ],
         ];
 
         $this->post('/articles/batch/edit', $data);
@@ -296,9 +296,9 @@ class ArticlesControllerTest extends IntegrationTestCase
                 'execute' => true,
                 'ids' => [
                     '00000000-0000-0000-0000-000000000001',
-                    '00000000-0000-0000-0000-000000000002'
-                ]
-            ]
+                    '00000000-0000-0000-0000-000000000002',
+                ],
+            ],
         ];
 
         $this->post('/articles/batch/edit', $data);

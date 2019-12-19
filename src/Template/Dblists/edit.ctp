@@ -13,7 +13,7 @@
 <section class="content-header">
     <div class="row">
         <div class="col-xs-12 col-md-6">
-            <h4><?= __('Edit Database List') ?></h4>
+            <h4><?= __d('Qobo/CsvMigrations', 'Edit Database List') ?></h4>
         </div>
     </div>
 </section>
@@ -22,14 +22,14 @@
         <div class="col-md-6">
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title"><?= __('Details') ?></h3>
+                    <h3 class="box-title"><?= __d('Qobo/CsvMigrations', 'Details') ?></h3>
                 </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-6">
                         <?= $this->Form->create($entity); ?>
                             <?= $this->Form->control('name') ?>
-                            <?= $this->Form->button(__('Submit'), ['class' => 'btn btn-primary']); ?>
+                            <?= $this->Form->button(__d('Qobo/CsvMigrations', 'Submit'), ['class' => 'btn btn-primary']); ?>
                         <?= $this->Form->end() ?>
                         </div>
                     </div>

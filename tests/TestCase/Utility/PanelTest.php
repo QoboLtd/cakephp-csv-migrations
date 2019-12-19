@@ -112,31 +112,31 @@ class PanelTest extends TestCase
                 'Scenario 1 - string comparison',
                 "%%status%% == 'first attempt'",
                 ['status' => 'first attempt'],
-                true
+                true,
             ],
             [
                 'Scenario 2 - string with special character',
                 "%%status%% == 'attempt #1'",
                 ['status' => 'attempt #1'],
-                true
+                true,
             ],
             [
                 'Scenario 3 - logical operator AND',
                 "%%status%% == 'active' && %%active%% == false",
                 ['status' => 'active', 'active' => false],
-                true
+                true,
             ],
             [
                 'Scenario 4 - logical operator NOT',
                 "!(%%status%% == 'active')",
                 ['status' => 'deactive'],
-                true
+                true,
             ],
             [
                 'Scenario 5 - logical operator OR',
                 "%%status%% == 'active' || %%active%% == false",
                 ['status' => 'active', 'active' => true],
-                true
+                true,
             ],
         ];
     }
@@ -199,7 +199,7 @@ class PanelTest extends TestCase
                 "%%hello%% == 'world' && object.isReallyBar(%%foo%%)",
                 ['foo' => 'bar', 'hello' => 'world'],
                 ['object' => $this],
-                true
+                true,
             ],
         ];
     }

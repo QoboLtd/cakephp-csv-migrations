@@ -188,7 +188,7 @@ class ImportShell extends Shell
         $data = [
             'status' => $table::STATUS_IN_PROGRESS,
             'attempts' => 1,
-            'attempted_date' => Time::now()
+            'attempted_date' => Time::now(),
         ];
 
         $import = $table->patchEntity($import, $data);
@@ -198,7 +198,7 @@ class ImportShell extends Shell
 
         // mark import as completed
         $data = [
-            'status' => $table::STATUS_COMPLETED
+            'status' => $table::STATUS_COMPLETED,
         ];
 
         $import = $table->patchEntity($import, $data);
@@ -312,7 +312,7 @@ class ImportShell extends Shell
             'import_id' => $import->get('id'),
             'status' => $table::STATUS_PENDING,
             'status_message' => $table::STATUS_PENDING_MESSAGE,
-            'model_name' => $import->get('model_name')
+            'model_name' => $import->get('model_name'),
         ];
 
         $i = $queryCount + 1;

@@ -45,7 +45,7 @@ class RelatedRenderer extends AbstractRenderer
             if (!empty($relatedParentProperties['dispFieldVal'])) {
                 $relatedProperties['dispFieldVal'] = implode(' ' . $this->_separator . ' ', [
                     $relatedParentProperties['dispFieldVal'],
-                    $relatedProperties['dispFieldVal']
+                    $relatedProperties['dispFieldVal'],
                 ]);
             }
         }

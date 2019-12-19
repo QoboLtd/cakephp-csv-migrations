@@ -35,8 +35,8 @@ class BooleanOnOffRenderer extends BooleanRenderer
     public function provide($data = null, array $options = [])
     {
         $valueLabels = [
-            0 => __('Off'),
-            1 => __('On'),
+            0 => __d('Qobo/CsvMigrations', 'Off'),
+            1 => __d('Qobo/CsvMigrations', 'On'),
         ];
 
         if (empty($options['valueLabels'])) {

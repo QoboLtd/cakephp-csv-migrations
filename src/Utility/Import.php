@@ -49,7 +49,7 @@ class Import
         'text/plain',
         'text/tab-separated-values',
         'text/x-comma-separated-values',
-        'text/x-csv'
+        'text/x-csv',
     ];
 
     /**
@@ -146,7 +146,7 @@ class Import
             'filename' => $filename,
             'status' => $table::STATUS_PENDING,
             'model_name' => $modelName,
-            'attempts' => 0
+            'attempts' => 0,
         ];
 
         $entity = $table->patchEntity($entity, $data);
@@ -319,12 +319,12 @@ class Import
                 'plugin' => $plugin,
                 'controller' => $controller,
                 'action' => 'view',
-                $entity->get('model_id')
+                $entity->get('model_id'),
             ];
             $link = $view->Html->link('<i class="fa fa-eye"></i>', $url, [
-                'title' => __('View'),
+                'title' => __d('Qobo/CsvMigrations', 'View'),
                 'class' => 'btn btn-default',
-                'escape' => false
+                'escape' => false,
             ]);
 
             $html = '<div class="btn-group btn-group-xs" role="group">' . $link . '</div>';
@@ -348,11 +348,11 @@ class Import
         $statusLabels = [
             ImportResultsTable::STATUS_SUCCESS => 'success',
             ImportResultsTable::STATUS_PENDING => 'warning',
-            ImportResultsTable::STATUS_FAIL => 'danger'
+            ImportResultsTable::STATUS_FAIL => 'danger',
         ];
         foreach ($data as $key => $value) {
             $data[$key][$index] = $view->Html->tag('span', $value[$index], [
-                'class' => 'label label-' . $statusLabels[$value[$index]]
+                'class' => 'label label-' . $statusLabels[$value[$index]],
             ]);
         }
 

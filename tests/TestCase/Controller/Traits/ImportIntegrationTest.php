@@ -23,7 +23,7 @@ class ImportIntegrationTest extends IntegrationTestCase
         'plugin.csv_migrations.authors',
         'plugin.csv_migrations.categories',
         'plugin.csv_migrations.imports',
-        'plugin.csv_migrations.import_results'
+        'plugin.csv_migrations.import_results',
     ];
 
     public function setUp(): void
@@ -93,8 +93,8 @@ class ImportIntegrationTest extends IntegrationTestCase
             'file' => [
                 'tmp_name' => TESTS . 'uploads' . DS . 'tmp' . DS . 'import',
                 'name' => 'articles.csv',
-                'type' => 'text/csv'
-            ]
+                'type' => 'text/csv',
+            ],
         ];
         $this->post('/articles/import', $data);
 
@@ -115,8 +115,8 @@ class ImportIntegrationTest extends IntegrationTestCase
     {
         $data = [
             'file' => [
-                'type' => 'unsupported_file_type'
-            ]
+                'type' => 'unsupported_file_type',
+            ],
         ];
         $this->post('/articles/import', $data);
 
@@ -132,10 +132,10 @@ class ImportIntegrationTest extends IntegrationTestCase
                 'fields' => [
                     'name' => [
                         'column' => 'Name',
-                        'default' => ''
-                    ]
-                ]
-            ]
+                        'default' => '',
+                    ],
+                ],
+            ],
         ];
         $this->put('/articles/import/' . $id, $data);
 

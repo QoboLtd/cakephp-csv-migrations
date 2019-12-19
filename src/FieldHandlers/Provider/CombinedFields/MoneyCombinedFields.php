@@ -26,10 +26,10 @@ class MoneyCombinedFields extends AbstractCombinedFields
      */
     protected $fields = [
         'amount' => [
-            'config' => 'CsvMigrations\\FieldHandlers\\Config\\DecimalConfig'
+            'config' => 'CsvMigrations\\FieldHandlers\\Config\\DecimalConfig',
         ],
         'currency' => [
-            'config' => 'CsvMigrations\\FieldHandlers\\Config\\CurrencyConfig'
-        ]
+            'config' => 'CsvMigrations\\FieldHandlers\\Config\\CurrencyConfig',
+        ],
     ];
 }

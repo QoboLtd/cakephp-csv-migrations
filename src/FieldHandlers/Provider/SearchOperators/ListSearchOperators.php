@@ -29,24 +29,24 @@ class ListSearchOperators extends AbstractSearchOperators
             'operator' => 'IN',
             'emptyCriteria' => [
                 'aggregator' => 'OR',
-                'values' => ['IS NULL', '= ""']
-            ]
+                'values' => ['IS NULL', '= ""'],
+            ],
         ],
         'is_not' => [
             'label' => 'is not',
             'operator' => 'NOT IN',
             'emptyCriteria' => [
                 'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""']
-            ]
+                'values' => ['IS NOT NULL', '!= ""'],
+            ],
         ],
         'in' => [
             'label' => 'in',
             'operator' => 'IN',
             'emptyCriteria' => [
                 'aggregator' => 'OR',
-                'values' => ['IS NULL', '= ""']
-            ]
+                'values' => ['IS NULL', '= ""'],
+            ],
         ],
     ];
 }

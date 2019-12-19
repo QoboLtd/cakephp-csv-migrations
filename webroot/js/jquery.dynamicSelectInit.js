@@ -21,7 +21,7 @@
                 var captions = $(this).data('captions');
                 var hide_next = $(this).data('hide-next');
                 var previous_default_value = $(this).data('previous-default-value');
-                $(document).dynamicSelect({
+                $(selectors[0]).parent().parent().dynamicSelect({
                     structure: structure,
                     optionValues: option_values,
                     selectors: selectors,

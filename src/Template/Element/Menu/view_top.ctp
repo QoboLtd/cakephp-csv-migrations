@@ -22,15 +22,15 @@ if (!empty($this->plugin)) {
 ?>
 <div class="btn-group btn-group-sm" role="group">
     <?= $this->Html->link(
-        '<i class="fa fa-pencil"></i> ' . __('Edit'),
+        '<i class="fa fa-pencil"></i> ' . __d('Qobo/CsvMigrations', 'Edit'),
         ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'edit', $options['entity']->id],
-        ['escape' => false, 'title' => __('Edit'), 'class' => 'btn btn-default']
+        ['escape' => false, 'title' => __d('Qobo/CsvMigrations', 'Edit'), 'class' => 'btn btn-default']
     ) ?>
     <?= $this->Form->postLink(
-        '<i class="fa fa-trash"></i> ' . __('Delete'),
+        '<i class="fa fa-trash"></i> ' . __d('Qobo/CsvMigrations', 'Delete'),
         ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'delete', $options['entity']->id],
-        ['escape' => false, 'title' => __('Delete'), 'class' => 'btn btn-default',
-        'confirm' => __('Are you sure you want to delete {0}?', $factory->renderValue(
+        ['escape' => false, 'title' => __d('Qobo/CsvMigrations', 'Delete'), 'class' => 'btn btn-default',
+        'confirm' => __d('Qobo/CsvMigrations', 'Are you sure you want to delete {0}?', $factory->renderValue(
             $tableName,
             $displayField,
             $options['entity']->{$displayField},

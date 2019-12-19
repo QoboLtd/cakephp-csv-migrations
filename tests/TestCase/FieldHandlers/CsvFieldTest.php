@@ -243,7 +243,7 @@ class CsvFieldTest extends TestCase
             ['birthdate', 'date', '', '', '', false],
             ['reminder_date', 'reminder', '', '', '', false],
             ['created', 'datetime', '', '', '', false],
-            ['modified', 'datetime', '', '', '', false]
+            ['modified', 'datetime', '', '', '', false],
         ];
     }
 
@@ -333,7 +333,7 @@ class CsvFieldTest extends TestCase
             [false, 0],
             [false, false],
             [false, null],
-            [false, []]
+            [false, []],
         ];
     }
 }

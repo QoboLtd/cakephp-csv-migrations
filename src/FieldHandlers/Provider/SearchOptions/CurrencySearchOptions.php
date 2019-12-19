@@ -71,20 +71,20 @@ class CurrencySearchOptions extends AbstractSearchOptions
                     'content' => [
                         'CsvMigrations.dom-observer',
                         'AdminLTE./bower_components/select2/dist/js/select2.full.min',
-                        'CsvMigrations.select2.init'
+                        'CsvMigrations.select2.init',
                     ],
-                    'block' => 'scriptBottom'
+                    'block' => 'scriptBottom',
                 ],
                 [
                     'type' => 'css',
                     'content' => [
                         'AdminLTE./bower_components/select2/dist/css/select2.min',
                         'Qobo/Utils.select2-bootstrap.min',
-                        'Qobo/Utils.select2-style'
+                        'Qobo/Utils.select2-style',
                     ],
-                    'block' => 'css'
-                ]
-            ]
+                    'block' => 'css',
+                ],
+            ],
         ];
 
         return $result;

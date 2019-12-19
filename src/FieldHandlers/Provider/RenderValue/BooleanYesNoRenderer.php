@@ -35,8 +35,8 @@ class BooleanYesNoRenderer extends BooleanRenderer
     public function provide($data = null, array $options = [])
     {
         $valueLabels = [
-            0 => __('No'),
-            1 => __('Yes'),
+            0 => __d('Qobo/CsvMigrations', 'No'),
+            1 => __d('Qobo/CsvMigrations', 'Yes'),
         ];
 
         if (empty($options['valueLabels'])) {

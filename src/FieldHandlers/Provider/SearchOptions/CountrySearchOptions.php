@@ -71,9 +71,9 @@ class CountrySearchOptions extends AbstractSearchOptions
                     'content' => [
                         'CsvMigrations.dom-observer',
                         'AdminLTE./bower_components/select2/dist/js/select2.full.min',
-                        'CsvMigrations.select2.init'
+                        'CsvMigrations.select2.init',
                     ],
-                    'block' => 'scriptBottom'
+                    'block' => 'scriptBottom',
                 ],
                 [
                     'type' => 'css',
@@ -81,11 +81,11 @@ class CountrySearchOptions extends AbstractSearchOptions
                         'AdminLTE./bower_components/select2/dist/css/select2.min',
                         'Qobo/Utils.select2-bootstrap.min',
                         'Qobo/Utils.select2-style',
-                        'Qobo/Utils./img/icons/flags/css/flag-icon.css'
+                        'Qobo/Utils./img/icons/flags/css/flag-icon.css',
                     ],
-                    'block' => 'css'
-                ]
-            ]
+                    'block' => 'css',
+                ],
+            ],
         ];
 
         return $result;

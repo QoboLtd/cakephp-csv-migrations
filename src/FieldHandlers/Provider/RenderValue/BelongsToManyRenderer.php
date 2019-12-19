@@ -56,7 +56,7 @@ class BelongsToManyRenderer extends AbstractRenderer
         $params = [
             'relatedProperties' => $relatedProperties,
             'options' => $options,
-            'associationList' => $associationList
+            'associationList' => $associationList,
         ];
 
         return $this->renderElement($elementName, $params);

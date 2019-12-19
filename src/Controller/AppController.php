@@ -267,11 +267,11 @@ class AppController extends BaseController
         }
 
         if (! $saved) {
-            $this->Flash->error((string)__('The record could not be saved, please try again.'));
+            $this->Flash->error((string)__d('Qobo/CsvMigrations', 'The record could not be saved, please try again.'));
         }
 
         if ($saved) {
-            $this->Flash->success((string)__('The record has been saved.'));
+            $this->Flash->success((string)__d('Qobo/CsvMigrations', 'The record has been saved.'));
 
             $primaryKey = $table->getPrimaryKey();
             if (! is_string($primaryKey)) {
@@ -311,9 +311,9 @@ class AppController extends BaseController
         $entity = $model->get($id);
 
         if ($model->delete($entity)) {
-            $this->Flash->success((string)__('The record has been deleted.'));
+            $this->Flash->success((string)__d('Qobo/CsvMigrations', 'The record has been deleted.'));
         } else {
-            $this->Flash->error((string)__('The record could not be deleted. Please, try again.'));
+            $this->Flash->error((string)__d('Qobo/CsvMigrations', 'The record could not be deleted. Please, try again.'));
         }
 
         $url = $this->referer();
@@ -347,7 +347,7 @@ class AppController extends BaseController
         // unlink associated record
         $table->{$assocName}->unlink($entity, [$assocEntity]);
 
-        $this->Flash->success((string)__('The record has been unlinked.'));
+        $this->Flash->success((string)__d('Qobo/CsvMigrations', 'The record has been unlinked.'));
 
         return $this->redirect($this->referer());
     }
@@ -375,7 +375,7 @@ class AppController extends BaseController
         $ids = (array)$this->request->getData($associationName . '._ids');
 
         if (empty($ids)) {
-            $this->Flash->error((string)__('No records provided for linking.'));
+            $this->Flash->error((string)__d('Qobo/CsvMigrations', 'No records provided for linking.'));
 
             return $this->redirect($this->referer());
         }
@@ -389,18 +389,18 @@ class AppController extends BaseController
             ->where([$association->getPrimaryKey() . ' IN' => $ids]);
 
         if ($query->isEmpty()) {
-            $this->Flash->error((string)__('No records found for linking.'));
+            $this->Flash->error((string)__d('Qobo/CsvMigrations', 'No records found for linking.'));
 
             return $this->redirect($this->referer());
         }
 
         if (! $association->link($table->get($id), $query->toArray())) {
-            $this->Flash->error((string)__('Failed to link records.'));
+            $this->Flash->error((string)__d('Qobo/CsvMigrations', 'Failed to link records.'));
 
             return $this->redirect($this->referer());
         }
 
-        $this->Flash->success(sprintf('(%s)', count($ids)) . ' ' . __('records have been linked.'));
+        $this->Flash->success(sprintf('(%s)', count($ids)) . ' ' . __d('Qobo/CsvMigrations', 'records have been linked.'));
 
         return $this->redirect($this->referer());
     }
@@ -422,7 +422,7 @@ class AppController extends BaseController
 
         $batchIds = (array)$this->request->getData('batch.ids');
         if (empty($batchIds)) {
-            $this->Flash->error((string)__('No records selected.'));
+            $this->Flash->error((string)__d('Qobo/CsvMigrations', 'No records selected.'));
 
             return $this->redirect($redirectUrl);
         }
@@ -433,7 +433,7 @@ class AppController extends BaseController
         $event = new Event((string)EventName::BATCH_IDS(), $this, [
             $batchIds,
             $operation,
-            $this->Auth->user()
+            $this->Auth->user(),
         ]);
         $this->getEventManager()->dispatch($event);
 
@@ -441,7 +441,7 @@ class AppController extends BaseController
 
         if (empty($batchIds)) {
             $operation = strtolower(Inflector::humanize($operation));
-            $this->Flash->error((string)__('Insufficient permissions to ' . $operation . ' the selected records.'));
+            $this->Flash->error((string)__d('Qobo/CsvMigrations', 'Insufficient permissions to {0} the selected records.', $operation));
 
             return $this->redirect($redirectUrl);
         }
@@ -456,10 +456,10 @@ class AppController extends BaseController
             // execute batch delete
             if ($table->deleteAll($conditions)) {
                 $this->Flash->success(
-                    (string)__(count($batchIds) . ' of ' . $batchIdsCount . ' selected records have been deleted.')
+                    (string)__d('Qobo/CsvMigrations', '{0} of {1} selected records have been deleted.', count($batchIds), $batchIdsCount)
                 );
             } else {
-                $this->Flash->error((string)__('Selected records could not be deleted. Please, try again.'));
+                $this->Flash->error((string)__d('Qobo/CsvMigrations', 'Selected records could not be deleted. Please, try again.'));
             }
 
             return $this->redirect($redirectUrl);
@@ -468,7 +468,7 @@ class AppController extends BaseController
         if ('edit' === $operation && (bool)$this->request->getData('batch.execute')) {
             $fields = (array)$this->request->getData($this->name);
             if (empty($fields)) {
-                $this->Flash->error((string)__('Selected records could not be updated. No changes provided.'));
+                $this->Flash->error((string)__d('Qobo/CsvMigrations', 'Selected records could not be updated. No changes provided.'));
 
                 return $this->redirect($redirectUrl);
             }
@@ -482,10 +482,10 @@ class AppController extends BaseController
             // execute batch edit
             if ($table->updateAll($fields, $conditions)) {
                 $this->Flash->success(
-                    (string)__(count($batchIds) . ' of ' . $batchIdsCount . ' selected records have been updated.')
+                    (string)__d('Qobo/CsvMigrations', '{0} of {1} selected records have been updated.', count($batchIds), $batchIdsCount)
                 );
             } else {
-                $this->Flash->error((string)__('Selected records could not be updated. Please, try again.'));
+                $this->Flash->error((string)__d('Qobo/CsvMigrations', 'Selected records could not be updated. Please, try again.'));
             }
 
             return $this->redirect($redirectUrl);

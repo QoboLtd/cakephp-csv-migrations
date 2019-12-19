@@ -61,7 +61,7 @@ final class AggregateResult
                     'source_table' => $config->getTable()->getAlias(),
                     'target_table' => $table->getAlias(),
                     'primar_key' => $table->getPrimaryKey(),
-                    'association' => $association->getName()
+                    'association' => $association->getName(),
                 ]);
 
                 return $q;
@@ -70,7 +70,7 @@ final class AggregateResult
             $entity = $config->getEntity();
 
             return $q->where([
-                $association->getTarget()->aliasField($primaryKey) => $entity->get($primaryKey)
+                $association->getTarget()->aliasField($primaryKey) => $entity->get($primaryKey),
             ]);
         });
 

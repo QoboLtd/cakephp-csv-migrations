@@ -136,7 +136,7 @@ class AutoIncrementEventListener implements EventListenerInterface
             }
 
             $result[$field] = [
-                'min' => $min
+                'min' => $min,
             ];
         }
 

@@ -36,13 +36,13 @@ echo $this->Html->scriptBlock(
 <section class="content-header">
     <div class="row">
         <div class="col-xs-12 col-md-6">
-            <h4><?= __('Database Lists') ?></h4>
+            <h4><?= __d('Qobo/CsvMigrations', 'Database Lists') ?></h4>
         </div>
         <div class="col-xs-12 col-md-6">
             <div class="pull-right">
                 <div class="btn-group btn-group-sm" role="group">
                     <?= $this->Html->link(
-                        '<i class="fa fa-plus"></i> ' . __('Add'),
+                        '<i class="fa fa-plus"></i> ' . __d('Qobo/CsvMigrations', 'Add'),
                         ['plugin' => 'CsvMigrations', 'controller' => 'Dblists', 'action' => 'add'],
                         ['title' => __d('CsvMigrations', 'Add'), 'escape' => false, 'class' => 'btn btn-default']
                     ); ?>
@@ -57,10 +57,10 @@ echo $this->Html->scriptBlock(
             <table class="table table-hover table-condensed table-vertical-align table-datatable">
                 <thead>
                     <tr>
-                        <th><?= __('Name'); ?></th>
-                        <th><?= __('Created'); ?></th>
-                        <th><?= __('Modified'); ?></th>
-                        <th class="actions"><?= __('Actions'); ?></th>
+                        <th><?= __d('Qobo/CsvMigrations', 'Name'); ?></th>
+                        <th><?= __d('Qobo/CsvMigrations', 'Created'); ?></th>
+                        <th><?= __d('Qobo/CsvMigrations', 'Modified'); ?></th>
+                        <th class="actions"><?= __d('Qobo/CsvMigrations', 'Actions'); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -80,7 +80,7 @@ echo $this->Html->scriptBlock(
                                     'action' => 'index',
                                     $entity->get('id')
                                 ],
-                                ['title' => __('View'), 'class' => 'btn btn-default', 'escape' => false]
+                                ['title' => __d('Qobo/CsvMigrations', 'View'), 'class' => 'btn btn-default', 'escape' => false]
                             );
 
                             echo $this->Html->link(
@@ -91,7 +91,7 @@ echo $this->Html->scriptBlock(
                                     'action' => 'edit',
                                     $entity->get('id')
                                 ],
-                                ['title' => __('Edit'), 'class' => 'btn btn-default', 'escape' => false]
+                                ['title' => __d('Qobo/CsvMigrations', 'Edit'), 'class' => 'btn btn-default', 'escape' => false]
                             );
 
                             echo $this->Form->postLink(
@@ -103,10 +103,10 @@ echo $this->Html->scriptBlock(
                                     $entity->get('id')
                                 ],
                                 [
-                                    'title' => __('Delete'),
+                                    'title' => __d('Qobo/CsvMigrations', 'Delete'),
                                     'class' => 'btn btn-default btn-sm',
                                     'escape' => false,
-                                    'confirm' => __('Are you sure you want to delete {0}?', $entity->get('name'))
+                                    'confirm' => __d('Qobo/CsvMigrations', 'Are you sure you want to delete {0}?', $entity->get('name'))
                                 ]
                             );
                             ?>

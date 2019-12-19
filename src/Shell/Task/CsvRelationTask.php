@@ -39,7 +39,7 @@ class CsvRelationTask extends BakeTask
      * @var array
      */
     public $tasks = [
-        'Bake.BakeTemplate'
+        'Bake.BakeTemplate',
     ];
 
     /**
@@ -220,21 +220,21 @@ class CsvRelationTask extends BakeTask
                 'type' => 'uuid',
                 'required' => true,
                 'non-searchable' => false,
-                'unique' => true
+                'unique' => true,
             ],
             'created' => [
                 'name' => 'created',
                 'type' => 'datetime',
                 'required' => false,
                 'non-searchable' => false,
-                'unique' => false
+                'unique' => false,
             ],
             'modified' => [
                 'name' => 'modified',
                 'type' => 'datetime',
                 'required' => false,
                 'non-searchable' => false,
-                'unique' => false
+                'unique' => false,
             ],
         ];
 
@@ -244,7 +244,7 @@ class CsvRelationTask extends BakeTask
                 'type' => sprintf('related(%s)', $module),
                 'required' => true,
                 'non-searchable' => false,
-                'unique' => false
+                'unique' => false,
             ];
         }
 

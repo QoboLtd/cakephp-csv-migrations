@@ -19,8 +19,8 @@ class CategoriesFixture extends TestFixture
         'trashed' => ['type' => 'datetime', 'null' => true],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
-            'unique' => ['type' => 'unique', 'columns' => ['name', 'id']]
-        ]
+            'unique' => ['type' => 'unique', 'columns' => ['name', 'id']],
+        ],
     ];
 
     public $records = [
@@ -29,14 +29,14 @@ class CategoriesFixture extends TestFixture
             'name' => 'First Category',
             'trashed' => null,
             'created' => '2016-07-01 10:39:23',
-            'modified' => '2016-07-01 10:41:31'
+            'modified' => '2016-07-01 10:41:31',
         ],
         [
             'id' => '00000000-0000-0000-0000-000000000002',
             'name' => 'Second Category',
             'trashed' => null,
             'created' => '2016-07-02 10:39:23',
-            'modified' => '2016-07-02 10:41:31'
-        ]
+            'modified' => '2016-07-02 10:41:31',
+        ],
     ];
 }

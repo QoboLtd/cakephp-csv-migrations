@@ -100,7 +100,7 @@ class CsvMigrationTask extends MigrationTask
 
         return [
             'table' => $table,
-            'name' => $name
+            'name' => $name,
         ];
     }
 

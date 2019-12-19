@@ -20,7 +20,7 @@ class ImportResultsTableTest extends TestCase
      */
     public $fixtures = [
         'plugin.csv_migrations.import_results',
-        'plugin.csv_migrations.imports'
+        'plugin.csv_migrations.imports',
     ];
 
     /**

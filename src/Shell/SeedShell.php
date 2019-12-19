@@ -69,7 +69,7 @@ class SeedShell extends Shell
         $parser->addOption('numberofrecords', [
             'short' => 'n',
             'help' => 'Number of fake records to create.',
-            'default' => 20
+            'default' => 20,
         ]);
 
         return $parser;

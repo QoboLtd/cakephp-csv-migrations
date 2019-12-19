@@ -46,13 +46,13 @@ class BelongsToManyRenderer extends AbstractRenderer
             if (!empty($relatedParentProperties['dispFieldVal'])) {
                 $relatedProperties['dispFieldVal'] = implode(' ' . $this->_separator . ' ', [
                     $relatedParentProperties['dispFieldVal'],
-                    $relatedProperties['dispFieldVal']
+                    $relatedProperties['dispFieldVal'],
                 ]);
             }
         }
 
         $entity = $options['entity'];
-        $entityClass = $table->entityClass();
+        $entityClass = $table->getEntityClass();
         $isNew = !(is_object($entity) && $entity instanceof $entityClass);
         $optionsSelected = [];
         if (!$isNew) {

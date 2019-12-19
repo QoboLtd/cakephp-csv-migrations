@@ -32,7 +32,7 @@ class RelatedFieldHandlerTest extends TestCase
             'type' => 'related(Foo)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
         $result = $this->fh->renderValue($id, $options);
 
@@ -52,7 +52,7 @@ class RelatedFieldHandlerTest extends TestCase
             'type' => 'related(Foo)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderInput($id, $options);
@@ -84,8 +84,8 @@ class RelatedFieldHandlerTest extends TestCase
                 'type' => 'related(Foo)',
                 'required' => false,
                 'non-searchable' => false,
-                'unique' => false
-            ])
+                'unique' => false,
+            ]),
         ];
 
         $result = $this->fh->renderInput($id, $options);
@@ -117,7 +117,7 @@ class RelatedFieldHandlerTest extends TestCase
             'type' => 'related(Foo)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->getSearchOptions($options);

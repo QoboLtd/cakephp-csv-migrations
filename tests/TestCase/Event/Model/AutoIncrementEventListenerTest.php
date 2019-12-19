@@ -23,7 +23,7 @@ class AutoIncrementEventListenerTest extends TestCase
     public $fixtures = ['plugin.CsvMigrations.Foo'];
 
     private $table;
-    private $autoincrementField ='reference';
+    private $autoincrementField = 'reference';
     private $data = ['name' => 'auto-increment test', 'status' => 'active', 'type' => 'bronze.used'];
 
     public function setUp(): void
@@ -64,7 +64,6 @@ class AutoIncrementEventListenerTest extends TestCase
 
         $this->assertSame(10, $newEntity->get($this->autoincrementField));
 
-
         $existingEntity = $this->table->get($newEntity->get('id'));
         $this->table->patchEntity($existingEntity, ['status' => 'inactive']);
         $this->table->saveOrFail($existingEntity);
@@ -77,7 +76,6 @@ class AutoIncrementEventListenerTest extends TestCase
         $this->table->saveOrFail($newEntity);
 
         $this->assertSame(10, $newEntity->get($this->autoincrementField));
-
 
         $existingEntity = $this->table->get($newEntity->get('id'), ['fields' => ['id', 'name']]);
         $this->table->patchEntity($existingEntity, ['status' => 'inactive']);

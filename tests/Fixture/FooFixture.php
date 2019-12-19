@@ -8,9 +8,6 @@ class FooFixture extends TestFixture
 {
     public $table = 'foo';
 
-    // Optional. Set this property to load fixtures to a different test datasource
-    public $connection = 'test';
-
     public $fields = [
         'id' => ['type' => 'uuid'],
         'description' => ['type' => 'text', 'null' => true],
@@ -34,6 +31,7 @@ class FooFixture extends TestFixture
         'modified_by' => ['type' => 'uuid', 'null' => true],
         'is_primary' => ['type' => 'boolean', 'null' => true],
         'trashed' => ['type' => 'datetime', 'null' => true],
+        'reference' => ['type' => 'integer', 'null' => true],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
             'unique' => ['type' => 'unique', 'columns' => ['name', 'id']],

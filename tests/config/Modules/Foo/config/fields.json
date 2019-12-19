@@ -1,5 +1,9 @@
 {
     "status": {
         "renderAs": "plain"
+    },
+    "reference": {
+        "auto-increment": true,
+        "min": 10
     }
 }

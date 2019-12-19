@@ -69,7 +69,9 @@ class AutoIncrementEventListener implements EventListenerInterface
         if (! $entity->isNew()) {
             foreach (array_keys($fields) as $field) {
                 Assert::isInstanceOf($entity, Entity::class);
-                $entity->set((string)$field, $entity->getOriginal((string)$field));
+                if ($entity->has((string)$field)) {
+                    $entity->set((string)$field, $entity->getOriginal((string)$field));
+                }
             }
 
             return;

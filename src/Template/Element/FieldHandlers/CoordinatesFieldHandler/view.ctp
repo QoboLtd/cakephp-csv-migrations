@@ -44,8 +44,8 @@ $randId = rand(1, 1000000);
 ?>
 
 <div class="view-map-container" data-gps="<?php echo $result; ?>">
-    <div class="gps-string"></div>
-    <div style="height:300px" class="view-googlemap" id="view-map-<?php echo $randId; ?>"></div>
+    <div class="gps-string"><?php echo $result; ?></div>
+    <div style="height:0px" class="view-googlemap" id="view-map-<?php echo $randId; ?>"></div>
 </div>
 
 <?php endif; ?>

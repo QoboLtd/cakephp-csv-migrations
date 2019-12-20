@@ -57,7 +57,7 @@ $attributes += [
         'input' => '<div class="input-group" >
                         <input type="{{type}}" name="{{name}}"{{attrs}}/>
                         <div class="input-group-btn">
-                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default-'. $randId .'"><i class="fa fa-map"></i></button>
+                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default-'. $randId .'"><i class="fa fa-pencil"></i></button>
                         </div>
                     </div>',
     ]
@@ -66,18 +66,21 @@ $attributes += [
 echo $this->Form->control($name, $attributes);
 ?>
 
-<div class="modal fade coordinates_modal" id="modal-default-<?php echo $randId; ?>">
+<div class="modal fade coordinates_modal" id="modal-default-<?= $randId ?>">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title"><?php echo (string)__d('Qobo/CsvMigrations', 'Coordinates'); ?> : <span class="modal_gps_value"><?php echo $value; ?></span></h4>
+            <h4 class="modal-title"><?= __($label); ?></h4>
+            <div><i class="fa fa-map-marker"></i> <span class="modal_gps_value"><?= $value; ?></span></div>
+        </div>
+      <div class="modal-body">
+
       </div>
-      <div class="modal-body"></div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary save_gps" data-dismiss="modal">Apply</button>
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal"><?= __('Cancel') ?></button>
+        <button type="button" class="btn btn-primary save_gps" data-dismiss="modal"><?= __('Apply') ?></button>
       </div>
     </div>
   </div>

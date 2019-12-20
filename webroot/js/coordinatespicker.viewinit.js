@@ -6,7 +6,7 @@ $(document).ready(function () {
         let data = $(this).find(".gps-string");
         let gps_value = $(this).data("gps");
 
-        $(data).text(gps_value)
+        $(data).html('<i class="fa fa-map-marker"></i> ' + gps_value);
         drawMap(id, gps_value, true)
     })
 })

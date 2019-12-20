@@ -117,7 +117,7 @@ return [
         ],
         "GoogleMaps" => [
             "ApiKey" => "",
-            "DefaultLocation" => "35.151012309561715,33.3649206161499",
+            "DefaultLocation" => "0.0,0.0",
         ],
     ],
 ];

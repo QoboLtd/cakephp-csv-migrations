@@ -39,7 +39,7 @@ class CoordinatesRenderer extends AbstractRenderer
         $fieldName = $table->aliasField($field);
 
         $default_coordinates = Configure::read("CsvMigrations.GoogleMaps.DefaultLocation");
-        $options['attributes']["default_coordinates"] = !empty($default_coordinates) ? $default_coordinates : "0,0.0,0";
+        $options['attributes']["default_coordinates"] = !empty($default_coordinates) ? $default_coordinates : "0.0,0.0";
 
         $params = [
             'field' => $field,

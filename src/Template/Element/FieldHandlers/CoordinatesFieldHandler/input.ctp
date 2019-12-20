@@ -11,7 +11,7 @@
  */
 use Cake\Core\Configure;
 
-$api_key = Configure::read("CsvMigrations.coordinates_field.GoogleMapKey");
+$api_key = Configure::read("CsvMigrations.GoogleMaps.ApiKey");
 
 if (empty($api_key)) {
     $attributes += [

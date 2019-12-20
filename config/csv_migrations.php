@@ -115,9 +115,9 @@ return [
                 ],
             ],
         ],
-        "coordinates_field" => [
-            "GoogleMapKey" => "",
-            "DefaultGPSLocation" => "35.151012309561715,33.3649206161499",
+        "GoogleMaps" => [
+            "ApiKey" => "",
+            "DefaultLocation" => "35.151012309561715,33.3649206161499",
         ],
     ],
 ];

@@ -115,5 +115,9 @@ return [
                 ],
             ],
         ],
+        "GoogleMaps" => [
+            "ApiKey" => "",
+            "DefaultLocation" => "0.0,0.0",
+        ],
     ],
 ];

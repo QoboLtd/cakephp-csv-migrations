@@ -213,17 +213,6 @@ class Import
      */
     public static function getRowsCount(string $path, bool $withHeader = false): int
     {
-        $result = trim(exec("/usr/bin/env wc -l '" . $path . "'", $output, $return));
-        if (0 === $return) {
-            list($result, ) = explode(' ', $result);
-            $result = (int)$result;
-            if (0 < $result) {
-                $result -= 1;
-            }
-
-            return $result;
-        }
-
         $reader = Reader::createFromPath($path, 'r');
 
         $result = $reader->each(function ($row) {

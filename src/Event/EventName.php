@@ -26,6 +26,7 @@ class EventName extends Enum
     const FIELD_HANDLER_DEFAULT_VALUE = 'CsvMigrations.FieldHandler.DefaultValue';
     // CsvMigrations Table events
     const MODEL_AFTER_SAVE = 'CsvMigrations.Model.afterSave';
+    const MODEL_AFTER_SAVE_COMMIT = 'CsvMigrations.Model.afterSaveCommit';
     // Panel extras
     const PANEL_POPULATE_EXTRAS = 'CsvMigrations.Panel.populate';
 }

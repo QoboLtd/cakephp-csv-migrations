@@ -134,6 +134,18 @@ class Table extends BaseTable implements HasFieldsInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function afterSaveCommit(Event $event, EntityInterface $entity, ArrayObject $options): void
+    {
+        EventManager::instance()->dispatch(new Event(
+            (string)EventName::MODEL_AFTER_SAVE_COMMIT(),
+            $this,
+            ['entity' => $entity, 'options' => $options]
+        ));
+    }
+
+    /**
      * Get fields from CSV file
      *
      * This method gets all fields defined in the CSV and returns

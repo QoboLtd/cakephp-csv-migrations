@@ -9,6 +9,7 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\Test\App\Controller\ArticlesController;
 use CsvMigrations\Utility\Import;
+use Webmozart\Assert\Assert;
 
 /**
  * CsvMigrations\Utility\Import Test Case
@@ -132,11 +133,10 @@ class ImportTest extends TestCase
             ->withParam('controller', 'Bar');
 
         $instance = new Import($this->table, $serverRequestWithPluginAndController, $this->flashComponent);
-        $result = $instance->create(
-            TableRegistry::getTableLocator()->get('CsvMigrations.Imports'),
-            $this->import,
-            'foobar'
-        );
+
+        $table = TableRegistry::getTableLocator()->get('CsvMigrations.Imports');
+        Assert::isInstanceOf($table, \CsvMigrations\Model\Table\ImportsTable::class);
+        $result = $instance->create($table, $this->import, 'foobar');
 
         $this->assertTrue($result);
         $this->assertSame('foobar', $this->import->get('filename'));

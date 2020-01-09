@@ -88,7 +88,7 @@
             that.evaluateWithServer();
         });
 
-        $(this.form).find(':input').on('ifChanged', function(event) {
+        $(this.form).find(':input').on('ifChanged', function (event) {
             that.evaluateWithServer();
         });
     };

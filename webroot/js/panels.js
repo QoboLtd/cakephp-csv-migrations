@@ -33,10 +33,20 @@
         var data = {};
         $(this.form).find(':input').each(function () {
             var name = $(this).attr('name');
-            var value = $(this).val();
-            if (typeof name !== 'undefined' && typeof value !== 'undefined' ) {
-                data[name] = value;
+            if (typeof name === 'undefined') {
+                return;
             }
+
+            var value = $(this).val();
+            if (typeof value === 'undefined') {
+                return;
+            }
+
+            if ($(this).attr('type') === 'checkbox') {
+                value = $(this).prop('checked') ? 1 : 0;
+            }
+
+            data[name] = value;
         });
 
         return data;
@@ -75,6 +85,10 @@
     Panel.prototype.observe = function () {
         var that = this;
         $(this.form).find(':input').change(function () {
+            that.evaluateWithServer();
+        });
+
+        $(this.form).find(':input').on('ifChanged', function (event) {
             that.evaluateWithServer();
         });
     };

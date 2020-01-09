@@ -42,6 +42,10 @@
                 return;
             }
 
+            if ($(this).attr('type') === 'checkbox') {
+                value = $(this).prop('checked') ? 1 : 0;
+            }
+
             data[name] = value;
         });
 

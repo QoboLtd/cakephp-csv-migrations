@@ -77,6 +77,10 @@
         $(this.form).find(':input').change(function () {
             that.evaluateWithServer();
         });
+
+        $(this.form).find(':input').on('ifChanged', function(event) {
+            that.evaluateWithServer();
+        });
     };
 
     Panel.prototype.evaluateWithServer = function () {

@@ -33,10 +33,16 @@
         var data = {};
         $(this.form).find(':input').each(function () {
             var name = $(this).attr('name');
-            var value = $(this).val();
-            if (typeof name !== 'undefined' && typeof value !== 'undefined' ) {
-                data[name] = value;
+            if (typeof name === 'undefined') {
+                return;
             }
+
+            var value = $(this).val();
+            if (typeof value === 'undefined') {
+                return;
+            }
+
+            data[name] = value;
         });
 
         return data;

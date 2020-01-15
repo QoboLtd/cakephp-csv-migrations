@@ -166,7 +166,7 @@ class FieldTest extends TestCase
             ],
             'two' => [
                 'label' => 'Two',
-                'inactive' => false
+                'inactive' => false,
             ],
             'three' => [
                 'label' => 'Three',
@@ -187,12 +187,12 @@ class FieldTest extends TestCase
             ],
             'two' => [
                 'label' => 'Two',
-                'inactive' => false
+                'inactive' => false,
             ],
             'three' => [
                 'label' => 'Three',
-                'inactive' => false
-            ]
+                'inactive' => false,
+            ],
         ];
 
         $this->assertSame($expected, Field::getList('Common.list'));

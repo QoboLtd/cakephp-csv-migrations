@@ -114,7 +114,7 @@ interface FieldHandlerInterface
      * @param mixed[] $options Field options
      * @return \Cake\Validation\Validator
      */
-    public function setValidationRules(Validator $validator, array $options = []) : Validator;
+    public function setValidationRules(Validator $validator, array $options = []): Validator;
 
     /**
      * Application rules setter.
@@ -125,5 +125,5 @@ interface FieldHandlerInterface
      * @param mixed[] $options Field options
      * @return \Cake\ORM\RulesChecker;
      */
-    public function setApplicationRules(RulesChecker $rules, array $options = []) : RulesChecker;
+    public function setApplicationRules(RulesChecker $rules, array $options = []): RulesChecker;
 }

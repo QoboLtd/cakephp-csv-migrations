@@ -375,7 +375,7 @@ class FieldHandler implements FieldHandlerInterface
      * @param array $options Field options
      * @return \Cake\ORM\RulesChecker
      */
-    public function setApplicationRules(RulesChecker $rules, array $options = []) : RulesChecker
+    public function setApplicationRules(RulesChecker $rules, array $options = []): RulesChecker
     {
         $options = array_merge($this->defaultOptions, $this->fixOptions($options));
 

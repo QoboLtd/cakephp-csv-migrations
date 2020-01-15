@@ -84,7 +84,7 @@ class FooTableTest extends TestCase
         $this->assertFalse($this->table->save($entity));
     }
 
-    public function testSaveWithInvalidTransitionsListItem() : void
+    public function testSaveWithInvalidTransitionsListItem(): void
     {
         $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'inactive', 'type' => 'bronze.new']);
         $this->table->save($entity);
@@ -93,7 +93,7 @@ class FooTableTest extends TestCase
         $this->assertFalse($this->table->save($entity));
     }
 
-    public function testSaveWithValidTransitionsListItem() : void
+    public function testSaveWithValidTransitionsListItem(): void
     {
         $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'active', 'type' => 'bronze.new']);
         $this->table->save($entity);
@@ -102,7 +102,7 @@ class FooTableTest extends TestCase
         $this->assertInstanceOf(EntityInterface::class, $this->table->save($entity));
     }
 
-    public function testSaveWithFootprint() : void
+    public function testSaveWithFootprint(): void
     {
         $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'active', 'type' => 'bronze.new']);
 

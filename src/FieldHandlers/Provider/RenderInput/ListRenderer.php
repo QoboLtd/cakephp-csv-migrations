@@ -43,7 +43,7 @@ class ListRenderer extends AbstractRenderer
             $selectListItems = new $selectListItems($this->config);
             $listName = $options['fieldDefinitions']->getLimit();
             $listOptions = [
-                'value' => $data
+                'value' => $data,
             ];
             $selectOptions += $selectListItems->provide($listName, $listOptions);
         } else {

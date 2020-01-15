@@ -152,7 +152,7 @@ class FieldHandlerFactory
      * @param mixed[] $options Field options
      * @return \Cake\ORM\RulesChecker
      */
-    public function setApplicationRules($table, string $field, RulesChecker $rules, array $options = []) : RulesChecker
+    public function setApplicationRules($table, string $field, RulesChecker $rules, array $options = []): RulesChecker
     {
         $handler = self::getByTableField($table, $field);
         $rules = $handler->setApplicationRules($rules, $options);

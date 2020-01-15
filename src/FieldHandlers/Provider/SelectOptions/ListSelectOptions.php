@@ -47,7 +47,7 @@ class ListSelectOptions extends AbstractSelectOptions
             $config = new ModuleConfig(ConfigType::LISTS(), $module, $list, [
                     'flatten' => $flatten,
                     'filter' => true,
-                    'transition' => $currentValue
+                    'transition' => $currentValue,
                 ]);
             $config = $config->parse();
             if (! property_exists($config, 'items')) {

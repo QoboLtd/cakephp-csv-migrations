@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Event\Model;
 
 use ArrayObject;
@@ -48,7 +50,7 @@ class AutoIncrementEventListener implements EventListenerInterface
      * @param  \ArrayObject $options entity options
      * @return void
      */
-    public function autoIncrementFieldValue(Event $event, EntityInterface $entity, ArrayObject $options) : void
+    public function autoIncrementFieldValue(Event $event, EntityInterface $entity, ArrayObject $options): void
     {
         $table = $event->getSubject();
 
@@ -67,7 +69,9 @@ class AutoIncrementEventListener implements EventListenerInterface
         if (! $entity->isNew()) {
             foreach (array_keys($fields) as $field) {
                 Assert::isInstanceOf($entity, Entity::class);
-                $entity->set((string)$field, $entity->getOriginal((string)$field));
+                if ($entity->has((string)$field)) {
+                    $entity->set((string)$field, $entity->getOriginal((string)$field));
+                }
             }
 
             return;
@@ -109,7 +113,7 @@ class AutoIncrementEventListener implements EventListenerInterface
      * @param \CsvMigrations\Table $table Table instance
      * @return mixed[]
      */
-    private function getAutoIncrementFields(Table $table) : array
+    private function getAutoIncrementFields(Table $table): array
     {
         $moduleName = Inflector::camelize($table->getTable());
         $mc = new ModuleConfig(ConfigType::FIELDS(), $moduleName);
@@ -134,7 +138,7 @@ class AutoIncrementEventListener implements EventListenerInterface
             }
 
             $result[$field] = [
-                'min' => $min
+                'min' => $min,
             ];
         }
 

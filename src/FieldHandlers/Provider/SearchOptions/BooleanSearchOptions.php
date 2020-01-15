@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
 
 /**
@@ -33,7 +35,7 @@ class BooleanSearchOptions extends AbstractSearchOptions
         $template = $view->Form->control('{{name}}', [
             'type' => 'checkbox',
             'class' => 'square',
-            'label' => false
+            'label' => false,
         ]);
 
         $defaultOptions['input'] = [
@@ -44,16 +46,16 @@ class BooleanSearchOptions extends AbstractSearchOptions
                     'content' => [
                         'CsvMigrations.dom-observer',
                         'AdminLTE./plugins/iCheck/icheck.min',
-                        'CsvMigrations.icheck.init'
+                        'CsvMigrations.icheck.init',
                     ],
-                    'block' => 'scriptBottom'
+                    'block' => 'scriptBottom',
                 ],
                 [
                     'type' => 'css',
                     'content' => 'AdminLTE./plugins/iCheck/all',
-                    'block' => 'css'
-                ]
-            ]
+                    'block' => 'css',
+                ],
+            ],
         ];
 
         $result[$this->config->getField()] = $defaultOptions;

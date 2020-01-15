@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
 
 use CsvMigrations\FieldHandlers\RelatedFieldTrait;
@@ -43,7 +45,7 @@ class RelatedRenderer extends AbstractRenderer
             if (!empty($relatedParentProperties['dispFieldVal'])) {
                 $relatedProperties['dispFieldVal'] = implode(' ' . $this->_separator . ' ', [
                     $relatedParentProperties['dispFieldVal'],
-                    $relatedProperties['dispFieldVal']
+                    $relatedProperties['dispFieldVal'],
                 ]);
             }
         }

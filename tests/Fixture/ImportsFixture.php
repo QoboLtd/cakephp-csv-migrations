@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
@@ -57,7 +58,7 @@ class ImportsFixture extends TestFixture
             'attempted_date' => '2017-08-01 11:06:06',
             'status' => 'Pending',
             'created_by' => '00000000-0000-0000-0000-000000000002',
-            'modified_by' => '00000000-0000-0000-0000-000000000001'
+            'modified_by' => '00000000-0000-0000-0000-000000000001',
         ],
         [
             'id' => '00000000-0000-0000-0000-000000000002',
@@ -71,7 +72,7 @@ class ImportsFixture extends TestFixture
             'attempted_date' => '2017-08-01 11:06:06',
             'status' => 'Pending',
             'created_by' => '00000000-0000-0000-0000-000000000001',
-            'modified_by' => '00000000-0000-0000-0000-000000000002'
+            'modified_by' => '00000000-0000-0000-0000-000000000002',
         ],
     ];
 }

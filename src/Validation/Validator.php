@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Validation;
 
 use InvalidArgumentException;
@@ -40,7 +42,7 @@ class Validator
         /** @var mixed[]|null $config */
         $inactive = $items['items'][$item]['inactive'] ?? null;
         if ($inactive === null || $inactive === true) {
-            return (string)__('Invalid list item: `{0}`', $item);
+            return (string)__d('Qobo/CsvMigrations', 'Invalid list item: `{0}`', $item);
         }
 
         return true;

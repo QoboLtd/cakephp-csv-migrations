@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
 
 /**
@@ -29,7 +31,7 @@ class DateSearchOptions extends AbstractSearchOptions
                 <i class="fa fa-%s"></i>
             </div>
             <input type="{{type}}" name="{{name}}"{{attrs}}/>
-        </div>'
+        </div>',
     ];
 
     /**
@@ -50,8 +52,8 @@ class DateSearchOptions extends AbstractSearchOptions
                     'fieldName' => '{{name}}',
                     'value' => '{{value}}',
                     'type' => 'datepicker',
-                    'label' => false
-                ]
+                    'label' => false,
+                ],
             ]);
         } else {
             $template = $view->Form->control('{{name}}', [
@@ -64,9 +66,9 @@ class DateSearchOptions extends AbstractSearchOptions
                 'templates' => [
                     'input' => vsprintf($this->templates['input'], [
                         '',
-                        'calendar'
-                    ])
-                ]
+                        'calendar',
+                    ]),
+                ],
             ]);
         }
 
@@ -78,16 +80,16 @@ class DateSearchOptions extends AbstractSearchOptions
                     'content' => [
                         'CsvMigrations.dom-observer',
                         'AdminLTE./bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min',
-                        'CsvMigrations.datepicker.init'
+                        'CsvMigrations.datepicker.init',
                     ],
-                    'block' => 'scriptBottom'
+                    'block' => 'scriptBottom',
                 ],
                 [
                     'type' => 'css',
                     'content' => 'AdminLTE./bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min',
-                    'block' => 'css'
-                ]
-            ]
+                    'block' => 'css',
+                ],
+            ],
         ];
 
         $result[$this->config->getField()] = $defaultOptions;

@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Config;
 
 use Cake\ORM\Table;
@@ -11,7 +12,7 @@ class ConfigTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function invalidProvidersProvider() : array
+    public function invalidProvidersProvider(): array
     {
         return [
             // empty config
@@ -93,7 +94,7 @@ class ConfigTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function validProvidersProvider() : array
+    public function validProvidersProvider(): array
     {
         return [
             [
@@ -120,7 +121,7 @@ class ConfigTest extends TestCase
      * @dataProvider invalidProvidersProvider
      * @expectedException \InvalidArgumentException
      */
-    public function testSetProvidersException(array $providers) : void
+    public function testSetProvidersException(array $providers): void
     {
         $configInstance = new Config('foo');
         $configInstance->setProviders($providers);
@@ -131,13 +132,13 @@ class ConfigTest extends TestCase
      * @dataProvider invalidProvidersProvider
      * @expectedException \InvalidArgumentException
      */
-    public function testValidateProvidersException(array $providers) : void
+    public function testValidateProvidersException(array $providers): void
     {
         $configInstance = new Config('foo');
         $configInstance->validateProviders($providers);
     }
 
-    public function testConstruct() : void
+    public function testConstruct(): void
     {
         $configInstance = new Config('foo');
         $this->assertTrue(is_object($configInstance), "Failed to instantiate Config object");
@@ -148,7 +149,7 @@ class ConfigTest extends TestCase
      * @param mixed[] $providers
      * @dataProvider validProvidersProvider
      */
-    public function testGetProviders(array $providers) : void
+    public function testGetProviders(array $providers): void
     {
         $configInstance = new Config('foo');
         $configInstance->setProviders($providers);
@@ -161,7 +162,7 @@ class ConfigTest extends TestCase
      * @dataProvider validProvidersProvider
      * @expectedException \InvalidArgumentException
      */
-    public function testGetProviderMissingException(array $providers) : void
+    public function testGetProviderMissingException(array $providers): void
     {
         $configInstance = new Config('foo');
         $configInstance->setProviders($providers);
@@ -171,19 +172,19 @@ class ConfigTest extends TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testSetFieldExceptionEmptyString() : void
+    public function testSetFieldExceptionEmptyString(): void
     {
         $configInstance = new Config('   ');
     }
 
-    public function testGetTable() : void
+    public function testGetTable(): void
     {
         $configInstance = new Config('field');
         $result = $configInstance->getTable();
         $this->assertTrue($result instanceof Table, "Config table returned a non-valid instance");
     }
 
-    public function testSetOptions() : void
+    public function testSetOptions(): void
     {
         $options = [
             'foo' => 'bar',

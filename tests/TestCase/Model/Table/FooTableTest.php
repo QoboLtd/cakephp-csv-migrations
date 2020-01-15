@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Model\Table;
 
 use Cake\Core\Configure;
@@ -25,7 +26,7 @@ class FooTableTest extends TestCase
      *
      * @return void
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -40,14 +41,14 @@ class FooTableTest extends TestCase
      *
      * @return void
      */
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->table);
 
         parent::tearDown();
     }
 
-    public function testInitialize() : void
+    public function testInitialize(): void
     {
         $this->assertInstanceOf(Table::class, $this->table);
         $this->assertInstanceOf(RepositoryInterface::class, $this->table);
@@ -64,7 +65,7 @@ class FooTableTest extends TestCase
         $this->assertTrue($this->table->hasBehavior('Footprint'));
     }
 
-    public function testSaveWithMissingRequiredFields() : void
+    public function testSaveWithMissingRequiredFields(): void
     {
         $entity = $this->table->newEntity(['description' => 'some random text']);
 
@@ -76,7 +77,7 @@ class FooTableTest extends TestCase
         ));
     }
 
-    public function testSaveWithInvalidListItem() : void
+    public function testSaveWithInvalidListItem(): void
     {
         $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'invalid_value', 'type' => 'bronze.new']);
 
@@ -114,7 +115,7 @@ class FooTableTest extends TestCase
         $this->assertEquals($expected, $entity->get('modified_by'));
     }
 
-    public function testGetParentRedirectUrl() : void
+    public function testGetParentRedirectUrl(): void
     {
         $result = $this->table->getParentRedirectUrl($this->table, $this->table->find()->firstOrFail());
         $this->assertTrue(is_array($result));
@@ -124,12 +125,12 @@ class FooTableTest extends TestCase
      * @dataProvider csvProvider
      * @param mixed[] $expected
      */
-    public function testGetFieldsDefinitions(string $name, array $expected) : void
+    public function testGetFieldsDefinitions(string $name, array $expected): void
     {
         $this->assertEquals($expected, $this->table->getFieldsDefinitions());
     }
 
-    public function testFieldsOptionsRenderer() : void
+    public function testFieldsOptionsRenderer(): void
     {
         $fhf = new FieldHandlerFactory();
         $result = $fhf->renderValue($this->table, 'status', 'active');
@@ -142,7 +143,7 @@ class FooTableTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function csvProvider() : array
+    public function csvProvider(): array
     {
         return [
             [
@@ -166,10 +167,11 @@ class FooTableTest extends TestCase
                     'start_time' => ['name' => 'start_time', 'type' => 'time', 'required' => '', 'non-searchable' => '', 'unique' => false],
                     'balance' => ['name' => 'balance', 'type' => 'decimal(12.4)', 'required' => '', 'non-searchable' => '', 'unique' => false],
                     'lead' => ['name' => 'lead', 'type' => 'related(Leads)', 'required' => '', 'non-searchable' => '', 'unique' => false],
+                    'reference' => ['name' => 'reference', 'type' => 'integer', 'required' => '', 'non-searchable' => '', 'unique' => false],
                     'created_by' => ['name' => 'created_by', 'type' => 'related(Users)', 'required' => '', 'non-searchable' => '', 'unique' => false],
-                    'modified_by' => ['name' => 'modified_by', 'type' => 'related(Users)', 'required' => '', 'non-searchable' => '', 'unique' => false]
-                ]
-            ]
+                    'modified_by' => ['name' => 'modified_by', 'type' => 'related(Users)', 'required' => '', 'non-searchable' => '', 'unique' => false],
+                ],
+            ],
         ];
     }
 }

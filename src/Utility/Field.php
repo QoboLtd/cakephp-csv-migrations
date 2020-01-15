@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Utility;
 
 use Cake\Core\App;
@@ -26,7 +28,7 @@ class Field
      * @param \Cake\Datasource\RepositoryInterface $table Table instance
      * @return string[]
      */
-    public static function getLookup(RepositoryInterface $table) : array
+    public static function getLookup(RepositoryInterface $table): array
     {
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
@@ -50,7 +52,7 @@ class Field
      * @param \Cake\Datasource\RepositoryInterface $table Table instance
      * @return mixed[]
      */
-    public static function getCsv(RepositoryInterface $table) : array
+    public static function getCsv(RepositoryInterface $table): array
     {
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
@@ -81,7 +83,7 @@ class Field
      * @param string $field Field name
      * @return \CsvMigrations\FieldHandlers\CsvField|null
      */
-    public static function getCsvField(RepositoryInterface $table, string $field) : ?CsvField
+    public static function getCsvField(RepositoryInterface $table, string $field): ?CsvField
     {
         if ('' === $field) {
             return null;
@@ -110,7 +112,7 @@ class Field
      * @param \Cake\Datasource\RepositoryInterface $table Table instance
      * @return string[]
      */
-    public static function getVirtual(RepositoryInterface $table) : array
+    public static function getVirtual(RepositoryInterface $table): array
     {
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
@@ -128,7 +130,7 @@ class Field
      * @param bool $panels Arrange panels flag
      * @return mixed[]
      */
-    public static function getCsvView(RepositoryInterface $table, string $action, bool $includeModel = false, bool $panels = false) : array
+    public static function getCsvView(RepositoryInterface $table, string $action, bool $includeModel = false, bool $panels = false): array
     {
         $tableName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
@@ -158,7 +160,7 @@ class Field
      * @param bool $flat Fatten list flag
      * @return mixed[]
      */
-    public static function getList(string $listName, bool $flat = false) : array
+    public static function getList(string $listName, bool $flat = false): array
     {
         $moduleName = '';
         if (false !== strpos($listName, '.')) {
@@ -183,7 +185,7 @@ class Field
      * @param mixed[] $fields csv fields
      * @return mixed[]
      */
-    protected static function arrangePanels(array $fields) : array
+    protected static function arrangePanels(array $fields): array
     {
         $result = [];
 
@@ -202,7 +204,7 @@ class Field
      * @param string[] $fields View csv fields
      * @return mixed[]
      */
-    protected static function setFieldPluginAndModel(string $tableName, array $fields) : array
+    protected static function setFieldPluginAndModel(string $tableName, array $fields): array
     {
         list($plugin, $model) = pluginSplit($tableName);
 

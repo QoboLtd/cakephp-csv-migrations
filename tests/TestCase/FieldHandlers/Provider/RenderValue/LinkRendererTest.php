@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use Cake\Core\Configure;
@@ -10,13 +11,13 @@ class LinkRendererTest extends TestCase
 {
     protected $renderer;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = new UrlConfig('link');
         $this->renderer = new LinkRenderer($config);
     }
 
-    public function testInterface() : void
+    public function testInterface(): void
     {
         $implementedInterfaces = array_keys(class_implements($this->renderer));
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\Provider\ProviderInterface', $implementedInterfaces), "ProviderInterface is not implemented");
@@ -25,7 +26,7 @@ class LinkRendererTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function getValues() : array
+    public function getValues(): array
     {
         return [
             [true, '1', 'Boolean true'],
@@ -48,13 +49,13 @@ class LinkRendererTest extends TestCase
      * @dataProvider getValues
      * @param mixed $value
      */
-    public function testRenderValue($value, string $expected, string $description) : void
+    public function testRenderValue($value, string $expected, string $description): void
     {
         $result = $this->renderer->provide($value);
         $this->assertSame($expected, $result, "Value rendering is broken for: $description");
     }
 
-    public function testRenderValueWithOptions() : void
+    public function testRenderValueWithOptions(): void
     {
         // Simple
         $options = [

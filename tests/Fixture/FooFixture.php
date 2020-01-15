@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
@@ -6,9 +7,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class FooFixture extends TestFixture
 {
     public $table = 'foo';
-
-    // Optional. Set this property to load fixtures to a different test datasource
-    public $connection = 'test';
 
     public $fields = [
         'id' => ['type' => 'uuid'],
@@ -33,10 +31,11 @@ class FooFixture extends TestFixture
         'modified_by' => ['type' => 'uuid', 'null' => true],
         'is_primary' => ['type' => 'boolean', 'null' => true],
         'trashed' => ['type' => 'datetime', 'null' => true],
+        'reference' => ['type' => 'integer', 'null' => true],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
-            'unique' => ['type' => 'unique', 'columns' => ['name', 'id']]
-        ]
+            'unique' => ['type' => 'unique', 'columns' => ['name', 'id']],
+        ],
     ];
 
     public $records = [
@@ -60,7 +59,7 @@ class FooFixture extends TestFixture
             'modified' => '2016-07-01 10:41:31',
             'trashed' => null,
             'balance' => 8.6727,
-            'is_primary' => 1
+            'is_primary' => 1,
         ],
         [
             'id' => '00000000-0000-0000-0000-000000000002',
@@ -82,7 +81,7 @@ class FooFixture extends TestFixture
             'modified' => '2018-09-26 10:41:31',
             'trashed' => null,
             'balance' => 8.6727,
-            'is_primary' => 1
+            'is_primary' => 1,
         ],
         [
             'id' => '00000000-0000-0000-0000-000000000003',
@@ -104,7 +103,7 @@ class FooFixture extends TestFixture
             'modified' => '2018-09-23 10:41:31',
             'trashed' => null,
             'balance' => 8.6727,
-            'is_primary' => 1
-        ]
+            'is_primary' => 1,
+        ],
     ];
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Controller;
 
 use App\Controller\AppController as BaseController;
@@ -141,7 +143,7 @@ class DblistItemsController extends BaseController
         $this->request->allowMethod('post');
 
         if (!in_array($action, ['up', 'down'])) {
-            $this->Flash->error((string)__('Unknown move action "{0}".', $action));
+            $this->Flash->error((string)__d('Qobo/CsvMigrations', 'Unknown move action "{0}".', $action));
 
             return $this->redirect($this->referer());
         }
@@ -149,9 +151,9 @@ class DblistItemsController extends BaseController
         $entity = $this->DblistItems->get($id);
 
         if ($this->DblistItems->{'move' . $action}($entity)) {
-            $this->Flash->success((string)__('{0} has been moved {1} successfully.', $entity->get('name'), $action));
+            $this->Flash->success((string)__d('Qobo/CsvMigrations', '{0} has been moved {1} successfully.', $entity->get('name'), $action));
         } else {
-            $this->Flash->error((string)__('Fail to move {0} {1}.', $entity->get('name'), $action));
+            $this->Flash->error((string)__d('Qobo/CsvMigrations', 'Fail to move {0} {1}.', $entity->get('name'), $action));
         }
 
         return $this->redirect($this->referer());

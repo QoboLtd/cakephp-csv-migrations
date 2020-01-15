@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Shell;
 
 use Cake\Console\ConsoleOptionParser;
@@ -85,7 +87,7 @@ class ValidateShell extends Shell
      * @param string[] $modules List of module names to validate
      * @return int Count of errors found
      */
-    protected function validateModules(array $modules) : int
+    protected function validateModules(array $modules): int
     {
         $result = 0;
 
@@ -112,7 +114,7 @@ class ValidateShell extends Shell
      * @param string $module Module name
      * @return mixed[] Array with errors and warnings
      */
-    protected function runModuleChecks(string $module) : array
+    protected function runModuleChecks(string $module): array
     {
         $result = [
             'errors' => [],
@@ -163,7 +165,7 @@ class ValidateShell extends Shell
      * @param int $errorCount Count of errors
      * @return void
      */
-    protected function printCheckStatus(int $errorCount) : void
+    protected function printCheckStatus(int $errorCount): void
     {
         if ($errorCount <= 0) {
             $this->success('OK');
@@ -181,7 +183,7 @@ class ValidateShell extends Shell
      * @param string[] $messages Array of messages to report
      * @return void
      */
-    protected function printMessages(string $type, array $messages = []) : void
+    protected function printMessages(string $type, array $messages = []): void
     {
         $this->out('');
 

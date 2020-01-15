@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
 use Cake\ORM\TableRegistry;
@@ -54,7 +56,7 @@ class BelongsToManyRenderer extends AbstractRenderer
         $params = [
             'relatedProperties' => $relatedProperties,
             'options' => $options,
-            'associationList' => $associationList
+            'associationList' => $associationList,
         ];
 
         return $this->renderElement($elementName, $params);

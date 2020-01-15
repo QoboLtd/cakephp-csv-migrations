@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Utility\ICal;
 
 use Cake\Core\App;
@@ -73,7 +75,7 @@ class IcEmail
      * @param string $config Email config to use ('default' if omitted)
      * @return mixed[] Result of \Cake\Mailer\Email::send()
      */
-    public function sendCalendarEmail(string $to, string $subject, string $content, array $eventOptions, string $config = 'default') : array
+    public function sendCalendarEmail(string $to, string $subject, string $content, array $eventOptions, string $config = 'default'): array
     {
         // Get iCal calendar
         $calendar = $this->getEventCalendar($eventOptions);
@@ -89,7 +91,7 @@ class IcEmail
             ->addAttachments(['event.ics' => [
                 'contentDisposition' => true,
                 'mimetype' => 'text/calendar',
-                'data' => $calendar->render()
+                'data' => $calendar->render(),
             ]]);
 
         return $emailer->send($content);
@@ -101,7 +103,7 @@ class IcEmail
      * @param mixed[] $eventOptions Options for event creation
      * @return \Eluceo\iCal\Component\Calendar Whatever IcCalendar::getCalendar() returns
      */
-    protected function getEventCalendar(array $eventOptions) : Calendar
+    protected function getEventCalendar(array $eventOptions): Calendar
     {
         // New iCal event
         $event = (new IcEvent($eventOptions))->getEvent();
@@ -118,7 +120,7 @@ class IcEmail
      *
      * @return string
      */
-    protected function getDisplayValue() : string
+    protected function getDisplayValue(): string
     {
         $fallbackValue = 'reminder';
         $displayField = $this->table->getDisplayField();
@@ -136,7 +138,7 @@ class IcEmail
         $renderedValue = $factory->renderValue($this->table, $displayField, $this->entity->get($displayField), [
             'renderAs' => 'related' === (new CsvField($config[$displayField]))->getType() ?
                 Setting::RENDER_PLAIN_VALUE_RELATED :
-                Setting::RENDER_PLAIN_VALUE
+                Setting::RENDER_PLAIN_VALUE,
         ]);
 
         if (! $renderedValue) {
@@ -151,7 +153,7 @@ class IcEmail
      *
      * @return string
      */
-    public function getEmailSubject() : string
+    public function getEmailSubject(): string
     {
         $result = sprintf(
             '%s: %s',
@@ -171,7 +173,7 @@ class IcEmail
      *
      * @return string
      */
-    public function getEmailContent() : string
+    public function getEmailContent(): string
     {
         $result = '';
 
@@ -204,7 +206,7 @@ class IcEmail
      *
      * @return string
      */
-    public function getEventSubject() : string
+    public function getEventSubject(): string
     {
         return $this->getEmailSubject();
     }
@@ -214,7 +216,7 @@ class IcEmail
      *
      * @return string
      */
-    public function getEventContent() : string
+    public function getEventContent(): string
     {
         $result = '';
 
@@ -245,7 +247,7 @@ class IcEmail
      *
      * @return string
      */
-    public function getEntityUrl() : string
+    public function getEntityUrl(): string
     {
         $primaryKey = $this->table->getPrimaryKey();
         Assert::string($primaryKey);
@@ -255,7 +257,7 @@ class IcEmail
                 'prefix' => false,
                 'controller' => $this->table->getTable(),
                 'action' => 'view',
-                $this->entity->get($primaryKey)
+                $this->entity->get($primaryKey),
             ],
             true
         );
@@ -268,7 +270,7 @@ class IcEmail
      *
      * @return string
      */
-    protected function getUserString() : string
+    protected function getUserString(): string
     {
         $result = 'System';
 
@@ -302,7 +304,7 @@ class IcEmail
      *
      * @return string
      */
-    protected function getChangelog() : string
+    protected function getChangelog(): string
     {
         if ($this->entity->isNew()) {
             return '';

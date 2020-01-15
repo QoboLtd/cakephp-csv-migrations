@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Model\Table;
 
 use Cake\ORM\TableRegistry;
@@ -20,7 +21,7 @@ class ImportsTableTest extends TestCase
      */
     public $fixtures = [
         'plugin.csv_migrations.imports',
-        'plugin.csv_migrations.import_results'
+        'plugin.csv_migrations.import_results',
     ];
 
     /**
@@ -28,7 +29,7 @@ class ImportsTableTest extends TestCase
      *
      * @return void
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
         $config = TableRegistry::exists('Imports') ? [] : ['className' => ImportsTable::class];
@@ -41,7 +42,7 @@ class ImportsTableTest extends TestCase
      *
      * @return void
      */
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->Imports);
 
@@ -53,7 +54,7 @@ class ImportsTableTest extends TestCase
      *
      * @return void
      */
-    public function testInitialize() : void
+    public function testInitialize(): void
     {
         $this->assertTrue($this->Imports->hasBehavior('Timestamp'), 'Missing behavior Timestamp.');
         $this->assertTrue($this->Imports->hasBehavior('Trash'), 'Missing behavior Trash.');
@@ -66,7 +67,7 @@ class ImportsTableTest extends TestCase
      *
      * @return void
      */
-    public function testValidationDefault() : void
+    public function testValidationDefault(): void
     {
         $validator = new Validator();
         $result = $this->Imports->validationDefault($validator);

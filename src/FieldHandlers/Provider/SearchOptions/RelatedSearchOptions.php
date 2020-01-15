@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
 
 use Cake\Core\Configure;
@@ -75,8 +77,8 @@ class RelatedSearchOptions extends AbstractSearchOptions
                     'prefix' => 'api',
                     'plugin' => $relatedProperties['plugin'],
                     'controller' => $relatedProperties['controller'],
-                    'action' => 'lookup.json'
-                ])
+                    'action' => 'lookup.json',
+                ]),
             ])
         );
 
@@ -86,7 +88,7 @@ class RelatedSearchOptions extends AbstractSearchOptions
             'prefix' => 'api',
             'plugin' => $relatedProperties['plugin'],
             'controller' => $relatedProperties['controller'],
-            'action' => 'lookup.json'
+            'action' => 'lookup.json',
         ]);
         $result[$field]['input'] = [
             'content' => $content,
@@ -96,9 +98,9 @@ class RelatedSearchOptions extends AbstractSearchOptions
                     'content' => [
                         'CsvMigrations.dom-observer',
                         'AdminLTE./bower_components/select2/dist/js/select2.full.min',
-                        'CsvMigrations.select2.init'
+                        'CsvMigrations.select2.init',
                     ],
-                    'block' => 'scriptBottom'
+                    'block' => 'scriptBottom',
                 ],
                 [
                     'type' => 'scriptBlock',
@@ -108,18 +110,18 @@ class RelatedSearchOptions extends AbstractSearchOptions
                             Configure::read('CsvMigrations.api')
                         )
                     ) . ');',
-                    'block' => 'scriptBottom'
+                    'block' => 'scriptBottom',
                 ],
                 [
                     'type' => 'css',
                     'content' => [
                         'AdminLTE./bower_components/select2/dist/css/select2.min',
                         'Qobo/Utils.select2-bootstrap.min',
-                        'Qobo/Utils.select2-style'
+                        'Qobo/Utils.select2-style',
                     ],
-                    'block' => 'css'
-                ]
-            ]
+                    'block' => 'css',
+                ],
+            ],
         ];
 
         return $result;

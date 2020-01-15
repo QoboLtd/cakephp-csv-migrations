@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use Cake\TestSuite\TestCase;
@@ -49,7 +50,7 @@ class ValidationRulesTest extends TestCase
      */
     public $fixtures = [
         'plugin.CsvMigrations.Dblists',
-        'plugin.CsvMigrations.DblistItems'
+        'plugin.CsvMigrations.DblistItems',
     ];
 
     /**
@@ -57,14 +58,14 @@ class ValidationRulesTest extends TestCase
      * @param mixed[] $fieldConfig
      * @param mixed[] $rulesConfig
      */
-    public function testProvide(string $providerClass, string $configClass, array $fieldConfig, array $rulesConfig) : void
+    public function testProvide(string $providerClass, string $configClass, array $fieldConfig, array $rulesConfig): void
     {
         $provider = new $providerClass(new $configClass($fieldConfig['name']));
         $result = $provider->provide(new Validator(), [
             'fieldDefinitions' => new CsvField([
                 'name' => $fieldConfig['name'],
-                'type' => $fieldConfig['type']
-            ])
+                'type' => $fieldConfig['type'],
+            ]),
         ]);
 
         $this->assertInstanceOf(Validator::class, $result);
@@ -84,15 +85,15 @@ class ValidationRulesTest extends TestCase
      * @param mixed[] $fieldConfig
      * @param mixed[] $rulesConfig
      */
-    public function testProvideWithRequired(string $providerClass, string $configClass, array $fieldConfig, array $rulesConfig) : void
+    public function testProvideWithRequired(string $providerClass, string $configClass, array $fieldConfig, array $rulesConfig): void
     {
         $provider = new $providerClass(new $configClass($fieldConfig['name']));
         $result = $provider->provide(new Validator(), [
             'fieldDefinitions' => new CsvField([
                 'name' => $fieldConfig['name'],
                 'type' => $fieldConfig['type'],
-                'required' => true
-            ])
+                'required' => true,
+            ]),
         ]);
 
         $this->assertFalse($result->field($fieldConfig['name'])->isEmptyAllowed());
@@ -112,15 +113,15 @@ class ValidationRulesTest extends TestCase
         $this->assertEquals($expected, $validatorRules);
     }
 
-    public function testProvideWithoutValidationRules() : void
+    public function testProvideWithoutValidationRules(): void
     {
         $provider = new AggregatedValidationRules(new AggregatedConfig('aggregated_field'));
         $validator = new Validator();
         $result = $provider->provide($validator, [
             'fieldDefinitions' => new CsvField([
                 'name' => 'aggregated_field',
-                'type' => 'aggregated'
-            ])
+                'type' => 'aggregated',
+            ]),
         ]);
 
         $this->assertSame($validator, $result);
@@ -129,104 +130,104 @@ class ValidationRulesTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function getValdationRulesByType() : array
+    public function getValdationRulesByType(): array
     {
         return [
             [
                 BlobValidationRules::class,
                 BlobConfig::class,
                 ['name' => 'bio', 'type' => 'blob'],
-                [['name' => 'scalar', 'rule' => 'isScalar']]
+                [['name' => 'scalar', 'rule' => 'isScalar']],
             ],
             [
                 BooleanValidationRules::class,
                 BooleanConfig::class,
                 ['name' => 'active', 'type' => 'boolean'],
-                [['name' => 'boolean', 'rule' => 'boolean']]
+                [['name' => 'boolean', 'rule' => 'boolean']],
             ],
             [
                 DatetimeValidationRules::class,
                 DatetimeConfig::class,
                 ['name' => 'appointment', 'type' => 'datetime'],
-                [['name' => 'dateTime', 'rule' => 'datetime']]
+                [['name' => 'dateTime', 'rule' => 'datetime']],
             ],
             [
                 DateValidationRules::class,
                 DateConfig::class,
                 ['name' => 'birthdate', 'type' => 'date'],
-                [['name' => 'date', 'rule' => 'date']]
+                [['name' => 'date', 'rule' => 'date']],
             ],
             [
                 DblistValidationRules::class,
                 DblistConfig::class,
                 ['name' => 'shift', 'type' => 'dblist(categories)'],
-                [['name' => 'inList', 'rule' => 'inList'], ['name' => 'scalar', 'rule' => 'isScalar']]
+                [['name' => 'inList', 'rule' => 'inList'], ['name' => 'scalar', 'rule' => 'isScalar']],
             ],
             [
                 DecimalValidationRules::class,
                 DecimalConfig::class,
                 ['name' => 'rate', 'type' => 'decimal'],
-                [['name' => 'decimal', 'rule' => 'decimal']]
+                [['name' => 'decimal', 'rule' => 'decimal']],
             ],
             [
                 EmailValidationRules::class,
                 EmailConfig::class,
                 ['name' => 'company_email', 'type' => 'email'],
-                [['name' => 'email', 'rule' => 'email']]
+                [['name' => 'email', 'rule' => 'email']],
             ],
             [
                 IntegerValidationRules::class,
                 IntegerConfig::class,
                 ['name' => 'meters', 'type' => 'integer'],
-                [['name' => 'integer', 'rule' => 'isInteger']]
+                [['name' => 'integer', 'rule' => 'isInteger']],
             ],
             [
                 ListValidationRules::class,
                 ListConfig::class,
                 ['name' => 'status', 'type' => 'list(list)'],
-                [['name' => 'inList', 'rule' => 'inList'], ['name' => 'scalar', 'rule' => 'isScalar']]
+                [['name' => 'inList', 'rule' => 'inList'], ['name' => 'scalar', 'rule' => 'isScalar']],
             ],
             [
                 PhoneValidationRules::class,
                 PhoneConfig::class,
                 ['name' => 'mobile_phone', 'type' => 'phone'],
-                [['name' => 'regex', 'rule' => 'custom']]
+                [['name' => 'regex', 'rule' => 'custom']],
             ],
             [
                 RelatedValidationRules::class,
                 RelatedConfig::class,
                 ['name' => 'post_id', 'type' => 'related(Posts)'],
-                [['name' => 'uuid', 'rule' => 'uuid']]
+                [['name' => 'uuid', 'rule' => 'uuid']],
             ],
             [
                 StringValidationRules::class,
                 StringConfig::class,
                 ['name' => 'first_name', 'type' => 'string'],
-                [['name' => 'scalar', 'rule' => 'isScalar']]
+                [['name' => 'scalar', 'rule' => 'isScalar']],
             ],
             [
                 TextValidationRules::class,
                 TextConfig::class,
                 ['name' => 'description', 'type' => 'text'],
-                [['name' => 'scalar', 'rule' => 'isScalar']]
+                [['name' => 'scalar', 'rule' => 'isScalar']],
             ],
             [
                 TimeValidationRules::class,
                 TimeConfig::class,
                 ['name' => 'shift', 'type' => 'time'],
-                [['name' => 'time', 'rule' => 'time']]
+                [['name' => 'time', 'rule' => 'time']],
             ],
             [
                 UrlValidationRules::class,
                 UrlConfig::class,
                 ['name' => 'website', 'type' => 'url'],
-                [['name' => 'url', 'rule' => 'url']]
+                [['name' => 'url', 'rule' => 'url']],
             ],
             [
                 UuidValidationRules::class,
                 UuidConfig::class,
                 ['name' => 'rule', 'type' => 'uuid'],
-                [['name' => 'uuid', 'rule' => 'uuid']]
+                [['name' => 'uuid', 'rule' => 'uuid']],
             ],
         ];
     }

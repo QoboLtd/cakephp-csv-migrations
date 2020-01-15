@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
 /**
@@ -33,8 +35,8 @@ class BooleanOnOffRenderer extends BooleanRenderer
     public function provide($data = null, array $options = [])
     {
         $valueLabels = [
-            0 => __('Off'),
-            1 => __('On'),
+            0 => __d('Qobo/CsvMigrations', 'Off'),
+            1 => __d('Qobo/CsvMigrations', 'On'),
         ];
 
         if (empty($options['valueLabels'])) {

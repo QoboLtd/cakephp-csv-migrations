@@ -125,6 +125,13 @@
         "non-searchable": false,
         "unique": false
     },
+    "reference": {
+        "name": "reference",
+        "type": "integer",
+        "required": false,
+        "non-searchable": false,
+        "unique": false
+    },
     "created_by": {
         "name": "created_by",
         "type": "related(Users)",

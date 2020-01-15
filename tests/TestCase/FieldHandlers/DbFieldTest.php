@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use CsvMigrations\FieldHandlers\CsvField;
@@ -7,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class DbFieldTest extends TestCase
 {
-    public function testConstructor() : void
+    public function testConstructor(): void
     {
         $dbField = new DbField('field', 'string', 255, true, true, true);
 
@@ -19,7 +20,7 @@ class DbFieldTest extends TestCase
         $this->assertTrue($dbField->getUnique(), "Field unique was not properly set");
     }
 
-    public function testFromCsvField() : void
+    public function testFromCsvField(): void
     {
         $csvField = new CsvField([
             'name' => 'field',
@@ -41,7 +42,7 @@ class DbFieldTest extends TestCase
         $this->assertEquals(true, $result->getUnique(), "fromCsvField() did not set correct unique");
     }
 
-    public function testSetOptions() : void
+    public function testSetOptions(): void
     {
         $dbField = new DbField('field', 'string', 255, true, true, true);
         $options = ['limit' => 100];
@@ -53,7 +54,7 @@ class DbFieldTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testSetNameEmptyException() : void
+    public function testSetNameEmptyException(): void
     {
         $dbField = new DbField('', 'string', 255, true, true, true);
     }
@@ -61,7 +62,7 @@ class DbFieldTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testSetTypeEmptyException() : void
+    public function testSetTypeEmptyException(): void
     {
         $dbField = new DbField('field', '', 255, true, true, true);
     }
@@ -69,7 +70,7 @@ class DbFieldTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testSetTypeUnsupportedException() : void
+    public function testSetTypeUnsupportedException(): void
     {
         $dbField = new DbField('field', 'unsupported-field-type', 255, true, true, true);
     }

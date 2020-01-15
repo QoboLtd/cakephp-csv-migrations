@@ -1,11 +1,11 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase;
 
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
-
 use CsvMigrations\Test\App\Model\Table\FooTable;
 
 /**
@@ -32,7 +32,7 @@ class TableTest extends TestCase
      */
     public $fixtures = [
         'plugin.csv_migrations.imports',
-        'plugin.csv_migrations.import_results'
+        'plugin.csv_migrations.import_results',
     ];
 
     /**
@@ -40,7 +40,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -58,7 +58,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function tearDown() : void
+    public function tearDown(): void
     {
         Configure::write('CsvMigrations.tableValidation', $this->defaultTableValidation);
         unset($this->defaultTableValidation);
@@ -72,7 +72,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function testValidationDefaultTableValidationDisabled() : void
+    public function testValidationDefaultTableValidationDisabled(): void
     {
         Configure::write('CsvMigrations.tableValidation', false);
         $validator = new Validator();
@@ -88,7 +88,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function testValidationDefaultTableValidationEnabled() : void
+    public function testValidationDefaultTableValidationEnabled(): void
     {
         Configure::write('CsvMigrations.tableValidation', true);
         $validator = new Validator();

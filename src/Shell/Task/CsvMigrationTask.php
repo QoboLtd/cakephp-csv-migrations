@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Shell\Task;
 
 use Cake\Core\Configure;
@@ -98,7 +100,7 @@ class CsvMigrationTask extends MigrationTask
 
         return [
             'table' => $table,
-            'name' => $name
+            'name' => $name,
         ];
     }
 
@@ -107,7 +109,7 @@ class CsvMigrationTask extends MigrationTask
      *
      * @return mixed[]
      */
-    protected function _getCsvModules() : array
+    protected function _getCsvModules(): array
     {
         $dir = new Folder(Configure::read('CsvMigrations.modules.path'));
         $folders = $dir->read(true)[0];
@@ -121,7 +123,7 @@ class CsvMigrationTask extends MigrationTask
      * @param string $tableName Table name
      * @return string[]
      */
-    protected function _getVars(string $tableName) : array
+    protected function _getVars(string $tableName): array
     {
         $table = Inflector::tableize($tableName);
 
@@ -136,7 +138,7 @@ class CsvMigrationTask extends MigrationTask
      * @param string $tableName target table name
      * @return string
      */
-    protected function _getLastModifiedTime(string $tableName) : string
+    protected function _getLastModifiedTime(string $tableName): string
     {
         $tableName = Inflector::camelize($tableName);
 

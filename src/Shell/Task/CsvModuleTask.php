@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Shell\Task;
 
 use Bake\Shell\Task\BakeTask;
@@ -36,7 +38,7 @@ class CsvModuleTask extends BakeTask
      * @var array
      */
     public $tasks = [
-        'Bake.BakeTemplate'
+        'Bake.BakeTemplate',
     ];
 
     /**
@@ -50,7 +52,7 @@ class CsvModuleTask extends BakeTask
         $parser->setDescription('Bakes Module bootstrap configuration files and MVC classes');
         $parser->addArgument('name', [
             'help' => 'The Module name to bake',
-            'required' => true
+            'required' => true,
         ]);
 
         return $parser;
@@ -61,7 +63,7 @@ class CsvModuleTask extends BakeTask
      *
      * @param string $name Module name
      */
-    public function main(string $name = '') : void
+    public function main(string $name = ''): void
     {
         parent::main();
 
@@ -86,7 +88,7 @@ class CsvModuleTask extends BakeTask
      * @param string $path Modules configuration path
      * @return void
      */
-    private function validate(string $name, string $path) : void
+    private function validate(string $name, string $path): void
     {
         Utility::validatePath($path);
 
@@ -109,7 +111,7 @@ class CsvModuleTask extends BakeTask
      * @param mixed[] $options Extra options
      * @return bool
      */
-    private function bake(string $name, string $template, array $data = [], string $suffix = '', array $options = []) : bool
+    private function bake(string $name, string $template, array $data = [], string $suffix = '', array $options = []): bool
     {
         $this->BakeTemplate->set($data);
         $contents = $this->BakeTemplate->generate('CsvMigrations.' . $template);
@@ -126,11 +128,11 @@ class CsvModuleTask extends BakeTask
      * @param string $name Module name
      * @return void
      */
-    private function bakeModuleConfig(string $name) : void
+    private function bakeModuleConfig(string $name): void
     {
         $options = [
             'path' => Configure::read('CsvMigrations.modules.path') . $name . DS . 'config' . DS,
-            'ext' => 'json'
+            'ext' => 'json',
         ];
 
         $this->bake('config.dist', 'Module/config/config', [], '', $options);
@@ -150,11 +152,11 @@ class CsvModuleTask extends BakeTask
      * @param string $name Module name
      * @return void
      */
-    private function bakeDatabaseConfig(string $name) : void
+    private function bakeDatabaseConfig(string $name): void
     {
         $options = [
             'path' => Configure::read('CsvMigrations.modules.path') . $name . DS . 'db' . DS,
-            'ext' => 'json'
+            'ext' => 'json',
         ];
 
         $this->bake('migration.dist', 'Module/db/migration', [], '', $options);
@@ -166,11 +168,11 @@ class CsvModuleTask extends BakeTask
      * @param string $name Module name
      * @return void
      */
-    private function bakeViewsConfig(string $name) : void
+    private function bakeViewsConfig(string $name): void
     {
         $options = [
             'path' => Configure::read('CsvMigrations.modules.path') . $name . DS . 'views' . DS,
-            'ext' => 'json'
+            'ext' => 'json',
         ];
 
         $this->bake('add.dist', 'Module/views/add', [], '', $options);
@@ -185,7 +187,7 @@ class CsvModuleTask extends BakeTask
      * @param string $name Module name
      * @return void
      */
-    private function bakeController(string $name) : void
+    private function bakeController(string $name): void
     {
         $this->pathFragment = 'Controller/';
 
@@ -198,7 +200,7 @@ class CsvModuleTask extends BakeTask
      * @param string $name Module name
      * @return void
      */
-    private function bakeApiController(string $name) : void
+    private function bakeApiController(string $name): void
     {
         $apiPaths = $this->getTargetApiPath();
         $this->pathFragment = $apiPaths['fragment'];
@@ -212,7 +214,7 @@ class CsvModuleTask extends BakeTask
      * @param string $name Module name
      * @return void
      */
-    private function bakeTable(string $name) : void
+    private function bakeTable(string $name): void
     {
         $this->pathFragment = 'Model/Table/';
 
@@ -225,7 +227,7 @@ class CsvModuleTask extends BakeTask
      * @param string $name Module name
      * @return void
      */
-    private function bakeEntity(string $name) : void
+    private function bakeEntity(string $name): void
     {
         $this->pathFragment = 'Model/Entity/';
 
@@ -238,7 +240,7 @@ class CsvModuleTask extends BakeTask
      * @param string $name Module name
      * @return void
      */
-    private function bakeFeature(string $name) : void
+    private function bakeFeature(string $name): void
     {
         $this->pathFragment = 'Feature/Type/Module/';
 
@@ -252,7 +254,7 @@ class CsvModuleTask extends BakeTask
      *
      * @return mixed[] $result containing path Fragment for baking.
      */
-    protected function getTargetApiPath() : array
+    protected function getTargetApiPath(): array
     {
         $result = [
             'fragment' => 'Controller/Api',

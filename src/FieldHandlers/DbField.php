@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers;
 
 use InvalidArgumentException;
@@ -99,7 +101,7 @@ class DbField
      * @param \CsvMigrations\FieldHandlers\CsvField $csvField CsvField instance
      * @return \CsvMigrations\FieldHandlers\DbField
      */
-    public static function fromCsvField(CsvField $csvField) : DbField
+    public static function fromCsvField(CsvField $csvField): DbField
     {
         return new self(
             $csvField->getName(),
@@ -116,7 +118,7 @@ class DbField
      *
      * @return void
      */
-    protected function setDefaultOptions() : void
+    protected function setDefaultOptions(): void
     {
         $type = $this->getType();
         if (! empty($this->defaultOptions[$type])) {
@@ -130,7 +132,7 @@ class DbField
      * @param mixed[] $options Options to set
      * @return void
      */
-    public function setOptions(array $options = []) : void
+    public function setOptions(array $options = []): void
     {
         $this->options = $options;
     }
@@ -140,7 +142,7 @@ class DbField
      *
      * @return mixed[]
      */
-    public function getOptions() : array
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -151,7 +153,7 @@ class DbField
      * @param string $name field name
      * @return void
      */
-    protected function setName(string $name) : void
+    protected function setName(string $name): void
     {
         if (empty($name)) {
             throw new InvalidArgumentException('Empty field name is not allowed');
@@ -165,7 +167,7 @@ class DbField
      *
      * @return string
      */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -176,7 +178,7 @@ class DbField
      * @param string $type field type
      * @return void
      */
-    protected function setType(string $type) : void
+    protected function setType(string $type): void
     {
         if (empty($type)) {
             throw new InvalidArgumentException(__CLASS__ . ': Empty field type is not allowed');
@@ -194,7 +196,7 @@ class DbField
      *
      * @return string
      */
-    public function getType() : string
+    public function getType(): string
     {
         return $this->type;
     }
@@ -205,7 +207,7 @@ class DbField
      * @param int|string|null $limit field limit
      * @return void
      */
-    public function setLimit($limit = null) : void
+    public function setLimit($limit = null): void
     {
         if ($limit !== null) {
             $this->options['limit'] = $limit;
@@ -233,7 +235,7 @@ class DbField
      * @param bool $required field required flag
      * @return void
      */
-    public function setRequired(bool $required) : void
+    public function setRequired(bool $required): void
     {
         // flip $required into allow null flag
         $this->options['null'] = ! $required;
@@ -244,7 +246,7 @@ class DbField
      *
      * @return bool
      */
-    public function getRequired() : bool
+    public function getRequired(): bool
     {
         return isset($this->options['null']) ?
             ! $this->options['null'] : // flip allow null flag into $required
@@ -257,7 +259,7 @@ class DbField
      * @param bool $nonSearchable field non-searchable flag
      * @return void
      */
-    public function setNonSearchable(bool $nonSearchable) : void
+    public function setNonSearchable(bool $nonSearchable): void
     {
         $this->nonSearchable = $nonSearchable;
     }
@@ -267,7 +269,7 @@ class DbField
      *
      * @return bool
      */
-    public function getNonSearchable() : bool
+    public function getNonSearchable(): bool
     {
         return $this->nonSearchable;
     }
@@ -278,7 +280,7 @@ class DbField
      * @param bool $unique field unique flag
      * @return void
      */
-    public function setUnique(bool $unique) : void
+    public function setUnique(bool $unique): void
     {
         $this->unique = $unique;
     }
@@ -288,7 +290,7 @@ class DbField
      *
      * @return bool
      */
-    public function getUnique() : bool
+    public function getUnique(): bool
     {
         return $this->unique;
     }

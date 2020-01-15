@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Aggregator;
 
 use Cake\ORM\TableRegistry;
@@ -10,22 +11,22 @@ use RuntimeException;
 class AverageAggregatorTest extends TestCase
 {
     public $fixtures = [
-        'plugin.CsvMigrations.foo'
+        'plugin.CsvMigrations.foo',
     ];
 
     private $table;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->table = TableRegistry::get('Foo');
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->table);
     }
 
-    public function testValidateWithNonExistingField() : void
+    public function testValidateWithNonExistingField(): void
     {
         $this->expectException(RuntimeException::class);
 
@@ -35,14 +36,14 @@ class AverageAggregatorTest extends TestCase
     /**
      * @dataProvider invalidFieldTypesProvider
      */
-    public function testValidateWithInvalidFieldType(string $field) : void
+    public function testValidateWithInvalidFieldType(string $field): void
     {
         $this->expectException(RuntimeException::class);
 
         new AverageAggregator(new Configuration($this->table, $field));
     }
 
-    public function testApplyConditions() : void
+    public function testApplyConditions(): void
     {
         $aggregator = new AverageAggregator(new Configuration($this->table, 'cost_amount'));
 
@@ -55,7 +56,7 @@ class AverageAggregatorTest extends TestCase
         $this->assertNotEquals($expected, $query);
     }
 
-    public function testGetResult() : void
+    public function testGetResult(): void
     {
         $aggregator = new AverageAggregator(new Configuration($this->table, 'cost_amount'));
 
@@ -65,7 +66,7 @@ class AverageAggregatorTest extends TestCase
         $this->assertSame(1100.1, $aggregator->getResult($query->first()));
     }
 
-    public function testGetConfig() : void
+    public function testGetConfig(): void
     {
         $aggregator = new AverageAggregator(new Configuration($this->table, 'cost_amount'));
 
@@ -75,7 +76,7 @@ class AverageAggregatorTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function invalidFieldTypesProvider() : array
+    public function invalidFieldTypesProvider(): array
     {
         return [
             ['cost_currency'],
@@ -83,7 +84,7 @@ class AverageAggregatorTest extends TestCase
             ['start_time'],
             ['created'],
             ['birthdate'],
-            ['created_by']
+            ['created_by'],
         ];
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\SearchOperators;
 
 /**
@@ -27,32 +29,32 @@ class NumberSearchOperators extends AbstractSearchOperators
             'operator' => 'IN',
             'emptyCriteria' => [
                 'aggregator' => 'OR',
-                'values' => ['IS NULL', '= 0']
-            ]
+                'values' => ['IS NULL', '= 0'],
+            ],
         ],
         'is_not' => [
             'label' => 'is not',
             'operator' => 'NOT IN',
             'emptyCriteria' => [
                 'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= 0']
-            ]
+                'values' => ['IS NOT NULL', '!= 0'],
+            ],
         ],
         'greater' => [
             'label' => 'greater',
             'operator' => '>',
             'emptyCriteria' => [
                 'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '> 0']
-            ]
+                'values' => ['IS NOT NULL', '> 0'],
+            ],
         ],
         'less' => [
             'label' => 'less',
             'operator' => '<',
             'emptyCriteria' => [
                 'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '< 0']
-            ]
+                'values' => ['IS NOT NULL', '< 0'],
+            ],
         ],
     ];
 }

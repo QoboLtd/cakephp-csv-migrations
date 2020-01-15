@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Controller\Traits;
 
 use Cake\Http\Response;
@@ -43,7 +45,7 @@ trait ImportTrait
             Assert::isInstanceOf($query, Query::class);
 
             $pagination = [
-                'count' => $query->count()
+                'count' => $query->count(),
             ];
 
             $data = ImportUtility::toDatatables($this->paginate($query), $columns);
@@ -54,7 +56,7 @@ trait ImportTrait
                 'success' => true,
                 'data' => $data,
                 'pagination' => $pagination,
-                '_serialize' => ['success', 'data', 'pagination']
+                '_serialize' => ['success', 'data', 'pagination'],
             ]);
 
             return;
@@ -120,7 +122,7 @@ trait ImportTrait
      * @param string $type Export Type (supported values: 'original', 'processed')
      * @return \Cake\Http\Response
      */
-    public function importDownload(string $id, string $type = 'original') : Response
+    public function importDownload(string $id, string $type = 'original'): Response
     {
         $table = TableRegistry::get('CsvMigrations.Imports');
         $entity = $table->get($id);

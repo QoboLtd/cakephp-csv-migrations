@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Utility\Validate;
 
 use Cake\Core\Configure;
@@ -68,7 +70,7 @@ class Utility
      *
      * @return string[]
      */
-    public static function getModules() : array
+    public static function getModules(): array
     {
         $path = Configure::read('CsvMigrations.modules.path');
         $result = QoboUtility::findDirs($path);
@@ -82,7 +84,7 @@ class Utility
      * @param string $module Module name to check
      * @return bool True if module is valid, false otherwise
      */
-    public static function isValidModule(string $module) : bool
+    public static function isValidModule(string $module): bool
     {
         return in_array($module, static::getModules());
     }
@@ -96,7 +98,7 @@ class Utility
      * @param string $module Module name to check the list in
      * @return bool True if valid, false otherwise
      */
-    public static function isValidList(string $list, string $module = '') : bool
+    public static function isValidList(string $list, string $module = ''): bool
     {
         if (strpos($list, '.') !== false) {
             list($module, $list) = explode('.', $list, 2);
@@ -151,7 +153,7 @@ class Utility
      * @param string $field Field to check
      * @return bool True if field is real, false otherwise
      */
-    public static function isRealModuleField(string $module, string $field) : bool
+    public static function isRealModuleField(string $module, string $field): bool
     {
         $fields = self::getRealModuleFields($module);
 
@@ -172,7 +174,7 @@ class Utility
      * @param bool $validate Should the data be validated against the schema.
      * @return string[] List of fields.
      */
-    public static function getRealModuleFields(string $module, bool $validate = true) : array
+    public static function getRealModuleFields(string $module, bool $validate = true): array
     {
         $moduleFields = [];
 
@@ -192,7 +194,7 @@ class Utility
      * @param string $field Field to check
      * @return bool True if field is real, false otherwise
      */
-    public static function isRealRelationField(string $module, string $field) : bool
+    public static function isRealRelationField(string $module, string $field): bool
     {
         $fields = self::getRealRelationFields($module);
 
@@ -209,7 +211,7 @@ class Utility
      * @param string $module Module name.
      * @return string[] List of relation fields.
      */
-    public static function getRealRelationFields(string $module) : array
+    public static function getRealRelationFields(string $module): array
     {
         $relation = [];
 
@@ -228,7 +230,7 @@ class Utility
      * @param bool $validate Should the data be validated against the schema.
      * @return string[] list of virtual fields.
      */
-    public static function getVirtualModuleFields(string $module, bool $validate = true) : array
+    public static function getVirtualModuleFields(string $module, bool $validate = true): array
     {
         $fields = [];
 
@@ -254,7 +256,7 @@ class Utility
      * @param string $field Field to check
      * @return bool True if field is real, false otherwise
      */
-    public static function isVirtualModuleField(string $module, string $field) : bool
+    public static function isVirtualModuleField(string $module, string $field): bool
     {
         $config = self::getVirtualModuleFields($module);
 
@@ -275,7 +277,7 @@ class Utility
      * @param string $field Field to check
      * @return bool True if field is valid, false otherwise
      */
-    public static function isValidModuleField(string $module, string $field) : bool
+    public static function isValidModuleField(string $module, string $field): bool
     {
         return static::isRealModuleField($module, $field) || static::isVirtualModuleField($module, $field) || static::isRealRelationField($module, $field);
     }
@@ -288,7 +290,7 @@ class Utility
      * @param string $type Field type
      * @return bool True if valid, false otherwise
      */
-    public static function isValidFieldType(string $type) : bool
+    public static function isValidFieldType(string $type): bool
     {
         try {
             $config = ConfigFactory::getByType($type, 'dummy_field');

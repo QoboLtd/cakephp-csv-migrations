@@ -16,23 +16,23 @@ return [
         'tableValidation' => true,
         'api' => [
             'auth' => true,
-            'token' => null
+            'token' => null,
         ],
         'actions' => ['add', 'edit', 'index', 'view'],
         'batch' => [
             'active' => true,
             'button_id' => '#batch-button',
             'action' => 'batch',
-            'types' => ['datetime', 'time', 'date', 'reminder', 'string', 'text', 'list', 'email', 'phone', 'url', 'boolean', 'related']
+            'types' => ['datetime', 'time', 'date', 'reminder', 'string', 'text', 'list', 'email', 'phone', 'url', 'boolean', 'related'],
         ],
         'panels' => [
             // actions to arrange fields into panels
             'actions' => ['add', 'batch', 'edit', 'view'],
             // actions that require dynamic panel functionality
-            'dynamic_actions' => ['add', 'edit']
+            'dynamic_actions' => ['add', 'edit'],
         ],
         'modules' => [
-            'path' => CONFIG . 'Modules' . DS
+            'path' => CONFIG . 'Modules' . DS,
         ],
         'features' => [
             'module' => [
@@ -42,14 +42,14 @@ return [
             ],
         ],
         'reports' => [
-            'filename' => 'reports'
+            'filename' => 'reports',
         ],
         'default_icon' => 'cube',
         'select2' => [
             'min_length' => 0,
             'timeout' => 300,
             'id' => '[data-type="select2"]',
-            'limit' => 10
+            'limit' => 10,
         ],
         // TinyMCE plugin configuration
         'TinyMCE' => [
@@ -61,7 +61,7 @@ return [
             'browser_spellcheck' => true,
             'file_browser_callback_types' => '',
             'theme' => 'modern',
-            'height' => 300
+            'height' => 300,
         ],
         // bootstrap-fileinput configuration
         // link: https://github.com/kartik-v/bootstrap-fileinput
@@ -83,8 +83,8 @@ return [
                 'validateInitialCount' => true,
             ],
             'initialPreviewConfig' => [
-                'url' => "/api/file-storages/delete/"
-            ]
+                'url' => "/api/file-storages/delete/",
+            ],
         ],
         // Configuration options for the ValidateShell
         'ValidateShell' => [
@@ -111,9 +111,13 @@ return [
                         'CsvMigrations\\Utility\\Validate\\Check\\ReportsCheck' => [],
                         'CsvMigrations\\Utility\\Validate\\Check\\MigrationCheck' => [],
                         'CsvMigrations\\Utility\\Validate\\Check\\ViewsCheck' => [],
-                    ]
+                    ],
                 ],
-            ]
-        ]
-    ]
+            ],
+        ],
+        "GoogleMaps" => [
+            "ApiKey" => "",
+            "DefaultLocation" => "0.0,0.0",
+        ],
+    ],
 ];

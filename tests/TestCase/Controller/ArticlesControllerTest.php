@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Controller;
 
 use Cake\ORM\TableRegistry;
@@ -12,21 +13,21 @@ class ArticlesControllerTest extends IntegrationTestCase
 {
     public $fixtures = [
         'plugin.csv_migrations.articles',
-        'plugin.csv_migrations.authors'
+        'plugin.csv_migrations.authors',
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->enableRetainFlashMessages();
 
         $this->session([
-            'Auth.User.id' => '00000000-0000-0000-0000-000000000001'
+            'Auth.User.id' => '00000000-0000-0000-0000-000000000001',
         ]);
     }
 
-    public function testViewUnauthenticatedFails() : void
+    public function testViewUnauthenticatedFails(): void
     {
         unset($this->_session['Auth.User.id']);
 
@@ -36,7 +37,7 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertRedirectContains('/users/login');
     }
 
-    public function testView() : void
+    public function testView(): void
     {
         $this->get('/articles/view/00000000-0000-0000-0000-000000000001');
         $this->markTestSkipped(
@@ -50,7 +51,7 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertResponseContains('Foo');
     }
 
-    public function testAddUnauthenticatedFails() : void
+    public function testAddUnauthenticatedFails(): void
     {
         unset($this->_session['Auth.User.id']);
 
@@ -60,7 +61,7 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertRedirectContains('/users/login');
     }
 
-    public function testAdd() : void
+    public function testAdd(): void
     {
         $this->get('/articles/add');
         $this->assertResponseOk();
@@ -75,10 +76,10 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertResponseContains('name="Articles[name]"');
     }
 
-    public function testAddPostData() : void
+    public function testAddPostData(): void
     {
         $data = [
-            'name' => 'Some Unique Name'
+            'name' => 'Some Unique Name',
         ];
 
         $this->post('/articles/add', $data);
@@ -90,7 +91,7 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertEquals(1, $query->count());
     }
 
-    public function testEditUnauthenticatedFails() : void
+    public function testEditUnauthenticatedFails(): void
     {
         unset($this->_session['Auth.User.id']);
 
@@ -100,7 +101,7 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertRedirectContains('/users/login');
     }
 
-    public function testEdit() : void
+    public function testEdit(): void
     {
         $this->get('/articles/edit/00000000-0000-0000-0000-000000000001');
         $this->assertResponseOk();
@@ -116,12 +117,12 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertResponseContains('value="Foo"');
     }
 
-    public function testEditPostData() : void
+    public function testEditPostData(): void
     {
         $id = '00000000-0000-0000-0000-000000000001';
 
         $data = [
-            'name' => 'Some Unique Name'
+            'name' => 'Some Unique Name',
         ];
 
         $this->post('/articles/edit/' . $id, $data);
@@ -133,12 +134,12 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertEquals($data['name'], $entity->get('name'));
     }
 
-    public function testEditPutData() : void
+    public function testEditPutData(): void
     {
         $id = '00000000-0000-0000-0000-000000000001';
 
         $data = [
-            'name' => 'Some Unique Name'
+            'name' => 'Some Unique Name',
         ];
 
         $this->put('/articles/edit/' . $id, $data);
@@ -150,7 +151,7 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertEquals($data['name'], $entity->get('name'));
     }
 
-    public function testDeleteUnauthenticatedFails() : void
+    public function testDeleteUnauthenticatedFails(): void
     {
         unset($this->_session['Auth.User.id']);
 
@@ -160,13 +161,13 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
     }
 
-    public function testDeleteGetRequest() : void
+    public function testDeleteGetRequest(): void
     {
         $this->get('/articles/delete/00000000-0000-0000-0000-000000000001');
         $this->assertResponseError();
     }
 
-    public function testDeleteData() : void
+    public function testDeleteData(): void
     {
         $id = '00000000-0000-0000-0000-000000000001';
 
@@ -178,7 +179,7 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertEquals(0, $query->count());
     }
 
-    public function testDeletePostData() : void
+    public function testDeletePostData(): void
     {
         $id = '00000000-0000-0000-0000-000000000001';
 
@@ -190,13 +191,13 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertEquals(0, $query->count());
     }
 
-    public function testBatchGetRequest() : void
+    public function testBatchGetRequest(): void
     {
         $this->get('/articles/batch/edit');
         $this->assertResponseError();
     }
 
-    public function testBatchDelete() : void
+    public function testBatchDelete(): void
     {
         $table = TableRegistry::get('Articles');
         $initialCount = $table->find('all')->count();
@@ -205,9 +206,9 @@ class ArticlesControllerTest extends IntegrationTestCase
             'batch' => [
                 'ids' => [
                     '00000000-0000-0000-0000-000000000001',
-                    '00000000-0000-0000-0000-000000000002'
-                ]
-            ]
+                    '00000000-0000-0000-0000-000000000002',
+                ],
+            ],
         ];
 
         $this->post('/articles/batch/delete', $data);
@@ -217,22 +218,22 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertSame($initialCount - 2, $table->find('all')->count());
     }
 
-    public function testBatchDeleteNoIds() : void
+    public function testBatchDeleteNoIds(): void
     {
         $this->post('/articles/batch/delete');
         $this->assertRedirect('/');
         $this->assertSession('No records selected.', 'Flash.flash.0.message');
     }
 
-    public function testBatchEdit() : void
+    public function testBatchEdit(): void
     {
         $data = [
             'batch' => [
                 'ids' => [
                     '00000000-0000-0000-0000-000000000001',
-                    '00000000-0000-0000-0000-000000000002'
-                ]
-            ]
+                    '00000000-0000-0000-0000-000000000002',
+                ],
+            ],
         ];
         $this->post('/articles/batch/edit', $data);
         $this->assertResponseSuccess();
@@ -243,26 +244,26 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertTrue($entity->isNew());
     }
 
-    public function testBatchEditNoIds() : void
+    public function testBatchEditNoIds(): void
     {
         $this->post('/articles/batch/edit');
         $this->assertRedirect('/');
         $this->assertSession('No records selected.', 'Flash.flash.0.message');
     }
 
-    public function testBatchEditExecute() : void
+    public function testBatchEditExecute(): void
     {
         $data = [
             'batch' => [
                 'execute' => true,
                 'ids' => [
                     '00000000-0000-0000-0000-000000000001',
-                    '00000000-0000-0000-0000-000000000002'
-                ]
+                    '00000000-0000-0000-0000-000000000002',
+                ],
             ],
             'Articles' => [
-                'name' => 'Batch edit article name'
-            ]
+                'name' => 'Batch edit article name',
+            ],
         ];
 
         $this->post('/articles/batch/edit', $data);
@@ -275,12 +276,12 @@ class ArticlesControllerTest extends IntegrationTestCase
         }
     }
 
-    public function testBatchEditExecuteNoIds() : void
+    public function testBatchEditExecuteNoIds(): void
     {
         $data = [
             'batch' => [
-                'execute' => true
-            ]
+                'execute' => true,
+            ],
         ];
 
         $this->post('/articles/batch/edit', $data);
@@ -288,16 +289,16 @@ class ArticlesControllerTest extends IntegrationTestCase
         $this->assertSession('No records selected.', 'Flash.flash.0.message');
     }
 
-    public function testBatchEditExecuteNoData() : void
+    public function testBatchEditExecuteNoData(): void
     {
         $data = [
             'batch' => [
                 'execute' => true,
                 'ids' => [
                     '00000000-0000-0000-0000-000000000001',
-                    '00000000-0000-0000-0000-000000000002'
-                ]
-            ]
+                    '00000000-0000-0000-0000-000000000002',
+                ],
+            ],
         ];
 
         $this->post('/articles/batch/edit', $data);

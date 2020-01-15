@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Shell;
 
 use Cake\Console\ConsoleIo;
@@ -26,7 +27,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
         'plugin.csv_migrations.articles',
         'plugin.csv_migrations.authors',
         'plugin.csv_migrations.imports',
-        'plugin.csv_migrations.import_results'
+        'plugin.csv_migrations.import_results',
     ];
 
     /**
@@ -48,7 +49,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
         $io = new ConsoleIo(new ConsoleOutput());
@@ -61,7 +62,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->ImportShell);
 
@@ -73,7 +74,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function testGetOptionParser() : void
+    public function testGetOptionParser(): void
     {
         $parser = $this->ImportShell->getOptionParser();
 
@@ -86,7 +87,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function testMain() : void
+    public function testMain(): void
     {
         $table = TableRegistry::getTableLocator()->get('Articles');
         $initialCount = $table->find()->count();
@@ -101,36 +102,36 @@ class ImportShellTest extends ConsoleIntegrationTestCase
                 'author' => '00000000-0000-0000-0000-000000000001',
                 'status' => 'draft',
                 'featured' => true,
-                'date' => (new \Cake\I18n\Date('2019-06-30'))
+                'date' => (new \Cake\I18n\Date('2019-06-30')),
             ],
             [
                 'name' => 'John Smith [import]',
                 'author' => '00000000-0000-0000-0000-000000000002',
                 'status' => 'published',
                 'featured' => false,
-                'date' => (new \Cake\I18n\Date('2019-06-05'))
+                'date' => (new \Cake\I18n\Date('2019-06-05')),
             ],
             [
                 'name' => 'Michael Cain [import]',
                 'author' => '00000000-0000-0000-0000-000000000001',
                 'status' => 'draft',
                 'featured' => false,
-                'date' => (new \Cake\I18n\Date('2019-04-13'))
+                'date' => (new \Cake\I18n\Date('2019-04-13')),
             ],
             [
                 'name' => 'John Kemp [import]',
                 'author' => '00000000-0000-0000-0000-000000000001',
                 'status' => 'draft',
                 'featured' => true,
-                'date' => (new \Cake\I18n\Date('2019-06-22'))
+                'date' => (new \Cake\I18n\Date('2019-06-22')),
             ],
             [
                 'name' => 'Michael Johnson [import]',
                 'author' => '00000000-0000-0000-0000-000000000002',
                 'status' => 'published',
                 'featured' => true,
-                'date' => (new \Cake\I18n\Date('2019-02-03'))
-            ]
+                'date' => (new \Cake\I18n\Date('2019-02-03')),
+            ],
         ];
 
         foreach ($check as $expected) {
@@ -150,7 +151,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function testMainWithInvalidDates() : void
+    public function testMainWithInvalidDates(): void
     {
         TableRegistry::getTableLocator()->get('CsvMigrations.ImportResults')->deleteAll([]);
 
@@ -162,14 +163,14 @@ class ImportShellTest extends ConsoleIntegrationTestCase
             'options' => [
                 'fields' => [
                     'name' => ['column' => 'Name', 'default' => ''],
-                    'date' => ['column' => 'Date', 'default' => '']
-                ]
+                    'date' => ['column' => 'Date', 'default' => ''],
+                ],
             ],
             'model_name' => 'Articles',
             'attempts' => 1,
             'status' => 'Pending',
             'created_by' => '00000000-0000-0000-0000-000000000001',
-            'modified_by' => '00000000-0000-0000-0000-000000000002'
+            'modified_by' => '00000000-0000-0000-0000-000000000002',
         ]);
         $table->save($entity);
 

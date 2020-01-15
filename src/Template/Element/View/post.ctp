@@ -101,11 +101,11 @@ $linkTitle = is_array($options['title']) ? $this->Html->link(
      * @todo probably this has to be moved to another plugin
      */
     if (!$this->request->getParam('pass.conversion')) {
-        echo $this->Form->button(__('Submit'), [
+        echo $this->Form->button(__d('Qobo/CsvMigrations', 'Submit'), [
             'name' => 'btn_operation', 'value' => 'submit', 'class' => 'btn btn-primary'
         ]);
 
-        echo $this->Html->link(__('Cancel'), ['action' => 'index'], array_merge(
+        echo $this->Html->link(__d('Qobo/CsvMigrations', 'Cancel'), ['action' => 'index'], array_merge(
             ['class' => 'btn btn-link', 'role' => 'button'],
             $this->request->getQuery('embedded') ? ['aria-label' => 'Close', 'data-dismiss' => 'modal'] : []
         ));

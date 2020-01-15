@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\SelectOptions;
 
 use Cake\Core\App;
@@ -30,7 +32,7 @@ class ListSelectOptions extends AbstractSelectOptions
      * @param array $options Options to use for provision
      * @return array
      */
-    public function provide($data = null, array $options = []) : array
+    public function provide($data = null, array $options = []): array
     {
         $spacer = isset($options['spacer']) ? (string)$options['spacer'] : ' - ';
         $flatten = isset($options['flatten']) ? (bool)$options['flatten'] : true;

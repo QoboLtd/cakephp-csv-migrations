@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Aggregator;
 
 use Cake\Datasource\EntityInterface;
@@ -13,17 +14,17 @@ class ConfigurationTest extends TestCase
 {
     public $fixtures = [
         'plugin.CsvMigrations.articles',
-        'plugin.CsvMigrations.foo'
+        'plugin.CsvMigrations.foo',
     ];
 
-    public function testConstructor() : void
+    public function testConstructor(): void
     {
         $result = new Configuration(TableRegistry::get('tableName'), 'field');
 
         $this->assertInstanceOf(Configuration::class, $result);
     }
 
-    public function testJoinMode() : void
+    public function testJoinMode(): void
     {
         $table = TableRegistry::get('Foo');
         $entity = $table->find()
@@ -39,21 +40,21 @@ class ConfigurationTest extends TestCase
         $this->assertFalse($configuration->joinMode());
     }
 
-    public function testGetTable() : void
+    public function testGetTable(): void
     {
         $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
 
         $this->assertInstanceOf(RepositoryInterface::class, $configuration->getTable());
     }
 
-    public function testGetField() : void
+    public function testGetField(): void
     {
         $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
 
         $this->assertEquals('field', $configuration->getField());
     }
 
-    public function testSetGetDisplayField() : void
+    public function testSetGetDisplayField(): void
     {
         $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
         $configuration->setDisplayField('displayField');
@@ -61,7 +62,7 @@ class ConfigurationTest extends TestCase
         $this->assertEquals('displayField', $configuration->getDisplayField());
     }
 
-    public function testGetJoinTable() : void
+    public function testGetJoinTable(): void
     {
         $table = TableRegistry::get('Foo');
         $entity = $table->find()
@@ -74,7 +75,7 @@ class ConfigurationTest extends TestCase
         $this->assertSame($table, $configuration->getJoinTable());
     }
 
-    public function testGetEntity() : void
+    public function testGetEntity(): void
     {
         $table = TableRegistry::get('Foo');
         $entity = $table->find()
@@ -87,7 +88,7 @@ class ConfigurationTest extends TestCase
         $this->assertSame($entity, $configuration->getEntity());
     }
 
-    public function testSetJoinDataWithoutInvalidEntity() : void
+    public function testSetJoinDataWithoutInvalidEntity(): void
     {
         $this->expectException(InvalidArgumentException::class);
 

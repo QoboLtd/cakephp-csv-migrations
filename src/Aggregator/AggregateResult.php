@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Aggregator;
 
 use Cake\Datasource\QueryInterface;
@@ -40,7 +41,7 @@ final class AggregateResult
      * @param \Cake\Datasource\QueryInterface $query Query object
      * @return \Cake\Datasource\QueryInterface
      */
-    private static function join(AggregatorInterface $aggregator, QueryInterface $query) : QueryInterface
+    private static function join(AggregatorInterface $aggregator, QueryInterface $query): QueryInterface
     {
         $config = $aggregator->getConfig();
 
@@ -60,7 +61,7 @@ final class AggregateResult
                     'source_table' => $config->getTable()->getAlias(),
                     'target_table' => $table->getAlias(),
                     'primar_key' => $table->getPrimaryKey(),
-                    'association' => $association->getName()
+                    'association' => $association->getName(),
                 ]);
 
                 return $q;
@@ -69,7 +70,7 @@ final class AggregateResult
             $entity = $config->getEntity();
 
             return $q->where([
-                $association->getTarget()->aliasField($primaryKey) => $entity->get($primaryKey)
+                $association->getTarget()->aliasField($primaryKey) => $entity->get($primaryKey),
             ]);
         });
 
@@ -85,7 +86,7 @@ final class AggregateResult
      * @return \Cake\ORM\Association
      * @throws \RuntimeException When association is not found between source and target tables.
      */
-    private static function findAssociation(AggregatorInterface $aggregator) : Association
+    private static function findAssociation(AggregatorInterface $aggregator): Association
     {
         $config = $aggregator->getConfig();
         $table = $config->getTable();

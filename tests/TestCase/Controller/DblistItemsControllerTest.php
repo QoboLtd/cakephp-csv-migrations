@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Controller;
 
 use Cake\ORM\TableRegistry;
@@ -11,12 +12,12 @@ class DblistItemsControllerTest extends IntegrationTestCase
 {
     public $fixtures = [
         'plugin.CsvMigrations.dblists',
-        'plugin.CsvMigrations.dblist_items'
+        'plugin.CsvMigrations.dblist_items',
     ];
 
     private $table;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -26,20 +27,20 @@ class DblistItemsControllerTest extends IntegrationTestCase
             'Auth' => [
                 'User' => [
                     'id' => '1',
-                    'username' => 'testing'
+                    'username' => 'testing',
                 ],
-            ]
+            ],
         ]);
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->table);
 
         parent::tearDown();
     }
 
-    public function testIndex() : void
+    public function testIndex(): void
     {
         $id = '35ded6f1-e886-4f3e-bcdd-47d9c55c3ce4';
 
@@ -47,7 +48,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertResponseOk();
     }
 
-    public function testIndexWithoutItems() : void
+    public function testIndexWithoutItems(): void
     {
         $this->enableRetainFlashMessages();
 
@@ -61,13 +62,13 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertSession('List is empty, do you want to add new item?', 'Flash.flash.0.message');
     }
 
-    public function testAdd() : void
+    public function testAdd(): void
     {
         $id = '35ded6f1-e886-4f3e-bcdd-47d9c55c3ce4';
         $data = [
             'name' => 'some really really random name',
             'value' => 'some_really_really_random_name',
-            'dblist_id' => $id
+            'dblist_id' => $id,
         ];
 
         $this->get('/csv-migrations/dblist-items/add/' . $id);
@@ -80,7 +81,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertEquals(1, $query->count());
     }
 
-    public function testAddWithInvalidData() : void
+    public function testAddWithInvalidData(): void
     {
         $this->enableRetainFlashMessages();
 
@@ -94,7 +95,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertSession('The database list item could not be saved. Please, try again.', 'Flash.flash.0.message');
     }
 
-    public function testEdit() : void
+    public function testEdit(): void
     {
         $id = '8233ddc0-5b8a-47e6-9432-e90fcba73015';
         $data = ['name' => 'some random name'];
@@ -109,7 +110,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertEquals($data['name'], $entity->get('name'));
     }
 
-    public function testEditWithInvalidData() : void
+    public function testEditWithInvalidData(): void
     {
         $this->enableRetainFlashMessages();
 
@@ -117,7 +118,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $data = [
             'name' => 'some random name',
             'value' => 'some_random_name',
-            'dblist_id' => '35ded6f1-e886-4f3e-bcdd-47d9c55c3ce4'
+            'dblist_id' => '35ded6f1-e886-4f3e-bcdd-47d9c55c3ce4',
         ];
 
         // create and persist a new entity
@@ -132,7 +133,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertSession('The database list item could not be saved. Please, try again.', 'Flash.flash.0.message');
     }
 
-    public function testDelete() : void
+    public function testDelete(): void
     {
         $id = '8233ddc0-5b8a-47e6-9432-e90fcba73015';
 
@@ -143,7 +144,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertTrue($query->isEmpty());
     }
 
-    public function testMoveNode() : void
+    public function testMoveNode(): void
     {
         $id = '8233ddc0-5b8a-47e6-9432-e90fcba73015';
 
@@ -157,7 +158,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
         $this->assertEquals($entity, $this->table->get($id));
     }
 
-    public function testMoveNodeWithInvalidAction() : void
+    public function testMoveNodeWithInvalidAction(): void
     {
         $this->enableRetainFlashMessages();
 

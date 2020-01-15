@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
 
 /**
@@ -29,7 +31,7 @@ class DatetimeSearchOptions extends AbstractSearchOptions
                 <i class="fa fa-%s"></i>
             </div>
             <input type="{{type}}" name="{{name}}"{{attrs}}/>
-        </div>'
+        </div>',
     ];
 
     /**
@@ -50,8 +52,8 @@ class DatetimeSearchOptions extends AbstractSearchOptions
                     'fieldName' => '{{name}}',
                     'value' => '{{value}}',
                     'type' => 'datetimepicker',
-                    'label' => false
-                ]
+                    'label' => false,
+                ],
             ]);
         } else {
             $template = $view->Form->control('', [
@@ -65,9 +67,9 @@ class DatetimeSearchOptions extends AbstractSearchOptions
                 'templates' => [
                     'input' => vsprintf($this->templates['input'], [
                         '',
-                        'calendar'
-                    ])
-                ]
+                        'calendar',
+                    ]),
+                ],
             ]);
         }
 
@@ -80,16 +82,16 @@ class DatetimeSearchOptions extends AbstractSearchOptions
                         'CsvMigrations.dom-observer',
                         'AdminLTE./bower_components/moment/min/moment.min',
                         'AdminLTE./bower_components/bootstrap-daterangepicker/daterangepicker',
-                        'CsvMigrations.datetimepicker.init'
+                        'CsvMigrations.datetimepicker.init',
                     ],
-                    'block' => 'scriptBottom'
+                    'block' => 'scriptBottom',
                 ],
                 [
                     'type' => 'css',
                     'content' => 'AdminLTE./bower_components/bootstrap-daterangepicker/daterangepicker',
-                    'block' => 'css'
-                ]
-            ]
+                    'block' => 'css',
+                ],
+            ],
         ];
 
         $result[$this->config->getField()] = $defaultOptions;

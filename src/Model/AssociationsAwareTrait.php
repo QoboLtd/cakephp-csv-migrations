@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Model;
 
 use Cake\Core\App;
@@ -35,7 +37,7 @@ trait AssociationsAwareTrait
      *
      * @return void
      */
-    public function setAssociations() : void
+    public function setAssociations(): void
     {
         foreach (Utility::findDirs(Configure::read('CsvMigrations.modules.path')) as $module) {
             $this->setByModule($module);
@@ -55,7 +57,7 @@ trait AssociationsAwareTrait
      * @param mixed[] $options Association options
      * @return void
      */
-    protected function setAssociation(string $type, string $alias, array $options) : void
+    protected function setAssociation(string $type, string $alias, array $options): void
     {
         $this->{$type}($alias, $options);
     }
@@ -66,7 +68,7 @@ trait AssociationsAwareTrait
      * @param string $module Module name
      * @return void
      */
-    private function setByModule(string $module) : void
+    private function setByModule(string $module): void
     {
         $config = (new ModuleConfig(ConfigType::MODULE(), $module))->parse();
         $fields = $this->getModuleFields($module);
@@ -99,7 +101,7 @@ trait AssociationsAwareTrait
      * @param mixed[] $fields Module fields
      * @return void
      */
-    private function setByTypeModule(string $module, array $fields) : void
+    private function setByTypeModule(string $module, array $fields): void
     {
         foreach ($fields as $field) {
             $this->setByTypeModuleField($module, $field);
@@ -113,7 +115,7 @@ trait AssociationsAwareTrait
      * @param mixed[] $fields Module fields
      * @return void
      */
-    private function setByTypeRelation(string $module, array $fields) : void
+    private function setByTypeRelation(string $module, array $fields): void
     {
         $moduleField = $this->getModuleRelatedField($fields);
 
@@ -142,7 +144,7 @@ trait AssociationsAwareTrait
      * @throws RuntimeException in case there are more than two fields pointing the some module.
      * @return mixed[]
      */
-    private function getSelfRelated(array $fields) : array
+    private function getSelfRelated(array $fields): array
     {
         $selfrelated = [];
         $duplicate = '';
@@ -182,7 +184,7 @@ trait AssociationsAwareTrait
      * @param mixed[] $fields Module fields
      * @return void
      */
-    private function setByTypeFile(string $module, array $fields) : void
+    private function setByTypeFile(string $module, array $fields): void
     {
         foreach ($fields as $field) {
             $this->setByTypeFileField($field);
@@ -196,7 +198,7 @@ trait AssociationsAwareTrait
      * @param \CsvMigrations\FieldHandlers\CsvField $field CSV Field instance
      * @return void
      */
-    private function setByTypeModuleField(string $module, CsvField $field) : void
+    private function setByTypeModuleField(string $module, CsvField $field): void
     {
         // skip non related type
         if (! $this->isRelatedType($field)) {
@@ -267,7 +269,7 @@ trait AssociationsAwareTrait
      * @param mixed[] $fields CSV Fields
      * @return void
      */
-    private function setByTypeSelfRelationField(string $module, array $fields) : void
+    private function setByTypeSelfRelationField(string $module, array $fields): void
     {
         $first = $fields[0];
         $second = $fields[1];
@@ -279,7 +281,7 @@ trait AssociationsAwareTrait
                 'joinTable' => Inflector::tableize($module),
                 'className' => $first->getAssocCsvModule(),
                 'foreignKey' => $second->getName(),
-                'targetForeignKey' => $first->getName()
+                'targetForeignKey' => $first->getName(),
             ]
         );
 
@@ -290,7 +292,7 @@ trait AssociationsAwareTrait
                 'joinTable' => Inflector::tableize($module),
                 'className' => $second->getAssocCsvModule(),
                 'foreignKey' => $first->getName(),
-                'targetForeignKey' => $second->getName()
+                'targetForeignKey' => $second->getName(),
             ]
         );
     }
@@ -303,7 +305,7 @@ trait AssociationsAwareTrait
      * @param \CsvMigrations\FieldHandlers\CsvField $moduleField Module related CSV Field instance
      * @return void
      */
-    private function setByTypeRelationField(string $module, CsvField $field, CsvField $moduleField) : void
+    private function setByTypeRelationField(string $module, CsvField $field, CsvField $moduleField): void
     {
         if (! $this->isRelatedType($field)) {
             return;
@@ -326,7 +328,7 @@ trait AssociationsAwareTrait
                 'joinTable' => Inflector::tableize($module),
                 'className' => $field->getAssocCsvModule(),
                 'foreignKey' => $moduleField->getName(),
-                'targetForeignKey' => $field->getName()
+                'targetForeignKey' => $field->getName(),
             ]
         );
     }
@@ -337,7 +339,7 @@ trait AssociationsAwareTrait
      * @param \CsvMigrations\FieldHandlers\CsvField $field CSV Field instance
      * @return bool
      */
-    private function isFootprintField(CsvField $field) : bool
+    private function isFootprintField(CsvField $field): bool
     {
         if (! $this->hasBehavior('Footprint')) {
             return false;
@@ -355,7 +357,7 @@ trait AssociationsAwareTrait
      * @param \CsvMigrations\FieldHandlers\CsvField $field CSV Field instance
      * @return void
      */
-    private function setByTypeFileField(CsvField $field) : void
+    private function setByTypeFileField(CsvField $field): void
     {
         if (! in_array($field->getType(), ['files', 'images'])) {
             return;
@@ -367,7 +369,7 @@ trait AssociationsAwareTrait
             [
                 'className' => FileUpload::FILE_STORAGE_TABLE_NAME,
                 'foreignKey' => 'foreign_key',
-                'conditions' => ['model' => $this->getTable(), 'model_field' => $field->getName()]
+                'conditions' => ['model' => $this->getTable(), 'model_field' => $field->getName()],
             ]
         );
     }
@@ -377,7 +379,7 @@ trait AssociationsAwareTrait
      *
      * @return string
      */
-    private function getTableName() : string
+    private function getTableName(): string
     {
         return App::shortName(get_class($this), 'Model/Table', 'Table');
     }
@@ -388,7 +390,7 @@ trait AssociationsAwareTrait
      * @param mixed[] $fields Module fields
      * @return \CsvMigrations\FieldHandlers\CsvField|null
      */
-    private function getModuleRelatedField(array $fields) : ?CsvField
+    private function getModuleRelatedField(array $fields): ?CsvField
     {
         foreach ($fields as $field) {
             if ($this->getTableName() === $field->getAssocCsvModule()) {
@@ -405,7 +407,7 @@ trait AssociationsAwareTrait
      * @param \CsvMigrations\FieldHandlers\CsvField $field CSV field instance
      * @return bool
      */
-    private function isRelatedType(CsvField $field) : bool
+    private function isRelatedType(CsvField $field): bool
     {
         return 'related' === $field->getType();
     }
@@ -416,7 +418,7 @@ trait AssociationsAwareTrait
      * @param string $module Module name
      * @return mixed[]
      */
-    private function getModuleFields(string $module) : array
+    private function getModuleFields(string $module): array
     {
         $config = (new ModuleConfig(ConfigType::MIGRATION(), $module))->parse();
         $config = json_encode($config);
@@ -444,7 +446,7 @@ trait AssociationsAwareTrait
      * @param string $foreignKey Foreign key
      * @return string
      */
-    public static function generateAssociationName(string $tableName, string $foreignKey) : string
+    public static function generateAssociationName(string $tableName, string $foreignKey): string
     {
         list($plugin, $tableName) = pluginSplit($tableName);
         $plugin = false !== strpos($plugin, '/') ? substr($plugin, strpos($plugin, '/') + 1) : $plugin;

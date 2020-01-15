@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Utility;
 
 use Cake\Controller\Component\FlashComponent;
@@ -47,7 +49,7 @@ class Import
         'text/plain',
         'text/tab-separated-values',
         'text/x-comma-separated-values',
-        'text/x-csv'
+        'text/x-csv',
     ];
 
     /**
@@ -87,7 +89,7 @@ class Import
      * @param bool $fullBase Full base flag
      * @return string
      */
-    public static function getProcessedFile(ImportEntity $import, bool $fullBase = true) : string
+    public static function getProcessedFile(ImportEntity $import, bool $fullBase = true): string
     {
         $pathInfo = pathinfo($import->get('filename'));
         $extension = $pathInfo['extension'] ?? '';
@@ -110,7 +112,7 @@ class Import
      *
      * @return string
      */
-    public function upload() : string
+    public function upload(): string
     {
         if (!$this->_validateUpload()) {
             return '';
@@ -133,7 +135,7 @@ class Import
      * @param string $filename Uploaded file name
      * @return bool
      */
-    public function create(ImportsTable $table, ImportEntity $entity, string $filename) : bool
+    public function create(ImportsTable $table, ImportEntity $entity, string $filename): bool
     {
         $modelName = $this->request->getParam('controller');
         if ($this->request->getParam('plugin')) {
@@ -144,7 +146,7 @@ class Import
             'filename' => $filename,
             'status' => $table::STATUS_PENDING,
             'model_name' => $modelName,
-            'attempts' => 0
+            'attempts' => 0,
         ];
 
         $entity = $table->patchEntity($entity, $data);
@@ -159,7 +161,7 @@ class Import
      * @param string[] $columns Display columns
      * @return \Cake\Datasource\QueryInterface
      */
-    public function getImportResults(ImportEntity $entity, array $columns) : QueryInterface
+    public function getImportResults(ImportEntity $entity, array $columns): QueryInterface
     {
         $sortCol = Hash::get($this->request->getQueryParams(), 'order.0.column', 0);
         $sortCol = array_key_exists($sortCol, $columns) ? $columns[$sortCol] : current($columns);
@@ -184,7 +186,7 @@ class Import
      * @param mixed[] $options Import options
      * @return mixed[]
      */
-    public static function prepareOptions(array $options) : array
+    public static function prepareOptions(array $options): array
     {
         if (empty($options['fields'])) {
             return [];
@@ -209,19 +211,8 @@ class Import
      * @param bool $withHeader Include header row into the count
      * @return int
      */
-    public static function getRowsCount(string $path, bool $withHeader = false) : int
+    public static function getRowsCount(string $path, bool $withHeader = false): int
     {
-        $result = trim(exec("/usr/bin/env wc -l '" . $path . "'", $output, $return));
-        if (0 === $return) {
-            list($result, ) = explode(' ', $result);
-            $result = (int)$result;
-            if (0 < $result) {
-                $result -= 1;
-            }
-
-            return $result;
-        }
-
         $reader = Reader::createFromPath($path, 'r');
 
         $result = $reader->each(function ($row) {
@@ -241,7 +232,7 @@ class Import
      * @param \CsvMigrations\Model\Entity\Import $entity Import entity
      * @return string[]
      */
-    public static function getUploadHeaders(ImportEntity $entity) : array
+    public static function getUploadHeaders(ImportEntity $entity): array
     {
         $reader = Reader::createFromPath($entity->filename, 'r');
 
@@ -253,7 +244,7 @@ class Import
      *
      * @return string[]
      */
-    public function getTableColumns() : array
+    public function getTableColumns(): array
     {
         $schema = $this->table->getSchema();
 
@@ -276,7 +267,7 @@ class Import
      * @param string[] $fields Display fields
      * @return mixed[]
      */
-    public static function toDatatables(ResultSetInterface $resultSet, array $fields) : array
+    public static function toDatatables(ResultSetInterface $resultSet, array $fields): array
     {
         $result = [];
 
@@ -301,7 +292,7 @@ class Import
      * @param mixed[] $data Response data
      * @return mixed[]
      */
-    public static function actionButtons(ResultSetInterface $resultSet, Table $table, array $data) : array
+    public static function actionButtons(ResultSetInterface $resultSet, Table $table, array $data): array
     {
         $view = new View();
         list($plugin, $controller) = pluginSplit($table->getRegistryAlias());
@@ -317,12 +308,12 @@ class Import
                 'plugin' => $plugin,
                 'controller' => $controller,
                 'action' => 'view',
-                $entity->get('model_id')
+                $entity->get('model_id'),
             ];
             $link = $view->Html->link('<i class="fa fa-eye"></i>', $url, [
-                'title' => __('View'),
+                'title' => __d('Qobo/CsvMigrations', 'View'),
                 'class' => 'btn btn-default',
-                'escape' => false
+                'escape' => false,
             ]);
 
             $html = '<div class="btn-group btn-group-xs" role="group">' . $link . '</div>';
@@ -340,17 +331,17 @@ class Import
      * @param int $index Status column index
      * @return mixed[]
      */
-    public static function setStatusLabels(array $data, int $index) : array
+    public static function setStatusLabels(array $data, int $index): array
     {
         $view = new View();
         $statusLabels = [
             ImportResultsTable::STATUS_SUCCESS => 'success',
             ImportResultsTable::STATUS_PENDING => 'warning',
-            ImportResultsTable::STATUS_FAIL => 'danger'
+            ImportResultsTable::STATUS_FAIL => 'danger',
         ];
         foreach ($data as $key => $value) {
             $data[$key][$index] = $view->Html->tag('span', $value[$index], [
-                'class' => 'label label-' . $statusLabels[$value[$index]]
+                'class' => 'label label-' . $statusLabels[$value[$index]],
             ]);
         }
 
@@ -362,7 +353,7 @@ class Import
      *
      * @return bool
      */
-    protected function _validateUpload() : bool
+    protected function _validateUpload(): bool
     {
         if (! $this->request->getData('file')) {
             $this->flash->error('Please choose a file to upload.');
@@ -384,7 +375,7 @@ class Import
      *
      * @return string
      */
-    protected function _uploadFile() : string
+    protected function _uploadFile(): string
     {
         if (! is_string($this->request->getData('file.name'))) {
             return '';
@@ -429,7 +420,7 @@ class Import
      *
      * @return string
      */
-    protected function _getUploadPath() : string
+    protected function _getUploadPath(): string
     {
         $result = Configure::read('Importer.path');
 

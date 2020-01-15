@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Config;
 
 use InvalidArgumentException;
@@ -28,7 +30,7 @@ abstract class FixedConfig extends Config
      * @param array $providers List of provider names and classes
      * @return void
      */
-    public function setProviders(array $providers) : void
+    public function setProviders(array $providers): void
     {
         throw new InvalidArgumentException("Setting predefined providers is not allowed");
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,10 +10,15 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Utility;
 
+use ArrayObject;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\Utility\Hash;
+use CsvMigrations\Event\EventName;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -63,6 +69,13 @@ class Panel
         $this->setName($name);
         $this->setExpression($config);
         $this->setFields();
+
+        // Move all fields into an object
+        foreach ($this->getFields() as $field) {
+            $search = sprintf('%1$s%2$s%1$s', self::EXP_TOKEN, $field);
+            $replace = sprintf('%1$sfields.%2$s%1$s', self::EXP_TOKEN, $field);
+            $this->expression = str_replace($search, $replace, $this->expression);
+        }
     }
 
     /**
@@ -70,7 +83,7 @@ class Panel
      *
      * @return string panel name
      */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -81,7 +94,7 @@ class Panel
      * @param string $name Panel name
      * @return void
      */
-    public function setName(string $name = '') : void
+    public function setName(string $name = ''): void
     {
         if (empty($name)) {
             throw new RuntimeException('Panel name not found therefore the object cannot be created');
@@ -95,7 +108,7 @@ class Panel
      * @param bool $clean Flag for removing the expression tokens
      * @return string expression
      */
-    public function getExpression(bool $clean = false) : string
+    public function getExpression(bool $clean = false): string
     {
         return $clean ?
             str_replace(self::EXP_TOKEN, '', $this->expression) : // clean up expression from placeholder tokens.
@@ -108,7 +121,7 @@ class Panel
      * @param mixed[] $config Table's config
      * @return void
      */
-    public function setExpression(array $config) : void
+    public function setExpression(array $config): void
     {
         $panels = Hash::get($config, self::PANELS);
         $exp = Hash::get($panels, $this->getName());
@@ -120,7 +133,7 @@ class Panel
      *
      * @return string[] fields
      */
-    public function getFields() : array
+    public function getFields(): array
     {
         return $this->fields;
     }
@@ -131,7 +144,7 @@ class Panel
      * @throws InvalidArgumentException
      * @return void
      */
-    public function setFields() : void
+    public function setFields(): void
     {
         preg_match_all('#' . self::EXP_TOKEN . '(.*?)' . self::EXP_TOKEN . '#', $this->getExpression(), $matches);
         if (empty($matches[1])) {
@@ -146,7 +159,7 @@ class Panel
      * @param mixed[] $data to get the values for placeholders
      * @return mixed[] Associative array, Keys: placeholders Values: values
      */
-    public function getFieldValues(array $data) : array
+    public function getFieldValues(array $data): array
     {
         $result = [];
         foreach ($this->getFields() as $field) {
@@ -160,13 +173,23 @@ class Panel
      * Evaluate the expression.
      *
      * @param mixed[] $data to get the values for placeholders
+     * @param mixed[] $extras Extra variables to pass to expression language parser
      * @return bool True if it matches, false otherwise.
      */
-    public function evalExpression(array $data) : bool
+    public function evalExpression(array $data, array $extras = []): bool
     {
+        $extraVariables = new ArrayObject($extras);
         $language = new ExpressionLanguage();
-        $values = $this->getFieldValues($data);
-        $eval = $language->evaluate($this->getExpression(true), $values);
+
+        // Make the fields properties of an internal object
+        $fields = $this->getFieldValues($data);
+        $fields = json_decode((string)json_encode($fields));
+
+        // Fire an event
+        $event = new Event((string)EventName::PANEL_POPULATE_EXTRAS(), null, $extraVariables);
+        EventManager::instance()->dispatch($event);
+
+        $eval = $language->evaluate($this->getExpression(true), compact('fields') + (array)$extraVariables);
 
         return $eval;
     }
@@ -177,7 +200,7 @@ class Panel
      * @param mixed[] $config Table's config
      * @return mixed[]
      */
-    public static function getPanelNames(array $config) : array
+    public static function getPanelNames(array $config): array
     {
         if (empty($config[self::PANELS])) {
             return [];

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Model\Table;
 
 use Cake\Datasource\QueryInterface;
@@ -69,7 +71,7 @@ class ImportResultsTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config) : void
+    public function initialize(array $config): void
     {
         parent::initialize($config);
 
@@ -83,7 +85,7 @@ class ImportResultsTable extends Table
         $this->belongsTo('Imports', [
             'foreignKey' => 'import_id',
             'joinType' => 'INNER',
-            'className' => 'CsvMigrations.Imports'
+            'className' => 'CsvMigrations.Imports',
         ]);
     }
 
@@ -93,7 +95,7 @@ class ImportResultsTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator) : Validator
+    public function validationDefault(Validator $validator): Validator
     {
         $validator
             ->uuid('id')
@@ -130,7 +132,7 @@ class ImportResultsTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules) : RulesChecker
+    public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['import_id'], 'Imports'));
 
@@ -144,11 +146,11 @@ class ImportResultsTable extends Table
      * @param mixed[] $options Additional options
      * @return \Cake\Datasource\QueryInterface
      */
-    public function findImported(QueryInterface $query, array $options) : QueryInterface
+    public function findImported(QueryInterface $query, array $options): QueryInterface
     {
         $query->where([
             'import_id' => $options['import']->id,
-            'status' => static::STATUS_SUCCESS
+            'status' => static::STATUS_SUCCESS,
         ]);
 
         return $query;
@@ -161,11 +163,11 @@ class ImportResultsTable extends Table
      * @param mixed[] $options Additional options
      * @return \Cake\Datasource\QueryInterface
      */
-    public function findPending(QueryInterface $query, array $options) : QueryInterface
+    public function findPending(QueryInterface $query, array $options): QueryInterface
     {
         $query->where([
             'import_id' => $options['import']->id,
-            'status' => static::STATUS_PENDING
+            'status' => static::STATUS_PENDING,
         ]);
 
         return $query;
@@ -178,11 +180,11 @@ class ImportResultsTable extends Table
      * @param mixed[] $options Additional options
      * @return \Cake\Datasource\QueryInterface
      */
-    public function findFailed(QueryInterface $query, array $options) : QueryInterface
+    public function findFailed(QueryInterface $query, array $options): QueryInterface
     {
         $query->where([
             'import_id' => $options['import']->id,
-            'status' => static::STATUS_FAIL
+            'status' => static::STATUS_FAIL,
         ]);
 
         return $query;

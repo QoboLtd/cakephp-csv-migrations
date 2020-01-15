@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\RenderName;
 
 use Cake\Utility\Inflector;
@@ -53,7 +55,7 @@ class DefaultRenderer extends AbstractProvider
      * @param string $name Field name
      * @return string
      */
-    protected function cleanName(string $name) : string
+    protected function cleanName(string $name): string
     {
         if ('._ids' === substr($name, -5)) {
             $name = substr($name, 0, -5);

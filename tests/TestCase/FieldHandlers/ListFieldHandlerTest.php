@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use Cake\Core\Configure;
@@ -15,7 +16,7 @@ class ListFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $dir = dirname(__DIR__) . DS . '..' . DS . 'config' . DS . 'Modules' . DS;
         Configure::write('CsvMigrations.modules.path', $dir);
@@ -27,7 +28,7 @@ class ListFieldHandlerTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function getRenderedValues() : array
+    public function getRenderedValues(): array
     {
         return [
             ['', ''],
@@ -40,7 +41,7 @@ class ListFieldHandlerTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function getInputValues() : array
+    public function getInputValues(): array
     {
         return [
             ['', ' -- Please choose -- '],
@@ -53,14 +54,14 @@ class ListFieldHandlerTest extends TestCase
     /**
      * @dataProvider getRenderedValues
      */
-    public function testRenderValue(string $value, string $expected) : void
+    public function testRenderValue(string $value, string $expected): void
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
             'type' => 'list(countries)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderValue($value, $options);
@@ -68,14 +69,14 @@ class ListFieldHandlerTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testRenderValueNested() : void
+    public function testRenderValueNested(): void
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
             'type' => 'list(nested)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderValue('first_level_1.second_level_1.third_level_1', $options);
@@ -83,14 +84,14 @@ class ListFieldHandlerTest extends TestCase
         $this->assertEquals('First level 1 - Second level 1 -  - Third level 1', $result);
     }
 
-    public function testRenderValueWithWrongValue() : void
+    public function testRenderValueWithWrongValue(): void
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
             'type' => 'list(countries)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderValue('non-existing-value', $options);
@@ -98,21 +99,21 @@ class ListFieldHandlerTest extends TestCase
         $this->assertNotEquals('non-existing-value', $result);
     }
 
-    public function testRenderValueEmptyData() : void
+    public function testRenderValueEmptyData(): void
     {
         $result = $this->fh->renderValue('', []);
 
         $this->assertEquals('', $result);
     }
 
-    public function testRenderValueSetListItems() : void
+    public function testRenderValueSetListItems(): void
     {
         $result = $this->fh->renderValue('foo', ['listItems' => ['foo' => 'Foo']]);
 
         $this->assertEquals('Foo', $result);
     }
 
-    public function testRenderValueWithPlainFlag() : void
+    public function testRenderValueWithPlainFlag(): void
     {
         $result = $this->fh->renderValue('foo', ['listItems' => ['foo' => 'Foo'], 'renderAs' => 'plain']);
         $this->assertEquals('foo', $result);
@@ -121,14 +122,14 @@ class ListFieldHandlerTest extends TestCase
     /**
      * @dataProvider getInputValues
      */
-    public function testRenderInput(string $value, string $label) : void
+    public function testRenderInput(string $value, string $label): void
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
             'type' => 'list(countries)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderInput('', $options);
@@ -141,7 +142,7 @@ class ListFieldHandlerTest extends TestCase
         }
     }
 
-    public function testFieldToDb() : void
+    public function testFieldToDb(): void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => $this->type]);
         $fh = $this->fh;
@@ -158,7 +159,7 @@ class ListFieldHandlerTest extends TestCase
         $this->assertEquals(255, $result[$this->field]->getLimit(), "fieldToDb() did not return correct limit for DbField instance");
     }
 
-    public function testGetSearchOptions() : void
+    public function testGetSearchOptions(): void
     {
         $result = $this->fh->getSearchOptions();
 

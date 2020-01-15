@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Config;
 
 use Cake\ORM\Table;
@@ -38,14 +40,14 @@ interface ConfigInterface
      * @param string $field Field name
      * @return void
      */
-    public function setField(string $field) : void;
+    public function setField(string $field): void;
 
     /**
      * Get field
      *
      * @return string
      */
-    public function getField() : string;
+    public function getField(): string;
 
     /**
      * Set table
@@ -53,14 +55,14 @@ interface ConfigInterface
      * @param \Cake\ORM\Table|string $table Table name or instance
      * @return void
      */
-    public function setTable($table = '') : void;
+    public function setTable($table = ''): void;
 
     /**
      * Get table
      *
      * @return \Cake\ORM\Table
      */
-    public function getTable() : Table;
+    public function getTable(): Table;
 
     /**
      * Set options
@@ -68,14 +70,14 @@ interface ConfigInterface
      * @param mixed[] $options Options
      * @return void
      */
-    public function setOptions(array $options = []) : void;
+    public function setOptions(array $options = []): void;
 
     /**
      * Get options
      *
      * @return mixed[]
      */
-    public function getOptions() : array;
+    public function getOptions(): array;
 
     /**
      * Set view
@@ -83,14 +85,14 @@ interface ConfigInterface
      * @param \Cake\View\View $view View instance
      * @return void
      */
-    public function setView(View $view) : void;
+    public function setView(View $view): void;
 
     /**
      * Get view
      *
      * @return \Cake\View\View
      */
-    public function getView() : View;
+    public function getView(): View;
 
     /**
      * Set providers
@@ -99,7 +101,7 @@ interface ConfigInterface
      * @param mixed[] $providers List of provider names and classes
      * @return void
      */
-    public function setProviders(array $providers) : void;
+    public function setProviders(array $providers): void;
 
     /**
      * Get providers
@@ -107,7 +109,7 @@ interface ConfigInterface
      * @throws \InvalidArgumentException for invalid providers
      * @return mixed[]
      */
-    public function getProviders() : array;
+    public function getProviders(): array;
 
     /**
      * Get provider by name
@@ -116,7 +118,7 @@ interface ConfigInterface
      * @param string $name Name of the provider to get
      * @return string
      */
-    public function getProvider(string $name) : string;
+    public function getProvider(string $name): string;
 
     /**
      * Validate providers
@@ -125,5 +127,5 @@ interface ConfigInterface
      * @param mixed[] $providers List of provider names and classes
      * @return void
      */
-    public function validateProviders(array $providers) : void;
+    public function validateProviders(array $providers): void;
 }

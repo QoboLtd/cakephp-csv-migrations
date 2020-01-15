@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
 
 use CsvMigrations\FieldHandlers\Setting;
@@ -43,7 +45,7 @@ class ListSearchOptions extends AbstractSearchOptions
         $view = $this->config->getView();
         $content = $view->Form->select('{{name}}', array_merge(['' => Setting::EMPTY_OPTION_LABEL()], $selectOptions), [
             'class' => 'form-control',
-            'label' => false
+            'label' => false,
         ]);
 
         foreach ($selectOptions as $key => $value) {

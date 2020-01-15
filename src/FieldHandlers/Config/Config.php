@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Config;
 
 use Cake\ORM\Table;
@@ -71,7 +73,7 @@ class Config implements ConfigInterface
         'renderInput',
         'renderValue',
         'renderName',
-        'validationRules'
+        'validationRules',
     ];
 
     /**
@@ -95,7 +97,7 @@ class Config implements ConfigInterface
      * @param string $field Field name
      * @return void
      */
-    public function setField(string $field) : void
+    public function setField(string $field): void
     {
         $field = trim($field);
         if (empty($field)) {
@@ -110,7 +112,7 @@ class Config implements ConfigInterface
      *
      * @return string
      */
-    public function getField() : string
+    public function getField(): string
     {
         return $this->field;
     }
@@ -121,7 +123,7 @@ class Config implements ConfigInterface
      * @param \Cake\Datasource\RepositoryInterface|string $table Table name or instance
      * @return void
      */
-    public function setTable($table = '') : void
+    public function setTable($table = ''): void
     {
         if ('' === $table) {
             $table = 'dummy';
@@ -141,7 +143,7 @@ class Config implements ConfigInterface
      *
      * @return \Cake\ORM\Table
      */
-    public function getTable() : Table
+    public function getTable(): Table
     {
         return $this->table;
     }
@@ -152,7 +154,7 @@ class Config implements ConfigInterface
      * @param array $options Options
      * @return void
      */
-    public function setOptions(array $options = []) : void
+    public function setOptions(array $options = []): void
     {
         $this->options = $options;
     }
@@ -162,7 +164,7 @@ class Config implements ConfigInterface
      *
      * @return array
      */
-    public function getOptions() : array
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -173,7 +175,7 @@ class Config implements ConfigInterface
      * @param \Cake\View\View $view View instance
      * @return void
      */
-    public function setView(View $view) : void
+    public function setView(View $view): void
     {
         $this->view = $view;
     }
@@ -183,7 +185,7 @@ class Config implements ConfigInterface
      *
      * @return \Cake\View\View
      */
-    public function getView() : View
+    public function getView(): View
     {
         if (empty($this->view)) {
             $this->setView(new AppView());
@@ -199,7 +201,7 @@ class Config implements ConfigInterface
      * @param array $providers List of provider names and classes
      * @return void
      */
-    public function setProviders(array $providers) : void
+    public function setProviders(array $providers): void
     {
         $this->validateProviders($providers);
         $this->providers = $providers;
@@ -211,7 +213,7 @@ class Config implements ConfigInterface
      * @throws \InvalidArgumentException for invalid provider
      * @return array
      */
-    public function getProviders() : array
+    public function getProviders(): array
     {
         $this->validateProviders($this->providers);
 
@@ -225,7 +227,7 @@ class Config implements ConfigInterface
      * @param string $name Name of the provider to get
      * @return string
      */
-    public function getProvider(string $name) : string
+    public function getProvider(string $name): string
     {
         $providers = $this->getProviders();
         if (!in_array($name, array_keys($providers))) {
@@ -242,7 +244,7 @@ class Config implements ConfigInterface
      * @param array $providers List of provider names and classes
      * @return void
      */
-    public function validateProviders(array $providers) : void
+    public function validateProviders(array $providers): void
     {
         Assert::allClassExists($providers);
         Assert::allImplementsInterface($providers, self::PROVIDER_INTERFACE);

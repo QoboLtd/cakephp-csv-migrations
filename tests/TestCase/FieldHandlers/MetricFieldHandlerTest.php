@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers;
 
 use Cake\ORM\Entity;
@@ -17,13 +18,13 @@ class MetricFieldHandlerTest extends TestCase
 
     protected $fh;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = ConfigFactory::getByType($this->type, $this->field, $this->table);
         $this->fh = new FieldHandler($config);
     }
 
-    public function testRenderValue() : void
+    public function testRenderValue(): void
     {
         $options['entity'] = new Entity(['field_metric_amount' => 135.50, 'field_metric_unit' => 'ft']);
         $options['fieldDefinitions'] = new CsvField([
@@ -31,7 +32,7 @@ class MetricFieldHandlerTest extends TestCase
             'type' => 'metric(units_area)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderValue('', $options);
@@ -39,14 +40,14 @@ class MetricFieldHandlerTest extends TestCase
         $this->assertEquals('135.50&nbsp;ft&sup2;', $result);
     }
 
-    public function testRenderInput() : void
+    public function testRenderInput(): void
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
             'type' => 'metric(units_area)',
             'required' => false,
             'non-searchable' => false,
-            'unique' => false
+            'unique' => false,
         ]);
 
         $result = $this->fh->renderInput('', $options);
@@ -66,7 +67,7 @@ class MetricFieldHandlerTest extends TestCase
         }
     }
 
-    public function testFieldToDb() : void
+    public function testFieldToDb(): void
     {
         $csvField = new CsvField(['name' => $this->field, 'type' => 'metric(metric)']);
         $fh = $this->fh;
@@ -91,7 +92,7 @@ class MetricFieldHandlerTest extends TestCase
         $this->assertEquals(255, $result[$fieldName]->getLimit(), "fieldToDb() did not return correct limit for DbField instance");
     }
 
-    public function testGetSearchOptions() : void
+    public function testGetSearchOptions(): void
     {
         $result = $this->fh->getSearchOptions();
         $this->assertTrue(is_array($result), "getSearchOptions() did not return an array");

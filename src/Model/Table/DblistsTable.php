@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Model\Table;
 
 use Cake\Datasource\EntityInterface;
@@ -43,7 +45,7 @@ class DblistsTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config) : void
+    public function initialize(array $config): void
     {
         parent::initialize($config);
 
@@ -66,7 +68,7 @@ class DblistsTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator) : Validator
+    public function validationDefault(Validator $validator): Validator
     {
         $validator
             ->uuid('id')
@@ -81,7 +83,7 @@ class DblistsTable extends Table
                 [
                     'rule' => 'validateUnique',
                     'provider' => 'table',
-                    'message' => __d('CsvMigrations', 'Name MUST be unique')
+                    'message' => __d('CsvMigrations', 'Name MUST be unique'),
                 ]
             );
 
@@ -95,7 +97,7 @@ class DblistsTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules) : RulesChecker
+    public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->isUnique(['name']));
 
@@ -112,7 +114,7 @@ class DblistsTable extends Table
      * @param string $listName List name to retrieve options from
      * @return mixed[] Options for the select option field
      */
-    public function getOptions(string $listName) : array
+    public function getOptions(string $listName): array
     {
         try {
             $entity = $this->find('all')
@@ -126,7 +128,7 @@ class DblistsTable extends Table
         $treeOptions = [
             'keyPath' => 'value',
             'valuePath' => 'name',
-            'spacer' => ' - '
+            'spacer' => ' - ',
         ];
 
         Assert::isInstanceOf($entity, EntityInterface::class);

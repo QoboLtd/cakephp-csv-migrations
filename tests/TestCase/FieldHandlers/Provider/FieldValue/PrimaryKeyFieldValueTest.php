@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\FieldValue;
 
 use Cake\Http\ServerRequest;
@@ -11,16 +12,16 @@ use CsvMigrations\FieldHandlers\Provider\ProviderInterface;
 class PrimaryKeyFieldValueTest extends TestCase
 {
     public $fixtures = [
-        'plugin.csv_migrations.foo'
+        'plugin.csv_migrations.foo',
     ];
 
-    public function testConstruct() : void
+    public function testConstruct(): void
     {
         $provider = new PrimaryKeyFieldValue(new FilesConfig('foobar'));
         $this->assertInstanceOf(ProviderInterface::class, $provider);
     }
 
-    public function testProvideWithExistingTable() : void
+    public function testProvideWithExistingTable(): void
     {
         // field name is not used within PrimaryKeyFieldValue provider
         $fieldName = 'foobar';
@@ -37,7 +38,7 @@ class PrimaryKeyFieldValueTest extends TestCase
      * @param mixed $value
      * @dataProvider valuesDataProvider
      */
-    public function testProvideWithDummyTable($value) : void
+    public function testProvideWithDummyTable($value): void
     {
         // field name is not used within PrimaryKeyFieldValue provider
         $fieldName = 'foobar';
@@ -51,7 +52,7 @@ class PrimaryKeyFieldValueTest extends TestCase
      * @param mixed $value
      * @dataProvider valuesDataProvider
      */
-    public function testProvideWithDummyTableWithoutEntity($value) : void
+    public function testProvideWithDummyTableWithoutEntity($value): void
     {
         // field name is not used within PrimaryKeyFieldValue provider
         $fieldName = 'foobar';
@@ -64,13 +65,13 @@ class PrimaryKeyFieldValueTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function valuesDataProvider() : array
+    public function valuesDataProvider(): array
     {
         return [
             [null],
             ['here goes some string'],
             [new Entity()],
-            [new ServerRequest()]
+            [new ServerRequest()],
         ];
     }
 }

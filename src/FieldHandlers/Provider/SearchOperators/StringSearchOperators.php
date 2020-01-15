@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\SearchOperators;
 
 /**
@@ -28,8 +30,8 @@ class StringSearchOperators extends AbstractSearchOperators
             'pattern' => '%{{value}}%',
             'emptyCriteria' => [
                 'aggregator' => 'OR',
-                'values' => ['IS NULL', '= ""']
-            ]
+                'values' => ['IS NULL', '= ""'],
+            ],
         ],
         'not_contains' => [
             'label' => 'does not contain',
@@ -37,8 +39,8 @@ class StringSearchOperators extends AbstractSearchOperators
             'pattern' => '%{{value}}%',
             'emptyCriteria' => [
                 'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""']
-            ]
+                'values' => ['IS NOT NULL', '!= ""'],
+            ],
         ],
         'starts_with' => [
             'label' => 'starts with',
@@ -46,8 +48,8 @@ class StringSearchOperators extends AbstractSearchOperators
             'pattern' => '{{value}}%',
             'emptyCriteria' => [
                 'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""']
-            ]
+                'values' => ['IS NOT NULL', '!= ""'],
+            ],
         ],
         'ends_with' => [
             'label' => 'ends with',
@@ -55,8 +57,8 @@ class StringSearchOperators extends AbstractSearchOperators
             'pattern' => '%{{value}}',
             'emptyCriteria' => [
                 'aggregator' => 'AND',
-                'values' => ['IS NOT NULL', '!= ""']
-            ]
+                'values' => ['IS NOT NULL', '!= ""'],
+            ],
         ],
     ];
 }

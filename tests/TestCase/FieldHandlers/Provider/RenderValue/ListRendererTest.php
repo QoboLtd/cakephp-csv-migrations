@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use CsvMigrations\FieldHandlers\Config\ListConfig;
@@ -9,13 +10,13 @@ class ListRendererTest extends TestCase
 {
     protected $renderer;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $config = new ListConfig('list');
         $this->renderer = new ListRenderer($config);
     }
 
-    public function testInterface() : void
+    public function testInterface(): void
     {
         $implementedInterfaces = array_keys(class_implements($this->renderer));
         $this->assertTrue(in_array('CsvMigrations\FieldHandlers\Provider\ProviderInterface', $implementedInterfaces), "ProviderInterface is not implemented");
@@ -24,7 +25,7 @@ class ListRendererTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function basicValues() : array
+    public function basicValues(): array
     {
         return [
             ['text', 'Text', 'Text'],
@@ -36,20 +37,20 @@ class ListRendererTest extends TestCase
     /**
      * @dataProvider basicValues
      */
-    public function testRenderValueBasic(string $value, string $expected, string $description) : void
+    public function testRenderValueBasic(string $value, string $expected, string $description): void
     {
         $result = $this->renderer->provide($value, ['listItems' => [ $value => $expected ] ]);
         $this->assertSame($expected, $result, "Value rendering is broken for: $description");
     }
 
-    public function testRenderValueZeroInt() : void
+    public function testRenderValueZeroInt(): void
     {
         $result = $this->renderer->provide(0, ['listItems' => [0 => 'Foobar']]);
 
         $this->assertEquals('Foobar', $result);
     }
 
-    public function testRenderValueNotFound() : void
+    public function testRenderValueNotFound(): void
     {
         $result = $this->renderer->provide('text', ['listItems' => ['foo' => 'Foo']]);
         $expected = sprintf(ListRenderer::VALUE_NOT_FOUND_HTML, 'text');
@@ -60,7 +61,7 @@ class ListRendererTest extends TestCase
         $this->assertEquals($expected, $result, "Value rendering is broken for missing HTML value");
     }
 
-    public function testRenderValue() : void
+    public function testRenderValue(): void
     {
         $listItems = [
             'parent' => 'Parent',
@@ -83,7 +84,7 @@ class ListRendererTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testRenderExceptionListItems() : void
+    public function testRenderExceptionListItems(): void
     {
         $result = $this->renderer->provide('test', ['listItems' => 'not_an_array']);
     }

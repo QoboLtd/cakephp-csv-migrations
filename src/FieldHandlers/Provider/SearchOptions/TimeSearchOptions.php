@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
 
 /**
@@ -29,7 +31,7 @@ class TimeSearchOptions extends AbstractSearchOptions
                 <i class="fa fa-%s"></i>
             </div>
             <input type="{{type}}" name="{{name}}"{{attrs}}/>
-        </div>'
+        </div>',
     ];
 
     /**
@@ -50,8 +52,8 @@ class TimeSearchOptions extends AbstractSearchOptions
                     'fieldName' => '{{name}}',
                     'value' => '{{value}}',
                     'type' => 'timepicker',
-                    'label' => false
-                ]
+                    'label' => false,
+                ],
             ]);
         } else {
             $template = $view->Form->control('', [
@@ -64,9 +66,9 @@ class TimeSearchOptions extends AbstractSearchOptions
                 'templates' => [
                     'input' => vsprintf($this->templates['input'], [
                         'bootstrap-timepicker timepicker',
-                        'clock-o'
-                    ])
-                ]
+                        'clock-o',
+                    ]),
+                ],
             ]);
         }
 
@@ -78,16 +80,16 @@ class TimeSearchOptions extends AbstractSearchOptions
                     'content' => [
                         'CsvMigrations.dom-observer',
                         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
-                        'CsvMigrations.timepicker.init'
+                        'CsvMigrations.timepicker.init',
                     ],
-                    'block' => 'scriptBottom'
+                    'block' => 'scriptBottom',
                 ],
                 [
                     'type' => 'css',
                     'content' => 'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
-                    'block' => 'css'
-                ]
-            ]
+                    'block' => 'css',
+                ],
+            ],
         ];
 
         $result[$this->config->getField()] = $defaultOptions;

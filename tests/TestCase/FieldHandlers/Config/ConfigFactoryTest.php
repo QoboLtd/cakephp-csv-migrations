@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Config;
 
 use CsvMigrations\FieldHandlers\Config\ConfigFactory;
@@ -10,7 +11,7 @@ class ConfigFactoryTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function supportedTypesProvider() : array
+    public function supportedTypesProvider(): array
     {
         return [
             ['blob'],
@@ -41,7 +42,7 @@ class ConfigFactoryTest extends TestCase
     /**
      * @dataProvider supportedTypesProvider
      */
-    public function testGetByType(string $type) : void
+    public function testGetByType(string $type): void
     {
         $field = 'foo';
         $result = ConfigFactory::getByType($type, $field);
@@ -53,7 +54,7 @@ class ConfigFactoryTest extends TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testGetByTypeException() : void
+    public function testGetByTypeException(): void
     {
         $result = ConfigFactory::getByType('unsupported_type', 'foo');
     }

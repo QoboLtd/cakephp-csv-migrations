@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\Model\Table;
 
 use Cake\ORM\TableRegistry;
@@ -27,7 +28,7 @@ class DblistsTableTest extends TestCase
      *
      * @return void
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
         $config = TableRegistry::exists('Dblists') ? [] : ['className' => 'CsvMigrations\Model\Table\DblistsTable'];
@@ -39,7 +40,7 @@ class DblistsTableTest extends TestCase
      *
      * @return void
      */
-    public function testInitialize() : void
+    public function testInitialize(): void
     {
         $this->assertTrue($this->Dblists->hasBehavior('Timestamp'), 'Missing behavior Timestamp.');
         $assoc = $this->Dblists->getAssociation('DblistItems');
@@ -51,7 +52,7 @@ class DblistsTableTest extends TestCase
      *
      * @return void
      */
-    public function testValidationDefault() : void
+    public function testValidationDefault(): void
     {
         $validator = $this->Dblists->getValidator();
         $this->assertTrue($validator->hasField('id'), 'Missing validation for id');
@@ -63,14 +64,14 @@ class DblistsTableTest extends TestCase
      *
      * @return void
      */
-    public function testGetOptions() : void
+    public function testGetOptions(): void
     {
         $expected = [
             'corporate' => 'Corporate',
             'leonid' => ' - Leonid',
             'individual' => 'Individual',
             'antonis' => ' - Antonis',
-            'george' => ' - George'
+            'george' => ' - George',
         ];
         $this->assertSame($expected, $this->Dblists->getOptions('categories'));
 
@@ -82,7 +83,7 @@ class DblistsTableTest extends TestCase
      *
      * @return void
      */
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->Dblists);
 

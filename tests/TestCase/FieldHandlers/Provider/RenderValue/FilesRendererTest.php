@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\RenderValue;
 
 use Burzum\FileStorage\Storage\Listener\LocalListener;
@@ -17,7 +18,7 @@ class FilesRendererTest extends TestCase
 
     private $renderer;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -27,12 +28,12 @@ class FilesRendererTest extends TestCase
         EventManager::instance()->on(new LocalListener([
             'imageProcessing' => true,
             'pathBuilderOptions' => [
-                'pathPrefix' => Configure::read('FileStorage.pathBuilderOptions.pathPrefix')
-            ]
+                'pathPrefix' => Configure::read('FileStorage.pathBuilderOptions.pathPrefix'),
+            ],
         ]));
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         unset($this->renderer);
 
@@ -42,7 +43,7 @@ class FilesRendererTest extends TestCase
     /**
      * @return mixed[]
      */
-    public function getValues() : array
+    public function getValues(): array
     {
         return [
             [true, ''],
@@ -56,7 +57,7 @@ class FilesRendererTest extends TestCase
         ];
     }
 
-    public function testRenderValue() : void
+    public function testRenderValue(): void
     {
         $expected = '/tests/img/qobo.png';
         $result = $this->renderer->provide('00000000-0000-0000-0000-000000000003');
@@ -68,7 +69,7 @@ class FilesRendererTest extends TestCase
      * @dataProvider getValues
      * @param mixed $value
      */
-    public function testRenderValueWithInvalidValue($value, string $expected) : void
+    public function testRenderValueWithInvalidValue($value, string $expected): void
     {
         $result = $this->renderer->provide($value);
         $this->assertSame($expected, $result);

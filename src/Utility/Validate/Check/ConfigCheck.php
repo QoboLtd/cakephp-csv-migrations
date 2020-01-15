@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,13 +10,13 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Utility\Validate\Check;
 
 use CsvMigrations\Utility\Validate\Utility;
 use InvalidArgumentException;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
-
 use Qobo\Utils\ModuleConfig\Parser\Parser;
 
 class ConfigCheck extends AbstractCheck
@@ -27,7 +28,7 @@ class ConfigCheck extends AbstractCheck
      * @param mixed[] $options Check options
      * @return int Number of encountered errors
      */
-    public function run(string $module, array $options = []) : int
+    public function run(string $module, array $options = []): int
     {
         $mc = $this->getModuleConfig($module, $options);
 
@@ -65,8 +66,8 @@ class ConfigCheck extends AbstractCheck
         $schema = $mc->createSchema(['lint' => true]);
         $schema->setCallback(function (array $schema) use ($module, $options) {
             // phpstan
-            $displayBad = !empty($options['display_field_bad_values'])? (array)$options['display_field_bad_values'] : [];
-            $iconBad = !empty($options['icon_bad_values'])? (array)$options['icon_bad_values'] : [];
+            $displayBad = !empty($options['display_field_bad_values']) ? (array)$options['display_field_bad_values'] : [];
+            $iconBad = !empty($options['icon_bad_values']) ? (array)$options['icon_bad_values'] : [];
 
             $schema = $this->addFieldsToSchema($schema, $module);
             $schema = $this->addVirtualFieldsToSchema($schema, $module);
@@ -149,7 +150,7 @@ class ConfigCheck extends AbstractCheck
      * @param mixed[] $config Configuration
      * @return void
      */
-    protected function checkParent(string $module, array $options = [], array $config = []) : void
+    protected function checkParent(string $module, array $options = [], array $config = []): void
     {
         if (empty($config['parent'])) {
             return;

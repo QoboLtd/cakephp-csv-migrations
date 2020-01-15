@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\CombinedFields;
 
 /**
@@ -24,10 +26,10 @@ class MetricCombinedFields extends AbstractCombinedFields
      */
     protected $fields = [
         'amount' => [
-            'config' => '\\CsvMigrations\\FieldHandlers\\Config\\DecimalConfig'
+            'config' => '\\CsvMigrations\\FieldHandlers\\Config\\DecimalConfig',
         ],
         'unit' => [
-            'config' => '\\CsvMigrations\\FieldHandlers\\Config\\ListConfig'
-        ]
+            'config' => '\\CsvMigrations\\FieldHandlers\\Config\\ListConfig',
+        ],
     ];
 }

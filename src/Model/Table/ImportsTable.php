@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Model\Table;
 
 use Cake\Database\Schema\TableSchema;
@@ -72,7 +74,7 @@ class ImportsTable extends Table
 
         $this->hasMany('ImportResults', [
             'foreignKey' => 'import_id',
-            'className' => 'CsvMigrations.ImportResults'
+            'className' => 'CsvMigrations.ImportResults',
         ]);
     }
 

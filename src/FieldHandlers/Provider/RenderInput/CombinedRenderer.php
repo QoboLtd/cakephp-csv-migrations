@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\RenderInput;
 
 use CsvMigrations\FieldHandlers\FieldHandler;
@@ -60,7 +62,7 @@ class CombinedRenderer extends AbstractRenderer
             'field' => $this->config->getField(),
             'label' => $label,
             'required' => $options['fieldDefinitions']->getRequired(),
-            'inputs' => $inputs
+            'inputs' => $inputs,
         ];
 
         $defaultElement = 'CsvMigrations.FieldHandlers/CombinedFieldHandler/input';

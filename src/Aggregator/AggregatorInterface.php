@@ -1,4 +1,5 @@
 <?php
+
 namespace CsvMigrations\Aggregator;
 
 use Cake\Datasource\EntityInterface;
@@ -11,7 +12,7 @@ interface AggregatorInterface
      *
      * @return bool
      */
-    public function validate() : bool;
+    public function validate(): bool;
 
     /**
      * Applies aggregation conditions.
@@ -19,7 +20,7 @@ interface AggregatorInterface
      * @param \Cake\Datasource\QueryInterface $query Query instance
      * @return \Cake\Datasource\QueryInterface
      */
-    public function applyConditions(QueryInterface $query) : QueryInterface;
+    public function applyConditions(QueryInterface $query): QueryInterface;
 
     /**
      * Returns aggregated result.
@@ -34,5 +35,5 @@ interface AggregatorInterface
      *
      * @return \CsvMigrations\Aggregator\Configuration
      */
-    public function getConfig() : Configuration;
+    public function getConfig(): Configuration;
 }

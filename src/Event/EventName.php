@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\Event;
 
 use MyCLabs\Enum\Enum;
@@ -24,4 +26,7 @@ class EventName extends Enum
     const FIELD_HANDLER_DEFAULT_VALUE = 'CsvMigrations.FieldHandler.DefaultValue';
     // CsvMigrations Table events
     const MODEL_AFTER_SAVE = 'CsvMigrations.Model.afterSave';
+    const MODEL_AFTER_SAVE_COMMIT = 'CsvMigrations.Model.afterSaveCommit';
+    // Panel extras
+    const PANEL_POPULATE_EXTRAS = 'CsvMigrations.Panel.populate';
 }

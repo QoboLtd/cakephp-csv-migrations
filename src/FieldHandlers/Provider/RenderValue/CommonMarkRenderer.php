@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  *
@@ -9,6 +10,7 @@
  * @copyright     Copyright (c) Qobo Ltd. (https://www.qobo.biz)
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
 
 use League\CommonMark\CommonMarkConverter;
@@ -37,7 +39,7 @@ class CommonMarkRenderer extends AbstractRenderer
 
         $config = [
             'html_input' => 'escape',
-            'allow_unsafe_links' => false
+            'allow_unsafe_links' => false,
         ];
 
         $converter = new CommonMarkConverter($config);

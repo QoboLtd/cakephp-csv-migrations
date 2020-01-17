@@ -124,6 +124,7 @@ class IcEmail
     {
         $fallbackValue = 'reminder';
         $displayField = $this->table->getDisplayField();
+
         if (! $this->entity->get($displayField)) {
             return $fallbackValue;
         }
@@ -133,13 +134,16 @@ class IcEmail
         $tableName = App::shortName(get_class($this->table), 'Model/Table', 'Table');
         list(, $tableName) = pluginSplit($tableName);
         $config = (new ModuleConfig(ConfigType::MIGRATION(), $tableName))->parseToArray();
-        Assert::keyExists($config, $displayField);
 
-        $renderedValue = $factory->renderValue($this->table, $displayField, $this->entity->get($displayField), [
-            'renderAs' => 'related' === (new CsvField($config[$displayField]))->getType() ?
-                Setting::RENDER_PLAIN_VALUE_RELATED :
-                Setting::RENDER_PLAIN_VALUE,
-        ]);
+        if (isset($config[$displayField])) {
+            $renderedValue = $factory->renderValue($this->table, $displayField, $this->entity->get($displayField), [
+                'renderAs' => 'related' === (new CsvField($config[$displayField]))->getType() ?
+                    Setting::RENDER_PLAIN_VALUE_RELATED :
+                    Setting::RENDER_PLAIN_VALUE,
+            ]);
+        } else {
+            $renderedValue = $this->entity->get($displayField);
+        }
 
         if (! $renderedValue) {
             return $fallbackValue;

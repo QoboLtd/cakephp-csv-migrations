@@ -122,23 +122,25 @@ class Utility
         }
 
         $array = Convert::objectToArray($config);
-        $transitions = (array)Hash::extract($array['items'], '{n}.transitions');
-
-        if (empty($transitions)) {
+        if (!isset($array['transaction'])) {
             return true;
         }
+        // Validate transaction JSON structure
+        $transaction = $array['transaction'];
+        $listItems = (array)Hash::extract($array['items'], '{n}.value');
 
-        $listKeys = array_flip((array)Hash::extract($array['items'], '{n}.value'));
-
-        foreach ($transitions as $transition) {
-            foreach ($transition as $key => $value) {
-                if ($value !== '' && !isset($listKeys[$value])) {
-                    return false;
-                }
-            }
+        if (!isset($transaction['initial']) && !empty($transaction['initial']) || !in_array($transaction['initial'], $listItems)) {
+            return false;
+        }
+        if (!isset($transaction['items']) || empty($transaction['items'])) {
+            return false;
         }
 
-        return true;
+        $to = (array)Hash::extract($transaction['items'], '{n}.to');
+        $from = (array)Hash::extract($transaction['items'], '{n}.from');
+        $elements = array_filter(array_unique(array_merge($to, $from)));
+
+        return empty(array_diff($elements, $listItems));
     }
 
     /**

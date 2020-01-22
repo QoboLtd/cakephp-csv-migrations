@@ -170,7 +170,6 @@ class FieldTest extends TestCase
             ],
             'three' => [
                 'label' => 'Three',
-                'inactive' => false
                 'inactive' => false,
             ],
         ];

@@ -51,13 +51,9 @@ class UtilityTest extends TestCase
         $this->assertTrue(is_bool($result), "isValidList() returned a non-boolean result");
         $this->assertFalse($result, "isValidList() returned true for a non-valid list");
 
-        $result = Utility::isValidList('list');
+        $result = Utility::isValidList('transaction');
         $this->assertTrue(is_bool($result), "isValidList() returned a non-boolean result");
         $this->assertTrue($result, "isValidList() returned false for a valid list");
-
-        $result = Utility::isValidList('wrong_list_transitions');
-        $this->assertTrue(is_bool($result), "isValidList() returned a non-boolean result");
-        $this->assertFalse($result, "isValidList() returned false for a valid list");
     }
 
     public function testIsRealModuleField(): void

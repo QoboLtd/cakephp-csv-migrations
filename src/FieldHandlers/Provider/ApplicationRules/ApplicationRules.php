@@ -47,7 +47,7 @@ class ApplicationRules extends AbstractApplicationRules
             $validator = (new Validator())->inList($field, array_keys($listOptions));
             $payload = [$field => $entity->get($field)];
             $errors = $validator->errors($payload, $entity->isNew());
-            $entity->errors($errors);
+            $entity->getErrors($errors);
 
             return empty($errors);
         }, 'listRules');

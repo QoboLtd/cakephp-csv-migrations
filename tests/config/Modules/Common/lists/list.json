@@ -9,14 +9,12 @@
         {
             "value": "two",
             "label": "Two",
-            "transitions" : ["three"],
             "inactive": false,
             "children": []
         },
         {
             "value": "three",
             "label": "Three",
-            "transitions" : [""],
             "inactive": false,
             "children": []
         }

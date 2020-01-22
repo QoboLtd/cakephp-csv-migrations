@@ -86,10 +86,10 @@ class FooTableTest extends TestCase
 
     public function testSaveWithInvalidTransitionsListItem(): void
     {
-        $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'inactive', 'type' => 'bronze.new']);
+        $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'active', 'type' => 'bronze.new']);
         $this->table->save($entity);
 
-        $entity = $this->table->patchEntity($entity, ['status' => 'active']);
+        $entity = $this->table->patchEntity($entity, ['status' => 'dead']);
         $this->assertFalse($this->table->save($entity));
     }
 
@@ -98,7 +98,9 @@ class FooTableTest extends TestCase
         $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'active', 'type' => 'bronze.new']);
         $this->table->save($entity);
 
-        $entity = $this->table->patchEntity($entity, ['status' => 'inactive']);
+        $entity->set('status', 'inactive');
+        //$entity = $this->table->patchEntity($entity, ['status' => 'dead']);
+
         $this->assertInstanceOf(EntityInterface::class, $this->table->save($entity));
     }
 

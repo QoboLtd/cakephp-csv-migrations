@@ -36,6 +36,7 @@ class ListSelectOptions extends AbstractSelectOptions
     {
         $spacer = isset($options['spacer']) ? (string)$options['spacer'] : ' - ';
         $flatten = isset($options['flatten']) ? (bool)$options['flatten'] : true;
+        $currentValue = isset($options['value']) ? $options['value'] : false;
 
         list($module, $list) = false !== strpos($data, '.') ?
             explode('.', $data, 2) :
@@ -43,7 +44,11 @@ class ListSelectOptions extends AbstractSelectOptions
 
         $result = [];
         try {
-            $config = new ModuleConfig(ConfigType::LISTS(), $module, $list, ['flatten' => $flatten, 'filter' => true]);
+            $config = new ModuleConfig(ConfigType::LISTS(), $module, $list, [
+                    'flatten' => $flatten,
+                    'filter' => true,
+                    'transaction' => $currentValue,
+                ]);
             $config = $config->parse();
             if (! property_exists($config, 'items')) {
                 return [];

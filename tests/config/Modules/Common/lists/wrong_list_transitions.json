@@ -16,6 +16,7 @@
             "value": "three",
             "label": "Three",
             "inactive": false,
+            "transitions" : ["non_value"],
             "children": []
         }
     ]

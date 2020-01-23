@@ -13,6 +13,7 @@
 
 namespace CsvMigrations\FieldHandlers;
 
+use Cake\ORM\RulesChecker;
 use Cake\Validation\Validator;
 use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 
@@ -114,4 +115,15 @@ interface FieldHandlerInterface
      * @return \Cake\Validation\Validator
      */
     public function setValidationRules(Validator $validator, array $options = []): Validator;
+
+    /**
+     * Application rules setter.
+     *
+     * Sets Table application rules based on the provided field-type.
+     *
+     * @param \Cake\ORM\RulesChecker $rules RulesChecker instance
+     * @param mixed[] $options Field options
+     * @return \Cake\ORM\RulesChecker;
+     */
+    public function setApplicationRules(RulesChecker $rules, array $options = []): RulesChecker;
 }

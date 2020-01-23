@@ -168,6 +168,10 @@ class FieldTest extends TestCase
                 'label' => 'Two',
                 'inactive' => false,
             ],
+            'three' => [
+                'label' => 'Three',
+                'inactive' => false,
+            ],
         ];
 
         $this->assertSame($expected, Field::getList('list'));
@@ -182,6 +186,10 @@ class FieldTest extends TestCase
             ],
             'two' => [
                 'label' => 'Two',
+                'inactive' => false,
+            ],
+            'three' => [
+                'label' => 'Three',
                 'inactive' => false,
             ],
         ];

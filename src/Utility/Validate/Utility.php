@@ -107,7 +107,11 @@ class Utility
         $listItems = null;
         try {
             $mc = new ModuleConfig(ConfigType::LISTS(), $module, $list, ['cacheSkip' => true]);
+
+            $schema = $mc->createSchema(['lint' => true]);
+            $mc->setParser(new Parser($schema, ['lint' => true, 'validate' => true]));
             $config = $mc->parse();
+
             $listItems = property_exists($config, 'items') ? $config->items : null;
         } catch (InvalidArgumentException $e) {
             return false;
@@ -117,7 +121,26 @@ class Utility
             return false;
         }
 
-        return true;
+        $array = Convert::objectToArray($config);
+        if (!isset($array['transaction'])) {
+            return true;
+        }
+        // Validate transaction JSON structure
+        $transaction = $array['transaction'];
+        $listItems = (array)Hash::extract($array['items'], '{n}.value');
+
+        if (!isset($transaction['initial']) && !empty($transaction['initial']) || !in_array($transaction['initial'], $listItems)) {
+            return false;
+        }
+        if (!isset($transaction['items']) || empty($transaction['items'])) {
+            return false;
+        }
+
+        $to = (array)Hash::extract($transaction['items'], '{n}.to');
+        $from = (array)Hash::extract($transaction['items'], '{n}.from');
+        $elements = array_filter(array_unique(array_merge($to, $from)));
+
+        return empty(array_diff($elements, $listItems));
     }
 
     /**

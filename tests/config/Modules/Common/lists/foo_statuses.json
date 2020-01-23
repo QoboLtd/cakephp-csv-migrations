@@ -11,6 +11,25 @@
             "label": "Inactive",
             "inactive": false,
             "children": []
+        },
+        {
+            "value": "dead",
+            "label": "Dead",
+            "inactive": false,
+            "children": []
         }
-    ]
+    ],
+    "transaction" : {
+        "initial": "active",
+        "items" : [
+            {
+                "from" : "active",
+                "to" : "inactive"
+            },
+            {
+                "from" : "inactive",
+                "to" : "dead"
+            }
+        ]
+    }
 }

@@ -77,10 +77,39 @@ class FooTableTest extends TestCase
         ));
     }
 
+    public function testSaveWithValidListItem(): void
+    {
+        $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'active', 'type' => 'bronze.new']);
+        $this->table->save($entity);
+        $this->assertInstanceOf(EntityInterface::class, $this->table->save($entity));
+    }
+
     public function testSaveWithInvalidListItem(): void
     {
         $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'invalid_value', 'type' => 'bronze.new']);
+        $this->assertFalse($this->table->save($entity));
+    }
 
+    public function testSaveWithValidTransitionsListItem(): void
+    {
+        $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'active', 'type' => 'bronze.new']);
+
+        $entity = $this->table->patchEntity($entity, ['name' => 'John Smith', 'status' => 'inactive', 'type' => 'bronze.new']);
+        $this->table->save($entity);
+
+        $entity = $this->table->get($this->table->save($entity));
+        $this->assertInstanceOf(EntityInterface::class, $this->table->save($entity));
+    }
+
+    public function testSaveWithInvalidTransitionsListItem(): void
+    {
+        $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'dead', 'type' => 'bronze.new']);
+        $this->assertFalse($this->table->save($entity));
+
+        $entity = $this->table->newEntity(['name' => 'John Smith', 'status' => 'active', 'type' => 'bronze.new']);
+        $this->assertInstanceOf(EntityInterface::class, $this->table->save($entity));
+
+        $entity = $this->table->patchEntity($entity, ['status' => 'dead']);
         $this->assertFalse($this->table->save($entity));
     }
 

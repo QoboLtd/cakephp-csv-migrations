@@ -50,6 +50,10 @@ class UtilityTest extends TestCase
         $result = Utility::isValidList('this list does not exist');
         $this->assertTrue(is_bool($result), "isValidList() returned a non-boolean result");
         $this->assertFalse($result, "isValidList() returned true for a non-valid list");
+
+        $result = Utility::isValidList('transaction');
+        $this->assertTrue(is_bool($result), "isValidList() returned a non-boolean result");
+        $this->assertTrue($result, "isValidList() returned false for a valid list");
     }
 
     public function testIsRealModuleField(): void

@@ -14,6 +14,7 @@
 namespace CsvMigrations\FieldHandlers;
 
 use Cake\Event\Event;
+use Cake\ORM\RulesChecker;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 use CsvMigrations\Event\EventName;
@@ -365,6 +366,28 @@ class FieldHandler implements FieldHandlerInterface
         }
 
         return $validator;
+    }
+
+    /**
+     * Application rules setter.
+     *
+     * @param \Cake\ORM\RulesChecker $rules RulesChecker instance
+     * @param array $options Field options
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function setApplicationRules(RulesChecker $rules, array $options = []): RulesChecker
+    {
+        $options = array_merge($this->defaultOptions, $this->fixOptions($options));
+
+        $provider = $this->config->getProvider('applicationRules');
+        $rules = (new $provider($this->config))->provide($rules, $options);
+        if (! $rules instanceof RulesChecker) {
+            throw new RuntimeException(
+                sprintf('Provider returned value must be an instance of %s.', RulesChecker::class)
+            );
+        }
+
+        return $rules;
     }
 
     /**

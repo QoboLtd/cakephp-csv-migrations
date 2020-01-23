@@ -12,7 +12,7 @@
 namespace CsvMigrations\FieldHandlers\Provider\ApplicationRules;
 
 use Cake\Core\App;
-use Cake\Validation\Validator;
+use Cake\Validation\Validation;
 use InvalidArgumentException;
 
 /**
@@ -34,23 +34,25 @@ class ApplicationRules extends AbstractApplicationRules
         $rules->add(function ($entity) use ($options, $provider) {
             $field = $options['fieldDefinitions']->getName();
 
-            $value = $entity->isDirty($field) ? $entity->getOriginal($field) : null;
-            if (empty($value)) {
+            $oldValue = (!$entity->isNew() && $entity->isDirty($field)) ? $entity->getOriginal($field) : null;
+            $newValue = $entity->get($field);
+
+            if (empty($oldValue) && !(bool)$options['fieldDefinitions']->getRequired()) {
                 return true;
             }
 
             $listOptions = (new $provider($this->config))->provide(
                 $options['fieldDefinitions']->getLimit(),
-                ['flatten' => true, 'filter' => true, 'value' => $value]
+                ['flatten' => true, 'filter' => true, 'value' => $oldValue]
             );
 
-            $validator = (new Validator())->inList($field, array_keys($listOptions));
-            $payload = [$field => $entity->get($field)];
-            $errors = $validator->errors($payload, $entity->isNew());
-            $entity->getErrors($errors);
+            $validation = Validation::inList($newValue, array_keys($listOptions));
+            if (!$validation) {
+                $entity->setErrors([$field => ["inList" => "The provided value is invalid"]]);
+            }
 
-            return empty($errors);
-        }, 'listRules');
+            return $validation;
+        }, 'listRoles');
 
         return $rules;
     }

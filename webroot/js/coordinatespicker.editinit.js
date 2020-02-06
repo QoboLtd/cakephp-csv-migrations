@@ -16,4 +16,8 @@ $(document).ready(function () {
             $(gps_input).val(coordinates)
         })
     })
+
+    $("button[data-dismiss='coordinates-modal']").click(function () {
+        $(this).closest('.modal').modal('hide')
+    })
 })

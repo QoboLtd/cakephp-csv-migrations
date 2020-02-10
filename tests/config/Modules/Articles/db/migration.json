@@ -15,7 +15,7 @@
     },
     "status": {
         "name": "status",
-        "type": "list(article_statuses)",
+        "type": "list(Articles.article_statuses)",
         "required": false,
         "non-searchable": false,
         "unique": false

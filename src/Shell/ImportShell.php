@@ -562,7 +562,11 @@ class ImportShell extends Shell
      */
     protected function _findListValue(RepositoryInterface $table, string $listName, string $value): string
     {
-        $options = FieldUtility::getList(sprintf('%s.%s', $table->getAlias(), $listName), true);
+        if (false !== strpos($listName, '.')) {
+            $options = FieldUtility::getList($listName, true);
+        } else {
+            $options = FieldUtility::getList(sprintf('%s.%s', $table->getAlias(), $listName), true);
+        }
 
         // check against list options values
         foreach ($options as $val => $params) {

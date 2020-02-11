@@ -451,6 +451,17 @@ final class FileUpload
     }
 
     /**
+     * Returns true if the provided model has files, false otherwise.
+     *
+     * @param string $modelName Model name
+     * @return bool
+     */
+    public static function hasFileFields(string $modelName): bool
+    {
+        return [] !== self::fileFields($modelName);
+    }
+
+    /**
      * File-type fields getter.
      *
      * @param string $modelName Model name

@@ -215,7 +215,7 @@ final class FileUpload
      */
     public function getFilesUrls(string $id, string $mediaSource, string $mediaSize = null): array
     {
-        if (empty($mediaSource) && !in_array($mediaSource, $this->getFileFields())) {
+        if (empty($mediaSource) && !in_array($mediaSource, self::fileFields($this->table->getAlias()))) {
             return [];
         }
 
@@ -436,7 +436,7 @@ final class FileUpload
     public function link(string $id, array $data): int
     {
         $ids = [];
-        foreach ($this->getFileFields() as $field) {
+        foreach (self::fileFields($this->table->getAlias()) as $field) {
             $ids = array_merge($ids, $this->getFileIdsByField($data, $field));
         }
 
@@ -453,21 +453,12 @@ final class FileUpload
     /**
      * File-type fields getter.
      *
+     * @param string $modelName Model name
      * @return mixed[]
      */
-    private function getFileFields(): array
+    public static function fileFields(string $modelName): array
     {
-        $config = new ModuleConfig(ConfigType::MIGRATION(), $this->table->getAlias());
-        $config = json_encode($config->parse());
-        if (false === $config) {
-            return [];
-        }
-
-        $fields = json_decode($config, true);
-
-        if (empty($fields)) {
-            return [];
-        }
+        $fields = (new ModuleConfig(ConfigType::MIGRATION(), $modelName))->parseToArray();
 
         $fields = array_filter($fields, function ($params) {
             return in_array($params['type'], self::FIELD_TYPES);

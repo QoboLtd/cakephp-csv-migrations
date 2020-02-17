@@ -110,6 +110,7 @@ class FieldHandler implements FieldHandlerInterface
         if (! empty($config[$field])) {
             $this->defaultOptions = (array)array_replace_recursive($this->defaultOptions, $config[$field]);
         }
+        $this->defaultOptions['attributes']['field-name'] = $field;
     }
 
     /**

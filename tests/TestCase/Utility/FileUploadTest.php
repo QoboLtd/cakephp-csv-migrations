@@ -323,8 +323,8 @@ class FileUploadTest extends TestCase
 
         $count = $this->fileUpload->link($articleId, [
             'Articles' => [
-                'image_ids' => [$fileStorage->get('id')]
-            ]
+                'image_ids' => [$fileStorage->get('id')],
+            ],
         ]);
 
         $this->assertSame(1, $count);
@@ -345,8 +345,8 @@ class FileUploadTest extends TestCase
 
         $data = [
             'Articles' => [
-                'image_ids' => ['00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002']
-            ]
+                'image_ids' => ['00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002'],
+            ],
         ];
 
         $this->assertSame(2, $this->fileUpload->link($articleId, $data));

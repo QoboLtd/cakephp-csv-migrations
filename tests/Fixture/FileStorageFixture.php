@@ -60,5 +60,21 @@ class FileStorageFixture extends BaseFixture
             'created' => '2018-10-26 12:00:00',
             'modified' => '2012-10-26 12:00:00',
         ],
+        [
+            'id' => '00000000-0000-0000-0000-000000000003',
+            'user_id' => '00000000-0000-0000-0000-000000000001',
+            'foreign_key' => '00000000-0000-0000-0000-000000000001',
+            'model' => 'articles',
+            'filename' => 'qobo.pdf',
+            'filesize' => '617',
+            'mime_type' => 'application/pdf',
+            'extension' => 'pdf',
+            'hash' => null,
+            'path' => 'tests/img/qobo.pdf',
+            'adapter' => 'Local',
+            'model_field' => 'image',
+            'created' => '2020-02-11 16:10:00',
+            'modified' => '2020-02-11 16:10:00',
+        ],
     ];
 }

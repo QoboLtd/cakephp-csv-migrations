@@ -413,11 +413,11 @@ class SeedShell extends Shell
         for ($count = 0; $count < $this->numberOfRecords; $count++) {
             $entity = $table->newEntity();
 
-            $this->out($moduleName . ' - Record ' . ($count+1));
+            $this->out($moduleName . ' - Record ' . ($count + 1));
 
             $data = [];
             foreach ($module as $fieldName => $fieldData) {
-                $this->out('- '. $fieldName, 1, Shell::VERBOSE);
+                $this->out('- ' . $fieldName, 1, Shell::VERBOSE);
 
                 if (empty($fieldData['type'])) {
                     continue;

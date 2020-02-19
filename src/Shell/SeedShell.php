@@ -15,6 +15,8 @@ namespace CsvMigrations\Shell;
 
 use Cake\Console\Shell;
 use Cake\Core\Configure;
+use Cake\I18n\Date;
+use Cake\I18n\Time;
 use Cake\ORM\TableRegistry;
 use Faker\Factory;
 use InvalidArgumentException;
@@ -174,7 +176,7 @@ class SeedShell extends Shell
                 $value = $faker->url;
                 break;
             case 'time':
-                $value = $faker->unique()->time('HH:mm');
+                $value = new Time($faker->unique()->time('H:m'));
                 break;
             case 'string':
                 $value = $faker->unique()->text(20);
@@ -196,28 +198,30 @@ class SeedShell extends Shell
                 break;
             case 'datetime':
             case 'reminder':
-                $value = $faker->unique()->dateTime('yyyy-MM-dd HH:mm:ss');
+                $value = new Time($faker->unique()->dateTime('Y-m-d H:m:s'));
                 break;
             case 'date':
-                $value = $faker->unique()->date('yyyy-MM-dd');
+                $value = new Date($faker->unique()->date('Y-m-d'));
                 break;
             case 'boolean':
                 $value = $faker->unique()->boolean();
                 break;
             default:
-                if (strpos($type, 'list') !== false || strpos($type, 'money') !== false || strpos($type, 'metric') !== false) {
+                if (strpos($type, 'list(') !== false || strpos($type, 'money(') !== false || strpos($type, 'metric(') !== false) {
                     //get list values
                     if (empty($listName)) {
                         $listName = $this->getStringEnclosedInParenthesis($type);
                     }
+
                     $list = $this->getListData($moduleName, $listName);
                     if (empty($list) || count($list) == 0) {
                         $value = null;
                         break;
                     }
+
                     $value = $faker->randomElement($list);
                 }
-                if (strpos($type, 'related') !== false) {
+                if (strpos($type, 'related(') !== false) {
                     //get list values
                     $moduleName = $this->getStringEnclosedInParenthesis($type);
                     $list = $this->getModuleIds($moduleName);
@@ -402,13 +406,19 @@ class SeedShell extends Shell
             return;
         }
 
+        $this->out($moduleName);
+
         $table = TableRegistry::get($moduleName);
 
         for ($count = 0; $count < $this->numberOfRecords; $count++) {
             $entity = $table->newEntity();
 
+            $this->out($moduleName . ' - Record ' . ($count+1));
+
             $data = [];
             foreach ($module as $fieldName => $fieldData) {
+                $this->out('- '. $fieldName, 1, Shell::VERBOSE);
+
                 if (empty($fieldData['type'])) {
                     continue;
                 }
@@ -421,7 +431,7 @@ class SeedShell extends Shell
                     continue;
                 }
 
-                $fieldValue = $this->getFieldValueBasedOnType($fieldData['type']);
+                $fieldValue = $this->getFieldValueBasedOnType($fieldData['type'], $moduleName);
                 if (empty($fieldValue)) {
                     continue;
                 }
@@ -433,7 +443,6 @@ class SeedShell extends Shell
             }
         }
         $this->modulesPolpulatedWithData[] = $moduleName;
-        $this->out($moduleName);
     }
 
     /**

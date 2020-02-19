@@ -198,7 +198,7 @@ class SeedShell extends Shell
                 break;
             case 'datetime':
             case 'reminder':
-                $value = new Time($faker->unique()->dateTime('Y-m-d H:m:s'));
+                $value = new Date($faker->unique()->dateTime());
                 break;
             case 'date':
                 $value = new Date($faker->unique()->date('Y-m-d'));

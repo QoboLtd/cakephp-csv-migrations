@@ -176,7 +176,7 @@ class SeedShell extends Shell
                 $value = $faker->url;
                 break;
             case 'time':
-                $value = new Time($faker->unique()->time('H:m'));
+                $value = $faker->unique()->time('H:m');
                 break;
             case 'string':
                 $value = $faker->unique()->text(20);
@@ -328,7 +328,7 @@ class SeedShell extends Shell
                 if (empty($field['type'])) {
                     continue;
                 }
-                if (strpos($field['type'], 'related') !== false) {
+                if (strpos($field['type'], 'related(') !== false) {
                     //get related module
                     $type = $this->getStringEnclosedInParenthesis($field['type']);
                     $module['relations'][] = $type;

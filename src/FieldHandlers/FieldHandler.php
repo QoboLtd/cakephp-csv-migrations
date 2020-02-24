@@ -124,7 +124,7 @@ class FieldHandler implements FieldHandlerInterface
      */
     protected function setDefaultLabel(): void
     {
-        $this->defaultOptions['label'] = __d("{0}", $this->renderName());
+        $this->defaultOptions['label'] = __($this->renderName());
     }
 
     /**

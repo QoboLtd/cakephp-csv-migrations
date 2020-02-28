@@ -49,7 +49,6 @@ var embedded = embedded || {};
      */
     Embedded.prototype._submitForm = function (form) {
         var that = this;
-        var withRelate = $(form).data('embedded-related-model') && $(form).data('embedded-related-id');
 
         $.ajax({
             url: $(form).attr('action'),
@@ -62,7 +61,7 @@ var embedded = embedded || {};
             },
             success: function (data, textStatus, jqXHR) {
                 // set related field display-field and value
-                withRelate ? that._setRelations(data.data.id, form) : that._setRelatedField(data.data.id, form);
+                that._setRelatedField(data.data.id, form);
 
                 // reset embedded form
                 $(form)[0].reset();
@@ -129,8 +128,8 @@ var embedded = embedded || {};
             headers: {
                 'Authorization': 'Bearer ' + that.api_token
             },
-            success: function (data, textStatus, jqXHR) {
-                location.reload();
+            success: function (response, textStatus, jqXHR) {
+                that._setRelatedField(id, form)
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);

@@ -2,9 +2,9 @@
 
 use Cake\Core\Configure;
 ?>
-<ul class="list-unstyled">
+<ul class="list-inline">
     <?php foreach ($associationList as $id => $title) { ?>
-        <li style="padding-bottom: 2px;">
+        <li>
             <?php
             if (isset($options['renderAs']) && $options['renderAs'] === 'plain') {
                 echo $title;

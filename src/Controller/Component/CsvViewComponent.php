@@ -13,6 +13,12 @@
 
 namespace CsvMigrations\Controller\Component;
 
+deprecationWarning(
+    '"CsvMigrations\Controller\Component" class is deprecated. This functionality is ' .
+    'now handled by "App\Controller\Component\CsvViewComponent" in ' .
+    'https://github.com/QoboLtd/project-template-cakephp/blob/v49.0.0/src/Controller/Component/CsvViewComponent.php'
+);
+
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;

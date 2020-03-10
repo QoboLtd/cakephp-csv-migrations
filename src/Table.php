@@ -58,19 +58,19 @@ class Table extends BaseTable implements HasFieldsInterface
 
         $this->addBehavior('Qobo/Utils.Footprint');
 
-        $config = (new ModuleConfig(
+        $module_config = (new ModuleConfig(
             ConfigType::MODULE(),
             App::shortName($config['className'], 'Model/Table', 'Table')
         ))->parseToArray();
 
         // Set trash behavior
-        if (!isset($config['table']['trash']) || $config['table']['trash'] === true) {
-            $this->addBehavior('Muffin/Trash.Trash');
+        if (!isset($module_config['table']['trash']) || $module_config['table']['trash'] === true) {
+            $this->addBehavior('Muffin/Trash.Trash', isset($config['table']['trash']['events']) ? $config['table']['trash'] : []);
         }
 
         // set display field from config
-        if (isset($config['table']['display_field'])) {
-            $this->setDisplayField($config['table']['display_field']);
+        if (isset($module_config['table']['display_field'])) {
+            $this->setDisplayField($module_config['table']['display_field']);
         }
 
         $this->setAssociations();

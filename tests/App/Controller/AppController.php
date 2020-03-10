@@ -3,9 +3,12 @@
 namespace CsvMigrations\Test\App\Controller;
 
 use Cake\Controller\Controller;
+use CsvMigrations\Controller\Traits\ImportTrait;
 
 class AppController extends Controller
 {
+    use ImportTrait;
+
     public function initialize()
     {
         parent::initialize();

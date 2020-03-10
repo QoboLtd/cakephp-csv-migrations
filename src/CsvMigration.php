@@ -144,23 +144,6 @@ class CsvMigration extends AbstractMigration
     }
 
     /**
-     * Method that creates joined tables for Many to Many relationships.
-     *
-     * @param string $tableName current table name
-     * @return mixed[]  phinx table instances
-     * @deprecated 28.0.2 Kept for BC, already baked csv migration files are using this method. This should disappear after cakephp-migrations v2.
-     */
-    public function joins(string $tableName): array
-    {
-        trigger_error(
-            __METHOD__ . '() is deprecated. See https://github.com/QoboLtd/cakephp-csv-migrations/pull/535',
-            E_USER_DEPRECATED
-        );
-
-        return [];
-    }
-
-    /**
      * Required fields getter method.
      *
      * Returns either just the field names or with their schema definition.

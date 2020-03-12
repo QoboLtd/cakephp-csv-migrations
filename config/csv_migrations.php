@@ -51,6 +51,7 @@ return [
             'id' => '[data-type="select2"]',
             'limit' => 10,
         ],
+        'appView' => \App\View\AppView::class,
         // TinyMCE plugin configuration
         'TinyMCE' => [
             'selector' => 'textarea.tinymce',

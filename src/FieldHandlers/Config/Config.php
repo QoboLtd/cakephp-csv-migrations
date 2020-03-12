@@ -13,10 +13,10 @@
 
 namespace CsvMigrations\FieldHandlers\Config;
 
+use Cake\Core\Configure;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\View\View;
-use CsvMigrations\View\AppView;
 use InvalidArgumentException;
 use Webmozart\Assert\Assert;
 
@@ -187,7 +187,9 @@ class Config implements ConfigInterface
     public function getView(): View
     {
         if (empty($this->view)) {
-            $this->setView(new AppView());
+            $viewClass = Configure::read('CsvMigrations.appView');
+
+            $this->setView(new $viewClass());
         }
 
         return $this->view;

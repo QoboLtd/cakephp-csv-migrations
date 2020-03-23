@@ -35,7 +35,7 @@ class ListRenderer extends AbstractRenderer
         $field = $this->config->getField();
         $table = $this->config->getTable();
         $fieldName = $table->aliasField($field);
-        $selectOptions = ['' => Setting::EMPTY_OPTION_LABEL()];
+        $selectOptions = empty($options['attributes']['multiple']) ? ['' => Setting::EMPTY_OPTION_LABEL()] : [];
 
         // if select options are not pre-defined
         if (empty($options['selectOptions'])) {

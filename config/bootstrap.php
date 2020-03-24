@@ -8,6 +8,7 @@ use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use CsvMigrations\Event\Model\AutoIncrementEventListener;
 use CsvMigrations\Event\Model\ModelAfterSaveListener;
+use CsvMigrations\Event\ProcessThumbnailsListener;
 
 // get app level config
 $config = Configure::read('CsvMigrations');
@@ -38,3 +39,4 @@ Configure::write('Importer', array_replace_recursive(
 
 EventManager::instance()->on(new AutoIncrementEventListener());
 EventManager::instance()->on(new ModelAfterSaveListener());
+EventManager::instance()->on(new ProcessThumbnailsListener());

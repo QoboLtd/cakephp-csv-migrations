@@ -26,6 +26,7 @@ use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\View\Helper\UrlHelper;
 use Cake\View\View;
+use CsvMigrations\Event\EventName;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\Utility;
@@ -420,7 +421,8 @@ final class FileUpload
 
         // generate thumbnails for image files
         if (in_array(strtolower($entity->get('extension')), self::IMAGE_EXTENSIONS)) {
-            $this->createThumbnails($entity);
+            $event = new Event((string)EventName::CREATE_THUMBNAILS(), $this->table, compact('entity'));
+            EventManager::instance()->dispatch($event);
         }
 
         return $entity;
@@ -516,7 +518,8 @@ final class FileUpload
         }
 
         if ($this->storageTable->delete($entity)) {
-            $this->removeThumbnails($entity);
+            $event = new Event((string)EventName::REMOVE_THUMBNAILS(), $this->table, compact('entity'));
+            EventManager::instance()->dispatch($event);
 
             return true;
         }

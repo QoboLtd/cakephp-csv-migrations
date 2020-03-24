@@ -29,4 +29,7 @@ class EventName extends Enum
     const MODEL_AFTER_SAVE_COMMIT = 'CsvMigrations.Model.afterSaveCommit';
     // Panel extras
     const PANEL_POPULATE_EXTRAS = 'CsvMigrations.Panel.populate';
+    // Thumbnails
+    const CREATE_THUMBNAILS = 'CsvMigrations.FileStorage.createThumbnails';
+    const REMOVE_THUMBNAILS = 'CsvMigrations.FileStorage.deleteThumbnails';
 }

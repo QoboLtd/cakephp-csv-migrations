@@ -11,6 +11,7 @@ use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use CsvMigrations\Event\ProcessThumbnailsListener;
 use CsvMigrations\Utility\FileUpload;
 
 /**
@@ -30,6 +31,7 @@ class FileUploadTest extends TestCase
         parent::setUp();
 
         EventManager::instance()->setEventList(new EventList());
+        EventManager::instance()->on(new ProcessThumbnailsListener());
 
         StorageManager::config('Local', [
             'adapterOptions' => [TMP, true],

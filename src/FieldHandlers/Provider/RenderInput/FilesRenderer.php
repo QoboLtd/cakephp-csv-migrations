@@ -53,6 +53,7 @@ class FilesRenderer extends AbstractRenderer
             'value' => $data,
             'entities' => $entities,
             'table' => Inflector::dasherize($table->getAlias()),
+            'help' => !empty($options['help']) ? $options['help'] : '',
         ];
 
         $defaultElement = 'CsvMigrations.FieldHandlers/FilesFieldHandler/input';

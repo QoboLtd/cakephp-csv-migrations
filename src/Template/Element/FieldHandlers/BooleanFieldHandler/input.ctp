@@ -12,7 +12,10 @@
 
 $attributes = isset($attributes) ? $attributes : [];
 
-$label = $this->Form->label($name, $label);
+$help_tooltip = empty($help) ? '' : '<span class="help-tip"><p>' . $help . '</p></span>';
+
+$label = $this->Form->label($name, $label) . $help_tooltip;
+
 
 $attributes += [
     'type' => $type,

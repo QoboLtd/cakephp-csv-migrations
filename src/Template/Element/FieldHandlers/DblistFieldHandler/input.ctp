@@ -14,7 +14,8 @@ $attributes = isset($attributes) ? $attributes : [];
 $attributes += [
     'class' => 'form-control' . ((isset($extraClasses) && !empty($extraClasses)) ? ' ' . $extraClasses : null),
     'required' => (bool)$required,
-    'value' => $value
+    'value' => $value,
+    'help' => $help,
 ];
 ?>
 <div class="form-group<?= $required ? ' required' : '' ?>">

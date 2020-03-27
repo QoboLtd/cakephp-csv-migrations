@@ -21,6 +21,7 @@ $attributes += [
     'max' => $max,
     'min' => $min,
     'placeholder' => $placeholder,
+    'help' => $help,
 ];
 
 echo $this->Form->control($name, $attributes);

@@ -64,6 +64,7 @@ class RelatedRenderer extends AbstractRenderer
             'title' => (!empty($options['placeholder']) ? $options['placeholder'] : $this->_getInputHelp($relatedProperties)),
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
+            'help' => (!empty($options['help']) ? $options['help'] : ''),
         ];
 
         $defaultElement = 'CsvMigrations.FieldHandlers/RelatedFieldHandler/input';

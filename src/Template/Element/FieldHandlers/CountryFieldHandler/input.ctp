@@ -18,7 +18,8 @@ $attributes += [
     'options' => $options,
     'class' => 'form-control select2 ' . $extraClasses,
     'required' => (bool)$required,
-    'value' => $value
+    'value' => $value,
+    'help' => $help,
 ];
 
 echo $this->Form->control($name, $attributes);

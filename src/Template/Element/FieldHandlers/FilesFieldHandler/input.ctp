@@ -35,6 +35,7 @@ $attributes += $options;
 ?>
 <div class="form-group <?= $required ? 'required' : '' ?> <?= $this->Form->isFieldError($name) ? 'has-error' : '' ?>">
 <?= $this->Form->label($name . '[]', $label) ?>
+<?= empty($help) ? '' : '<span class="help-tip"><p>' . $help . '</p></span>'; ?>
 <?= $this->Form->{$type}($name . '[]', $attributes); ?>
 <?php if ($entities && $entities->count()) : ?>
     <?php foreach ($entities as $entity) : ?>

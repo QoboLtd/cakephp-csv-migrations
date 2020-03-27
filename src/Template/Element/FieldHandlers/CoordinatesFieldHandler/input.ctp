@@ -20,6 +20,7 @@ if (empty($api_key)) {
         'required' => (bool)$required,
         'value' => $value,
         'placeholder' => $placeholder,
+        'help' => $help,
     ];
 
     echo $this->Form->control($name, $attributes);
@@ -60,7 +61,8 @@ $attributes += [
                         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default-'. $randId .'"><i class="fa fa-pencil"></i></button>
                         </div>
                     </div>',
-    ]
+    ],
+    'help' => $help,
 ];
 
 echo $this->Form->control($name, $attributes);

@@ -30,6 +30,7 @@ $attributes += [
         'controller' => $relatedProperties['controller'],
         'action' => 'lookup.json'
     ]),
+    'help' => $help,
 ];
 ?>
 <div class="input-group select2-bootstrap-prepend select2-bootstrap-append">

@@ -20,7 +20,7 @@ foreach (array_keys($inputs) as $fieldName) {
 ?>
 <div class="form-group <?= $required ? 'required' : '' ?> <?= $hasError ? 'has-error' : '' ?>">
     <?= $this->Form->label($field, $label); ?>
-    <?= empty($help) ? '' : '<span class="help-tip"><p>' . $help . '</p></span>'; ?>
+    <?= $this->Html->help($help); ?>
     <div class="row combined-field">
     <?php foreach ($inputs as $input) : ?>
         <div class="col-xs-6 col-lg-4"><?= $input ?></div>

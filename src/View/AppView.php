@@ -32,6 +32,7 @@ class AppView extends View
     {
         parent::initialize();
 
+        $this->loadHelper('MyHtml');
         $this->loadHelper('Form', ['className' => 'AdminLTE.Form']);
     }
 }

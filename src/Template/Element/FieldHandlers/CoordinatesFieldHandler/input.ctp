@@ -61,8 +61,7 @@ $attributes += [
                         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default-'. $randId .'"><i class="fa fa-pencil"></i></button>
                         </div>
                     </div>',
-    ],
-    'help' => $help,
+    ]
 ];
 
 echo $this->Form->control($name, $attributes);
@@ -74,7 +73,7 @@ echo $this->Form->control($name, $attributes);
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="coordinates-modal" aria-label="Close">
           <span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title"><?= __($label); ?></h4>
+            <h4 class="modal-title"><?= __($label); ?><?= $this->Html->help($help);?></h4>
             <div><i class="fa fa-map-marker"></i> <span class="modal_gps_value"><?= $value; ?></span></div>
         </div>
       <div class="modal-body">

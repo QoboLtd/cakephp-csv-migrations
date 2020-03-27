@@ -50,7 +50,7 @@ for ($i = 0; $i <= $levels; $i++) {
         $options['data-hide-next'] = true;
         $options['data-previous-default-value'] = true;
         $options['label'] = $label;
-        $options['help'] = empty($help) ? '' : $help;
+        $options['help'] = $help;
     } else {
         $options['label'] = false;
     }

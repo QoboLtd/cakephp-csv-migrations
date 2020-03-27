@@ -31,13 +31,12 @@ $attributes += [
         'plugin' => $relatedProperties['plugin'],
         'controller' => $relatedProperties['controller'],
         'action' => 'lookup.json'
-    ]),
-    'help' => $help,
+    ])
 ];
 ?>
 <div class="form-group <?= $required ? 'required' : '' ?> <?= $this->Form->isFieldError($name) ? 'has-error' : '' ?>">
     <?= $this->Form->label($name, $label, ['class' => 'control-label']) ?>
-    <?= empty($attributes['help']) ? '' : '<span class="help-tip"><p>' . $attributes['help'] . '</p></span>'; ?>
+    <?= $this->Html->help($help); ?>
     <div class="input-group">
         <div class="input-group-addon" title="<?= $relatedProperties['controller'] ?>">
             <span class="fa fa-<?= $icon ?>"></span>

@@ -13,12 +13,10 @@
 
 namespace CsvMigrations\View\Helper;
 
-use Cake\View\Helper\HtmlHelper as Helper;
+use Cake\View\Helper\HtmlHelper;
 
-class MyHtmlHelper extends Helper
+class MyHtmlHelper extends HtmlHelper
 {
-    public $helpers = ['Html'];
-
     /**
      * Template for help tooltip
      *

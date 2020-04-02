@@ -44,6 +44,7 @@ class AggregatedRenderer extends AbstractRenderer
             'label' => $options['label'],
             'value' => $this->getAggregatedValue($options),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
+            'help' => (!empty($options['help']) ? $options['help'] : ''),
         ];
 
         return $this->renderElement($element, $params);

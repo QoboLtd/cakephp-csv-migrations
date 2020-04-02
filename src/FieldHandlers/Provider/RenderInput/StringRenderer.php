@@ -45,6 +45,7 @@ class StringRenderer extends AbstractRenderer
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
             'placeholder' => (!empty($options['placeholder']) ? $options['placeholder'] : ''),
+            'help' => (!empty($options['help']) ? $options['help'] : ''),
         ];
 
         $defaultElement = 'CsvMigrations.FieldHandlers/BaseFieldHandler/input';

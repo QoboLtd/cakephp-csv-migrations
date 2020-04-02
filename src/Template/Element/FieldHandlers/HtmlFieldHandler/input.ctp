@@ -19,6 +19,7 @@ $attributes += [
     'required' => (bool)$required,
     'value' => $value,
     'placeholder' => $placeholder,
+    'help' => $help,
 ];
 
 echo $this->Form->control($name, $attributes);

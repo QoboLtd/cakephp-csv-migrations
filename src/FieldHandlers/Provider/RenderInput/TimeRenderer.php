@@ -55,6 +55,7 @@ class TimeRenderer extends AbstractRenderer
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
             'minuteStep' => (isset($options['timeIncrement']) ? $options['timeIncrement'] : null),
+            'help' => (!empty($options['help']) ? $options['help'] : ''),
         ];
 
         $defaultElement = 'CsvMigrations.FieldHandlers/TimeFieldHandler/input';

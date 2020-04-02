@@ -36,6 +36,7 @@ $attributes += [
 ?>
 <div class="form-group <?= $required ? 'required' : '' ?> <?= $this->Form->isFieldError($name) ? 'has-error' : '' ?>">
     <?= $this->Form->label($name, $label, ['class' => 'control-label']) ?>
+    <?= $this->Html->help($help); ?>
     <div class="input-group">
         <div class="input-group-addon" title="<?= $relatedProperties['controller'] ?>">
             <span class="fa fa-<?= $icon ?>"></span>

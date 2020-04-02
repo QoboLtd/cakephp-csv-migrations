@@ -12,7 +12,8 @@
 
 $attributes = isset($attributes) ? $attributes : [];
 
-$label = $this->Form->label($name, $label);
+$label = $this->Form->label($name, $label) . $this->Html->help($help);
+
 
 $attributes += [
     'type' => $type,

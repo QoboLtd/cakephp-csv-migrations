@@ -63,6 +63,7 @@ class HasManyRenderer extends AbstractRenderer
             'title' => $this->_getInputHelp($relatedProperties),
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
+            'help' => (!empty($options['help']) ? $options['help'] : ''),
         ];
 
         $defaultElement = 'CsvMigrations.FieldHandlers/HasManyFieldHandler/input';

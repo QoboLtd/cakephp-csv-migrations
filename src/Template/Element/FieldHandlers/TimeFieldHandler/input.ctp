@@ -26,7 +26,8 @@ $attributes += [
             </div>
             <input type="{{type}}" name="{{name}}"{{attrs}}/>
         </div>'
-    ]
+    ],
+    'help' => $help,
 ];
 
 if (!empty($minuteStep)) {

@@ -63,6 +63,7 @@ echo $this->Html->script(
         'CsvMigrations.datetimepicker.init',
         'AdminLTE./bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min',
         'CsvMigrations.datepicker.init',
+        'CsvMigrations.tooltip.init',
         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
         'Qobo/Utils./plugins/datatables/datatables.min',
         'Qobo/Utils./plugins/datatables/js/dataTables.bootstrap.min',

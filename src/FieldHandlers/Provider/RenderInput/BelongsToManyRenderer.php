@@ -71,7 +71,7 @@ class BelongsToManyRenderer extends AbstractRenderer
             'name' => $fieldName,
             'association' => $options['association'],
             'type' => 'select',
-            'label' => $options['association']->className(),
+            'label' => isset($options['label']) ? $options['label'] : $options['association']->className(),
             'required' => $options['fieldDefinitions']->getRequired(),
             'value' => array_keys($optionsSelected),
             'options' => $optionsSelected,

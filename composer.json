@@ -24,13 +24,13 @@
     "repositories": [
         {
             "type": "git",
-            "url": "https://github.com/QoboLtd/cakephp-file-storage.git"
+            "url": "https://github.com/QoboLtd/cakephp-utils.git"
         }
     ],
     "require": {
         "eluceo/ical": "^0.11.0",
         "qobo/cakephp-translations": "^10.0",
-        "qobo/cakephp-utils": "^13.0",
+        "qobo/cakephp-utils": "dev-cakephp-v38",
         "league/commonmark": "^0.19",
         "symfony/expression-language": "^3.1"
     },

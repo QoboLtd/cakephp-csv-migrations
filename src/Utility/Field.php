@@ -91,7 +91,7 @@ class Field
             return null;
         }
 
-        return new CsvField($parsed);
+        return new CsvField($parsed['field']);
     }
 
     /**

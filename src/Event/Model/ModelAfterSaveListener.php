@@ -215,6 +215,8 @@ class ModelAfterSaveListener implements EventListenerInterface
             if ('reminder' === $field['type']) {
                 return $field;
             }
+
+            return null;
         });
 
         if (empty($fields)) {
@@ -224,7 +226,7 @@ class ModelAfterSaveListener implements EventListenerInterface
         // FIXME: What should happen when there is more than 1 reminder field on the table?
         reset($fields);
 
-        return current($fields)->name;
+        return current($fields)['name'];
     }
 
     /**

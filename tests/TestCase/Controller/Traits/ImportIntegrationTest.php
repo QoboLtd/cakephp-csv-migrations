@@ -141,7 +141,7 @@ class ImportIntegrationTest extends IntegrationTestCase
 
         $this->assertRedirect();
 
-        $table = TableRegistry::get('CsvMigrations.Imports');
+        $table = TableRegistry::getTableLocator()->get('CsvMigrations.Imports');
         $entity = $table->get($id);
 
         $this->assertEquals($data['options'], $entity->get('options'));

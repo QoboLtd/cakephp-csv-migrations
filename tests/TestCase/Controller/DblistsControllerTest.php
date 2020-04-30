@@ -21,7 +21,7 @@ class DblistsControllerTest extends IntegrationTestCase
     {
         parent::setUp();
 
-        $this->table = TableRegistry::get('CsvMigrations.Dblists');
+        $this->table = TableRegistry::getTableLocator()->get('CsvMigrations.Dblists');
 
         $this->session([
             'Auth' => [

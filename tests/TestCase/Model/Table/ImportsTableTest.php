@@ -32,9 +32,9 @@ class ImportsTableTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $config = TableRegistry::exists('Imports') ? [] : ['className' => ImportsTable::class];
+        $config = TableRegistry::getTableLocator()->exists('Imports') ? [] : ['className' => ImportsTable::class];
 
-        $this->Imports = TableRegistry::get('Imports', $config);
+        $this->Imports = TableRegistry::getTableLocator()->get('Imports', $config);
     }
 
     /**

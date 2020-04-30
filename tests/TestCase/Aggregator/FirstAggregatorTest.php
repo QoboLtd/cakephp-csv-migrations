@@ -20,7 +20,7 @@ class FirstAggregatorTest extends TestCase
 
     public function setUp(): void
     {
-        $this->table = TableRegistry::get('Foo');
+        $this->table = TableRegistry::getTableLocator()->get('Foo');
     }
 
     public function tearDown(): void

@@ -32,14 +32,14 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
     {
         parent::setUp();
         // Setup Articles table
-        $config = TableRegistry::exists('Articles') ? [] : ['classname' => ArticlesTable::class];
-        $this->Articles = TableRegistry::get('Articles', $config);
+        $config = TableRegistry::getTableLocator()->exists('Articles') ? [] : ['classname' => ArticlesTable::class];
+        $this->Articles = TableRegistry::getTableLocator()->get('Articles', $config);
         // Setup Leads table
-        $config = TableRegistry::exists('Leads') ? [] : ['classname' => LeadsTable::class];
-        $this->Leads = TableRegistry::get('Leads', $config);
+        $config = TableRegistry::getTableLocator()->exists('Leads') ? [] : ['classname' => LeadsTable::class];
+        $this->Leads = TableRegistry::getTableLocator()->get('Leads', $config);
         // Setup Users table
-        $config = TableRegistry::exists('Users') ? [] : ['classname' => UsersTable::class];
-        $this->Users = TableRegistry::get('Users', $config);
+        $config = TableRegistry::getTableLocator()->exists('Users') ? [] : ['classname' => UsersTable::class];
+        $this->Users = TableRegistry::getTableLocator()->get('Users', $config);
     }
 
     public function tearDown(): void

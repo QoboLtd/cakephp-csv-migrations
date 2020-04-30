@@ -43,7 +43,7 @@ class DblistSearchOptions extends AbstractSearchOptions
 
         $list = $options['fieldDefinitions']->getListName();
 
-        $table = TableRegistry::get('CsvMigrations.Dblists');
+        $table = TableRegistry::getTableLocator()->get('CsvMigrations.Dblists');
         Assert::isInstanceOf($table, DblistsTable::class);
 
         $selectOptions = $table->getOptions($list);

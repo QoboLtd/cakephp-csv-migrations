@@ -47,8 +47,8 @@ class FileUploadTest extends TestCase
             ],
         ]));
 
-        $this->table = TableRegistry::get('Burzum/FileStorage.FileStorage');
-        $this->fileUpload = new FileUpload(TableRegistry::get('Articles'));
+        $this->table = TableRegistry::getTableLocator()->get('Burzum/FileStorage.FileStorage');
+        $this->fileUpload = new FileUpload(TableRegistry::getTableLocator()->get('Articles'));
     }
 
     public function tearDown(): void

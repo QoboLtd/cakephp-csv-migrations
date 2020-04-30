@@ -31,8 +31,8 @@ class DblistItemsTableTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $config = TableRegistry::exists('DblistItems') ? [] : ['className' => 'CsvMigrations\Model\Table\DblistItemsTable'];
-        $this->DblistItems = TableRegistry::get('DblistItems', $config);
+        $config = TableRegistry::getTableLocator()->exists('DblistItems') ? [] : ['className' => 'CsvMigrations\Model\Table\DblistItemsTable'];
+        $this->DblistItems = TableRegistry::getTableLocator()->get('DblistItems', $config);
     }
 
     /**

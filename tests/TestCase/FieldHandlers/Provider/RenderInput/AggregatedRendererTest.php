@@ -22,7 +22,7 @@ class AggregatedRendererTest extends TestCase
     public function setUp(): void
     {
         $this->renderer = new AggregatedRenderer(new AggregatedConfig('aggregated', 'Leads'));
-        $this->entity = TableRegistry::get('Leads')->get('00000000-0000-0000-0000-000000000001');
+        $this->entity = TableRegistry::getTableLocator()->get('Leads')->get('00000000-0000-0000-0000-000000000001');
     }
 
     public function tearDown(): void

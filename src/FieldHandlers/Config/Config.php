@@ -129,7 +129,7 @@ class Config implements ConfigInterface
         }
 
         if (is_string($table)) {
-            $table = TableRegistry::get($table);
+            $table = TableRegistry::getTableLocator()->get($table);
         }
 
         Assert::isInstanceOf($table, Table::class);

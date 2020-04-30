@@ -41,7 +41,7 @@ class DblistRenderer extends AbstractRenderer
         $fieldName = $table->aliasField($field);
 
         $list = $options['fieldDefinitions']->getListName();
-        $table = TableRegistry::get('CsvMigrations.Dblists');
+        $table = TableRegistry::getTableLocator()->get('CsvMigrations.Dblists');
         Assert::isInstanceOf($table, DblistsTable::class);
 
         $params = [

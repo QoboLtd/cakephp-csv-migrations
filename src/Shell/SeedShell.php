@@ -268,7 +268,7 @@ class SeedShell extends Shell
      */
     protected function getModuleIds(string $moduleName): array
     {
-        $table = TableRegistry::get($moduleName);
+        $table = TableRegistry::getTableLocator()->get($moduleName);
         $query = $table->find()
             ->limit(100)
             ->select($table->getPrimaryKey());
@@ -408,7 +408,7 @@ class SeedShell extends Shell
 
         $this->out($moduleName);
 
-        $table = TableRegistry::get($moduleName);
+        $table = TableRegistry::getTableLocator()->get($moduleName);
 
         for ($count = 0; $count < $this->numberOfRecords; $count++) {
             $entity = $table->newEntity();

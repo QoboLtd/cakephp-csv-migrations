@@ -21,7 +21,7 @@ class DblistItemsControllerTest extends IntegrationTestCase
     {
         parent::setUp();
 
-        $this->table = TableRegistry::get('CsvMigrations.DblistItems');
+        $this->table = TableRegistry::getTableLocator()->get('CsvMigrations.DblistItems');
 
         $this->session([
             'Auth' => [

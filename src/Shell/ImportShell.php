@@ -79,7 +79,7 @@ class ImportShell extends Shell
             return;
         }
 
-        $table = TableRegistry::get('CsvMigrations.Imports');
+        $table = TableRegistry::getTableLocator()->get('CsvMigrations.Imports');
         Assert::isInstanceOf($table, ImportsTable::class);
         $query = $table->find('all')
             ->where([
@@ -298,7 +298,7 @@ class ImportShell extends Shell
         Assert::isInstanceOf($progress, ProgressHelper::class);
         $progress->init();
 
-        $table = TableRegistry::get('CsvMigrations.ImportResults');
+        $table = TableRegistry::getTableLocator()->get('CsvMigrations.ImportResults');
         Assert::isInstanceOf($table, ImportResultsTable::class);
 
         $query = $table->find('all')->where(['import_id' => $import->get('id')]);
@@ -344,7 +344,7 @@ class ImportShell extends Shell
      */
     protected function _importResult(Import $import, array $headers, int $rowNumber, array $data): void
     {
-        $importTable = TableRegistry::get('CsvMigrations.ImportResults');
+        $importTable = TableRegistry::getTableLocator()->get('CsvMigrations.ImportResults');
         Assert::isInstanceOf($importTable, ImportResultsTable::class);
 
         $query = $importTable->find('all')
@@ -364,7 +364,7 @@ class ImportShell extends Shell
             return;
         }
 
-        $table = TableRegistry::get($importResult->get('model_name'));
+        $table = TableRegistry::getTableLocator()->get($importResult->get('model_name'));
 
         $data = $this->_prepareData($import, $headers, $data);
         $csvFields = FieldUtility::getCsv($table);
@@ -495,8 +495,8 @@ class ImportShell extends Shell
         if (null !== $csvField && 'related' === $csvField->getType()) {
             $relatedTable = (string)$csvField->getLimit();
             $value = $this->_findRelatedRecord(
-                TableRegistry::get($relatedTable),
-                TableRegistry::get($relatedTable)->getDisplayField(),
+                TableRegistry::getTableLocator()->get($relatedTable),
+                TableRegistry::getTableLocator()->get($relatedTable)->getDisplayField(),
                 $value
             );
         }
@@ -594,7 +594,7 @@ class ImportShell extends Shell
      */
     protected function _importFail(ImportResult $entity, array $errors): bool
     {
-        $table = TableRegistry::get('CsvMigrations.ImportResults');
+        $table = TableRegistry::getTableLocator()->get('CsvMigrations.ImportResults');
         Assert::isInstanceOf($table, ImportResultsTable::class);
 
         $entity->set('status', $table::STATUS_FAIL);
@@ -613,7 +613,7 @@ class ImportShell extends Shell
      */
     protected function _importSuccess(ImportResult $importResult, EntityInterface $entity): bool
     {
-        $table = TableRegistry::get('CsvMigrations.ImportResults');
+        $table = TableRegistry::getTableLocator()->get('CsvMigrations.ImportResults');
         Assert::isInstanceOf($table, ImportResultsTable::class);
 
         $importResult->set('model_id', $entity->get('id'));

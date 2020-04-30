@@ -31,7 +31,7 @@ trait ImportTrait
      */
     public function import(string $id = '')
     {
-        $table = TableRegistry::get('CsvMigrations.Imports');
+        $table = TableRegistry::getTableLocator()->get('CsvMigrations.Imports');
         Assert::isInstanceOf($table, ImportsTable::class);
 
         $entity = '' === $id ? $table->newEntity() : $table->get($id);
@@ -89,7 +89,7 @@ trait ImportTrait
                 $this->set('headers', ImportUtility::getUploadHeaders($entity));
                 $this->set('columns', $utility->getTableColumns());
             } else { // Import/progress.ctp
-                $resultsTable = TableRegistry::get('CsvMigrations.ImportResults');
+                $resultsTable = TableRegistry::getTableLocator()->get('CsvMigrations.ImportResults');
                 $this->set('importCount', $resultsTable->find('imported', ['import' => $entity])->count());
                 $this->set('pendingCount', $resultsTable->find('pending', ['import' => $entity])->count());
                 $this->set('failCount', $resultsTable->find('failed', ['import' => $entity])->count());
@@ -124,7 +124,7 @@ trait ImportTrait
      */
     public function importDownload(string $id, string $type = 'original'): Response
     {
-        $table = TableRegistry::get('CsvMigrations.Imports');
+        $table = TableRegistry::getTableLocator()->get('CsvMigrations.Imports');
         $entity = $table->get($id);
         Assert::isInstanceOf($entity, Import::class);
 

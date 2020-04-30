@@ -27,9 +27,9 @@ class AggregateResultTest extends TestCase
 
     public function setUp(): void
     {
-        $this->articlesTable = TableRegistry::get('Articles');
-        $this->fooTable = TableRegistry::get('Foo');
-        $this->leadsTable = TableRegistry::get('Leads');
+        $this->articlesTable = TableRegistry::getTableLocator()->get('Articles');
+        $this->fooTable = TableRegistry::getTableLocator()->get('Foo');
+        $this->leadsTable = TableRegistry::getTableLocator()->get('Leads');
     }
 
     public function tearDown(): void

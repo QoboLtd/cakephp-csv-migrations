@@ -53,10 +53,11 @@ class CsvViewComponent extends Component
         $table = $controller->loadModel();
 
         // skip passing table fields if action is not supported by the plugin
-        if (in_array($this->request->getParam('action'), Configure::readOrFail('CsvMigrations.actions'))) {
+        $request = $this->getController()->getRequest();
+        if (in_array($request->getParam('action'), Configure::readOrFail('CsvMigrations.actions'))) {
             // if action requires panels, arrange the fields into the panels
-            $panels = in_array($this->request->getParam('action'), (array)Configure::read('CsvMigrations.panels.actions'));
-            $fields = Field::getCsvView($table, $this->request->getParam('action'), true, $panels);
+            $panels = in_array($request->getParam('action'), (array)Configure::read('CsvMigrations.panels.actions'));
+            $fields = Field::getCsvView($table, $request->getParam('action'), true, $panels);
 
             $controller->set('fields', $fields);
             $controller->set('_serialize', ['fields']);
@@ -84,7 +85,8 @@ class CsvViewComponent extends Component
     {
         $panelActions = (array)Configure::read('CsvMigrations.panels.actions');
         $dynamicPanelActions = (array)Configure::read('CsvMigrations.panels.dynamic_actions');
-        if (!in_array($this->request->getParam('action'), array_diff($panelActions, $dynamicPanelActions))) {
+        $request = $this->getController()->getRequest();
+        if (!in_array($request->getParam('action'), array_diff($panelActions, $dynamicPanelActions))) {
             return;
         }
 
@@ -104,7 +106,7 @@ class CsvViewComponent extends Component
             );
         }
 
-        if ((string)Configure::read('CsvMigrations.batch.action') === $this->request->getParam('action')) {
+        if ((string)Configure::read('CsvMigrations.batch.action') === $request->getParam('action')) {
             $this->filterBatchFields($event);
         }
     }
@@ -117,7 +119,8 @@ class CsvViewComponent extends Component
      */
     protected function filterBatchFields(Event $event): void
     {
-        $config = new ModuleConfig(ConfigType::MIGRATION(), $this->request->getParam('controller'));
+        $request = $this->getController()->getRequest();
+        $config = new ModuleConfig(ConfigType::MIGRATION(), $request->getParam('controller'));
         $config = json_encode($config->parse());
         $fields = false === $config ? [] : json_decode($config, true);
 

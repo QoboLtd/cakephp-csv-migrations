@@ -19,44 +19,44 @@ class ConfigurationTest extends TestCase
 
     public function testConstructor(): void
     {
-        $result = new Configuration(TableRegistry::get('tableName'), 'field');
+        $result = new Configuration(TableRegistry::getTableLocator()->get('tableName'), 'field');
 
         $this->assertInstanceOf(Configuration::class, $result);
     }
 
     public function testJoinMode(): void
     {
-        $table = TableRegistry::get('Foo');
+        $table = TableRegistry::getTableLocator()->get('Foo');
         $entity = $table->find()
             ->enableHydration(true)
             ->firstOrFail();
         Assert::isInstanceOf($entity, EntityInterface::class);
-        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
+        $configuration = new Configuration(TableRegistry::getTableLocator()->get('tableName'), 'field');
 
         $configuration->setJoinData($table, $entity);
         $this->assertTrue($configuration->joinMode());
 
-        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
+        $configuration = new Configuration(TableRegistry::getTableLocator()->get('tableName'), 'field');
         $this->assertFalse($configuration->joinMode());
     }
 
     public function testGetTable(): void
     {
-        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
+        $configuration = new Configuration(TableRegistry::getTableLocator()->get('tableName'), 'field');
 
         $this->assertInstanceOf(RepositoryInterface::class, $configuration->getTable());
     }
 
     public function testGetField(): void
     {
-        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
+        $configuration = new Configuration(TableRegistry::getTableLocator()->get('tableName'), 'field');
 
         $this->assertEquals('field', $configuration->getField());
     }
 
     public function testSetGetDisplayField(): void
     {
-        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
+        $configuration = new Configuration(TableRegistry::getTableLocator()->get('tableName'), 'field');
         $configuration->setDisplayField('displayField');
 
         $this->assertEquals('displayField', $configuration->getDisplayField());
@@ -64,12 +64,12 @@ class ConfigurationTest extends TestCase
 
     public function testGetJoinTable(): void
     {
-        $table = TableRegistry::get('Foo');
+        $table = TableRegistry::getTableLocator()->get('Foo');
         $entity = $table->find()
             ->enableHydration(true)
             ->firstOrFail();
         Assert::isInstanceOf($entity, EntityInterface::class);
-        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
+        $configuration = new Configuration(TableRegistry::getTableLocator()->get('tableName'), 'field');
         $configuration->setJoinData($table, $entity);
 
         $this->assertSame($table, $configuration->getJoinTable());
@@ -77,12 +77,12 @@ class ConfigurationTest extends TestCase
 
     public function testGetEntity(): void
     {
-        $table = TableRegistry::get('Foo');
+        $table = TableRegistry::getTableLocator()->get('Foo');
         $entity = $table->find()
             ->enableHydration(true)
             ->firstOrFail();
         Assert::isInstanceOf($entity, EntityInterface::class);
-        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
+        $configuration = new Configuration(TableRegistry::getTableLocator()->get('tableName'), 'field');
         $configuration->setJoinData($table, $entity);
 
         $this->assertSame($entity, $configuration->getEntity());
@@ -92,14 +92,14 @@ class ConfigurationTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $table = TableRegistry::get('Foo');
-        $entity = TableRegistry::get('Articles')
+        $table = TableRegistry::getTableLocator()->get('Foo');
+        $entity = TableRegistry::getTableLocator()->get('Articles')
             ->find()
             ->enableHydration(true)
             ->firstOrFail();
         Assert::isInstanceOf($entity, EntityInterface::class);
 
-        $configuration = new Configuration(TableRegistry::get('tableName'), 'field');
+        $configuration = new Configuration(TableRegistry::getTableLocator()->get('tableName'), 'field');
 
         // using entity from another table, instead of the configured join table (Foo)
         $configuration->setJoinData($table, $entity);

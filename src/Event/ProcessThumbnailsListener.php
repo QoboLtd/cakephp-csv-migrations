@@ -17,7 +17,6 @@ use Burzum\FileStorage\Model\Entity\FileStorage;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\ORM\Table;
-use CsvMigrations\Event\EventName;
 use CsvMigrations\Utility\FileUpload;
 use Webmozart\Assert\Assert;
 

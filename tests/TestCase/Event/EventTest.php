@@ -2,7 +2,6 @@
 
 namespace CsvMigrations\Test\TestCase\Event;
 
-use Cake\Event\EventListenerInterface;
 use Cake\TestSuite\IntegrationTestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;

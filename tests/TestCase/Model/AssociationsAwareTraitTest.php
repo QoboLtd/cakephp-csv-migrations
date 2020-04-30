@@ -8,7 +8,6 @@ use Cake\ORM\Association\HasMany;
 use Cake\ORM\TableRegistry;
 use CsvMigrations\Model\AssociationsAwareTrait;
 use PHPUnit\Framework\TestCase;
-use Webmozart\Assert\Assert;
 
 class AssociationsAwareTraitTest extends TestCase
 {

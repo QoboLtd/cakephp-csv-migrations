@@ -2,7 +2,6 @@
 
 namespace CsvMigrations\Test\TestCase\FieldHandlers\Config;
 
-use CsvMigrations\FieldHandlers\Config\Config;
 use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 use CsvMigrations\FieldHandlers\Config\StringConfig;
 use PHPUnit\Framework\TestCase;

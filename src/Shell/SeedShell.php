@@ -16,7 +16,6 @@ namespace CsvMigrations\Shell;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\I18n\Date;
-use Cake\I18n\Time;
 use Cake\ORM\TableRegistry;
 use Faker\Factory;
 use InvalidArgumentException;

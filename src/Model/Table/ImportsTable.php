@@ -14,21 +14,23 @@
 namespace CsvMigrations\Model\Table;
 
 use Cake\Database\Schema\TableSchema;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use CsvMigrations\Model\Entity\Import;
 
 /**
  * Imports Model
  *
  * @property \CsvMigrations\Model\Table\ImportResultsTable|\Cake\ORM\Association\HasMany $ImportResults
  *
- * @method \CsvMigrations\Model\Entity\Import get($primaryKey, $options = [])
- * @method \CsvMigrations\Model\Entity\Import newEntity($data = null, array $options = [])
- * @method \CsvMigrations\Model\Entity\Import[] newEntities(array $data, array $options = [])
- * @method \CsvMigrations\Model\Entity\Import|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \CsvMigrations\Model\Entity\Import patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \CsvMigrations\Model\Entity\Import[] patchEntities($entities, array $data, array $options = [])
- * @method \CsvMigrations\Model\Entity\Import findOrCreate($search, callable $callback = null, $options = [])
+ * @method Import get($primaryKey, $options = [])
+ * @method Import newEntity($data = null, array $options = [])
+ * @method Import[] newEntities(array $data, array $options = [])
+ * @method Import|bool save(EntityInterface $entity, $options = [])
+ * @method Import patchEntity(EntityInterface $entity, array $data, array $options = [])
+ * @method Import[] patchEntities($entities, array $data, array $options = [])
+ * @method Import findOrCreate($search, callable $callback = null, $options = [])
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */

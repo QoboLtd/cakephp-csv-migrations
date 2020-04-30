@@ -22,6 +22,7 @@ use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Log\LogTrait;
 use Cake\Network\Exception\SocketException;
+use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use CsvMigrations\Event\EventName;
@@ -279,7 +280,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      */
     protected function isRequiredModified(EntityInterface $entity, array $requiredFields, Table $table): bool
     {
-        Assert::isInstanceOf($entity, \Cake\ORM\Entity::class);
+        Assert::isInstanceOf($entity, Entity::class);
 
         foreach ($requiredFields as $field) {
             if (! $entity->isDirty($field)) {

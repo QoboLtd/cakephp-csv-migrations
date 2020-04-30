@@ -35,6 +35,8 @@ use CsvMigrations\Model\Table\ImportResultsTable;
 use CsvMigrations\Model\Table\ImportsTable;
 use CsvMigrations\Utility\Field as FieldUtility;
 use CsvMigrations\Utility\Import as ImportUtility;
+use DateTime;
+use Exception;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use NinjaMutex\MutexException;
@@ -454,15 +456,15 @@ class ImportShell extends Shell
                         break;
                     case 'datetime':
                         try {
-                            $data[$field] = (new \DateTime($value))->format('Y-m-d H:i:s');
-                        } catch (\Exception $e) {
+                            $data[$field] = (new DateTime($value))->format('Y-m-d H:i:s');
+                        } catch (Exception $e) {
                             // @ignoreException
                         }
                         break;
                     case 'date':
                         try {
-                            $data[$field] = (new \DateTime($value))->format('Y-m-d');
-                        } catch (\Exception $e) {
+                            $data[$field] = (new DateTime($value))->format('Y-m-d');
+                        } catch (Exception $e) {
                             // @ignoreException
                         }
                         break;

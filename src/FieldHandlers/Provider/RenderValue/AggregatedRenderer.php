@@ -36,7 +36,7 @@ class AggregatedRenderer extends AbstractRenderer
     {
         $config = explode(',', $options['fieldDefinitions']->getLimit(), 4);
 
-        $configuration = new Configuration(TableRegistry::getTableLocator()->getTableLocator()->get($config[1]), $config[2]);
+        $configuration = new Configuration(TableRegistry::getTableLocator()->get($config[1]), $config[2]);
         $configuration->setJoinData($this->config->getTable(), $options['entity'])
             ->setDisplayField(isset($config[3]) ? $config[3] : '');
 

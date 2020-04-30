@@ -24,6 +24,7 @@ use PDOException;
 use Psr\Log\LogLevel;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Webmozart\Assert\Assert;
 
 /**
  * This class is responsible for handling all CSV migrations.
@@ -121,7 +122,10 @@ class CsvMigration extends AbstractMigration
      */
     private function handleCsv(): void
     {
-        $tableName = Inflector::pluralize(Inflector::classify($this->table->getName()));
+        $tableName = $this->table->getName();
+        Assert::notNull($tableName);
+
+        $tableName = Inflector::pluralize(Inflector::classify($tableName));
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $tableName);
         $data = json_encode($mc->parse());
         if (false === $data) {
@@ -218,6 +222,7 @@ class CsvMigration extends AbstractMigration
 
         // remove unneeded columns
         foreach (array_diff($tableFields, $editedColumns) as $fieldName) {
+            Assert::notNull($fieldName);
             $this->deleteColumn($fieldName);
         }
     }

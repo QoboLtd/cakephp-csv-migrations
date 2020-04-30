@@ -73,11 +73,7 @@ trait AssociationsAwareTrait
         $config = (new ModuleConfig(ConfigType::MODULE(), $module))->parseToArray();
         $fields = $this->getModuleFields($module);
 
-        if (! array_key_exists('table', $config)) {
-            return;
-        }
-
-        if (! array_key_exists('type', $config['table'])) {
+        if (!isset($config['table']['type'])) {
             return;
         }
 

@@ -13,7 +13,7 @@ use CsvMigrations\Aggregator\MaxAggregator;
 use CsvMigrations\Aggregator\SumAggregator;
 use RuntimeException;
 
-class AggregateTest extends TestCase
+class AggregateResultTest extends TestCase
 {
     public $fixtures = [
         'plugin.CsvMigrations.articles',

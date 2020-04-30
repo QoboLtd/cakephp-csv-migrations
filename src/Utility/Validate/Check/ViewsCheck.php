@@ -38,11 +38,10 @@ class ViewsCheck extends AbstractCheck
 
         $viewCounter = 0;
         foreach ($views as $view) {
-            $path = '';
             $mc = $this->getModuleConfig($module, $view, $options);
 
             try {
-                $path = $mc->find();
+                $mc->find();
             } catch (InvalidArgumentException $e) {
                 // It's OK for view files to be missing.
                 // For example, Files and Users modules.

@@ -216,8 +216,6 @@ class ImportShell extends Shell
      */
     protected function _existingImport(ImportsTable $table, Import $import, int $count): bool
     {
-        $result = false;
-
         $data = ['attempted_date' => Time::now()];
 
         // max attempts rearched

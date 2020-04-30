@@ -428,9 +428,7 @@ class SeedShell extends Shell
                 $data[$fieldName] = $fieldValue;
             }
             $entity = $table->patchEntity($entity, $data);
-            if ($table->save($entity)) {
-                $id = $entity->id;
-            }
+            $table->save($entity);
         }
         $this->modulesPolpulatedWithData[] = $moduleName;
     }

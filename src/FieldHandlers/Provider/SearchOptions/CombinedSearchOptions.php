@@ -37,7 +37,6 @@ class CombinedSearchOptions extends AbstractSearchOptions
         $combinedFields = new $combinedFields($this->config);
         $combinedFields = $combinedFields->provide($data, $options);
 
-        $view = $this->config->getView();
         foreach ($combinedFields as $suffix => $fieldOptions) {
             $fieldName = $this->config->getField() . '_' . $suffix;
 

@@ -154,8 +154,6 @@ class Utility
      */
     public static function getRealModuleFields(string $module, bool $validate = true): array
     {
-        $moduleFields = [];
-
         if (empty(self::$migrationJsonArray[$module])) {
             self::setMigrationJsonArray($module, $validate);
         }
@@ -271,7 +269,7 @@ class Utility
     public static function isValidFieldType(string $type): bool
     {
         try {
-            $config = ConfigFactory::getByType($type, 'dummy_field');
+            ConfigFactory::getByType($type, 'dummy_field');
         } catch (InvalidArgumentException $e) {
             return false;
         }

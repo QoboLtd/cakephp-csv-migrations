@@ -179,8 +179,6 @@ class IcEmail
      */
     public function getEmailContent(): string
     {
-        $result = '';
-
         $module = Inflector::singularize($this->table->getAlias());
         $displayValue = $this->getDisplayValue();
         $user = $this->getUserString();

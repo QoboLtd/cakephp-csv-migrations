@@ -35,15 +35,7 @@ class Field
         $config = new ModuleConfig(ConfigType::MODULE(), $moduleName);
         $parsed = $config->parseToArray();
 
-        if (! array_key_exists('table', $parsed)) {
-            return [];
-        }
-
-        if (! array_key_exists('lookup_fields', $parsed['table'])) {
-            return [];
-        }
-
-        return $parsed['table']['lookup_fields'];
+        return $parsed['table']['lookup_fields'] ?? [];
     }
 
     /**

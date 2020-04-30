@@ -363,16 +363,7 @@ class SeedShell extends Shell
 
         foreach ($modules as $module) {
             $mc = new ModuleConfig(ConfigType::MIGRATION(), $module);
-
-            $config = json_encode($mc->parse());
-            if (false === $config) {
-                continue;
-            }
-
-            $config = json_decode($config, true);
-            if (empty($config)) {
-                continue;
-            }
+            $config = $mc->parseToArray();
 
             if (! isset($csvFiles[$module])) {
                 $csvFiles[$module] = [];

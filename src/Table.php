@@ -101,14 +101,12 @@ class Table extends BaseTable implements HasFieldsInterface
     public function validationEnabled(Validator $validator): Validator
     {
         $className = App::shortName(get_class($this), 'Model/Table', 'Table');
-        $config = (new ModuleConfig(ConfigType::MIGRATION(), $className))->parse();
-        $config = json_encode($config);
-        if (false === $config) {
+        $config = (new ModuleConfig(ConfigType::MIGRATION(), $className))->parseToArray();
+        if (empty($config)) {
             return $validator;
         }
-        $config = json_decode($config, true);
-        $factory = new FieldHandlerFactory();
 
+        $factory = new FieldHandlerFactory();
         foreach ($config as $column) {
             $validator = $factory->setValidationRules($this, $column['name'], $validator);
         }
@@ -191,8 +189,7 @@ class Table extends BaseTable implements HasFieldsInterface
             list(, $moduleName) = pluginSplit($moduleName);
 
             $mc = new ModuleConfig(ConfigType::MIGRATION(), $moduleName);
-            $config = json_encode($mc->parse());
-            $result = false === $config ? [] : json_decode($config, true);
+            $result = $mc->parseToArray();
             if (! empty($result)) {
                 $this->_fieldDefinitions = $result;
             }
@@ -225,32 +222,28 @@ class Table extends BaseTable implements HasFieldsInterface
      */
     public function getParentRedirectUrl(RepositoryInterface $table, EntityInterface $entity): array
     {
-        $config = (new ModuleConfig(ConfigType::MODULE(), $this->getAlias()))->parse();
-        if (! isset($config->parent)) {
+        $config = (new ModuleConfig(ConfigType::MODULE(), $this->getAlias()))->parseToArray();
+        if (! isset($config['parent']['redirect'])) {
             return [];
         }
 
-        if (! isset($config->parent->redirect)) {
-            return [];
-        }
-
-        if ('parent' === $config->parent->redirect) {
-            if (! isset($config->parent->module)) {
+        if ('parent' === $config['parent']['redirect']) {
+            if (! isset($config['parent']['module'])) {
                 return [];
             }
 
-            if (! isset($config->parent->relation)) {
+            if (! isset($config['parent']['relation'])) {
                 return [];
             }
 
             return [
-                'controller' => $config->parent->module,
-                'action' => $entity->get($config->parent->relation) ? 'view' : 'index',
-                $entity->get($config->parent->relation),
+                'controller' => $config['parent']['module'],
+                'action' => $entity->get($config['parent']['relation']) ? 'view' : 'index',
+                $entity->get($config['parent']['relation']),
             ];
         }
 
-        if ('self' === $config->parent->redirect) {
+        if ('self' === $config['parent']['redirect']) {
             $values = [];
             foreach ((array)$table->getPrimaryKey() as $primaryKey) {
                 $values[] = $entity->get($primaryKey);

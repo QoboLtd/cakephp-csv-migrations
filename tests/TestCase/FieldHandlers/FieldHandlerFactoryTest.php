@@ -53,8 +53,7 @@ class FieldHandlerFactoryTest extends TestCase
         Configure::write('CsvMigrations.modules.path', TESTS . 'config' . DS . 'Modules' . DS);
 
         $mc = new ModuleConfig(ConfigType::MIGRATION(), 'Foo');
-        $config = json_encode($mc->parse());
-        $this->csvData = false !== $config ? json_decode($config, true) : [];
+        $this->csvData = $mc->parseToArray();
 
         $config = TableRegistry::getTableLocator()->exists('Foo') ? [] : ['className' => 'CsvMigrations\Test\App\Model\Table\FooTable'];
         $this->table = TableRegistry::getTableLocator()->get('Foo', $config);

@@ -70,22 +70,22 @@ trait AssociationsAwareTrait
      */
     private function setByModule(string $module): void
     {
-        $config = (new ModuleConfig(ConfigType::MODULE(), $module))->parse();
+        $config = (new ModuleConfig(ConfigType::MODULE(), $module))->parseToArray();
         $fields = $this->getModuleFields($module);
 
-        if (! property_exists($config, 'table')) {
+        if (! array_key_exists('table', $config)) {
             return;
         }
 
-        if (! property_exists($config->table, 'type')) {
+        if (! array_key_exists('type', $config['table'])) {
             return;
         }
 
-        if ('module' === $config->table->type) {
+        if ('module' === $config['table']['type']) {
             $this->setByTypeModule($module, $fields);
         }
 
-        if ('relation' === $config->table->type) {
+        if ('relation' === $config['table']['type']) {
             $this->setByTypeRelation($module, $fields);
         }
 
@@ -420,14 +420,7 @@ trait AssociationsAwareTrait
      */
     private function getModuleFields(string $module): array
     {
-        $config = (new ModuleConfig(ConfigType::MIGRATION(), $module))->parse();
-        $config = json_encode($config);
-        if (false === $config) {
-            return [];
-        }
-
-        $fields = json_decode($config, true);
-
+        $fields = (new ModuleConfig(ConfigType::MIGRATION(), $module))->parseToArray();
         foreach ($fields as $k => $v) {
             $fields[$k] = new CsvField($v);
         }

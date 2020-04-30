@@ -33,17 +33,17 @@ class Field
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
         $config = new ModuleConfig(ConfigType::MODULE(), $moduleName);
-        $parsed = $config->parse();
+        $parsed = $config->parseToArray();
 
-        if (! property_exists($parsed, 'table')) {
+        if (! array_key_exists('table', $parsed)) {
             return [];
         }
 
-        if (! property_exists($parsed->table, 'lookup_fields')) {
+        if (! array_key_exists('lookup_fields', $parsed['table'])) {
             return [];
         }
 
-        return $parsed->table->lookup_fields;
+        return $parsed['table']['lookup_fields'];
     }
 
     /**
@@ -57,13 +57,7 @@ class Field
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
         $config = new ModuleConfig(ConfigType::MIGRATION(), $moduleName);
-        $parsed = json_encode($config->parse());
-        if (false === $parsed) {
-            return [];
-        }
-
-        $parsed = json_decode($parsed, true);
-
+        $parsed = $config->parseToArray();
         if (empty($parsed)) {
             return [];
         }
@@ -92,18 +86,12 @@ class Field
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
         $config = new ModuleConfig(ConfigType::MIGRATION(), $moduleName);
-        $parsed = $config->parse();
-
-        if (! property_exists($parsed, $field)) {
+        $parsed = $config->parseToArray();
+        if (!isset($parsed[$field])) {
             return null;
         }
 
-        $parsed = json_encode($parsed->{$field});
-        if (false === $parsed) {
-            return null;
-        }
-
-        return new CsvField(json_decode($parsed, true));
+        return new CsvField($parsed);
     }
 
     /**
@@ -115,10 +103,9 @@ class Field
     public static function getVirtual(RepositoryInterface $table): array
     {
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
+        $config = (new ModuleConfig(ConfigType::MODULE(), $moduleName))->parseToArray();
 
-        $config = (new ModuleConfig(ConfigType::MODULE(), $moduleName))->parse();
-
-        return property_exists($config, 'virtualFields') ? (array)$config->virtualFields : [];
+        return isset($config['virtualFields']) ? (array)$config['virtualFields'] : [];
     }
 
     /**
@@ -134,13 +121,13 @@ class Field
     {
         $tableName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
-        $config = (new ModuleConfig(ConfigType::VIEW(), $tableName, $action))->parse();
+        $config = (new ModuleConfig(ConfigType::VIEW(), $tableName, $action))->parseToArray();
 
-        if (! isset($config->items)) {
+        if (! isset($config['items'])) {
             return [];
         }
 
-        $result = $config->items;
+        $result = $config['items'];
 
         if ($panels) {
             $result = static::arrangePanels($result);
@@ -169,8 +156,7 @@ class Field
 
         $config = new ModuleConfig(ConfigType::LISTS(), $moduleName, $listName, ['flatten' => $flat]);
         try {
-            $config = json_encode($config->parse());
-            $config = false !== $config ? json_decode($config, true) : [];
+            $config = $config->parseToArray();
             $items = isset($config['items']) ? $config['items'] : [];
         } catch (InvalidArgumentException $e) {
             return [];

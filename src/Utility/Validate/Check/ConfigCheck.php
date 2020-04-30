@@ -34,8 +34,7 @@ class ConfigCheck extends AbstractCheck
 
         $config = [];
         try {
-            $conf = json_encode($mc->parse());
-            $config = false === $conf ? [] : json_decode($conf, true);
+            $config = $mc->parseToArray();
         } catch (InvalidArgumentException $e) {
             // We need errors and warnings irrelevant of the exception
             $this->errors = array_merge($this->errors, $mc->getErrors());

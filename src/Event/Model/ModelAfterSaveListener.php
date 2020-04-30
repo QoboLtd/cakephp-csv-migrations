@@ -209,10 +209,10 @@ class ModelAfterSaveListener implements EventListenerInterface
      */
     protected function getReminderField(RepositoryInterface $table): string
     {
-        $config = (new ModuleConfig(ConfigType::MIGRATION(), $table->getRegistryAlias()))->parse();
+        $config = (new ModuleConfig(ConfigType::MIGRATION(), $table->getRegistryAlias()))->parseToArray();
 
         $fields = array_filter((array)$config, function ($field) {
-            if ('reminder' === $field->type) {
+            if ('reminder' === $field['type']) {
                 return $field;
             }
         });

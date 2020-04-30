@@ -129,21 +129,13 @@ final class FileUpload
     private function getOrderClause(string $field): array
     {
         $className = App::shortName(get_class($this->table), 'Model/Table', 'Table');
-        $config = (new ModuleConfig(ConfigType::FIELDS(), $className))->parse();
+        $config = (new ModuleConfig(ConfigType::FIELDS(), $className))->parseToArray();
 
-        if (! property_exists($config, $field)) {
+        if (!isset($config[$field]['orderBy']) || !isset($config[$field]['orderDir'])) {
             return [];
         }
 
-        if (! property_exists($config->{$field}, 'orderBy')) {
-            return [];
-        }
-
-        if (! property_exists($config->{$field}, 'orderDir')) {
-            return [];
-        }
-
-        return [$config->{$field}->orderBy => $config->{$field}->orderDir];
+        return [$config[$field]['orderBy'] => $config[$field]['orderDir']];
     }
 
     /**

@@ -44,17 +44,10 @@ class ListSelectOptions extends AbstractSelectOptions
         $result = [];
         try {
             $config = new ModuleConfig(ConfigType::LISTS(), $module, $list, ['flatten' => $flatten, 'filter' => true]);
-            $config = $config->parse();
-            if (! property_exists($config, 'items')) {
+            $config = $config->parseToArray();
+            if (! array_key_exists('items', $config)) {
                 return [];
             }
-
-            $config = json_encode($config->items);
-            if (false === $config) {
-                return [];
-            }
-
-            $result = json_decode($config, true);
         } catch (InvalidArgumentException $e) {
             /* Do nothing.
              *

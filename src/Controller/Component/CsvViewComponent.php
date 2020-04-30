@@ -94,8 +94,7 @@ class CsvViewComponent extends Component
         Assert::isInstanceOf($controller, Controller::class);
 
         $config = new ModuleConfig(ConfigType::MODULE(), $controller->getName());
-        $config = json_encode($config->parse());
-        $config = false === $config ? [] : json_decode($config, true);
+        $config = $config->parseToArray();
 
         $panels = $this->getPanels($config, $controller->viewVars['entity']->toArray());
         if (! empty($panels['fail'])) {
@@ -121,8 +120,7 @@ class CsvViewComponent extends Component
     {
         $request = $this->getController()->getRequest();
         $config = new ModuleConfig(ConfigType::MIGRATION(), $request->getParam('controller'));
-        $config = json_encode($config->parse());
-        $fields = false === $config ? [] : json_decode($config, true);
+        $fields = $config->parseToArray();
 
         $batchFields = (array)Configure::read('CsvMigrations.batch.types');
 

@@ -125,29 +125,17 @@ class CsvRelationTask extends BakeTask
      */
     private function isModule(string $module): bool
     {
-        $config = (new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]))->parse();
-        $config = json_encode($config);
-        if (false === $config) {
-            return false;
-        }
-        $config = json_decode($config, true);
+        $config = (new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]))->parseToArray();
         if (empty($config)) {
             return false;
         }
 
-        $config = (new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]))->parse();
-        if (! property_exists($config, 'table')) {
-            return false;
-        }
-        if (! property_exists($config->table, 'type')) {
+        $config = (new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]))->parseToArray();
+        if (!isset($config['table']['type'])) {
             return false;
         }
 
-        if ('module' !== $config->table->type) {
-            return false;
-        }
-
-        return true;
+        return $config['table']['type'] === 'module';
     }
 
     /**

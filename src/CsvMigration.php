@@ -127,15 +127,14 @@ class CsvMigration extends AbstractMigration
 
         $tableName = Inflector::pluralize(Inflector::classify($tableName));
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $tableName);
-        $data = json_encode($mc->parse());
-        if (false === $data) {
+        $data = $mc->parseToArray();
+        if (empty($data)) {
             $this->log(sprintf('No data found for %s module', $tableName), LogLevel::ERROR);
 
             return;
         }
-        $data = json_decode($data, true);
-        $data = array_merge($data, self::$_requiredFields);
 
+        $data = array_merge($data, self::$_requiredFields);
         try {
             $tableFields = $this->table->getColumns();
         } catch (PDOException $e) {

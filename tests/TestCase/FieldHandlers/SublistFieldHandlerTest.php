@@ -42,8 +42,7 @@ class SublistFieldHandlerTest extends TestCase
         $this->assertContains('data-selectors', $result);
 
         $mc = new ModuleConfig(ConfigType::LISTS(), '', 'countries');
-        $config = json_encode($mc->parse());
-        $config = false !== $config ? json_decode($config, true) : [];
+        $config = $mc->parseToArray();
         $items = isset($config['items']) ? $config['items'] : [];
         foreach ($items as $key => $item) {
             if ((bool)$item['inactive']) {

@@ -48,7 +48,7 @@ class Utility
     {
         $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
         $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
-        self::$configJsonArray[$module] = Convert::objectToArray($mc->parse());
+        self::$configJsonArray[$module] = $mc->parseToArray();
     }
 
     /**
@@ -62,7 +62,7 @@ class Utility
     {
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
         $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
-        self::$migrationJsonArray[$module] = Convert::objectToArray($mc->parse());
+        self::$migrationJsonArray[$module] = $mc->parseToArray();
     }
 
     /**
@@ -107,8 +107,8 @@ class Utility
         $listItems = null;
         try {
             $mc = new ModuleConfig(ConfigType::LISTS(), $module, $list, ['cacheSkip' => true]);
-            $config = $mc->parse();
-            $listItems = property_exists($config, 'items') ? $config->items : null;
+            $config = $mc->parseToArray();
+            $listItems = $config['items'] ?? null;
         } catch (InvalidArgumentException $e) {
             return false;
         }

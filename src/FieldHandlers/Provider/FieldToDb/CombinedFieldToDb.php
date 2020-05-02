@@ -45,8 +45,12 @@ class CombinedFieldToDb extends AbstractFieldToDb
         foreach ($combinedFields as $suffix => $options) {
             $subField = clone $data;
             $subField->setName($data->getName() . '_' . $suffix);
-            if (isset($options['limit'])) {
+
+            // Keep only the numeric limits, to avoid MySQL Errors
+            if (isset($options['limit']) && is_numeric($options['limit'])) {
                 $subField->setLimit($options['limit']);
+            } else {
+                $subField->setLimit(null);
             }
 
             $config = new $options['config']($subField->getName(), $this->config->getTable());

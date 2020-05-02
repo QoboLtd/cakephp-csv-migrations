@@ -255,18 +255,6 @@ class CsvMigration extends AbstractMigration
     private function updateColumn(DbField $dbField): void
     {
         $this->table->changeColumn($dbField->getName(), $dbField->getType(), $dbField->getOptions());
-        // set field as unique
-        if ($dbField->getUnique()) {
-            // avoid creation of duplicate indexes
-            if (!$this->table->hasIndex($dbField->getName())) {
-                $this->table->addIndex([$dbField->getName()], ['unique' => true]);
-            }
-        } else {
-            if ($this->table->hasIndex($dbField->getName())) {
-                $this->table->removeIndexByName($dbField->getName());
-            }
-        }
-
         $this->addIndexes($dbField);
     }
 
@@ -309,17 +297,19 @@ class CsvMigration extends AbstractMigration
         }
 
         // remove legacy index
-        $this->table->removeIndexByName($dbField->getName());
+        if ($this->table->hasIndexByName($dbField->getName())) {
+            $this->table->removeIndexByName($dbField->getName());
+        }
 
         // remove unique index
-        if (!$dbField->getUnique() && $this->table->hasIndex($dbField->getName())) {
-            $indexName = 'unique_' . $dbField->getName();
+        $indexName = $this->getIndexName($dbField, 'unique');
+        if (!$dbField->getUnique() && $this->table->hasIndexByName($indexName)) {
             $this->table->removeIndexByName($indexName);
         }
 
         // remove lookup index
-        if ('uuid' !== $dbField->getType() && $this->table->hasIndex($dbField->getName())) {
-            $indexName = 'lookup_' . $dbField->getName();
+        $indexName = $this->getIndexName($dbField, 'lookup');
+        if ('uuid' !== $dbField->getType() && $this->table->hasIndexByName($indexName)) {
             $this->table->removeIndexByName($indexName);
         }
     }
@@ -344,7 +334,7 @@ class CsvMigration extends AbstractMigration
         }
 
         $options = [];
-        $options['name'] = $type . '_' . $dbField->getName();
+        $options['name'] = $this->getIndexName($dbField, $type);
         if ('unique' === $type) {
             $options['unique'] = true;
         }
@@ -352,6 +342,18 @@ class CsvMigration extends AbstractMigration
         $this->table->addIndex($dbField->getName(), $options);
 
         return true;
+    }
+
+    /**
+     * Suggests an index name based on the provided field and index type
+     *
+     * @param \CsvMigrations\FieldHandlers\DbField $dbField DbField object
+     * @param string $type Index type
+     * @return string
+     */
+    private function getIndexName(DbField $dbField, string $type): string
+    {
+        return sprintf('%s_%s', $type, $dbField->getName());
     }
 
     /**

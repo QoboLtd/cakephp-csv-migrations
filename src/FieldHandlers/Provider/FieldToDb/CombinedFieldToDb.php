@@ -48,7 +48,7 @@ class CombinedFieldToDb extends AbstractFieldToDb
 
             // Keep only the numeric limits, to avoid MySQL Errors
             if (isset($options['limit']) && is_numeric($options['limit'])) {
-                $subField->setLimit($options['limit']);
+                $subField->setLimit((int)$options['limit']);
             } else {
                 $subField->setLimit(null);
             }

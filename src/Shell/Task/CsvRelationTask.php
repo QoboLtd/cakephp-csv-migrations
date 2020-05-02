@@ -88,10 +88,27 @@ class CsvRelationTask extends BakeTask
             $this->abort('Aborting, system modules not found.');
         }
 
-        $result[] = $this->in('Please select first related module:', $modules);
-        $result[] = $this->in('Please select second related module:', $modules);
+        $selectedModule = $this->in('Please select first related module:', $modules);
+        if (is_null($selectedModule)) {
+            $this->abort('Aborting, no module was selected');
+        }
+
+        $result[] = (string)$selectedModule;
+
+        $selectedModule = $this->in('Please select second related module:', $modules);
+        if (is_null($selectedModule)) {
+            $this->abort('Aborting, no module was selected');
+        }
+
+        $result[] = (string)$selectedModule;
+
         while ('y' === $this->in('Would you like to select more modules?', ['y', 'n'])) {
-            $result[] = $this->in('Please select another related module:', $modules);
+            $selectedModule = $this->in('Please select another related module:', $modules);
+            if (is_null($selectedModule)) {
+                break;
+            }
+
+            $result[] = (string)$selectedModule;
         }
 
         return $result;

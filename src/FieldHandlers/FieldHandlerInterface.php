@@ -114,4 +114,11 @@ interface FieldHandlerInterface
      * @return \Cake\Validation\Validator
      */
     public function setValidationRules(Validator $validator, array $options = []): Validator;
+
+    /**
+     * Get Default Value of the Field Handler
+     *
+     * @return mixed
+     */
+    public function getDefaultValue();
 }

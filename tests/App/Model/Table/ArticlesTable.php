@@ -16,6 +16,7 @@ class ArticlesTable extends Table
         $this->addBehavior('Timestamp');
         $options = [
             'fields' => ['author'],
+            'translationTable' => 'Translations.Translations',
         ];
         $this->addBehavior('Translate', $options);
     }

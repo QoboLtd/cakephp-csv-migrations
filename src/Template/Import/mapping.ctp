@@ -14,6 +14,7 @@ use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
+use CsvMigrations\Utility\Import as ImportUtility;
 
 $factory = new FieldHandlerFactory();
 
@@ -47,7 +48,12 @@ if (!$options['title']) {
     $options['title'] .= __d('Qobo/CsvMigrations', 'Import fields mapping');
 }
 
-sort($columns);
+
+$lang_field = ImportUtility::getTranslationFields($this->name, $headers);
+
+$columns = array_merge(array_flip($columns), $lang_field);
+
+ksort($columns);
 
 echo $this->element('CsvMigrations.common_js_libs', ['scriptBlock' => 'bottom']);
 echo $this->Html->scriptBlock(
@@ -89,7 +95,7 @@ echo $this->Html->scriptBlock(
                         <div class="col-md-4"><h4><?= __d('Qobo/CsvMigrations', 'Default Value') ?></h4></div>
                     </div>
                 </div>
-                <?php foreach ($columns as $column) : ?>
+                <?php foreach ($columns as $column => $detail) : ?>
                     <?php
                     $searchOptions = $factory->getSearchOptions($this->name, $column, [
                         'multiple' => false, // disable multi-selection
@@ -100,8 +106,10 @@ echo $this->Html->scriptBlock(
                     if (! isset($searchOptions[$column]['input']['content'])) {
                         continue;
                     }
+                    is_numeric($detail) ?
+                    $label = $factory->renderName($this->name, $column):
+                    $label = $factory->renderName($this->name, $detail['parent']) . " (". strtoupper($detail['lang']) .")";
 
-                    $label = $factory->renderName($this->name, $column);
                     ?>
                     <div class="row">
                         <div class="col-md-3">

@@ -25,6 +25,7 @@ use Cake\Datasource\RepositoryInterface;
 use Cake\Event\EventManager;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
+use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Shell\Helper\ProgressHelper;
@@ -379,6 +380,7 @@ class ImportShell extends Shell
 
         try {
             $entity = $table->newEntity();
+            list($entity, $data) = $this->setLanguages($table, $entity, $headers, $data);
             $entity = $table->patchEntity($entity, $data);
 
             $table->save($entity) ?
@@ -388,7 +390,41 @@ class ImportShell extends Shell
             $this->_importFail($importResult, [$e->getMessage()]);
         } catch (PDOException $e) {
             $this->_importFail($importResult, [$e->getMessage()]);
+        } catch (MissingBehaviorException $e) {
+            $this->_importFail($importResult, [$e->getMessage()]);
         }
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param Table $table Table class
+     * @param EntityInterface $entity New entity
+     * @param string[] $headers Upload file headers
+     * @param mixed[] $data Current data from file line
+     * @return mixed[]
+     */
+    protected function setLanguages(Table $table, EntityInterface $entity, array $headers, array $data): array
+    {
+        if (!$table->behaviors()->has('Translate')) {
+            return [$entity, $data];
+        }
+
+        $fields = ImportUtility::getTranslationFields($table->getAlias(), $headers);
+        foreach ($fields as $field => $value) {
+            if (!in_array($field, array_keys($data))) {
+                continue;
+            }
+
+            if (!method_exists($entity, 'translation')) {
+                throw new MissingBehaviorException("Translation behavior is not configured correctly.");
+            }
+
+            $entity->translation($value['lang'])->{$value['parent']} = $data[$field];
+            unset($data[$field]);
+        }
+
+        return [$entity, $data];
     }
 
     /**

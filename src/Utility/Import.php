@@ -29,10 +29,14 @@ use CsvMigrations\Model\Entity\Import as ImportEntity;
 use CsvMigrations\Model\Table\ImportResultsTable;
 use CsvMigrations\Model\Table\ImportsTable;
 use League\Csv\Reader;
+use Qobo\Utils\ModuleConfig\ConfigType;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class Import
 {
     const PROCESSED_FILE_SUFFIX = '.processed';
+
+    const LANGUAGE_REGEX_PATTERN = "/^%s__([a-z]{2})$/";
 
     /**
      * Supported mime types for uploaded import file.
@@ -346,6 +350,47 @@ class Import
         }
 
         return $data;
+    }
+
+    /**
+     * Return a list of translatable fields from the imported file headers.
+     * IE : `description` is a translatable field and in the headers is set `description__ru`.
+     * The result will be:
+     *      'description__ru' => [
+     *          'parent' => 'description',
+     *          'lang' => 'ru'
+     *      ]
+     *
+     * @param string $model Model name
+     * @param string[] $headers File headers
+     * @param string $pattern Regex pattern
+     * @return mixed[]
+     */
+    public static function getTranslationFields(string $model, array $headers, string $pattern = ""): array
+    {
+        $pattern = empty($pattern) ? static::LANGUAGE_REGEX_PATTERN : $pattern;
+
+        // find translatable fields
+        $config = (new ModuleConfig(ConfigType::FIELDS(), $model))->parseToArray();
+        $translate = array_keys(array_filter($config, function ($v) {
+            return !empty($v['translatable']);
+        }));
+
+        // find languages in headers
+        $lang = [];
+        $lang_field = [];
+        foreach ($translate as $field) {
+            foreach ($headers as $head) {
+                preg_match(sprintf($pattern, $field), $head, $l);
+                !empty($l[1]) && !in_array($l[1], $lang) ? $lang[] = $l[1] : '';
+                empty($l[0]) ?: $lang_field[$l[0]] = [
+                    'parent' => $field,
+                    'lang' => $l[1],
+                ];
+            }
+        }
+
+        return $lang_field;
     }
 
     /**

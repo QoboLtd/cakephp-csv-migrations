@@ -6,7 +6,10 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
 use Cake\Datasource\EntityInterface;
+use Cake\ORM\Behavior;
+use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Exception\MissingBehaviorException;
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 use CsvMigrations\Model\Table\ImportResultsTable;
@@ -209,6 +212,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
         $headers = [
             "author",
             "author__ru",
+        ];
 
         $data = [
             "author" => "first author",

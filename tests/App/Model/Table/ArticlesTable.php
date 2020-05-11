@@ -14,5 +14,9 @@ class ArticlesTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $options = [
+            'fields' => ['author'],
+        ];
+        $this->addBehavior('Translate', $options);
     }
 }

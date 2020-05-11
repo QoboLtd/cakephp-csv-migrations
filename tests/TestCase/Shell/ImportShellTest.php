@@ -6,10 +6,15 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
 use Cake\Datasource\EntityInterface;
+use Cake\ORM\Behavior;
+use Cake\ORM\BehaviorRegistry;
+use Cake\ORM\Exception\MissingBehaviorException;
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 use CsvMigrations\Model\Table\ImportResultsTable;
 use CsvMigrations\Shell\ImportShell;
+use ReflectionMethod;
 use Webmozart\Assert\Assert;
 
 /**
@@ -192,5 +197,40 @@ class ImportShellTest extends ConsoleIntegrationTestCase
             $this->assertSame(ImportResultsTable::STATUS_FAIL, $entity->get('status'));
             $this->assertSame('Import failed: {"date":{"date":"The provided value is invalid"}}', $entity->get('status_message'));
         }
+    }
+
+    public function testSetLanguages(): void
+    {
+        $method = new ReflectionMethod('CsvMigrations\Shell\ImportShell', 'setLanguages');
+        $method->setAccessible(true);
+
+        $object = new ImportShell();
+
+        $table = TableRegistry::getTableLocator()->get('Articles');
+        $entity = $table->newEntity();
+
+        $headers = [
+            "author",
+            "author__ru",
+        ];
+
+        $data = [
+            "author" => "first author",
+            "author__ru" => "author RUSSIAN",
+        ];
+
+        list($updated_entity, $results) = $method->invokeArgs($object, [$table, $entity, $headers, $data]);
+
+        $data_result = [
+            "author" => "first author",
+        ];
+
+        $this->assertSame($results, $data_result);
+
+        if (!method_exists($entity, 'translation')) {
+            throw new MissingBehaviorException("Translate behavior is not configured correctly: check TranslateTrait in the Entity class");
+        }
+
+        $this->assertEquals("author RUSSIAN", $updated_entity->translation('ru')->get("author"));
     }
 }

@@ -396,7 +396,7 @@ class ImportShell extends Shell
     }
 
     /**
-     * Undocumented function
+     * Check for tranlsations, set the entity with Translate Behavior and update the data payload.
      *
      * @param Table $table Table class
      * @param EntityInterface $entity New entity
@@ -417,7 +417,7 @@ class ImportShell extends Shell
             }
 
             if (!method_exists($entity, 'translation')) {
-                throw new MissingBehaviorException("Translation behavior is not configured correctly.");
+                throw new MissingBehaviorException("Translation behavior is not configured correctly: check TranslateTrait in the Entity class");
             }
 
             $entity->translation($value['lang'])->{$value['parent']} = $data[$field];

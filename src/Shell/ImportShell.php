@@ -417,10 +417,10 @@ class ImportShell extends Shell
             }
 
             if (!method_exists($entity, 'translation')) {
-                throw new MissingBehaviorException("Translation behavior is not configured correctly: check TranslateTrait in the Entity class");
+                throw new MissingBehaviorException("Translate behavior is not configured correctly: check TranslateTrait in the Entity class");
             }
 
-            $entity->translation($value['lang'])->{$value['parent']} = $data[$field];
+            $entity->translation($value['lang'])->set($value['parent'], $data[$field]);
             unset($data[$field]);
         }
 

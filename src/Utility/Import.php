@@ -377,12 +377,10 @@ class Import
         }));
 
         // find languages in headers
-        $lang = [];
         $lang_field = [];
         foreach ($translate as $field) {
             foreach ($headers as $head) {
                 preg_match(sprintf($pattern, $field), $head, $l);
-                !empty($l[1]) && !in_array($l[1], $lang) ? $lang[] = $l[1] : '';
                 empty($l[0]) ?: $lang_field[$l[0]] = [
                     'parent' => $field,
                     'lang' => $l[1],

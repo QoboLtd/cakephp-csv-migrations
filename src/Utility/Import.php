@@ -15,11 +15,11 @@ namespace CsvMigrations\Utility;
 
 use Cake\Controller\Component\FlashComponent;
 use Cake\Core\Configure;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
@@ -35,8 +35,6 @@ use Qobo\Utils\ModuleConfig\ModuleConfig;
 class Import
 {
     const PROCESSED_FILE_SUFFIX = '.processed';
-
-    const LANGUAGE_REGEX_PATTERN = "/^%s__([a-z]{2})$/";
 
     /**
      * Supported mime types for uploaded import file.
@@ -363,12 +361,11 @@ class Import
      *
      * @param string $model Model name
      * @param string[] $headers File headers
-     * @param string $pattern Regex pattern
      * @return mixed[]
      */
-    public static function getTranslationFields(string $model, array $headers, string $pattern = ""): array
+    public static function getTranslationFields(string $model, array $headers): array
     {
-        $pattern = empty($pattern) ? static::LANGUAGE_REGEX_PATTERN : $pattern;
+        $pattern = Configure::readOrFail("Translate.pattern");
 
         // find translatable fields
         $config = (new ModuleConfig(ConfigType::FIELDS(), $model))->parseToArray();

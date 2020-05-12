@@ -207,30 +207,33 @@ class ImportShellTest extends ConsoleIntegrationTestCase
         $object = new ImportShell();
 
         $table = TableRegistry::getTableLocator()->get('Articles');
-        $entity = $table->newEntity();
 
         $headers = [
             "author",
             "author__ru",
+            "author__it",
         ];
 
         $data = [
             "author" => "first author",
             "author__ru" => "author RUSSIAN",
+            "author__it" => "author ITALIAN",
         ];
 
-        list($updated_entity, $results) = $method->invokeArgs($object, [$table, $entity, $headers, $data]);
+        $results = $method->invokeArgs($object, [$table, $headers, $data]);
 
         $data_result = [
             "author" => "first author",
+            "_translations" => [
+                "ru" => [
+                    "author" => "author RUSSIAN",
+                ],
+                "it" => [
+                    "author" => "author ITALIAN",
+                ],
+            ],
         ];
 
         $this->assertSame($results, $data_result);
-
-        if (!method_exists($entity, 'translation')) {
-            throw new MissingBehaviorException("Translate behavior is not configured correctly: check TranslateTrait in the Entity class");
-        }
-
-        $this->assertEquals("author RUSSIAN", $updated_entity->translation('ru')->get("author"));
     }
 }

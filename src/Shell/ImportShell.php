@@ -217,8 +217,6 @@ class ImportShell extends Shell
      */
     protected function _existingImport(ImportsTable $table, Import $import, int $count): bool
     {
-        $result = false;
-
         $data = ['attempted_date' => Time::now()];
 
         // max attempts rearched
@@ -368,6 +366,11 @@ class ImportShell extends Shell
         $table = TableRegistry::get($importResult->get('model_name'));
 
         $data = $this->_prepareData($import, $headers, $data);
+
+        if ($table->behaviors()->has('Translate')) {
+            $data = $this->setLanguages($table->getAlias(), $headers, $data);
+        }
+
         $csvFields = FieldUtility::getCsv($table);
         $data = $this->_processData($table, $csvFields, $data);
 
@@ -380,7 +383,6 @@ class ImportShell extends Shell
 
         try {
             $entity = $table->newEntity();
-            list($entity, $data) = $this->setLanguages($table, $entity, $headers, $data);
             $entity = $table->patchEntity($entity, $data);
 
             $table->save($entity) ?
@@ -390,41 +392,31 @@ class ImportShell extends Shell
             $this->_importFail($importResult, [$e->getMessage()]);
         } catch (PDOException $e) {
             $this->_importFail($importResult, [$e->getMessage()]);
-        } catch (MissingBehaviorException $e) {
-            $this->_importFail($importResult, [$e->getMessage()]);
         }
     }
 
     /**
-     * Check for tranlsations, set the entity with Translate Behavior and update the data payload.
+     * Prepare data for Translate Behavior
      *
-     * @param Table $table Table class
-     * @param EntityInterface $entity New entity
+     * @param string $table Table name
      * @param string[] $headers Upload file headers
      * @param mixed[] $data Current data from file line
      * @return mixed[]
      */
-    protected function setLanguages(Table $table, EntityInterface $entity, array $headers, array $data): array
+    protected function setLanguages(string $table, array $headers, array $data): array
     {
-        if (!$table->behaviors()->has('Translate')) {
-            return [$entity, $data];
-        }
+        $fields = ImportUtility::getTranslationFields($table, $headers);
 
-        $fields = ImportUtility::getTranslationFields($table->getAlias(), $headers);
         foreach ($fields as $field => $value) {
             if (!in_array($field, array_keys($data))) {
                 continue;
             }
 
-            if (!method_exists($entity, 'translation')) {
-                throw new MissingBehaviorException("Translate behavior is not configured correctly: check TranslateTrait in the Entity class");
-            }
-
-            $entity->translation($value['lang'])->set($value['parent'], $data[$field]);
+            $data["_translations"][$value['lang']][$value['parent']] = $data[$field];
             unset($data[$field]);
         }
 
-        return [$entity, $data];
+        return $data;
     }
 
     /**

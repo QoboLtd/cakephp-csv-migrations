@@ -13,7 +13,7 @@
         "icon": "cube",
         "basic_search_fields": [],
         "allow_reminders": [],
-        "translatable": false,
+        "translatable": true,
         "permissions_parent_modules": []
     },
     "parent": {

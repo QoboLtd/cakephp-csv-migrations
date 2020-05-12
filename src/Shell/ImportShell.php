@@ -216,8 +216,6 @@ class ImportShell extends Shell
      */
     protected function _existingImport(ImportsTable $table, Import $import, int $count): bool
     {
-        $result = false;
-
         $data = ['attempted_date' => Time::now()];
 
         // max attempts rearched
@@ -367,6 +365,11 @@ class ImportShell extends Shell
         $table = TableRegistry::get($importResult->get('model_name'));
 
         $data = $this->_prepareData($import, $headers, $data);
+
+        if ($table->behaviors()->has('Translate')) {
+            $data = $this->setLanguages($table->getAlias(), $headers, $data);
+        }
+
         $csvFields = FieldUtility::getCsv($table);
         $data = $this->_processData($table, $csvFields, $data);
 
@@ -389,6 +392,30 @@ class ImportShell extends Shell
         } catch (PDOException $e) {
             $this->_importFail($importResult, [$e->getMessage()]);
         }
+    }
+
+    /**
+     * Prepare data for Translate Behavior
+     *
+     * @param string $table Table name
+     * @param string[] $headers Upload file headers
+     * @param mixed[] $data Current data from file line
+     * @return mixed[]
+     */
+    protected function setLanguages(string $table, array $headers, array $data): array
+    {
+        $fields = ImportUtility::getTranslationFields($table, $headers);
+
+        foreach ($fields as $field => $value) {
+            if (!in_array($field, array_keys($data))) {
+                continue;
+            }
+
+            $data["_translations"][$value['lang']][$value['parent']] = $data[$field];
+            unset($data[$field]);
+        }
+
+        return $data;
     }
 
     /**

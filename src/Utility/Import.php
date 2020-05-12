@@ -19,7 +19,6 @@ use Cake\Datasource\QueryInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
@@ -29,6 +28,8 @@ use CsvMigrations\Model\Entity\Import as ImportEntity;
 use CsvMigrations\Model\Table\ImportResultsTable;
 use CsvMigrations\Model\Table\ImportsTable;
 use League\Csv\Reader;
+use Qobo\Utils\ModuleConfig\ConfigType;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class Import
 {
@@ -346,6 +347,44 @@ class Import
         }
 
         return $data;
+    }
+
+    /**
+     * Return a list of translatable fields from the imported file headers.
+     * IE : `description` is a translatable field and in the headers is set `description__ru`.
+     * The result will be:
+     *      'description__ru' => [
+     *          'parent' => 'description',
+     *          'lang' => 'ru'
+     *      ]
+     *
+     * @param string $model Model name
+     * @param string[] $headers File headers
+     * @return mixed[]
+     */
+    public static function getTranslationFields(string $model, array $headers): array
+    {
+        $pattern = Configure::readOrFail("Translate.pattern");
+
+        // find translatable fields
+        $config = (new ModuleConfig(ConfigType::FIELDS(), $model))->parseToArray();
+        $translate = array_keys(array_filter($config, function ($v) {
+            return !empty($v['translatable']);
+        }));
+
+        // find languages in headers
+        $lang_field = [];
+        foreach ($translate as $field) {
+            foreach ($headers as $head) {
+                preg_match(sprintf($pattern, $field), $head, $l);
+                empty($l[0]) ?: $lang_field[$l[0]] = [
+                    'parent' => $field,
+                    'lang' => $l[1],
+                ];
+            }
+        }
+
+        return $lang_field;
     }
 
     /**

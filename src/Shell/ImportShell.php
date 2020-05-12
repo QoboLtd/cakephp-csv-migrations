@@ -25,7 +25,6 @@ use Cake\Datasource\RepositoryInterface;
 use Cake\Event\EventManager;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Shell\Helper\ProgressHelper;

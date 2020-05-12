@@ -15,7 +15,6 @@ namespace CsvMigrations\Utility;
 
 use Cake\Controller\Component\FlashComponent;
 use Cake\Core\Configure;
-use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Http\ServerRequest;

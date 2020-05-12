@@ -216,7 +216,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
             "author__it" => "author ITALIAN",
         ];
 
-        $results = $method->invokeArgs($object, [$table, $headers, $data]);
+        $results = $method->invokeArgs($object, [$table->getAlias(), $headers, $data]);
 
         $data_result = [
             "author" => "first author",

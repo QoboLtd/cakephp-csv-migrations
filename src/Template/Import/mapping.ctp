@@ -115,7 +115,7 @@ $('select[name="options[options][update_identifier]"]').on("change", function(){
                     <div class="col-md-8">
                         <div class="form-group input checkbox">
                             <input type="checkbox" name="options[options][update]" value="1" class="square" id="is_update">
-                            <label class="control-label">Update matching records.</label>
+                            <label class="control-label"><?= __d('Qobo/CsvMigrations', 'Update existing records') ?></label>
                         </div>
                     </div>
                 </div>
@@ -123,7 +123,7 @@ $('select[name="options[options][update_identifier]"]').on("change", function(){
                     <div class="col-md-3">
                         <div class="visible-md visible-lg text-right">
                             <label class="control-label ">
-                                <?= __d('Qobo/CsvMigrations', 'Update identifier') ?>
+                                <?= __d('Qobo/CsvMigrations', 'Match records by') ?>
                             </label>
                         </div>
                     </div>

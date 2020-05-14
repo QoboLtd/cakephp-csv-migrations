@@ -100,7 +100,7 @@ class DblistItemsTable extends Table
         $rules->add(
             $rules->isUnique(
                 ['dblist_id', 'name', 'value'],
-                __d('CsvMigrations', 'This list item is already in this list.')
+                __d('Qobo/CsvMigrations', 'This list item is already in this list.')
             )
         );
 

@@ -44,7 +44,7 @@ echo $this->Html->scriptBlock(
                     <?= $this->Html->link(
                         '<i class="fa fa-plus"></i> ' . __d('Qobo/CsvMigrations', 'Add'),
                         ['plugin' => 'CsvMigrations', 'controller' => 'Dblists', 'action' => 'add'],
-                        ['title' => __d('CsvMigrations', 'Add'), 'escape' => false, 'class' => 'btn btn-default']
+                        ['title' => __d('Qobo/CsvMigrations', 'Add'), 'escape' => false, 'class' => 'btn btn-default']
                     ); ?>
                 </div>
             </div>

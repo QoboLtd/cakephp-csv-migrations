@@ -107,6 +107,7 @@ $('select[name="options[options][update_identifier]"]').on("change", function(){
     <div class="row">
         <div class="col-md-10 col-lg-8">
             <div class="box box-primary">
+                <?php if(!empty($identifier)): ?>
                 <?= $this->Form->create($import, ["id" => "mapping"]) ?>
                 <div class="box-body">
                 <div class="row">
@@ -114,7 +115,7 @@ $('select[name="options[options][update_identifier]"]').on("change", function(){
                     <div class="col-md-8">
                         <div class="form-group input checkbox">
                             <input type="checkbox" name="options[options][update]" class="square" id="is_update">
-                            <label class="control-label">This is an update.</label>
+                            <label class="control-label">Update matching records.</label>
                         </div>
                     </div>
                 </div>
@@ -137,7 +138,7 @@ $('select[name="options[options][update_identifier]"]').on("change", function(){
                         ]) ?>
                     </div>
                 </div>
-
+                <?php endif; ?>
                 <div class="visible-md visible-lg text-center">
                     <div class="row">
                         <div class="col-md-3"><h4><?= __d('Qobo/CsvMigrations', 'Field') ?></h4></div>

@@ -48,29 +48,50 @@ if (!$options['title']) {
     $options['title'] .= __d('Qobo/CsvMigrations', 'Import fields mapping');
 }
 
-
 $lang_field = ImportUtility::getTranslationFields($this->name, $headers);
-
 $columns = array_merge(array_flip($columns), $lang_field);
-
 ksort($columns);
 
+$unique = array_intersect(ImportUtility::uniqueColumns($this->name), $headers);
+$identifier = [];
+foreach ($unique as $item) {
+    $identifier[$item] = $factory->renderName($this->name, $item);
+}
+
 echo $this->element('CsvMigrations.common_js_libs', ['scriptBlock' => 'bottom']);
-echo $this->Html->scriptBlock(
-    '(function ($) {
-        $(\'.form-control[data-class="select2"]\').select2({
-            theme: \'bootstrap\',
-            width: \'100%\',
-            placeholder: \'-- Please choose --\',
-            escapeMarkup: function (text) {
-                return text;
-            }
-        }).val(null).trigger(\'change\');
-    })(jQuery);
-',
-    ['block' => 'scriptBottom']
-);
 ?>
+
+<?php $this->Html->scriptStart(array('block' => 'scriptBottom', 'inline' => false)); ?>
+;(function ($) {
+  $('.form-control[data-class="select2"]')
+    .select2({
+      theme: 'bootstrap',
+      width: '100%',
+      placeholder: '-- Please choose --',
+      escapeMarkup: function (text) {
+        return text
+      }
+    })
+    .val(null)
+    .trigger('change')
+})(jQuery)
+
+$("#identifierRow").hide()
+$('#is_update:checkbox').on('ifChanged', function(e){
+    $("#identifierRow").toggle()
+    $("#identifierRow").find("label").parent().toggleClass("required")
+    $('select[name="options[options][update_identifier]"]').prop('required', this.checked)
+    $('select[name="options[options][update_identifier]"]').val("").trigger("change")
+});
+
+$('select[name="options[options][update_identifier]"]').on("change", function(){
+    if ($(this).val() === 'id') {
+         $("<input />").attr("type", "hidden").attr("name", "options[fields][id][column]").attr("value", "id").appendTo("#mapping");
+    }
+});
+
+<?php $this->Html->scriptEnd(); ?>
+
 <section class="content-header">
     <div class="row">
         <div class="col-xs-12 col-md-6">
@@ -86,8 +107,38 @@ echo $this->Html->scriptBlock(
     <div class="row">
         <div class="col-md-10 col-lg-8">
             <div class="box box-primary">
+                <?php if(!empty($identifier)): ?>
+                <?= $this->Form->create($import, ["id" => "mapping"]) ?>
                 <div class="box-body">
-                <?= $this->Form->create($import) ?>
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-8">
+                        <div class="form-group input checkbox">
+                            <input type="checkbox" name="options[options][update]" value="1" class="square" id="is_update">
+                            <label class="control-label"><?= __d('Qobo/CsvMigrations', 'Update existing records') ?></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="identifierRow">
+                    <div class="col-md-3">
+                        <div class="visible-md visible-lg text-right">
+                            <label class="control-label ">
+                                <?= __d('Qobo/CsvMigrations', 'Match records by') ?>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <?= $this->Form->control('options.options.update_identifier', [
+                            'empty' => true,
+                            'label' => false,
+                            'type' => 'select',
+                            'value' => $identifier,
+                            'options' => $identifier,
+                            'class' => 'form-control select2'
+                        ]) ?>
+                    </div>
+                </div>
+                <?php endif; ?>
                 <div class="visible-md visible-lg text-center">
                     <div class="row">
                         <div class="col-md-3"><h4><?= __d('Qobo/CsvMigrations', 'Field') ?></h4></div>

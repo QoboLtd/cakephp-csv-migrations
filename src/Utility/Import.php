@@ -15,6 +15,7 @@ namespace CsvMigrations\Utility;
 
 use Cake\Controller\Component\FlashComponent;
 use Cake\Core\Configure;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Http\ServerRequest;
@@ -202,6 +203,10 @@ class Import
             $result['fields'][$field] = $params;
         }
 
+        if (!empty($options['options'])) {
+            $result['options'] = $options['options'];
+        }
+
         return $result;
     }
 
@@ -385,6 +390,32 @@ class Import
         }
 
         return $lang_field;
+    }
+
+    /**
+     * @param string $model Model name
+     * @return string[]
+     */
+    public static function uniqueColumns(string $model): array
+    {
+        $table = TableRegistry::getTableLocator()->get($model);
+
+        $result = (array)$table->getPrimaryKey();
+
+        foreach ($table->getSchema()->constraints() as $constraint) {
+            $constraint = $table->getSchema()->getConstraint($constraint);
+            if (TableSchema::CONSTRAINT_UNIQUE === $constraint['type']) {
+                $result = array_merge($result, $constraint['columns']);
+            }
+        }
+
+        $result = array_merge($result, array_keys(
+            array_filter((new ModuleConfig(ConfigType::FIELDS(), $model))->parseToArray(), function ($item) {
+                return array_key_exists('auto-increment', $item) && true === $item['auto-increment'];
+            })
+        ));
+
+        return array_unique($result);
     }
 
     /**

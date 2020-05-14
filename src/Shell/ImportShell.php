@@ -364,12 +364,11 @@ class ImportShell extends Shell
 
         $table = TableRegistry::get($importResult->get('model_name'));
 
+        // Preparing the data
         $data = $this->_prepareData($import, $headers, $data);
-
         if ($table->behaviors()->has('Translate')) {
             $data = $this->setLanguages($table->getAlias(), $headers, $data);
         }
-
         $csvFields = FieldUtility::getCsv($table);
         $data = $this->_processData($table, $csvFields, $data);
 
@@ -380,10 +379,17 @@ class ImportShell extends Shell
             return;
         }
 
-        try {
-            $entity = $table->newEntity();
-            $entity = $table->patchEntity($entity, $data);
+        $options = $import->get('options');
+        if (!empty($options['options']['update']) && (bool)$options['options']['update']) {
+            $key = $options['options']['update_identifier'];
 
+            $oldEntity = $table->find()->where([$key => $data[$key]])->first();
+        }
+
+        $entity = empty($oldEntity) || !($oldEntity instanceof EntityInterface) ? $table->newEntity() : $oldEntity;
+        $entity = $table->patchEntity($entity, $data);
+
+        try {
             $table->save($entity) ?
                 $this->_importSuccess($importResult, $entity) :
                 $this->_importFail($importResult, $entity->getErrors());

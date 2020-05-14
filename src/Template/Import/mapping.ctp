@@ -114,7 +114,7 @@ $('select[name="options[options][update_identifier]"]').on("change", function(){
                     <div class="col-md-3"></div>
                     <div class="col-md-8">
                         <div class="form-group input checkbox">
-                            <input type="checkbox" name="options[options][update]" class="square" id="is_update">
+                            <input type="checkbox" name="options[options][update]" value="1" class="square" id="is_update">
                             <label class="control-label">Update matching records.</label>
                         </div>
                     </div>

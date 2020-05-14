@@ -380,7 +380,7 @@ class ImportShell extends Shell
         }
 
         $options = $import->get('options');
-        if (!empty($options['options']['update_identifier'])) {
+        if (!empty($options['options']['update']) && (bool)$options['options']['update']) {
             $key = $options['options']['update_identifier'];
 
             $oldEntity = $table->find()->where([$key => $data[$key]])->first();

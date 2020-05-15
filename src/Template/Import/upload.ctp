@@ -10,6 +10,7 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\Model\Table\ImportsTable;
 use Qobo\Utils\ModuleConfig\ConfigType;
@@ -37,6 +38,8 @@ if (!$options['title']) {
     $options['title'] .= ' &raquo; ';
     $options['title'] .= __d('Qobo/CsvMigrations', 'Import Data');
 }
+
+$resultsTable = TableRegistry::get('CsvMigrations.ImportResults');
 ?>
 <section class="content-header">
     <div class="row">
@@ -85,17 +88,40 @@ if (!$options['title']) {
                             <tr>
                                 <th><?= __d('Qobo/CsvMigrations', 'Filename'); ?></th>
                                 <th><?= __d('Qobo/CsvMigrations', 'Status'); ?></th>
+                                <th><?= __d('Qobo/CsvMigrations', 'Imported'); ?></th>
+                                <th><?= __d('Qobo/CsvMigrations', 'Pending'); ?></th>
+                                <th><?= __d('Qobo/CsvMigrations', 'Fail'); ?></th>
                                 <th><?= __d('Qobo/CsvMigrations', 'Attempts'); ?></th>
                                 <th><?= __d('Qobo/CsvMigrations', 'Last attempt'); ?></th>
                                 <th class="actions"><?= __d('Qobo/CsvMigrations', 'Actions'); ?></th>
                             </tr>
                             <?php foreach ($existingImports as $existingImport) : ?>
+                            <?php 
+                                $imported = $resultsTable->find('imported', ['import' => $existingImport])->count();
+                                $pending = $resultsTable->find('pending', ['import' => $existingImport])->count();
+                                $failed = $resultsTable->find('failed', ['import' => $existingImport])->count();
+                            ?>
                                 <tr>
                                     <td><?= basename($existingImport->get('filename')) ?></td>
                                     <td>
                                         <span class="label label-<?= $statusLabels[$existingImport->get('status')] ?>">
                                             <?= $existingImport->get('status') ?>
                                         </span>
+                                    </td>
+                                    <td>
+                                     <?php if ($imported > 0): ?>
+                                        <span class="label label-success"><?= $imported ?></span>
+                                     <?php endif; ?>
+                                    </td>
+                                    <td>
+                                     <?php if ($pending > 0): ?>
+                                        <span class="label label-warning"><?= $pending ?></span>
+                                     <?php endif; ?>
+                                    </td>
+                                    <td>
+                                     <?php if ($failed > 0): ?>
+                                        <span class="label label-danger"><?= $failed ?></span>
+                                     <?php endif; ?>
                                     </td>
                                     <td><?= $existingImport->get('attempts') ?></td>
                                     <td><?php

@@ -52,7 +52,7 @@ $lang_field = ImportUtility::getTranslationFields($this->name, $headers);
 $columns = array_merge(array_flip($columns), $lang_field);
 ksort($columns);
 
-$unique = array_intersect(ImportUtility::uniqueColumns($this->name), $headers);
+$unique = ImportUtility::uniqueColumns($this->name);
 $identifier = [];
 foreach ($unique as $item) {
     $identifier[$item] = $factory->renderName($this->name, $item);

@@ -387,12 +387,14 @@ class ImportShell extends Shell
         }
 
         $entity = empty($oldEntity) || !($oldEntity instanceof EntityInterface) ? $table->newEntity() : $oldEntity;
-        $entity = $table->patchEntity($entity, $data);
+        // After save, all the entity are not new.
+        $isNew = $entity->isNew();
 
+        $entity = $table->patchEntity($entity, $data);
         try {
             $table->save($entity) ?
-                $this->_importSuccess($importResult, $entity) :
-                $this->_importFail($importResult, $entity->getErrors());
+            $this->_importSuccess($importResult, $entity, $isNew) :
+            $this->_importFail($importResult, $entity->getErrors());
         } catch (CakeException $e) {
             $this->_importFail($importResult, [$e->getMessage()]);
         } catch (PDOException $e) {
@@ -642,15 +644,17 @@ class ImportShell extends Shell
      *
      * @param \CsvMigrations\Model\Entity\ImportResult $importResult ImportResult entity
      * @param \Cake\Datasource\EntityInterface $entity Newly created Entity
+     * @param bool $isNew New or updated record
      * @return bool
      */
-    protected function _importSuccess(ImportResult $importResult, EntityInterface $entity): bool
+    protected function _importSuccess(ImportResult $importResult, EntityInterface $entity, bool $isNew): bool
     {
         $table = TableRegistry::get('CsvMigrations.ImportResults');
         Assert::isInstanceOf($table, ImportResultsTable::class);
 
         $importResult->set('model_id', $entity->get('id'));
-        $importResult->set('status', $table::STATUS_SUCCESS);
+        $status = $isNew ? $table::STATUS_SUCCESS : $table::STATUS_UPDATED;
+        $importResult->set('status', $status);
         $importResult->set('status_message', $table::STATUS_SUCCESS_MESSAGE);
 
         return (bool)$table->save($importResult);

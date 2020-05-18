@@ -41,6 +41,11 @@ class ImportResultsTable extends Table
     const STATUS_SUCCESS = 'Success';
 
     /**
+     * Success updated status.
+     */
+    const STATUS_UPDATED = 'Updated';
+
+    /**
      * Fail status.
      */
     const STATUS_FAIL = 'Fail';
@@ -185,6 +190,23 @@ class ImportResultsTable extends Table
         $query->where([
             'import_id' => $options['import']->id,
             'status' => static::STATUS_FAIL,
+        ]);
+
+        return $query;
+    }
+
+    /**
+     * Find import results by import id and updated status.
+     *
+     * @param \Cake\Datasource\QueryInterface $query Query object
+     * @param mixed[] $options Additional options
+     * @return \Cake\Datasource\QueryInterface
+     */
+    public function findUpdated(QueryInterface $query, array $options): QueryInterface
+    {
+        $query->where([
+            'import_id' => $options['import']->id,
+            'status' => static::STATUS_UPDATED,
         ]);
 
         return $query;

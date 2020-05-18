@@ -89,6 +89,7 @@ $resultsTable = TableRegistry::get('CsvMigrations.ImportResults');
                                 <th><?= __d('Qobo/CsvMigrations', 'Filename'); ?></th>
                                 <th><?= __d('Qobo/CsvMigrations', 'Status'); ?></th>
                                 <th><?= __d('Qobo/CsvMigrations', 'Imported'); ?></th>
+                                <th><?= __d('Qobo/CsvMigrations', 'Updated'); ?></th>
                                 <th><?= __d('Qobo/CsvMigrations', 'Pending'); ?></th>
                                 <th><?= __d('Qobo/CsvMigrations', 'Fail'); ?></th>
                                 <th><?= __d('Qobo/CsvMigrations', 'Attempts'); ?></th>
@@ -98,6 +99,7 @@ $resultsTable = TableRegistry::get('CsvMigrations.ImportResults');
                             <?php foreach ($existingImports as $existingImport) : ?>
                             <?php 
                                 $imported = $resultsTable->find('imported', ['import' => $existingImport])->count();
+                                $updated = $resultsTable->find('updated', ['import' => $existingImport])->count();
                                 $pending = $resultsTable->find('pending', ['import' => $existingImport])->count();
                                 $failed = $resultsTable->find('failed', ['import' => $existingImport])->count();
                             ?>
@@ -111,6 +113,11 @@ $resultsTable = TableRegistry::get('CsvMigrations.ImportResults');
                                     <td>
                                      <?php if ($imported > 0): ?>
                                         <span class="label label-success"><?= $imported ?></span>
+                                     <?php endif; ?>
+                                    </td>
+                                    <td>
+                                     <?php if ($updated > 0): ?>
+                                        <span class="label label-success"><?= $updated ?></span>
                                      <?php endif; ?>
                                     </td>
                                     <td>

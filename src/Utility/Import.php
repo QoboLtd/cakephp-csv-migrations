@@ -342,6 +342,7 @@ class Import
         $view = new View();
         $statusLabels = [
             ImportResultsTable::STATUS_SUCCESS => 'success',
+            ImportResultsTable::STATUS_UPDATED => 'success',
             ImportResultsTable::STATUS_PENDING => 'warning',
             ImportResultsTable::STATUS_FAIL => 'danger',
         ];

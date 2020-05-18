@@ -73,7 +73,7 @@ if (file_exists($processedFile)) {
     if ($totalRecords <= 0) {
         $totalRecords = 1;
     }
-    $percent = round(($importCount / $totalRecords) * 100, 1);
+    $percent = round((($importCount + $updatedCount) / $totalRecords) * 100, 1);
     $processedLink = $this->Html->link('Processed', [
         'plugin' => $this->plugin,
         'controller' => $this->name,
@@ -144,6 +144,8 @@ if (!$options['title']) {
                         <dd><?= number_format($totalRecords) ?></dd>
                         <dt><?= __d('Qobo/CsvMigrations', 'Imported records') ?></dt>
                         <dd><span class="label label-success"><?= number_format($importCount) ?></span></dd>
+                        <dt><?= __d('Qobo/CsvMigrations', 'Updated records') ?></dt>
+                        <dd><span class="label label-success"><?= number_format($updatedCount) ?></span></dd>
                         <dt><?= __d('Qobo/CsvMigrations', 'Pending records') ?></dt>
                         <dd><span class="label label-warning"><?= number_format($pendingCount) ?></span></dd>
                         <dt><?= __d('Qobo/CsvMigrations', 'Failed records') ?></dt>

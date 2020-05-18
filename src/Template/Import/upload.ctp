@@ -91,7 +91,7 @@ $resultsTable = TableRegistry::get('CsvMigrations.ImportResults');
                                 <th><?= __d('Qobo/CsvMigrations', 'Imported'); ?></th>
                                 <th><?= __d('Qobo/CsvMigrations', 'Updated'); ?></th>
                                 <th><?= __d('Qobo/CsvMigrations', 'Pending'); ?></th>
-                                <th><?= __d('Qobo/CsvMigrations', 'Fail'); ?></th>
+                                <th><?= __d('Qobo/CsvMigrations', 'Failed'); ?></th>
                                 <th><?= __d('Qobo/CsvMigrations', 'Attempts'); ?></th>
                                 <th><?= __d('Qobo/CsvMigrations', 'Last attempt'); ?></th>
                                 <th class="actions"><?= __d('Qobo/CsvMigrations', 'Actions'); ?></th>

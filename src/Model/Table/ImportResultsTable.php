@@ -38,37 +38,37 @@ class ImportResultsTable extends Table
     /**
      * Success status.
      */
-    const STATUS_SUCCESS = 'Success';
+    public const STATUS_SUCCESS = 'Success';
 
     /**
      * Success updated status.
      */
-    const STATUS_UPDATED = 'Updated';
+    public const STATUS_UPDATED = 'Updated';
 
     /**
      * Fail status.
      */
-    const STATUS_FAIL = 'Fail';
+    public const STATUS_FAIL = 'Fail';
 
     /**
      * Pending status.
      */
-    const STATUS_PENDING = 'Pending';
+    public const STATUS_PENDING = 'Pending';
 
     /**
      * Success status message.
      */
-    const STATUS_SUCCESS_MESSAGE = 'Imported successfully';
+    public const STATUS_SUCCESS_MESSAGE = 'Imported successfully';
 
     /**
      * Fail status message.
      */
-    const STATUS_FAIL_MESSAGE = 'Import failed: %s';
+    public const STATUS_FAIL_MESSAGE = 'Import failed: %s';
 
     /**
      * Pending status message.
      */
-    const STATUS_PENDING_MESSAGE = 'Pending import';
+    public const STATUS_PENDING_MESSAGE = 'Pending import';
 
     /**
      * Initialize method

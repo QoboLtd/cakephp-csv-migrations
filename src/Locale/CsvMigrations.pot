@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2020-05-14 11:39+0000\n"
+"POT-Creation-Date: 2020-05-18 11:12+0300\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -66,7 +66,7 @@ msgstr ""
 #: Template/Dblists/add.ctp:32
 #: Template/Dblists/edit.ctp:32
 #: Template/Import/mapping.ctp:198
-#: Template/Import/upload.ctp:67
+#: Template/Import/upload.ctp:70
 msgid "Submit"
 msgstr ""
 
@@ -98,20 +98,20 @@ msgstr ""
 
 #: Template/DblistItems/index.ctp:50
 #: Template/Dblists/index.ctp:61
-#: Template/Import/progress.ctp:153
+#: Template/Import/progress.ctp:155
 msgid "Created"
 msgstr ""
 
 #: Template/DblistItems/index.ctp:51
 #: Template/Dblists/index.ctp:62
-#: Template/Import/progress.ctp:160
+#: Template/Import/progress.ctp:162
 msgid "Modified"
 msgstr ""
 
 #: Template/DblistItems/index.ctp:52
 #: Template/Dblists/index.ctp:63
-#: Template/Import/progress.ctp:180
-#: Template/Import/upload.ctp:90
+#: Template/Import/progress.ctp:182
+#: Template/Import/upload.ctp:97
 msgid "Actions"
 msgstr ""
 
@@ -151,7 +151,7 @@ msgid "Database Lists"
 msgstr ""
 
 #: Template/Dblists/index.ctp:83
-#: Template/Import/upload.ctp:110
+#: Template/Import/upload.ctp:143
 #: Utility/Import.php:320
 msgid "View"
 msgstr ""
@@ -189,7 +189,7 @@ msgid "Import progress"
 msgstr ""
 
 #: Template/Import/progress.ctp:131
-#: Template/Import/upload.ctp:86
+#: Template/Import/upload.ctp:89
 msgid "Filename"
 msgstr ""
 
@@ -197,8 +197,8 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: Template/Import/progress.ctp:135;178
-#: Template/Import/upload.ctp:87
+#: Template/Import/progress.ctp:135;180
+#: Template/Import/upload.ctp:90
 msgid "Status"
 msgstr ""
 
@@ -215,47 +215,67 @@ msgid "Imported records"
 msgstr ""
 
 #: Template/Import/progress.ctp:147
-msgid "Pending records"
+msgid "Updated records"
 msgstr ""
 
 #: Template/Import/progress.ctp:149
-msgid "Failed records"
+msgid "Pending records"
 msgstr ""
 
 #: Template/Import/progress.ctp:151
-#: Template/Import/upload.ctp:88
+msgid "Failed records"
+msgstr ""
+
+#: Template/Import/progress.ctp:153
+#: Template/Import/upload.ctp:95
 msgid "Attempts"
 msgstr ""
 
-#: Template/Import/progress.ctp:155
+#: Template/Import/progress.ctp:157
 msgid "Last Attempt"
 msgstr ""
 
-#: Template/Import/progress.ctp:177
+#: Template/Import/progress.ctp:179
 msgid "Row"
 msgstr ""
 
-#: Template/Import/progress.ctp:179
+#: Template/Import/progress.ctp:181
 msgid "Status Message"
 msgstr ""
 
-#: Template/Import/upload.ctp:38
+#: Template/Import/upload.ctp:39
 msgid "Import Data"
 msgstr ""
 
-#: Template/Import/upload.ctp:58
+#: Template/Import/upload.ctp:61
 msgid "File upload"
 msgstr ""
 
-#: Template/Import/upload.ctp:65
+#: Template/Import/upload.ctp:68
 msgid "Supported file types: .csv"
 msgstr ""
 
-#: Template/Import/upload.ctp:79
+#: Template/Import/upload.ctp:82
 msgid "Existing imports"
 msgstr ""
 
-#: Template/Import/upload.ctp:89
+#: Template/Import/upload.ctp:91
+msgid "Imported"
+msgstr ""
+
+#: Template/Import/upload.ctp:92
+msgid "Updated"
+msgstr ""
+
+#: Template/Import/upload.ctp:93
+msgid "Pending"
+msgstr ""
+
+#: Template/Import/upload.ctp:94
+msgid "Failed"
+msgstr ""
+
+#: Template/Import/upload.ctp:96
 msgid "Last attempt"
 msgstr ""
 

@@ -9,6 +9,8 @@ cghooks.lock
 composer.lock
 config/Migrations/schema-dump-default.lock
 config/Migrations/schema-dump-test.lock
+
+tests/App/Module
 # OS generated files #
 ######################
 .DS_Store

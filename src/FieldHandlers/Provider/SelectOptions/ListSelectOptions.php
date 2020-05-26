@@ -14,9 +14,8 @@
 namespace CsvMigrations\FieldHandlers\Provider\SelectOptions;
 
 use Cake\Core\App;
-use InvalidArgumentException;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\Exception\MissingModuleException;
+use Qobo\Utils\Module\ModuleRegistry;
 
 /**
  * ListSelectOptions
@@ -39,33 +38,14 @@ class ListSelectOptions extends AbstractSelectOptions
 
         list($module, $list) = false !== strpos($data, '.') ?
             explode('.', $data, 2) :
-            [App::shortName(get_class($this->config->getTable()), 'Model/Table', 'Table'), $data];
+            // [App::shortName(get_class($this->config->getTable()), 'Model/Table', 'Table'), $data];
+            [$this->config->getTable()->getAlias(), $data ?? ''];
 
-        $result = [];
         try {
-            $config = new ModuleConfig(ConfigType::LISTS(), $module, $list, ['flatten' => $flatten, 'filter' => true]);
-            $config = $config->parse();
-            if (! property_exists($config, 'items')) {
-                return [];
-            }
-
-            $config = json_encode($config->items);
-            if (false === $config) {
-                return [];
-            }
-
-            $result = json_decode($config, true);
-        } catch (InvalidArgumentException $e) {
-            /* Do nothing.
-             *
-             * ModuleConfig checks for the file to exist and to be readable and so on, but here we do load lists
-             * recursively (for sub-lists, etc), which might result in files not always being there.
-             *
-             * In this particular case, it's not the end of the world.
-             */
+            $result = ModuleRegistry::getModule($module)->getList($list, $flatten, true);
+        } catch (MissingModuleException $e) {
             return [];
         }
-
         if (empty($result)) {
             return [];
         }

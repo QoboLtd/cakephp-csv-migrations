@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class ListFieldHandlerTest extends TestCase
 {
-    protected $table = 'fields';
+    protected $table = 'Fields';
     protected $field = 'field_list';
     protected $type = 'list';
 

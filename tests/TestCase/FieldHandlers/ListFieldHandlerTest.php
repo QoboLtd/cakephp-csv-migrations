@@ -58,7 +58,7 @@ class ListFieldHandlerTest extends TestCase
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
-            'type' => 'list(countries)',
+            'type' => 'list(Common.countries)',
             'required' => false,
             'non-searchable' => false,
             'unique' => false,
@@ -73,7 +73,7 @@ class ListFieldHandlerTest extends TestCase
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
-            'type' => 'list(nested)',
+            'type' => 'list(Common.nested)',
             'required' => false,
             'non-searchable' => false,
             'unique' => false,
@@ -88,7 +88,7 @@ class ListFieldHandlerTest extends TestCase
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
-            'type' => 'list(countries)',
+            'type' => 'list(Common.countries)',
             'required' => false,
             'non-searchable' => false,
             'unique' => false,
@@ -126,7 +126,7 @@ class ListFieldHandlerTest extends TestCase
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
-            'type' => 'list(countries)',
+            'type' => 'list(Common.countries)',
             'required' => false,
             'non-searchable' => false,
             'unique' => false,

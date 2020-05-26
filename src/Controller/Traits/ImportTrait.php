@@ -91,6 +91,7 @@ trait ImportTrait
             } else { // Import/progress.ctp
                 $resultsTable = TableRegistry::getTableLocator()->get('CsvMigrations.ImportResults');
                 $this->set('importCount', $resultsTable->find('imported', ['import' => $entity])->count());
+                $this->set('updatedCount', $resultsTable->find('updated', ['import' => $entity])->count());
                 $this->set('pendingCount', $resultsTable->find('pending', ['import' => $entity])->count());
                 $this->set('failCount', $resultsTable->find('failed', ['import' => $entity])->count());
             }

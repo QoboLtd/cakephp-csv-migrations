@@ -121,6 +121,21 @@ class FieldHandlerFactory
     }
 
     /**
+     * Get Default Render Value from Renderers
+     *
+     * @param mixed $table Name or instance of the Table
+     * @param string $field Field name
+     * @param mixed[] $options Field options
+     * @return mixed
+     */
+    public function getDefaultValue($table, string $field, array $options = [])
+    {
+        $handler = self::getByTableField($table, $field, $options, $this->cakeView);
+
+        return $handler->getDefaultValue();
+    }
+
+    /**
      * Validation rules setter.
      *
      * @param mixed $table Name or instance of the Table

@@ -40,32 +40,37 @@ class ImportResultsTable extends Table
     /**
      * Success status.
      */
-    const STATUS_SUCCESS = 'Success';
+    public const STATUS_SUCCESS = 'Success';
+
+    /**
+     * Success updated status.
+     */
+    public const STATUS_UPDATED = 'Updated';
 
     /**
      * Fail status.
      */
-    const STATUS_FAIL = 'Fail';
+    public const STATUS_FAIL = 'Fail';
 
     /**
      * Pending status.
      */
-    const STATUS_PENDING = 'Pending';
+    public const STATUS_PENDING = 'Pending';
 
     /**
      * Success status message.
      */
-    const STATUS_SUCCESS_MESSAGE = 'Imported successfully';
+    public const STATUS_SUCCESS_MESSAGE = 'Imported successfully';
 
     /**
      * Fail status message.
      */
-    const STATUS_FAIL_MESSAGE = 'Import failed: %s';
+    public const STATUS_FAIL_MESSAGE = 'Import failed: %s';
 
     /**
      * Pending status message.
      */
-    const STATUS_PENDING_MESSAGE = 'Pending import';
+    public const STATUS_PENDING_MESSAGE = 'Pending import';
 
     /**
      * Initialize method
@@ -187,6 +192,23 @@ class ImportResultsTable extends Table
         $query->where([
             'import_id' => $options['import']->id,
             'status' => static::STATUS_FAIL,
+        ]);
+
+        return $query;
+    }
+
+    /**
+     * Find import results by import id and updated status.
+     *
+     * @param \Cake\Datasource\QueryInterface $query Query object
+     * @param mixed[] $options Additional options
+     * @return \Cake\Datasource\QueryInterface
+     */
+    public function findUpdated(QueryInterface $query, array $options): QueryInterface
+    {
+        $query->where([
+            'import_id' => $options['import']->id,
+            'status' => static::STATUS_UPDATED,
         ]);
 
         return $query;

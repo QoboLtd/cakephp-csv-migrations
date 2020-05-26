@@ -15,6 +15,7 @@ namespace CsvMigrations\Utility;
 
 use Cake\Controller\Component\FlashComponent;
 use Cake\Core\Configure;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Http\ServerRequest;
@@ -28,6 +29,8 @@ use CsvMigrations\Model\Entity\Import as ImportEntity;
 use CsvMigrations\Model\Table\ImportResultsTable;
 use CsvMigrations\Model\Table\ImportsTable;
 use League\Csv\Reader;
+use Qobo\Utils\ModuleConfig\ConfigType;
+use Qobo\Utils\ModuleConfig\ModuleConfig;
 
 class Import
 {
@@ -200,6 +203,10 @@ class Import
             $result['fields'][$field] = $params;
         }
 
+        if (!empty($options['options'])) {
+            $result['options'] = $options['options'];
+        }
+
         return $result;
     }
 
@@ -335,6 +342,7 @@ class Import
         $view = new View();
         $statusLabels = [
             ImportResultsTable::STATUS_SUCCESS => 'success',
+            ImportResultsTable::STATUS_UPDATED => 'success',
             ImportResultsTable::STATUS_PENDING => 'warning',
             ImportResultsTable::STATUS_FAIL => 'danger',
         ];
@@ -345,6 +353,70 @@ class Import
         }
 
         return $data;
+    }
+
+    /**
+     * Return a list of translatable fields from the imported file headers.
+     * IE : `description` is a translatable field and in the headers is set `description__ru`.
+     * The result will be:
+     *      'description__ru' => [
+     *          'parent' => 'description',
+     *          'lang' => 'ru'
+     *      ]
+     *
+     * @param string $model Model name
+     * @param string[] $headers File headers
+     * @return mixed[]
+     */
+    public static function getTranslationFields(string $model, array $headers): array
+    {
+        $pattern = Configure::readOrFail("Translate.pattern");
+
+        // find translatable fields
+        $config = (new ModuleConfig(ConfigType::FIELDS(), $model))->parseToArray();
+        $translate = array_keys(array_filter($config, function ($v) {
+            return !empty($v['translatable']);
+        }));
+
+        // find languages in headers
+        $lang_field = [];
+        foreach ($translate as $field) {
+            foreach ($headers as $head) {
+                preg_match(sprintf($pattern, $field), $head, $l);
+                empty($l[0]) ?: $lang_field[$l[0]] = [
+                    'parent' => $field,
+                    'lang' => $l[1],
+                ];
+            }
+        }
+
+        return $lang_field;
+    }
+
+    /**
+     * @param string $model Model name
+     * @return string[]
+     */
+    public static function uniqueColumns(string $model): array
+    {
+        $table = TableRegistry::getTableLocator()->get($model);
+
+        $result = (array)$table->getPrimaryKey();
+
+        foreach ($table->getSchema()->constraints() as $constraint) {
+            $constraint = $table->getSchema()->getConstraint($constraint);
+            if (TableSchema::CONSTRAINT_UNIQUE === $constraint['type']) {
+                $result = array_merge($result, $constraint['columns']);
+            }
+        }
+
+        $result = array_merge($result, array_keys(
+            array_filter((new ModuleConfig(ConfigType::FIELDS(), $model))->parseToArray(), function ($item) {
+                return array_key_exists('auto-increment', $item) && true === $item['auto-increment'];
+            })
+        ));
+
+        return array_unique($result);
     }
 
     /**

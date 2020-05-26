@@ -188,6 +188,16 @@ class FieldHandler implements FieldHandlerInterface
     }
 
     /**
+     * Get Default Value of the Field Handler
+     *
+     * @return mixed
+     */
+    public function getDefaultValue()
+    {
+        return $this->defaultOptions['default'];
+    }
+
+    /**
      * Fix provided options
      *
      * This method is here to fix some issues with backward

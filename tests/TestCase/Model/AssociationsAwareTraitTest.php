@@ -5,6 +5,7 @@ namespace CsvMigrations\Test\TestCase\Model;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
+use Cake\ORM\Association\HasOne;
 use Cake\ORM\TableRegistry;
 use CsvMigrations\Model\AssociationsAwareTrait;
 use PHPUnit\Framework\TestCase;
@@ -86,6 +87,8 @@ class AssociationsAwareTraitTest extends TestCase
             ['Articles', 'MainArticleArticles', BelongsTo::class],
             ['Articles', 'MainArticleIdSimilarArticles', BelongsToMany::class, 'similar_articles'],
             ['Articles', 'SimilarArticleIdSimilarArticles', BelongsToMany::class, 'similar_articles'],
+            ['Articles', 'Articles_author_translation', HasOne::class],
+            ['Articles', 'translations', HasMany::class],
             ['Authors', 'AuthorArticles', HasMany::class],
             ['Authors', 'OwnerPosts', HasMany::class],
             ['Categories', 'CategoryArticles', HasMany::class],

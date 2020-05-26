@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2019-12-06 14:18+0000\n"
+"POT-Creation-Date: 2020-05-18 11:12+0300\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -14,24 +14,272 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+#: Controller/DblistItemsController.php:146
+msgid "Unknown move action \"{0}\"."
+msgstr ""
+
+#: Controller/DblistItemsController.php:154
+msgid "{0} has been moved {1} successfully."
+msgstr ""
+
+#: Controller/DblistItemsController.php:156
+msgid "Fail to move {0} {1}."
+msgstr ""
+
+#: FieldHandlers/Provider/RenderValue/BooleanOnOffRenderer.php:38
+msgid "Off"
+msgstr ""
+
+#: FieldHandlers/Provider/RenderValue/BooleanOnOffRenderer.php:39
+msgid "On"
+msgstr ""
+
+#: FieldHandlers/Provider/RenderValue/BooleanYesNoRenderer.php:38
+msgid "No"
+msgstr ""
+
+#: FieldHandlers/Provider/RenderValue/BooleanYesNoRenderer.php:39
+msgid "Yes"
+msgstr ""
+
+#: Model/Table/DblistItemsTable.php:103
 msgid "This list item is already in this list."
 msgstr ""
 
+#: Model/Table/DblistsTable.php:86
 msgid "Name MUST be unique"
 msgstr ""
 
+#: Template/DblistItems/add.ctp:16
 msgid "Create Database List Item"
 msgstr ""
 
+#: Template/DblistItems/add.ctp:25
+#: Template/DblistItems/edit.ctp:25
+#: Template/Dblists/add.ctp:25
+#: Template/Dblists/edit.ctp:25
 msgid "Details"
 msgstr ""
 
+#: Template/DblistItems/add.ctp:47
+#: Template/DblistItems/edit.ctp:47
+#: Template/Dblists/add.ctp:32
+#: Template/Dblists/edit.ctp:32
+#: Template/Import/mapping.ctp:198
+#: Template/Import/upload.ctp:70
 msgid "Submit"
 msgstr ""
 
+#: Template/DblistItems/edit.ctp:16
 msgid "Edit Database List Item"
 msgstr ""
 
+#: Template/DblistItems/index.ctp:21
+msgid "Database List Items"
+msgstr ""
+
+#: Template/DblistItems/index.ctp:23
+msgid "for"
+msgstr ""
+
+#: Template/DblistItems/index.ctp:33;34
+#: Template/Dblists/index.ctp:45;47
 msgid "Add"
+msgstr ""
+
+#: Template/DblistItems/index.ctp:48
+#: Template/Dblists/index.ctp:60
+msgid "Name"
+msgstr ""
+
+#: Template/DblistItems/index.ctp:49
+msgid "Value"
+msgstr ""
+
+#: Template/DblistItems/index.ctp:50
+#: Template/Dblists/index.ctp:61
+#: Template/Import/progress.ctp:155
+msgid "Created"
+msgstr ""
+
+#: Template/DblistItems/index.ctp:51
+#: Template/Dblists/index.ctp:62
+#: Template/Import/progress.ctp:162
+msgid "Modified"
+msgstr ""
+
+#: Template/DblistItems/index.ctp:52
+#: Template/Dblists/index.ctp:63
+#: Template/Import/progress.ctp:182
+#: Template/Import/upload.ctp:97
+msgid "Actions"
+msgstr ""
+
+#: Template/DblistItems/index.ctp:74
+msgid "Move up"
+msgstr ""
+
+#: Template/DblistItems/index.ctp:86
+msgid "Move down"
+msgstr ""
+
+#: Template/DblistItems/index.ctp:97
+#: Template/Dblists/index.ctp:94
+msgid "Edit"
+msgstr ""
+
+#: Template/DblistItems/index.ctp:109
+#: Template/Dblists/index.ctp:106
+msgid "Delete"
+msgstr ""
+
+#: Template/DblistItems/index.ctp:112
+#: Template/Dblists/index.ctp:109
+msgid "Are you sure you want to delete {0}?"
+msgstr ""
+
+#: Template/Dblists/add.ctp:16
+msgid "Create Database List"
+msgstr ""
+
+#: Template/Dblists/edit.ctp:16
+msgid "Edit Database List"
+msgstr ""
+
+#: Template/Dblists/index.ctp:39
+msgid "Database Lists"
+msgstr ""
+
+#: Template/Dblists/index.ctp:83
+#: Template/Import/upload.ctp:143
+#: Utility/Import.php:320
+msgid "View"
+msgstr ""
+
+#: Template/Import/mapping.ctp:48
+msgid "Import fields mapping"
+msgstr ""
+
+#: Template/Import/mapping.ctp:118
+msgid "Update existing records"
+msgstr ""
+
+#: Template/Import/mapping.ctp:126
+msgid "Match records by"
+msgstr ""
+
+#: Template/Import/mapping.ctp:144
+msgid "Field"
+msgstr ""
+
+#: Template/Import/mapping.ctp:145
+msgid "File Column"
+msgstr ""
+
+#: Template/Import/mapping.ctp:146
+msgid "Default Value"
+msgstr ""
+
+#: Template/Import/progress.ctp:106
+msgid "Imports"
+msgstr ""
+
+#: Template/Import/progress.ctp:126
+msgid "Import progress"
+msgstr ""
+
+#: Template/Import/progress.ctp:131
+#: Template/Import/upload.ctp:89
+msgid "Filename"
+msgstr ""
+
+#: Template/Import/progress.ctp:133
+msgid "Download"
+msgstr ""
+
+#: Template/Import/progress.ctp:135;180
+#: Template/Import/upload.ctp:90
+msgid "Status"
+msgstr ""
+
+#: Template/Import/progress.ctp:141
+msgid "Total rows"
+msgstr ""
+
+#: Template/Import/progress.ctp:143
+msgid "Total records"
+msgstr ""
+
+#: Template/Import/progress.ctp:145
+msgid "Imported records"
+msgstr ""
+
+#: Template/Import/progress.ctp:147
+msgid "Updated records"
+msgstr ""
+
+#: Template/Import/progress.ctp:149
+msgid "Pending records"
+msgstr ""
+
+#: Template/Import/progress.ctp:151
+msgid "Failed records"
+msgstr ""
+
+#: Template/Import/progress.ctp:153
+#: Template/Import/upload.ctp:95
+msgid "Attempts"
+msgstr ""
+
+#: Template/Import/progress.ctp:157
+msgid "Last Attempt"
+msgstr ""
+
+#: Template/Import/progress.ctp:179
+msgid "Row"
+msgstr ""
+
+#: Template/Import/progress.ctp:181
+msgid "Status Message"
+msgstr ""
+
+#: Template/Import/upload.ctp:39
+msgid "Import Data"
+msgstr ""
+
+#: Template/Import/upload.ctp:61
+msgid "File upload"
+msgstr ""
+
+#: Template/Import/upload.ctp:68
+msgid "Supported file types: .csv"
+msgstr ""
+
+#: Template/Import/upload.ctp:82
+msgid "Existing imports"
+msgstr ""
+
+#: Template/Import/upload.ctp:91
+msgid "Imported"
+msgstr ""
+
+#: Template/Import/upload.ctp:92
+msgid "Updated"
+msgstr ""
+
+#: Template/Import/upload.ctp:93
+msgid "Pending"
+msgstr ""
+
+#: Template/Import/upload.ctp:94
+msgid "Failed"
+msgstr ""
+
+#: Template/Import/upload.ctp:96
+msgid "Last attempt"
+msgstr ""
+
+#: Validation/Validator.php:45
+msgid "Invalid list item: `{0}`"
 msgstr ""
 

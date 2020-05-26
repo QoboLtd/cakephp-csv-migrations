@@ -13,7 +13,7 @@
 <section class="content-header">
     <div class="row">
         <div class="col-xs-12 col-md-6">
-            <h4><?= __d('CsvMigrations', 'Create Database List Item') ?></h4>
+            <h4><?= __d('Qobo/CsvMigrations', 'Create Database List Item') ?></h4>
         </div>
     </div>
 </section>
@@ -22,7 +22,7 @@
         <div class="col-md-6">
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title"><?= __d('CsvMigrations', 'Details') ?></h3>
+                    <h3 class="box-title"><?= __d('Qobo/CsvMigrations', 'Details') ?></h3>
                 </div>
                 <div class="box-body">
                 <?= $this->Form->create($entity); ?>
@@ -44,7 +44,7 @@
                             <?= $this->Form->control('active', ['checked' => 'checked']); ?>
                         </div>
                     </div>
-                <?= $this->Form->button(__d('CsvMigrations', "Submit"), ['class' => 'btn btn-primary']); ?>
+                <?= $this->Form->button(__d('Qobo/CsvMigrations', "Submit"), ['class' => 'btn btn-primary']); ?>
                 <?= $this->Form->end() ?>
                 </div>
             </div>

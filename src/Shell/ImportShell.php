@@ -366,7 +366,11 @@ class ImportShell extends Shell
 
         $table = TableRegistry::getTableLocator()->get($importResult->get('model_name'));
 
+        // Preparing the data
         $data = $this->_prepareData($import, $headers, $data);
+        if ($table->behaviors()->has('Translate')) {
+            $data = $this->setLanguages($table->getAlias(), $headers, $data);
+        }
         $csvFields = FieldUtility::getCsv($table);
         $data = $this->_processData($table, $csvFields, $data);
 
@@ -377,18 +381,51 @@ class ImportShell extends Shell
             return;
         }
 
-        try {
-            $entity = $table->newEntity();
-            $entity = $table->patchEntity($entity, $data);
+        $options = $import->get('options');
+        if (!empty($options['options']['update']) && (bool)$options['options']['update']) {
+            $key = $options['options']['update_identifier'];
 
+            $oldEntity = $table->find()->where([$key => $data[$key]])->first();
+        }
+
+        $entity = empty($oldEntity) || !($oldEntity instanceof EntityInterface) ? $table->newEntity() : $oldEntity;
+        // After save, all the entity are not new.
+        $isNew = $entity->isNew();
+
+        $entity = $table->patchEntity($entity, $data);
+        try {
             $table->save($entity) ?
-                $this->_importSuccess($importResult, $entity) :
-                $this->_importFail($importResult, $entity->getErrors());
+            $this->_importSuccess($importResult, $entity, $isNew) :
+            $this->_importFail($importResult, $entity->getErrors());
         } catch (CakeException $e) {
             $this->_importFail($importResult, [$e->getMessage()]);
         } catch (PDOException $e) {
             $this->_importFail($importResult, [$e->getMessage()]);
         }
+    }
+
+    /**
+     * Prepare data for Translate Behavior
+     *
+     * @param string $table Table name
+     * @param string[] $headers Upload file headers
+     * @param mixed[] $data Current data from file line
+     * @return mixed[]
+     */
+    protected function setLanguages(string $table, array $headers, array $data): array
+    {
+        $fields = ImportUtility::getTranslationFields($table, $headers);
+
+        foreach ($fields as $field => $value) {
+            if (!in_array($field, array_keys($data))) {
+                continue;
+            }
+
+            $data["_translations"][$value['lang']][$value['parent']] = $data[$field];
+            unset($data[$field]);
+        }
+
+        return $data;
     }
 
     /**
@@ -609,15 +646,17 @@ class ImportShell extends Shell
      *
      * @param \CsvMigrations\Model\Entity\ImportResult $importResult ImportResult entity
      * @param \Cake\Datasource\EntityInterface $entity Newly created Entity
+     * @param bool $isNew New or updated record
      * @return bool
      */
-    protected function _importSuccess(ImportResult $importResult, EntityInterface $entity): bool
+    protected function _importSuccess(ImportResult $importResult, EntityInterface $entity, bool $isNew): bool
     {
         $table = TableRegistry::getTableLocator()->get('CsvMigrations.ImportResults');
         Assert::isInstanceOf($table, ImportResultsTable::class);
 
         $importResult->set('model_id', $entity->get('id'));
-        $importResult->set('status', $table::STATUS_SUCCESS);
+        $status = $isNew ? $table::STATUS_SUCCESS : $table::STATUS_UPDATED;
+        $importResult->set('status', $status);
         $importResult->set('status_message', $table::STATUS_SUCCESS_MESSAGE);
 
         return (bool)$table->save($importResult);

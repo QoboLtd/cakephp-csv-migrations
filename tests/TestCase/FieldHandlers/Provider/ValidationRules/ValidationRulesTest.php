@@ -1,6 +1,6 @@
 <?php
 
-namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider;
+namespace CsvMigrations\Test\TestCase\FieldHandlers\Provider\ValidationRules;
 
 use Cake\TestSuite\TestCase;
 use Cake\Validation\ValidationRule;

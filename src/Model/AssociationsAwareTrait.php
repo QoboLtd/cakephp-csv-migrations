@@ -68,7 +68,7 @@ trait AssociationsAwareTrait
      * @param string $module Module name
      * @return void
      */
-    private function setByModule(string $module): void
+    protected function setByModule(string $module): void
     {
         $config = (new ModuleConfig(ConfigType::MODULE(), $module))->parseToArray();
         $fields = $this->getModuleFields($module);

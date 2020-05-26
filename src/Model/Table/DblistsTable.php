@@ -83,7 +83,7 @@ class DblistsTable extends Table
                 [
                     'rule' => 'validateUnique',
                     'provider' => 'table',
-                    'message' => __d('CsvMigrations', 'Name MUST be unique'),
+                    'message' => __d('Qobo/CsvMigrations', 'Name MUST be unique'),
                 ]
             );
 

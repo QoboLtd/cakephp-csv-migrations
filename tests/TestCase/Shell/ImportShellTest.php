@@ -10,6 +10,7 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 use CsvMigrations\Model\Table\ImportResultsTable;
 use CsvMigrations\Shell\ImportShell;
+use ReflectionMethod;
 use Webmozart\Assert\Assert;
 
 /**
@@ -192,5 +193,43 @@ class ImportShellTest extends ConsoleIntegrationTestCase
             $this->assertSame(ImportResultsTable::STATUS_FAIL, $entity->get('status'));
             $this->assertSame('Import failed: {"date":{"date":"The provided value is invalid"}}', $entity->get('status_message'));
         }
+    }
+
+    public function testSetLanguages(): void
+    {
+        $method = new ReflectionMethod('CsvMigrations\Shell\ImportShell', 'setLanguages');
+        $method->setAccessible(true);
+
+        $object = new ImportShell();
+
+        $table = TableRegistry::getTableLocator()->get('Articles');
+
+        $headers = [
+            "author",
+            "author__ru",
+            "author__it",
+        ];
+
+        $data = [
+            "author" => "first author",
+            "author__ru" => "author RUSSIAN",
+            "author__it" => "author ITALIAN",
+        ];
+
+        $results = $method->invokeArgs($object, [$table->getAlias(), $headers, $data]);
+
+        $data_result = [
+            "author" => "first author",
+            "_translations" => [
+                "ru" => [
+                    "author" => "author RUSSIAN",
+                ],
+                "it" => [
+                    "author" => "author ITALIAN",
+                ],
+            ],
+        ];
+
+        $this->assertSame($results, $data_result);
     }
 }

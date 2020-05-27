@@ -153,7 +153,7 @@ $runner = new class extends ConsoleIntegrationTestCase {
 };
 $modulesPath = TESTS . 'config' . DS . 'Modules' . DS;
 $modulesFolder = new Folder($modulesPath);
-foreach ($modulesFolder->read()[0] as $file) {
-    $runner->exec('generate_modules module ' . $file . ' -f --module-path=' . $modulesPath);
-    $runner->assertOutputContains('<success>');
+foreach ($modulesFolder->read()[0] as $dir) {
+    $runner->exec('generate_modules module ' . $dir . ' -f --module-path=' . $modulesPath);
+    $runner->assertOutputContains('<success>', sprintf('Failed to generate module: %s', $dir));
 }

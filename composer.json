@@ -30,7 +30,7 @@
     "require": {
         "eluceo/ical": "^0.11.0",
         "qobo/cakephp-translations": "^10.0",
-        "qobo/cakephp-utils": "^13.0",
+        "qobo/cakephp-utils": "^13.1",
         "league/commonmark": "^0.19",
         "symfony/expression-language": "^3.1"
     },

@@ -19,8 +19,7 @@ use Cake\ORM\Behavior;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\Utility\FileUpload;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\ModuleRegistry;
 use Qobo\Utils\Utility;
 use RuntimeException;
 use Webmozart\Assert\Assert;
@@ -70,22 +69,19 @@ trait AssociationsAwareTrait
      */
     protected function setByModule(string $module): void
     {
-        $config = (new ModuleConfig(ConfigType::MODULE(), $module))->parse();
+        $config = ModuleRegistry::getModule($module)->getConfig();
+
         $fields = $this->getModuleFields($module);
 
-        if (! property_exists($config, 'table')) {
+        if (empty($config['table']['type'])) {
             return;
         }
 
-        if (! property_exists($config->table, 'type')) {
-            return;
-        }
-
-        if ('module' === $config->table->type) {
+        if ('module' === $config['table']['type']) {
             $this->setByTypeModule($module, $fields);
         }
 
-        if ('relation' === $config->table->type) {
+        if ('relation' === $config['table']['type']) {
             $this->setByTypeRelation($module, $fields);
         }
 
@@ -420,13 +416,7 @@ trait AssociationsAwareTrait
      */
     private function getModuleFields(string $module): array
     {
-        $config = (new ModuleConfig(ConfigType::MIGRATION(), $module))->parse();
-        $config = json_encode($config);
-        if (false === $config) {
-            return [];
-        }
-
-        $fields = json_decode($config, true);
+        $fields = ModuleRegistry::getModule($module)->getMigration();
 
         foreach ($fields as $k => $v) {
             $fields[$k] = new CsvField($v);

@@ -17,8 +17,8 @@ use Cake\Core\App;
 use Cake\Datasource\RepositoryInterface;
 use CsvMigrations\FieldHandlers\CsvField;
 use InvalidArgumentException;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\Exception\MissingModuleException;
+use Qobo\Utils\Module\ModuleRegistry;
 
 class Field
 {
@@ -31,19 +31,17 @@ class Field
     public static function getLookup(RepositoryInterface $table): array
     {
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
-
-        $config = new ModuleConfig(ConfigType::MODULE(), $moduleName);
-        $parsed = $config->parse();
-
-        if (! property_exists($parsed, 'table')) {
+        $config = [];
+        try {
+            $config = ModuleRegistry::getModule($moduleName)->getConfig();
+        } catch (MissingModuleException $e) {
+            return [];
+        }
+        if (empty($config['table']['lookup_fields'])) {
             return [];
         }
 
-        if (! property_exists($parsed->table, 'lookup_fields')) {
-            return [];
-        }
-
-        return $parsed->table->lookup_fields;
+        return $config['table']['lookup_fields'];
     }
 
     /**
@@ -56,20 +54,18 @@ class Field
     {
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
-        $config = new ModuleConfig(ConfigType::MIGRATION(), $moduleName);
-        $parsed = json_encode($config->parse());
-        if (false === $parsed) {
+        $config = [];
+        try {
+            $config = ModuleRegistry::getModule($moduleName)->getMigration();
+        } catch (MissingModuleException $e) {
             return [];
         }
-
-        $parsed = json_decode($parsed, true);
-
-        if (empty($parsed)) {
+        if (empty($config)) {
             return [];
         }
 
         $result = [];
-        foreach ($parsed as $field => $params) {
+        foreach ($config as $field => $params) {
             $result[$field] = new CsvField($params);
         }
 
@@ -90,20 +86,12 @@ class Field
         }
 
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
-
-        $config = new ModuleConfig(ConfigType::MIGRATION(), $moduleName);
-        $parsed = $config->parse();
-
-        if (! property_exists($parsed, $field)) {
+        $config = ModuleRegistry::getModule($moduleName)->getMigration();
+        if (empty($config[$field])) {
             return null;
         }
 
-        $parsed = json_encode($parsed->{$field});
-        if (false === $parsed) {
-            return null;
-        }
-
-        return new CsvField(json_decode($parsed, true));
+        return new CsvField($config[$field]);
     }
 
     /**
@@ -115,10 +103,9 @@ class Field
     public static function getVirtual(RepositoryInterface $table): array
     {
         $moduleName = App::shortName(get_class($table), 'Model/Table', 'Table');
+        $config = ModuleRegistry::getModule($moduleName)->getConfig();
 
-        $config = (new ModuleConfig(ConfigType::MODULE(), $moduleName))->parse();
-
-        return property_exists($config, 'virtualFields') ? (array)$config->virtualFields : [];
+        return !empty($config['virtualFields']) ? $config['virtualFields'] : [];
     }
 
     /**
@@ -134,23 +121,22 @@ class Field
     {
         $tableName = App::shortName(get_class($table), 'Model/Table', 'Table');
 
-        $config = (new ModuleConfig(ConfigType::VIEW(), $tableName, $action))->parse();
-
-        if (! isset($config->items)) {
+        $config = [];
+        try {
+            $config = ModuleRegistry::getModule($tableName)->getView($action);
+        } catch (MissingModuleException $e) {
             return [];
         }
 
-        $result = $config->items;
-
         if ($panels) {
-            $result = static::arrangePanels($result);
+            $config = static::arrangePanels($config);
         }
 
         if ($includeModel) {
-            $result = static::setFieldPluginAndModel($tableName, $result);
+            $config = static::setFieldPluginAndModel($tableName, $config);
         }
 
-        return $result;
+        return $config;
     }
 
     /**
@@ -166,17 +152,11 @@ class Field
         if (false !== strpos($listName, '.')) {
             list($moduleName, $listName) = explode('.', $listName, 2);
         }
-
-        $config = new ModuleConfig(ConfigType::LISTS(), $moduleName, $listName, ['flatten' => $flat]);
-        try {
-            $config = json_encode($config->parse());
-            $config = false !== $config ? json_decode($config, true) : [];
-            $items = isset($config['items']) ? $config['items'] : [];
-        } catch (InvalidArgumentException $e) {
+        if (empty($moduleName)) {
             return [];
         }
 
-        return $items;
+        return ModuleRegistry::getModule($moduleName)->getList($listName, $flat);
     }
 
     /**

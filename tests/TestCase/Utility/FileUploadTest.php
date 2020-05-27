@@ -10,6 +10,7 @@ use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\ORM\TableRegistry;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\Event\ProcessThumbnailsListener;
 use CsvMigrations\Utility\FileUpload;
@@ -197,17 +198,17 @@ class FileUploadTest extends TestCase
         $this->assertSame([], $this->fileUpload->getFilesUrls('00000000-0000-0000-0000-000000000003', ''));
 
         $this->assertSame(
-            ['tests/img/qobo.png'],
+            [Router::url('tests/img/qobo.png', true)],
             $this->fileUpload->getFilesUrls('00000000-0000-0000-0000-000000000003', 'image')
         );
 
         $this->assertSame(
-            ['tests/img/qobo.png'],
+            [Router::url('tests/img/qobo.png', true)],
             $this->fileUpload->getFilesUrls('00000000-0000-0000-0000-000000000003', 'image', 'huge')
         );
 
         $this->assertSame(
-            [''],
+            [Router::url('', true)],
             $this->fileUpload->getFilesUrls('00000000-0000-0000-0000-000000000003', 'image', 'invalid-size')
         );
     }

@@ -29,7 +29,7 @@ class MetricFieldHandlerTest extends TestCase
         $options['entity'] = new Entity(['field_metric_amount' => 135.50, 'field_metric_unit' => 'ft']);
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
-            'type' => 'metric(units_area)',
+            'type' => 'metric(Common.units_area)',
             'required' => false,
             'non-searchable' => false,
             'unique' => false,
@@ -44,7 +44,7 @@ class MetricFieldHandlerTest extends TestCase
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
-            'type' => 'metric(units_area)',
+            'type' => 'metric(Common.units_area)',
             'required' => false,
             'non-searchable' => false,
             'unique' => false,

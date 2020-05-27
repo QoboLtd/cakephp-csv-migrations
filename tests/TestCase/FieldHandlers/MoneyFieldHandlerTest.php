@@ -29,7 +29,7 @@ class MoneyFieldHandlerTest extends TestCase
         $options['entity'] = new Entity(['field_money_amount' => 150, 'field_money_currency' => 'EUR']);
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
-            'type' => 'money(currencies)',
+            'type' => 'money(Common.currencies)',
             'required' => false,
             'non-searchable' => false,
             'unique' => false,
@@ -44,7 +44,7 @@ class MoneyFieldHandlerTest extends TestCase
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
-            'type' => 'money(countries)',
+            'type' => 'money(Common.countries)',
             'required' => false,
             'non-searchable' => false,
             'unique' => false,

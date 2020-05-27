@@ -222,7 +222,7 @@ final class FileUpload
 
         $files = $this->getFiles($mediaSource, $id);
         $thumbs = $files->extract($mediaSize ? 'thumbnails.' . $mediaSize : 'path')->map(function ($thumb) {
-            return Router::fullBaseUrl() . $thumb;
+            return Router::url($thumb, true);
         })->toArray();
 
         return $thumbs;

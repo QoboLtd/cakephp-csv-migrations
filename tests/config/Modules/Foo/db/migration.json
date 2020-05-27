@@ -22,42 +22,42 @@
     },
     "status": {
         "name": "status",
-        "type": "list(foo_statuses)",
+        "type": "list(Common.foo_statuses)",
         "required": true,
         "non-searchable": false,
         "unique": false
     },
     "type": {
         "name": "type",
-        "type": "list(foo_types)",
+        "type": "list(Common.foo_types)",
         "required": true,
         "non-searchable": false,
         "unique": false
     },
     "gender": {
         "name": "gender",
-        "type": "list(genders)",
+        "type": "list(Common.genders)",
         "required": false,
         "non-searchable": false,
         "unique": false
     },
     "city": {
         "name": "city",
-        "type": "list(cities)",
+        "type": "list(Common.cities)",
         "required": false,
         "non-searchable": false,
         "unique": false
     },
     "country": {
         "name": "country",
-        "type": "list(countries)",
+        "type": "list(Common.countries)",
         "required": false,
         "non-searchable": false,
         "unique": false
     },
     "cost": {
         "name": "cost",
-        "type": "money(currencies)",
+        "type": "money(Common.currencies)",
         "required": false,
         "non-searchable": false,
         "unique": false
@@ -92,7 +92,7 @@
     },
     "garden_area": {
         "name": "garden_area",
-        "type": "metric(units_area)",
+        "type": "metric(Common.units_area)",
         "required": false,
         "non-searchable": false,
         "unique": false

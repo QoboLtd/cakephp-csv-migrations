@@ -109,6 +109,7 @@ class FieldHandler implements FieldHandlerInterface
         try {
             $config = ModuleRegistry::getModule(Inflector::camelize($table->getTable()))->getFields();
         } catch (MissingModuleException $e) {
+            // @ignoreException
         }
         if (! empty($config[$field])) {
             $this->defaultOptions = (array)array_replace_recursive($this->defaultOptions, $config[$field]);

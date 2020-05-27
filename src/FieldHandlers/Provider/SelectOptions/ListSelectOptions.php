@@ -54,7 +54,7 @@ class ListSelectOptions extends AbstractSelectOptions
         }
 
         foreach ($result as $key => $value) {
-            $result[$key] = str_repeat($spacer, substr_count($key, '.')) . $value['label'];
+            $result[$key] = str_repeat($spacer, substr_count((string)$key, '.')) . $value['label'];
         }
 
         return $result;

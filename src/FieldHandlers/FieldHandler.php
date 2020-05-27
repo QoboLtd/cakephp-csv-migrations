@@ -21,8 +21,8 @@ use CsvMigrations\FieldHandlers\Config\ConfigFactory;
 use CsvMigrations\FieldHandlers\Config\ConfigInterface;
 use CsvMigrations\HasFieldsInterface;
 use InvalidArgumentException;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\Exception\MissingModuleException;
+use Qobo\Utils\Module\ModuleRegistry;
 use RuntimeException;
 
 /**
@@ -105,8 +105,11 @@ class FieldHandler implements FieldHandlerInterface
         $table = $this->config->getTable();
         $field = $this->config->getField();
 
-        $mc = new ModuleConfig(ConfigType::FIELDS(), Inflector::camelize($table->getTable()));
-        $config = $mc->parseToArray();
+        $config = [];
+        try {
+            $config = ModuleRegistry::getModule(Inflector::camelize($table->getTable()))->getFields();
+        } catch (MissingModuleException $e) {
+        }
         if (! empty($config[$field])) {
             $this->defaultOptions = (array)array_replace_recursive($this->defaultOptions, $config[$field]);
         }

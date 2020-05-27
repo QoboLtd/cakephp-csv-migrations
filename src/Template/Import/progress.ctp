@@ -14,8 +14,7 @@ use Cake\Core\Configure;
 use Cake\Utility\Inflector;
 use CsvMigrations\Model\Table\ImportsTable;
 use CsvMigrations\Utility\Import as ImportUtility;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\ModuleRegistry;
 
 $statusLabels = [
     ImportsTable::STATUS_IN_PROGRESS => 'primary',
@@ -96,9 +95,9 @@ $options = [
 
 // generate title
 if (!$options['title']) {
-    $config = (new ModuleConfig(ConfigType::MODULE(), $this->name))->parse();
+    $config = ModuleRegistry::getModule($this->name)->getConfig();
     $options['title'] = $this->Html->link(
-        isset($config->table->alias) ? $config->table->alias : Inflector::humanize(Inflector::underscore($this->name)),
+        isset($config['table']['alias']) ? $config['table']['alias'] : Inflector::humanize(Inflector::underscore($this->name)),
         ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index']
     );
     $options['title'] .= ' &raquo; ';

@@ -13,9 +13,8 @@
 
 namespace CsvMigrations\Validation;
 
-use InvalidArgumentException;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\Exception\MissingModuleException;
+use Qobo\Utils\Module\ModuleRegistry;
 
 /**
  * This class can be attached to CakePHP's validator and used for validating
@@ -34,13 +33,13 @@ class Validator
     public function inModuleList(string $item, string $moduleName, string $listName)
     {
         try {
-            $items = (new ModuleConfig(ConfigType::LISTS(), $moduleName, $listName))->parseToArray();
-        } catch (InvalidArgumentException $e) {
+            $items = ModuleRegistry::getModule($moduleName)->getList($listName);
+        } catch (MissingModuleException $e) {
             return $e->getMessage();
         }
 
         /** @var mixed[]|null $config */
-        $inactive = $items['items'][$item]['inactive'] ?? null;
+        $inactive = $items[$item]['inactive'] ?? null;
         if ($inactive === null || $inactive === true) {
             return (string)__d('Qobo/CsvMigrations', 'Invalid list item: `{0}`', $item);
         }

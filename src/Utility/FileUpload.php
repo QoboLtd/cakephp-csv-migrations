@@ -27,8 +27,8 @@ use Cake\Utility\Hash;
 use Cake\View\Helper\UrlHelper;
 use Cake\View\View;
 use CsvMigrations\Event\EventName;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\Exception\MissingModuleException;
+use Qobo\Utils\Module\ModuleRegistry;
 use Qobo\Utils\Utility;
 use Webmozart\Assert\Assert;
 
@@ -129,21 +129,22 @@ final class FileUpload
     private function getOrderClause(string $field): array
     {
         $className = App::shortName(get_class($this->table), 'Model/Table', 'Table');
-        $config = (new ModuleConfig(ConfigType::FIELDS(), $className))->parse();
-
-        if (! property_exists($config, $field)) {
+        $config = [];
+        try {
+            $config = ModuleRegistry::getModule($className)->getFields();
+        } catch (MissingModuleException $e) {
             return [];
         }
 
-        if (! property_exists($config->{$field}, 'orderBy')) {
+        if (empty($config[$field]['orderBy'])) {
             return [];
         }
 
-        if (! property_exists($config->{$field}, 'orderDir')) {
+        if (empty($config[$field]['orderDir'])) {
             return [];
         }
 
-        return [$config->{$field}->orderBy => $config->{$field}->orderDir];
+        return [$config[$field]['orderBy'] => $config[$field]['orderDir']];
     }
 
     /**
@@ -471,7 +472,7 @@ final class FileUpload
      */
     public static function fileFields(string $modelName): array
     {
-        $fields = (new ModuleConfig(ConfigType::MIGRATION(), $modelName))->parseToArray();
+        $fields = ModuleRegistry::getModule($modelName)->getMigration();
 
         $fields = array_filter($fields, function ($params) {
             return in_array($params['type'], self::FIELD_TYPES);

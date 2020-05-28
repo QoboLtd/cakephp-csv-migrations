@@ -24,8 +24,7 @@ use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\FieldHandlers\Setting;
 use CsvMigrations\Table as Table;
 use Eluceo\iCal\Component\Calendar;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\ModuleRegistry;
 use Qobo\Utils\Utility\User;
 use Webmozart\Assert\Assert;
 
@@ -133,7 +132,7 @@ class IcEmail
 
         $tableName = App::shortName(get_class($this->table), 'Model/Table', 'Table');
         list(, $tableName) = pluginSplit($tableName);
-        $config = (new ModuleConfig(ConfigType::MIGRATION(), $tableName))->parseToArray();
+        $config = ModuleRegistry::getModule($tableName)->getMigration();
 
         if (isset($config[$displayField])) {
             $renderedValue = $factory->renderValue($this->table, $displayField, $this->entity->get($displayField), [

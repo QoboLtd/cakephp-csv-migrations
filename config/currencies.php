@@ -388,7 +388,7 @@ return [
             ],
             'TTD' => [
                 'description' => 'Trinidad and Tobago Dollar',
-                'symbol' => '₺;',
+                'symbol' => 'TT&#36;',
             ],
             'TRY' => [
                 'description' => 'Turkish Lira',

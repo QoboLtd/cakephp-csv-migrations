@@ -18,7 +18,7 @@ $limit = 3;
 ?>
 <div class="row">
 <?php if ($limit < $entities->count()) : ?>
-    <div class="col-xs-12">
+    <div class="col-xs-12 thumbnail-controls">
         <p class="text-right">
             <a href="#collapseFiles<?= $uuid ?>" class="btn btn-default btn-xs" data-toggle="collapse" aria-controls="collapseFiles<?= $uuid ?>" aria-expanded="false" role="button">
                 <span class="dropdown">
@@ -32,7 +32,7 @@ $limit = 3;
     <?php if ($limit < $entities->count() && $limit === $index) : ?>
         <div class="collapse" id="collapseFiles<?= $uuid ?>">
     <?php endif; ?>
-    <div class="col-xs-4">
+    <div class="col-xs-4 thumbnail-<?= $index ?>">
         <a href="<?= $entity->get('path') ?>" target="_blank">
             <div class="thumbnail" title="<?= $entity->get('filename') ?>">
                 <?= $this->Html->image(Hash::get(

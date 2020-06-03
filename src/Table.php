@@ -210,34 +210,46 @@ class Table extends BaseTable implements HasFieldsInterface
      *
      * @param \Cake\ORM\Table $table of the entity table
      * @param \Cake\Datasource\EntityInterface $entity of the actual table.
+     * @param string $parent identifying which config to pick
      *
      * @return mixed[] $result containing CakePHP-standard array for redirect.
      */
-    public function getParentRedirectUrl(RepositoryInterface $table, EntityInterface $entity): array
+    public function getParentRedirectUrl(RepositoryInterface $table, EntityInterface $entity, string $parent): array
     {
         $config = ModuleRegistry::getModule($this->getAlias())->getConfig();
-
-        if (empty($config['parent']['redirect'])) {
+        if (empty($config['parent'])) {
             return [];
         }
 
-        if ('parent' === $config['parent']['redirect']) {
-            if (! isset($config['parent']['module'])) {
+        $parentConfig = [];
+
+        foreach ($config['parent'] as $item) {
+            if ($item['module'] === $parent) {
+                $parentConfig = $item;
+            }
+        }
+
+        if (empty($parentConfig)) {
+            return [];
+        }
+
+        if ('parent' === $parentConfig['redirect']) {
+            if (! isset($parentConfig['module'])) {
                 return [];
             }
 
-            if (! isset($config['parent']['relation'])) {
+            if (! isset($parentConfig['relation'])) {
                 return [];
             }
 
             return [
-                'controller' => $config['parent']['module'],
-                'action' => $entity->get($config['parent']['relation']) ? 'view' : 'index',
-                $entity->get($config['parent']['relation']),
+                'controller' => $parentConfig['module'],
+                'action' => $entity->get($parentConfig['relation']) ? 'view' : 'index',
+                $entity->get($parentConfig['relation']),
             ];
         }
 
-        if ('self' === $config['parent']['redirect']) {
+        if ('self' === $parentConfig['redirect']) {
             $values = [];
             foreach ((array)$table->getPrimaryKey() as $primaryKey) {
                 $values[] = $entity->get($primaryKey);

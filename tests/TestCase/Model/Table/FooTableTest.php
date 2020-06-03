@@ -99,7 +99,7 @@ class FooTableTest extends TestCase
 
     public function testGetParentRedirectUrl(): void
     {
-        $result = $this->table->getParentRedirectUrl($this->table, $this->table->find()->firstOrFail());
+        $result = $this->table->getParentRedirectUrl($this->table, $this->table->find()->firstOrFail(), 'Leads');
         $this->assertTrue(is_array($result));
     }
 

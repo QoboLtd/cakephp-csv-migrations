@@ -443,7 +443,7 @@ final class FileUpload
      */
     private function isAllowed(string $type): bool
     {
-        foreach ((array)Configure::read("FileUpload.allowedMime") as $mime) {
+        foreach ((array)Configure::read('FileUpload.allowedMime') as $mime) {
             if (strpos($type, $mime) === 0) {
                 return true;
             }

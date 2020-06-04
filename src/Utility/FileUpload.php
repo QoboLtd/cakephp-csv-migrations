@@ -391,6 +391,12 @@ final class FileUpload
             return null;
         }
 
+        if (!$this->isAllowed($file['type'])) {
+            $this->log(sprintf('Mine "%s" is not alloed to be uploaded', $file['type']), 'error');
+
+            return null;
+        }
+
         if (0 !== $file['error']) {
             $this->log(sprintf('File upload error code: %s', $file['error']), 'error');
 
@@ -427,6 +433,23 @@ final class FileUpload
         }
 
         return $entity;
+    }
+
+    /**
+     * Compare the mime type with a list of allowed types.
+     *
+     * @param string $type File mime type.
+     * @return bool
+     */
+    private function isAllowed(string $type): bool
+    {
+        foreach ((array)Configure::read("FileUpload.allowedMime") as $mime) {
+            if (strpos($type, $mime) === 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

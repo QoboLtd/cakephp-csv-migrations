@@ -384,4 +384,19 @@ class FileUploadTest extends TestCase
 
         $this->assertTrue($this->fileUpload->removeThumbnails($fileStorage));
     }
+
+    public function testAllowedMimeType(): void
+    {
+        Configure::write("FileUpload.allowedMime", ["text"]);
+
+        $data = [
+            'tmp_name' => TESTS . 'img' . DS . 'qobo.png',
+            'error' => 0,
+            'name' => 'qobo.png',
+            'type' => 'image/png',
+            'size' => 1186,
+        ];
+
+        $this->assertNull($this->fileUpload->save('image', $data));
+    }
 }

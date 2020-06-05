@@ -82,7 +82,7 @@ return [
                 // this should always be set in kilobytes
                 'maxFileSize' => (int)($uploadLimit / 1024),
                 'validateInitialCount' => true,
-                "allowedFileTypes" => [],
+                'allowedFileTypes' => [],
             ],
             'initialPreviewConfig' => [
                 'url' => "/api/file-storages/delete/",

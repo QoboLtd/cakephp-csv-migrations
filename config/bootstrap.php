@@ -31,6 +31,9 @@ $config = $config ? $config : [];
 // load default plugin config
 Configure::load('CsvMigrations.importer');
 
+// load default plugin config
+Configure::load('CsvMigrations.file_upload');
+
 // overwrite default plugin config by app level config
 Configure::write('Importer', array_replace_recursive(
     Configure::read('Importer'),

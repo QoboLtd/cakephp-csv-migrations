@@ -37,6 +37,11 @@ echo $this->Html->scriptBlock(
 );
 
 $fileInputOptions = Configure::read('CsvMigrations.BootstrapFileInput');
+$allowed = Configure::read('FileUpload.allowedMime');
+array_walk($allowed, function(&$v, $k) {
+    $v = explode("/", $v)[0];
+});
+$fileInputOptions['defaults']['allowedFileTypes'] = array_unique($allowed);
 echo $this->Html->scriptBlock(
     'fileInputOptions = ' . json_encode($fileInputOptions) . ';',
     ['block' => 'scriptBottom']

@@ -387,7 +387,7 @@ class FileUploadTest extends TestCase
 
     public function testAllowedMimeType(): void
     {
-        Configure::write("FileUpload.allowedMime", ["text"]);
+        Configure::write('FileUpload.allowedMime', ['text']);
 
         $data = [
             'tmp_name' => TESTS . 'img' . DS . 'qobo.png',

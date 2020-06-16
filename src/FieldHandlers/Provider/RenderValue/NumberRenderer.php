@@ -48,6 +48,11 @@ class NumberRenderer extends AbstractRenderer
             return '0';
         }
 
+        // Avoid to render NULL data
+        if (is_null($data)) {
+            return '';
+        }
+
         // Sanitize
         $number = filter_var($data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 

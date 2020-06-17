@@ -57,6 +57,7 @@ echo $this->Html->script(
         'CsvMigrations.dom-observer',
         'CsvMigrations.embedded',
         'CsvMigrations.panels',
+        'CsvMigrations.sortable.min',
         'CsvMigrations.fileinput.min',
         'CsvMigrations.fileinput-load',
         'CsvMigrations.jquery.dynamicSelect',
@@ -79,6 +80,7 @@ echo $this->Html->script(
         'Qobo/Utils./plugins/tinymce/tinymce.min',
         'CsvMigrations.tinymce.init',
         'Qobo/Utils.select2.init',
+        'CsvMigrations.notify.min',
     ],
     [
         'block' => 'scriptBottom'

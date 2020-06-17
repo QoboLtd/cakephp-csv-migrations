@@ -26,6 +26,7 @@ $(document).ready(function () {
         showRemove: false,
         dropZoneEnabled: false,
         showUploadedThumbs: true,
+        reversePreviewOrder: false,
         fileActionSettings: {
             showUpload: false,
             showZoom: false,
@@ -171,6 +172,7 @@ $(document).ready(function () {
             showUpload: false,
             overwriteInitial: false,
             initialPreviewAsData: true,
+            reversePreviewOrder: false,
             ajaxDeleteSettings: {
                 type: 'delete',
                 dataType: 'json',
@@ -211,6 +213,24 @@ $(document).ready(function () {
             options.initialPreviewConfig = opts;
             options.initialPreview = paths;
             that.refreshFileInput(this, options);
+        }).on("filesorted", function(event, params) {
+            $.post({
+                url: '/api/file-storage/order',
+                data: JSON.stringify(params.stack),
+                headers: {
+                    'Authorization': 'Bearer ' + that.api_token
+                },
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if(data.success) {
+                        $.notify(data.message, "success");
+                    } else {
+                        $.notify(data.message, "error");
+                    }
+
+                }
+            });
         });
     };
 
@@ -293,6 +313,7 @@ $(document).ready(function () {
             initialPreview: this.options.initialPreview,
             initialPreviewConfig: this.options.initialPreviewConfig,
             initialPreviewAsData: true,
+            reversePreviewOrder: false,
             ajaxDeleteSettings: {
                 type: 'delete',
                 dataType: 'json',
@@ -327,6 +348,25 @@ $(document).ready(function () {
         }).on("filebatchselected", function (event) {
             $(document).trigger('updateFiles', [event.target.files, $(this).attr('name')]);
             inputField.fileinput('upload');
+        }).on("filesorted", function(event, params) {
+            console.log(JSON.stringify(params.stack));
+            $.post({
+                url: '/api/file-storage/order',
+                data: JSON.stringify(params.stack),
+                headers: {
+                    'Authorization': 'Bearer ' + that.api_token
+                },
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if(data.success) {
+                        $.notify(data.message, "success");
+                    } else {
+                        $.notify(data.message, "error");
+                    }
+
+                }
+            });
         });
     };
 

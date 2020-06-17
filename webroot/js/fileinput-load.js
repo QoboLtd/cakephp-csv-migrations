@@ -213,7 +213,7 @@ $(document).ready(function () {
             options.initialPreviewConfig = opts;
             options.initialPreview = paths;
             that.refreshFileInput(this, options);
-        }).on("filesorted", function(event, params) {
+        }).on("filesorted", function (event, params) {
             $.post({
                 url: '/api/file-storage/order',
                 data: JSON.stringify(params.stack),
@@ -223,7 +223,7 @@ $(document).ready(function () {
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (data) {
-                    if(data.success) {
+                    if (data.success) {
                         $.notify(data.message, "success");
                     } else {
                         $.notify(data.message, "error");
@@ -348,7 +348,7 @@ $(document).ready(function () {
         }).on("filebatchselected", function (event) {
             $(document).trigger('updateFiles', [event.target.files, $(this).attr('name')]);
             inputField.fileinput('upload');
-        }).on("filesorted", function(event, params) {
+        }).on("filesorted", function (event, params) {
             console.log(JSON.stringify(params.stack));
             $.post({
                 url: '/api/file-storage/order',
@@ -359,7 +359,7 @@ $(document).ready(function () {
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (data) {
-                    if(data.success) {
+                    if (data.success) {
                         $.notify(data.message, "success");
                     } else {
                         $.notify(data.message, "error");

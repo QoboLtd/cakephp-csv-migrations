@@ -14,3 +14,11 @@
 .theme-explorer .explorer-caption {
     display: none !important;
 }
+
+.theme-explorer {
+    width:350px;
+}
+
+.file-details-cell {
+    font-size: 12px;
+}

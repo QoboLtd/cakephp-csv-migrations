@@ -10,14 +10,23 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Qobo\Utils\Module\ModuleRegistry;
+
 $attributes = isset($attributes) ? $attributes : [];
 
 $class = str_replace('.', '_', $name . '_ids');
+
+$config = ModuleRegistry::getModule($table)->getFields();
 
 $options = [
     'multiple' => true,
     'data-upload-url' => sprintf("/api/%s/upload", $table),
 ];
+
+if (isset($config[$field]['orderBy']) && isset($config[$field]['orderDir'])) {
+    $options['data-file-order'] = 1;
+}
+
 if ($value && $entities && $entities->count()) {
     $options['data-document-id'] = $value;
     $files = [];

@@ -23,7 +23,7 @@ $options = [
     'data-upload-url' => sprintf("/api/%s/upload", $table),
 ];
 
-if (isset($config[$field]['orderBy']) && isset($config[$field]['orderDir'])) {
+if (isset($config[$field]['orderBy']) && 'order' == $config[$field]['orderBy'] && isset($config[$field]['orderDir'])) {
     $options['data-file-order'] = 1;
 }
 

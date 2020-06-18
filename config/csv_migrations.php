@@ -68,14 +68,17 @@ return [
         // link: https://github.com/kartik-v/bootstrap-fileinput
         'BootstrapFileInput' => [
             'defaults' => [
-                'showUpload' => true,
+                'theme' => 'explorer',
+                'showCaption' => false,
                 'showRemove' => false,
-                'showUploadedThumbs' => true,
+                'showUploadedThumbs' => false,
+                'reversePreviewOrder' => false,
                 'uploadAsync' => true,
-                'dropZoneEnabled' => false,
+                'dropZoneEnabled' => true,
+                'browseOnZoneClick' => true,
                 'fileActionSettings' => [
                     'showUpload' => false,
-                    'showZoom' => false,
+                    'showZoom' => true,
                 ],
                 'maxFileCount' => 30,
                 'fileSizeGetter' => true,

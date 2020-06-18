@@ -14,26 +14,15 @@ $(document).ready(function () {
             this.createNew(field);
         }
 
+
         field.on('change', function (e) {
             //Trigger the updateFiles Event and pass all the collected uploads
             $(document).trigger('updateFiles', [e.target.files, $(this).attr('name')]);
         });
     };
 
-    FileInput.prototype.defaultOptions = {
-        uploadAsync: true,
-        showUpload: false,
-        showRemove: false,
-        dropZoneEnabled: false,
-        showUploadedThumbs: true,
-        reversePreviewOrder: false,
-        fileActionSettings: {
-            showUpload: false,
-            showZoom: false,
-        },
-        maxFileCount: 30,
-        maxFileSize: 2000,
-    };
+    //Use this to override setting from config
+    FileInput.prototype.defaultOptions = {};
 
     FileInput.prototype.staticHtml = {
         previewOtherFile: "<div class='file-preview-text'><h2>" +
@@ -170,6 +159,7 @@ $(document).ready(function () {
 
         var existing = {
             showUpload: false,
+            showCaption: false,
             overwriteInitial: false,
             initialPreviewAsData: true,
             reversePreviewOrder: false,
@@ -309,6 +299,7 @@ $(document).ready(function () {
         // overwrtting default options in case of existing files
         var existing = {
             showUpload: false,
+            showCaption: false,
             overwriteInitial: false,
             initialPreview: this.options.initialPreview,
             initialPreviewConfig: this.options.initialPreviewConfig,
@@ -349,7 +340,6 @@ $(document).ready(function () {
             $(document).trigger('updateFiles', [event.target.files, $(this).attr('name')]);
             inputField.fileinput('upload');
         }).on("filesorted", function (event, params) {
-            console.log(JSON.stringify(params.stack));
             $.post({
                 url: '/api/file-storage/order',
                 data: JSON.stringify(params.stack),

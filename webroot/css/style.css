@@ -10,3 +10,7 @@
 .datepicker {
     z-index: 1060 !important;
 }
+
+.theme-explorer .explorer-caption {
+    display: none !important;
+}

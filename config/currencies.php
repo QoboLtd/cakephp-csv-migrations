@@ -6,6 +6,10 @@ return [
                 'description' => 'Albania Lek',
                 'symbol' => 'Lek',
             ],
+            'AED' => [
+                'description' => 'UAE Dirham',
+                'symbol' => 'د.إ',
+            ],
             'AFN' => [
                 'description' => 'Afghanistan Afghani',
                 'symbol' => '؋',
@@ -385,6 +389,10 @@ return [
             'TTD' => [
                 'description' => 'Trinidad and Tobago Dollar',
                 'symbol' => 'TT&#36;',
+            ],
+            'TRY' => [
+                'description' => 'Turkish Lira',
+                'symbol' => '₺',
             ],
             'TVD' => [
                 'description' => 'Tuvalu Dollar',

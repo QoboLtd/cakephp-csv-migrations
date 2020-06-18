@@ -19,12 +19,13 @@ echo $this->Html->css(
         'AdminLTE./bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min',
         'AdminLTE./plugins/timepicker/bootstrap-timepicker.min',
         'AdminLTE./bower_components/select2/dist/css/select2.min',
-        'CsvMigrations.fileinput.min',
         'CsvMigrations.style',
         'Qobo/Utils./plugins/datatables/css/dataTables.bootstrap.min',
         'Qobo/Utils.select2-bootstrap.min',
         'Qobo/Utils.select2-style',
-        'Qobo/Utils./img/icons/flags/css/flag-icon.css'
+        'Qobo/Utils./img/icons/flags/css/flag-icon.css',
+        'CsvMigrations.fileinput.min',
+        'CsvMigrations.explorer_theme'
     ],
     [
         'block' => 'css'
@@ -57,8 +58,7 @@ echo $this->Html->script(
         'CsvMigrations.dom-observer',
         'CsvMigrations.embedded',
         'CsvMigrations.panels',
-        'CsvMigrations.fileinput.min',
-        'CsvMigrations.fileinput-load',
+        'CsvMigrations.sortable.min',
         'CsvMigrations.jquery.dynamicSelect',
         'CsvMigrations.jquery.dynamicSelectInit',
         'AdminLTE./plugins/iCheck/icheck.min',
@@ -79,6 +79,10 @@ echo $this->Html->script(
         'Qobo/Utils./plugins/tinymce/tinymce.min',
         'CsvMigrations.tinymce.init',
         'Qobo/Utils.select2.init',
+        'CsvMigrations.notify.min',
+        'CsvMigrations.fileinput.min',
+        'CsvMigrations.explorer_theme',
+        'CsvMigrations.fileinput-load'
     ],
     [
         'block' => 'scriptBottom'

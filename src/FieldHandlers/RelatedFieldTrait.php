@@ -51,6 +51,12 @@ trait RelatedFieldTrait
         }
         // @codingStandardsIgnoreEnd
 
+        // Return if the module is disable
+        $table = TableRegistry::get($relatedProperties['config']['parent']['module']);
+        if (empty($table)) {
+            return [];
+        }
+
         $foreignKey = $this->_getForeignKey(
             TableRegistry::get($relatedProperties['config']['parent']['module']),
             empty($relatedProperties['plugin']) ?

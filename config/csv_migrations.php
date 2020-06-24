@@ -91,6 +91,7 @@ return [
             'initialPreviewConfig' => [
                 'url' => "/api/file-storages/delete/",
             ],
+            'orderField' => 'order',
         ],
         // Configuration options for the ValidateShell
         'ValidateShell' => [

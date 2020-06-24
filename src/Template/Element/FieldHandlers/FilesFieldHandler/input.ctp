@@ -10,6 +10,7 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\Core\Configure;
 use Qobo\Utils\Module\ModuleRegistry;
 
 $attributes = isset($attributes) ? $attributes : [];
@@ -23,7 +24,9 @@ $options = [
     'data-upload-url' => sprintf("/api/%s/upload", $table),
 ];
 
-if (isset($config[$field]['orderBy']) && 'order' == $config[$field]['orderBy'] && isset($config[$field]['orderDir'])) {
+$orderField = Configure::read('CsvMigrations.BootstrapFileInput.orderField');
+
+if (isset($config[$field]['orderBy']) && $orderField == $config[$field]['orderBy'] && isset($config[$field]['orderDir'])) {
     $options['data-file-order'] = 1;
 }
 

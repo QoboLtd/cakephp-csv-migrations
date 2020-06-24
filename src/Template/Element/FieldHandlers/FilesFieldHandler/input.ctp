@@ -35,6 +35,9 @@ if ($value && $entities && $entities->count()) {
             'id' => $entity->id,
             'path' => $entity->path,
             'size' => $entity->get('filesize'),
+            'caption' => h($entity->filename),
+            'type' => ('application/pdf' == $entity->mime_type) ? 'pdf' : 'image',
+            'file_type' => $entity->mime_type,
         ];
     }
     //passed to generate previews

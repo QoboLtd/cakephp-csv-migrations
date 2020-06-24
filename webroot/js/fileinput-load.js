@@ -94,7 +94,9 @@ $(document).ready(function () {
                     var options = {
                         key: file.id,
                         url: '/api/file-storage/delete/' + file.id,
-                        size: file.size
+                        size: file.size,
+                        caption: file.caption,
+                        downloadUrl: file.path
                     };
                     filesOptions.push(options);
                 }
@@ -157,12 +159,24 @@ $(document).ready(function () {
         var paths = [];
         var that = this;
 
+        //Enable file dragging based on data attribute data-file-order
+        //set on FilesFieldHandler/input.ctp
+        var showDrag = false;
+        if (1 == $(inputField).attr('data-file-order')) {
+            showDrag = true;
+        }
+
         var existing = {
             showUpload: false,
-            showCaption: false,
+            showCaption: true,
             overwriteInitial: false,
             initialPreviewAsData: true,
             reversePreviewOrder: false,
+            fileActionSettings: {
+                showDrag: showDrag,
+                showZoom: true,
+                dragIcon: '<i class="glyphicon glyphicon-sort"></i>'
+            },
             ajaxDeleteSettings: {
                 type: 'delete',
                 dataType: 'json',
@@ -295,12 +309,23 @@ $(document).ready(function () {
         var paths = [];
         var that = this;
 
+        //Enable file dragging based on data attribute data-file-order and data-file-order-direction
+        //set on FilesFieldHandler/input.ctp
+        var showDrag = false;
+        if (1 == $(inputField).attr('data-file-order')) {
+            showDrag = true;
+        }
         // Keep existing images on adding new images,
         // overwrtting default options in case of existing files
         var existing = {
             showUpload: false,
-            showCaption: false,
+            showCaption: true,
             overwriteInitial: false,
+            fileActionSettings: {
+                showDrag: showDrag,
+                showZoom: true,
+                dragIcon: '<i class="glyphicon glyphicon-sort"></i>'
+            },
             initialPreview: this.options.initialPreview,
             initialPreviewConfig: this.options.initialPreviewConfig,
             initialPreviewAsData: true,

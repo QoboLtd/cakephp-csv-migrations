@@ -74,11 +74,12 @@ return [
                 'showUploadedThumbs' => false,
                 'reversePreviewOrder' => false,
                 'uploadAsync' => true,
-                'dropZoneEnabled' => true,
+                'dropZoneEnabled' => false,
                 'browseOnZoneClick' => true,
                 'fileActionSettings' => [
                     'showUpload' => false,
-                    'showZoom' => true,
+                    'showZoom' => false,
+                    'showDrag' => true,
                 ],
                 'maxFileCount' => 30,
                 'fileSizeGetter' => true,
@@ -90,6 +91,7 @@ return [
             'initialPreviewConfig' => [
                 'url' => "/api/file-storages/delete/",
             ],
+            'orderField' => 'order',
         ],
         // Configuration options for the ValidateShell
         'ValidateShell' => [

@@ -14,3 +14,7 @@
 .theme-explorer .explorer-caption {
     display: none !important;
 }
+
+.file-details-cell {
+    font-size: 12px;
+}

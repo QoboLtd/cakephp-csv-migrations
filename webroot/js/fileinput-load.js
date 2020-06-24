@@ -94,7 +94,9 @@ $(document).ready(function () {
                     var options = {
                         key: file.id,
                         url: '/api/file-storage/delete/' + file.id,
-                        size: file.size
+                        size: file.size,
+                        caption: file.caption,
+                        downloadUrl: file.path
                     };
                     filesOptions.push(options);
                 }
@@ -166,7 +168,7 @@ $(document).ready(function () {
 
         var existing = {
             showUpload: false,
-            showCaption: false,
+            showCaption: true,
             overwriteInitial: false,
             initialPreviewAsData: true,
             reversePreviewOrder: false,
@@ -317,7 +319,7 @@ $(document).ready(function () {
         // overwrtting default options in case of existing files
         var existing = {
             showUpload: false,
-            showCaption: false,
+            showCaption: true,
             overwriteInitial: false,
             fileActionSettings: {
                 showDrag: showDrag,

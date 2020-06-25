@@ -166,9 +166,12 @@ $(document).ready(function () {
             showDrag = true;
         }
 
+        var maxFileCountAllowed = $(inputField).data('file-limit');
+
         var existing = {
             showUpload: false,
             showCaption: true,
+            maxFileCount: maxFileCountAllowed,
             overwriteInitial: false,
             initialPreviewAsData: true,
             reversePreviewOrder: false,
@@ -315,10 +318,13 @@ $(document).ready(function () {
         if (1 == $(inputField).attr('data-file-order')) {
             showDrag = true;
         }
+
+        var maxFileCountAllowed = $(inputField).data('file-limit');
         // Keep existing images on adding new images,
         // overwrtting default options in case of existing files
         var existing = {
             showUpload: false,
+            maxFileCount: maxFileCountAllowed,
             showCaption: true,
             overwriteInitial: false,
             fileActionSettings: {

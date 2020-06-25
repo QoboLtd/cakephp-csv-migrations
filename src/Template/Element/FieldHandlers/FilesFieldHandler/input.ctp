@@ -30,6 +30,10 @@ if (isset($config[$field]['orderBy']) && $orderField == $config[$field]['orderBy
     $options['data-file-order'] = 1;
 }
 
+if (isset($config[$field]['limit'])) {
+    $options['data-file-limit'] = $config[$field]['limit'];
+}
+
 if ($value && $entities && $entities->count()) {
     $options['data-document-id'] = $value;
     $files = [];

@@ -56,7 +56,7 @@ final class FileUpload
      *
      * @var string[]
      */
-    const IMAGE_EXTENSIONS = ['jpg', 'png', 'jpeg', 'gif'];
+    const IMAGE_EXTENSIONS = ['jpg', 'png', 'jpeg', 'gif', 'jfif'];
 
     /**
      * Table instance.

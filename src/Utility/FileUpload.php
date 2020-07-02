@@ -103,13 +103,19 @@ final class FileUpload
      *
      * @param string $field Field name
      * @param string $id Foreign key value (UUID)
+     * @param mixed[] $orderBy Order by fields and direction
      * @return \Cake\Datasource\ResultSetInterface
      */
-    public function getFiles(string $field, string $id): ResultSetInterface
+    public function getFiles(string $field, string $id, array $orderBy = []): ResultSetInterface
     {
         $query = $this->storageTable->find('all')
-            ->where([self::FILE_STORAGE_FOREIGN_KEY => $id, 'model' => $this->table->getTable(), 'model_field' => $field])
-            ->order($this->getOrderClause($field));
+            ->where([self::FILE_STORAGE_FOREIGN_KEY => $id, 'model' => $this->table->getTable(), 'model_field' => $field]);
+
+        if (0 < count($orderBy)) {
+            $query->order($orderBy);
+        } else {
+            $query->order($this->getOrderClause($field));
+        }
 
         $result = $query->all();
         foreach ($result as $entity) {

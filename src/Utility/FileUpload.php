@@ -116,11 +116,13 @@ final class FileUpload
                     'model_field' => $field]
             );
 
-        if (0 < count($orderBy)) {
-            $query->order($orderBy);
-        } else {
-            $query->order($this->getOrderClause($field));
+        $orderClause = $orderBy;
+
+        if (0 == count($orderClause)) {
+            $orderClause = $this->getOrderClause($field);
         }
+
+        $query->order($orderClause);
 
         $result = $query->all();
         foreach ($result as $entity) {

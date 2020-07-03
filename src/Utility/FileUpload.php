@@ -109,7 +109,12 @@ final class FileUpload
     public function getFiles(string $field, string $id, array $orderBy = []): ResultSetInterface
     {
         $query = $this->storageTable->find('all')
-            ->where([self::FILE_STORAGE_FOREIGN_KEY => $id, 'model' => $this->table->getTable(), 'model_field' => $field]);
+            ->where(
+                [
+                    self::FILE_STORAGE_FOREIGN_KEY => $id,
+                    'model' => $this->table->getTable(),
+                    'model_field' => $field]
+            );
 
         if (0 < count($orderBy)) {
             $query->order($orderBy);

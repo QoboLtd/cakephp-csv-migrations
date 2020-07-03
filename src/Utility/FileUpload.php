@@ -118,7 +118,7 @@ final class FileUpload
 
         $orderClause = $orderBy;
 
-        if (0 == count($orderClause)) {
+        if (0 === count($orderClause)) {
             $orderClause = $this->getOrderClause($field);
         }
 

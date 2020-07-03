@@ -10,14 +10,30 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\Core\Configure;
+use Qobo\Utils\Module\ModuleRegistry;
+
 $attributes = isset($attributes) ? $attributes : [];
 
 $class = str_replace('.', '_', $name . '_ids');
+
+$config = ModuleRegistry::getModule($table)->getFields();
 
 $options = [
     'multiple' => true,
     'data-upload-url' => sprintf("/api/%s/upload", $table),
 ];
+
+$orderField = Configure::read('CsvMigrations.BootstrapFileInput.orderField');
+
+if (isset($config[$field]['orderBy']) && $orderField == $config[$field]['orderBy'] && isset($config[$field]['orderDir'])) {
+    $options['data-file-order'] = 1;
+}
+
+if (isset($config[$field]['limit'])) {
+    $options['data-file-limit'] = $config[$field]['limit'];
+}
+
 if ($value && $entities && $entities->count()) {
     $options['data-document-id'] = $value;
     $files = [];
@@ -26,6 +42,9 @@ if ($value && $entities && $entities->count()) {
             'id' => $entity->id,
             'path' => $entity->path,
             'size' => $entity->get('filesize'),
+            'caption' => h($entity->filename),
+            'type' => ('application/pdf' == $entity->mime_type) ? 'pdf' : 'image',
+            'file_type' => $entity->mime_type,
         ];
     }
     //passed to generate previews

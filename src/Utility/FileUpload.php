@@ -27,8 +27,8 @@ use Cake\Utility\Hash;
 use Cake\View\Helper\UrlHelper;
 use Cake\View\View;
 use CsvMigrations\Event\EventName;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\Exception\MissingModuleException;
+use Qobo\Utils\Module\ModuleRegistry;
 use Qobo\Utils\Utility;
 use Webmozart\Assert\Assert;
 
@@ -56,7 +56,7 @@ final class FileUpload
      *
      * @var string[]
      */
-    const IMAGE_EXTENSIONS = ['jpg', 'png', 'jpeg', 'gif'];
+    const IMAGE_EXTENSIONS = ['jpg', 'png', 'jpeg', 'gif', 'jfif'];
 
     /**
      * Table instance.
@@ -103,13 +103,26 @@ final class FileUpload
      *
      * @param string $field Field name
      * @param string $id Foreign key value (UUID)
+     * @param mixed[] $orderBy Order by fields and direction
      * @return \Cake\Datasource\ResultSetInterface
      */
-    public function getFiles(string $field, string $id): ResultSetInterface
+    public function getFiles(string $field, string $id, array $orderBy = []): ResultSetInterface
     {
         $query = $this->storageTable->find('all')
-            ->where([self::FILE_STORAGE_FOREIGN_KEY => $id, 'model' => $this->table->getTable(), 'model_field' => $field])
-            ->order($this->getOrderClause($field));
+            ->where(
+                [
+                    self::FILE_STORAGE_FOREIGN_KEY => $id,
+                    'model' => $this->table->getTable(),
+                    'model_field' => $field]
+            );
+
+        $orderClause = $orderBy;
+
+        if (0 === count($orderClause)) {
+            $orderClause = $this->getOrderClause($field);
+        }
+
+        $query->order($orderClause);
 
         $result = $query->all();
         foreach ($result as $entity) {
@@ -129,9 +142,18 @@ final class FileUpload
     private function getOrderClause(string $field): array
     {
         $className = App::shortName(get_class($this->table), 'Model/Table', 'Table');
-        $config = (new ModuleConfig(ConfigType::FIELDS(), $className))->parseToArray();
+        $config = [];
+        try {
+            $config = ModuleRegistry::getModule($className)->getFields();
+        } catch (MissingModuleException $e) {
+            return [];
+        }
 
-        if (!isset($config[$field]['orderBy']) || !isset($config[$field]['orderDir'])) {
+        if (empty($config[$field]['orderBy'])) {
+            return [];
+        }
+
+        if (empty($config[$field]['orderDir'])) {
             return [];
         }
 
@@ -214,7 +236,7 @@ final class FileUpload
 
         $files = $this->getFiles($mediaSource, $id);
         $thumbs = $files->extract($mediaSize ? 'thumbnails.' . $mediaSize : 'path')->map(function ($thumb) {
-            return Router::fullBaseUrl() . $thumb;
+            return Router::url($thumb, true);
         })->toArray();
 
         return $thumbs;
@@ -382,6 +404,12 @@ final class FileUpload
             return null;
         }
 
+        if (!$this->isAllowed($file['type'])) {
+            $this->log(sprintf('Mine "%s" is not alloed to be uploaded', $file['type']), 'error');
+
+            return null;
+        }
+
         if (0 !== $file['error']) {
             $this->log(sprintf('File upload error code: %s', $file['error']), 'error');
 
@@ -418,6 +446,23 @@ final class FileUpload
         }
 
         return $entity;
+    }
+
+    /**
+     * Compare the mime type with a list of allowed types.
+     *
+     * @param string $type File mime type.
+     * @return bool
+     */
+    private function isAllowed(string $type): bool
+    {
+        foreach ((array)Configure::read('FileUpload.allowedMime') as $mime) {
+            if (strpos($type, $mime) === 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -463,7 +508,7 @@ final class FileUpload
      */
     public static function fileFields(string $modelName): array
     {
-        $fields = (new ModuleConfig(ConfigType::MIGRATION(), $modelName))->parseToArray();
+        $fields = ModuleRegistry::getModule($modelName)->getMigration();
 
         $fields = array_filter($fields, function ($params) {
             return in_array($params['type'], self::FIELD_TYPES);

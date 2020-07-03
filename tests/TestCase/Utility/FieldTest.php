@@ -170,7 +170,7 @@ class FieldTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expected, Field::getList('list'));
+        $this->assertSame($expected, Field::getList('Common.list'));
     }
 
     public function testGetListWithModule(): void
@@ -214,7 +214,7 @@ class FieldTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expected, Field::getList('nested'));
+        $this->assertSame($expected, Field::getList('Common.nested'));
     }
 
     public function testGetListWithChildrenFlatten(): void
@@ -238,7 +238,7 @@ class FieldTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expected, Field::getList('nested', true));
+        $this->assertSame($expected, Field::getList('Common.nested', true));
     }
 
     public function testGetListEmpty(): void

@@ -14,25 +14,15 @@ $(document).ready(function () {
             this.createNew(field);
         }
 
+
         field.on('change', function (e) {
             //Trigger the updateFiles Event and pass all the collected uploads
             $(document).trigger('updateFiles', [e.target.files, $(this).attr('name')]);
         });
     };
 
-    FileInput.prototype.defaultOptions = {
-        uploadAsync: true,
-        showUpload: false,
-        showRemove: false,
-        dropZoneEnabled: false,
-        showUploadedThumbs: true,
-        fileActionSettings: {
-            showUpload: false,
-            showZoom: false,
-        },
-        maxFileCount: 30,
-        maxFileSize: 2000,
-    };
+    //Use this to override setting from config
+    FileInput.prototype.defaultOptions = {};
 
     FileInput.prototype.staticHtml = {
         previewOtherFile: "<div class='file-preview-text'><h2>" +
@@ -104,7 +94,9 @@ $(document).ready(function () {
                     var options = {
                         key: file.id,
                         url: '/api/file-storage/delete/' + file.id,
-                        size: file.size
+                        size: file.size,
+                        caption: file.caption,
+                        downloadUrl: file.path
                     };
                     filesOptions.push(options);
                 }
@@ -167,10 +159,27 @@ $(document).ready(function () {
         var paths = [];
         var that = this;
 
+        //Enable file dragging based on data attribute data-file-order
+        //set on FilesFieldHandler/input.ctp
+        var showDrag = false;
+        if (1 == $(inputField).attr('data-file-order')) {
+            showDrag = true;
+        }
+
+        var maxFileCountAllowed = $(inputField).data('file-limit');
+
         var existing = {
             showUpload: false,
+            showCaption: true,
+            maxFileCount: maxFileCountAllowed,
             overwriteInitial: false,
             initialPreviewAsData: true,
+            reversePreviewOrder: false,
+            fileActionSettings: {
+                showDrag: showDrag,
+                showZoom: true,
+                dragIcon: '<i class="glyphicon glyphicon-sort"></i>'
+            },
             ajaxDeleteSettings: {
                 type: 'delete',
                 dataType: 'json',
@@ -211,6 +220,24 @@ $(document).ready(function () {
             options.initialPreviewConfig = opts;
             options.initialPreview = paths;
             that.refreshFileInput(this, options);
+        }).on("filesorted", function (event, params) {
+            $.post({
+                url: '/api/file-storage/order',
+                data: JSON.stringify(params.stack),
+                headers: {
+                    'Authorization': 'Bearer ' + that.api_token
+                },
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        $.notify(data.message, "success");
+                    } else {
+                        $.notify(data.message, "error");
+                    }
+
+                }
+            });
         });
     };
 
@@ -285,14 +312,30 @@ $(document).ready(function () {
         var paths = [];
         var that = this;
 
+        //Enable file dragging based on data attribute data-file-order and data-file-order-direction
+        //set on FilesFieldHandler/input.ctp
+        var showDrag = false;
+        if (1 == $(inputField).attr('data-file-order')) {
+            showDrag = true;
+        }
+
+        var maxFileCountAllowed = $(inputField).data('file-limit');
         // Keep existing images on adding new images,
         // overwrtting default options in case of existing files
         var existing = {
             showUpload: false,
+            maxFileCount: maxFileCountAllowed,
+            showCaption: true,
             overwriteInitial: false,
+            fileActionSettings: {
+                showDrag: showDrag,
+                showZoom: true,
+                dragIcon: '<i class="glyphicon glyphicon-sort"></i>'
+            },
             initialPreview: this.options.initialPreview,
             initialPreviewConfig: this.options.initialPreviewConfig,
             initialPreviewAsData: true,
+            reversePreviewOrder: false,
             ajaxDeleteSettings: {
                 type: 'delete',
                 dataType: 'json',
@@ -327,6 +370,24 @@ $(document).ready(function () {
         }).on("filebatchselected", function (event) {
             $(document).trigger('updateFiles', [event.target.files, $(this).attr('name')]);
             inputField.fileinput('upload');
+        }).on("filesorted", function (event, params) {
+            $.post({
+                url: '/api/file-storage/order',
+                data: JSON.stringify(params.stack),
+                headers: {
+                    'Authorization': 'Bearer ' + that.api_token
+                },
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        $.notify(data.message, "success");
+                    } else {
+                        $.notify(data.message, "error");
+                    }
+
+                }
+            });
         });
     };
 

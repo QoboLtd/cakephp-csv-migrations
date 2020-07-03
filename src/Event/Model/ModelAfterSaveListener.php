@@ -34,8 +34,7 @@ use CsvMigrations\Utility\ICal\IcEmail;
 use DateTimeZone;
 use InvalidArgumentException;
 use Psr\Log\LogLevel;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\ModuleRegistry;
 use Webmozart\Assert\Assert;
 
 class ModelAfterSaveListener implements EventListenerInterface
@@ -184,7 +183,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      */
     protected function getRemindersToModules(RepositoryInterface $table): array
     {
-        $config = (new ModuleConfig(ConfigType::MODULE(), $table->getRegistryAlias()))->parseToArray();
+        $config = ModuleRegistry::getModule($table->getRegistryAlias())->getConfig();
         if (empty($config['table']['allow_reminders'])) {
             return [];
         }
@@ -210,7 +209,7 @@ class ModelAfterSaveListener implements EventListenerInterface
      */
     protected function getReminderField(RepositoryInterface $table): string
     {
-        $config = (new ModuleConfig(ConfigType::MIGRATION(), $table->getRegistryAlias()))->parseToArray();
+        $config = ModuleRegistry::getModule($table->getRegistryAlias())->getMigration();
 
         $fields = array_filter((array)$config, function ($field) {
             if ('reminder' === $field['type']) {

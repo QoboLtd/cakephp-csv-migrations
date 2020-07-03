@@ -25,8 +25,7 @@ use Cake\Validation\Validator;
 use CsvMigrations\Event\EventName;
 use CsvMigrations\FieldHandlers\FieldHandlerFactory;
 use CsvMigrations\Model\AssociationsAwareTrait;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\ModuleRegistry;
 use Qobo\Utils\Utility\User;
 
 /**
@@ -58,10 +57,8 @@ class Table extends BaseTable implements HasFieldsInterface
 
         $this->addBehavior('Qobo/Utils.Footprint');
 
-        $module_config = (new ModuleConfig(
-            ConfigType::MODULE(),
-            App::shortName($config['className'], 'Model/Table', 'Table')
-        ))->parseToArray();
+        $moduleName = App::shortName($config['className'], 'Model/Table', 'Table');
+        $module_config = ModuleRegistry::getModule($moduleName)->getConfig();
 
         // Set trash behavior
         if (!isset($module_config['table']['trash']) || $module_config['table']['trash'] === true) {
@@ -101,10 +98,8 @@ class Table extends BaseTable implements HasFieldsInterface
     public function validationEnabled(Validator $validator): Validator
     {
         $className = App::shortName(get_class($this), 'Model/Table', 'Table');
-        $config = (new ModuleConfig(ConfigType::MIGRATION(), $className))->parseToArray();
-        if (empty($config)) {
-            return $validator;
-        }
+        $config = ModuleRegistry::getModule($className)->getMigration();
+        $factory = new FieldHandlerFactory();
 
         $factory = new FieldHandlerFactory();
         foreach ($config as $column) {
@@ -188,10 +183,9 @@ class Table extends BaseTable implements HasFieldsInterface
             $moduleName = App::shortName(get_class($this), 'Model/Table', 'Table');
             list(, $moduleName) = pluginSplit($moduleName);
 
-            $mc = new ModuleConfig(ConfigType::MIGRATION(), $moduleName);
-            $result = $mc->parseToArray();
-            if (! empty($result)) {
-                $this->_fieldDefinitions = $result;
+            $config = ModuleRegistry::getModule($moduleName)->getMigration();
+            if (!empty($config)) {
+                $result = $this->_fieldDefinitions = $config;
             }
         }
 
@@ -217,13 +211,26 @@ class Table extends BaseTable implements HasFieldsInterface
      *
      * @param \Cake\ORM\Table $table of the entity table
      * @param \Cake\Datasource\EntityInterface $entity of the actual table.
+     * @param string $parent identifying which config to pick
      *
      * @return mixed[] $result containing CakePHP-standard array for redirect.
      */
-    public function getParentRedirectUrl(RepositoryInterface $table, EntityInterface $entity): array
+    public function getParentRedirectUrl(RepositoryInterface $table, EntityInterface $entity, string $parent): array
     {
         $config = (new ModuleConfig(ConfigType::MODULE(), $this->getAlias()))->parseToArray();
         if (! isset($config['parent']['redirect'])) {
+            return [];
+        }
+
+        $parentConfig = [];
+
+        foreach ($config['parent'] as $item) {
+            if ($item['module'] === $parent) {
+                $parentConfig = $item;
+            }
+        }
+
+        if (empty($parentConfig)) {
             return [];
         }
 
@@ -237,13 +244,13 @@ class Table extends BaseTable implements HasFieldsInterface
             }
 
             return [
-                'controller' => $config['parent']['module'],
-                'action' => $entity->get($config['parent']['relation']) ? 'view' : 'index',
-                $entity->get($config['parent']['relation']),
+                'controller' => $parentConfig['module'],
+                'action' => $entity->get($parentConfig['relation']) ? 'view' : 'index',
+                $entity->get($parentConfig['relation']),
             ];
         }
 
-        if ('self' === $config['parent']['redirect']) {
+        if ('self' === $parentConfig['redirect']) {
             $values = [];
             foreach ((array)$table->getPrimaryKey() as $primaryKey) {
                 $values[] = $entity->get($primaryKey);

@@ -78,7 +78,9 @@
     };
 
     Panel.prototype.resetPanels = function () {
-        $(this.form).find('[data-provide="dynamic-panel"].hidden').find(':input').attr('disabled', false);
+        if (window.location.href.indexOf("/batch/edit") === -1) {
+            $(this.form).find('[data-provide="dynamic-panel"].hidden').find(':input').attr('disabled', false);
+        }
         $(this.form).find('[data-provide="dynamic-panel"]').removeClass('hidden');
     };
 

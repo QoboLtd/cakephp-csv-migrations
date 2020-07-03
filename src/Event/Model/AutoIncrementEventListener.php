@@ -22,8 +22,7 @@ use Cake\Event\EventListenerInterface;
 use Cake\ORM\Entity;
 use Cake\Utility\Inflector;
 use CsvMigrations\Table;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\ModuleRegistry;
 use Webmozart\Assert\Assert;
 
 class AutoIncrementEventListener implements EventListenerInterface
@@ -116,8 +115,7 @@ class AutoIncrementEventListener implements EventListenerInterface
     private function getAutoIncrementFields(Table $table): array
     {
         $moduleName = Inflector::camelize($table->getTable());
-        $mc = new ModuleConfig(ConfigType::FIELDS(), $moduleName);
-        $config = $mc->parseToArray();
+        $config = ModuleRegistry::getModule($moduleName)->getFields();
 
         if (empty($config)) {
             return [];

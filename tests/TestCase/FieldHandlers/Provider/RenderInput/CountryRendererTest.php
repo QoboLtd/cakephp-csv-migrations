@@ -52,7 +52,7 @@ class CountryRendererTest extends TestCase
             'label' => 'Country',
             'fieldDefinitions' => new CsvField([
                 'name' => 'country',
-                'type' => 'country(countries)',
+                'type' => 'country(Common.countries)',
                 'required' => false,
                 'non-searchable' => false,
                 'unique' => false,

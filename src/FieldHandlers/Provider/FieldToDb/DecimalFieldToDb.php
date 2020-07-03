@@ -49,10 +49,12 @@ class DecimalFieldToDb extends AbstractFieldToDb
         $limit = (string)$dbField->getLimit();
         if (! empty($limit) && false !== strpos($limit, '.')) {
             list($precision, $scale) = explode('.', $limit);
-            $fieldOptions = $dbField->getOptions();
-            $fieldOptions['precision'] = $precision;
-            $fieldOptions['scale'] = $scale;
-            $dbField->setOptions($fieldOptions);
+            if (ctype_digit($precision) && ctype_digit($scale)) {
+                $fieldOptions = $dbField->getOptions();
+                $fieldOptions['precision'] = $precision;
+                $fieldOptions['scale'] = $scale;
+                $dbField->setOptions($fieldOptions);
+            }
         }
 
         $result = [

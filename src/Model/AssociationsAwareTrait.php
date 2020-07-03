@@ -19,8 +19,8 @@ use Cake\ORM\Behavior;
 use Cake\Utility\Inflector;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\Utility\FileUpload;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\Exception\MissingModuleException;
+use Qobo\Utils\Module\ModuleRegistry;
 use Qobo\Utils\Utility;
 use RuntimeException;
 use Webmozart\Assert\Assert;
@@ -70,10 +70,14 @@ trait AssociationsAwareTrait
      */
     protected function setByModule(string $module): void
     {
-        $config = (new ModuleConfig(ConfigType::MODULE(), $module))->parseToArray();
+        try {
+            $config = ModuleRegistry::getModule($module)->getConfig();
+        } catch (MissingModuleException $e) {
+            return;
+        }
         $fields = $this->getModuleFields($module);
 
-        if (!isset($config['table']['type'])) {
+        if (empty($config['table']['type'])) {
             return;
         }
 
@@ -416,7 +420,8 @@ trait AssociationsAwareTrait
      */
     private function getModuleFields(string $module): array
     {
-        $fields = (new ModuleConfig(ConfigType::MIGRATION(), $module))->parseToArray();
+        $fields = ModuleRegistry::getModule($module)->getMigration();
+
         foreach ($fields as $k => $v) {
             $fields[$k] = new CsvField($v);
         }

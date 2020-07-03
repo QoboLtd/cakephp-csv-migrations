@@ -23,7 +23,7 @@ foreach (array_keys($inputs) as $fieldName) {
     <?= $this->Html->help($help); ?>
     <div class="row combined-field">
     <?php foreach ($inputs as $input) : ?>
-        <div class="col-xs-6 col-lg-4"><?= $input ?></div>
+        <div class="col-xs-6 col-md-6 col-lg-5"><?= $input ?></div>
     <?php endforeach; ?>
     </div>
 </div>

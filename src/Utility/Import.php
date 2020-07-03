@@ -29,8 +29,7 @@ use CsvMigrations\Model\Entity\Import as ImportEntity;
 use CsvMigrations\Model\Table\ImportResultsTable;
 use CsvMigrations\Model\Table\ImportsTable;
 use League\Csv\Reader;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\ModuleRegistry;
 
 class Import
 {
@@ -373,7 +372,7 @@ class Import
         $pattern = Configure::readOrFail("Translate.pattern");
 
         // find translatable fields
-        $config = (new ModuleConfig(ConfigType::FIELDS(), $model))->parseToArray();
+        $config = ModuleRegistry::getModule($model)->getFields();
         $translate = array_keys(array_filter($config, function ($v) {
             return !empty($v['translatable']);
         }));
@@ -411,7 +410,7 @@ class Import
         }
 
         $result = array_merge($result, array_keys(
-            array_filter((new ModuleConfig(ConfigType::FIELDS(), $model))->parseToArray(), function ($item) {
+            array_filter(ModuleRegistry::getModule($model)->getFields(), function ($item) {
                 return array_key_exists('auto-increment', $item) && true === $item['auto-increment'];
             })
         ));

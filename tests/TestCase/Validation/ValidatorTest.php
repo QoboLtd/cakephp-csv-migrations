@@ -5,6 +5,7 @@ namespace CsvMigrations\Test\TestCase\Validation;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator as CakeValidator;
 use CsvMigrations\Validation\Validator;
+use Qobo\Utils\Module\ModuleRegistry;
 
 class ValidatorTest extends TestCase
 {
@@ -67,16 +68,34 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Test that an item from a list can be validated successfully
+     * Test that an item from a non existing list in an existing module
+     * throws an error.
      *
      * @return void
      */
     public function testInModuleListModuleConfigErrorIsCaught(): void
     {
+        $commonModule = ModuleRegistry::getModule('Common');
+        $shouldSkip = !method_exists($commonModule, 'getListOrFail');
+        $this->skipIf($shouldSkip, 'Skipping until `Qobo\Utils\Module\Module` implements `getListOrFail`.');
+
         $result = $this->Validator->inModuleList('EUR', 'Common', 'bad_currencies_list');
         $this->assertTrue(is_string($result), 'Expected error string');
         $this->assertContains('Path does not', $result);
         $this->assertContains('bad_currencies_list', $result);
+    }
+
+    /**
+     * Test that an error message is returned when a missing module is referenced.
+     *
+     * @return void
+     */
+    public function testInModuleListMissingModule(): void
+    {
+        $result = $this->Validator->inModuleList('EUR', 'BadCommon', 'currencies');
+        $this->assertTrue(is_string($result), 'Expected error string');
+        $this->assertContains('does not exist', $result);
+        $this->assertContains('BadCommon', $result);
     }
 
     /**

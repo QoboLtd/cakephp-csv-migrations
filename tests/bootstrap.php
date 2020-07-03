@@ -3,6 +3,7 @@
 use Cake\Core\Configure;
 use Cake\Filesystem\Folder;
 use Cake\Mailer\Email;
+use Cake\TestSuite\ConsoleIntegrationTestCase;
 use Cake\Utility\Security;
 
 $pluginName = 'CsvMigrations';
@@ -146,3 +147,13 @@ Email::setConfig([
         'transport' => 'debug',
     ],
 ]);
+
+// Generate module files for tests
+$runner = new class extends ConsoleIntegrationTestCase {
+};
+$modulesPath = TESTS . 'config' . DS . 'Modules' . DS;
+$modulesFolder = new Folder($modulesPath);
+foreach ($modulesFolder->read()[0] as $dir) {
+    $runner->exec('generate_modules module ' . $dir . ' -f --module-path=' . $modulesPath);
+    $runner->assertOutputContains('<success>', sprintf('Failed to generate module: %s', $dir));
+}

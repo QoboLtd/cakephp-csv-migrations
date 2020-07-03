@@ -12,6 +12,8 @@ parameters:
     ignoreErrors:
         # This rule is ignored to avoid aborting early during import shell execution.
         - '#In method "CsvMigrations\\Shell\\ImportShell::_processData", caught "Exception" must be rethrown.#'
+    excludes_analyse:
+        - tests/App/Module/*.php
 includes:
     - vendor/phpstan/phpstan-webmozart-assert/extension.neon
     - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon

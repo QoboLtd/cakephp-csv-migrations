@@ -13,8 +13,7 @@
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\Model\Table\ImportsTable;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\ModuleRegistry;
 
 $statusLabels = [
     ImportsTable::STATUS_IN_PROGRESS => 'primary',
@@ -30,9 +29,9 @@ $options = [
 
 // generate title
 if (!$options['title']) {
-    $config = (new ModuleConfig(ConfigType::MODULE(), $this->name))->parseToArray();
+    $config = ModuleRegistry::getModule($this->name)->getConfig();
     $options['title'] = $this->Html->link(
-        $config['table']['alias'] ?? Inflector::humanize(Inflector::underscore($this->name)),
+        isset($config['table']['alias']) ? $config['table']['alias'] : Inflector::humanize(Inflector::underscore($this->name)),
         ['plugin' => $this->plugin, 'controller' => $this->name, 'action' => 'index']
     );
     $options['title'] .= ' &raquo; ';
@@ -97,7 +96,7 @@ $resultsTable = TableRegistry::get('CsvMigrations.ImportResults');
                                 <th class="actions"><?= __d('Qobo/CsvMigrations', 'Actions'); ?></th>
                             </tr>
                             <?php foreach ($existingImports as $existingImport) : ?>
-                            <?php 
+                            <?php
                                 $imported = $resultsTable->find('imported', ['import' => $existingImport])->count();
                                 $updated = $resultsTable->find('updated', ['import' => $existingImport])->count();
                                 $pending = $resultsTable->find('pending', ['import' => $existingImport])->count();

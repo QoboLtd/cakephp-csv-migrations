@@ -68,24 +68,30 @@ return [
         // link: https://github.com/kartik-v/bootstrap-fileinput
         'BootstrapFileInput' => [
             'defaults' => [
-                'showUpload' => true,
+                'theme' => 'explorer',
+                'showCaption' => false,
                 'showRemove' => false,
-                'showUploadedThumbs' => true,
+                'showUploadedThumbs' => false,
+                'reversePreviewOrder' => false,
                 'uploadAsync' => true,
                 'dropZoneEnabled' => false,
+                'browseOnZoneClick' => true,
                 'fileActionSettings' => [
                     'showUpload' => false,
                     'showZoom' => false,
+                    'showDrag' => true,
                 ],
                 'maxFileCount' => 30,
                 'fileSizeGetter' => true,
                 // this should always be set in kilobytes
                 'maxFileSize' => (int)($uploadLimit / 1024),
                 'validateInitialCount' => true,
+                'allowedFileTypes' => [],
             ],
             'initialPreviewConfig' => [
                 'url' => "/api/file-storages/delete/",
             ],
+            'orderField' => 'order',
         ],
         // Configuration options for the ValidateShell
         'ValidateShell' => [

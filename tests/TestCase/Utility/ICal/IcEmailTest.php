@@ -3,6 +3,7 @@
 namespace CsvMigrations\Test\TestCase\Utility\ICal;
 
 use Cake\ORM\TableRegistry;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use CsvMigrations\Utility\ICal\IcEmail;
 
@@ -66,7 +67,7 @@ class IcEmailTest extends TestCase
     public function testGetEntityUrl(): void
     {
         $this->assertSame(
-            '/articles/view/' . $this->entity->get('id'),
+            Router::url('/articles/view/' . $this->entity->get('id'), true),
             (new IcEmail($this->table, $this->entity))->getEntityUrl()
         );
     }
@@ -74,7 +75,7 @@ class IcEmailTest extends TestCase
     public function testGetEntityUrlWithNewEntity(): void
     {
         $this->assertSame(
-            '/articles/view',
+            Router::url('/articles/view', true),
             (new IcEmail($this->table, $this->table->newEntity(['name' => 'Foobar'])))->getEntityUrl()
         );
     }
@@ -82,7 +83,7 @@ class IcEmailTest extends TestCase
     public function testGetEmailContent(): void
     {
         $this->assertSame(
-            "Article \"Hello World!\" updated by System\n\n* Status: changed from \"draft\" to \"published\".\n\n\n\nSee more: /articles/view/" . $this->entity->get('id'),
+            "Article \"Hello World!\" updated by System\n\n* Status: changed from \"draft\" to \"published\".\n\n\n\nSee more: " . Router::url('/articles/view/' . $this->entity->get('id'), true),
             (new IcEmail($this->table, $this->entity))->getEmailContent()
         );
     }
@@ -90,7 +91,7 @@ class IcEmailTest extends TestCase
     public function testGetEmailContentWithNewEntity(): void
     {
         $this->assertSame(
-            "Article \"Foobar\" created by System\n\nSee more: /articles/view",
+            "Article \"Foobar\" created by System\n\nSee more: " . Router::url('/articles/view', true),
             (new IcEmail($this->table, $this->table->newEntity(['name' => 'Foobar'])))->getEmailContent()
         );
     }
@@ -98,7 +99,7 @@ class IcEmailTest extends TestCase
     public function testGetEventContent(): void
     {
         $this->assertSame(
-            "\n\nSee more: /articles/view/" . $this->entity->get('id'),
+            "\n\nSee more: " . Router::url('/articles/view/' . $this->entity->get('id'), true),
             (new IcEmail($this->table, $this->entity))->getEventContent()
         );
     }

@@ -20,8 +20,7 @@ use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use CsvMigrations\Exception\UnsupportedPrimaryKeyException;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\ModuleRegistry;
 use RuntimeException;
 use Webmozart\Assert\Assert;
 
@@ -51,6 +50,12 @@ trait RelatedFieldTrait
             return [];
         }
         // @codingStandardsIgnoreEnd
+
+        // Return if the module is disable
+        $table = TableRegistry::get($relatedProperties['config']['parent']['module']);
+        if (empty($table)) {
+            return [];
+        }
 
         $foreignKey = $this->_getForeignKey(
             TableRegistry::getTableLocator()->get($relatedProperties['config']['parent']['module']),
@@ -90,7 +95,7 @@ trait RelatedFieldTrait
     {
         $table = TableRegistry::getTableLocator()->get($tableName);
 
-        $config = (new ModuleConfig(ConfigType::MODULE(), $tableName))->parseToArray();
+        $config = ModuleRegistry::getModule($tableName)->getConfig();
 
         $displayField = $table->getDisplayField();
         $displayFieldValue = '';
@@ -186,7 +191,7 @@ trait RelatedFieldTrait
      */
     protected function _getInputHelp(array $properties): string
     {
-        $config = (new ModuleConfig(ConfigType::MODULE(), $properties['controller']))->parseToArray();
+        $config = ModuleRegistry::getModule($properties['controller'])->getConfig();
         $typeaheadFields = !empty($config['table']['typeahead_fields']) ? $config['table']['typeahead_fields'] : [];
         // if no typeahead fields, use display field
         if (empty($typeaheadFields)) {
@@ -225,7 +230,7 @@ trait RelatedFieldTrait
      */
     protected function _getInputIcon(array $properties): string
     {
-        $config = (new ModuleConfig(ConfigType::MODULE(), $properties['controller']))->parseToArray();
+        $config = ModuleRegistry::getModule($properties['controller'])->getConfig();
 
         if (! isset($config['table'])) {
             return Configure::read('CsvMigrations.default_icon');

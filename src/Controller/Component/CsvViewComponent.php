@@ -26,8 +26,7 @@ use Cake\Event\Event;
 use CsvMigrations\Controller\Traits\PanelsTrait;
 use CsvMigrations\FieldHandlers\CsvField;
 use CsvMigrations\Utility\Field;
-use Qobo\Utils\ModuleConfig\ConfigType;
-use Qobo\Utils\ModuleConfig\ModuleConfig;
+use Qobo\Utils\Module\ModuleRegistry;
 use Webmozart\Assert\Assert;
 
 /**
@@ -93,8 +92,7 @@ class CsvViewComponent extends Component
         $controller = $event->getSubject();
         Assert::isInstanceOf($controller, Controller::class);
 
-        $config = new ModuleConfig(ConfigType::MODULE(), $controller->getName());
-        $config = $config->parseToArray();
+        $config = ModuleRegistry::getModule($controller->getName())->getConfig();
 
         $panels = $this->getPanels($config, $controller->viewVars['entity']->toArray());
         if (! empty($panels['fail'])) {
@@ -118,9 +116,7 @@ class CsvViewComponent extends Component
      */
     protected function filterBatchFields(Event $event): void
     {
-        $request = $this->getController()->getRequest();
-        $config = new ModuleConfig(ConfigType::MIGRATION(), $request->getParam('controller'));
-        $fields = $config->parseToArray();
+        $fields = ModuleRegistry::getModule($this->request->getParam('controller'))->getMigration();
 
         $batchFields = (array)Configure::read('CsvMigrations.batch.types');
 

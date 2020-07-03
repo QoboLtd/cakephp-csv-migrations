@@ -36,11 +36,13 @@
             "Users"
         ]
     },
-    "parent": {
-        "module": "Leads",
-        "relation": "lead",
-        "redirect": "parent"
-    },
+    "parent": [
+        {
+            "module": "Leads",
+            "relation": "lead",
+            "redirect": "parent"
+        }
+    ],
     "associations": {
         "hide_associations": [
             "TestTable",

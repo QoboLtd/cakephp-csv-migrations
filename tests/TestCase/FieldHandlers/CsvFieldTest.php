@@ -163,7 +163,11 @@ class CsvFieldTest extends TestCase
     {
         foreach ($this->getterProvider() as $v) {
             $csvField = new CsvField(array_shift($this->csvData));
-            $this->assertEquals($v[2], $csvField->getAssocCsvModule());
+            $expected = $v[2];
+            if (!empty($csvField->getAssocCsvModule())) {
+                $expected = 'Common.' . $expected;
+            }
+            $this->assertEquals($expected, $csvField->getAssocCsvModule());
         }
     }
 

@@ -27,7 +27,7 @@ class SublistFieldHandlerTest extends TestCase
     {
         $options['fieldDefinitions'] = new CsvField([
             'name' => $this->field,
-            'type' => 'list(countries)',
+            'type' => 'list(Common.countries)',
             'required' => false,
             'non-searchable' => false,
             'unique' => false,

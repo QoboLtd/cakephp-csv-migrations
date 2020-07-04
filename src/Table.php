@@ -217,7 +217,7 @@ class Table extends BaseTable implements HasFieldsInterface
      */
     public function getParentRedirectUrl(RepositoryInterface $table, EntityInterface $entity, string $parent): array
     {
-        $config = (new ModuleConfig(ConfigType::MODULE(), $this->getAlias()))->parseToArray();
+        $config = ModuleRegistry::getModule($this->getAlias())->getMigration();
         if (! isset($config['parent']['redirect'])) {
             return [];
         }

@@ -17,7 +17,7 @@ $attributes = isset($attributes) ? $attributes : [];
 
 $class = str_replace('.', '_', $name . '_ids');
 
-$config = ModuleRegistry::getModule($table)->getFields();
+$config = ModuleRegistry::getModule($this->name)->getFields();
 
 $options = [
     'multiple' => true,

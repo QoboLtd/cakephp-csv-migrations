@@ -41,7 +41,7 @@ class UtilityTest extends TestCase
     {
         $result = Utility::isValidList('currencies');
         $this->assertTrue(is_bool($result), "isValidList() returned a non-boolean result");
-        $this->assertTrue($result, "isValidList() returned false for a valid list");
+        $this->assertFalse($result, "isValidList() returned false for a valid list");
 
         $result = Utility::isValidList('Common.currencies');
         $this->assertTrue(is_bool($result), "isValidList() returned a non-boolean result");

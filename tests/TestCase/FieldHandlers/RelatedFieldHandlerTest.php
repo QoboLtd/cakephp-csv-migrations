@@ -38,7 +38,7 @@ class RelatedFieldHandlerTest extends TestCase
 
         $this->assertContains('/foo/view/' . $id, $result);
 
-        $table = TableRegistry::get('Foo');
+        $table = TableRegistry::getTableLocator()->get('Foo');
         $entity = $table->get($id);
         $fieldName = $table->getDisplayField();
         $this->assertContains($entity->{$fieldName}, $result);
@@ -66,7 +66,7 @@ class RelatedFieldHandlerTest extends TestCase
         // test icon
         $this->assertContains('<span class="fa fa-user"></span>', $result);
 
-        $table = TableRegistry::get('Foo');
+        $table = TableRegistry::getTableLocator()->get('Foo');
         $entity = $table->get($id);
         $fieldName = $table->getDisplayField();
         $this->assertContains($entity->{$fieldName}, $result);

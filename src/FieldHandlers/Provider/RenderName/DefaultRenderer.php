@@ -33,8 +33,6 @@ class DefaultRenderer extends AbstractProvider
      */
     public function provide($data = null, array $options = [])
     {
-        $result = '';
-
         // Return as is, if not empty
         if (!empty($data)) {
             return $data;

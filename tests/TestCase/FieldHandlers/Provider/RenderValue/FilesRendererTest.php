@@ -14,7 +14,7 @@ class FilesRendererTest extends TestCase
 {
     use ModelAwareTrait;
 
-    public $fixtures = ['plugin.CsvMigrations.file_storage'];
+    public $fixtures = ['plugin.CsvMigrations.FileStorage'];
 
     private $renderer;
 

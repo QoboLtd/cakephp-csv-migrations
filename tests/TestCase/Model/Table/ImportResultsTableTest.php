@@ -19,8 +19,8 @@ class ImportResultsTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.csv_migrations.import_results',
-        'plugin.csv_migrations.imports',
+        'plugin.CsvMigrations.ImportResults',
+        'plugin.CsvMigrations.Imports',
     ];
 
     /**
@@ -31,9 +31,9 @@ class ImportResultsTableTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $config = TableRegistry::exists('ImportResults') ? [] : ['className' => ImportResultsTable::class];
+        $config = TableRegistry::getTableLocator()->exists('ImportResults') ? [] : ['className' => ImportResultsTable::class];
 
-        $this->ImportResults = TableRegistry::get('ImportResults', $config);
+        $this->ImportResults = TableRegistry::getTableLocator()->get('ImportResults', $config);
     }
 
     /**

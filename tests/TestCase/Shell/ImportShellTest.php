@@ -24,11 +24,11 @@ class ImportShellTest extends ConsoleIntegrationTestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.CakeDC/Users.users',
-        'plugin.csv_migrations.articles',
-        'plugin.csv_migrations.authors',
-        'plugin.csv_migrations.imports',
-        'plugin.csv_migrations.import_results',
+        'plugin.CakeDC/Users.Users',
+        'plugin.CsvMigrations.Articles',
+        'plugin.CsvMigrations.Authors',
+        'plugin.CsvMigrations.Imports',
+        'plugin.CsvMigrations.ImportResults',
     ];
 
     /**

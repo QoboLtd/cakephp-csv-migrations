@@ -35,10 +35,6 @@ class HasManyRenderer extends AbstractRenderer
     public function provide($data = null, array $options = [])
     {
         $field = $this->config->getField();
-        $table = $this->config->getTable();
-
-        $fieldName = $table->aliasField($field);
-
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), (string)$data);
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
             $relatedParentProperties = $this->_getRelatedParentProperties($relatedProperties);

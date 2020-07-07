@@ -34,8 +34,7 @@ class MigrationCheck extends AbstractCheck
         $mc = $this->getModuleConfig($module, $options);
         $fields = [];
         try {
-            $config = json_encode($mc->parse());
-            $fields = false === $config ? [] : json_decode($config, true);
+            $fields = $mc->parseToArray();
         } catch (InvalidArgumentException $e) {
             // We need errors and warnings irrelevant of the exception
             $this->errors = array_merge($this->errors, $mc->getErrors());
@@ -169,8 +168,8 @@ class MigrationCheck extends AbstractCheck
              * If the view file does exist, it has to be parseable.
              */
             try {
-                $config = $mc->parse();
-                $viewRows = property_exists($config, 'items') ? $config->items : [];
+                $config = $mc->parseToArray();
+                $viewRows = $config['items'] ?? [];
             } catch (InvalidArgumentException $e) {
                 continue;
             }

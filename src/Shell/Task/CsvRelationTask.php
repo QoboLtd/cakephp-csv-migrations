@@ -88,10 +88,27 @@ class CsvRelationTask extends BakeTask
             $this->abort('Aborting, system modules not found.');
         }
 
-        $result[] = $this->in('Please select first related module:', $modules);
-        $result[] = $this->in('Please select second related module:', $modules);
+        $selectedModule = $this->in('Please select first related module:', $modules);
+        if (is_null($selectedModule)) {
+            $this->abort('Aborting, no module was selected');
+        }
+
+        $result[] = (string)$selectedModule;
+
+        $selectedModule = $this->in('Please select second related module:', $modules);
+        if (is_null($selectedModule)) {
+            $this->abort('Aborting, no module was selected');
+        }
+
+        $result[] = (string)$selectedModule;
+
         while ('y' === $this->in('Would you like to select more modules?', ['y', 'n'])) {
-            $result[] = $this->in('Please select another related module:', $modules);
+            $selectedModule = $this->in('Please select another related module:', $modules);
+            if (is_null($selectedModule)) {
+                break;
+            }
+
+            $result[] = (string)$selectedModule;
         }
 
         return $result;
@@ -125,29 +142,17 @@ class CsvRelationTask extends BakeTask
      */
     private function isModule(string $module): bool
     {
-        $config = (new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]))->parse();
-        $config = json_encode($config);
-        if (false === $config) {
-            return false;
-        }
-        $config = json_decode($config, true);
+        $config = (new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]))->parseToArray();
         if (empty($config)) {
             return false;
         }
 
-        $config = (new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]))->parse();
-        if (! property_exists($config, 'table')) {
-            return false;
-        }
-        if (! property_exists($config->table, 'type')) {
+        $config = (new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]))->parseToArray();
+        if (!isset($config['table']['type'])) {
             return false;
         }
 
-        if ('module' !== $config->table->type) {
-            return false;
-        }
-
-        return true;
+        return $config['table']['type'] === 'module';
     }
 
     /**

@@ -172,7 +172,7 @@ class Import
             $sortDir = 'asc';
         }
 
-        $table = TableRegistry::get('CsvMigrations.ImportResults');
+        $table = TableRegistry::getTableLocator()->get('CsvMigrations.ImportResults');
 
         $query = $table->find('all')
             ->where([$table->aliasField('import_id') => $entity->id])

@@ -52,7 +52,7 @@ class FieldHandlerFactory
      */
     public static function getByTableField($table, string $field, array $options = [], ?View $view = null): FieldHandlerInterface
     {
-        $table = is_string($table) ? TableRegistry::get($table) : $table;
+        $table = is_string($table) ? TableRegistry::getTableLocator()->get($table) : $table;
         $handler = self::getHandler($table, $field, $options, $view);
 
         return $handler;

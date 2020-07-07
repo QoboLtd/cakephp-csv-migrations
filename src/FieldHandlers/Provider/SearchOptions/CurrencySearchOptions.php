@@ -14,7 +14,6 @@
 namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
 
 use CsvMigrations\FieldHandlers\Provider\RenderValue\CurrencyRenderer as CurrencyValueRenderer;
-use CsvMigrations\FieldHandlers\Setting;
 
 /**
  * CurrencySearchOptions

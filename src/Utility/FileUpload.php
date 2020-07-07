@@ -87,7 +87,7 @@ final class FileUpload
     public function __construct(Table $table)
     {
         $this->table = $table;
-        $this->storageTable = TableRegistry::get(self::FILE_STORAGE_TABLE_NAME);
+        $this->storageTable = TableRegistry::getTableLocator()->get(self::FILE_STORAGE_TABLE_NAME);
 
         /**
          * NOTE: if we don't have a predefined setup for the field image

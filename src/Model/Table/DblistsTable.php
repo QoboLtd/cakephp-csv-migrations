@@ -15,10 +15,10 @@ namespace CsvMigrations\Model\Table;
 
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
-use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use CsvMigrations\Model\Entity\Dblist;
 use Webmozart\Assert\Assert;
 
 /**
@@ -26,13 +26,13 @@ use Webmozart\Assert\Assert;
  *
  * @property \Cake\ORM\Association\HasMany $DblistItems
  *
- * @method \CsvMigrations\Model\Entity\Dblist get($primaryKey, $options = [])
- * @method \CsvMigrations\Model\Entity\Dblist newEntity($data = null, array $options = [])
- * @method \CsvMigrations\Model\Entity\Dblist[] newEntities(array $data, array $options = [])
- * @method \CsvMigrations\Model\Entity\Dblist|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \CsvMigrations\Model\Entity\Dblist patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \CsvMigrations\Model\Entity\Dblist[] patchEntities($entities, array $data, array $options = [])
- * @method \CsvMigrations\Model\Entity\Dblist findOrCreate($search, callable $callback = null)
+ * @method Dblist get($primaryKey, $options = [])
+ * @method Dblist newEntity($data = null, array $options = [])
+ * @method Dblist[] newEntities(array $data, array $options = [])
+ * @method Dblist|bool save(EntityInterface $entity, $options = [])
+ * @method Dblist patchEntity(EntityInterface $entity, array $data, array $options = [])
+ * @method Dblist[] patchEntities($entities, array $data, array $options = [])
+ * @method Dblist findOrCreate($search, callable $callback = null)
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */

@@ -22,7 +22,6 @@ use Qobo\Utils\ModuleConfig\ConfigType;
 use Qobo\Utils\ModuleConfig\ModuleConfig;
 use Qobo\Utils\ModuleConfig\Parser\Parser;
 use Qobo\Utils\Utility as QoboUtility;
-use Qobo\Utils\Utility\Convert;
 
 /**
  * Utility Class
@@ -48,7 +47,7 @@ class Utility
     {
         $mc = new ModuleConfig(ConfigType::MODULE(), $module, null, ['cacheSkip' => true]);
         $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
-        self::$configJsonArray[$module] = Convert::objectToArray($mc->parse());
+        self::$configJsonArray[$module] = $mc->parseToArray();
     }
 
     /**
@@ -62,7 +61,7 @@ class Utility
     {
         $mc = new ModuleConfig(ConfigType::MIGRATION(), $module, null, ['cacheSkip' => true]);
         $mc->setParser(new Parser($mc->createSchema(), ['validate' => $validate]));
-        self::$migrationJsonArray[$module] = Convert::objectToArray($mc->parse());
+        self::$migrationJsonArray[$module] = $mc->parseToArray();
     }
 
     /**
@@ -107,8 +106,8 @@ class Utility
         $listItems = null;
         try {
             $mc = new ModuleConfig(ConfigType::LISTS(), $module, $list, ['cacheSkip' => true]);
-            $config = $mc->parse();
-            $listItems = property_exists($config, 'items') ? $config->items : null;
+            $config = $mc->parseToArray();
+            $listItems = $config['items'] ?? null;
         } catch (InvalidArgumentException $e) {
             return false;
         }
@@ -155,8 +154,6 @@ class Utility
      */
     public static function getRealModuleFields(string $module, bool $validate = true): array
     {
-        $moduleFields = [];
-
         if (empty(self::$migrationJsonArray[$module])) {
             self::setMigrationJsonArray($module, $validate);
         }
@@ -272,7 +269,7 @@ class Utility
     public static function isValidFieldType(string $type): bool
     {
         try {
-            $config = ConfigFactory::getByType($type, 'dummy_field');
+            ConfigFactory::getByType($type, 'dummy_field');
         } catch (InvalidArgumentException $e) {
             return false;
         }

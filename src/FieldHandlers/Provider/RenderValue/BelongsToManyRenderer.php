@@ -36,7 +36,6 @@ class BelongsToManyRenderer extends AbstractRenderer
     {
         $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), (string)$data);
 
-        $table = $this->config->getTable();
         $entity = $options['entity'];
         $association = $options['association'];
         $contactsData = TableRegistry::getTableLocator()->get($entity->getSource())->get($entity->get('id'), ['contain' => $association->getName()]);

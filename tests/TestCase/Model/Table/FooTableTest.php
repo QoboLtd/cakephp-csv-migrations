@@ -32,8 +32,8 @@ class FooTableTest extends TestCase
 
         Configure::write('CsvMigrations.modules.path', TESTS . 'config' . DS . 'Modules' . DS);
 
-        $config = TableRegistry::exists('Foo') ? [] : ['className' => 'CsvMigrations\Test\App\Model\Table\FooTable'];
-        $this->table = TableRegistry::get('Foo', $config);
+        $config = TableRegistry::getTableLocator()->exists('Foo') ? [] : ['className' => 'CsvMigrations\Test\App\Model\Table\FooTable'];
+        $this->table = TableRegistry::getTableLocator()->get('Foo', $config);
     }
 
     /**

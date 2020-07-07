@@ -21,16 +21,10 @@
         "sort-packages": true,
         "optimize-autoloader": true
     },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/QoboLtd/cakephp-file-storage.git"
-        }
-    ],
     "require": {
         "eluceo/ical": "^0.11.0",
-        "qobo/cakephp-translations": "^10.0",
-        "qobo/cakephp-utils": "^13.1",
+        "qobo/cakephp-translations": "^10.5",
+        "qobo/cakephp-utils": "^13.0",
         "league/commonmark": "^0.19",
         "symfony/expression-language": "^3.1"
     },
@@ -68,6 +62,5 @@
         "test": "Runs phpcs and phpunit without coverage",
         "test-coverage": "Runs phpcs and phpunit with coverage enabled"
     },
-    "prefer-stable": true,
-    "minimum-stability": "dev"
+    "prefer-stable": true
 }

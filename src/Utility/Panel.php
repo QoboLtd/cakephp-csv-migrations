@@ -16,7 +16,6 @@ namespace CsvMigrations\Utility;
 use ArrayObject;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
-use Cake\ORM\Entity;
 use Cake\Utility\Hash;
 use CsvMigrations\Event\EventName;
 use InvalidArgumentException;

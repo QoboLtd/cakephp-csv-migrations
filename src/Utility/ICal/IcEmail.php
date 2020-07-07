@@ -178,8 +178,6 @@ class IcEmail
      */
     public function getEmailContent(): string
     {
-        $result = '';
-
         $module = Inflector::singularize($this->table->getAlias());
         $displayValue = $this->getDisplayValue();
         $user = $this->getUserString();
@@ -313,7 +311,7 @@ class IcEmail
             return '';
         }
 
-        $modifiedFields = $this->entity->extractOriginalChanged($this->entity->visibleProperties());
+        $modifiedFields = $this->entity->extractOriginalChanged($this->entity->getVisible());
         if (empty($modifiedFields)) {
             return '';
         }

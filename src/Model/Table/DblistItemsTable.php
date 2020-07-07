@@ -13,23 +13,25 @@
 
 namespace CsvMigrations\Model\Table;
 
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\QueryInterface;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use CsvMigrations\Model\Entity\DblistItem;
 
 /**
  * DblistItems Model
  *
  * @property \Cake\ORM\Association\BelongsTo $Dblists
  *
- * @method \CsvMigrations\Model\Entity\DblistItem get($primaryKey, $options = [])
- * @method \CsvMigrations\Model\Entity\DblistItem newEntity($data = null, array $options = [])
- * @method \CsvMigrations\Model\Entity\DblistItem[] newEntities(array $data, array $options = [])
- * @method \CsvMigrations\Model\Entity\DblistItem|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \CsvMigrations\Model\Entity\DblistItem patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \CsvMigrations\Model\Entity\DblistItem[] patchEntities($entities, array $data, array $options = [])
- * @method \CsvMigrations\Model\Entity\DblistItem findOrCreate($search, callable $callback = null)
+ * @method DblistItem get($primaryKey, $options = [])
+ * @method DblistItem newEntity($data = null, array $options = [])
+ * @method DblistItem[] newEntities(array $data, array $options = [])
+ * @method DblistItem|bool save(EntityInterface $entity, $options = [])
+ * @method DblistItem patchEntity(EntityInterface $entity, array $data, array $options = [])
+ * @method DblistItem[] patchEntities($entities, array $data, array $options = [])
+ * @method DblistItem findOrCreate($search, callable $callback = null)
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */

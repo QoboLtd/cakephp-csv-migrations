@@ -52,9 +52,8 @@ class MetricFieldHandlerTest extends TestCase
 
         $result = $this->fh->renderInput('', $options);
 
-        $mc = new ModuleConfig(ConfigType::LISTS(), '', 'units_area');
-        $config = json_encode($mc->parse());
-        $config = false !== $config ? json_decode($config, true) : [];
+        $mc = new ModuleConfig(ConfigType::LISTS(), 'Common', 'units_area');
+        $config = $mc->parseToArray();
         $items = isset($config['items']) ? $config['items'] : [];
         foreach ($items as $key => $item) {
             if ((bool)$item['inactive']) {

@@ -31,8 +31,8 @@ class DblistsTableTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $config = TableRegistry::exists('Dblists') ? [] : ['className' => 'CsvMigrations\Model\Table\DblistsTable'];
-        $this->Dblists = TableRegistry::get('Dblists', $config);
+        $config = TableRegistry::getTableLocator()->exists('Dblists') ? [] : ['className' => 'CsvMigrations\Model\Table\DblistsTable'];
+        $this->Dblists = TableRegistry::getTableLocator()->get('Dblists', $config);
     }
 
     /**

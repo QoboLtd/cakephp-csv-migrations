@@ -30,7 +30,7 @@ class CountryRendererTest extends TestCase
     public function setUp(): void
     {
         $this->renderer = new CountryRenderer(new CountryConfig('list'));
-        $this->entity = TableRegistry::get('foo')->get('00000000-0000-0000-0000-000000000001');
+        $this->entity = TableRegistry::getTableLocator()->get('foo')->get('00000000-0000-0000-0000-000000000001');
     }
 
     /**

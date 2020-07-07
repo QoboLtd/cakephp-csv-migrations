@@ -38,11 +38,10 @@ class ViewsCheck extends AbstractCheck
 
         $viewCounter = 0;
         foreach ($views as $view) {
-            $path = '';
             $mc = $this->getModuleConfig($module, $view, $options);
 
             try {
-                $path = $mc->find();
+                $mc->find();
             } catch (InvalidArgumentException $e) {
                 // It's OK for view files to be missing.
                 // For example, Files and Users modules.
@@ -56,8 +55,8 @@ class ViewsCheck extends AbstractCheck
             $viewCounter++;
             $seenFields = $fields = [];
             try {
-                $config = $mc->parse();
-                $fields = property_exists($config, 'items') ? $config->items : [];
+                $config = $mc->parseToArray();
+                $fields = array_key_exists('items', $config) ? $config['items'] : [];
             } catch (InvalidArgumentException $e) {
                 $this->errors = array_merge($this->errors, $mc->getErrors());
                 $this->warnings = array_merge($this->warnings, $mc->getWarnings());

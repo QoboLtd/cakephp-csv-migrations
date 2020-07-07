@@ -11,8 +11,8 @@ use Cake\TestSuite\IntegrationTestCase;
 class DblistsControllerTest extends IntegrationTestCase
 {
     public $fixtures = [
-        'plugin.CsvMigrations.dblists',
-        'plugin.CsvMigrations.dblist_items',
+        'plugin.CsvMigrations.Dblists',
+        'plugin.CsvMigrations.DblistItems',
     ];
 
     private $table;
@@ -21,7 +21,7 @@ class DblistsControllerTest extends IntegrationTestCase
     {
         parent::setUp();
 
-        $this->table = TableRegistry::get('CsvMigrations.Dblists');
+        $this->table = TableRegistry::getTableLocator()->get('CsvMigrations.Dblists');
 
         $this->session([
             'Auth' => [

@@ -34,7 +34,7 @@ class FieldTest extends TestCase
 
     public function testGetLookup(): void
     {
-        $table = TableRegistry::get('Articles');
+        $table = TableRegistry::getTableLocator()->get('Articles');
 
         $expected = ['name'];
         $this->assertSame($expected, Field::getLookup($table));
@@ -42,14 +42,14 @@ class FieldTest extends TestCase
 
     public function testGetLookupEmpty(): void
     {
-        $table = TableRegistry::get('NonExistingTable');
+        $table = TableRegistry::getTableLocator()->get('NonExistingTable');
 
         $this->assertSame([], Field::getLookup($table));
     }
 
     public function testGetCsv(): void
     {
-        $table = TableRegistry::get('Articles');
+        $table = TableRegistry::getTableLocator()->get('Articles');
 
         $result = Field::getCsv($table);
         $expected = ['id', 'name', 'status', 'author', 'main_article', 'date', 'featured', 'category', 'image', 'created', 'modified'];
@@ -62,7 +62,7 @@ class FieldTest extends TestCase
 
     public function testGetCsvEmpty(): void
     {
-        $table = TableRegistry::get('NonExistingTable');
+        $table = TableRegistry::getTableLocator()->get('NonExistingTable');
 
         $this->assertSame([], Field::getCsv($table));
     }
@@ -70,7 +70,7 @@ class FieldTest extends TestCase
     public function testGetCsvField(): void
     {
         /** @var \CsvMigrations\FieldHandlers\CsvField */
-        $result = Field::getCsvField(TableRegistry::get('Articles'), 'name');
+        $result = Field::getCsvField(TableRegistry::getTableLocator()->get('Articles'), 'name');
 
         $this->assertInstanceOf(CsvField::class, $result);
         $this->assertSame('name', $result->getName());
@@ -79,19 +79,19 @@ class FieldTest extends TestCase
 
     public function testGetCsvFieldWithInvalidField(): void
     {
-        $result = Field::getCsvField(TableRegistry::get('Articles'), 'non-existing-field');
+        $result = Field::getCsvField(TableRegistry::getTableLocator()->get('Articles'), 'non-existing-field');
 
         $this->assertNull($result);
     }
 
     public function testGetVirtual(): void
     {
-        $this->assertSame(['name' => ['id', 'created']], Field::getVirtual(TableRegistry::get('Foo')));
+        $this->assertSame(['name' => ['id', 'created']], Field::getVirtual(TableRegistry::getTableLocator()->get('Foo')));
     }
 
     public function testGetVirtualEmpty(): void
     {
-        $this->assertSame([], Field::getVirtual(TableRegistry::get('Articles')));
+        $this->assertSame([], Field::getVirtual(TableRegistry::getTableLocator()->get('Articles')));
     }
 
     public function testGetCsvView(): void
@@ -101,7 +101,7 @@ class FieldTest extends TestCase
             ['Details', 'author', ''],
         ];
 
-        $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add'));
+        $this->assertSame($expected, Field::getCsvView(TableRegistry::getTableLocator()->get('Articles'), 'add'));
     }
 
     public function testGetCsvViewWithIncludePluginModel(): void
@@ -119,7 +119,7 @@ class FieldTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add', true));
+        $this->assertSame($expected, Field::getCsvView(TableRegistry::getTableLocator()->get('Articles'), 'add', true));
     }
 
     public function testGetCsvViewWithArrangeInPanels(): void
@@ -131,7 +131,7 @@ class FieldTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add', false, true));
+        $this->assertSame($expected, Field::getCsvView(TableRegistry::getTableLocator()->get('Articles'), 'add', false, true));
     }
 
     public function testGetCsvViewWithIncludePluginModelAndArrangeInPanels(): void
@@ -149,12 +149,12 @@ class FieldTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expected, Field::getCsvView(TableRegistry::get('Articles'), 'add', true, true));
+        $this->assertSame($expected, Field::getCsvView(TableRegistry::getTableLocator()->get('Articles'), 'add', true, true));
     }
 
     public function testGetCsvViewEmpty(): void
     {
-        $this->assertSame([], Field::getCsvView(TableRegistry::get('NonExistingTable'), 'add', true, true));
+        $this->assertSame([], Field::getCsvView(TableRegistry::getTableLocator()->get('NonExistingTable'), 'add', true, true));
     }
 
     public function testGetList(): void

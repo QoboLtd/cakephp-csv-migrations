@@ -101,6 +101,7 @@ class Table extends BaseTable implements HasFieldsInterface
         $config = ModuleRegistry::getModule($className)->getMigration();
         $factory = new FieldHandlerFactory();
 
+        $factory = new FieldHandlerFactory();
         foreach ($config as $column) {
             $validator = $factory->setValidationRules($this, $column['name'], $validator);
         }
@@ -216,8 +217,8 @@ class Table extends BaseTable implements HasFieldsInterface
      */
     public function getParentRedirectUrl(RepositoryInterface $table, EntityInterface $entity, string $parent): array
     {
-        $config = ModuleRegistry::getModule($this->getAlias())->getConfig();
-        if (empty($config['parent'])) {
+        $config = ModuleRegistry::getModule($this->getAlias())->getMigration();
+        if (! isset($config['parent']['redirect'])) {
             return [];
         }
 
@@ -233,12 +234,12 @@ class Table extends BaseTable implements HasFieldsInterface
             return [];
         }
 
-        if ('parent' === $parentConfig['redirect']) {
-            if (! isset($parentConfig['module'])) {
+        if ('parent' === $config['parent']['redirect']) {
+            if (! isset($config['parent']['module'])) {
                 return [];
             }
 
-            if (! isset($parentConfig['relation'])) {
+            if (! isset($config['parent']['relation'])) {
                 return [];
             }
 

@@ -14,7 +14,6 @@
 namespace CsvMigrations\FieldHandlers\Provider\SearchOptions;
 
 use CsvMigrations\FieldHandlers\Provider\RenderValue\CountryRenderer as CountryValueRenderer;
-use CsvMigrations\FieldHandlers\Setting;
 
 /**
  * CountrySearchOptions

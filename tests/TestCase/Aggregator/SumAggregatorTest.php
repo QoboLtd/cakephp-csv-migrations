@@ -11,14 +11,14 @@ use RuntimeException;
 class SumAggregatorTest extends TestCase
 {
     public $fixtures = [
-        'plugin.CsvMigrations.foo',
+        'plugin.CsvMigrations.Foo',
     ];
 
     private $table;
 
     public function setUp(): void
     {
-        $this->table = TableRegistry::get('Foo');
+        $this->table = TableRegistry::getTableLocator()->get('Foo');
     }
 
     public function tearDown(): void

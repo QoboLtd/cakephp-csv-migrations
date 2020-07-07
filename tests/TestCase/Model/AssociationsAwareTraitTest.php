@@ -15,7 +15,7 @@ class AssociationsAwareTraitTest extends TestCase
     public function setUp(): void
     {
         // clear table registry to avoid ambiguous table instances during test runs
-        TableRegistry::clear();
+        TableRegistry::getTableLocator()->clear();
     }
 
     /**
@@ -31,7 +31,7 @@ class AssociationsAwareTraitTest extends TestCase
      */
     public function testAssociations(string $table, string $name, string $type, string $joinTable = ''): void
     {
-        $association = TableRegistry::get($table)->getAssociation($name);
+        $association = TableRegistry::getTableLocator()->get($table)->getAssociation($name);
 
         $this->assertInstanceOf($type, $association);
 
@@ -54,7 +54,7 @@ class AssociationsAwareTraitTest extends TestCase
         }
 
         foreach ($data as $tableName => $associations) {
-            $tableAssociations = TableRegistry::get($tableName)->associations()->keys();
+            $tableAssociations = TableRegistry::getTableLocator()->get($tableName)->associations()->keys();
             $this->assertEmpty(array_diff($tableAssociations, $associations));
         }
     }

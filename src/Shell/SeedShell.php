@@ -16,7 +16,6 @@ namespace CsvMigrations\Shell;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\I18n\Date;
-use Cake\I18n\Time;
 use Cake\ORM\TableRegistry;
 use Faker\Factory;
 use InvalidArgumentException;
@@ -268,7 +267,7 @@ class SeedShell extends Shell
      */
     protected function getModuleIds(string $moduleName): array
     {
-        $table = TableRegistry::get($moduleName);
+        $table = TableRegistry::getTableLocator()->get($moduleName);
         $query = $table->find()
             ->limit(100)
             ->select($table->getPrimaryKey());
@@ -363,16 +362,7 @@ class SeedShell extends Shell
 
         foreach ($modules as $module) {
             $mc = new ModuleConfig(ConfigType::MIGRATION(), $module);
-
-            $config = json_encode($mc->parse());
-            if (false === $config) {
-                continue;
-            }
-
-            $config = json_decode($config, true);
-            if (empty($config)) {
-                continue;
-            }
+            $config = $mc->parseToArray();
 
             if (! isset($csvFiles[$module])) {
                 $csvFiles[$module] = [];
@@ -408,7 +398,7 @@ class SeedShell extends Shell
 
         $this->out($moduleName);
 
-        $table = TableRegistry::get($moduleName);
+        $table = TableRegistry::getTableLocator()->get($moduleName);
 
         for ($count = 0; $count < $this->numberOfRecords; $count++) {
             $entity = $table->newEntity();
@@ -438,9 +428,7 @@ class SeedShell extends Shell
                 $data[$fieldName] = $fieldValue;
             }
             $entity = $table->patchEntity($entity, $data);
-            if ($table->save($entity)) {
-                $id = $entity->id;
-            }
+            $table->save($entity);
         }
         $this->modulesPolpulatedWithData[] = $moduleName;
     }

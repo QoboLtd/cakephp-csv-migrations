@@ -58,7 +58,7 @@ trait RelatedFieldTrait
         }
 
         $foreignKey = $this->_getForeignKey(
-            TableRegistry::get($relatedProperties['config']['parent']['module']),
+            TableRegistry::getTableLocator()->get($relatedProperties['config']['parent']['module']),
             empty($relatedProperties['plugin']) ?
                 $relatedProperties['controller'] :
                 sprintf('%s.%s', $relatedProperties['plugin'], $relatedProperties['controller'])
@@ -93,7 +93,7 @@ trait RelatedFieldTrait
      */
     protected function _getRelatedProperties(string $tableName, string $data): array
     {
-        $table = TableRegistry::get($tableName);
+        $table = TableRegistry::getTableLocator()->get($tableName);
 
         $config = ModuleRegistry::getModule($tableName)->getConfig();
 

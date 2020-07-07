@@ -13,7 +13,7 @@ use RuntimeException;
 class LastAggregatorTest extends TestCase
 {
     public $fixtures = [
-        'plugin.CsvMigrations.foo',
+        'plugin.CsvMigrations.Foo',
     ];
 
     private $table;

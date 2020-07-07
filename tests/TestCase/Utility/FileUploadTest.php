@@ -21,7 +21,7 @@ use CsvMigrations\Utility\FileUpload;
 class FileUploadTest extends TestCase
 {
     public $fixtures = [
-        'plugin.CsvMigrations.file_storage',
+        'plugin.CsvMigrations.FileStorage',
     ];
 
     private $table;

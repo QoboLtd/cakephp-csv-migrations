@@ -19,11 +19,11 @@ class ImportIntegrationTest extends IntegrationTestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.csv_migrations.articles',
-        'plugin.csv_migrations.authors',
-        'plugin.csv_migrations.categories',
-        'plugin.csv_migrations.imports',
-        'plugin.csv_migrations.import_results',
+        'plugin.CsvMigrations.Articles',
+        'plugin.CsvMigrations.Authors',
+        'plugin.CsvMigrations.Categories',
+        'plugin.CsvMigrations.Imports',
+        'plugin.CsvMigrations.ImportResults',
     ];
 
     public function setUp(): void

@@ -311,7 +311,7 @@ class IcEmail
             return '';
         }
 
-        $modifiedFields = $this->entity->extractOriginalChanged($this->entity->visibleProperties());
+        $modifiedFields = $this->entity->extractOriginalChanged($this->entity->getVisible());
         if (empty($modifiedFields)) {
             return '';
         }

@@ -11,7 +11,7 @@ use RuntimeException;
 class SumAggregatorTest extends TestCase
 {
     public $fixtures = [
-        'plugin.CsvMigrations.foo',
+        'plugin.CsvMigrations.Foo',
     ];
 
     private $table;

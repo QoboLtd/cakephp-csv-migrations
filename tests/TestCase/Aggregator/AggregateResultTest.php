@@ -16,9 +16,9 @@ use RuntimeException;
 class AggregateResultTest extends TestCase
 {
     public $fixtures = [
-        'plugin.CsvMigrations.articles',
-        'plugin.CsvMigrations.foo',
-        'plugin.CsvMigrations.leads',
+        'plugin.CsvMigrations.Articles',
+        'plugin.CsvMigrations.Foo',
+        'plugin.CsvMigrations.Leads',
     ];
 
     private $articlesTable;

@@ -13,8 +13,8 @@ use Webmozart\Assert\Assert;
 class ConfigurationTest extends TestCase
 {
     public $fixtures = [
-        'plugin.CsvMigrations.articles',
-        'plugin.CsvMigrations.foo',
+        'plugin.CsvMigrations.Articles',
+        'plugin.CsvMigrations.Foo',
     ];
 
     public function testConstructor(): void

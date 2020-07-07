@@ -98,7 +98,7 @@ final class AggregateResult
                 continue;
             }
 
-            if ($association->className() !== $joinTable->getAlias()) {
+            if ($association->getClassName() !== $joinTable->getAlias()) {
                 continue;
             }
 

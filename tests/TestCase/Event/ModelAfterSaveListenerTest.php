@@ -23,9 +23,9 @@ class ModelAfterSaveListenerTest extends IntegrationTestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.csv_migrations.articles',
-        'plugin.csv_migrations.leads',
-        'plugin.csv_migrations.users',
+        'plugin.CsvMigrations.Articles',
+        'plugin.CsvMigrations.Leads',
+        'plugin.CsvMigrations.Users',
     ];
 
     public function setUp(): void

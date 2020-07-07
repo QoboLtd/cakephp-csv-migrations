@@ -52,7 +52,7 @@ class MetricFieldHandlerTest extends TestCase
 
         $result = $this->fh->renderInput('', $options);
 
-        $mc = new ModuleConfig(ConfigType::LISTS(), '', 'units_area');
+        $mc = new ModuleConfig(ConfigType::LISTS(), 'Common', 'units_area');
         $config = $mc->parseToArray();
         $items = isset($config['items']) ? $config['items'] : [];
         foreach ($items as $key => $item) {

@@ -52,7 +52,7 @@ class MoneyFieldHandlerTest extends TestCase
 
         $result = $this->fh->renderInput('', $options);
 
-        $mc = new ModuleConfig(ConfigType::LISTS(), '', 'countries');
+        $mc = new ModuleConfig(ConfigType::LISTS(), 'Common', 'countries');
         $config = $mc->parseToArray();
         $items = isset($config['items']) ? $config['items'] : [];
         foreach ($items as $key => $item) {

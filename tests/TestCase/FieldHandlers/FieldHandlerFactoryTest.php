@@ -35,7 +35,7 @@ class Foo extends Entity
 
 class FieldHandlerFactoryTest extends TestCase
 {
-    public $fixtures = ['plugin.CsvMigrations.foo'];
+    public $fixtures = ['plugin.CsvMigrations.Foo'];
 
     private $table;
     private $fhf;

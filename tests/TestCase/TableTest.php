@@ -31,8 +31,8 @@ class TableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.csv_migrations.imports',
-        'plugin.csv_migrations.import_results',
+        'plugin.CsvMigrations.Imports',
+        'plugin.CsvMigrations.ImportResults',
     ];
 
     /**

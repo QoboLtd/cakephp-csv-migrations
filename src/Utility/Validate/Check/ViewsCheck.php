@@ -218,9 +218,14 @@ class ViewsCheck extends AbstractCheck
         $mc = new ModuleConfig(ConfigType::VIEW(), $module, $view, ['cacheSkip' => true]);
 
         $schema = $mc->createSchema(['lint' => true]);
-        $schema->setCallback(function (array $schema) use ($module) {
+        $schema->setCallback(function (array $schema) use ($module, $view) {
             //Add fields from migration file
             $schema = $this->addFieldsToSchema($schema, $module);
+
+            // Add virtual fields to `index` and `view`
+            if (in_array($view, ['index', 'view'])) {
+                $schema = $this->addVirtualFieldsToSchema($schema, $module);
+            }
             //Add relation fields
             $schema = $this->addRelationToSchema($schema, $module);
 

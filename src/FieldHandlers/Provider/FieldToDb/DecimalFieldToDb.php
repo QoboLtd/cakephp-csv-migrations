@@ -53,6 +53,7 @@ class DecimalFieldToDb extends AbstractFieldToDb
                 $fieldOptions = $dbField->getOptions();
                 $fieldOptions['precision'] = $precision;
                 $fieldOptions['scale'] = $scale;
+                unset($fieldOptions['limit']);
                 $dbField->setOptions($fieldOptions);
             }
         }

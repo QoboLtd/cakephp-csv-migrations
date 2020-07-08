@@ -45,7 +45,7 @@ class DecimalFieldToDb extends AbstractFieldToDb
 
         $data->setType($this->dbFieldType);
 
-        $limit = $data->getLimit();
+        $limit = (string)$data->getLimit();
         $data->setLimit(null);
 
         $dbField = DbField::fromCsvField($data);

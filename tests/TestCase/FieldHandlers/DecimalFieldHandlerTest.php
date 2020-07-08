@@ -37,7 +37,7 @@ class DecimalFieldHandlerTest extends TestCase
         $this->assertEquals($this->type, $result[$this->field]->getType(), "fieldToDb() did not return correct hardcoded type for DbField instance");
 
         $options = $result[$this->field]->getOptions();
-        $this->assertEquals('12.4', $options['limit']);
+        $this->assertArrayNotHasKey('limit', $options);
         $this->assertEquals('12', $options['precision']);
         $this->assertEquals('4', $options['scale']);
         $this->assertEquals(true, $options['null']);
@@ -62,7 +62,7 @@ class DecimalFieldHandlerTest extends TestCase
         $result = $fh::fieldToDb($csvField);
         $options = $result[$this->field]->getOptions();
 
-        $this->assertEquals('15', $options['limit']);
+        $this->assertArrayNotHasKey('limit', $options);
         $this->assertEquals('10', $options['precision']);
         $this->assertEquals('2', $options['scale']);
     }

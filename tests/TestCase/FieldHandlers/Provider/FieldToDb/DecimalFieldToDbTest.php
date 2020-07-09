@@ -60,7 +60,7 @@ class DecimalFieldToDbTest extends TestCase
 
         $this->assertEquals('foobar', $result['foobar']->getName(), "DbField name is incorrect");
         $this->assertEquals('decimal', $result['foobar']->getType(), "DbField type is incorrect");
-        $this->assertEquals(5, $result['foobar']->getLimit(), "DbField limit is incorrect");
+        $this->assertEquals(null, $result['foobar']->getLimit(), "DbField limit is incorrect");
 
         $options = $result['foobar']->getOptions();
         $this->assertTrue(array_key_exists('precision', $options), "Field options are 'precision' key");
@@ -81,7 +81,7 @@ class DecimalFieldToDbTest extends TestCase
 
         $this->assertEquals('foobar', $result['foobar']->getName(), "DbField name is incorrect");
         $this->assertEquals('decimal', $result['foobar']->getType(), "DbField type is incorrect");
-        $this->assertEquals('5.6', $result['foobar']->getLimit(), "DbField limit is incorrect");
+        $this->assertEquals(null, $result['foobar']->getLimit(), "DbField limit is incorrect");
 
         $options = $result['foobar']->getOptions();
         $this->assertTrue(array_key_exists('precision', $options), "Field options are 'precision' key");

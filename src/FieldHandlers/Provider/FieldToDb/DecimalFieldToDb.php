@@ -45,8 +45,10 @@ class DecimalFieldToDb extends AbstractFieldToDb
 
         $data->setType($this->dbFieldType);
 
+        $limit = (string)$data->getLimit();
+        $data->setLimit(null);
+
         $dbField = DbField::fromCsvField($data);
-        $limit = (string)$dbField->getLimit();
         if (! empty($limit) && false !== strpos($limit, '.')) {
             list($precision, $scale) = explode('.', $limit);
             if (ctype_digit($precision) && ctype_digit($scale)) {

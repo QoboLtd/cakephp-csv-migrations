@@ -16,7 +16,6 @@ namespace CsvMigrations\FieldHandlers\Provider\RenderValue;
  *
  * Allow us keep the badge functionality of Related fields, without
  * disclosing the URL.
- *
  */
 class BadgeRenderer extends RelatedRenderer
 {

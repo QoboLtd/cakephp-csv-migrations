@@ -38,7 +38,7 @@ class ListSelectOptions extends AbstractSelectOptions
 
         list($module, $list) = false !== strpos($data, '.') ?
             explode('.', $data, 2) :
-            [$this->config->getTable()->getAlias(), $data ?? ''];
+            [App::shortName(get_class($this->config->getTable()), 'Model/Table', 'Table'), $data ?? ''];
 
         try {
             $result = ModuleRegistry::getModule($module)->getList($list, $flatten, true);

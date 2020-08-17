@@ -23,7 +23,7 @@ return [
             'active' => true,
             'button_id' => '#batch-button',
             'action' => 'batch',
-            'types' => ['datetime', 'time', 'date', 'reminder', 'string', 'text', 'list', 'email', 'phone', 'url', 'boolean', 'related'],
+            'types' => ['datetime', 'time', 'date', 'reminder', 'string', 'text', 'list', 'email', 'phone', 'url', 'boolean', 'related', 'color'],
         ],
         'panels' => [
             // actions to arrange fields into panels

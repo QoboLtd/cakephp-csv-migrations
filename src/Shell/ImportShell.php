@@ -484,7 +484,7 @@ class ImportShell extends Shell
                         $data[$field] = $this->_findListValue($table, $csvFields[$field]->getLimit(), $value);
                         break;
                     case 'sublist':
-                        $data[$field] = strtolower(str_replace(' ', '_', $value));
+                        $data[$field] = $this->_findSublistValue($table, $csvFields[$field]->getLimit(), $value);
                         break;
                     case 'country':
                         $data[$field] = $this->_findListValue($table, 'countries', $value);
@@ -616,6 +616,45 @@ class ImportShell extends Shell
         // check against list options labels
         foreach ($options as $val => $params) {
             if (strtolower($params['label']) === strtolower(trim($value))) {
+                return $val;
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * Fetch sublist value.
+     *
+     * First will try to find if the row value matches one
+     * of the sublist options.
+     *
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
+     * @param string $listName Sublist name
+     * @param string $value Field value
+     * @return string
+     */
+    protected function _findSublistValue(RepositoryInterface $table, string $listName, string $value): string
+    {
+        if (false !== strpos($listName, '.')) {
+            $options = FieldUtility::getList($listName, true);
+        } else {
+            $options = FieldUtility::getList(sprintf('%s.%s', $table->getAlias(), $listName), true);
+        }
+
+        $valueFiltered = strtolower(str_replace(' ', '_', $value));
+
+        // check against list options values
+        foreach ($options as $val => $params) {
+            if (strtolower($val) === strtolower(trim($valueFiltered))) {
+                return $val;
+            }
+        }
+
+        $valueExploded = explode('.', $value);
+        // check against list options labels
+        foreach ($options as $val => $params) {
+            if (strtolower($params['label']) === strtolower(trim($valueExploded[1]))) {
                 return $val;
             }
         }

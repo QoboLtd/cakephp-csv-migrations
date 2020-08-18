@@ -483,6 +483,14 @@ class ImportShell extends Shell
                     case 'list':
                         $data[$field] = $this->_findListValue($table, $csvFields[$field]->getLimit(), $value);
                         break;
+                    case 'sublist':
+                         //If the value is not in the format of <parent>.<child>
+                        if (false === strpos($value, '.')) {
+                            $data[$field] = $this->_findListValue($table, $csvFields[$field]->getLimit(), $value);
+                        } else {
+                            $data[$field] = $this->_findSublistValue($table, $csvFields[$field]->getLimit(), $value);
+                        }
+                        break;
                     case 'country':
                         $data[$field] = $this->_findListValue($table, 'countries', $value);
                         break;
@@ -613,6 +621,54 @@ class ImportShell extends Shell
         // check against list options labels
         foreach ($options as $val => $params) {
             if (strtolower($params['label']) === strtolower(trim($value))) {
+                return $val;
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * Fetch sublist value.
+     *
+     * First will try to find if the row value matches one
+     * of the sublist options.
+     *
+     * @param \Cake\Datasource\RepositoryInterface $table Table instance
+     * @param string $listName Sublist name
+     * @param string $value Field value
+     * @return string
+     */
+    protected function _findSublistValue(RepositoryInterface $table, string $listName, string $value): string
+    {
+        if (false !== strpos($listName, '.')) {
+            $options = FieldUtility::getList($listName, true);
+        } else {
+            $options = FieldUtility::getList(sprintf('%s.%s', $table->getAlias(), $listName), true);
+        }
+
+        /*
+            In a sublist the label does not contain the parent in it so
+            the label for example of a parent.child will be only the child label
+
+            @TODO Try to match parent label also instead of only the child label.
+            Need to check also why the getList with true returns the labels non flatten
+         */
+
+        // check against list options values (exact match) <parent>.<child>
+        foreach ($options as $val => $params) {
+            if (strtolower($val) === strtolower(trim($value))) {
+                return $val;
+            }
+        }
+
+        //Split parent.child, [0] = parent, [1] = child
+        $valueExploded = explode('.', $value);
+
+        // check against list options for child labels
+        foreach ($options as $val => $params) {
+            //@TODO we need to check tha label of parent also in the future
+            if (strtolower($params['label']) === strtolower(trim($valueExploded[1]))) {
                 return $val;
             }
         }

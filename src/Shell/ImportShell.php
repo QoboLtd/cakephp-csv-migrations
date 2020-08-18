@@ -485,6 +485,9 @@ class ImportShell extends Shell
                     case 'list':
                         $data[$field] = $this->_findListValue($table, $csvFields[$field]->getLimit(), $value);
                         break;
+                    case 'sublist':
+                        $data[$field] = strtolower(str_replace(' ', '_', $value));
+                        break;
                     case 'country':
                         $data[$field] = $this->_findListValue($table, 'countries', $value);
                         break;

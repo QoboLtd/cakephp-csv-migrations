@@ -567,6 +567,9 @@ class ImportShell extends Shell
             // remove virtual/non-existing fields
             $lookupFields = array_intersect($lookupFields, $targetTable->getSchema()->columns());
 
+            // Use string types
+            $typeMap = array_combine($lookupFields, array_pad([], count($lookupFields), 'string'));
+
             // alias lookup fields
             foreach ($lookupFields as $k => $v) {
                 $lookupFields[$k] = $targetTable->aliasField($v);
@@ -578,6 +581,7 @@ class ImportShell extends Shell
             $query = $targetTable->find('all')
                 ->enableHydration(true)
                 ->select([$targetTable->aliasField($primaryKey)])
+                ->setTypeMap($typeMap)
                 ->where(['OR' => array_combine($lookupFields, $lookupValues)]);
 
             try {

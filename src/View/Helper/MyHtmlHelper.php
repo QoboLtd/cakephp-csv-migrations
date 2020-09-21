@@ -25,6 +25,6 @@ class MyHtmlHelper extends HtmlHelper
      */
     public function help(string $message): string
     {
-        return '<span data-toggle="tooltip" title="" class="badge bg-blue" data-placement="auto right" data-original-title="' . __($message) . '">?</span>';
+        return 'data-toggle="tooltip" data-placement="auto right" data-original-title="' . __($message) . '"';
     }
 }

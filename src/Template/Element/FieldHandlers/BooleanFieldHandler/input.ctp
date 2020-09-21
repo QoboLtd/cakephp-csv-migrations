@@ -12,7 +12,7 @@
 
 $attributes = isset($attributes) ? $attributes : [];
 
-$label = $this->Form->label($name, $label) . $this->Html->help($help);
+$label = $this->Form->label($name, $label);
 
 
 $attributes += [
@@ -22,7 +22,7 @@ $attributes += [
     'checked' => (bool)$value,
     'label' => false,
     'templates' => [
-        'inputContainer' => '<div class="form-group input {{required}}">' .
+        'inputContainer' => '<div ' . $this->Html->help($help) . 'class="form-group input {{required}}">' .
             $label . '<div class="clearfix"></div>{{content}}</div>',
         'inputContainerError' => '<div class="form-group input {{required}} has-error">' .
             $label . '<div class="clearfix"></div>{{content}}{{error}}</div>'

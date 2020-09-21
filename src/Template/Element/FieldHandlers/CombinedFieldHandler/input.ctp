@@ -20,10 +20,18 @@ foreach (array_keys($inputs) as $fieldName) {
 ?>
 <div class="form-group <?= $required ? 'required' : '' ?> <?= $hasError ? 'has-error' : '' ?>">
     <?= $this->Form->label($field, $label); ?>
-    <?= $this->Html->help($help); ?>
     <div class="row combined-field">
-    <?php foreach ($inputs as $input) : ?>
-        <div class="col-xs-6 col-md-6 col-lg-5"><?= $input ?></div>
+    <?php 
+        $i = true;
+        foreach ($inputs as $input) : 
+            $help = '';
+            if ($i) {
+                $help = $this->Html->help($help);
+                $i = false;
+            }
+    ?>
+    
+        <div <?= $help ?> class="col-xs-6 col-md-6 col-lg-5"><?= $input ?></div>
     <?php endforeach; ?>
     </div>
 </div>

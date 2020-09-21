@@ -51,5 +51,3 @@ $attributes += [
 ];
 
 echo $this->Form->control($name, $attributes);
-?>
-

@@ -569,6 +569,7 @@ class ImportShell extends Shell
 
             // Use string types
             $typeMap = array_combine($lookupFields, array_pad([], count($lookupFields), 'string'));
+            Assert::isArray($typeMap);
 
             // alias lookup fields
             foreach ($lookupFields as $k => $v) {

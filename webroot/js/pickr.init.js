@@ -3,9 +3,8 @@
         const pickr = new Pickr({
             el: this,
             useAsButton: true,
-            default: this.value ?? '#000000',
+            "default": (this.value ? this.value : '#000000'),
             theme: 'classic',
-
             swatches: [
                 'rgba(244, 67, 54, 1)',
                 'rgba(233, 30, 99, 1)',

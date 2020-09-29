@@ -50,6 +50,10 @@ class CombinedRenderer extends AbstractRenderer
             $result[] = $handler->renderValue($data, $options);
         }
 
-        return implode('&nbsp;', $result);
+        if (empty($result[0])) {
+            return '';
+        }
+
+        return implode('&nbsp;', array_filter($result));
     }
 }

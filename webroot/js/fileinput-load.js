@@ -1,7 +1,21 @@
 $(document).ready(function () {
     'use strict';
 
-  /* constructor */
+    /**
+     * @TODO
+     * Find a way to retrieve this from input.ctp
+     */
+    var previewTypes = {
+        'application/pdf' : 'pdf',
+        'application/msword' : 'object',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document' : 'object',
+        'application/vnd.ms-excel' : 'object',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'object',
+        'application/vnd.ms-powerpoint' : 'object',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation' : 'object',
+    };
+
+    /* constructor */
     var FileInput = function (files, name, field) {
         this.api_token = api_options.hasOwnProperty('token') ? api_options.token : null;
         this.options = {};
@@ -23,11 +37,11 @@ $(document).ready(function () {
     //Use this to override setting from config
     FileInput.prototype.defaultOptions = {};
 
-  /**
-   * Preview initial preview of the upload field.
-   *
-   * @param string url
-   */
+    /**
+    * Preview initial preview of the upload field.
+    *
+    * @param string url
+    */
     FileInput.prototype.setInitialPreview = function (url) {
         var imgExtensions = /\.(jpeg|jpg|gif|png)$/;
 
@@ -95,12 +109,20 @@ $(document).ready(function () {
 
     FileInput.prototype.addDeleteUrls = function (ids) {
         var opts = [];
+
         if (ids.length) {
             ids.forEach(function (element) {
+
+                var tmpPreviewType = (previewTypes[element.filetype] ?? 'image');
+
                 opts.push({
                     key: element.id,
                     url: '/api/file-storage/delete/' + element.id,
-                    size: element.size
+                    size: element.size,
+                    caption: element.caption,
+                    type: tmpPreviewType,
+                    filetype: element.file_type,
+                    downloadUrl: element.path,
                 });
             });
         }
@@ -157,7 +179,7 @@ $(document).ready(function () {
             showUpload: false,
             showCaption: true,
             maxFileCount: maxFileCountAllowed,
-            overwriteInitial: false,
+            overwriteInitial: true,
             initialPreviewAsData: true,
             reversePreviewOrder: false,
             fileActionSettings: {
@@ -187,11 +209,15 @@ $(document).ready(function () {
 
         inputField.fileinput(options).on('fileuploaded', function (event, data) {
             if (true === data.response.success) {
+
                 var input = this;
                 data.response.data.forEach(function (file) {
                     let tmp = {
-                        'id': file.id,
-                        'size': (file.hasOwnProperty('filesize') ? file.filesize : 0)
+                        id: file.id,
+                        size: (file.hasOwnProperty('filesize') ? file.filesize : 0),
+                        key: file.id,
+                        caption: escape(file.filename),
+                        filetype: file.mime_type
                     };
                     ids.push(tmp);
                     paths.push(file.path);

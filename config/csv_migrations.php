@@ -110,7 +110,7 @@ return [
             ],
             'orderField' => 'order',
             'previewTypes' => [
-                'application/pdf' => 'pdf'
+                'application/pdf' => 'pdf',
                 'application/msword' => 'object',
                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'object',
                 'application/vnd.ms-excel' => 'object',

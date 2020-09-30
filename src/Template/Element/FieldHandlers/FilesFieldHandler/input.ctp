@@ -51,6 +51,10 @@ if ($value && $entities && $entities->count()) {
             case 'application/vnd.ms-excel':
             //xlsx
             case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+            //ppt
+            case 'application/vnd.ms-powerpoint':
+            //pptx
+            case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
                 $previewType = 'object';
                 break;
             default:

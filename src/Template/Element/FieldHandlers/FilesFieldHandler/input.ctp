@@ -25,6 +25,7 @@ $options = [
 ];
 
 $orderField = Configure::read('CsvMigrations.BootstrapFileInput.orderField');
+$previewTypes = Configure::read('CsvMigrations.BootstrapFileInput.previewTypes',[]);
 
 if (isset($config[$field]['orderBy']) && $orderField == $config[$field]['orderBy'] && isset($config[$field]['orderDir'])) {
     $options['data-file-order'] = 1;
@@ -39,28 +40,8 @@ if ($value && $entities && $entities->count()) {
     $files = [];
 
     foreach ($entities as $entity) {
-        switch ($entity->mime_type) {
-            case 'application/pdf':
-                $previewType = 'pdf';
-                break;
-            //doc
-            case 'application/msword':
-            //docx
-            case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-            //xls
-            case 'application/vnd.ms-excel':
-            //xlsx
-            case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-            //ppt
-            case 'application/vnd.ms-powerpoint':
-            //pptx
-            case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
-                $previewType = 'object';
-                break;
-            default:
-                $previewType = 'image';
-                break;
-        }
+
+        $previewType = isset($previewTypes[$entity->mime_type]) ? $previewTypes[$entity->mime_type] : 'image';
 
         $files[] = [
             'id' => $entity->id,

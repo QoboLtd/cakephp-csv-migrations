@@ -1,4 +1,4 @@
-`<?php
+<?php
 // get upload limit in bytes
 $uploadLimit = Qobo\Utils\Utility\Convert::valueToBytes(ini_get('upload_max_filesize'));
 

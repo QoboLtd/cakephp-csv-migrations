@@ -1,7 +1,21 @@
 $(document).ready(function () {
     'use strict';
 
-  /* constructor */
+    /**
+     * @TODO
+     * Find a way to retrieve this from input.ctp
+     */
+    var previewTypes = {
+        'application/pdf' : 'pdf',
+        'application/msword' : 'object',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document' : 'object',
+        'application/vnd.ms-excel' : 'object',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'object',
+        'application/vnd.ms-powerpoint' : 'object',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation' : 'object',
+    };
+
+    /* constructor */
     var FileInput = function (files, name, field) {
         this.html = this.staticHtml;
         this.api_token = api_options.hasOwnProperty('token') ? api_options.token : null;
@@ -24,27 +38,11 @@ $(document).ready(function () {
     //Use this to override setting from config
     FileInput.prototype.defaultOptions = {};
 
-    FileInput.prototype.staticHtml = {
-        previewOtherFile: "<div class='file-preview-text'><h2>" +
-        "<i class='glyphicon glyphicon-file'></i></h2>" +
-        "<a href='%%url%%' target='_blank'>View file</a></div>",
-        img: "<img class='img-responsive' src='%%url%%' alt='img-preview' />",
-        trash: "<i class=\"glyphicon glyphicon-trash\"></i>",
-        icons: {
-            docx: '<i class="fa fa-file-word-o text-primary"></i>',
-            xlsx: '<i class="fa fa-file-excel-o text-success"></i>',
-            pptx: '<i class="fa fa-file-powerpoint-o text-danger"></i>',
-            jpg: '<i class="fa fa-file-photo-o text-warning"></i>',
-            pdf: '<i class="fa fa-file-pdf-o text-danger"></i>',
-            zip: '<i class="fa fa-file-archive-o text-muted"></i>',
-        }
-    };
-
-  /**
-   * Preview initial preview of the upload field.
-   *
-   * @param string url
-   */
+    /**
+    * Preview initial preview of the upload field.
+    *
+    * @param string url
+    */
     FileInput.prototype.setInitialPreview = function (url) {
         var imgExtensions = /\.(jpeg|jpg|gif|png)$/;
 
@@ -110,12 +108,20 @@ $(document).ready(function () {
 
     FileInput.prototype.addDeleteUrls = function (ids) {
         var opts = [];
+
         if (ids.length) {
             ids.forEach(function (element) {
+
+                var tmpPreviewType = (previewTypes[element.filetype] ?? 'image');
+
                 opts.push({
                     key: element.id,
                     url: '/api/file-storage/delete/' + element.id,
-                    size: element.size
+                    size: element.size,
+                    caption: element.caption,
+                    type: tmpPreviewType,
+                    filetype: element.file_type,
+                    downloadUrl: element.path,
                 });
             });
         }
@@ -172,7 +178,7 @@ $(document).ready(function () {
             showUpload: false,
             showCaption: true,
             maxFileCount: maxFileCountAllowed,
-            overwriteInitial: false,
+            overwriteInitial: true,
             initialPreviewAsData: true,
             reversePreviewOrder: false,
             fileActionSettings: {
@@ -202,11 +208,15 @@ $(document).ready(function () {
 
         inputField.fileinput(options).on('fileuploaded', function (event, data) {
             if (true === data.response.success) {
+
                 var input = this;
                 data.response.data.forEach(function (file) {
                     let tmp = {
-                        'id': file.id,
-                        'size': (file.hasOwnProperty('filesize') ? file.filesize : 0)
+                        id: file.id,
+                        size: (file.hasOwnProperty('filesize') ? file.filesize : 0),
+                        key: file.id,
+                        caption: escape(file.filename),
+                        filetype: file.mime_type
                     };
                     ids.push(tmp);
                     paths.push(file.path);

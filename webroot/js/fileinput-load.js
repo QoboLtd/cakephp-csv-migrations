@@ -3,7 +3,6 @@ $(document).ready(function () {
 
   /* constructor */
     var FileInput = function (files, name, field) {
-        this.html = this.staticHtml;
         this.api_token = api_options.hasOwnProperty('token') ? api_options.token : null;
         this.options = {};
         if (typeof files === 'object') {
@@ -23,22 +22,6 @@ $(document).ready(function () {
 
     //Use this to override setting from config
     FileInput.prototype.defaultOptions = {};
-
-    FileInput.prototype.staticHtml = {
-        previewOtherFile: "<div class='file-preview-text'><h2>" +
-        "<i class='glyphicon glyphicon-file'></i></h2>" +
-        "<a href='%%url%%' target='_blank'>View file</a></div>",
-        img: "<img class='img-responsive' src='%%url%%' alt='img-preview' />",
-        trash: "<i class=\"glyphicon glyphicon-trash\"></i>",
-        icons: {
-            docx: '<i class="fa fa-file-word-o text-primary"></i>',
-            xlsx: '<i class="fa fa-file-excel-o text-success"></i>',
-            pptx: '<i class="fa fa-file-powerpoint-o text-danger"></i>',
-            jpg: '<i class="fa fa-file-photo-o text-warning"></i>',
-            pdf: '<i class="fa fa-file-pdf-o text-danger"></i>',
-            zip: '<i class="fa fa-file-archive-o text-muted"></i>',
-        }
-    };
 
   /**
    * Preview initial preview of the upload field.
@@ -96,7 +79,9 @@ $(document).ready(function () {
                         url: '/api/file-storage/delete/' + file.id,
                         size: file.size,
                         caption: file.caption,
-                        downloadUrl: file.path
+                        type: file.type,
+                        filetype: file.file_type,
+                        downloadUrl: file.path,
                     };
                     filesOptions.push(options);
                 }
@@ -186,7 +171,7 @@ $(document).ready(function () {
                 contentType: 'application/json',
                 headers: {
                     'Authorization': 'Bearer ' + that.api_token
-                },
+                }
             }
         };
 

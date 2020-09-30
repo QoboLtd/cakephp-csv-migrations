@@ -120,7 +120,7 @@ $(document).ready(function () {
                     size: element.size,
                     caption: element.caption,
                     type: tmpPreviewType,
-                    filetype: element.file_type,
+                    filetype: element.filetype,
                     downloadUrl: element.path,
                 });
             });

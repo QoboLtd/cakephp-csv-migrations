@@ -37,13 +37,33 @@ if (isset($config[$field]['limit'])) {
 if ($value && $entities && $entities->count()) {
     $options['data-document-id'] = $value;
     $files = [];
+
     foreach ($entities as $entity) {
+        switch ($entity->mime_type) {
+            case 'application/pdf':
+                $previewType = 'pdf';
+                break;
+            //doc
+            case 'application/msword':
+            //docx
+            case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+            //xls
+            case 'application/vnd.ms-excel':
+            //xlsx
+            case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                $previewType = 'object';
+                break;
+            default:
+                $previewType = 'image';
+                break;
+        }
+
         $files[] = [
             'id' => $entity->id,
             'path' => $entity->path,
             'size' => $entity->get('filesize'),
             'caption' => h($entity->filename),
-            'type' => ('application/pdf' == $entity->mime_type) ? 'pdf' : 'image',
+            'type' => $previewType,
             'file_type' => $entity->mime_type,
         ];
     }

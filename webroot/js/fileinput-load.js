@@ -39,10 +39,10 @@ $(document).ready(function () {
     FileInput.prototype.defaultOptions = {};
 
     /**
-    * Preview initial preview of the upload field.
-    *
-    * @param string url
-    */
+     * Preview initial preview of the upload field.
+     *
+     * @param string url
+     */
     FileInput.prototype.setInitialPreview = function (url) {
         var imgExtensions = /\.(jpeg|jpg|gif|png)$/;
 
@@ -112,7 +112,7 @@ $(document).ready(function () {
         if (ids.length) {
             ids.forEach(function (element) {
 
-                var tmpPreviewType = (previewTypes[element.filetype] ?? 'image');
+                var tmpPreviewType = (previewTypes[element.filetype]) ? previewTypes[element.filetype] : 'image';
 
                 opts.push({
                     key: element.id,
@@ -121,7 +121,7 @@ $(document).ready(function () {
                     caption: element.caption,
                     type: tmpPreviewType,
                     filetype: element.filetype,
-                    downloadUrl: element.path,
+                    downloadUrl: element.path
                 });
             });
         }
@@ -208,7 +208,6 @@ $(document).ready(function () {
 
         inputField.fileinput(options).on('fileuploaded', function (event, data) {
             if (true === data.response.success) {
-
                 var input = this;
                 data.response.data.forEach(function (file) {
                     let tmp = {

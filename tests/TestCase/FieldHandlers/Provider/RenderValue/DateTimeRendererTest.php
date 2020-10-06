@@ -36,7 +36,7 @@ class DateTimeRendererTest extends TestCase
             ['foobar', 'foobar', 'Non-date string'],
             [15, '15', 'Non-date integer'],
             [null, '', 'Null'],
-            [Time::parse('2017-07-06 14:20:00'), '2017-07-06 14:20', 'Date time from object'],
+            [Time::parse('2017-07-06 14:20:00'), '2017-07-06<span class="separator">&nbsp;</span>14:20', 'Date time from object'],
             [[], '', 'Array Value'],
         ];
     }

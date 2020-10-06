@@ -25,7 +25,7 @@ class DatetimeRenderer extends AbstractRenderer
     /**
      * Date/time format
      */
-    const FORMAT = 'yyyy-MM-dd HH:mm';
+    const FORMAT = 'yyyy-MM-dd\'<span class="separator">&nbsp;</span>\'HH:mm';
 
     /**
      * Provide rendered value
@@ -44,7 +44,6 @@ class DatetimeRenderer extends AbstractRenderer
     public function provide($data = null, array $options = [])
     {
         $result = '';
-
         if (!isset($options['format'])) {
             $options['format'] = static::FORMAT;
         }
@@ -70,8 +69,6 @@ class DatetimeRenderer extends AbstractRenderer
             return $result;
         }
 
-        $result = parent::provide($data, $options);
-
-        return $result;
+        return $data;
     }
 }

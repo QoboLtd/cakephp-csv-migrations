@@ -25,7 +25,7 @@ class DatetimeRenderer extends AbstractRenderer
     /**
      * Date/time format
      */
-    const FORMAT = 'yyyy-MM-dd\'<span class="separator"></span>\'HH:mm';
+    const FORMAT = 'yyyy-MM-dd\'<span class="separator">&nbsp;</span>\'HH:mm';
 
     /**
      * Provide rendered value

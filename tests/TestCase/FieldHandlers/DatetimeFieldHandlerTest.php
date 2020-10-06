@@ -50,8 +50,8 @@ class DatetimeFieldHandlerTest extends TestCase
             ['14:20:00', '14:20:00', 'Time string'],
             ['foobar', 'foobar', 'Non-date string'],
             [15, 15, 'Non-date integer'],
-            [Time::parse('2017-07-06 14:20:00'), '2017-07-06<span class="separator"></span>14:20', 'Date time from object'],
-            [new Date('2017-07-06 14:20:00'), '2017-07-06<span class="separator"></span>00:00', 'Date time from object'],
+            [Time::parse('2017-07-06 14:20:00'), '2017-07-06<span class="separator">&nbsp;</span>14:20', 'Date time from object'],
+            [new Date('2017-07-06 14:20:00'), '2017-07-06<span class="separator">&nbsp;</span>00:00', 'Date time from object'],
         ];
     }
 

@@ -14,7 +14,6 @@ $attributes = isset($attributes) ? $attributes : [];
 
 $label = $this->Form->label($name, $label);
 
-
 $attributes += [
     'type' => $type,
     'class' => 'square' . ( (isset($extraClasses) && !empty($extraClasses)) ? ' ' . $extraClasses : null ),
@@ -22,8 +21,8 @@ $attributes += [
     'checked' => (bool)$value,
     'label' => false,
     'templates' => [
-        'inputContainer' => '<div ' . $this->Html->help($help) . 'class="form-group input {{required}}">' .
-            $label . '<div class="clearfix"></div>{{content}}</div>',
+        'inputContainer' => '<div class="form-group input {{required}}">' .
+            $label . $this->Html->help($help) . '<div class="clearfix"></div>{{content}}</div>',
         'inputContainerError' => '<div class="form-group input {{required}} has-error">' .
             $label . '<div class="clearfix"></div>{{content}}{{error}}</div>'
     ]

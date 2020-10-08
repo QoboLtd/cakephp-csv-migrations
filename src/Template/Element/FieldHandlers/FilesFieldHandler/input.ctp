@@ -25,6 +25,7 @@ $options = [
 ];
 
 $orderField = Configure::read('CsvMigrations.BootstrapFileInput.orderField');
+$previewTypes = Configure::read('CsvMigrations.BootstrapFileInput.previewTypes',[]);
 
 if (isset($config[$field]['orderBy']) && $orderField == $config[$field]['orderBy'] && isset($config[$field]['orderDir'])) {
     $options['data-file-order'] = 1;
@@ -38,15 +39,20 @@ if ($value && $entities && $entities->count()) {
     $options['data-document-id'] = $value;
     $files = [];
     foreach ($entities as $entity) {
+
+        $previewType = isset($previewTypes[$entity->mime_type]) ? $previewTypes[$entity->mime_type] : 'image';
+
         $files[] = [
             'id' => $entity->id,
             'path' => $entity->path,
             'size' => $entity->get('filesize'),
             'caption' => h($entity->filename),
-            'type' => ('application/pdf' == $entity->mime_type) ? 'pdf' : 'image',
+            'type' => $previewType,
             'file_type' => $entity->mime_type,
         ];
     }
+
+    debug($files);
     //passed to generate previews
     $options['data-files'] = json_encode($files);
 }

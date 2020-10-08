@@ -17,7 +17,6 @@ $(document).ready(function () {
 
     /* constructor */
     var FileInput = function (files, name, field) {
-        this.html = this.staticHtml;
         this.api_token = api_options.hasOwnProperty('token') ? api_options.token : null;
         this.options = {};
         if (typeof files === 'object') {
@@ -94,7 +93,9 @@ $(document).ready(function () {
                         url: '/api/file-storage/delete/' + file.id,
                         size: file.size,
                         caption: file.caption,
-                        downloadUrl: file.path
+                        type: file.type,
+                        filetype: file.file_type,
+                        downloadUrl: file.path,
                     };
                     filesOptions.push(options);
                 }
@@ -192,7 +193,7 @@ $(document).ready(function () {
                 contentType: 'application/json',
                 headers: {
                     'Authorization': 'Bearer ' + that.api_token
-                },
+                }
             }
         };
 

@@ -87,11 +87,37 @@ return [
                 'maxFileSize' => (int)($uploadLimit / 1024),
                 'validateInitialCount' => true,
                 'allowedFileTypes' => [],
+                //Array of types or false to show preview for all
+                'allowedPreviewTypes' => ['image'],
+                'initialPreviewFileType' => 'image',
+                'preferIconicPreview' => false,
+                'previewFileIconSettings' => [
+                    'doc' => '<i class="fa fa-file-word-o text-primary"></i>',
+                    'docx' => '<i class="fa fa-file-word-o text-primary"></i>',
+                    'xls' => '<i class="fa fa-file-excel-o text-success"></i>',
+                    'xlsx' => '<i class="fa fa-file-excel-o text-success"></i>',
+                    'ppt' => '<i class="fa fa-file-powerpoint-o text-danger"></i>',
+                    'pptx' => '<i class="fa fa-file-powerpoint-o text-danger"></i>',
+                    'jpg' => '<i class="fa fa-file-photo-o text-warning"></i>',
+                    'png' => '<i class="fa fa-file-photo-o text-warning"></i>',
+                    'jfif' => '<i class="fa fa-file-photo-o text-warning"></i>',
+                    'pdf' => '<i class="fa fa-file-pdf-o text-danger"></i>',
+                    'zip' => '<i class="fa fa-file-archive-o text-muted"></i>',
+                ],
             ],
             'initialPreviewConfig' => [
                 'url' => "/api/file-storages/delete/",
             ],
             'orderField' => 'order',
+            'previewTypes' => [
+                'application/pdf' => 'pdf',
+                'application/msword' => 'object',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'object',
+                'application/vnd.ms-excel' => 'object',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'object',
+                'application/vnd.ms-powerpoint' => 'object',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'object',
+            ],
         ],
         // Configuration options for the ValidateShell
         'ValidateShell' => [

@@ -52,7 +52,6 @@ if ($value && $entities && $entities->count()) {
         ];
     }
 
-    debug($files);
     //passed to generate previews
     $options['data-files'] = json_encode($files);
 }

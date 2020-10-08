@@ -3,7 +3,7 @@
         const pickr = new Pickr({
             el: this,
             useAsButton: true,
-            default: this.value ?? '#000000',
+            "default": (this.value ? this.value : '#000000'),
             theme: 'classic',
 
             swatches: [
@@ -22,7 +22,6 @@
                 'rgba(255, 235, 59, 1)',
                 'rgba(255, 193, 7, 1)'
             ],
-
             components: {
                 preview: true,
                 opacity: false,

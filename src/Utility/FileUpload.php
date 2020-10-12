@@ -656,6 +656,9 @@ final class FileUpload
         }
 
         $exif = exif_read_data($filename);
+        if ($exif === false) {
+            return;
+        }
 
         if (empty($exif['Orientation'])) {
             return;

@@ -651,6 +651,10 @@ final class FileUpload
      */
     private function imageFixOrientation(string $filename): void
     {
+        if (!file_exists($filename)) {
+            throw new \RuntimeException(sprintf('File %s not found!', $filename));
+        }
+
         $exif = exif_read_data($filename);
 
         if (empty($exif['Orientation'])) {

@@ -649,7 +649,7 @@ final class FileUpload
      * @param  string $filename Image path
      * @return void
      */
-    private function imageFixOrientation($filename): void
+    private function imageFixOrientation(string $filename): void
     {
         $exif = exif_read_data($filename);
 

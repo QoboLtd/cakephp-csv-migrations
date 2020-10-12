@@ -613,6 +613,8 @@ final class FileUpload
             return false;
         }
 
+        $this->imageFixOrientation(WWW_ROOT . $entity['path']);
+
         $event = new Event($eventName, $this, [
             'entity' => $entity,
             'versions' => array_keys($imgSizes),
@@ -640,5 +642,36 @@ final class FileUpload
         }
 
         return $result;
+    }
+
+    /**
+     * Image Rotation Fix
+     * @param  string $filename Image path
+     * @return void
+     */
+    private function imageFixOrientation($filename): void
+    {
+        $exif = exif_read_data($filename);
+
+        if (empty($exif['Orientation'])) {
+            return;
+        }
+
+        $image = imagecreatefromjpeg($filename);
+        switch ($exif['Orientation']) {
+            case 3:
+                $image = imagerotate($image, 180, 0);
+                break;
+
+            case 6:
+                $image = imagerotate($image, -90, 0);
+                break;
+
+            case 8:
+                $image = imagerotate($image, 90, 0);
+                break;
+        }
+
+        imagejpeg($image, $filename, 90);
     }
 }

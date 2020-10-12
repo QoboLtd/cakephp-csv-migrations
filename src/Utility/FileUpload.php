@@ -664,7 +664,11 @@ final class FileUpload
             return;
         }
 
+        /**
+         * @var Resource
+         */
         $image = imagecreatefromjpeg($filename);
+
         switch ($exif['Orientation']) {
             case 3:
                 $image = imagerotate($image, 180, 0);

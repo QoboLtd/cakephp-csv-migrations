@@ -33,7 +33,7 @@ $limit = 3;
         <div class="collapse" id="collapseFiles<?= $uuid ?>">
     <?php endif; ?>
     <div class="col-xs-4 thumbnail-<?= $index ?>">
-        <a href="<?= $entity->get('path') ?>" target="_blank">
+        <a href="<?= $entity->get('path') ?>" class="lightbox-image" data-fancybox="photos-<?= $uuid ?>">
             <div class="thumbnail" title="<?= $entity->get('filename') ?>">
                 <?= $this->Html->image(Hash::get(
                     $entity->get('thumbnails'),

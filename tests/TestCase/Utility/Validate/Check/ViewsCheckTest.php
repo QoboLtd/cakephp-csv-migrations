@@ -126,20 +126,6 @@ class ViewsCheckTest extends TestCase
     }
 
     /**
-     * Test that there are too many columns in fields array
-     */
-    public function testRunTooManyColumns(): void
-    {
-        Configure::write('CsvMigrations.actions', ['too_many_columns']);
-        $this->check->run('Foo', ['configFile' => 'missing_name_migration.json']);
-        $errors = $this->check->getErrors();
-        $this->assertNotEmpty($errors);
-        $this->assertCount(2, $errors);
-        $this->assertEquals("[Foo][view] parse : [too_many_columns.json] : Failed to validate json data against the schema.", $errors[0]);
-        $this->assertEquals("[Foo][view] parse : [/items/0]: There must be a maximum of 13 items in the array", $errors[1]);
-    }
-
-    /**
      * Test that there are duplicate columns in the fields array
      */
     public function testDuplicateColumns(): void

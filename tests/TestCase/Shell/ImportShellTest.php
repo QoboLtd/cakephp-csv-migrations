@@ -198,7 +198,7 @@ class ImportShellTest extends ConsoleIntegrationTestCase
     public function testremoveSpacesLeftRight(): void
     {
       //mocked data
-        $arraydata = ["city" => "   GreatCity", "country" => "   SM  ", "email" => "example@example.com", "first_name" => " James ", "last_name" => "Smith   ", "phone" => " +00000000000 ", "type" => "individual"];
+        $arraydata = ['city' => '   GreatCity', 'country' => '   SM  ', 'email' => 'example@example.com', 'first_name' => ' James ', 'last_name' => 'Smith   ', 'phone' => ' +00000000000 ', 'type' => 'individual'];
         $results = $this->ImportShell->removeSpacesLeftRight($arraydata);
         $this->assertEquals('GreatCity', $results['city']);
         $this->assertEquals('SM', $results['country']);

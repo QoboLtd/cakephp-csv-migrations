@@ -63,6 +63,21 @@ class ImportShell extends Shell
     }
 
     /**
+     * remove spaces from row data.
+     *
+     * @param mixed[] $data Entity data
+     * @return mixed[]
+     */
+    public function removeSpacesLeftRight(array $data): array
+    {
+        foreach ($data as $field => $value) {
+            $data[$field] = trim($value);
+        }
+
+        return $data;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function main()
@@ -476,6 +491,7 @@ class ImportShell extends Shell
     protected function _processData(Table $table, array $csvFields, array $data): array
     {
         $schema = $table->getSchema();
+        $data = $this->removeSpacesLeftRight($data);
         foreach ($data as $field => $value) {
             if (!empty($csvFields) && in_array($field, array_keys($csvFields))) {
                 switch ($csvFields[$field]->getType()) {

@@ -33,7 +33,7 @@ $limit = 3;
         <div class="collapse" id="collapseFiles<?= $uuid ?>">
     <?php endif; ?>
     <div class="col-xs-4 thumbnail-<?= $index ?>">
-        <a href="<?= $entity->get('path') ?>" target="_blank">
+        <a href="<?= $entity->get('path') ?>" <?=in_array($entity->get('extension'), FileUpload::IMAGE_EXTENSIONS) ? ' data-gallery="photos-' . $uuid . '"' : ' target="_blank"'?>>
             <div class="thumbnail" title="<?= $entity->get('filename') ?>">
                 <?= $this->Html->image(Hash::get(
                     $entity->get('thumbnails'),

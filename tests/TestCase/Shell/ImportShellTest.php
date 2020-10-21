@@ -195,6 +195,20 @@ class ImportShellTest extends ConsoleIntegrationTestCase
         }
     }
 
+    public function testremoveSpacesLeftRight(): void
+    {
+      //mocked data
+        $arraydata = ['city' => '   GreatCity', 'country' => '   SM  ', 'email' => 'example@example.com', 'first_name' => ' James ', 'last_name' => 'Smith   ', 'phone' => ' +00000000000 ', 'type' => 'individual'];
+        $results = $this->ImportShell->removeSpacesLeftRight($arraydata);
+        $this->assertEquals('GreatCity', $results['city']);
+        $this->assertEquals('SM', $results['country']);
+        $this->assertEquals('example@example.com', $results['email']);
+        $this->assertEquals('James', $results['first_name']);
+        $this->assertEquals('Smith', $results['last_name']);
+        $this->assertEquals('+00000000000', $results['phone']);
+        $this->assertEquals('individual', $results['type']);
+    }
+
     public function testSetLanguages(): void
     {
         $method = new ReflectionMethod('CsvMigrations\Shell\ImportShell', 'setLanguages');

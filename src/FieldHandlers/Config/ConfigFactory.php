@@ -13,6 +13,7 @@
 
 namespace CsvMigrations\FieldHandlers\Config;
 
+use Cake\Utility\Inflector;
 use InvalidArgumentException;
 
 /**
@@ -35,7 +36,7 @@ class ConfigFactory
      */
     public static function getByType(string $type, string $field, $table = '', array $options = []): ConfigInterface
     {
-        $configClass = __NAMESPACE__ . '\\' . ucfirst($type) . 'Config';
+        $configClass = __NAMESPACE__ . '\\' . Inflector::camelize($type) . 'Config';
         if (!class_exists($configClass)) {
             throw new InvalidArgumentException("Configuration type [$type] is not supported");
         }

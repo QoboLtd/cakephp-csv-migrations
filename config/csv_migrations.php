@@ -148,9 +148,32 @@ return [
                 ],
             ],
         ],
-        "GoogleMaps" => [
-            "ApiKey" => "",
-            "DefaultLocation" => "0.0,0.0",
+        'GoogleMaps' => [
+            'ApiKey' => '',
+            'DefaultLocation' => '0.0,0.0',
+        ],
+        'Inputmask' => [
+            "setup" => [
+                'rightAlign' => false,
+                'removeMaskOnSubmit' => true,
+                'numericInput' => true,
+                'alias' => 'numeric',
+                'groupSeparator' => ',',
+                'digitsOptional' => false,
+                'placeholder' => '0',
+            ],
+            "Area" => [
+                'digits' => 0,
+                'suffix' => 'm²',
+            ],
+            "Distance" => [
+                'digits' => 0,
+                'suffix' => 'km',
+            ],
+            "Currency" => [
+                'digits' => 2,
+                'prefix' => '$',
+            ],
         ],
     ],
 ];

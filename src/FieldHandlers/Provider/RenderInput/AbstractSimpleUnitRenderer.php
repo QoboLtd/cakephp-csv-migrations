@@ -71,6 +71,6 @@ abstract class AbstractSimpleUnitRenderer extends AbstractRenderer
     {
         $class = explode('\\', get_called_class());
 
-        return preg_replace(['/Simple/', '/Renderer/'], '', end($class));
+        return (string)preg_replace(['/Simple/', '/Renderer/'], '', (string)end($class));
     }
 }

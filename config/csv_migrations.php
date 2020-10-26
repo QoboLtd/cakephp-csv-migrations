@@ -153,7 +153,7 @@ return [
             'DefaultLocation' => '0.0,0.0',
         ],
         'Inputmask' => [
-            "setup" => [
+            'setup' => [
                 'rightAlign' => false,
                 'removeMaskOnSubmit' => true,
                 'numericInput' => true,
@@ -162,15 +162,15 @@ return [
                 'digitsOptional' => false,
                 'placeholder' => '0',
             ],
-            "Area" => [
+            'Area' => [
                 'digits' => 0,
                 'suffix' => 'm²',
             ],
-            "Distance" => [
+            'Distance' => [
                 'digits' => 0,
                 'suffix' => 'km',
             ],
-            "Currency" => [
+            'Currency' => [
                 'digits' => 2,
                 'prefix' => '$',
             ],

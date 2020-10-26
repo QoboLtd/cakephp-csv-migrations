@@ -33,7 +33,7 @@ class SimpleDistanceConfig extends FixedConfig
         'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\IntegerSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
         'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\SimpleDistanceRenderer',
-        'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\IntegerRenderer',
+        'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\SimpleDistanceRenderer',
         'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
         'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\IntegerValidationRules',
     ];

@@ -25,7 +25,7 @@ class SimpleAreaRenderer extends NumberRenderer
     /**
      * Decimal precision
      */
-    const PRECISION = 0;
+    public const PRECISION = 0;
 
     /**
      * Provide rendered value

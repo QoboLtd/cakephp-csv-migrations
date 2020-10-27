@@ -25,7 +25,7 @@ class SimpleCurrencyRenderer extends NumberRenderer
     /**
      * Decimal precision
      */
-    const PRECISION = 2;
+    public const PRECISION = 2;
 
     /**
      * Provide rendered value

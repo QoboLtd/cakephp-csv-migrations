@@ -26,15 +26,15 @@ class SimpleDistanceConfig extends FixedConfig
      */
     protected $providers = [
         'combinedFields' => '\\CsvMigrations\\FieldHandlers\\Provider\\CombinedFields\\NullCombinedFields',
-        'dbFieldType' => '\\CsvMigrations\\FieldHandlers\\Provider\\DbFieldType\\IntegerDbFieldType',
+        'dbFieldType' => '\\CsvMigrations\\FieldHandlers\\Provider\\DbFieldType\\DecimalDbFieldType',
         'fieldValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldValue\\MixedFieldValue',
-        'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\IntegerFieldToDb',
+        'fieldToDb' => '\\CsvMigrations\\FieldHandlers\\Provider\\FieldToDb\\DecimalFieldToDb',
         'searchOperators' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOperators\\NumberSearchOperators',
-        'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\IntegerSearchOptions',
+        'searchOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SearchOptions\\DecimalSearchOptions',
         'selectOptions' => '\\CsvMigrations\\FieldHandlers\\Provider\\SelectOptions\\NullSelectOptions',
         'renderInput' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderInput\\SimpleDistanceRenderer',
         'renderValue' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderValue\\SimpleDistanceRenderer',
         'renderName' => '\\CsvMigrations\\FieldHandlers\\Provider\\RenderName\\DefaultRenderer',
-        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\IntegerValidationRules',
+        'validationRules' => '\\CsvMigrations\\FieldHandlers\\Provider\\ValidationRules\\DecimalValidationRules',
     ];
 }

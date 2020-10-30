@@ -42,6 +42,6 @@ class SimpleCurrencyRenderer extends NumberRenderer
             return '';
         }
 
-        return Configure::read('CsvMigrations.Inputmask.Currency.prefix', '') . ' ' . $data;
+        return Configure::read('CsvMigrations.Inputmask.Currency.prefix', '') . ' ' . preg_replace('/.00$/', '', $data);
     }
 }

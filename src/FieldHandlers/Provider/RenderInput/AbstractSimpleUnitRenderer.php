@@ -39,8 +39,10 @@ abstract class AbstractSimpleUnitRenderer extends AbstractRenderer
 
         $type = $this->getCalledClass();
         $options['attributes']['inputmask'] = Configure::read('CsvMigrations.Inputmask.setup');
-        $options['attributes']['inputmask']['prefix'] = Configure::read('CsvMigrations.Inputmask.' . $type . '.prefix', '') . ' ';
-        $options['attributes']['inputmask']['suffix'] = ' ' . Configure::read('CsvMigrations.Inputmask.' . $type . '.suffix', '');
+        $prefix = Configure::read('CsvMigrations.Inputmask.' . $type . '.prefix', '');
+        $suffix = Configure::read('CsvMigrations.Inputmask.' . $type . '.suffix', '');
+        $options['attributes']['inputmask']['prefix'] = empty($prefix) ? '' : $prefix . ' ';
+        $options['attributes']['inputmask']['suffix'] = empty($suffix) ? '' : ' ' . $suffix;
         $options['attributes']['inputmask']['digits'] = Configure::read('CsvMigrations.Inputmask.' . $type . '.digits', '0');
 
         $params = [

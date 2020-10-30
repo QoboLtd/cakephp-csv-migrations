@@ -156,18 +156,17 @@ return [
             'setup' => [
                 'rightAlign' => false,
                 'removeMaskOnSubmit' => true,
-                'numericInput' => true,
-                'alias' => 'numeric',
+                'positionCaretOnClick' => 'ignore',
+                'alias' => 'decimal',
                 'groupSeparator' => ',',
-                'digitsOptional' => false,
-                'placeholder' => '0',
+                'digitsOptional' => true,
             ],
             'Area' => [
-                'digits' => 0,
+                'digits' => 2,
                 'suffix' => 'm²',
             ],
             'Distance' => [
-                'digits' => 0,
+                'digits' => 2,
                 'suffix' => 'km',
             ],
             'Currency' => [

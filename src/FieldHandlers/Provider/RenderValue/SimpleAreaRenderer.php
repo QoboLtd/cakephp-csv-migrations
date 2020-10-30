@@ -25,7 +25,7 @@ class SimpleAreaRenderer extends NumberRenderer
     /**
      * Decimal precision
      */
-    public const PRECISION = 0;
+    public const PRECISION = 2;
 
     /**
      * Provide rendered value
@@ -42,6 +42,6 @@ class SimpleAreaRenderer extends NumberRenderer
             return '';
         }
 
-        return $data . ' ' . Configure::read('CsvMigrations.Inputmask.Area.suffix', '');
+        return preg_replace('/.00$/', '', $data) . ' ' . Configure::read('CsvMigrations.Inputmask.Area.suffix', '');
     }
 }

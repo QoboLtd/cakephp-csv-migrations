@@ -5,15 +5,6 @@ $uploadLimit = Qobo\Utils\Utility\Convert::valueToBytes(ini_get('upload_max_file
 // CsvMigrations plugin configuration
 return [
     'CsvMigrations' => [
-        /**
-         * Enables/disables Table default validation rules.
-         *
-         * @see \CsvMigrations\Table::validationDefault();
-         * @see \CsvMigrations\FieldHandlers\FieldHandler::setValidationRules();
-         * @see \CsvMigrations\FieldHandlers\FieldHandlerFactory::setValidationRules();
-         * @see src/FieldHandlers/Provider/ValidationRules;
-         */
-        'tableValidation' => true,
         'api' => [
             'auth' => true,
             'token' => null,

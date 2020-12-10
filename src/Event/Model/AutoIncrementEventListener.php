@@ -78,7 +78,7 @@ class AutoIncrementEventListener implements EventListenerInterface
 
         foreach ($fields as $field => $options) {
             // get max value
-            $query = $table->find('withTrashed');
+            $query = $table->find('withTrashed', ['accessCheck' => false]);
 
             try {
                 $max = $query->select([$field => $query->func()->max((string)$field)])

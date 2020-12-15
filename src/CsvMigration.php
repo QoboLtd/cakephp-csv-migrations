@@ -116,6 +116,22 @@ class CsvMigration extends AbstractMigration
     }
 
     /**
+     * Gets the csv configuration data
+     *
+     * @return mixed[] The CSV configuration data
+     */
+    protected function getCsvData(): array
+    {
+        $tableName = $this->table->getName();
+        Assert::notNull($tableName);
+
+        $tableName = Inflector::pluralize(Inflector::classify($tableName));
+        $mc = new ModuleConfig(ConfigType::MIGRATION(), $tableName);
+
+        return $mc->parseToArray();
+    }
+
+    /**
      * Apply changes from the JSON file
      *
      * @return void
@@ -125,9 +141,8 @@ class CsvMigration extends AbstractMigration
         $tableName = $this->table->getName();
         Assert::notNull($tableName);
 
-        $tableName = Inflector::pluralize(Inflector::classify($tableName));
-        $mc = new ModuleConfig(ConfigType::MIGRATION(), $tableName);
-        $data = $mc->parseToArray();
+        $data = $this->getCsvData();
+
         if (empty($data)) {
             $this->log(sprintf('No data found for %s module', $tableName), LogLevel::ERROR);
 

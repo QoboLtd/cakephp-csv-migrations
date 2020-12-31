@@ -20,15 +20,11 @@ use MyCLabs\Enum\Enum;
  */
 class EventName extends Enum
 {
-    // Controller events
-    const BATCH_IDS = 'CsvMigrations.Batch.ids';
     // Field Handlers events
     const FIELD_HANDLER_DEFAULT_VALUE = 'CsvMigrations.FieldHandler.DefaultValue';
     // CsvMigrations Table events
     const MODEL_AFTER_SAVE = 'CsvMigrations.Model.afterSave';
     const MODEL_AFTER_SAVE_COMMIT = 'CsvMigrations.Model.afterSaveCommit';
-    // Panel extras
-    const PANEL_POPULATE_EXTRAS = 'CsvMigrations.Panel.populate';
     // Thumbnails
     const CREATE_THUMBNAILS = 'CsvMigrations.FileStorage.createThumbnails';
     const REMOVE_THUMBNAILS = 'CsvMigrations.FileStorage.deleteThumbnails';

@@ -9,7 +9,7 @@ use CsvMigrations\Utility\ICal\IcEmail;
 
 class IcEmailTest extends TestCase
 {
-    public $fixtures = ['plugin.CsvMigrations.articles'];
+    public $fixtures = ['plugin.CsvMigrations.Articles'];
 
     private $table;
     private $entity;

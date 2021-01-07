@@ -17,8 +17,8 @@ use Webmozart\Assert\Assert;
 class ImportTest extends TestCase
 {
     public $fixtures = [
-        'plugin.csv_migrations.imports',
-        'plugin.csv_migrations.import_results',
+        'plugin.CsvMigrations.Imports',
+        'plugin.CsvMigrations.ImportResults',
     ];
 
     private $table;

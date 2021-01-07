@@ -42,51 +42,14 @@ class PanelTest extends TestCase
         $panel->setName();
     }
 
-    public function testGetExpression(): void
-    {
-        $panel = new Panel('Foobar', $this->config);
-        $result = $panel->getExpression();
-
-        $this->assertFalse(empty($result), 'Expression is empty');
-        $this->assertTrue(is_string($result), 'Expression is not a string`');
-        $this->assertContains(Panel::EXP_TOKEN, $result, 'Expression does not contain tokens');
-
-        // Cleaned up expression
-        $result = $panel->getExpression(true);
-        $this->assertNotContains(Panel::EXP_TOKEN, $result, 'Expression contains tokens');
-    }
-
-    public function testGetFields(): void
-    {
-        $panel = new Panel('Foobar', $this->config);
-        $result = $panel->getFields();
-        $this->assertFalse(empty($result), 'Fields are empty');
-        $this->assertTrue(is_array($result), 'Fields is not an array');
-
-        $this->assertTrue(in_array('type', $panel->getFields()), 'Field type is missing');
-        $this->assertTrue(in_array('name', $panel->getFields()), 'Field name is missing');
-    }
-
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \Symfony\Component\ExpressionLanguage\SyntaxError
      */
-    public function testSetFields(): void
+    public function testInvalidExpression(): void
     {
         $panel = new Panel('Foobar', ['panels' => ['Foobar' => '(this is not a valid expression)']]);
-    }
 
-    public function testGetFieldValues(): void
-    {
-        $panel = new Panel('Foobar', $this->config);
-        $data = ['type' => 'company', 'name' => 'amazon', 'dummy' => 'foo'];
-        $actual = $panel->getFieldValues($data);
-        $expected = ['type' => 'company', 'name' => 'amazon'];
-        $this->assertEquals($actual, $expected, 'Data and field values should be equal.');
-
-        $data = [];
-        $actual = $panel->getFieldValues($data);
-        $expected = ['type' => null, 'name' => null];
-        $this->assertEquals($actual, $expected, 'When data is empty the the field values should be null.');
+        $panel->evalExpression([]);
     }
 
     /**

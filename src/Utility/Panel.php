@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Copyright (c) Qobo Ltd. (https://www.qobo.biz)
@@ -20,6 +21,8 @@ use Cake\Utility\Hash;
 use CsvMigrations\Event\EventName;
 use InvalidArgumentException;
 use RuntimeException;
+use Symfony\Component\ExpressionLanguage\ExpressionFunction;
+use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 /**
@@ -34,27 +37,31 @@ class Panel
     const PANELS = 'panels';
 
     /**
-     * Token used in expression to distinquish placeholders.
-     */
-    const EXP_TOKEN = '%%';
-
-    /**
      * Panel name
      * @var string
      */
-    public $name;
+    private $name;
 
     /**
      * Expression
      * @var string
      */
-    public $expression;
+    private $expression;
 
     /**
-     * Fields
-     * @var array
+     * @var ExpressionFunctionProviderInterface[]
      */
-    public $fields = [];
+    private static $providers = [];
+
+    /**
+     * @param ExpressionFunctionProviderInterface $provider Provider
+     *
+     * @return void
+     */
+    public static function registerFunctionProvider(ExpressionFunctionProviderInterface $provider): void
+    {
+        self::$providers[] = $provider;
+    }
 
     /**
      * Initializes a new instance
@@ -67,14 +74,6 @@ class Panel
     {
         $this->setName($name);
         $this->setExpression($config);
-        $this->setFields();
-
-        // Move all fields into an object
-        foreach ($this->getFields() as $field) {
-            $search = sprintf('%1$s%2$s%1$s', self::EXP_TOKEN, $field);
-            $replace = sprintf('%1$sfields.%2$s%1$s', self::EXP_TOKEN, $field);
-            $this->expression = str_replace($search, $replace, $this->expression);
-        }
     }
 
     /**
@@ -102,19 +101,6 @@ class Panel
     }
 
     /**
-     * Getter of expression
-     *
-     * @param bool $clean Flag for removing the expression tokens
-     * @return string expression
-     */
-    public function getExpression(bool $clean = false): string
-    {
-        return $clean ?
-            str_replace(self::EXP_TOKEN, '', $this->expression) : // clean up expression from placeholder tokens.
-            $this->expression;
-    }
-
-    /**
      * Setter of expression.
      *
      * @param mixed[] $config Table's config
@@ -124,48 +110,11 @@ class Panel
     {
         $panels = Hash::get($config, self::PANELS);
         $exp = Hash::get($panels, $this->getName());
+
+        // Simply strip variable placeholders
+        $exp = str_replace('%%', '', $exp);
+
         $this->expression = $exp;
-    }
-
-    /**
-     * Getter of fields
-     *
-     * @return string[] fields
-     */
-    public function getFields(): array
-    {
-        return $this->fields;
-    }
-
-    /**
-     * Setter of fields.
-     *
-     * @throws InvalidArgumentException
-     * @return void
-     */
-    public function setFields(): void
-    {
-        preg_match_all('#' . self::EXP_TOKEN . '(.*?)' . self::EXP_TOKEN . '#', $this->getExpression(), $matches);
-        if (empty($matches[1])) {
-            throw new InvalidArgumentException("No tokens found in expression");
-        }
-        $this->fields = $matches[1];
-    }
-
-    /**
-     * Returns field values from the given entity.
-     *
-     * @param mixed[] $data to get the values for placeholders
-     * @return mixed[] Associative array, Keys: placeholders Values: values
-     */
-    public function getFieldValues(array $data): array
-    {
-        $result = [];
-        foreach ($this->getFields() as $field) {
-            $result[$field] = array_key_exists($field, $data) ? $data[$field] : null;
-        }
-
-        return $result;
     }
 
     /**
@@ -177,20 +126,9 @@ class Panel
      */
     public function evalExpression(array $data, array $extras = []): bool
     {
-        $extraVariables = new ArrayObject($extras);
-        $language = new ExpressionLanguage();
+        $language = new ExpressionLanguage(null, self::$providers);
 
-        // Make the fields properties of an internal object
-        $fields = $this->getFieldValues($data);
-        $fields = json_decode((string)json_encode($fields));
-
-        // Fire an event
-        $event = new Event((string)EventName::PANEL_POPULATE_EXTRAS(), null, $extraVariables);
-        EventManager::instance()->dispatch($event);
-
-        $eval = $language->evaluate($this->getExpression(true), compact('fields') + (array)$extraVariables);
-
-        return $eval;
+        return $language->evaluate($this->expression, array_merge($data, $extras));
     }
 
     /**

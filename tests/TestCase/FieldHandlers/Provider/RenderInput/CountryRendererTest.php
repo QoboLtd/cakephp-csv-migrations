@@ -11,7 +11,7 @@ use CsvMigrations\FieldHandlers\Provider\RenderInput\CountryRenderer;
 class CountryRendererTest extends TestCase
 {
     public $fixtures = [
-        'plugin.CsvMigrations.foo',
+        'plugin.CsvMigrations.Foo',
     ];
 
     /**

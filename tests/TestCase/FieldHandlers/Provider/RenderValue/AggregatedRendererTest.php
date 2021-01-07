@@ -12,8 +12,8 @@ use CsvMigrations\FieldHandlers\Provider\RenderValue\AggregatedRenderer;
 class AggregatedRendererTest extends TestCase
 {
     public $fixtures = [
-        'plugin.CsvMigrations.foo',
-        'plugin.CsvMigrations.leads',
+        'plugin.CsvMigrations.Foo',
+        'plugin.CsvMigrations.Leads',
     ];
 
     private $renderer;

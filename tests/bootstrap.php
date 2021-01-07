@@ -3,6 +3,7 @@
 use Cake\Core\Configure;
 use Cake\Filesystem\Folder;
 use Cake\Mailer\Email;
+use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 use Cake\Utility\Security;
 
@@ -128,7 +129,7 @@ Configure::load('CsvMigrations.importer');
  *
  * @link https://github.com/cakephp/cakephp/blob/3.6.13/tests/TestCase/Mailer/EmailTest.php#L131-L138
  */
-Email::setConfigTransport([
+TransportFactory::setConfig([
     'debug' => [
         'className' => 'Debug',
     ],

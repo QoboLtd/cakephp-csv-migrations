@@ -264,7 +264,23 @@ final class FileUpload
     }
 
     /**
-     * Image path getter.
+     * Gets the file url path
+     */
+    private function getFilePath(string $path)
+    {
+        if (method_exists('App\Utility\StaticFileMapper', 'map')) {
+            $basePath = call_user_func('App\Utility\StaticFileMapper::map', $path);
+
+            $basePath = substr($basePath, 0, -(strlen($path)));
+
+            return $basePath;
+        }
+
+        return WWW_ROOT;
+    }
+
+    /**
+     * Image URL getter.
      *
      * @param \Burzum\FileStorage\Model\Entity\FileStorage $entity FileStorage entity
      * @param string $version Version name
@@ -287,13 +303,24 @@ final class FileUpload
 
         EventManager::instance()->dispatch($event);
 
-        if (! $event->getResult()) {
-            return $entity->get('path');
+        $result = $event->getResult();
+        $path = $entity->get('path');
+
+        if (!$result) {
+            return $path;
         }
 
-        return file_exists(WWW_ROOT . trim($event->getResult(), DS)) ?
-            $event->getResult() :
-            $entity->get('path');
+        $fullPath = $this->getFilePath($path) . DS . $result;
+        if (!file_exists($fullPath)) {
+            return $path;
+        }
+
+        // Special case for samples. The URL is /samples/ instead of /uploads/
+        if (substr($path, 0, strlen('/samples/')) === '/samples/') {
+            $result = '/samples/' . substr($result, strlen('/uploads/'));
+        }
+
+        return $result;
     }
 
     /**

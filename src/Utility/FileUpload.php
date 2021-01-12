@@ -265,9 +265,8 @@ final class FileUpload
 
     /**
      * Gets the absolute file base path
-     * 
-     * @param string $path The relative file path
      *
+     * @param string $path The relative file path
      * @return string
      */
     private function getFileBasePath(string $path): string
@@ -320,7 +319,10 @@ final class FileUpload
         }
 
         // Special case for samples. The URL is /samples/ instead of /uploads/
-        if (substr($path, 0, strlen('/samples/')) === '/samples/') {
+        if (
+            substr($path, 0, strlen('/samples/')) === '/samples/'
+            && substr($result, 0, strlen('/uploads/')) === '/uploads/'
+        ) {
             $result = '/samples/' . substr($result, strlen('/uploads/'));
         }
 

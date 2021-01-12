@@ -264,14 +264,18 @@ final class FileUpload
     }
 
     /**
-     * Gets the file url path
+     * Gets the absolute file base path
+     * 
+     * @param string $path The relative file path
+     *
+     * @return string
      */
-    private function getFilePath(string $path)
+    private function getFileBasePath(string $path): string
     {
         if (method_exists('App\Utility\StaticFileMapper', 'map')) {
             $basePath = call_user_func('App\Utility\StaticFileMapper::map', $path);
 
-            $basePath = substr($basePath, 0, -(strlen($path)));
+            $basePath = substr($basePath, 0, -strlen($path));
 
             return $basePath;
         }
@@ -310,7 +314,7 @@ final class FileUpload
             return $path;
         }
 
-        $fullPath = $this->getFilePath($path) . DS . $result;
+        $fullPath = $this->getFileBasePath($path) . DS . $result;
         if (!file_exists($fullPath)) {
             return $path;
         }

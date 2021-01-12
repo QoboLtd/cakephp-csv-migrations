@@ -85,9 +85,9 @@ final class FileUpload
      * Contructor method.
      *
      * @param \Cake\ORM\Table $table Table Instance
-     * @param ImagePathMapper $imagePathMapper Image path mapper to override default.
+     * @param ?ImagePathMapper $imagePathMapper Image path mapper to override default.
      */
-    public function __construct(Table $table, ImagePathMapper $imagePathMapper = null)
+    public function __construct(Table $table, ?ImagePathMapper $imagePathMapper = null)
     {
         $this->table = $table;
         $this->storageTable = TableRegistry::getTableLocator()->get(self::FILE_STORAGE_TABLE_NAME);

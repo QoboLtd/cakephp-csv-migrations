@@ -79,15 +79,25 @@ final class FileUpload
      */
     private $urlHelper = null;
 
+    private $imagePathMapper = null;
+
     /**
      * Contructor method.
      *
      * @param \Cake\ORM\Table $table Table Instance
+     * @param ImagePathMapper $imagePathMapper Image path mapper to override default.
      */
-    public function __construct(Table $table)
+    public function __construct(Table $table, ImagePathMapper $imagePathMapper = null)
     {
         $this->table = $table;
         $this->storageTable = TableRegistry::getTableLocator()->get(self::FILE_STORAGE_TABLE_NAME);
+
+        if ($imagePathMapper === null) {
+            $imagePathMapperClass = Configure::read('FileStorage.imagePathMapper', DefaultImagePathMapper::class);
+
+            $this->imagePathMapper = new $imagePathMapperClass();
+            Assert::isInstanceOf($this->imagePathMapper, ImagePathMapper::class);
+        }
 
         /**
          * NOTE: if we don't have a predefined setup for the field image
@@ -181,14 +191,19 @@ final class FileUpload
      */
     public function getThumbnails(FileStorage $entity): array
     {
-        $versions = (array)Configure::read('FileStorage.imageHashes.file_storage');
+        $versions = (array)Configure::read(sprintf('FileStorage.imageSizes.%s', $entity->get('model')));
         if (empty($versions)) {
             return [];
         }
 
         $result = [];
         foreach (array_keys($versions) as $version) {
-            $result[$version] = $this->getThumbnail($entity, (string)$version);
+            $thumbnail = $this->getThumbnail($entity, (string)$version);
+            if (empty($thumbnail)) {
+                continue;
+            }
+
+            $result[$version] = $thumbnail;
         }
 
         return $result;
@@ -201,20 +216,15 @@ final class FileUpload
      * @param string $version Version name
      * @return string
      */
-    public function getThumbnail(FileStorage $entity, string $version): string
+    public function getThumbnail(FileStorage $entity, string $version): ?string
     {
-        $versions = (array)Configure::read('FileStorage.imageHashes.file_storage');
-        if (empty($versions)) {
-            return str_replace(DS, '/', $entity->get('path'));
-        }
-
-        if (! array_key_exists($version, $versions)) {
-            return str_replace(DS, '/', $entity->get('path'));
-        }
-
         $path = in_array(strtolower($entity->get('extension')), self::IMAGE_EXTENSIONS) ?
-            $this->getImagePath($entity, $version) :
+            $this->imagePathMapper->getImagePath($entity, $version) :
             $this->getIconPath($entity, $version);
+
+        if ($path === null) {
+            return $path;
+        }
 
         return str_replace(DS, '/', $path);
     }
@@ -261,72 +271,6 @@ final class FileUpload
         }
 
         return $thumbnails;
-    }
-
-    /**
-     * Gets the absolute file base path
-     *
-     * @param string $path The relative file path
-     * @return string
-     */
-    private function getFileBasePath(string $path): string
-    {
-        if (method_exists('App\Utility\StaticFileMapper', 'map')) {
-            $basePath = call_user_func('App\Utility\StaticFileMapper::map', $path);
-
-            $basePath = substr($basePath, 0, -strlen($path));
-
-            return $basePath;
-        }
-
-        return WWW_ROOT;
-    }
-
-    /**
-     * Image URL getter.
-     *
-     * @param \Burzum\FileStorage\Model\Entity\FileStorage $entity FileStorage entity
-     * @param string $version Version name
-     * @return string
-     */
-    private function getImagePath(FileStorage $entity, string $version): string
-    {
-        $hash = (string)Configure::read(sprintf('FileStorage.imageHashes.file_storage.%s', $version));
-        if (empty($hash)) {
-            return $entity->get('path');
-        }
-
-        $event = new Event('ImageVersion.getVersions', $this, [
-            'hash' => $hash,
-            'image' => $entity,
-            'version' => $version,
-            'options' => [],
-            'pathType' => 'fullPath',
-        ]);
-
-        EventManager::instance()->dispatch($event);
-
-        $result = $event->getResult();
-        $path = $entity->get('path');
-
-        if (!$result) {
-            return $path;
-        }
-
-        $fullPath = $this->getFileBasePath($path) . DS . $result;
-        if (!file_exists($fullPath)) {
-            return $path;
-        }
-
-        // Special case for samples. The URL is /samples/ instead of /uploads/
-        if (
-            substr($path, 0, strlen('/samples/')) === '/samples/'
-            && substr($result, 0, strlen('/uploads/')) === '/uploads/'
-        ) {
-            $result = '/samples/' . substr($result, strlen('/uploads/'));
-        }
-
-        return $result;
     }
 
     /**

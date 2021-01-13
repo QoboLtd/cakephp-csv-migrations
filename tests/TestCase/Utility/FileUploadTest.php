@@ -230,7 +230,7 @@ class FileUploadTest extends TestCase
 
     public function testGetThumbnailsWithoutConfiguration(): void
     {
-        Configure::write('FileStorage.imageHashes.file_storage', []);
+        Configure::write('FileStorage.imageSizes', []);
         $fileStorage = $this->table->get('00000000-0000-0000-0000-000000000001');
 
         $this->assertSame([], $this->fileUpload->getThumbnails($fileStorage));

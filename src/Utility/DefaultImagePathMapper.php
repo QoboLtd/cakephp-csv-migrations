@@ -39,7 +39,6 @@ class DefaultImagePathMapper implements ImagePathMapper
         try {
             EventManager::instance()->dispatch($event);
         } catch (\RuntimeException $e) {
-            // In case of invalid size
             return null;
         }
 

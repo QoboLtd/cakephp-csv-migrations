@@ -36,7 +36,12 @@ class DefaultImagePathMapper implements ImagePathMapper
             'pathType' => 'fullPath',
         ]);
 
-        EventManager::instance()->dispatch($event);
+        try {
+            EventManager::instance()->dispatch($event);
+        } catch (\RuntimeException $e) {
+            // In case of invalid size
+            return null;
+        }
 
         $result = $event->getResult();
         if (!$result) {

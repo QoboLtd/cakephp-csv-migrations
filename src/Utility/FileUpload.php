@@ -223,7 +223,7 @@ final class FileUpload
             $this->getIconPath($entity, $version);
 
         if ($path === null) {
-            return $path;
+            return $entity->get('path');
         }
 
         return str_replace(DS, '/', $path);

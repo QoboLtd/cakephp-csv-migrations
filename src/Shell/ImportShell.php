@@ -68,7 +68,7 @@ class ImportShell extends Shell
      * @param mixed[] $data Entity data
      * @return mixed[]
      */
-    private function removeSpacesLeftRight(array $data): array
+    public function removeSpacesLeftRight(array $data): array
     {
         array_walk_recursive($data, function (&$value) {
             $value = trim($value);
@@ -76,7 +76,6 @@ class ImportShell extends Shell
 
         return $data;
     }
-
 
     /**
      * {@inheritDoc}

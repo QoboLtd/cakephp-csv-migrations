@@ -70,9 +70,9 @@ class ImportShell extends Shell
      */
     public function removeSpacesLeftRight(array $data): array
     {
-        foreach ($data as $field => $value) {
-            $data[$field] = trim($value);
-        }
+        array_walk_recursive($data, function (&$value) {
+            $value = trim($value);
+        });
 
         return $data;
     }

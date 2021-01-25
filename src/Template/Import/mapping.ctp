@@ -79,11 +79,11 @@ $("#identifierRow").hide()
 $('#is_update:checkbox').on('ifChanged', function(e){
     $("#identifierRow").toggle()
     $("#identifierRow").find("label").parent().toggleClass("required")
-    $('select[name="options[options][update_identifier]"]').prop('required', this.checked)
-    $('select[name="options[options][update_identifier]"]').val("").trigger("change")
+    $('select[name="options[update_identifier]"]').prop('required', this.checked)
+    $('select[name="options[update_identifier]"]').val("").trigger("change")
 });
 
-$('select[name="options[options][update_identifier]"]').on("change", function(){
+$('select[name="options[update_identifier]"]').on("change", function(){
     if ($(this).val() === 'id') {
          $("<input />").attr("type", "hidden").attr("name", "options[fields][id][column]").attr("value", "id").appendTo("#mapping");
     }
@@ -113,7 +113,7 @@ $('select[name="options[options][update_identifier]"]').on("change", function(){
                     <div class="col-md-3"></div>
                     <div class="col-md-8">
                         <div class="form-group input checkbox">
-                            <input type="checkbox" name="options[options][update]" value="1" class="square" id="is_update">
+                            <input type="checkbox" name="options[update]" value="1" class="square" id="is_update">
                             <label class="control-label"><?= __d('Qobo/CsvMigrations', 'Update existing records') ?></label>
                         </div>
                     </div>
@@ -127,7 +127,7 @@ $('select[name="options[options][update_identifier]"]').on("change", function(){
                         </div>
                     </div>
                     <div class="col-md-8">
-                        <?= $this->Form->control('options.options.update_identifier', [
+                        <?= $this->Form->control('options.update_identifier', [
                             'empty' => true,
                             'label' => false,
                             'type' => 'select',

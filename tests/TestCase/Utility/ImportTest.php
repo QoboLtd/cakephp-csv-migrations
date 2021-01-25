@@ -34,8 +34,9 @@ class ImportTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        $config = TableRegistry::getTableLocator()->exists('Foo') ? [] : ['className' => 'CsvMigrations\Test\App\Model\Table\FooTable'];
+        $this->table = TableRegistry::getTableLocator()->get('Foo', $config);
 
-        $this->table = TableRegistry::getTableLocator()->get('CsvMigrations.ImportResults');
         $this->import = TableRegistry::getTableLocator()
             ->get('CsvMigrations.Imports')
             ->get('00000000-0000-0000-0000-000000000002');
@@ -141,7 +142,7 @@ class ImportTest extends TestCase
         $this->assertTrue($result);
         $this->assertSame('foobar', $this->import->get('filename'));
         $this->assertSame('Pending', $this->import->get('status'));
-        $this->assertSame('Foo.Bar', $this->import->get('model_name'));
+        $this->assertSame('Foo', $this->import->get('model_name'));
         $this->assertSame(0, $this->import->get('attempts'));
     }
 
@@ -229,12 +230,23 @@ class ImportTest extends TestCase
         $instance = new Import($this->table, $this->serverRequest, $this->flashComponent);
 
         $expected = [
-            'import_id',
-            'model_id',
-            'model_name',
-            'row_number',
+            'balance',
+            'birthdate',
+            'city',
+            'cost_amount',
+            'cost_currency',
+            'country',
+            'description',
+            'garden_area_amount',
+            'garden_area_unit',
+            'gender',
+            'is_primary',
+            'lead',
+            'name',
+            'reference',
+            'start_time',
             'status',
-            'status_message',
+            'type',
         ];
 
         $result = $instance->getTableColumns();
@@ -245,7 +257,8 @@ class ImportTest extends TestCase
 
     public function testToDatatables(): void
     {
-        $query = $this->table->find();
+        $table = TableRegistry::getTableLocator()->get('CsvMigration.ImportResults');
+        $query = $table->find();
 
         $columns = ['row_number', 'status', 'status_message'];
 
@@ -272,7 +285,8 @@ class ImportTest extends TestCase
     public function testActionButtons(): void
     {
         $articlesTable = TableRegistry::getTableLocator()->get('CsvMigrations.Articles');
-        $query = $this->table->find();
+        $table = TableRegistry::getTableLocator()->get('CsvMigration.ImportResults');
+        $query = $table->find();
 
         $columns = ['row_number', 'status', 'status_message'];
         $data = Import::toDatatables($query->all(), $columns);
@@ -286,8 +300,8 @@ class ImportTest extends TestCase
 
     public function testSetStatusLabels(): void
     {
-        $articlesTable = TableRegistry::getTableLocator()->get('CsvMigrations.Articles');
-        $query = $this->table->find();
+        $table = TableRegistry::getTableLocator()->get('CsvMigration.ImportResults');
+        $query = $table->find();
 
         $columns = ['row_number', 'status', 'status_message'];
         $data = Import::toDatatables($query->all(), $columns);

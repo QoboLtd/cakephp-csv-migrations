@@ -25,6 +25,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\View\View;
 use CsvMigrations\CsvMigration;
+use CsvMigrations\Exception\ImportErrorException;
 use CsvMigrations\Model\Entity\Import as ImportEntity;
 use CsvMigrations\Model\Table\ImportResultsTable;
 use CsvMigrations\Model\Table\ImportsTable;
@@ -76,7 +77,7 @@ class Import
      * @param \Cake\Controller\Component\FlashComponent $flash Flash component
      * @return void
      */
-    public function __construct(Table $table, ServerRequest $request, FlashComponent $flash)
+    public function __construct(Table $table, ServerRequest $request, ?FlashComponent $flash = null)
     {
         $this->table = $table;
         $this->request = $request;
@@ -116,13 +117,15 @@ class Import
     public function upload(): string
     {
         if (!$this->_validateUpload()) {
+            $this->setError('Unable to upload file to the specified directory.');
+
             return '';
         }
 
         $result = $this->_uploadFile();
 
         if ('' === $result) {
-            $this->flash->error('Unable to upload file to the specified directory.');
+            $this->setError('Unable to upload file to the specified directory.');
         }
 
         return $result;
@@ -138,15 +141,10 @@ class Import
      */
     public function create(ImportsTable $table, ImportEntity $entity, string $filename): bool
     {
-        $modelName = $this->request->getParam('controller');
-        if ($this->request->getParam('plugin')) {
-            $modelName = $this->request->getParam('plugin') . '.' . $modelName;
-        }
-
         $data = [
             'filename' => $filename,
             'status' => $table::STATUS_PENDING,
-            'model_name' => $modelName,
+            'model_name' => $this->table->getRegistryAlias(),
             'attempts' => 0,
         ];
 
@@ -202,8 +200,10 @@ class Import
             $result['fields'][$field] = $params;
         }
 
-        if (!empty($options['options'])) {
-            $result['options'] = $options['options'];
+        // Add more options to $result if exists.
+        unset($options['fields']);
+        if (!empty($options)) {
+            $result = array_merge($result, $options);
         }
 
         return $result;
@@ -234,12 +234,16 @@ class Import
     /**
      * Get upload file column headers (first row).
      *
-     * @param \CsvMigrations\Model\Entity\Import $entity Import entity
+     * @param \CsvMigrations\Model\Entity\Import|string $file Import entity or filename
      * @return string[]
      */
-    public static function getUploadHeaders(ImportEntity $entity): array
+    public static function getUploadHeaders($file): array
     {
-        $reader = Reader::createFromPath($entity->filename, 'r');
+        if ($file instanceof ImportEntity) {
+            $file = $file->get("filename");
+        }
+
+        $reader = Reader::createFromPath($file, 'r');
 
         return $reader->fetchOne();
     }
@@ -419,6 +423,44 @@ class Import
     }
 
     /**
+     * Try to map the header of the uploaed file with the DB field or the related labels.
+     *
+     * @param string $filename Filename
+     * @param string $model Model name
+     * @return array Return the mapped array in the "options format" for Import entities.
+     */
+    public static function smartMapping(string $filename, string $model): array
+    {
+        $results = [];
+
+        $fields = ModuleRegistry::getModule($model)->getFields();
+        $labels = array_flip(array_combine(array_keys($fields), Hash::extract($fields, '{s}.label')));
+
+        $headers = self::getUploadHeaders($filename);
+        foreach ($headers as $head) {
+            // Check if is the head is in the DB format. (ie : "field_name")
+            if (array_key_exists($head, $fields) && empty($result[$head])) {
+                $results[$head] = ['column' => $head];
+            }
+
+            // Check if is the head is a label. (ie : Field Name Label)
+            if (array_key_exists($head, $labels) && empty($result[$head])) {
+                $results[$head] = ['column' => $labels[$head]];
+            }
+
+            // Fail due ambiguous name columns
+            if (!empty($result[$head])) {
+                throw new \Exception("");
+            }
+
+            // Do sth with umapped fields here
+            // ...
+        }
+
+        return $results;
+    }
+
+    /**
      * Upload file validation.
      *
      * @return bool
@@ -426,13 +468,13 @@ class Import
     protected function _validateUpload(): bool
     {
         if (! $this->request->getData('file')) {
-            $this->flash->error('Please choose a file to upload.');
+            $this->setError('Please choose a file to upload.');
 
             return false;
         }
 
         if (! in_array($this->request->getData('file.type'), $this->__supportedMimeTypes)) {
-            $this->flash->error('Unable to upload file, unsupported file provided.');
+            $this->setError('Unable to upload file, unsupported file provided.');
 
             return false;
         }
@@ -509,11 +551,28 @@ class Import
 
         // create upload path, recursively.
         if (!mkdir($result, 0777, true)) {
-            $this->flash->error('Failed to create upload directory.');
+            $this->setError('Failed to create upload directory.');
 
             return '';
         }
 
         return $result;
+    }
+
+    /**
+     * If flash messages are not enabled it throws an exception.
+     *
+     * @param string $msg Error message
+     * @return void
+     */
+    protected function setError(string $msg)
+    {
+        if (!empty($this->flash)) {
+            $this->flash->error($msg);
+
+            return;
+        }
+
+        throw new ImportErrorException($msg);
     }
 }

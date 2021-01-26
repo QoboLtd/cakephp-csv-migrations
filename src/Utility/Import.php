@@ -65,7 +65,7 @@ class Import
     private $request;
 
     /**
-     * @var \Cake\Controller\Component\FlashComponent
+     * @var \Cake\Controller\Component\FlashComponent|null
      */
     private $flash;
 
@@ -240,7 +240,7 @@ class Import
     public static function getUploadHeaders($file): array
     {
         if ($file instanceof ImportEntity) {
-            $file = $file->get("filename");
+            $file = $file->get('filename');
         }
 
         $reader = Reader::createFromPath($file, 'r');
@@ -427,14 +427,14 @@ class Import
      *
      * @param string $filename Filename
      * @param string $model Model name
-     * @return array Return the mapped array in the "options format" for Import entities.
+     * @return mixed[] Return the mapped array in the "options format" for Import entities.
      */
     public static function smartMapping(string $filename, string $model): array
     {
         $results = [];
 
         $fields = ModuleRegistry::getModule($model)->getFields();
-        $labels = array_flip(array_combine(array_keys($fields), Hash::extract($fields, '{s}.label')));
+        $labels = array_flip((array)array_combine(array_keys($fields), (array)Hash::extract($fields, '{s}.label')));
 
         $headers = self::getUploadHeaders($filename);
         foreach ($headers as $head) {
@@ -450,7 +450,7 @@ class Import
 
             // Fail due ambiguous name columns
             if (!empty($result[$head])) {
-                throw new \Exception("");
+                throw new ImportErrorException('Fail due ambiguous name columns');
             }
 
             // Do sth with umapped fields here
@@ -565,7 +565,7 @@ class Import
      * @param string $msg Error message
      * @return void
      */
-    protected function setError(string $msg)
+    protected function setError(string $msg): void
     {
         if (!empty($this->flash)) {
             $this->flash->error($msg);

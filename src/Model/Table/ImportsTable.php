@@ -90,35 +90,35 @@ class ImportsTable extends Table
     {
         $validator
             ->uuid('id')
-            ->allowEmpty('id', 'create');
+            ->allowEmptyString('id', 'create');
 
         $validator
             ->requirePresence('filename', 'create')
-            ->notEmpty('filename');
+            ->notEmptyString('filename');
 
         $validator
             ->requirePresence('status', 'create')
-            ->notEmpty('status');
+            ->notEmptyString('status');
 
         $validator
             ->requirePresence('model_name', 'create')
-            ->notEmpty('model_name');
+            ->notEmptyString('model_name');
 
         $validator
             ->requirePresence('attempts', 'create')
-            ->notEmpty('attempts');
+            ->notEmptyString('attempts');
 
         $validator
             ->dateTime('trashed')
-            ->allowEmpty('trashed');
+            ->allowEmptyString('trashed');
 
         $validator
             ->uuid('created_by')
-            ->notEmpty('created_by');
+            ->notEmptyString('created_by');
 
         $validator
             ->uuid('modified_by')
-            ->notEmpty('modified_by');
+            ->notEmptyString('modified_by');
 
         return $validator;
     }

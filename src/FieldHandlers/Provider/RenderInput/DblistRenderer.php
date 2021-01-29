@@ -51,10 +51,7 @@ class DblistRenderer extends AbstractRenderer
             'label' => $options['label'],
             'required' => $options['fieldDefinitions']->getRequired(),
             'value' => $data,
-            'options' => array_merge(
-                ['' => Setting::EMPTY_OPTION_LABEL()],
-                $table->getOptions($list)
-            ),
+            'options' => ['' => Setting::EMPTY_OPTION_LABEL()] + $table->getOptions($list),
             'extraClasses' => (!empty($options['extraClasses']) ? implode(' ', $options['extraClasses']) : ''),
             'attributes' => empty($options['attributes']) ? [] : $options['attributes'],
             'help' => (!empty($options['help']) ? $options['help'] : ''),

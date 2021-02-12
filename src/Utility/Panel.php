@@ -87,6 +87,16 @@ class Panel
     }
 
     /**
+     * Getter of panel expression.
+     *
+     * @return string panel expression
+     */
+    public function getExpression(): string
+    {
+        return $this->expression;
+    }
+
+    /**
      * Setter of panel name.
      *
      * @param string $name Panel name

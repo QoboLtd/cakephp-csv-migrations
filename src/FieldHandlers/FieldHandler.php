@@ -115,6 +115,16 @@ class FieldHandler implements FieldHandlerInterface
             $this->defaultOptions = (array)array_replace_recursive($this->defaultOptions, $config[$field]);
         }
         $this->defaultOptions['attributes']['field-name'] = $field;
+
+        //Set connected/target fields
+        if (
+            isset($config[$field])
+            && isset($config[$field]['filterFromField'])
+            && isset($config[$field]['filterSetAsConnectedField'])
+        ) {
+            $this->defaultOptions['attributes']['data-connected-field'] = $config[$field]['filterFromField'];
+            $this->defaultOptions['attributes']['data-connected-target-field'] = $config[$field]['filterSetAsConnectedField'];
+        }
     }
 
     /**

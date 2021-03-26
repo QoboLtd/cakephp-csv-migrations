@@ -80,7 +80,17 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
                 return text;
             },
             ajax: {
-                url: $(input).data('url'),
+                url: function() {
+
+                    var connectedField = $(input).data('connected-field') ?? '';
+                    var connectedTargetField = $(input).data('connected-target-field') ?? '';
+                    var connectedFieldValue = '';
+                    if (connectedField != '' && connectedTargetField != '') {
+                        connectedFieldValue = '?' + connectedTargetField + '=' + $('#' + connectedField).val();
+                    }
+
+                    return $(input).data('url') + connectedFieldValue;
+                },
                 dataType: 'json',
                 contentType: 'application/json',
                 accepts: {

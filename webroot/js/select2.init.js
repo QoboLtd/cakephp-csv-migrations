@@ -82,6 +82,7 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
             ajax: {
                 url: function() {
 
+                    var currentFieldName = $(input).attr('field-name');
                     var connectedField = $(input).data('connected-field') ?? '';
                     var connectedTargetField = $(input).data('connected-target-field') ?? '';
                     var connectedFieldValue = '';
@@ -89,7 +90,13 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
                         connectedFieldValue = '?' + connectedTargetField + '=' + $('#' + connectedField).val();
                     }
 
-                    return $(input).data('url') + connectedFieldValue;
+                    if (connectedFieldValue != '' && currentFieldName != '') {
+                        currentFieldName = '&field=' + currentFieldName;
+                    } else {
+                        currentFieldName = '?field=' + currentFieldName;
+                    }
+
+                    return $(input).data('url') + connectedFieldValue + currentFieldName;
                 },
                 dataType: 'json',
                 contentType: 'application/json',

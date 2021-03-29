@@ -82,14 +82,23 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
             ajax: {
                 url: function() {
 
+                    var currentFieldName = $(input).attr('field-name') ?? '';
                     var connectedField = $(input).data('connected-field') ?? '';
                     var connectedTargetField = $(input).data('connected-target-field') ?? '';
                     var connectedFieldValue = '';
-                    if (connectedField != '' && connectedTargetField != '') {
-                        connectedFieldValue = '?' + connectedTargetField + '=' + $('#' + connectedField).val();
+                    var params = {}
+
+                    if (currentFieldName != '') {
+                        params['field'] = currentFieldName;
                     }
 
-                    return $(input).data('url') + connectedFieldValue;
+                    if (connectedField != '' && connectedTargetField != '') {
+                        params[connectedTargetField] = $('#' + connectedField).val();
+                    }
+
+                    var jParams = jQuery.param(params);
+
+                    return $(input).data('url') + '?' + jParams;
                 },
                 dataType: 'json',
                 contentType: 'application/json',

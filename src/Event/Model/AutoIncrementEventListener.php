@@ -65,12 +65,30 @@ class AutoIncrementEventListener implements EventListenerInterface
         }
 
         Assert::isInstanceOf($entity, Entity::class);
-
         foreach (array_keys($fields) as $field) {
-            if ($entity->has((string)$field) && !empty($entity->getOriginal((string)$field))) {
-                $entity->set((string)$field, $entity->getOriginal((string)$field));
-                unset($fields[$field]);
+
+            /**
+             * If entity is new set the auto increment value to null
+             *
+             */
+            if ($entity->isNew()) {
+                $entity->set((string)$field, null);
+                continue;
             }
+
+            /**
+             * If existing entity with empty auto increment field then continue
+             */
+            if (empty($entity->getOriginal((string)$field))) {
+                continue;
+            }
+
+            /**
+             * If Entity is not new then we set the auto increment field value to its original
+             * as we do not want to be able to change the auto increment field
+             */
+            $entity->set((string)$field, $entity->getOriginal((string)$field));
+            unset($fields[$field]);
         }
 
         foreach ($fields as $field => $options) {

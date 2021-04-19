@@ -68,7 +68,7 @@ class AutoIncrementEventListener implements EventListenerInterface
 
         foreach (array_keys($fields) as $field) {
             if ($entity->has((string)$field) && !empty($entity->getOriginal((string)$field))) {
-                $entity->set((string)$field)) = $entity->getOriginal((string)$field));
+                $entity->set((string)$field, $entity->getOriginal((string)$field));
                 unset($fields[$field]);
             }
         }

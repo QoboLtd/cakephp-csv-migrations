@@ -82,6 +82,6 @@ class AutoIncrementEventListenerTest extends TestCase
         $this->table->saveOrFail($existingEntity);
 
         $existingEntity = $this->table->get($existingEntity->get('id'));
-        $this->assertSame(10, $existingEntity->get($this->autoincrementField));
+        $this->assertSame(11, $existingEntity->get($this->autoincrementField));
     }
 }

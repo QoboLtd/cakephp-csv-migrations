@@ -80,11 +80,10 @@ var csv_migrations_select2 = csv_migrations_select2 || {};
                 return text;
             },
             ajax: {
-                url: function() {
-
-                    var currentFieldName = $(input).attr('field-name') ?? '';
-                    var connectedField = $(input).data('connected-field') ?? '';
-                    var connectedTargetField = $(input).data('connected-target-field') ?? '';
+                url: function () {
+                    var currentFieldName = ($(input).attr('field-name') === undefined) ? '' : $(input).attr('field-name');
+                    var connectedField = ($(input).data('connected-field') === undefined) ? '' : $(input).data('connected-field');
+                    var connectedTargetField = ($(input).data('connected-target-field') === undefined) ? '' : $(input).data('connected-target-field');
                     var connectedFieldValue = '';
                     var params = {}
 

@@ -64,13 +64,16 @@ class AutoIncrementEventListener implements EventListenerInterface
             return;
         }
 
-        Assert::isInstanceOf($entity, Entity::class);
-
-        foreach (array_keys($fields) as $field) {
-            if ($entity->has((string)$field) && !empty($entity->getOriginal((string)$field))) {
-                $entity->set((string)$field)) = $entity->getOriginal((string)$field));
-                unset($fields[$field]);
+        // skip modifying auto-increment field(s) on existing records.
+        if (! $entity->isNew() && empty($options['autoIncrement'])) {
+            foreach (array_keys($fields) as $field) {
+                Assert::isInstanceOf($entity, Entity::class);
+                if ($entity->has((string)$field)) {
+                    $entity->set((string)$field, $entity->getOriginal((string)$field));
+                }
             }
+
+            return;
         }
 
         foreach ($fields as $field => $options) {

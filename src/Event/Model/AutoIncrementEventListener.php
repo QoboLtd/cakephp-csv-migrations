@@ -81,7 +81,10 @@ class AutoIncrementEventListener implements EventListenerInterface
             $query = $table->find('withTrashed');
 
             try {
-                $max = $query->select([$field => $query->func()->max((string)$field)])
+                $max = $query->select([
+                        $field => $query->func()
+                            ->max((string)$table->aliasField($field)),
+                        ])
                     ->enableHydration(true)
                     ->firstOrFail();
                 Assert::isInstanceOf($max, EntityInterface::class);

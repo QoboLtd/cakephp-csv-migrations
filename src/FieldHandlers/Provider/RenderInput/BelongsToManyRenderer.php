@@ -40,7 +40,9 @@ class BelongsToManyRenderer extends AbstractRenderer
 
         $fieldName = $table->aliasField($field);
 
-        $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), (!is_string($data)) ? '' : $data);
+        $data = (!is_string($data)) ? '' : $data;
+
+        $relatedProperties = $this->_getRelatedProperties($options['fieldDefinitions']->getLimit(), $data);
         if (!empty($relatedProperties['dispFieldVal']) && !empty($relatedProperties['config']['parent']['module'])) {
             $relatedParentProperties = $this->_getRelatedParentProperties($relatedProperties);
             if (!empty($relatedParentProperties['dispFieldVal'])) {

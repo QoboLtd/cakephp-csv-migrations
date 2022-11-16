@@ -13,6 +13,9 @@
 
 namespace CsvMigrations\FieldHandlers\Provider\ValidationRules;
 
+use Cake\Validation\Validator;
+use InvalidArgumentException;
+
 /**
  * DateValidationRules
  *
@@ -25,8 +28,23 @@ class DateValidationRules extends AbstractValidationRules
      */
     public function provide($validator = null, array $options = [])
     {
-        $validator = parent::provide($validator, $options);
-        $validator->date($options['fieldDefinitions']->getName());
+        if (! $validator instanceof Validator) {
+            throw new InvalidArgumentException(
+                sprintf('Validator parameter must be an instance of %s.', Validator::class)
+            );
+        }
+
+        $field = $options['fieldDefinitions'];
+
+        $fieldName = $field->getName();
+
+        if ($field->getRequired()) {
+            $validator->notEmptyDate($field->getName(), 'Missing date', 'create');
+        } else {
+            $validator->allowEmptyDate($field->getName());
+        }
+
+        $validator->date($fieldName);
 
         return $validator;
     }

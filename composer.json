@@ -22,7 +22,7 @@
         "optimize-autoloader": true
     },
     "require": {
-        "eluceo/ical": "^0.11.0",
+        "eluceo/ical": "^2.8.0",
         "qobo/cakephp-translations": "^10.5",
         "qobo/cakephp-utils": "^13.0",
         "league/commonmark": "^0.19",
